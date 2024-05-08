@@ -9,7 +9,7 @@ export default class LoadingModalUiHandler extends ModalUiHandler {
   }
 
   getModalTitle(): string {
-    return '';
+    return "";
   }
 
   getWidth(): number {
@@ -21,17 +21,23 @@ export default class LoadingModalUiHandler extends ModalUiHandler {
   }
 
   getMargin(): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   getButtonLabels(): string[] {
-    return [ ];
+    return [];
   }
 
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, 'Loading…', TextStyle.WINDOW);
+    const label = addTextObject(
+      this.scene,
+      this.getWidth() / 2,
+      this.getHeight() / 2,
+      "Loading…",
+      TextStyle.WINDOW,
+    );
     label.setOrigin(0.5, 0.5);
 
     this.modalContainer.add(label);

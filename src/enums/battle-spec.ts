@@ -1,4 +1,4 @@
 export enum BattleSpec {
-    DEFAULT,
-    FINAL_BOSS
+  DEFAULT = 0,
+  FINAL_BOSS = 1,
 }

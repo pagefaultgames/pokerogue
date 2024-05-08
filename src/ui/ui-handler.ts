@@ -1,13 +1,13 @@
 import BattleScene from "../battle-scene";
 import { TextStyle, getTextColor } from "./text";
-import UI, { Mode } from "./ui";
-import {Button} from "../enums/buttons";
+import { Mode } from "./ui";
+import { Button } from "../enums/buttons";
 
 export default abstract class UiHandler {
   protected scene: BattleScene;
   protected mode: integer;
   protected cursor: integer = 0;
-  public active: boolean = false;
+  public active = false;
 
   constructor(scene: BattleScene, mode: Mode) {
     this.scene = scene;
@@ -28,7 +28,7 @@ export default abstract class UiHandler {
     return this.scene.ui;
   }
 
-  getTextColor(style: TextStyle, shadow: boolean = false): string {
+  getTextColor(style: TextStyle, shadow = false): string {
     return getTextColor(style, shadow, this.scene.uiTheme);
   }
 
@@ -38,8 +38,7 @@ export default abstract class UiHandler {
 
   setCursor(cursor: integer): boolean {
     const changed = this.cursor !== cursor;
-    if (changed)
-      this.cursor = cursor;
+    if (changed) this.cursor = cursor;
 
     return changed;
   }

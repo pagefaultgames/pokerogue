@@ -1,9 +1,9 @@
 import { GameModes, gameModes } from "../game-mode";
 
 export enum Unlockables {
-  ENDLESS_MODE,
-  MINI_BLACK_HOLE,
-  SPLICED_ENDLESS_MODE
+  ENDLESS_MODE = 0,
+  MINI_BLACK_HOLE = 1,
+  SPLICED_ENDLESS_MODE = 2,
 }
 
 export function getUnlockableName(unlockable: Unlockables) {
@@ -11,7 +11,7 @@ export function getUnlockableName(unlockable: Unlockables) {
     case Unlockables.ENDLESS_MODE:
       return `${gameModes[GameModes.ENDLESS].getName()} Mode`;
     case Unlockables.MINI_BLACK_HOLE:
-      return 'Mini Black Hole';
+      return "Mini Black Hole";
     case Unlockables.SPLICED_ENDLESS_MODE:
       return `${gameModes[GameModes.SPLICED_ENDLESS].getName()} Mode`;
   }

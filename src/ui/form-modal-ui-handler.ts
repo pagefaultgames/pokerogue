@@ -5,8 +5,8 @@ import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import * as Utils from "../utils";
-import i18next from '../plugins/i18n';
-import {Button} from "../enums/buttons";
+import i18next from "../plugins/i18n";
+import { Button } from "../enums/buttons";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
@@ -30,12 +30,18 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   abstract getFields(): string[];
 
   getHeight(config?: ModalConfig): number {
-    return 20 * this.getFields().length + (this.getModalTitle() ? 26 : 0) + ((config as FormModalConfig)?.errorMessage ? 12 : 0) + this.getButtonTopMargin() + 28;
+    return (
+      20 * this.getFields().length +
+      (this.getModalTitle() ? 26 : 0) +
+      ((config as FormModalConfig)?.errorMessage ? 12 : 0) +
+      this.getButtonTopMargin() +
+      28
+    );
   }
 
   getReadableErrorMessage(error: string): string {
-    if (error?.indexOf('connection refused') > -1)
-      return 'Could not connect to the server';
+    if (error?.indexOf("connection refused") > -1)
+      return "Could not connect to the server";
 
     return error;
   }
@@ -48,17 +54,50 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     const hasTitle = !!this.getModalTitle();
 
     fields.forEach((field, f) => {
-      const label = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * f, field, TextStyle.TOOLTIP_CONTENT);
+      const label = addTextObject(
+        this.scene,
+        10,
+        (hasTitle ? 31 : 5) + 20 * f,
+        field,
+        TextStyle.TOOLTIP_CONTENT,
+      );
 
       this.modalContainer.add(label);
 
-      const inputContainer = this.scene.add.container(70, (hasTitle ? 28 : 2) + 20 * f);
+      const inputContainer = this.scene.add.container(
+        70,
+        (hasTitle ? 28 : 2) + 20 * f,
+      );
       inputContainer.setVisible(false);
 
-      const inputBg = addWindow(this.scene, 0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
+      const inputBg = addWindow(
+        this.scene,
+        0,
+        0,
+        80,
+        16,
+        false,
+        false,
+        0,
+        0,
+        WindowVariant.XTHIN,
+      );
 
-      const isPassword = field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"));
-      const input = addTextInputObject(this.scene, 4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, { type: isPassword ? 'password' : 'text', maxLength: isPassword ? 64 : 16 });
+      const isPassword =
+        field.includes(i18next.t("menu:password")) ||
+        field.includes(i18next.t("menu:confirmPassword"));
+      const input = addTextInputObject(
+        this.scene,
+        4,
+        -2,
+        440,
+        116,
+        TextStyle.TOOLTIP_CONTENT,
+        {
+          type: isPassword ? "password" : "text",
+          maxLength: isPassword ? 64 : 16,
+        },
+      );
       input.setOrigin(0, 0);
 
       inputContainer.add(inputBg);
@@ -69,16 +108,27 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.inputs.push(input);
     });
 
-    this.errorMessage = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin(), '', TextStyle.TOOLTIP_CONTENT);
+    this.errorMessage = addTextObject(
+      this.scene,
+      10,
+      (hasTitle ? 31 : 5) +
+        20 * (fields.length - 1) +
+        16 +
+        this.getButtonTopMargin(),
+      "",
+      TextStyle.TOOLTIP_CONTENT,
+    );
     this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
-    this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
+    this.errorMessage.setShadowColor(
+      this.getTextColor(TextStyle.SUMMARY_PINK, true),
+    );
     this.errorMessage.setVisible(false);
     this.modalContainer.add(this.errorMessage);
   }
 
   show(args: any[]): boolean {
     if (super.show(args)) {
-      this.inputContainers.map(ic => ic.setVisible(true));
+      this.inputContainers.map((ic) => ic.setVisible(true));
 
       const config = args[0] as FormModalConfig;
 
@@ -87,10 +137,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
         : null;
 
       if (this.buttonBgs.length) {
-        this.buttonBgs[0].off('pointerdown');
-        this.buttonBgs[0].on('pointerdown', () => {
-          if (this.submitAction)
-            this.submitAction();
+        this.buttonBgs[0].off("pointerdown");
+        this.buttonBgs[0].on("pointerdown", () => {
+          if (this.submitAction) this.submitAction();
         });
       }
 
@@ -100,9 +149,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.scene.tweens.add({
         targets: this.modalContainer,
         duration: Utils.fixedInt(1000),
-        ease: 'Sine.easeInOut',
-        y: '-=24',
-        alpha: 1
+        ease: "Sine.easeInOut",
+        y: "-=24",
+        alpha: 1,
       });
 
       return true;
@@ -121,14 +170,17 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   }
 
   sanitizeInputs(): void {
-    for (let input of this.inputs)
-      input.text = input.text.trim();
+    for (const input of this.inputs) input.text = input.text.trim();
   }
 
   updateContainer(config?: ModalConfig): void {
     super.updateContainer(config);
 
-    this.errorMessage.setText(this.getReadableErrorMessage((config as FormModalConfig)?.errorMessage || ''));
+    this.errorMessage.setText(
+      this.getReadableErrorMessage(
+        (config as FormModalConfig)?.errorMessage || "",
+      ),
+    );
     this.errorMessage.setVisible(!!this.errorMessage.text);
   }
 
@@ -136,7 +188,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     super.clear();
     this.modalContainer.setVisible(false);
 
-    this.inputContainers.map(ic => ic.setVisible(false));
+    this.inputContainers.map((ic) => ic.setVisible(false));
 
     this.submitAction = null;
   }

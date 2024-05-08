@@ -1,40 +1,40 @@
 {
-    "$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
-    "organizeImports": {
-        "enabled": true
-    },
-    "files": {
-        "maxSize": 2097152
-    },
-    "linter": {
-        "enabled": true,
-        "rules": {
-            "recommended": true,
-            "correctness": {
-                "noUnusedImports": "error"
-            },
-            "suspicious": {
-                "noExplicitAny": "off"
-            },
-            "style": {
-                "useImportType": "off",
-				"useBlockStatements": "error"
-			}
-        }
-    },
-    "formatter": {
-        "enabled": true,
-        "indentStyle": "space"
-    },
-    "json": {
-        "formatter": {
-            "enabled": true
-        }
-    },
-    "vcs": {
-        "enabled": true,
-        "clientKind": "git",
-        "useIgnoreFile": true,
-        "defaultBranch": "main"
+  "$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "files": {
+    "maxSize": 2097152
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedImports": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "style": {
+        "useImportType": "off",
+        "useBlockStatements": "error"
+      }
     }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
+    }
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  }
 }

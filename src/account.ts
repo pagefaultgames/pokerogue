@@ -9,30 +9,33 @@ export interface UserInfo {
 export let loggedInUser: UserInfo = null;
 
 export function updateUserInfo(): Promise<[boolean, integer]> {
-  return new Promise<[boolean, integer]>(resolve => {
+  return new Promise<[boolean, integer]>((resolve) => {
     if (bypassLogin) {
       let lastSessionSlot = -1;
       for (let s = 0; s < 2; s++) {
-        if (localStorage.getItem(`sessionData${s ? s : ''}`)) {
+        if (localStorage.getItem(`sessionData${s ? s : ""}`)) {
           lastSessionSlot = s;
           break;
         }
       }
-      loggedInUser = { username: 'Guest', lastSessionSlot: lastSessionSlot };
-      return resolve([ true, 200 ]);
+      loggedInUser = { username: "Guest", lastSessionSlot: lastSessionSlot };
+      return resolve([true, 200]);
     }
-    Utils.apiFetch('account/info', true).then(response => {
-      if (!response.ok) {
-        resolve([ false, response.status ]);
-        return;
-      }
-      return response.json();
-    }).then(jsonResponse => {
-      loggedInUser = jsonResponse;
-      resolve([ true, 200 ]);
-    }).catch(err => {
-      console.error(err);
-      resolve([ false, 500 ]);
-    });
+    Utils.apiFetch("account/info", true)
+      .then((response) => {
+        if (!response.ok) {
+          resolve([false, response.status]);
+          return;
+        }
+        return response.json();
+      })
+      .then((jsonResponse) => {
+        loggedInUser = jsonResponse;
+        resolve([true, 200]);
+      })
+      .catch((err) => {
+        console.error(err);
+        resolve([false, 500]);
+      });
   });
 }

@@ -40,12 +40,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 1
         },
@@ -100,12 +95,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            255,
-            255,
-            255,
-            100
-          ],
+          "color": [255, 255, 255, 100],
           "priority": 1,
           "focus": 1
         },
@@ -119,12 +109,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 192,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 1
         },
@@ -179,12 +164,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "priority": 1,
           "focus": 1
         },
@@ -198,12 +178,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 64,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 1
         },
@@ -217,12 +192,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            170,
-            170,
-            170,
-            66
-          ],
+          "color": [170, 170, 170, 66],
           "priority": 1,
           "focus": 1
         },
@@ -236,12 +206,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 192,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 1
         },
@@ -296,12 +261,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 170,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "priority": 1,
           "focus": 1
         },
@@ -315,12 +275,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 64,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 1
         },
@@ -334,12 +289,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            85,
-            85,
-            85,
-            33
-          ],
+          "color": [85, 85, 85, 33],
           "priority": 1,
           "focus": 1
         },
@@ -353,12 +303,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 192,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 1
         },
@@ -384,12 +329,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -430,12 +370,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 85,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "priority": 1,
           "focus": 1
         },
@@ -449,12 +384,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 42,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 1
         },
@@ -481,12 +411,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 1
         },
@@ -512,12 +437,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -558,12 +478,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         },
         {
@@ -576,12 +491,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 10,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 1
         },
@@ -595,12 +505,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 21,
-          "color": [
-            255,
-            255,
-            255,
-            100
-          ],
+          "color": [255, 255, 255, 100],
           "priority": 1,
           "focus": 1
         },
@@ -614,12 +519,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 32,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 1
         },
@@ -674,12 +574,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -720,12 +615,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -766,12 +656,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -812,12 +697,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -858,12 +738,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -904,12 +779,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -962,12 +832,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1020,12 +885,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1078,12 +938,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1136,12 +991,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1194,12 +1044,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1252,12 +1097,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1310,12 +1150,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1368,12 +1203,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1426,12 +1256,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1484,12 +1309,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1542,12 +1362,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1600,12 +1415,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1658,12 +1468,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1716,12 +1521,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1774,12 +1574,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1832,12 +1627,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1878,12 +1668,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1924,12 +1709,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -1970,12 +1750,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -2016,12 +1791,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -2062,12 +1832,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -2120,12 +1885,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -2178,12 +1938,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 1
         }
       ],
@@ -2325,12 +2080,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 2
         },
@@ -2385,12 +2135,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            255,
-            255,
-            255,
-            100
-          ],
+          "color": [255, 255, 255, 100],
           "priority": 1,
           "focus": 2
         },
@@ -2404,12 +2149,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 192,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 2
         },
@@ -2464,12 +2204,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "priority": 1,
           "focus": 2
         },
@@ -2483,12 +2218,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 64,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 2
         },
@@ -2502,12 +2232,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            170,
-            170,
-            170,
-            66
-          ],
+          "color": [170, 170, 170, 66],
           "priority": 1,
           "focus": 2
         },
@@ -2521,12 +2246,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 192,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 2
         },
@@ -2581,12 +2301,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 170,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "priority": 1,
           "focus": 2
         },
@@ -2600,12 +2315,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 64,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 2
         },
@@ -2619,12 +2329,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            85,
-            85,
-            85,
-            33
-          ],
+          "color": [85, 85, 85, 33],
           "priority": 1,
           "focus": 2
         },
@@ -2638,12 +2343,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 192,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 2
         },
@@ -2669,12 +2369,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -2715,12 +2410,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 85,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "priority": 1,
           "focus": 2
         },
@@ -2734,12 +2424,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 42,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 2
         },
@@ -2766,12 +2451,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 128,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 2
         },
@@ -2797,12 +2477,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -2843,12 +2518,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         },
         {
@@ -2861,12 +2531,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 10,
-          "color": [
-            255,
-            255,
-            255,
-            150
-          ],
+          "color": [255, 255, 255, 150],
           "priority": 1,
           "focus": 2
         },
@@ -2880,12 +2545,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 21,
-          "color": [
-            255,
-            255,
-            255,
-            100
-          ],
+          "color": [255, 255, 255, 100],
           "priority": 1,
           "focus": 2
         },
@@ -2899,12 +2559,7 @@
           "target": 2,
           "graphicFrame": 43,
           "opacity": 32,
-          "color": [
-            255,
-            255,
-            255,
-            50
-          ],
+          "color": [255, 255, 255, 50],
           "priority": 1,
           "focus": 2
         },
@@ -2959,12 +2614,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3005,12 +2655,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3051,12 +2696,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3097,12 +2737,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3143,12 +2778,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3189,12 +2819,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3247,12 +2872,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3305,12 +2925,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3363,12 +2978,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3421,12 +3031,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3479,12 +3084,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3537,12 +3137,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3595,12 +3190,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3653,12 +3243,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3711,12 +3296,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3769,12 +3349,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3827,12 +3402,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3885,12 +3455,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -3943,12 +3508,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4001,12 +3561,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4059,12 +3614,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4117,12 +3667,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4163,12 +3708,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4209,12 +3749,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4255,12 +3790,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4301,12 +3831,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4347,12 +3872,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4405,12 +3925,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],
@@ -4463,12 +3978,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            255,
-            255,
-            255,
-            255
-          ],
+          "color": [255, 255, 255, 255],
           "focus": 2
         }
       ],

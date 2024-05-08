@@ -1,4 +1,3 @@
-
 export enum ArenaTagType {
   NONE = "NONE",
   MUD_SPORT = "MUD_SPORT",
@@ -16,5 +15,5 @@ export enum ArenaTagType {
   REFLECT = "REFLECT",
   LIGHT_SCREEN = "LIGHT_SCREEN",
   AURORA_VEIL = "AURORA_VEIL",
-  TAILWIND = "TAILWIND"
+  TAILWIND = "TAILWIND",
 }

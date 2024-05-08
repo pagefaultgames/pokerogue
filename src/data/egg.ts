@@ -1,4 +1,4 @@
-import { Type } from "./type";
+
 import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { Species } from "./enums/species";
@@ -8,9 +8,9 @@ import { EggTier } from "./enums/egg-type";
 export const EGG_SEED = 1073741824;
 
 export enum GachaType {
-  MOVE,
-  LEGENDARY,
-  SHINY
+  MOVE = 0,
+  LEGENDARY = 1,
+  SHINY = 2,
 }
 
 export class Egg {
@@ -20,7 +20,12 @@ export class Egg {
   public hatchWaves: integer;
   public timestamp: integer;
 
-  constructor(id: integer, gachaType: GachaType, hatchWaves: integer, timestamp: integer) {
+  constructor(
+    id: integer,
+    gachaType: GachaType,
+    hatchWaves: integer,
+    timestamp: integer,
+  ) {
     this.id = id;
     this.tier = Math.floor(id / EGG_SEED);
     this.gachaType = gachaType;
@@ -33,8 +38,7 @@ export class Egg {
   }
 
   getKey(): string {
-    if (this.isManaphyEgg())
-      return 'manaphy';
+    if (this.isManaphyEgg()) return "manaphy";
     return this.tier.toString();
   }
 }
@@ -52,52 +56,63 @@ export function getEggTierDefaultHatchWaves(tier: EggTier): integer {
 }
 
 export function getEggDescriptor(egg: Egg): string {
-  if (egg.isManaphyEgg())
-    return 'Manaphy';
+  if (egg.isManaphyEgg()) return "Manaphy";
   switch (egg.tier) {
     case EggTier.GREAT:
-      return 'Rare';
+      return "Rare";
     case EggTier.ULTRA:
-      return 'Epic';
+      return "Epic";
     case EggTier.MASTER:
-      return 'Legendary';
+      return "Legendary";
     default:
-      return 'Common';
+      return "Common";
   }
 }
 
 export function getEggHatchWavesMessage(hatchWaves: integer): string {
   if (hatchWaves <= 5)
-    return 'Sounds can be heard coming from inside! It will hatch soon!';
+    return "Sounds can be heard coming from inside! It will hatch soon!";
   if (hatchWaves <= 15)
-    return 'It appears to move occasionally. It may be close to hatching.';
+    return "It appears to move occasionally. It may be close to hatching.";
   if (hatchWaves <= 50)
-    return 'What will hatch from this? It doesn\'t seem close to hatching.';
-  return 'It looks like this Egg will take a long time to hatch.';
+    return "What will hatch from this? It doesn't seem close to hatching.";
+  return "It looks like this Egg will take a long time to hatch.";
 }
 
-export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string {
+export function getEggGachaTypeDescriptor(
+  scene: BattleScene,
+  egg: Egg,
+): string {
   switch (egg.gachaType) {
     case GachaType.LEGENDARY:
-      return `Legendary Rate Up (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
+      return `Legendary Rate Up (${getPokemonSpecies(
+        getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp),
+      ).getName()})`;
     case GachaType.MOVE:
-      return 'Rare Egg Move Rate Up';
+      return "Rare Egg Move Rate Up";
     case GachaType.SHINY:
-      return 'Shiny Rate Up';
+      return "Shiny Rate Up";
   }
 }
 
-export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timestamp: integer): Species {
+export function getLegendaryGachaSpeciesForTimestamp(
+  scene: BattleScene,
+  timestamp: integer,
+): Species {
   const legendarySpecies = Object.entries(speciesStarters)
-    .filter(s => s[1] >= 8 && s[1] <= 9)
-    .map(s => parseInt(s[0]))
-    .filter(s => getPokemonSpecies(s).isObtainable());
+    .filter((s) => s[1] >= 8 && s[1] <= 9)
+    .map((s) => Number.parseInt(s[0]))
+    .filter((s) => getPokemonSpecies(s).isObtainable());
 
   let ret: Species;
 
-  scene.executeWithSeedOffset(() => {
-    ret = Utils.randSeedItem(legendarySpecies);
-  }, Utils.getSunday(new Date(timestamp)).getTime(), EGG_SEED.toString());
+  scene.executeWithSeedOffset(
+    () => {
+      ret = Utils.randSeedItem(legendarySpecies);
+    },
+    Utils.getSunday(new Date(timestamp)).getTime(),
+    EGG_SEED.toString(),
+  );
 
   return ret;
 }

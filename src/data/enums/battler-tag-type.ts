@@ -1,4 +1,3 @@
-
 export enum BattlerTagType {
   NONE = "NONE",
   RECHARGING = "RECHARGING",
@@ -55,5 +54,5 @@ export enum BattlerTagType {
   CURSED = "CURSED",
   CHARGED = "CHARGED",
   GROUNDED = "GROUNDED",
-  MAGNET_RISEN = "MAGNET_RISEN"
+  MAGNET_RISEN = "MAGNET_RISEN",
 }

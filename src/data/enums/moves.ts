@@ -1,1706 +1,1706 @@
 export enum Moves {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/None_(move) | Source} */
-  NONE,
+  NONE = 0,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pound_(move) | Source} */
-  POUND,
+  POUND = 1,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Karate_Chop_(move) | Source} */
-  KARATE_CHOP,
+  KARATE_CHOP = 2,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Slap_(move) | Source} */
-  DOUBLE_SLAP,
+  DOUBLE_SLAP = 3,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Comet_Punch_(move) | Source} */
-  COMET_PUNCH,
+  COMET_PUNCH = 4,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mega_Punch_(move) | Source} */
-  MEGA_PUNCH,
+  MEGA_PUNCH = 5,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pay_Day_(move) | Source} */
-  PAY_DAY,
+  PAY_DAY = 6,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fire_Punch_(move) | Source} */
-  FIRE_PUNCH,
+  FIRE_PUNCH = 7,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Punch_(move) | Source} */
-  ICE_PUNCH,
+  ICE_PUNCH = 8,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunder_Punch_(move) | Source} */
-  THUNDER_PUNCH,
+  THUNDER_PUNCH = 9,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scratch_(move) | Source} */
-  SCRATCH,
+  SCRATCH = 10,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vise_Grip_(move) | Source} */
-  VISE_GRIP,
+  VISE_GRIP = 11,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Guillotine_(move) | Source} */
-  GUILLOTINE,
+  GUILLOTINE = 12,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Razor_Wind_(move) | Source} */
-  RAZOR_WIND,
+  RAZOR_WIND = 13,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swords_Dance_(move) | Source} */
-  SWORDS_DANCE,
+  SWORDS_DANCE = 14,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cut_(move) | Source} */
-  CUT,
+  CUT = 15,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gust_(move) | Source} */
-  GUST,
+  GUST = 16,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wing_Attack_(move) | Source} */
-  WING_ATTACK,
+  WING_ATTACK = 17,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Whirlwind_(move) | Source} */
-  WHIRLWIND,
+  WHIRLWIND = 18,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fly_(move) | Source} */
-  FLY,
+  FLY = 19,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bind_(move) | Source} */
-  BIND,
+  BIND = 20,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slam_(move) | Source} */
-  SLAM,
+  SLAM = 21,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vine_Whip_(move) | Source} */
-  VINE_WHIP,
+  VINE_WHIP = 22,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stomp_(move) | Source} */
-  STOMP,
+  STOMP = 23,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Kick_(move) | Source} */
-  DOUBLE_KICK,
+  DOUBLE_KICK = 24,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mega_Kick_(move) | Source} */
-  MEGA_KICK,
+  MEGA_KICK = 25,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jump_Kick_(move) | Source} */
-  JUMP_KICK,
+  JUMP_KICK = 26,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rolling_Kick_(move) | Source} */
-  ROLLING_KICK,
+  ROLLING_KICK = 27,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sand_Attack_(move) | Source} */
-  SAND_ATTACK,
+  SAND_ATTACK = 28,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Headbutt_(move) | Source} */
-  HEADBUTT,
+  HEADBUTT = 29,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Horn_Attack_(move) | Source} */
-  HORN_ATTACK,
+  HORN_ATTACK = 30,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fury_Attack_(move) | Source} */
-  FURY_ATTACK,
+  FURY_ATTACK = 31,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Horn_Drill_(move) | Source} */
-  HORN_DRILL,
+  HORN_DRILL = 32,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tackle_(move) | Source} */
-  TACKLE,
+  TACKLE = 33,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Body_Slam_(move) | Source} */
-  BODY_SLAM,
+  BODY_SLAM = 34,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wrap_(move) | Source} */
-  WRAP,
+  WRAP = 35,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Take_Down_(move) | Source} */
-  TAKE_DOWN,
+  TAKE_DOWN = 36,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thrash_(move) | Source} */
-  THRASH,
+  THRASH = 37,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Edge_(move) | Source} */
-  DOUBLE_EDGE,
+  DOUBLE_EDGE = 38,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tail_Whip_(move) | Source} */
-  TAIL_WHIP,
+  TAIL_WHIP = 39,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Sting_(move) | Source} */
-  POISON_STING,
+  POISON_STING = 40,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Twineedle_(move) | Source} */
-  TWINEEDLE,
+  TWINEEDLE = 41,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pin_Missile_(move) | Source} */
-  PIN_MISSILE,
+  PIN_MISSILE = 42,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leer_(move) | Source} */
-  LEER,
+  LEER = 43,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bite_(move) | Source} */
-  BITE,
+  BITE = 44,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Growl_(move) | Source} */
-  GROWL,
+  GROWL = 45,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Roar_(move) | Source} */
-  ROAR,
+  ROAR = 46,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sing_(move) | Source} */
-  SING,
+  SING = 47,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Supersonic_(move) | Source} */
-  SUPERSONIC,
+  SUPERSONIC = 48,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sonic_Boom_(move) | Source} */
-  SONIC_BOOM,
+  SONIC_BOOM = 49,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Disable_(move) | Source} */
-  DISABLE,
+  DISABLE = 50,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Acid_(move) | Source} */
-  ACID,
+  ACID = 51,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ember_(move) | Source} */
-  EMBER,
+  EMBER = 52,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flamethrower_(move) | Source} */
-  FLAMETHROWER,
+  FLAMETHROWER = 53,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mist_(move) | Source} */
-  MIST,
+  MIST = 54,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Water_Gun_(move) | Source} */
-  WATER_GUN,
+  WATER_GUN = 55,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Pump_(move) | Source} */
-  HYDRO_PUMP,
+  HYDRO_PUMP = 56,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Surf_(move) | Source} */
-  SURF,
+  SURF = 57,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Beam_(move) | Source} */
-  ICE_BEAM,
+  ICE_BEAM = 58,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blizzard_(move) | Source} */
-  BLIZZARD,
+  BLIZZARD = 59,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psybeam_(move) | Source} */
-  PSYBEAM,
+  PSYBEAM = 60,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bubble_Beam_(move) | Source} */
-  BUBBLE_BEAM,
+  BUBBLE_BEAM = 61,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aurora_Beam_(move) | Source} */
-  AURORA_BEAM,
+  AURORA_BEAM = 62,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hyper_Beam_(move) | Source} */
-  HYPER_BEAM,
+  HYPER_BEAM = 63,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Peck_(move) | Source} */
-  PECK,
+  PECK = 64,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drill_Peck_(move) | Source} */
-  DRILL_PECK,
+  DRILL_PECK = 65,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Submission_(move) | Source} */
-  SUBMISSION,
+  SUBMISSION = 66,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Low_Kick_(move) | Source} */
-  LOW_KICK,
+  LOW_KICK = 67,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Counter_(move) | Source} */
-  COUNTER,
+  COUNTER = 68,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seismic_Toss_(move) | Source} */
-  SEISMIC_TOSS,
+  SEISMIC_TOSS = 69,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Strength_(move) | Source} */
-  STRENGTH,
+  STRENGTH = 70,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Absorb_(move) | Source} */
-  ABSORB,
+  ABSORB = 71,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mega_Drain_(move) | Source} */
-  MEGA_DRAIN,
+  MEGA_DRAIN = 72,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leech_Seed_(move) | Source} */
-  LEECH_SEED,
+  LEECH_SEED = 73,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Growth_(move) | Source} */
-  GROWTH,
+  GROWTH = 74,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Razor_Leaf_(move) | Source} */
-  RAZOR_LEAF,
+  RAZOR_LEAF = 75,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Solar_Beam_(move) | Source} */
-  SOLAR_BEAM,
+  SOLAR_BEAM = 76,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Powder_(move) | Source} */
-  POISON_POWDER,
+  POISON_POWDER = 77,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stun_Spore_(move) | Source} */
-  STUN_SPORE,
+  STUN_SPORE = 78,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sleep_Powder_(move) | Source} */
-  SLEEP_POWDER,
+  SLEEP_POWDER = 79,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Petal_Dance_(move) | Source} */
-  PETAL_DANCE,
+  PETAL_DANCE = 80,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/String_Shot_(move) | Source} */
-  STRING_SHOT,
+  STRING_SHOT = 81,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Rage_(move) | Source} */
-  DRAGON_RAGE,
+  DRAGON_RAGE = 82,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fire_Spin_(move) | Source} */
-  FIRE_SPIN,
+  FIRE_SPIN = 83,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunder_Shock_(move) | Source} */
-  THUNDER_SHOCK,
+  THUNDER_SHOCK = 84,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunderbolt_(move) | Source} */
-  THUNDERBOLT,
+  THUNDERBOLT = 85,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move) | Source} */
-  THUNDER_WAVE,
+  THUNDER_WAVE = 86,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunder_(move) | Source} */
-  THUNDER,
+  THUNDER = 87,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Throw_(move) | Source} */
-  ROCK_THROW,
+  ROCK_THROW = 88,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Earthquake_(move) | Source} */
-  EARTHQUAKE,
+  EARTHQUAKE = 89,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fissure_(move) | Source} */
-  FISSURE,
+  FISSURE = 90,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dig_(move) | Source} */
-  DIG,
+  DIG = 91,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toxic_(move) | Source} */
-  TOXIC,
+  TOXIC = 92,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(move) | Source} */
-  CONFUSION,
+  CONFUSION = 93,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psychic_(move) | Source} */
-  PSYCHIC,
+  PSYCHIC = 94,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hypnosis_(move) | Source} */
-  HYPNOSIS,
+  HYPNOSIS = 95,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meditate_(move) | Source} */
-  MEDITATE,
+  MEDITATE = 96,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Agility_(move) | Source} */
-  AGILITY,
+  AGILITY = 97,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quick_Attack_(move) | Source} */
-  QUICK_ATTACK,
+  QUICK_ATTACK = 98,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rage_(move) | Source} */
-  RAGE,
+  RAGE = 99,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Teleport_(move) | Source} */
-  TELEPORT,
+  TELEPORT = 100,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Night_Shade_(move) | Source} */
-  NIGHT_SHADE,
+  NIGHT_SHADE = 101,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mimic_(move) | Source} */
-  MIMIC,
+  MIMIC = 102,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Screech_(move) | Source} */
-  SCREECH,
+  SCREECH = 103,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Team_(move) | Source} */
-  DOUBLE_TEAM,
+  DOUBLE_TEAM = 104,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Recover_(move) | Source} */
-  RECOVER,
+  RECOVER = 105,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Harden_(move) | Source} */
-  HARDEN,
+  HARDEN = 106,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Minimize_(move) | Source} */
-  MINIMIZE,
+  MINIMIZE = 107,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smokescreen_(move) | Source} */
-  SMOKESCREEN,
+  SMOKESCREEN = 108,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Confuse_Ray_(move) | Source} */
-  CONFUSE_RAY,
+  CONFUSE_RAY = 109,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Withdraw_(move) | Source} */
-  WITHDRAW,
+  WITHDRAW = 110,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Defense_Curl_(move) | Source} */
-  DEFENSE_CURL,
+  DEFENSE_CURL = 111,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Barrier_(move) | Source} */
-  BARRIER,
+  BARRIER = 112,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Light_Screen_(move) | Source} */
-  LIGHT_SCREEN,
+  LIGHT_SCREEN = 113,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Haze_(move) | Source} */
-  HAZE,
+  HAZE = 114,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Reflect_(move) | Source} */
-  REFLECT,
+  REFLECT = 115,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Focus_Energy_(move) | Source} */
-  FOCUS_ENERGY,
+  FOCUS_ENERGY = 116,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bide_(move) | Source} */
-  BIDE,
+  BIDE = 117,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Metronome_(move) | Source} */
-  METRONOME,
+  METRONOME = 118,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mirror_Move_(move) | Source} */
-  MIRROR_MOVE,
+  MIRROR_MOVE = 119,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Self_Destruct_(move) | Source} */
-  SELF_DESTRUCT,
+  SELF_DESTRUCT = 120,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Egg_Bomb_(move) | Source} */
-  EGG_BOMB,
+  EGG_BOMB = 121,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lick_(move) | Source} */
-  LICK,
+  LICK = 122,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smog_(move) | Source} */
-  SMOG,
+  SMOG = 123,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sludge_(move) | Source} */
-  SLUDGE,
+  SLUDGE = 124,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bone_Club_(move) | Source} */
-  BONE_CLUB,
+  BONE_CLUB = 125,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fire_Blast_(move) | Source} */
-  FIRE_BLAST,
+  FIRE_BLAST = 126,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Waterfall_(move) | Source} */
-  WATERFALL,
+  WATERFALL = 127,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clamp_(move) | Source} */
-  CLAMP,
+  CLAMP = 128,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swift_(move) | Source} */
-  SWIFT,
+  SWIFT = 129,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skull_Bash_(move) | Source} */
-  SKULL_BASH,
+  SKULL_BASH = 130,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spike_Cannon_(move) | Source} */
-  SPIKE_CANNON,
+  SPIKE_CANNON = 131,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Constrict_(move) | Source} */
-  CONSTRICT,
+  CONSTRICT = 132,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Amnesia_(move) | Source} */
-  AMNESIA,
+  AMNESIA = 133,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kinesis_(move) | Source} */
-  KINESIS,
+  KINESIS = 134,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Soft_Boiled_(move) | Source} */
-  SOFT_BOILED,
+  SOFT_BOILED = 135,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/High_Jump_Kick_(move) | Source} */
-  HIGH_JUMP_KICK,
+  HIGH_JUMP_KICK = 136,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glare_(move) | Source} */
-  GLARE,
+  GLARE = 137,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dream_Eater_(move) | Source} */
-  DREAM_EATER,
+  DREAM_EATER = 138,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Gas_(move) | Source} */
-  POISON_GAS,
+  POISON_GAS = 139,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Barrage_(move) | Source} */
-  BARRAGE,
+  BARRAGE = 140,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leech_Life_(move) | Source} */
-  LEECH_LIFE,
+  LEECH_LIFE = 141,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lovely_Kiss_(move) | Source} */
-  LOVELY_KISS,
+  LOVELY_KISS = 142,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sky_Attack_(move) | Source} */
-  SKY_ATTACK,
+  SKY_ATTACK = 143,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Transform_(move) | Source} */
-  TRANSFORM,
+  TRANSFORM = 144,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bubble_(move) | Source} */
-  BUBBLE,
+  BUBBLE = 145,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dizzy_Punch_(move) | Source} */
-  DIZZY_PUNCH,
+  DIZZY_PUNCH = 146,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spore_(move) | Source} */
-  SPORE,
+  SPORE = 147,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flash_(move) | Source} */
-  FLASH,
+  FLASH = 148,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psywave_(move) | Source} */
-  PSYWAVE,
+  PSYWAVE = 149,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Splash_(move) | Source} */
-  SPLASH,
+  SPLASH = 150,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Acid_Armor_(move) | Source} */
-  ACID_ARMOR,
+  ACID_ARMOR = 151,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crabhammer_(move) | Source} */
-  CRABHAMMER,
+  CRABHAMMER = 152,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Explosion_(move) | Source} */
-  EXPLOSION,
+  EXPLOSION = 153,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fury_Swipes_(move) | Source} */
-  FURY_SWIPES,
+  FURY_SWIPES = 154,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bonemerang_(move) | Source} */
-  BONEMERANG,
+  BONEMERANG = 155,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rest_(move) | Source} */
-  REST,
+  REST = 156,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Slide_(move) | Source} */
-  ROCK_SLIDE,
+  ROCK_SLIDE = 157,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hyper_Fang_(move) | Source} */
-  HYPER_FANG,
+  HYPER_FANG = 158,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sharpen_(move) | Source} */
-  SHARPEN,
+  SHARPEN = 159,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Conversion_(move) | Source} */
-  CONVERSION,
+  CONVERSION = 160,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tri_Attack_(move) | Source} */
-  TRI_ATTACK,
+  TRI_ATTACK = 161,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Super_Fang_(move) | Source} */
-  SUPER_FANG,
+  SUPER_FANG = 162,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slash_(move) | Source} */
-  SLASH,
+  SLASH = 163,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(move) | Source} */
-  SUBSTITUTE,
+  SUBSTITUTE = 164,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Struggle_(move) | Source} */
-  STRUGGLE,
+  STRUGGLE = 165,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sketch_(move) | Source} */
-  SKETCH,
+  SKETCH = 166,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Triple_Kick_(move) | Source} */
-  TRIPLE_KICK,
+  TRIPLE_KICK = 167,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thief_(move) | Source} */
-  THIEF,
+  THIEF = 168,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spider_Web_(move) | Source} */
-  SPIDER_WEB,
+  SPIDER_WEB = 169,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mind_Reader_(move) | Source} */
-  MIND_READER,
+  MIND_READER = 170,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nightmare_(move) | Source} */
-  NIGHTMARE,
+  NIGHTMARE = 171,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flame_Wheel_(move) | Source} */
-  FLAME_WHEEL,
+  FLAME_WHEEL = 172,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snore_(move) | Source} */
-  SNORE,
+  SNORE = 173,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Curse_(move) | Source} */
-  CURSE,
+  CURSE = 174,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flail_(move) | Source} */
-  FLAIL,
+  FLAIL = 175,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Conversion_2_(move) | Source} */
-  CONVERSION_2,
+  CONVERSION_2 = 176,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aeroblast_(move) | Source} */
-  AEROBLAST,
+  AEROBLAST = 177,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cotton_Spore_(move) | Source} */
-  COTTON_SPORE,
+  COTTON_SPORE = 178,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Reversal_(move) | Source} */
-  REVERSAL,
+  REVERSAL = 179,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spite_(move) | Source} */
-  SPITE,
+  SPITE = 180,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Powder_Snow_(move) | Source} */
-  POWDER_SNOW,
+  POWDER_SNOW = 181,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Protect_(move) | Source} */
-  PROTECT,
+  PROTECT = 182,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mach_Punch_(move) | Source} */
-  MACH_PUNCH,
+  MACH_PUNCH = 183,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scary_Face_(move) | Source} */
-  SCARY_FACE,
+  SCARY_FACE = 184,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Feint_Attack_(move) | Source} */
-  FEINT_ATTACK,
+  FEINT_ATTACK = 185,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sweet_Kiss_(move) | Source} */
-  SWEET_KISS,
+  SWEET_KISS = 186,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move) | Source} */
-  BELLY_DRUM,
+  BELLY_DRUM = 187,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sludge_Bomb_(move) | Source} */
-  SLUDGE_BOMB,
+  SLUDGE_BOMB = 188,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mud_Slap_(move) | Source} */
-  MUD_SLAP,
+  MUD_SLAP = 189,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Octazooka_(move) | Source} */
-  OCTAZOOKA,
+  OCTAZOOKA = 190,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spikes_(move) | Source} */
-  SPIKES,
+  SPIKES = 191,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zap_Cannon_(move) | Source} */
-  ZAP_CANNON,
+  ZAP_CANNON = 192,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Foresight_(move) | Source} */
-  FORESIGHT,
+  FORESIGHT = 193,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Destiny_Bond_(move) | Source} */
-  DESTINY_BOND,
+  DESTINY_BOND = 194,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Perish_Song_(move) | Source} */
-  PERISH_SONG,
+  PERISH_SONG = 195,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Icy_Wind_(move) | Source} */
-  ICY_WIND,
+  ICY_WIND = 196,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Detect_(move) | Source} */
-  DETECT,
+  DETECT = 197,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bone_Rush_(move) | Source} */
-  BONE_RUSH,
+  BONE_RUSH = 198,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lock_On_(move) | Source} */
-  LOCK_ON,
+  LOCK_ON = 199,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Outrage_(move) | Source} */
-  OUTRAGE,
+  OUTRAGE = 200,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandstorm_(move) | Source} */
-  SANDSTORM,
+  SANDSTORM = 201,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Giga_Drain_(move) | Source} */
-  GIGA_DRAIN,
+  GIGA_DRAIN = 202,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Endure_(move) | Source} */
-  ENDURE,
+  ENDURE = 203,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charm_(move) | Source} */
-  CHARM,
+  CHARM = 204,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rollout_(move) | Source} */
-  ROLLOUT,
+  ROLLOUT = 205,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/False_Swipe_(move) | Source} */
-  FALSE_SWIPE,
+  FALSE_SWIPE = 206,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swagger_(move) | Source} */
-  SWAGGER,
+  SWAGGER = 207,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Milk_Drink_(move) | Source} */
-  MILK_DRINK,
+  MILK_DRINK = 208,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spark_(move) | Source} */
-  SPARK,
+  SPARK = 209,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fury_Cutter_(move) | Source} */
-  FURY_CUTTER,
+  FURY_CUTTER = 210,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Steel_Wing_(move) | Source} */
-  STEEL_WING,
+  STEEL_WING = 211,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mean_Look_(move) | Source} */
-  MEAN_LOOK,
+  MEAN_LOOK = 212,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Attract_(move) | Source} */
-  ATTRACT,
+  ATTRACT = 213,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sleep_Talk_(move) | Source} */
-  SLEEP_TALK,
+  SLEEP_TALK = 214,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heal_Bell_(move) | Source} */
-  HEAL_BELL,
+  HEAL_BELL = 215,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Return_(move) | Source} */
-  RETURN,
+  RETURN = 216,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Present_(move) | Source} */
-  PRESENT,
+  PRESENT = 217,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Frustration_(move) | Source} */
-  FRUSTRATION,
+  FRUSTRATION = 218,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Safeguard_(move) | Source} */
-  SAFEGUARD,
+  SAFEGUARD = 219,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pain_Split_(move) | Source} */
-  PAIN_SPLIT,
+  PAIN_SPLIT = 220,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sacred_Fire_(move) | Source} */
-  SACRED_FIRE,
+  SACRED_FIRE = 221,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magnitude_(move) | Source} */
-  MAGNITUDE,
+  MAGNITUDE = 222,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dynamic_Punch_(move) | Source} */
-  DYNAMIC_PUNCH,
+  DYNAMIC_PUNCH = 223,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Megahorn_(move) | Source} */
-  MEGAHORN,
+  MEGAHORN = 224,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Breath_(move) | Source} */
-  DRAGON_BREATH,
+  DRAGON_BREATH = 225,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Baton_Pass_(move) | Source} */
-  BATON_PASS,
+  BATON_PASS = 226,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Encore_(move) | Source} */
-  ENCORE,
+  ENCORE = 227,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pursuit_(move) | Source} */
-  PURSUIT,
+  PURSUIT = 228,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rapid_Spin_(move) | Source} */
-  RAPID_SPIN,
+  RAPID_SPIN = 229,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sweet_Scent_(move) | Source} */
-  SWEET_SCENT,
+  SWEET_SCENT = 230,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Tail_(move) | Source} */
-  IRON_TAIL,
+  IRON_TAIL = 231,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Metal_Claw_(move) | Source} */
-  METAL_CLAW,
+  METAL_CLAW = 232,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vital_Throw_(move) | Source} */
-  VITAL_THROW,
+  VITAL_THROW = 233,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Morning_Sun_(move) | Source} */
-  MORNING_SUN,
+  MORNING_SUN = 234,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Synthesis_(move) | Source} */
-  SYNTHESIS,
+  SYNTHESIS = 235,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Moonlight_(move) | Source} */
-  MOONLIGHT,
+  MOONLIGHT = 236,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hidden_Power_(move) | Source} */
-  HIDDEN_POWER,
+  HIDDEN_POWER = 237,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cross_Chop_(move) | Source} */
-  CROSS_CHOP,
+  CROSS_CHOP = 238,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Twister_(move) | Source} */
-  TWISTER,
+  TWISTER = 239,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rain_Dance_(move) | Source} */
-  RAIN_DANCE,
+  RAIN_DANCE = 240,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sunny_Day_(move) | Source} */
-  SUNNY_DAY,
+  SUNNY_DAY = 241,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crunch_(move) | Source} */
-  CRUNCH,
+  CRUNCH = 242,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mirror_Coat_(move) | Source} */
-  MIRROR_COAT,
+  MIRROR_COAT = 243,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psych_Up_(move) | Source} */
-  PSYCH_UP,
+  PSYCH_UP = 244,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Extreme_Speed_(move) | Source} */
-  EXTREME_SPEED,
+  EXTREME_SPEED = 245,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ancient_Power_(move) | Source} */
-  ANCIENT_POWER,
+  ANCIENT_POWER = 246,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shadow_Ball_(move) | Source} */
-  SHADOW_BALL,
+  SHADOW_BALL = 247,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Future_Sight_(move) | Source} */
-  FUTURE_SIGHT,
+  FUTURE_SIGHT = 248,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Smash_(move) | Source} */
-  ROCK_SMASH,
+  ROCK_SMASH = 249,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Whirlpool_(move) | Source} */
-  WHIRLPOOL,
+  WHIRLPOOL = 250,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Beat_Up_(move) | Source} */
-  BEAT_UP,
+  BEAT_UP = 251,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move) | Source} */
-  FAKE_OUT,
+  FAKE_OUT = 252,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Uproar_(move) | Source} */
-  UPROAR,
+  UPROAR = 253,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stockpile_(move) | Source} */
-  STOCKPILE,
+  STOCKPILE = 254,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spit_Up_(move) | Source} */
-  SPIT_UP,
+  SPIT_UP = 255,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swallow_(move) | Source} */
-  SWALLOW,
+  SWALLOW = 256,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heat_Wave_(move) | Source} */
-  HEAT_WAVE,
+  HEAT_WAVE = 257,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hail_(move) | Source} */
-  HAIL,
+  HAIL = 258,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Torment_(move) | Source} */
-  TORMENT,
+  TORMENT = 259,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flatter_(move) | Source} */
-  FLATTER,
+  FLATTER = 260,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Will_O_Wisp_(move) | Source} */
-  WILL_O_WISP,
+  WILL_O_WISP = 261,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Memento_(move) | Source} */
-  MEMENTO,
+  MEMENTO = 262,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Facade_(move) | Source} */
-  FACADE,
+  FACADE = 263,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Focus_Punch_(move) | Source} */
-  FOCUS_PUNCH,
+  FOCUS_PUNCH = 264,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smelling_Salts_(move) | Source} */
-  SMELLING_SALTS,
+  SMELLING_SALTS = 265,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Follow_Me_(move) | Source} */
-  FOLLOW_ME,
+  FOLLOW_ME = 266,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nature_Power_(move) | Source} */
-  NATURE_POWER,
+  NATURE_POWER = 267,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charge_(move) | Source} */
-  CHARGE,
+  CHARGE = 268,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Taunt_(move) | Source} */
-  TAUNT,
+  TAUNT = 269,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Helping_Hand_(move) | Source} */
-  HELPING_HAND,
+  HELPING_HAND = 270,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trick_(move) | Source} */
-  TRICK,
+  TRICK = 271,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Role_Play_(move) | Source} */
-  ROLE_PLAY,
+  ROLE_PLAY = 272,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wish_(move) | Source} */
-  WISH,
+  WISH = 273,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Assist_(move) | Source} */
-  ASSIST,
+  ASSIST = 274,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ingrain_(move) | Source} */
-  INGRAIN,
+  INGRAIN = 275,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Superpower_(move) | Source} */
-  SUPERPOWER,
+  SUPERPOWER = 276,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magic_Coat_(move) | Source} */
-  MAGIC_COAT,
+  MAGIC_COAT = 277,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Recycle_(move) | Source} */
-  RECYCLE,
+  RECYCLE = 278,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Revenge_(move) | Source} */
-  REVENGE,
+  REVENGE = 279,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Brick_Break_(move) | Source} */
-  BRICK_BREAK,
+  BRICK_BREAK = 280,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Yawn_(move) | Source} */
-  YAWN,
+  YAWN = 281,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Knock_Off_(move) | Source} */
-  KNOCK_OFF,
+  KNOCK_OFF = 282,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Endeavor_(move) | Source} */
-  ENDEAVOR,
+  ENDEAVOR = 283,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eruption_(move) | Source} */
-  ERUPTION,
+  ERUPTION = 284,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skill_Swap_(move) | Source} */
-  SKILL_SWAP,
+  SKILL_SWAP = 285,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Imprison_(move) | Source} */
-  IMPRISON,
+  IMPRISON = 286,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Refresh_(move) | Source} */
-  REFRESH,
+  REFRESH = 287,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grudge_(move) | Source} */
-  GRUDGE,
+  GRUDGE = 288,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snatch_(move) | Source} */
-  SNATCH,
+  SNATCH = 289,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Secret_Power_(move) | Source} */
-  SECRET_POWER,
+  SECRET_POWER = 290,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dive_(move) | Source} */
-  DIVE,
+  DIVE = 291,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arm_Thrust_(move) | Source} */
-  ARM_THRUST,
+  ARM_THRUST = 292,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Camouflage_(move) | Source} */
-  CAMOUFLAGE,
+  CAMOUFLAGE = 293,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tail_Glow_(move) | Source} */
-  TAIL_GLOW,
+  TAIL_GLOW = 294,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Luster_Purge_(move) | Source} */
-  LUSTER_PURGE,
+  LUSTER_PURGE = 295,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mist_Ball_(move) | Source} */
-  MIST_BALL,
+  MIST_BALL = 296,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Feather_Dance_(move) | Source} */
-  FEATHER_DANCE,
+  FEATHER_DANCE = 297,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Teeter_Dance_(move) | Source} */
-  TEETER_DANCE,
+  TEETER_DANCE = 298,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blaze_Kick_(move) | Source} */
-  BLAZE_KICK,
+  BLAZE_KICK = 299,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mud_Sport_(move) | Source} */
-  MUD_SPORT,
+  MUD_SPORT = 300,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Ball_(move) | Source} */
-  ICE_BALL,
+  ICE_BALL = 301,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Needle_Arm_(move) | Source} */
-  NEEDLE_ARM,
+  NEEDLE_ARM = 302,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slack_Off_(move) | Source} */
-  SLACK_OFF,
+  SLACK_OFF = 303,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hyper_Voice_(move) | Source} */
-  HYPER_VOICE,
+  HYPER_VOICE = 304,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Fang_(move) | Source} */
-  POISON_FANG,
+  POISON_FANG = 305,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crush_Claw_(move) | Source} */
-  CRUSH_CLAW,
+  CRUSH_CLAW = 306,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blast_Burn_(move) | Source} */
-  BLAST_BURN,
+  BLAST_BURN = 307,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Cannon_(move) | Source} */
-  HYDRO_CANNON,
+  HYDRO_CANNON = 308,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meteor_Mash_(move) | Source} */
-  METEOR_MASH,
+  METEOR_MASH = 309,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Astonish_(move) | Source} */
-  ASTONISH,
+  ASTONISH = 310,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Weather_Ball_(move) | Source} */
-  WEATHER_BALL,
+  WEATHER_BALL = 311,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aromatherapy_(move) | Source} */
-  AROMATHERAPY,
+  AROMATHERAPY = 312,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fake_Tears_(move) | Source} */
-  FAKE_TEARS,
+  FAKE_TEARS = 313,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Air_Cutter_(move) | Source} */
-  AIR_CUTTER,
+  AIR_CUTTER = 314,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Overheat_(move) | Source} */
-  OVERHEAT,
+  OVERHEAT = 315,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Odor_Sleuth_(move) | Source} */
-  ODOR_SLEUTH,
+  ODOR_SLEUTH = 316,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Tomb_(move) | Source} */
-  ROCK_TOMB,
+  ROCK_TOMB = 317,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Silver_Wind_(move) | Source} */
-  SILVER_WIND,
+  SILVER_WIND = 318,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Metal_Sound_(move) | Source} */
-  METAL_SOUND,
+  METAL_SOUND = 319,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grass_Whistle_(move) | Source} */
-  GRASS_WHISTLE,
+  GRASS_WHISTLE = 320,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tickle_(move) | Source} */
-  TICKLE,
+  TICKLE = 321,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cosmic_Power_(move) | Source} */
-  COSMIC_POWER,
+  COSMIC_POWER = 322,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Water_Spout_(move) | Source} */
-  WATER_SPOUT,
+  WATER_SPOUT = 323,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Signal_Beam_(move) | Source} */
-  SIGNAL_BEAM,
+  SIGNAL_BEAM = 324,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shadow_Punch_(move) | Source} */
-  SHADOW_PUNCH,
+  SHADOW_PUNCH = 325,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Extrasensory_(move) | Source} */
-  EXTRASENSORY,
+  EXTRASENSORY = 326,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sky_Uppercut_(move) | Source} */
-  SKY_UPPERCUT,
+  SKY_UPPERCUT = 327,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sand_Tomb_(move) | Source} */
-  SAND_TOMB,
+  SAND_TOMB = 328,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sheer_Cold_(move) | Source} */
-  SHEER_COLD,
+  SHEER_COLD = 329,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Muddy_Water_(move) | Source} */
-  MUDDY_WATER,
+  MUDDY_WATER = 330,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bullet_Seed_(move) | Source} */
-  BULLET_SEED,
+  BULLET_SEED = 331,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aerial_Ace_(move) | Source} */
-  AERIAL_ACE,
+  AERIAL_ACE = 332,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Icicle_Spear_(move) | Source} */
-  ICICLE_SPEAR,
+  ICICLE_SPEAR = 333,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Defense_(move) | Source} */
-  IRON_DEFENSE,
+  IRON_DEFENSE = 334,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Block_(move) | Source} */
-  BLOCK,
+  BLOCK = 335,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Howl_(move) | Source} */
-  HOWL,
+  HOWL = 336,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Claw_(move) | Source} */
-  DRAGON_CLAW,
+  DRAGON_CLAW = 337,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Frenzy_Plant_(move) | Source} */
-  FRENZY_PLANT,
+  FRENZY_PLANT = 338,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bulk_Up_(move) | Source} */
-  BULK_UP,
+  BULK_UP = 339,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bounce_(move) | Source} */
-  BOUNCE,
+  BOUNCE = 340,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mud_Shot_(move) | Source} */
-  MUD_SHOT,
+  MUD_SHOT = 341,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Tail_(move) | Source} */
-  POISON_TAIL,
+  POISON_TAIL = 342,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Covet_(move) | Source} */
-  COVET,
+  COVET = 343,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Volt_Tackle_(move) | Source} */
-  VOLT_TACKLE,
+  VOLT_TACKLE = 344,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magical_Leaf_(move) | Source} */
-  MAGICAL_LEAF,
+  MAGICAL_LEAF = 345,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Water_Sport_(move) | Source} */
-  WATER_SPORT,
+  WATER_SPORT = 346,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Calm_Mind_(move) | Source} */
-  CALM_MIND,
+  CALM_MIND = 347,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leaf_Blade_(move) | Source} */
-  LEAF_BLADE,
+  LEAF_BLADE = 348,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Dance_(move) | Source} */
-  DRAGON_DANCE,
+  DRAGON_DANCE = 349,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Blast_(move) | Source} */
-  ROCK_BLAST,
+  ROCK_BLAST = 350,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shock_Wave_(move) | Source} */
-  SHOCK_WAVE,
+  SHOCK_WAVE = 351,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Water_Pulse_(move) | Source} */
-  WATER_PULSE,
+  WATER_PULSE = 352,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Doom_Desire_(move) | Source} */
-  DOOM_DESIRE,
+  DOOM_DESIRE = 353,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psycho_Boost_(move) | Source} */
-  PSYCHO_BOOST,
+  PSYCHO_BOOST = 354,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Roost_(move) | Source} */
-  ROOST,
+  ROOST = 355,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Source} */
-  GRAVITY,
+  GRAVITY = 356,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Miracle_Eye_(move) | Source} */
-  MIRACLE_EYE,
+  MIRACLE_EYE = 357,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wake_Up_Slap_(move) | Source} */
-  WAKE_UP_SLAP,
+  WAKE_UP_SLAP = 358,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hammer_Arm_(move) | Source} */
-  HAMMER_ARM,
+  HAMMER_ARM = 359,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gyro_Ball_(move) | Source} */
-  GYRO_BALL,
+  GYRO_BALL = 360,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move) | Source} */
-  HEALING_WISH,
+  HEALING_WISH = 361,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Brine_(move) | Source} */
-  BRINE,
+  BRINE = 362,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Natural_Gift_(move) | Source} */
-  NATURAL_GIFT,
+  NATURAL_GIFT = 363,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Feint_(move) | Source} */
-  FEINT,
+  FEINT = 364,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pluck_(move) | Source} */
-  PLUCK,
+  PLUCK = 365,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tailwind_(move) | Source} */
-  TAILWIND,
+  TAILWIND = 366,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Acupressure_(move) | Source} */
-  ACUPRESSURE,
+  ACUPRESSURE = 367,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Metal_Burst_(move) | Source} */
-  METAL_BURST,
+  METAL_BURST = 368,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/U_Turn_(move) | Source} */
-  U_TURN,
+  U_TURN = 369,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Close_Combat_(move) | Source} */
-  CLOSE_COMBAT,
+  CLOSE_COMBAT = 370,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Payback_(move) | Source} */
-  PAYBACK,
+  PAYBACK = 371,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Assurance_(move) | Source} */
-  ASSURANCE,
+  ASSURANCE = 372,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Embargo_(move) | Source} */
-  EMBARGO,
+  EMBARGO = 373,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fling_(move) | Source} */
-  FLING,
+  FLING = 374,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psycho_Shift_(move) | Source} */
-  PSYCHO_SHIFT,
+  PSYCHO_SHIFT = 375,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trump_Card_(move) | Source} */
-  TRUMP_CARD,
+  TRUMP_CARD = 376,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heal_Block_(move) | Source} */
-  HEAL_BLOCK,
+  HEAL_BLOCK = 377,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wring_Out_(move) | Source} */
-  WRING_OUT,
+  WRING_OUT = 378,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Trick_(move) | Source} */
-  POWER_TRICK,
+  POWER_TRICK = 379,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gastro_Acid_(move) | Source} */
-  GASTRO_ACID,
+  GASTRO_ACID = 380,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lucky_Chant_(move) | Source} */
-  LUCKY_CHANT,
+  LUCKY_CHANT = 381,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Me_First_(move) | Source} */
-  ME_FIRST,
+  ME_FIRST = 382,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Copycat_(move) | Source} */
-  COPYCAT,
+  COPYCAT = 383,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Swap_(move) | Source} */
-  POWER_SWAP,
+  POWER_SWAP = 384,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Guard_Swap_(move) | Source} */
-  GUARD_SWAP,
+  GUARD_SWAP = 385,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Punishment_(move) | Source} */
-  PUNISHMENT,
+  PUNISHMENT = 386,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Last_Resort_(move) | Source} */
-  LAST_RESORT,
+  LAST_RESORT = 387,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Worry_Seed_(move) | Source} */
-  WORRY_SEED,
+  WORRY_SEED = 388,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sucker_Punch_(move) | Source} */
-  SUCKER_PUNCH,
+  SUCKER_PUNCH = 389,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toxic_Spikes_(move) | Source} */
-  TOXIC_SPIKES,
+  TOXIC_SPIKES = 390,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heart_Swap_(move) | Source} */
-  HEART_SWAP,
+  HEART_SWAP = 391,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aqua_Ring_(move) | Source} */
-  AQUA_RING,
+  AQUA_RING = 392,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | Source} */
-  MAGNET_RISE,
+  MAGNET_RISE = 393,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flare_Blitz_(move) | Source} */
-  FLARE_BLITZ,
+  FLARE_BLITZ = 394,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Force_Palm_(move) | Source} */
-  FORCE_PALM,
+  FORCE_PALM = 395,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aura_Sphere_(move) | Source} */
-  AURA_SPHERE,
+  AURA_SPHERE = 396,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Polish_(move) | Source} */
-  ROCK_POLISH,
+  ROCK_POLISH = 397,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Jab_(move) | Source} */
-  POISON_JAB,
+  POISON_JAB = 398,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dark_Pulse_(move) | Source} */
-  DARK_PULSE,
+  DARK_PULSE = 399,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Night_Slash_(move) | Source} */
-  NIGHT_SLASH,
+  NIGHT_SLASH = 400,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aqua_Tail_(move) | Source} */
-  AQUA_TAIL,
+  AQUA_TAIL = 401,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seed_Bomb_(move) | Source} */
-  SEED_BOMB,
+  SEED_BOMB = 402,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Air_Slash_(move) | Source} */
-  AIR_SLASH,
+  AIR_SLASH = 403,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/X_Scissor_(move) | Source} */
-  X_SCISSOR,
+  X_SCISSOR = 404,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bug_Buzz_(move) | Source} */
-  BUG_BUZZ,
+  BUG_BUZZ = 405,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Pulse_(move) | Source} */
-  DRAGON_PULSE,
+  DRAGON_PULSE = 406,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Rush_(move) | Source} */
-  DRAGON_RUSH,
+  DRAGON_RUSH = 407,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Gem_(move) | Source} */
-  POWER_GEM,
+  POWER_GEM = 408,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drain_Punch_(move) | Source} */
-  DRAIN_PUNCH,
+  DRAIN_PUNCH = 409,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vacuum_Wave_(move) | Source} */
-  VACUUM_WAVE,
+  VACUUM_WAVE = 410,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Focus_Blast_(move) | Source} */
-  FOCUS_BLAST,
+  FOCUS_BLAST = 411,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Energy_Ball_(move) | Source} */
-  ENERGY_BALL,
+  ENERGY_BALL = 412,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Brave_Bird_(move) | Source} */
-  BRAVE_BIRD,
+  BRAVE_BIRD = 413,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Earth_Power_(move) | Source} */
-  EARTH_POWER,
+  EARTH_POWER = 414,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Switcheroo_(move) | Source} */
-  SWITCHEROO,
+  SWITCHEROO = 415,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Giga_Impact_(move) | Source} */
-  GIGA_IMPACT,
+  GIGA_IMPACT = 416,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nasty_Plot_(move) | Source} */
-  NASTY_PLOT,
+  NASTY_PLOT = 417,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bullet_Punch_(move) | Source} */
-  BULLET_PUNCH,
+  BULLET_PUNCH = 418,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Avalanche_(move) | Source} */
-  AVALANCHE,
+  AVALANCHE = 419,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Shard_(move) | Source} */
-  ICE_SHARD,
+  ICE_SHARD = 420,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shadow_Claw_(move) | Source} */
-  SHADOW_CLAW,
+  SHADOW_CLAW = 421,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunder_Fang_(move) | Source} */
-  THUNDER_FANG,
+  THUNDER_FANG = 422,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Fang_(move) | Source} */
-  ICE_FANG,
+  ICE_FANG = 423,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fire_Fang_(move) | Source} */
-  FIRE_FANG,
+  FIRE_FANG = 424,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shadow_Sneak_(move) | Source} */
-  SHADOW_SNEAK,
+  SHADOW_SNEAK = 425,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mud_Bomb_(move) | Source} */
-  MUD_BOMB,
+  MUD_BOMB = 426,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psycho_Cut_(move) | Source} */
-  PSYCHO_CUT,
+  PSYCHO_CUT = 427,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zen_Headbutt_(move) | Source} */
-  ZEN_HEADBUTT,
+  ZEN_HEADBUTT = 428,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mirror_Shot_(move) | Source} */
-  MIRROR_SHOT,
+  MIRROR_SHOT = 429,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flash_Cannon_(move) | Source} */
-  FLASH_CANNON,
+  FLASH_CANNON = 430,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Climb_(move) | Source} */
-  ROCK_CLIMB,
+  ROCK_CLIMB = 431,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Defog_(move) | Source} */
-  DEFOG,
+  DEFOG = 432,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move) | Source} */
-  TRICK_ROOM,
+  TRICK_ROOM = 433,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Draco_Meteor_(move) | Source} */
-  DRACO_METEOR,
+  DRACO_METEOR = 434,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Discharge_(move) | Source} */
-  DISCHARGE,
+  DISCHARGE = 435,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lava_Plume_(move) | Source} */
-  LAVA_PLUME,
+  LAVA_PLUME = 436,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leaf_Storm_(move) | Source} */
-  LEAF_STORM,
+  LEAF_STORM = 437,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Whip_(move) | Source} */
-  POWER_WHIP,
+  POWER_WHIP = 438,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rock_Wrecker_(move) | Source} */
-  ROCK_WRECKER,
+  ROCK_WRECKER = 439,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cross_Poison_(move) | Source} */
-  CROSS_POISON,
+  CROSS_POISON = 440,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gunk_Shot_(move) | Source} */
-  GUNK_SHOT,
+  GUNK_SHOT = 441,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Head_(move) | Source} */
-  IRON_HEAD,
+  IRON_HEAD = 442,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Bomb_(move) | Source} */
-  MAGNET_BOMB,
+  MAGNET_BOMB = 443,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stone_Edge_(move) | Source} */
-  STONE_EDGE,
+  STONE_EDGE = 444,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Captivate_(move) | Source} */
-  CAPTIVATE,
+  CAPTIVATE = 445,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stealth_Rock_(move) | Source} */
-  STEALTH_ROCK,
+  STEALTH_ROCK = 446,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grass_Knot_(move) | Source} */
-  GRASS_KNOT,
+  GRASS_KNOT = 447,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chatter_(move) | Source} */
-  CHATTER,
+  CHATTER = 448,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Judgment_(move) | Source} */
-  JUDGMENT,
+  JUDGMENT = 449,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bug_Bite_(move) | Source} */
-  BUG_BITE,
+  BUG_BITE = 450,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charge_Beam_(move) | Source} */
-  CHARGE_BEAM,
+  CHARGE_BEAM = 451,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wood_Hammer_(move) | Source} */
-  WOOD_HAMMER,
+  WOOD_HAMMER = 452,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aqua_Jet_(move) | Source} */
-  AQUA_JET,
+  AQUA_JET = 453,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Attack_Order_(move) | Source} */
-  ATTACK_ORDER,
+  ATTACK_ORDER = 454,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Defend_Order_(move) | Source} */
-  DEFEND_ORDER,
+  DEFEND_ORDER = 455,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heal_Order_(move) | Source} */
-  HEAL_ORDER,
+  HEAL_ORDER = 456,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Head_Smash_(move) | Source} */
-  HEAD_SMASH,
+  HEAD_SMASH = 457,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Hit_(move) | Source} */
-  DOUBLE_HIT,
+  DOUBLE_HIT = 458,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Roar_Of_Time_(move) | Source} */
-  ROAR_OF_TIME,
+  ROAR_OF_TIME = 459,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spacial_Rend_(move) | Source} */
-  SPACIAL_REND,
+  SPACIAL_REND = 460,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lunar_Dance_(move) | Source} */
-  LUNAR_DANCE,
+  LUNAR_DANCE = 461,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crush_Grip_(move) | Source} */
-  CRUSH_GRIP,
+  CRUSH_GRIP = 462,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magma_Storm_(move) | Source} */
-  MAGMA_STORM,
+  MAGMA_STORM = 463,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dark_Void_(move) | Source} */
-  DARK_VOID,
+  DARK_VOID = 464,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seed_Flare_(move) | Source} */
-  SEED_FLARE,
+  SEED_FLARE = 465,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ominous_Wind_(move) | Source} */
-  OMINOUS_WIND,
+  OMINOUS_WIND = 466,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shadow_Force_(move) | Source} */
-  SHADOW_FORCE,
+  SHADOW_FORCE = 467,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hone_Claws_(move) | Source} */
-  HONE_CLAWS,
+  HONE_CLAWS = 468,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) | Source} */
-  WIDE_GUARD,
+  WIDE_GUARD = 469,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Guard_Split_(move) | Source} */
-  GUARD_SPLIT,
+  GUARD_SPLIT = 470,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Split_(move) | Source} */
-  POWER_SPLIT,
+  POWER_SPLIT = 471,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wonder_Room_(move) | Source} */
-  WONDER_ROOM,
+  WONDER_ROOM = 472,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psyshock_(move) | Source} */
-  PSYSHOCK,
+  PSYSHOCK = 473,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Venoshock_(move) | Source} */
-  VENOSHOCK,
+  VENOSHOCK = 474,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Autotomize_(move) | Source} */
-  AUTOTOMIZE,
+  AUTOTOMIZE = 475,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rage_Powder_(move) | Source} */
-  RAGE_POWDER,
+  RAGE_POWDER = 476,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Source} */
-  TELEKINESIS,
+  TELEKINESIS = 477,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magic_Room_(move) | Source} */
-  MAGIC_ROOM,
+  MAGIC_ROOM = 478,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smack_Down_(move) | Source} */
-  SMACK_DOWN,
+  SMACK_DOWN = 479,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Storm_Throw_(move) | Source} */
-  STORM_THROW,
+  STORM_THROW = 480,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flame_Burst_(move) | Source} */
-  FLAME_BURST,
+  FLAME_BURST = 481,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sludge_Wave_(move) | Source} */
-  SLUDGE_WAVE,
+  SLUDGE_WAVE = 482,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quiver_Dance_(move) | Source} */
-  QUIVER_DANCE,
+  QUIVER_DANCE = 483,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heavy_Slam_(move) | Source} */
-  HEAVY_SLAM,
+  HEAVY_SLAM = 484,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Synchronoise_(move) | Source} */
-  SYNCHRONOISE,
+  SYNCHRONOISE = 485,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electro_Ball_(move) | Source} */
-  ELECTRO_BALL,
+  ELECTRO_BALL = 486,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Soak_(move) | Source} */
-  SOAK,
+  SOAK = 487,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flame_Charge_(move) | Source} */
-  FLAME_CHARGE,
+  FLAME_CHARGE = 488,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Coil_(move) | Source} */
-  COIL,
+  COIL = 489,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Low_Sweep_(move) | Source} */
-  LOW_SWEEP,
+  LOW_SWEEP = 490,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Acid_Spray_(move) | Source} */
-  ACID_SPRAY,
+  ACID_SPRAY = 491,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Foul_Play_(move) | Source} */
-  FOUL_PLAY,
+  FOUL_PLAY = 492,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Simple_Beam_(move) | Source} */
-  SIMPLE_BEAM,
+  SIMPLE_BEAM = 493,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Entrainment_(move) | Source} */
-  ENTRAINMENT,
+  ENTRAINMENT = 494,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/After_You_(move) | Source} */
-  AFTER_YOU,
+  AFTER_YOU = 495,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Round_(move) | Source} */
-  ROUND,
+  ROUND = 496,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Echoed_Voice_(move) | Source} */
-  ECHOED_VOICE,
+  ECHOED_VOICE = 497,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chip_Away_(move) | Source} */
-  CHIP_AWAY,
+  CHIP_AWAY = 498,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clear_Smog_(move) | Source} */
-  CLEAR_SMOG,
+  CLEAR_SMOG = 499,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stored_Power_(move) | Source} */
-  STORED_POWER,
+  STORED_POWER = 500,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quick_Guard_(move) | Source} */
-  QUICK_GUARD,
+  QUICK_GUARD = 501,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ally_Switch_(move) | Source} */
-  ALLY_SWITCH,
+  ALLY_SWITCH = 502,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scald_(move) | Source} */
-  SCALD,
+  SCALD = 503,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shell_Smash_(move) | Source} */
-  SHELL_SMASH,
+  SHELL_SMASH = 504,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heal_Pulse_(move) | Source} */
-  HEAL_PULSE,
+  HEAL_PULSE = 505,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hex_(move) | Source} */
-  HEX,
+  HEX = 506,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) | Source} */
-  SKY_DROP,
+  SKY_DROP = 507,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shift_Gear_(move) | Source} */
-  SHIFT_GEAR,
+  SHIFT_GEAR = 508,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Circle_Throw_(move) | Source} */
-  CIRCLE_THROW,
+  CIRCLE_THROW = 509,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Incinerate_(move) | Source} */
-  INCINERATE,
+  INCINERATE = 510,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quash_(move) | Source} */
-  QUASH,
+  QUASH = 511,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Acrobatics_(move) | Source} */
-  ACROBATICS,
+  ACROBATICS = 512,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Reflect_Type_(move) | Source} */
-  REFLECT_TYPE,
+  REFLECT_TYPE = 513,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Retaliate_(move) | Source} */
-  RETALIATE,
+  RETALIATE = 514,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Final_Gambit_(move) | Source} */
-  FINAL_GAMBIT,
+  FINAL_GAMBIT = 515,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bestow_(move) | Source} */
-  BESTOW,
+  BESTOW = 516,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Inferno_(move) | Source} */
-  INFERNO,
+  INFERNO = 517,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Water_Pledge_(move) | Source} */
-  WATER_PLEDGE,
+  WATER_PLEDGE = 518,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fire_Pledge_(move) | Source} */
-  FIRE_PLEDGE,
+  FIRE_PLEDGE = 519,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grass_Pledge_(move) | Source} */
-  GRASS_PLEDGE,
+  GRASS_PLEDGE = 520,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Volt_Switch_(move) | Source} */
-  VOLT_SWITCH,
+  VOLT_SWITCH = 521,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Struggle_Bug_(move) | Source} */
-  STRUGGLE_BUG,
+  STRUGGLE_BUG = 522,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bulldoze_(move) | Source} */
-  BULLDOZE,
+  BULLDOZE = 523,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Frost_Breath_(move) | Source} */
-  FROST_BREATH,
+  FROST_BREATH = 524,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Tail_(move) | Source} */
-  DRAGON_TAIL,
+  DRAGON_TAIL = 525,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Work_Up_(move) | Source} */
-  WORK_UP,
+  WORK_UP = 526,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electroweb_(move) | Source} */
-  ELECTROWEB,
+  ELECTROWEB = 527,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wild_Charge_(move) | Source} */
-  WILD_CHARGE,
+  WILD_CHARGE = 528,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drill_Run_(move) | Source} */
-  DRILL_RUN,
+  DRILL_RUN = 529,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dual_Chop_(move) | Source} */
-  DUAL_CHOP,
+  DUAL_CHOP = 530,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heart_Stamp_(move) | Source} */
-  HEART_STAMP,
+  HEART_STAMP = 531,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Horn_Leech_(move) | Source} */
-  HORN_LEECH,
+  HORN_LEECH = 532,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sacred_Sword_(move) | Source} */
-  SACRED_SWORD,
+  SACRED_SWORD = 533,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Razor_Shell_(move) | Source} */
-  RAZOR_SHELL,
+  RAZOR_SHELL = 534,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heat_Crash_(move) | Source} */
-  HEAT_CRASH,
+  HEAT_CRASH = 535,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leaf_Tornado_(move) | Source} */
-  LEAF_TORNADO,
+  LEAF_TORNADO = 536,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Steamroller_(move) | Source} */
-  STEAMROLLER,
+  STEAMROLLER = 537,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cotton_Guard_(move) | Source} */
-  COTTON_GUARD,
+  COTTON_GUARD = 538,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Night_Daze_(move) | Source} */
-  NIGHT_DAZE,
+  NIGHT_DAZE = 539,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psystrike_(move) | Source} */
-  PSYSTRIKE,
+  PSYSTRIKE = 540,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tail_Slap_(move) | Source} */
-  TAIL_SLAP,
+  TAIL_SLAP = 541,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hurricane_(move) | Source} */
-  HURRICANE,
+  HURRICANE = 542,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Head_Charge_(move) | Source} */
-  HEAD_CHARGE,
+  HEAD_CHARGE = 543,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gear_Grind_(move) | Source} */
-  GEAR_GRIND,
+  GEAR_GRIND = 544,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Searing_Shot_(move) | Source} */
-  SEARING_SHOT,
+  SEARING_SHOT = 545,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Techno_Blast_(move) | Source} */
-  TECHNO_BLAST,
+  TECHNO_BLAST = 546,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Relic_Song_(move) | Source} */
-  RELIC_SONG,
+  RELIC_SONG = 547,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Secret_Sword_(move) | Source} */
-  SECRET_SWORD,
+  SECRET_SWORD = 548,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glaciate_(move) | Source} */
-  GLACIATE,
+  GLACIATE = 549,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bolt_Strike_(move) | Source} */
-  BOLT_STRIKE,
+  BOLT_STRIKE = 550,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blue_Flare_(move) | Source} */
-  BLUE_FLARE,
+  BLUE_FLARE = 551,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fiery_Dance_(move) | Source} */
-  FIERY_DANCE,
+  FIERY_DANCE = 552,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Freeze_Shock_(move) | Source} */
-  FREEZE_SHOCK,
+  FREEZE_SHOCK = 553,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Burn_(move) | Source} */
-  ICE_BURN,
+  ICE_BURN = 554,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snarl_(move) | Source} */
-  SNARL,
+  SNARL = 555,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Icicle_Crash_(move) | Source} */
-  ICICLE_CRASH,
+  ICICLE_CRASH = 556,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/V_Create_(move) | Source} */
-  V_CREATE,
+  V_CREATE = 557,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fusion_Flare_(move) | Source} */
-  FUSION_FLARE,
+  FUSION_FLARE = 558,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fusion_Bolt_(move) | Source} */
-  FUSION_BOLT,
+  FUSION_BOLT = 559,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flying_Press_(move) | Source} */
-  FLYING_PRESS,
+  FLYING_PRESS = 560,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) | Source} */
-  MAT_BLOCK,
+  MAT_BLOCK = 561,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Belch_(move) | Source} */
-  BELCH,
+  BELCH = 562,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rototiller_(move) | Source} */
-  ROTOTILLER,
+  ROTOTILLER = 563,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sticky_Web_(move) | Source} */
-  STICKY_WEB,
+  STICKY_WEB = 564,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fell_Stinger_(move) | Source} */
-  FELL_STINGER,
+  FELL_STINGER = 565,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Phantom_Force_(move) | Source} */
-  PHANTOM_FORCE,
+  PHANTOM_FORCE = 566,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trick_Or_Treat_(move) | Source} */
-  TRICK_OR_TREAT,
+  TRICK_OR_TREAT = 567,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Noble_Roar_(move) | Source} */
-  NOBLE_ROAR,
+  NOBLE_ROAR = 568,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ion_Deluge_(move) | Source} */
-  ION_DELUGE,
+  ION_DELUGE = 569,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Parabolic_Charge_(move) | Source} */
-  PARABOLIC_CHARGE,
+  PARABOLIC_CHARGE = 570,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Forests_Curse_(move) | Source} */
-  FORESTS_CURSE,
+  FORESTS_CURSE = 571,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Petal_Blizzard_(move) | Source} */
-  PETAL_BLIZZARD,
+  PETAL_BLIZZARD = 572,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Freeze_Dry_(move) | Source} */
-  FREEZE_DRY,
+  FREEZE_DRY = 573,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Disarming_Voice_(move) | Source} */
-  DISARMING_VOICE,
+  DISARMING_VOICE = 574,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Parting_Shot_(move) | Source} */
-  PARTING_SHOT,
+  PARTING_SHOT = 575,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Topsy_Turvy_(move) | Source} */
-  TOPSY_TURVY,
+  TOPSY_TURVY = 576,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Draining_Kiss_(move) | Source} */
-  DRAINING_KISS,
+  DRAINING_KISS = 577,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) | Source} */
-  CRAFTY_SHIELD,
+  CRAFTY_SHIELD = 578,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flower_Shield_(move) | Source} */
-  FLOWER_SHIELD,
+  FLOWER_SHIELD = 579,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grassy_Terrain_(move) | Source} */
-  GRASSY_TERRAIN,
+  GRASSY_TERRAIN = 580,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Misty_Terrain_(move) | Source} */
-  MISTY_TERRAIN,
+  MISTY_TERRAIN = 581,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electrify_(move) | Source} */
-  ELECTRIFY,
+  ELECTRIFY = 582,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Play_Rough_(move) | Source} */
-  PLAY_ROUGH,
+  PLAY_ROUGH = 583,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fairy_Wind_(move) | Source} */
-  FAIRY_WIND,
+  FAIRY_WIND = 584,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Moonblast_(move) | Source} */
-  MOONBLAST,
+  MOONBLAST = 585,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Boomburst_(move) | Source} */
-  BOOMBURST,
+  BOOMBURST = 586,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fairy_Lock_(move) | Source} */
-  FAIRY_LOCK,
+  FAIRY_LOCK = 587,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kings_Shield_(move) | Source} */
-  KINGS_SHIELD,
+  KINGS_SHIELD = 588,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Play_Nice_(move) | Source} */
-  PLAY_NICE,
+  PLAY_NICE = 589,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Confide_(move) | Source} */
-  CONFIDE,
+  CONFIDE = 590,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Diamond_Storm_(move) | Source} */
-  DIAMOND_STORM,
+  DIAMOND_STORM = 591,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Steam_Eruption_(move) | Source} */
-  STEAM_ERUPTION,
+  STEAM_ERUPTION = 592,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hyperspace_Hole_(move) | Source} */
-  HYPERSPACE_HOLE,
+  HYPERSPACE_HOLE = 593,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Water_Shuriken_(move) | Source} */
-  WATER_SHURIKEN,
+  WATER_SHURIKEN = 594,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mystical_Fire_(move) | Source} */
-  MYSTICAL_FIRE,
+  MYSTICAL_FIRE = 595,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spiky_Shield_(move) | Source} */
-  SPIKY_SHIELD,
+  SPIKY_SHIELD = 596,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aromatic_Mist_(move) | Source} */
-  AROMATIC_MIST,
+  AROMATIC_MIST = 597,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eerie_Impulse_(move) | Source} */
-  EERIE_IMPULSE,
+  EERIE_IMPULSE = 598,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Venom_Drench_(move) | Source} */
-  VENOM_DRENCH,
+  VENOM_DRENCH = 599,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Powder_(move) | Source} */
-  POWDER,
+  POWDER = 600,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Geomancy_(move) | Source} */
-  GEOMANCY,
+  GEOMANCY = 601,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magnetic_Flux_(move) | Source} */
-  MAGNETIC_FLUX,
+  MAGNETIC_FLUX = 602,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Happy_Hour_(move) | Source} */
-  HAPPY_HOUR,
+  HAPPY_HOUR = 603,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electric_Terrain_(move) | Source} */
-  ELECTRIC_TERRAIN,
+  ELECTRIC_TERRAIN = 604,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dazzling_Gleam_(move) | Source} */
-  DAZZLING_GLEAM,
+  DAZZLING_GLEAM = 605,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Celebrate_(move) | Source} */
-  CELEBRATE,
+  CELEBRATE = 606,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hold_Hands_(move) | Source} */
-  HOLD_HANDS,
+  HOLD_HANDS = 607,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Baby_Doll_Eyes_(move) | Source} */
-  BABY_DOLL_EYES,
+  BABY_DOLL_EYES = 608,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nuzzle_(move) | Source} */
-  NUZZLE,
+  NUZZLE = 609,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hold_Back_(move) | Source} */
-  HOLD_BACK,
+  HOLD_BACK = 610,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Infestation_(move) | Source} */
-  INFESTATION,
+  INFESTATION = 611,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Up_Punch_(move) | Source} */
-  POWER_UP_PUNCH,
+  POWER_UP_PUNCH = 612,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Oblivion_Wing_(move) | Source} */
-  OBLIVION_WING,
+  OBLIVION_WING = 613,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Source} */
-  THOUSAND_ARROWS,
+  THOUSAND_ARROWS = 614,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Waves_(move) | Source} */
-  THOUSAND_WAVES,
+  THOUSAND_WAVES = 615,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lands_Wrath_(move) | Source} */
-  LANDS_WRATH,
+  LANDS_WRATH = 616,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Light_Of_Ruin_(move) | Source} */
-  LIGHT_OF_RUIN,
+  LIGHT_OF_RUIN = 617,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Origin_Pulse_(move) | Source} */
-  ORIGIN_PULSE,
+  ORIGIN_PULSE = 618,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Precipice_Blades_(move) | Source} */
-  PRECIPICE_BLADES,
+  PRECIPICE_BLADES = 619,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Ascent_(move) | Source} */
-  DRAGON_ASCENT,
+  DRAGON_ASCENT = 620,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hyperspace_Fury_(move) | Source} */
-  HYPERSPACE_FURY,
+  HYPERSPACE_FURY = 621,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Breakneck_Blitz__Physical_(move) | Source} */
-  BREAKNECK_BLITZ__PHYSICAL,
+  BREAKNECK_BLITZ__PHYSICAL = 622,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Breakneck_Blitz__Special_(move) | Source} */
-  BREAKNECK_BLITZ__SPECIAL,
+  BREAKNECK_BLITZ__SPECIAL = 623,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/All_Out_Pummeling__Physical_(move) | Source} */
-  ALL_OUT_PUMMELING__PHYSICAL,
+  ALL_OUT_PUMMELING__PHYSICAL = 624,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/All_Out_Pummeling__Special_(move) | Source} */
-  ALL_OUT_PUMMELING__SPECIAL,
+  ALL_OUT_PUMMELING__SPECIAL = 625,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Supersonic_Skystrike__Physical_(move) | Source} */
-  SUPERSONIC_SKYSTRIKE__PHYSICAL,
+  SUPERSONIC_SKYSTRIKE__PHYSICAL = 626,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Supersonic_Skystrike__Special_(move) | Source} */
-  SUPERSONIC_SKYSTRIKE__SPECIAL,
+  SUPERSONIC_SKYSTRIKE__SPECIAL = 627,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Acid_Downpour__Physical_(move) | Source} */
-  ACID_DOWNPOUR__PHYSICAL,
+  ACID_DOWNPOUR__PHYSICAL = 628,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Acid_Downpour__Special_(move) | Source} */
-  ACID_DOWNPOUR__SPECIAL,
+  ACID_DOWNPOUR__SPECIAL = 629,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tectonic_Rage__Physical_(move) | Source} */
-  TECTONIC_RAGE__PHYSICAL,
+  TECTONIC_RAGE__PHYSICAL = 630,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tectonic_Rage__Special_(move) | Source} */
-  TECTONIC_RAGE__SPECIAL,
+  TECTONIC_RAGE__SPECIAL = 631,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Continental_Crush__Physical_(move) | Source} */
-  CONTINENTAL_CRUSH__PHYSICAL,
+  CONTINENTAL_CRUSH__PHYSICAL = 632,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Continental_Crush__Special_(move) | Source} */
-  CONTINENTAL_CRUSH__SPECIAL,
+  CONTINENTAL_CRUSH__SPECIAL = 633,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Savage_Spin_Out__Physical_(move) | Source} */
-  SAVAGE_SPIN_OUT__PHYSICAL,
+  SAVAGE_SPIN_OUT__PHYSICAL = 634,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Savage_Spin_Out__Special_(move) | Source} */
-  SAVAGE_SPIN_OUT__SPECIAL,
+  SAVAGE_SPIN_OUT__SPECIAL = 635,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Never_Ending_Nightmare__Physical_(move) | Source} */
-  NEVER_ENDING_NIGHTMARE__PHYSICAL,
+  NEVER_ENDING_NIGHTMARE__PHYSICAL = 636,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Never_Ending_Nightmare__Special_(move) | Source} */
-  NEVER_ENDING_NIGHTMARE__SPECIAL,
+  NEVER_ENDING_NIGHTMARE__SPECIAL = 637,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Corkscrew_Crash__Physical_(move) | Source} */
-  CORKSCREW_CRASH__PHYSICAL,
+  CORKSCREW_CRASH__PHYSICAL = 638,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Corkscrew_Crash__Special_(move) | Source} */
-  CORKSCREW_CRASH__SPECIAL,
+  CORKSCREW_CRASH__SPECIAL = 639,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Inferno_Overdrive__Physical_(move) | Source} */
-  INFERNO_OVERDRIVE__PHYSICAL,
+  INFERNO_OVERDRIVE__PHYSICAL = 640,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Inferno_Overdrive__Special_(move) | Source} */
-  INFERNO_OVERDRIVE__SPECIAL,
+  INFERNO_OVERDRIVE__SPECIAL = 641,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Vortex__Physical_(move) | Source} */
-  HYDRO_VORTEX__PHYSICAL,
+  HYDRO_VORTEX__PHYSICAL = 642,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Vortex__Special_(move) | Source} */
-  HYDRO_VORTEX__SPECIAL,
+  HYDRO_VORTEX__SPECIAL = 643,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bloom_Doom__Physical_(move) | Source} */
-  BLOOM_DOOM__PHYSICAL,
+  BLOOM_DOOM__PHYSICAL = 644,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bloom_Doom__Special_(move) | Source} */
-  BLOOM_DOOM__SPECIAL,
+  BLOOM_DOOM__SPECIAL = 645,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gigavolt_Havoc__Physical_(move) | Source} */
-  GIGAVOLT_HAVOC__PHYSICAL,
+  GIGAVOLT_HAVOC__PHYSICAL = 646,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gigavolt_Havoc__Special_(move) | Source} */
-  GIGAVOLT_HAVOC__SPECIAL,
+  GIGAVOLT_HAVOC__SPECIAL = 647,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shattered_Psyche__Physical_(move) | Source} */
-  SHATTERED_PSYCHE__PHYSICAL,
+  SHATTERED_PSYCHE__PHYSICAL = 648,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shattered_Psyche__Special_(move) | Source} */
-  SHATTERED_PSYCHE__SPECIAL,
+  SHATTERED_PSYCHE__SPECIAL = 649,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Subzero_Slammer__Physical_(move) | Source} */
-  SUBZERO_SLAMMER__PHYSICAL,
+  SUBZERO_SLAMMER__PHYSICAL = 650,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Subzero_Slammer__Special_(move) | Source} */
-  SUBZERO_SLAMMER__SPECIAL,
+  SUBZERO_SLAMMER__SPECIAL = 651,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Devastating_Drake__Physical_(move) | Source} */
-  DEVASTATING_DRAKE__PHYSICAL,
+  DEVASTATING_DRAKE__PHYSICAL = 652,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Devastating_Drake__Special_(move) | Source} */
-  DEVASTATING_DRAKE__SPECIAL,
+  DEVASTATING_DRAKE__SPECIAL = 653,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Black_Hole_Eclipse__Physical_(move) | Source} */
-  BLACK_HOLE_ECLIPSE__PHYSICAL,
+  BLACK_HOLE_ECLIPSE__PHYSICAL = 654,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Black_Hole_Eclipse__Special_(move) | Source} */
-  BLACK_HOLE_ECLIPSE__SPECIAL,
+  BLACK_HOLE_ECLIPSE__SPECIAL = 655,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Twinkle_Tackle__Physical_(move) | Source} */
-  TWINKLE_TACKLE__PHYSICAL,
+  TWINKLE_TACKLE__PHYSICAL = 656,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Twinkle_Tackle__Special_(move) | Source} */
-  TWINKLE_TACKLE__SPECIAL,
+  TWINKLE_TACKLE__SPECIAL = 657,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Catastropika_(move) | Source} */
-  CATASTROPIKA,
+  CATASTROPIKA = 658,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shore_Up_(move) | Source} */
-  SHORE_UP,
+  SHORE_UP = 659,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/First_Impression_(move) | Source} */
-  FIRST_IMPRESSION,
+  FIRST_IMPRESSION = 660,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Baneful_Bunker_(move) | Source} */
-  BANEFUL_BUNKER,
+  BANEFUL_BUNKER = 661,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spirit_Shackle_(move) | Source} */
-  SPIRIT_SHACKLE,
+  SPIRIT_SHACKLE = 662,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Darkest_Lariat_(move) | Source} */
-  DARKEST_LARIAT,
+  DARKEST_LARIAT = 663,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sparkling_Aria_(move) | Source} */
-  SPARKLING_ARIA,
+  SPARKLING_ARIA = 664,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Hammer_(move) | Source} */
-  ICE_HAMMER,
+  ICE_HAMMER = 665,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Floral_Healing_(move) | Source} */
-  FLORAL_HEALING,
+  FLORAL_HEALING = 666,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/High_Horsepower_(move) | Source} */
-  HIGH_HORSEPOWER,
+  HIGH_HORSEPOWER = 667,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Strength_Sap_(move) | Source} */
-  STRENGTH_SAP,
+  STRENGTH_SAP = 668,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Solar_Blade_(move) | Source} */
-  SOLAR_BLADE,
+  SOLAR_BLADE = 669,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leafage_(move) | Source} */
-  LEAFAGE,
+  LEAFAGE = 670,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spotlight_(move) | Source} */
-  SPOTLIGHT,
+  SPOTLIGHT = 671,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toxic_Thread_(move) | Source} */
-  TOXIC_THREAD,
+  TOXIC_THREAD = 672,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Laser_Focus_(move) | Source} */
-  LASER_FOCUS,
+  LASER_FOCUS = 673,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gear_Up_(move) | Source} */
-  GEAR_UP,
+  GEAR_UP = 674,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Throat_Chop_(move) | Source} */
-  THROAT_CHOP,
+  THROAT_CHOP = 675,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pollen_Puff_(move) | Source} */
-  POLLEN_PUFF,
+  POLLEN_PUFF = 676,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Anchor_Shot_(move) | Source} */
-  ANCHOR_SHOT,
+  ANCHOR_SHOT = 677,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move) | Source} */
-  PSYCHIC_TERRAIN,
+  PSYCHIC_TERRAIN = 678,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lunge_(move) | Source} */
-  LUNGE,
+  LUNGE = 679,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fire_Lash_(move) | Source} */
-  FIRE_LASH,
+  FIRE_LASH = 680,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Trip_(move) | Source} */
-  POWER_TRIP,
+  POWER_TRIP = 681,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Burn_Up_(move) | Source} */
-  BURN_UP,
+  BURN_UP = 682,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Speed_Swap_(move) | Source} */
-  SPEED_SWAP,
+  SPEED_SWAP = 683,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smart_Strike_(move) | Source} */
-  SMART_STRIKE,
+  SMART_STRIKE = 684,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Purify_(move) | Source} */
-  PURIFY,
+  PURIFY = 685,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Revelation_Dance_(move) | Source} */
-  REVELATION_DANCE,
+  REVELATION_DANCE = 686,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Core_Enforcer_(move) | Source} */
-  CORE_ENFORCER,
+  CORE_ENFORCER = 687,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trop_Kick_(move) | Source} */
-  TROP_KICK,
+  TROP_KICK = 688,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move) | Source} */
-  INSTRUCT,
+  INSTRUCT = 689,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Source} */
-  BEAK_BLAST,
+  BEAK_BLAST = 690,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clanging_Scales_(move) | Source} */
-  CLANGING_SCALES,
+  CLANGING_SCALES = 691,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Hammer_(move) | Source} */
-  DRAGON_HAMMER,
+  DRAGON_HAMMER = 692,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Brutal_Swing_(move) | Source} */
-  BRUTAL_SWING,
+  BRUTAL_SWING = 693,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aurora_Veil_(move) | Source} */
-  AURORA_VEIL,
+  AURORA_VEIL = 694,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sinister_Arrow_Raid_(move) | Source} */
-  SINISTER_ARROW_RAID,
+  SINISTER_ARROW_RAID = 695,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malicious_Moonsault_(move) | Source} */
-  MALICIOUS_MOONSAULT,
+  MALICIOUS_MOONSAULT = 696,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Oceanic_Operetta_(move) | Source} */
-  OCEANIC_OPERETTA,
+  OCEANIC_OPERETTA = 697,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Guardian_Of_Alola_(move) | Source} */
-  GUARDIAN_OF_ALOLA,
+  GUARDIAN_OF_ALOLA = 698,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Soul_Stealing_7_Star_Strike_(move) | Source} */
-  SOUL_STEALING_7_STAR_STRIKE,
+  SOUL_STEALING_7_STAR_STRIKE = 699,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stoked_Sparksurfer_(move) | Source} */
-  STOKED_SPARKSURFER,
+  STOKED_SPARKSURFER = 700,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pulverizing_Pancake_(move) | Source} */
-  PULVERIZING_PANCAKE,
+  PULVERIZING_PANCAKE = 701,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Extreme_Evoboost_(move) | Source} */
-  EXTREME_EVOBOOST,
+  EXTREME_EVOBOOST = 702,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Genesis_Supernova_(move) | Source} */
-  GENESIS_SUPERNOVA,
+  GENESIS_SUPERNOVA = 703,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shell_Trap_(move) | Source} */
-  SHELL_TRAP,
+  SHELL_TRAP = 704,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fleur_Cannon_(move) | Source} */
-  FLEUR_CANNON,
+  FLEUR_CANNON = 705,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psychic_Fangs_(move) | Source} */
-  PSYCHIC_FANGS,
+  PSYCHIC_FANGS = 706,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stomping_Tantrum_(move) | Source} */
-  STOMPING_TANTRUM,
+  STOMPING_TANTRUM = 707,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shadow_Bone_(move) | Source} */
-  SHADOW_BONE,
+  SHADOW_BONE = 708,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Accelerock_(move) | Source} */
-  ACCELEROCK,
+  ACCELEROCK = 709,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Liquidation_(move) | Source} */
-  LIQUIDATION,
+  LIQUIDATION = 710,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Prismatic_Laser_(move) | Source} */
-  PRISMATIC_LASER,
+  PRISMATIC_LASER = 711,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spectral_Thief_(move) | Source} */
-  SPECTRAL_THIEF,
+  SPECTRAL_THIEF = 712,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sunsteel_Strike_(move) | Source} */
-  SUNSTEEL_STRIKE,
+  SUNSTEEL_STRIKE = 713,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Moongeist_Beam_(move) | Source} */
-  MOONGEIST_BEAM,
+  MOONGEIST_BEAM = 714,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tearful_Look_(move) | Source} */
-  TEARFUL_LOOK,
+  TEARFUL_LOOK = 715,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zing_Zap_(move) | Source} */
-  ZING_ZAP,
+  ZING_ZAP = 716,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Natures_Madness_(move) | Source} */
-  NATURES_MADNESS,
+  NATURES_MADNESS = 717,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Multi_Attack_(move) | Source} */
-  MULTI_ATTACK,
+  MULTI_ATTACK = 718,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ten_Million_Volt_Thunderbolt_(move) | Source} */
-  TEN_MILLION_VOLT_THUNDERBOLT,
+  TEN_MILLION_VOLT_THUNDERBOLT = 719,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mind_Blown_(move) | Source} */
-  MIND_BLOWN,
+  MIND_BLOWN = 720,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Plasma_Fists_(move) | Source} */
-  PLASMA_FISTS,
+  PLASMA_FISTS = 721,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Photon_Geyser_(move) | Source} */
-  PHOTON_GEYSER,
+  PHOTON_GEYSER = 722,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Light_That_Burns_The_Sky_(move) | Source} */
-  LIGHT_THAT_BURNS_THE_SKY,
+  LIGHT_THAT_BURNS_THE_SKY = 723,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Searing_Sunraze_Smash_(move) | Source} */
-  SEARING_SUNRAZE_SMASH,
+  SEARING_SUNRAZE_SMASH = 724,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Menacing_Moonraze_Maelstrom_(move) | Source} */
-  MENACING_MOONRAZE_MAELSTROM,
+  MENACING_MOONRAZE_MAELSTROM = 725,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lets_Snuggle_Forever_(move) | Source} */
-  LETS_SNUGGLE_FOREVER,
+  LETS_SNUGGLE_FOREVER = 726,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Splintered_Stormshards_(move) | Source} */
-  SPLINTERED_STORMSHARDS,
+  SPLINTERED_STORMSHARDS = 727,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soulblaze_(move) | Source} */
-  CLANGOROUS_SOULBLAZE,
+  CLANGOROUS_SOULBLAZE = 728,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zippy_Zap_(move) | Source} */
-  ZIPPY_ZAP,
+  ZIPPY_ZAP = 729,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Splishy_Splash_(move) | Source} */
-  SPLISHY_SPLASH,
+  SPLISHY_SPLASH = 730,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Floaty_Fall_(move) | Source} */
-  FLOATY_FALL,
+  FLOATY_FALL = 731,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pika_Papow_(move) | Source} */
-  PIKA_PAPOW,
+  PIKA_PAPOW = 732,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bouncy_Bubble_(move) | Source} */
-  BOUNCY_BUBBLE,
+  BOUNCY_BUBBLE = 733,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Buzzy_Buzz_(move) | Source} */
-  BUZZY_BUZZ,
+  BUZZY_BUZZ = 734,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sizzly_Slide_(move) | Source} */
-  SIZZLY_SLIDE,
+  SIZZLY_SLIDE = 735,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glitzy_Glow_(move) | Source} */
-  GLITZY_GLOW,
+  GLITZY_GLOW = 736,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Baddy_Bad_(move) | Source} */
-  BADDY_BAD,
+  BADDY_BAD = 737,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sappy_Seed_(move) | Source} */
-  SAPPY_SEED,
+  SAPPY_SEED = 738,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Freezy_Frost_(move) | Source} */
-  FREEZY_FROST,
+  FREEZY_FROST = 739,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sparkly_Swirl_(move) | Source} */
-  SPARKLY_SWIRL,
+  SPARKLY_SWIRL = 740,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Veevee_Volley_(move) | Source} */
-  VEEVEE_VOLLEY,
+  VEEVEE_VOLLEY = 741,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Iron_Bash_(move) | Source} */
-  DOUBLE_IRON_BASH,
+  DOUBLE_IRON_BASH = 742,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Guard_(move) | Source} */
-  MAX_GUARD,
+  MAX_GUARD = 743,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dynamax_Cannon_(move) | Source} */
-  DYNAMAX_CANNON,
+  DYNAMAX_CANNON = 744,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snipe_Shot_(move) | Source} */
-  SNIPE_SHOT,
+  SNIPE_SHOT = 745,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jaw_Lock_(move) | Source} */
-  JAW_LOCK,
+  JAW_LOCK = 746,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stuff_Cheeks_(move) | Source} */
-  STUFF_CHEEKS,
+  STUFF_CHEEKS = 747,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/No_Retreat_(move) | Source} */
-  NO_RETREAT,
+  NO_RETREAT = 748,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tar_Shot_(move) | Source} */
-  TAR_SHOT,
+  TAR_SHOT = 749,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magic_Powder_(move) | Source} */
-  MAGIC_POWDER,
+  MAGIC_POWDER = 750,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Darts_(move) | Source} */
-  DRAGON_DARTS,
+  DRAGON_DARTS = 751,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Teatime_(move) | Source} */
-  TEATIME,
+  TEATIME = 752,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Octolock_(move) | Source} */
-  OCTOLOCK,
+  OCTOLOCK = 753,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bolt_Beak_(move) | Source} */
-  BOLT_BEAK,
+  BOLT_BEAK = 754,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fishious_Rend_(move) | Source} */
-  FISHIOUS_REND,
+  FISHIOUS_REND = 755,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Court_Change_(move) | Source} */
-  COURT_CHANGE,
+  COURT_CHANGE = 756,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Flare_(move) | Source} */
-  MAX_FLARE,
+  MAX_FLARE = 757,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Flutterby_(move) | Source} */
-  MAX_FLUTTERBY,
+  MAX_FLUTTERBY = 758,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Lightning_(move) | Source} */
-  MAX_LIGHTNING,
+  MAX_LIGHTNING = 759,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Strike_(move) | Source} */
-  MAX_STRIKE,
+  MAX_STRIKE = 760,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Knuckle_(move) | Source} */
-  MAX_KNUCKLE,
+  MAX_KNUCKLE = 761,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Phantasm_(move) | Source} */
-  MAX_PHANTASM,
+  MAX_PHANTASM = 762,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Hailstorm_(move) | Source} */
-  MAX_HAILSTORM,
+  MAX_HAILSTORM = 763,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Ooze_(move) | Source} */
-  MAX_OOZE,
+  MAX_OOZE = 764,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Geyser_(move) | Source} */
-  MAX_GEYSER,
+  MAX_GEYSER = 765,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Airstream_(move) | Source} */
-  MAX_AIRSTREAM,
+  MAX_AIRSTREAM = 766,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Starfall_(move) | Source} */
-  MAX_STARFALL,
+  MAX_STARFALL = 767,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Wyrmwind_(move) | Source} */
-  MAX_WYRMWIND,
+  MAX_WYRMWIND = 768,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Mindstorm_(move) | Source} */
-  MAX_MINDSTORM,
+  MAX_MINDSTORM = 769,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Rockfall_(move) | Source} */
-  MAX_ROCKFALL,
+  MAX_ROCKFALL = 770,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Quake_(move) | Source} */
-  MAX_QUAKE,
+  MAX_QUAKE = 771,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Darkness_(move) | Source} */
-  MAX_DARKNESS,
+  MAX_DARKNESS = 772,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Overgrowth_(move) | Source} */
-  MAX_OVERGROWTH,
+  MAX_OVERGROWTH = 773,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Max_Steelspike_(move) | Source} */
-  MAX_STEELSPIKE,
+  MAX_STEELSPIKE = 774,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move) | Source} */
-  CLANGOROUS_SOUL,
+  CLANGOROUS_SOUL = 775,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Body_Press_(move) | Source} */
-  BODY_PRESS,
+  BODY_PRESS = 776,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Decorate_(move) | Source} */
-  DECORATE,
+  DECORATE = 777,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drum_Beating_(move) | Source} */
-  DRUM_BEATING,
+  DRUM_BEATING = 778,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snap_Trap_(move) | Source} */
-  SNAP_TRAP,
+  SNAP_TRAP = 779,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pyro_Ball_(move) | Source} */
-  PYRO_BALL,
+  PYRO_BALL = 780,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Behemoth_Blade_(move) | Source} */
-  BEHEMOTH_BLADE,
+  BEHEMOTH_BLADE = 781,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Behemoth_Bash_(move) | Source} */
-  BEHEMOTH_BASH,
+  BEHEMOTH_BASH = 782,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aura_Wheel_(move) | Source} */
-  AURA_WHEEL,
+  AURA_WHEEL = 783,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Breaking_Swipe_(move) | Source} */
-  BREAKING_SWIPE,
+  BREAKING_SWIPE = 784,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Branch_Poke_(move) | Source} */
-  BRANCH_POKE,
+  BRANCH_POKE = 785,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Overdrive_(move) | Source} */
-  OVERDRIVE,
+  OVERDRIVE = 786,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Apple_Acid_(move) | Source} */
-  APPLE_ACID,
+  APPLE_ACID = 787,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grav_Apple_(move) | Source} */
-  GRAV_APPLE,
+  GRAV_APPLE = 788,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spirit_Break_(move) | Source} */
-  SPIRIT_BREAK,
+  SPIRIT_BREAK = 789,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Strange_Steam_(move) | Source} */
-  STRANGE_STEAM,
+  STRANGE_STEAM = 790,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Life_Dew_(move) | Source} */
-  LIFE_DEW,
+  LIFE_DEW = 791,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Obstruct_(move) | Source} */
-  OBSTRUCT,
+  OBSTRUCT = 792,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/False_Surrender_(move) | Source} */
-  FALSE_SURRENDER,
+  FALSE_SURRENDER = 793,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meteor_Assault_(move) | Source} */
-  METEOR_ASSAULT,
+  METEOR_ASSAULT = 794,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eternabeam_(move) | Source} */
-  ETERNABEAM,
+  ETERNABEAM = 795,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Steel_Beam_(move) | Source} */
-  STEEL_BEAM,
+  STEEL_BEAM = 796,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Expanding_Force_(move) | Source} */
-  EXPANDING_FORCE,
+  EXPANDING_FORCE = 797,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Steel_Roller_(move) | Source} */
-  STEEL_ROLLER,
+  STEEL_ROLLER = 798,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scale_Shot_(move) | Source} */
-  SCALE_SHOT,
+  SCALE_SHOT = 799,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meteor_Beam_(move) | Source} */
-  METEOR_BEAM,
+  METEOR_BEAM = 800,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shell_Side_Arm_(move) | Source} */
-  SHELL_SIDE_ARM,
+  SHELL_SIDE_ARM = 801,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Misty_Explosion_(move) | Source} */
-  MISTY_EXPLOSION,
+  MISTY_EXPLOSION = 802,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grassy_Glide_(move) | Source} */
-  GRASSY_GLIDE,
+  GRASSY_GLIDE = 803,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rising_Voltage_(move) | Source} */
-  RISING_VOLTAGE,
+  RISING_VOLTAGE = 804,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Terrain_Pulse_(move) | Source} */
-  TERRAIN_PULSE,
+  TERRAIN_PULSE = 805,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skitter_Smack_(move) | Source} */
-  SKITTER_SMACK,
+  SKITTER_SMACK = 806,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Burning_Jealousy_(move) | Source} */
-  BURNING_JEALOUSY,
+  BURNING_JEALOUSY = 807,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lash_Out_(move) | Source} */
-  LASH_OUT,
+  LASH_OUT = 808,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poltergeist_(move) | Source} */
-  POLTERGEIST,
+  POLTERGEIST = 809,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Corrosive_Gas_(move) | Source} */
-  CORROSIVE_GAS,
+  CORROSIVE_GAS = 810,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Coaching_(move) | Source} */
-  COACHING,
+  COACHING = 811,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flip_Turn_(move) | Source} */
-  FLIP_TURN,
+  FLIP_TURN = 812,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Triple_Axel_(move) | Source} */
-  TRIPLE_AXEL,
+  TRIPLE_AXEL = 813,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dual_Wingbeat_(move) | Source} */
-  DUAL_WINGBEAT,
+  DUAL_WINGBEAT = 814,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scorching_Sands_(move) | Source} */
-  SCORCHING_SANDS,
+  SCORCHING_SANDS = 815,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jungle_Healing_(move) | Source} */
-  JUNGLE_HEALING,
+  JUNGLE_HEALING = 816,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wicked_Blow_(move) | Source} */
-  WICKED_BLOW,
+  WICKED_BLOW = 817,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Surging_Strikes_(move) | Source} */
-  SURGING_STRIKES,
+  SURGING_STRIKES = 818,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunder_Cage_(move) | Source} */
-  THUNDER_CAGE,
+  THUNDER_CAGE = 819,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Energy_(move) | Source} */
-  DRAGON_ENERGY,
+  DRAGON_ENERGY = 820,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Freezing_Glare_(move) | Source} */
-  FREEZING_GLARE,
+  FREEZING_GLARE = 821,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fiery_Wrath_(move) | Source} */
-  FIERY_WRATH,
+  FIERY_WRATH = 822,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunderous_Kick_(move) | Source} */
-  THUNDEROUS_KICK,
+  THUNDEROUS_KICK = 823,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glacial_Lance_(move) | Source} */
-  GLACIAL_LANCE,
+  GLACIAL_LANCE = 824,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Astral_Barrage_(move) | Source} */
-  ASTRAL_BARRAGE,
+  ASTRAL_BARRAGE = 825,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eerie_Spell_(move) | Source} */
-  EERIE_SPELL,
+  EERIE_SPELL = 826,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dire_Claw_(move) | Source} */
-  DIRE_CLAW,
+  DIRE_CLAW = 827,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psyshield_Bash_(move) | Source} */
-  PSYSHIELD_BASH,
+  PSYSHIELD_BASH = 828,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Power_Shift_(move) | Source} */
-  POWER_SHIFT,
+  POWER_SHIFT = 829,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stone_Axe_(move) | Source} */
-  STONE_AXE,
+  STONE_AXE = 830,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Springtide_Storm_(move) | Source} */
-  SPRINGTIDE_STORM,
+  SPRINGTIDE_STORM = 831,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mystical_Power_(move) | Source} */
-  MYSTICAL_POWER,
+  MYSTICAL_POWER = 832,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raging_Fury_(move) | Source} */
-  RAGING_FURY,
+  RAGING_FURY = 833,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wave_Crash_(move) | Source} */
-  WAVE_CRASH,
+  WAVE_CRASH = 834,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chloroblast_(move) | Source} */
-  CHLOROBLAST,
+  CHLOROBLAST = 835,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mountain_Gale_(move) | Source} */
-  MOUNTAIN_GALE,
+  MOUNTAIN_GALE = 836,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Victory_Dance_(move) | Source} */
-  VICTORY_DANCE,
+  VICTORY_DANCE = 837,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Headlong_Rush_(move) | Source} */
-  HEADLONG_RUSH,
+  HEADLONG_RUSH = 838,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Barb_Barrage_(move) | Source} */
-  BARB_BARRAGE,
+  BARB_BARRAGE = 839,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Esper_Wing_(move) | Source} */
-  ESPER_WING,
+  ESPER_WING = 840,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bitter_Malice_(move) | Source} */
-  BITTER_MALICE,
+  BITTER_MALICE = 841,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shelter_(move) | Source} */
-  SHELTER,
+  SHELTER = 842,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Triple_Arrows_(move) | Source} */
-  TRIPLE_ARROWS,
+  TRIPLE_ARROWS = 843,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Infernal_Parade_(move) | Source} */
-  INFERNAL_PARADE,
+  INFERNAL_PARADE = 844,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ceaseless_Edge_(move) | Source} */
-  CEASELESS_EDGE,
+  CEASELESS_EDGE = 845,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bleakwind_Storm_(move) | Source} */
-  BLEAKWIND_STORM,
+  BLEAKWIND_STORM = 846,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wildbolt_Storm_(move) | Source} */
-  WILDBOLT_STORM,
+  WILDBOLT_STORM = 847,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandsear_Storm_(move) | Source} */
-  SANDSEAR_STORM,
+  SANDSEAR_STORM = 848,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lunar_Blessing_(move) | Source} */
-  LUNAR_BLESSING,
+  LUNAR_BLESSING = 849,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Take_Heart_(move) | Source} */
-  TAKE_HEART,
+  TAKE_HEART = 850,
   /*G_MAX_WILDFIRE,
   G_MAX_BEFUDDLE,
   G_MAX_VOLT_CRASH,
@@ -1735,141 +1735,141 @@ export enum Moves {
   G_MAX_ONE_BLOW,
   G_MAX_RAPID_FLOW,*/
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tera_Blast_(move) | Source} */
-  TERA_BLAST,
+  TERA_BLAST = 851,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Silk_Trap_(move) | Source} */
-  SILK_TRAP,
+  SILK_TRAP = 852,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Axe_Kick_(move) | Source} */
-  AXE_KICK,
+  AXE_KICK = 853,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Last_Respects_(move) | Source} */
-  LAST_RESPECTS,
+  LAST_RESPECTS = 854,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lumina_Crash_(move) | Source} */
-  LUMINA_CRASH,
+  LUMINA_CRASH = 855,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Order_Up_(move) | Source} */
-  ORDER_UP,
+  ORDER_UP = 856,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jet_Punch_(move) | Source} */
-  JET_PUNCH,
+  JET_PUNCH = 857,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spicy_Extract_(move) | Source} */
-  SPICY_EXTRACT,
+  SPICY_EXTRACT = 858,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spin_Out_(move) | Source} */
-  SPIN_OUT,
+  SPIN_OUT = 859,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Population_Bomb_(move) | Source} */
-  POPULATION_BOMB,
+  POPULATION_BOMB = 860,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Spinner_(move) | Source} */
-  ICE_SPINNER,
+  ICE_SPINNER = 861,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glaive_Rush_(move) | Source} */
-  GLAIVE_RUSH,
+  GLAIVE_RUSH = 862,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Revival_Blessing_(move) | Source} */
-  REVIVAL_BLESSING,
+  REVIVAL_BLESSING = 863,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Salt_Cure_(move) | Source} */
-  SALT_CURE,
+  SALT_CURE = 864,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Triple_Dive_(move) | Source} */
-  TRIPLE_DIVE,
+  TRIPLE_DIVE = 865,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mortal_Spin_(move) | Source} */
-  MORTAL_SPIN,
+  MORTAL_SPIN = 866,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Doodle_(move) | Source} */
-  DOODLE,
+  DOODLE = 867,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fillet_Away_(move) | Source} */
-  FILLET_AWAY,
+  FILLET_AWAY = 868,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kowtow_Cleave_(move) | Source} */
-  KOWTOW_CLEAVE,
+  KOWTOW_CLEAVE = 869,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flower_Trick_(move) | Source} */
-  FLOWER_TRICK,
+  FLOWER_TRICK = 870,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Torch_Song_(move) | Source} */
-  TORCH_SONG,
+  TORCH_SONG = 871,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aqua_Step_(move) | Source} */
-  AQUA_STEP,
+  AQUA_STEP = 872,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raging_Bull_(move) | Source} */
-  RAGING_BULL,
+  RAGING_BULL = 873,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Make_It_Rain_(move) | Source} */
-  MAKE_IT_RAIN,
+  MAKE_IT_RAIN = 874,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psyblade_(move) | Source} */
-  PSYBLADE,
+  PSYBLADE = 875,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Steam_(move) | Source} */
-  HYDRO_STEAM,
+  HYDRO_STEAM = 876,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ruination_(move) | Source} */
-  RUINATION,
+  RUINATION = 877,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Collision_Course_(move) | Source} */
-  COLLISION_COURSE,
+  COLLISION_COURSE = 878,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electro_Drift_(move) | Source} */
-  ELECTRO_DRIFT,
+  ELECTRO_DRIFT = 879,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shed_Tail_(move) | Source} */
-  SHED_TAIL,
+  SHED_TAIL = 880,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chilly_Reception_(move) | Source} */
-  CHILLY_RECEPTION,
+  CHILLY_RECEPTION = 881,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tidy_Up_(move) | Source} */
-  TIDY_UP,
+  TIDY_UP = 882,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snowscape_(move) | Source} */
-  SNOWSCAPE,
+  SNOWSCAPE = 883,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pounce_(move) | Source} */
-  POUNCE,
+  POUNCE = 884,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trailblaze_(move) | Source} */
-  TRAILBLAZE,
+  TRAILBLAZE = 885,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chilling_Water_(move) | Source} */
-  CHILLING_WATER,
+  CHILLING_WATER = 886,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hyper_Drill_(move) | Source} */
-  HYPER_DRILL,
+  HYPER_DRILL = 887,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Twin_Beam_(move) | Source} */
-  TWIN_BEAM,
+  TWIN_BEAM = 888,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rage_Fist_(move) | Source} */
-  RAGE_FIST,
+  RAGE_FIST = 889,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Armor_Cannon_(move) | Source} */
-  ARMOR_CANNON,
+  ARMOR_CANNON = 890,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bitter_Blade_(move) | Source} */
-  BITTER_BLADE,
+  BITTER_BLADE = 891,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Shock_(move) | Source} */
-  DOUBLE_SHOCK,
+  DOUBLE_SHOCK = 892,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gigaton_Hammer_(move) | Source} */
-  GIGATON_HAMMER,
+  GIGATON_HAMMER = 893,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Comeuppance_(move) | Source} */
-  COMEUPPANCE,
+  COMEUPPANCE = 894,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aqua_Cutter_(move) | Source} */
-  AQUA_CUTTER,
+  AQUA_CUTTER = 895,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blazing_Torque_(move) | Source} */
-  BLAZING_TORQUE,
+  BLAZING_TORQUE = 896,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wicked_Torque_(move) | Source} */
-  WICKED_TORQUE,
+  WICKED_TORQUE = 897,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Noxious_Torque_(move) | Source} */
-  NOXIOUS_TORQUE,
+  NOXIOUS_TORQUE = 898,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Combat_Torque_(move) | Source} */
-  COMBAT_TORQUE,
+  COMBAT_TORQUE = 899,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magical_Torque_(move) | Source} */
-  MAGICAL_TORQUE,
+  MAGICAL_TORQUE = 900,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blood_Moon_(move) | Source} */
-  BLOOD_MOON,
+  BLOOD_MOON = 901,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Matcha_Gotcha_(move) | Source} */
-  MATCHA_GOTCHA,
+  MATCHA_GOTCHA = 902,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Syrup_Bomb_(move) | Source} */
-  SYRUP_BOMB,
+  SYRUP_BOMB = 903,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ivy_Cudgel_(move) | Source} */
-  IVY_CUDGEL,
+  IVY_CUDGEL = 904,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electro_Shot_(move) | Source} */
-  ELECTRO_SHOT,
+  ELECTRO_SHOT = 905,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tera_Starstorm_(move) | Source} */
-  TERA_STARSTORM,
+  TERA_STARSTORM = 906,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fickle_Beam_(move) | Source} */
-  FICKLE_BEAM,
+  FICKLE_BEAM = 907,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Burning_Bulwark_(move) | Source} */
-  BURNING_BULWARK,
+  BURNING_BULWARK = 908,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunderclap_(move) | Source} */
-  THUNDERCLAP,
+  THUNDERCLAP = 909,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mighty_Cleave_(move) | Source} */
-  MIGHTY_CLEAVE,
+  MIGHTY_CLEAVE = 910,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tachyon_Cutter_(move) | Source} */
-  TACHYON_CUTTER,
+  TACHYON_CUTTER = 911,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hard_Press_(move) | Source} */
-  HARD_PRESS,
+  HARD_PRESS = 912,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragon_Cheer_(move) | Source} */
-  DRAGON_CHEER,
+  DRAGON_CHEER = 913,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Alluring_Voice_(move) | Source} */
-  ALLURING_VOICE,
+  ALLURING_VOICE = 914,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Temper_Flare_(move) | Source} */
-  TEMPER_FLARE,
+  TEMPER_FLARE = 915,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Supercell_Slam_(move) | Source} */
-  SUPERCELL_SLAM,
+  SUPERCELL_SLAM = 916,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psychic_Noise_(move) | Source} */
-  PSYCHIC_NOISE,
+  PSYCHIC_NOISE = 917,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Upper_Hand_(move) | Source} */
-  UPPER_HAND,
+  UPPER_HAND = 918,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malignant_Chain_(move) | Source} */
-  MALIGNANT_CHAIN,
-};
+  MALIGNANT_CHAIN = 919,
+}

@@ -475,12 +475,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          120,
-          -100,
-          -100,
-          0
-        ],
+        "tone": [120, -100, -100, 0],
         "locked": true,
         "priority": 1,
         "focus": 1
@@ -581,12 +576,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          -100,
-          -100,
-          0
-        ],
+        "tone": [255, -100, -100, 0],
         "locked": true,
         "priority": 1,
         "focus": 1
@@ -687,12 +677,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          -100,
-          -100,
-          0
-        ],
+        "tone": [255, -100, -100, 0],
         "locked": true,
         "priority": 1,
         "focus": 1
@@ -793,12 +778,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          -100,
-          -100,
-          0
-        ],
+        "tone": [255, -100, -100, 0],
         "locked": true,
         "priority": 1,
         "focus": 1
@@ -887,12 +867,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          -100,
-          -100,
-          0
-        ],
+        "tone": [255, -100, -100, 0],
         "locked": true,
         "priority": 1,
         "focus": 1
@@ -981,12 +956,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          -100,
-          -100,
-          0
-        ],
+        "tone": [255, -100, -100, 0],
         "locked": true,
         "priority": 1,
         "focus": 1
@@ -1075,12 +1045,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          120,
-          -50,
-          -50,
-          0
-        ],
+        "tone": [120, -50, -50, 0],
         "locked": true,
         "priority": 1,
         "focus": 1

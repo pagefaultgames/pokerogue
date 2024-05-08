@@ -585,8 +585,7 @@
       }
     ]
   ],
-  "frameTimedEvents": {
-  },
+  "frameTimedEvents": {},
   "position": 3,
   "hue": 0
 }

@@ -7,11 +7,11 @@ import { ProtectAttr } from "./move";
 import { BattlerIndex } from "#app/battle.js";
 
 export enum TerrainType {
-  NONE,
-  MISTY,
-  ELECTRIC,
-  GRASSY,
-  PSYCHIC
+  NONE = 0,
+  MISTY = 1,
+  ELECTRIC = 2,
+  GRASSY = 3,
+  PSYCHIC = 4,
 }
 
 export class Terrain {
@@ -24,8 +24,7 @@ export class Terrain {
   }
 
   lapse(): boolean {
-    if (this.turnsLeft)
-      return !!--this.turnsLeft;
+    if (this.turnsLeft) return !!--this.turnsLeft;
 
     return true;
   }
@@ -33,29 +32,35 @@ export class Terrain {
   getAttackTypeMultiplier(attackType: Type): number {
     switch (this.terrainType) {
       case TerrainType.ELECTRIC:
-        if (attackType === Type.ELECTRIC)
-          return 1.3;
+        if (attackType === Type.ELECTRIC) return 1.3;
         break;
       case TerrainType.GRASSY:
-        if (attackType === Type.GRASS)
-          return 1.3;
+        if (attackType === Type.GRASS) return 1.3;
         break;
       case TerrainType.PSYCHIC:
-        if (attackType === Type.PSYCHIC)
-          return 1.3;
+        if (attackType === Type.PSYCHIC) return 1.3;
         break;
     }
 
     return 1;
   }
 
-  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
+  isMoveTerrainCancelled(
+    user: Pokemon,
+    targets: BattlerIndex[],
+    move: Move,
+  ): boolean {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
         if (!move.getAttrs(ProtectAttr).length) {
           const priority = new Utils.IntegerHolder(move.priority);
           applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);
-          return priority.value > 0 && user.getOpponents().filter(o => targets.includes(o.getBattlerIndex())).length > 0;
+          return (
+            priority.value > 0 &&
+            user
+              .getOpponents()
+              .filter((o) => targets.includes(o.getBattlerIndex())).length > 0
+          );
         }
     }
 
@@ -63,17 +68,19 @@ export class Terrain {
   }
 }
 
-export function getTerrainColor(terrainType: TerrainType): [ integer, integer, integer ] {
+export function getTerrainColor(
+  terrainType: TerrainType,
+): [integer, integer, integer] {
   switch (terrainType) {
     case TerrainType.MISTY:
-      return [ 232, 136, 200 ];
+      return [232, 136, 200];
     case TerrainType.ELECTRIC:
-      return [ 248, 248, 120 ];
+      return [248, 248, 120];
     case TerrainType.GRASSY:
-      return [ 120, 200, 80 ];
+      return [120, 200, 80];
     case TerrainType.PSYCHIC:
-      return [ 160, 64, 160 ];
+      return [160, 64, 160];
   }
 
-  return [ 0, 0, 0 ];
+  return [0, 0, 0];
 }

@@ -675,12 +675,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -5,
-            -5,
-            -5,
-            25
-          ],
+          "tone": [-5, -5, -5, 25],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -733,12 +728,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -10,
-            -10,
-            -10,
-            50
-          ],
+          "tone": [-10, -10, -10, 50],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -791,12 +781,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -15,
-            -15,
-            -15,
-            75
-          ],
+          "tone": [-15, -15, -15, 75],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -849,12 +834,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -20,
-            -20,
-            -20,
-            100
-          ],
+          "tone": [-20, -20, -20, 100],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -907,12 +887,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -25,
-            -25,
-            -25,
-            125
-          ],
+          "tone": [-25, -25, -25, 125],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -976,12 +951,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -30,
-            -30,
-            -30,
-            150
-          ],
+          "tone": [-30, -30, -30, 150],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1046,12 +1016,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -35,
-            -35,
-            -35,
-            175
-          ],
+          "tone": [-35, -35, -35, 175],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1115,12 +1080,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -40,
-            -40,
-            -40,
-            200
-          ],
+          "tone": [-40, -40, -40, 200],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1173,12 +1133,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -45,
-            -45,
-            -45,
-            225
-          ],
+          "tone": [-45, -45, -45, 225],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1231,12 +1186,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -50,
-            -50,
-            -50,
-            255
-          ],
+          "tone": [-50, -50, -50, 255],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1289,12 +1239,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -50,
-            -50,
-            -50,
-            255
-          ],
+          "tone": [-50, -50, -50, 255],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1359,12 +1304,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -40,
-            -40,
-            -40,
-            200
-          ],
+          "tone": [-40, -40, -40, 200],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1416,12 +1356,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -30,
-            -30,
-            -30,
-            150
-          ],
+          "tone": [-30, -30, -30, 150],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1462,12 +1397,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -20,
-            -20,
-            -20,
-            100
-          ],
+          "tone": [-20, -20, -20, 100],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -1508,12 +1438,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -10,
-            -10,
-            -10,
-            50
-          ],
+          "tone": [-10, -10, -10, 50],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2285,12 +2210,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -5,
-            -5,
-            -5,
-            50
-          ],
+          "tone": [-5, -5, -5, 50],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2304,12 +2224,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -5,
-            -5,
-            -5,
-            25
-          ],
+          "tone": [-5, -5, -5, 25],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2349,12 +2264,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -10,
-            -10,
-            -10,
-            50
-          ],
+          "tone": [-10, -10, -10, 50],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2368,12 +2278,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -10,
-            -10,
-            -10,
-            50
-          ],
+          "tone": [-10, -10, -10, 50],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2413,12 +2318,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -15,
-            -15,
-            -15,
-            75
-          ],
+          "tone": [-15, -15, -15, 75],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2432,12 +2332,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -15,
-            -15,
-            -15,
-            75
-          ],
+          "tone": [-15, -15, -15, 75],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2477,12 +2372,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -20,
-            -20,
-            -20,
-            100
-          ],
+          "tone": [-20, -20, -20, 100],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2496,12 +2386,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -20,
-            -20,
-            -20,
-            100
-          ],
+          "tone": [-20, -20, -20, 100],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2541,12 +2426,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -25,
-            -25,
-            -25,
-            125
-          ],
+          "tone": [-25, -25, -25, 125],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2560,12 +2440,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -25,
-            -25,
-            -25,
-            125
-          ],
+          "tone": [-25, -25, -25, 125],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2616,12 +2491,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -30,
-            -30,
-            -30,
-            150
-          ],
+          "tone": [-30, -30, -30, 150],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2635,12 +2505,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -30,
-            -30,
-            -30,
-            150
-          ],
+          "tone": [-30, -30, -30, 150],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2692,12 +2557,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -35,
-            -35,
-            -35,
-            175
-          ],
+          "tone": [-35, -35, -35, 175],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2711,12 +2571,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -35,
-            -35,
-            -35,
-            175
-          ],
+          "tone": [-35, -35, -35, 175],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2768,12 +2623,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -40,
-            -40,
-            -40,
-            200
-          ],
+          "tone": [-40, -40, -40, 200],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2787,12 +2637,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -40,
-            -40,
-            -40,
-            200
-          ],
+          "tone": [-40, -40, -40, 200],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2832,12 +2677,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -45,
-            -45,
-            -45,
-            225
-          ],
+          "tone": [-45, -45, -45, 225],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2851,12 +2691,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -45,
-            -45,
-            -45,
-            225
-          ],
+          "tone": [-45, -45, -45, 225],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2896,12 +2731,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -50,
-            -50,
-            -50,
-            255
-          ],
+          "tone": [-50, -50, -50, 255],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2915,12 +2745,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -50,
-            -50,
-            -50,
-            255
-          ],
+          "tone": [-50, -50, -50, 255],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -2960,12 +2785,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -50,
-            -50,
-            -50,
-            255
-          ],
+          "tone": [-50, -50, -50, 255],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -2979,12 +2799,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -50,
-            -50,
-            -50,
-            255
-          ],
+          "tone": [-50, -50, -50, 255],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -3024,12 +2839,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -40,
-            -40,
-            -40,
-            200
-          ],
+          "tone": [-40, -40, -40, 200],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -3043,12 +2853,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -40,
-            -40,
-            -40,
-            200
-          ],
+          "tone": [-40, -40, -40, 200],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -3088,12 +2893,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -30,
-            -30,
-            -30,
-            150
-          ],
+          "tone": [-30, -30, -30, 150],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -3107,12 +2907,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -30,
-            -30,
-            -30,
-            150
-          ],
+          "tone": [-30, -30, -30, 150],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -3152,12 +2947,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -20,
-            -20,
-            -20,
-            100
-          ],
+          "tone": [-20, -20, -20, 100],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -3171,12 +2961,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -20,
-            -20,
-            -20,
-            100
-          ],
+          "tone": [-20, -20, -20, 100],
           "locked": true,
           "priority": 1,
           "focus": 1
@@ -3204,12 +2989,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -10,
-            -10,
-            -10,
-            50
-          ],
+          "tone": [-10, -10, -10, 50],
           "locked": true,
           "priority": 1,
           "focus": 2
@@ -3223,12 +3003,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 255,
-          "tone": [
-            -10,
-            -10,
-            -10,
-            50
-          ],
+          "tone": [-10, -10, -10, 50],
           "locked": true,
           "priority": 1,
           "focus": 1

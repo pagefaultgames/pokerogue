@@ -2,2053 +2,2053 @@ export enum Species {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pokémon) | Source} */
   BULBASAUR = 1,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ivysaur_(Pokémon) | Source} */
-  IVYSAUR,
+  IVYSAUR = 2,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Venusaur_(Pokémon) | Source} */
-  VENUSAUR,
+  VENUSAUR = 3,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charmander_(Pokémon) | Source} */
-  CHARMANDER,
+  CHARMANDER = 4,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charmeleon_(Pokémon) | Source} */
-  CHARMELEON,
+  CHARMELEON = 5,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charizard_(Pokémon) | Source} */
-  CHARIZARD,
+  CHARIZARD = 6,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Squirtle_(Pokémon) | Source} */
-  SQUIRTLE,
+  SQUIRTLE = 7,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wartortle_(Pokémon) | Source} */
-  WARTORTLE,
+  WARTORTLE = 8,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blastoise_(Pokémon) | Source} */
-  BLASTOISE,
+  BLASTOISE = 9,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Caterpie_(Pokémon) | Source} */
-  CATERPIE,
+  CATERPIE = 10,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Metapod_(Pokémon) | Source} */
-  METAPOD,
+  METAPOD = 11,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Butterfree_(Pokémon) | Source} */
-  BUTTERFREE,
+  BUTTERFREE = 12,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Weedle_(Pokémon) | Source} */
-  WEEDLE,
+  WEEDLE = 13,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kakuna_(Pokémon) | Source} */
-  KAKUNA,
+  KAKUNA = 14,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Beedrill_(Pokémon) | Source} */
-  BEEDRILL,
+  BEEDRILL = 15,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pidgey_(Pokémon) | Source} */
-  PIDGEY,
+  PIDGEY = 16,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pidgeotto_(Pokémon) | Source} */
-  PIDGEOTTO,
+  PIDGEOTTO = 17,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pidgeot_(Pokémon) | Source} */
-  PIDGEOT,
+  PIDGEOT = 18,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rattata_(Pokémon) | Source} */
-  RATTATA,
+  RATTATA = 19,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raticate_(Pokémon) | Source} */
-  RATICATE,
+  RATICATE = 20,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spearow_(Pokémon) | Source} */
-  SPEAROW,
+  SPEAROW = 21,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fearow_(Pokémon) | Source} */
-  FEAROW,
+  FEAROW = 22,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ekans_(Pokémon) | Source} */
-  EKANS,
+  EKANS = 23,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arbok_(Pokémon) | Source} */
-  ARBOK,
+  ARBOK = 24,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pokémon) | Source} */
-  PIKACHU,
+  PIKACHU = 25,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raichu_(Pokémon) | Source} */
-  RAICHU,
+  RAICHU = 26,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandshrew_(Pokémon) | Source} */
-  SANDSHREW,
+  SANDSHREW = 27,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandslash_(Pokémon) | Source} */
-  SANDSLASH,
+  SANDSLASH = 28,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nidoran_F_(Pokémon) | Source} */
-  NIDORAN_F,
+  NIDORAN_F = 29,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nidorina_(Pokémon) | Source} */
-  NIDORINA,
+  NIDORINA = 30,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nidoqueen_(Pokémon) | Source} */
-  NIDOQUEEN,
+  NIDOQUEEN = 31,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nidoran_M_(Pokémon) | Source} */
-  NIDORAN_M,
+  NIDORAN_M = 32,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nidorino_(Pokémon) | Source} */
-  NIDORINO,
+  NIDORINO = 33,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nidoking_(Pokémon) | Source} */
-  NIDOKING,
+  NIDOKING = 34,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clefairy_(Pokémon) | Source} */
-  CLEFAIRY,
+  CLEFAIRY = 35,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clefable_(Pokémon) | Source} */
-  CLEFABLE,
+  CLEFABLE = 36,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vulpix_(Pokémon) | Source} */
-  VULPIX,
+  VULPIX = 37,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ninetales_(Pokémon) | Source} */
-  NINETALES,
+  NINETALES = 38,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jigglypuff_(Pokémon) | Source} */
-  JIGGLYPUFF,
+  JIGGLYPUFF = 39,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wigglytuff_(Pokémon) | Source} */
-  WIGGLYTUFF,
+  WIGGLYTUFF = 40,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zubat_(Pokémon) | Source} */
-  ZUBAT,
+  ZUBAT = 41,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Golbat_(Pokémon) | Source} */
-  GOLBAT,
+  GOLBAT = 42,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Oddish_(Pokémon) | Source} */
-  ODDISH,
+  ODDISH = 43,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gloom_(Pokémon) | Source} */
-  GLOOM,
+  GLOOM = 44,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vileplume_(Pokémon) | Source} */
-  VILEPLUME,
+  VILEPLUME = 45,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Paras_(Pokémon) | Source} */
-  PARAS,
+  PARAS = 46,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Parasect_(Pokémon) | Source} */
-  PARASECT,
+  PARASECT = 47,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Venonat_(Pokémon) | Source} */
-  VENONAT,
+  VENONAT = 48,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Venomoth_(Pokémon) | Source} */
-  VENOMOTH,
+  VENOMOTH = 49,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Diglett_(Pokémon) | Source} */
-  DIGLETT,
+  DIGLETT = 50,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dugtrio_(Pokémon) | Source} */
-  DUGTRIO,
+  DUGTRIO = 51,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meowth_(Pokémon) | Source} */
-  MEOWTH,
+  MEOWTH = 52,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Persian_(Pokémon) | Source} */
-  PERSIAN,
+  PERSIAN = 53,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Psyduck_(Pokémon) | Source} */
-  PSYDUCK,
+  PSYDUCK = 54,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Golduck_(Pokémon) | Source} */
-  GOLDUCK,
+  GOLDUCK = 55,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mankey_(Pokémon) | Source} */
-  MANKEY,
+  MANKEY = 56,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Primeape_(Pokémon) | Source} */
-  PRIMEAPE,
+  PRIMEAPE = 57,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Growlithe_(Pokémon) | Source} */
-  GROWLITHE,
+  GROWLITHE = 58,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arcanine_(Pokémon) | Source} */
-  ARCANINE,
+  ARCANINE = 59,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poliwag_(Pokémon) | Source} */
-  POLIWAG,
+  POLIWAG = 60,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poliwhirl_(Pokémon) | Source} */
-  POLIWHIRL,
+  POLIWHIRL = 61,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poliwrath_(Pokémon) | Source} */
-  POLIWRATH,
+  POLIWRATH = 62,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Abra_(Pokémon) | Source} */
-  ABRA,
+  ABRA = 63,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kadabra_(Pokémon) | Source} */
-  KADABRA,
+  KADABRA = 64,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Alakazam_(Pokémon) | Source} */
-  ALAKAZAM,
+  ALAKAZAM = 65,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Machop_(Pokémon) | Source} */
-  MACHOP,
+  MACHOP = 66,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Machoke_(Pokémon) | Source} */
-  MACHOKE,
+  MACHOKE = 67,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Machamp_(Pokémon) | Source} */
-  MACHAMP,
+  MACHAMP = 68,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bellsprout_(Pokémon) | Source} */
-  BELLSPROUT,
+  BELLSPROUT = 69,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Weepinbell_(Pokémon) | Source} */
-  WEEPINBELL,
+  WEEPINBELL = 70,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Victreebel_(Pokémon) | Source} */
-  VICTREEBEL,
+  VICTREEBEL = 71,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tentacool_(Pokémon) | Source} */
-  TENTACOOL,
+  TENTACOOL = 72,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tentacruel_(Pokémon) | Source} */
-  TENTACRUEL,
+  TENTACRUEL = 73,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Geodude_(Pokémon) | Source} */
-  GEODUDE,
+  GEODUDE = 74,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Graveler_(Pokémon) | Source} */
-  GRAVELER,
+  GRAVELER = 75,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Golem_(Pokémon) | Source} */
-  GOLEM,
+  GOLEM = 76,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ponyta_(Pokémon) | Source} */
-  PONYTA,
+  PONYTA = 77,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rapidash_(Pokémon) | Source} */
-  RAPIDASH,
+  RAPIDASH = 78,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slowpoke_(Pokémon) | Source} */
-  SLOWPOKE,
+  SLOWPOKE = 79,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slowbro_(Pokémon) | Source} */
-  SLOWBRO,
+  SLOWBRO = 80,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magnemite_(Pokémon) | Source} */
-  MAGNEMITE,
+  MAGNEMITE = 81,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magneton_(Pokémon) | Source} */
-  MAGNETON,
+  MAGNETON = 82,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Farfetchd_(Pokémon) | Source} */
-  FARFETCHD,
+  FARFETCHD = 83,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Doduo_(Pokémon) | Source} */
-  DODUO,
+  DODUO = 84,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dodrio_(Pokémon) | Source} */
-  DODRIO,
+  DODRIO = 85,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seel_(Pokémon) | Source} */
-  SEEL,
+  SEEL = 86,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dewgong_(Pokémon) | Source} */
-  DEWGONG,
+  DEWGONG = 87,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grimer_(Pokémon) | Source} */
-  GRIMER,
+  GRIMER = 88,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Muk_(Pokémon) | Source} */
-  MUK,
+  MUK = 89,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shellder_(Pokémon) | Source} */
-  SHELLDER,
+  SHELLDER = 90,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cloyster_(Pokémon) | Source} */
-  CLOYSTER,
+  CLOYSTER = 91,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gastly_(Pokémon) | Source} */
-  GASTLY,
+  GASTLY = 92,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Haunter_(Pokémon) | Source} */
-  HAUNTER,
+  HAUNTER = 93,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gengar_(Pokémon) | Source} */
-  GENGAR,
+  GENGAR = 94,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Onix_(Pokémon) | Source} */
-  ONIX,
+  ONIX = 95,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drowzee_(Pokémon) | Source} */
-  DROWZEE,
+  DROWZEE = 96,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hypno_(Pokémon) | Source} */
-  HYPNO,
+  HYPNO = 97,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Krabby_(Pokémon) | Source} */
-  KRABBY,
+  KRABBY = 98,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kingler_(Pokémon) | Source} */
-  KINGLER,
+  KINGLER = 99,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Voltorb_(Pokémon) | Source} */
-  VOLTORB,
+  VOLTORB = 100,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electrode_(Pokémon) | Source} */
-  ELECTRODE,
+  ELECTRODE = 101,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Exeggcute_(Pokémon) | Source} */
-  EXEGGCUTE,
+  EXEGGCUTE = 102,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Exeggutor_(Pokémon) | Source} */
-  EXEGGUTOR,
+  EXEGGUTOR = 103,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cubone_(Pokémon) | Source} */
-  CUBONE,
+  CUBONE = 104,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Marowak_(Pokémon) | Source} */
-  MAROWAK,
+  MAROWAK = 105,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hitmonlee_(Pokémon) | Source} */
-  HITMONLEE,
+  HITMONLEE = 106,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hitmonchan_(Pokémon) | Source} */
-  HITMONCHAN,
+  HITMONCHAN = 107,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lickitung_(Pokémon) | Source} */
-  LICKITUNG,
+  LICKITUNG = 108,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Koffing_(Pokémon) | Source} */
-  KOFFING,
+  KOFFING = 109,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Weezing_(Pokémon) | Source} */
-  WEEZING,
+  WEEZING = 110,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rhyhorn_(Pokémon) | Source} */
-  RHYHORN,
+  RHYHORN = 111,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rhydon_(Pokémon) | Source} */
-  RHYDON,
+  RHYDON = 112,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chansey_(Pokémon) | Source} */
-  CHANSEY,
+  CHANSEY = 113,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tangela_(Pokémon) | Source} */
-  TANGELA,
+  TANGELA = 114,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kangaskhan_(Pokémon) | Source} */
-  KANGASKHAN,
+  KANGASKHAN = 115,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Horsea_(Pokémon) | Source} */
-  HORSEA,
+  HORSEA = 116,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seadra_(Pokémon) | Source} */
-  SEADRA,
+  SEADRA = 117,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Goldeen_(Pokémon) | Source} */
-  GOLDEEN,
+  GOLDEEN = 118,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seaking_(Pokémon) | Source} */
-  SEAKING,
+  SEAKING = 119,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Staryu_(Pokémon) | Source} */
-  STARYU,
+  STARYU = 120,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Starmie_(Pokémon) | Source} */
-  STARMIE,
+  STARMIE = 121,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mr_Mime_(Pokémon) | Source} */
-  MR_MIME,
+  MR_MIME = 122,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scyther_(Pokémon) | Source} */
-  SCYTHER,
+  SCYTHER = 123,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jynx_(Pokémon) | Source} */
-  JYNX,
+  JYNX = 124,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electabuzz_(Pokémon) | Source} */
-  ELECTABUZZ,
+  ELECTABUZZ = 125,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magmar_(Pokémon) | Source} */
-  MAGMAR,
+  MAGMAR = 126,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pinsir_(Pokémon) | Source} */
-  PINSIR,
+  PINSIR = 127,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tauros_(Pokémon) | Source} */
-  TAUROS,
+  TAUROS = 128,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magikarp_(Pokémon) | Source} */
-  MAGIKARP,
+  MAGIKARP = 129,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gyarados_(Pokémon) | Source} */
-  GYARADOS,
+  GYARADOS = 130,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lapras_(Pokémon) | Source} */
-  LAPRAS,
+  LAPRAS = 131,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ditto_(Pokémon) | Source} */
-  DITTO,
+  DITTO = 132,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eevee_(Pokémon) | Source} */
-  EEVEE,
+  EEVEE = 133,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vaporeon_(Pokémon) | Source} */
-  VAPOREON,
+  VAPOREON = 134,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jolteon_(Pokémon) | Source} */
-  JOLTEON,
+  JOLTEON = 135,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flareon_(Pokémon) | Source} */
-  FLAREON,
+  FLAREON = 136,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Porygon_(Pokémon) | Source} */
-  PORYGON,
+  PORYGON = 137,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Omanyte_(Pokémon) | Source} */
-  OMANYTE,
+  OMANYTE = 138,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Omastar_(Pokémon) | Source} */
-  OMASTAR,
+  OMASTAR = 139,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kabuto_(Pokémon) | Source} */
-  KABUTO,
+  KABUTO = 140,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kabutops_(Pokémon) | Source} */
-  KABUTOPS,
+  KABUTOPS = 141,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aerodactyl_(Pokémon) | Source} */
-  AERODACTYL,
+  AERODACTYL = 142,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snorlax_(Pokémon) | Source} */
-  SNORLAX,
+  SNORLAX = 143,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Articuno_(Pokémon) | Source} */
-  ARTICUNO,
+  ARTICUNO = 144,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zapdos_(Pokémon) | Source} */
-  ZAPDOS,
+  ZAPDOS = 145,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Moltres_(Pokémon) | Source} */
-  MOLTRES,
+  MOLTRES = 146,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dratini_(Pokémon) | Source} */
-  DRATINI,
+  DRATINI = 147,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragonair_(Pokémon) | Source} */
-  DRAGONAIR,
+  DRAGONAIR = 148,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragonite_(Pokémon) | Source} */
-  DRAGONITE,
+  DRAGONITE = 149,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mewtwo_(Pokémon) | Source} */
-  MEWTWO,
+  MEWTWO = 150,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mew_(Pokémon) | Source} */
-  MEW,
+  MEW = 151,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chikorita_(Pokémon) | Source} */
-  CHIKORITA,
+  CHIKORITA = 152,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bayleef_(Pokémon) | Source} */
-  BAYLEEF,
+  BAYLEEF = 153,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meganium_(Pokémon) | Source} */
-  MEGANIUM,
+  MEGANIUM = 154,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cyndaquil_(Pokémon) | Source} */
-  CYNDAQUIL,
+  CYNDAQUIL = 155,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quilava_(Pokémon) | Source} */
-  QUILAVA,
+  QUILAVA = 156,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Typhlosion_(Pokémon) | Source} */
-  TYPHLOSION,
+  TYPHLOSION = 157,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Totodile_(Pokémon) | Source} */
-  TOTODILE,
+  TOTODILE = 158,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Croconaw_(Pokémon) | Source} */
-  CROCONAW,
+  CROCONAW = 159,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Feraligatr_(Pokémon) | Source} */
-  FERALIGATR,
+  FERALIGATR = 160,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sentret_(Pokémon) | Source} */
-  SENTRET,
+  SENTRET = 161,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Furret_(Pokémon) | Source} */
-  FURRET,
+  FURRET = 162,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hoothoot_(Pokémon) | Source} */
-  HOOTHOOT,
+  HOOTHOOT = 163,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Noctowl_(Pokémon) | Source} */
-  NOCTOWL,
+  NOCTOWL = 164,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ledyba_(Pokémon) | Source} */
-  LEDYBA,
+  LEDYBA = 165,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ledian_(Pokémon) | Source} */
-  LEDIAN,
+  LEDIAN = 166,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spinarak_(Pokémon) | Source} */
-  SPINARAK,
+  SPINARAK = 167,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ariados_(Pokémon) | Source} */
-  ARIADOS,
+  ARIADOS = 168,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crobat_(Pokémon) | Source} */
-  CROBAT,
+  CROBAT = 169,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chinchou_(Pokémon) | Source} */
-  CHINCHOU,
+  CHINCHOU = 170,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lanturn_(Pokémon) | Source} */
-  LANTURN,
+  LANTURN = 171,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pichu_(Pokémon) | Source} */
-  PICHU,
+  PICHU = 172,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cleffa_(Pokémon) | Source} */
-  CLEFFA,
+  CLEFFA = 173,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Igglybuff_(Pokémon) | Source} */
-  IGGLYBUFF,
+  IGGLYBUFF = 174,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Togepi_(Pokémon) | Source} */
-  TOGEPI,
+  TOGEPI = 175,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Togetic_(Pokémon) | Source} */
-  TOGETIC,
+  TOGETIC = 176,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Natu_(Pokémon) | Source} */
-  NATU,
+  NATU = 177,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Xatu_(Pokémon) | Source} */
-  XATU,
+  XATU = 178,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mareep_(Pokémon) | Source} */
-  MAREEP,
+  MAREEP = 179,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flaaffy_(Pokémon) | Source} */
-  FLAAFFY,
+  FLAAFFY = 180,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ampharos_(Pokémon) | Source} */
-  AMPHAROS,
+  AMPHAROS = 181,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bellossom_(Pokémon) | Source} */
-  BELLOSSOM,
+  BELLOSSOM = 182,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Marill_(Pokémon) | Source} */
-  MARILL,
+  MARILL = 183,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Azumarill_(Pokémon) | Source} */
-  AZUMARILL,
+  AZUMARILL = 184,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sudowoodo_(Pokémon) | Source} */
-  SUDOWOODO,
+  SUDOWOODO = 185,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Politoed_(Pokémon) | Source} */
-  POLITOED,
+  POLITOED = 186,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hoppip_(Pokémon) | Source} */
-  HOPPIP,
+  HOPPIP = 187,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skiploom_(Pokémon) | Source} */
-  SKIPLOOM,
+  SKIPLOOM = 188,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jumpluff_(Pokémon) | Source} */
-  JUMPLUFF,
+  JUMPLUFF = 189,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aipom_(Pokémon) | Source} */
-  AIPOM,
+  AIPOM = 190,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sunkern_(Pokémon) | Source} */
-  SUNKERN,
+  SUNKERN = 191,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sunflora_(Pokémon) | Source} */
-  SUNFLORA,
+  SUNFLORA = 192,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Yanma_(Pokémon) | Source} */
-  YANMA,
+  YANMA = 193,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wooper_(Pokémon) | Source} */
-  WOOPER,
+  WOOPER = 194,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quagsire_(Pokémon) | Source} */
-  QUAGSIRE,
+  QUAGSIRE = 195,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Espeon_(Pokémon) | Source} */
-  ESPEON,
+  ESPEON = 196,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Umbreon_(Pokémon) | Source} */
-  UMBREON,
+  UMBREON = 197,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Murkrow_(Pokémon) | Source} */
-  MURKROW,
+  MURKROW = 198,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slowking_(Pokémon) | Source} */
-  SLOWKING,
+  SLOWKING = 199,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Misdreavus_(Pokémon) | Source} */
-  MISDREAVUS,
+  MISDREAVUS = 200,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Unown_(Pokémon) | Source} */
-  UNOWN,
+  UNOWN = 201,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wobbuffet_(Pokémon) | Source} */
-  WOBBUFFET,
+  WOBBUFFET = 202,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Girafarig_(Pokémon) | Source} */
-  GIRAFARIG,
+  GIRAFARIG = 203,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pineco_(Pokémon) | Source} */
-  PINECO,
+  PINECO = 204,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Forretress_(Pokémon) | Source} */
-  FORRETRESS,
+  FORRETRESS = 205,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dunsparce_(Pokémon) | Source} */
-  DUNSPARCE,
+  DUNSPARCE = 206,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gligar_(Pokémon) | Source} */
-  GLIGAR,
+  GLIGAR = 207,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Steelix_(Pokémon) | Source} */
-  STEELIX,
+  STEELIX = 208,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snubbull_(Pokémon) | Source} */
-  SNUBBULL,
+  SNUBBULL = 209,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Granbull_(Pokémon) | Source} */
-  GRANBULL,
+  GRANBULL = 210,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Qwilfish_(Pokémon) | Source} */
-  QWILFISH,
+  QWILFISH = 211,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scizor_(Pokémon) | Source} */
-  SCIZOR,
+  SCIZOR = 212,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shuckle_(Pokémon) | Source} */
-  SHUCKLE,
+  SHUCKLE = 213,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heracross_(Pokémon) | Source} */
-  HERACROSS,
+  HERACROSS = 214,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sneasel_(Pokémon) | Source} */
-  SNEASEL,
+  SNEASEL = 215,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Teddiursa_(Pokémon) | Source} */
-  TEDDIURSA,
+  TEDDIURSA = 216,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ursaring_(Pokémon) | Source} */
-  URSARING,
+  URSARING = 217,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slugma_(Pokémon) | Source} */
-  SLUGMA,
+  SLUGMA = 218,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magcargo_(Pokémon) | Source} */
-  MAGCARGO,
+  MAGCARGO = 219,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swinub_(Pokémon) | Source} */
-  SWINUB,
+  SWINUB = 220,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Piloswine_(Pokémon) | Source} */
-  PILOSWINE,
+  PILOSWINE = 221,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Corsola_(Pokémon) | Source} */
-  CORSOLA,
+  CORSOLA = 222,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Remoraid_(Pokémon) | Source} */
-  REMORAID,
+  REMORAID = 223,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Octillery_(Pokémon) | Source} */
-  OCTILLERY,
+  OCTILLERY = 224,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Delibird_(Pokémon) | Source} */
-  DELIBIRD,
+  DELIBIRD = 225,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mantine_(Pokémon) | Source} */
-  MANTINE,
+  MANTINE = 226,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skarmory_(Pokémon) | Source} */
-  SKARMORY,
+  SKARMORY = 227,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Houndour_(Pokémon) | Source} */
-  HOUNDOUR,
+  HOUNDOUR = 228,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Houndoom_(Pokémon) | Source} */
-  HOUNDOOM,
+  HOUNDOOM = 229,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kingdra_(Pokémon) | Source} */
-  KINGDRA,
+  KINGDRA = 230,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Phanpy_(Pokémon) | Source} */
-  PHANPY,
+  PHANPY = 231,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Donphan_(Pokémon) | Source} */
-  DONPHAN,
+  DONPHAN = 232,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Porygon2_(Pokémon) | Source} */
-  PORYGON2,
+  PORYGON2 = 233,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stantler_(Pokémon) | Source} */
-  STANTLER,
+  STANTLER = 234,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smeargle_(Pokémon) | Source} */
-  SMEARGLE,
+  SMEARGLE = 235,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tyrogue_(Pokémon) | Source} */
-  TYROGUE,
+  TYROGUE = 236,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hitmontop_(Pokémon) | Source} */
-  HITMONTOP,
+  HITMONTOP = 237,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smoochum_(Pokémon) | Source} */
-  SMOOCHUM,
+  SMOOCHUM = 238,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Elekid_(Pokémon) | Source} */
-  ELEKID,
+  ELEKID = 239,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magby_(Pokémon) | Source} */
-  MAGBY,
+  MAGBY = 240,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Miltank_(Pokémon) | Source} */
-  MILTANK,
+  MILTANK = 241,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blissey_(Pokémon) | Source} */
-  BLISSEY,
+  BLISSEY = 242,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raikou_(Pokémon) | Source} */
-  RAIKOU,
+  RAIKOU = 243,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Entei_(Pokémon) | Source} */
-  ENTEI,
+  ENTEI = 244,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Suicune_(Pokémon) | Source} */
-  SUICUNE,
+  SUICUNE = 245,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Larvitar_(Pokémon) | Source} */
-  LARVITAR,
+  LARVITAR = 246,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pupitar_(Pokémon) | Source} */
-  PUPITAR,
+  PUPITAR = 247,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tyranitar_(Pokémon) | Source} */
-  TYRANITAR,
+  TYRANITAR = 248,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lugia_(Pokémon) | Source} */
-  LUGIA,
+  LUGIA = 249,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ho_Oh_(Pokémon) | Source} */
-  HO_OH,
+  HO_OH = 250,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Celebi_(Pokémon) | Source} */
-  CELEBI,
+  CELEBI = 251,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Treecko_(Pokémon) | Source} */
-  TREECKO,
+  TREECKO = 252,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grovyle_(Pokémon) | Source} */
-  GROVYLE,
+  GROVYLE = 253,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sceptile_(Pokémon) | Source} */
-  SCEPTILE,
+  SCEPTILE = 254,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Torchic_(Pokémon) | Source} */
-  TORCHIC,
+  TORCHIC = 255,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Combusken_(Pokémon) | Source} */
-  COMBUSKEN,
+  COMBUSKEN = 256,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blaziken_(Pokémon) | Source} */
-  BLAZIKEN,
+  BLAZIKEN = 257,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mudkip_(Pokémon) | Source} */
-  MUDKIP,
+  MUDKIP = 258,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Marshtomp_(Pokémon) | Source} */
-  MARSHTOMP,
+  MARSHTOMP = 259,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swampert_(Pokémon) | Source} */
-  SWAMPERT,
+  SWAMPERT = 260,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poochyena_(Pokémon) | Source} */
-  POOCHYENA,
+  POOCHYENA = 261,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mightyena_(Pokémon) | Source} */
-  MIGHTYENA,
+  MIGHTYENA = 262,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zigzagoon_(Pokémon) | Source} */
-  ZIGZAGOON,
+  ZIGZAGOON = 263,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Linoone_(Pokémon) | Source} */
-  LINOONE,
+  LINOONE = 264,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wurmple_(Pokémon) | Source} */
-  WURMPLE,
+  WURMPLE = 265,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Silcoon_(Pokémon) | Source} */
-  SILCOON,
+  SILCOON = 266,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Beautifly_(Pokémon) | Source} */
-  BEAUTIFLY,
+  BEAUTIFLY = 267,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cascoon_(Pokémon) | Source} */
-  CASCOON,
+  CASCOON = 268,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dustox_(Pokémon) | Source} */
-  DUSTOX,
+  DUSTOX = 269,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lotad_(Pokémon) | Source} */
-  LOTAD,
+  LOTAD = 270,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lombre_(Pokémon) | Source} */
-  LOMBRE,
+  LOMBRE = 271,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ludicolo_(Pokémon) | Source} */
-  LUDICOLO,
+  LUDICOLO = 272,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seedot_(Pokémon) | Source} */
-  SEEDOT,
+  SEEDOT = 273,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nuzleaf_(Pokémon) | Source} */
-  NUZLEAF,
+  NUZLEAF = 274,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shiftry_(Pokémon) | Source} */
-  SHIFTRY,
+  SHIFTRY = 275,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Taillow_(Pokémon) | Source} */
-  TAILLOW,
+  TAILLOW = 276,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swellow_(Pokémon) | Source} */
-  SWELLOW,
+  SWELLOW = 277,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wingull_(Pokémon) | Source} */
-  WINGULL,
+  WINGULL = 278,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pelipper_(Pokémon) | Source} */
-  PELIPPER,
+  PELIPPER = 279,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ralts_(Pokémon) | Source} */
-  RALTS,
+  RALTS = 280,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kirlia_(Pokémon) | Source} */
-  KIRLIA,
+  KIRLIA = 281,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gardevoir_(Pokémon) | Source} */
-  GARDEVOIR,
+  GARDEVOIR = 282,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Surskit_(Pokémon) | Source} */
-  SURSKIT,
+  SURSKIT = 283,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Masquerain_(Pokémon) | Source} */
-  MASQUERAIN,
+  MASQUERAIN = 284,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shroomish_(Pokémon) | Source} */
-  SHROOMISH,
+  SHROOMISH = 285,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Breloom_(Pokémon) | Source} */
-  BRELOOM,
+  BRELOOM = 286,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slakoth_(Pokémon) | Source} */
-  SLAKOTH,
+  SLAKOTH = 287,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vigoroth_(Pokémon) | Source} */
-  VIGOROTH,
+  VIGOROTH = 288,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slaking_(Pokémon) | Source} */
-  SLAKING,
+  SLAKING = 289,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nincada_(Pokémon) | Source} */
-  NINCADA,
+  NINCADA = 290,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ninjask_(Pokémon) | Source} */
-  NINJASK,
+  NINJASK = 291,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shedinja_(Pokémon) | Source} */
-  SHEDINJA,
+  SHEDINJA = 292,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Whismur_(Pokémon) | Source} */
-  WHISMUR,
+  WHISMUR = 293,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Loudred_(Pokémon) | Source} */
-  LOUDRED,
+  LOUDRED = 294,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Exploud_(Pokémon) | Source} */
-  EXPLOUD,
+  EXPLOUD = 295,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Makuhita_(Pokémon) | Source} */
-  MAKUHITA,
+  MAKUHITA = 296,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hariyama_(Pokémon) | Source} */
-  HARIYAMA,
+  HARIYAMA = 297,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Azurill_(Pokémon) | Source} */
-  AZURILL,
+  AZURILL = 298,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nosepass_(Pokémon) | Source} */
-  NOSEPASS,
+  NOSEPASS = 299,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skitty_(Pokémon) | Source} */
-  SKITTY,
+  SKITTY = 300,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Delcatty_(Pokémon) | Source} */
-  DELCATTY,
+  DELCATTY = 301,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sableye_(Pokémon) | Source} */
-  SABLEYE,
+  SABLEYE = 302,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mawile_(Pokémon) | Source} */
-  MAWILE,
+  MAWILE = 303,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aron_(Pokémon) | Source} */
-  ARON,
+  ARON = 304,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lairon_(Pokémon) | Source} */
-  LAIRON,
+  LAIRON = 305,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aggron_(Pokémon) | Source} */
-  AGGRON,
+  AGGRON = 306,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meditite_(Pokémon) | Source} */
-  MEDITITE,
+  MEDITITE = 307,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Medicham_(Pokémon) | Source} */
-  MEDICHAM,
+  MEDICHAM = 308,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electrike_(Pokémon) | Source} */
-  ELECTRIKE,
+  ELECTRIKE = 309,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Manectric_(Pokémon) | Source} */
-  MANECTRIC,
+  MANECTRIC = 310,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Plusle_(Pokémon) | Source} */
-  PLUSLE,
+  PLUSLE = 311,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Minun_(Pokémon) | Source} */
-  MINUN,
+  MINUN = 312,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Volbeat_(Pokémon) | Source} */
-  VOLBEAT,
+  VOLBEAT = 313,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Illumise_(Pokémon) | Source} */
-  ILLUMISE,
+  ILLUMISE = 314,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Roselia_(Pokémon) | Source} */
-  ROSELIA,
+  ROSELIA = 315,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gulpin_(Pokémon) | Source} */
-  GULPIN,
+  GULPIN = 316,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swalot_(Pokémon) | Source} */
-  SWALOT,
+  SWALOT = 317,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Carvanha_(Pokémon) | Source} */
-  CARVANHA,
+  CARVANHA = 318,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sharpedo_(Pokémon) | Source} */
-  SHARPEDO,
+  SHARPEDO = 319,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wailmer_(Pokémon) | Source} */
-  WAILMER,
+  WAILMER = 320,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wailord_(Pokémon) | Source} */
-  WAILORD,
+  WAILORD = 321,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Numel_(Pokémon) | Source} */
-  NUMEL,
+  NUMEL = 322,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Camerupt_(Pokémon) | Source} */
-  CAMERUPT,
+  CAMERUPT = 323,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Torkoal_(Pokémon) | Source} */
-  TORKOAL,
+  TORKOAL = 324,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spoink_(Pokémon) | Source} */
-  SPOINK,
+  SPOINK = 325,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grumpig_(Pokémon) | Source} */
-  GRUMPIG,
+  GRUMPIG = 326,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spinda_(Pokémon) | Source} */
-  SPINDA,
+  SPINDA = 327,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trapinch_(Pokémon) | Source} */
-  TRAPINCH,
+  TRAPINCH = 328,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vibrava_(Pokémon) | Source} */
-  VIBRAVA,
+  VIBRAVA = 329,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flygon_(Pokémon) | Source} */
-  FLYGON,
+  FLYGON = 330,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cacnea_(Pokémon) | Source} */
-  CACNEA,
+  CACNEA = 331,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cacturne_(Pokémon) | Source} */
-  CACTURNE,
+  CACTURNE = 332,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swablu_(Pokémon) | Source} */
-  SWABLU,
+  SWABLU = 333,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Altaria_(Pokémon) | Source} */
-  ALTARIA,
+  ALTARIA = 334,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zangoose_(Pokémon) | Source} */
-  ZANGOOSE,
+  ZANGOOSE = 335,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seviper_(Pokémon) | Source} */
-  SEVIPER,
+  SEVIPER = 336,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lunatone_(Pokémon) | Source} */
-  LUNATONE,
+  LUNATONE = 337,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Solrock_(Pokémon) | Source} */
-  SOLROCK,
+  SOLROCK = 338,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Barboach_(Pokémon) | Source} */
-  BARBOACH,
+  BARBOACH = 339,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Whiscash_(Pokémon) | Source} */
-  WHISCASH,
+  WHISCASH = 340,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Corphish_(Pokémon) | Source} */
-  CORPHISH,
+  CORPHISH = 341,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crawdaunt_(Pokémon) | Source} */
-  CRAWDAUNT,
+  CRAWDAUNT = 342,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Baltoy_(Pokémon) | Source} */
-  BALTOY,
+  BALTOY = 343,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Claydol_(Pokémon) | Source} */
-  CLAYDOL,
+  CLAYDOL = 344,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lileep_(Pokémon) | Source} */
-  LILEEP,
+  LILEEP = 345,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cradily_(Pokémon) | Source} */
-  CRADILY,
+  CRADILY = 346,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Anorith_(Pokémon) | Source} */
-  ANORITH,
+  ANORITH = 347,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Armaldo_(Pokémon) | Source} */
-  ARMALDO,
+  ARMALDO = 348,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Feebas_(Pokémon) | Source} */
-  FEEBAS,
+  FEEBAS = 349,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Milotic_(Pokémon) | Source} */
-  MILOTIC,
+  MILOTIC = 350,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Castform_(Pokémon) | Source} */
-  CASTFORM,
+  CASTFORM = 351,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kecleon_(Pokémon) | Source} */
-  KECLEON,
+  KECLEON = 352,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shuppet_(Pokémon) | Source} */
-  SHUPPET,
+  SHUPPET = 353,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Banette_(Pokémon) | Source} */
-  BANETTE,
+  BANETTE = 354,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Duskull_(Pokémon) | Source} */
-  DUSKULL,
+  DUSKULL = 355,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dusclops_(Pokémon) | Source} */
-  DUSCLOPS,
+  DUSCLOPS = 356,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tropius_(Pokémon) | Source} */
-  TROPIUS,
+  TROPIUS = 357,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chimecho_(Pokémon) | Source} */
-  CHIMECHO,
+  CHIMECHO = 358,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Absol_(Pokémon) | Source} */
-  ABSOL,
+  ABSOL = 359,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wynaut_(Pokémon) | Source} */
-  WYNAUT,
+  WYNAUT = 360,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snorunt_(Pokémon) | Source} */
-  SNORUNT,
+  SNORUNT = 361,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glalie_(Pokémon) | Source} */
-  GLALIE,
+  GLALIE = 362,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spheal_(Pokémon) | Source} */
-  SPHEAL,
+  SPHEAL = 363,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sealeo_(Pokémon) | Source} */
-  SEALEO,
+  SEALEO = 364,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Walrein_(Pokémon) | Source} */
-  WALREIN,
+  WALREIN = 365,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clamperl_(Pokémon) | Source} */
-  CLAMPERL,
+  CLAMPERL = 366,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Huntail_(Pokémon) | Source} */
-  HUNTAIL,
+  HUNTAIL = 367,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gorebyss_(Pokémon) | Source} */
-  GOREBYSS,
+  GOREBYSS = 368,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Relicanth_(Pokémon) | Source} */
-  RELICANTH,
+  RELICANTH = 369,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Luvdisc_(Pokémon) | Source} */
-  LUVDISC,
+  LUVDISC = 370,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bagon_(Pokémon) | Source} */
-  BAGON,
+  BAGON = 371,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shelgon_(Pokémon) | Source} */
-  SHELGON,
+  SHELGON = 372,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Salamence_(Pokémon) | Source} */
-  SALAMENCE,
+  SALAMENCE = 373,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Beldum_(Pokémon) | Source} */
-  BELDUM,
+  BELDUM = 374,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Metang_(Pokémon) | Source} */
-  METANG,
+  METANG = 375,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Metagross_(Pokémon) | Source} */
-  METAGROSS,
+  METAGROSS = 376,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Regirock_(Pokémon) | Source} */
-  REGIROCK,
+  REGIROCK = 377,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Regice_(Pokémon) | Source} */
-  REGICE,
+  REGICE = 378,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Registeel_(Pokémon) | Source} */
-  REGISTEEL,
+  REGISTEEL = 379,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Latias_(Pokémon) | Source} */
-  LATIAS,
+  LATIAS = 380,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Latios_(Pokémon) | Source} */
-  LATIOS,
+  LATIOS = 381,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kyogre_(Pokémon) | Source} */
-  KYOGRE,
+  KYOGRE = 382,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Groudon_(Pokémon) | Source} */
-  GROUDON,
+  GROUDON = 383,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rayquaza_(Pokémon) | Source} */
-  RAYQUAZA,
+  RAYQUAZA = 384,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jirachi_(Pokémon) | Source} */
-  JIRACHI,
+  JIRACHI = 385,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Deoxys_(Pokémon) | Source} */
-  DEOXYS,
+  DEOXYS = 386,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Turtwig_(Pokémon) | Source} */
-  TURTWIG,
+  TURTWIG = 387,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grotle_(Pokémon) | Source} */
-  GROTLE,
+  GROTLE = 388,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Torterra_(Pokémon) | Source} */
-  TORTERRA,
+  TORTERRA = 389,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chimchar_(Pokémon) | Source} */
-  CHIMCHAR,
+  CHIMCHAR = 390,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Monferno_(Pokémon) | Source} */
-  MONFERNO,
+  MONFERNO = 391,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Infernape_(Pokémon) | Source} */
-  INFERNAPE,
+  INFERNAPE = 392,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Piplup_(Pokémon) | Source} */
-  PIPLUP,
+  PIPLUP = 393,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Prinplup_(Pokémon) | Source} */
-  PRINPLUP,
+  PRINPLUP = 394,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Empoleon_(Pokémon) | Source} */
-  EMPOLEON,
+  EMPOLEON = 395,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Starly_(Pokémon) | Source} */
-  STARLY,
+  STARLY = 396,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Staravia_(Pokémon) | Source} */
-  STARAVIA,
+  STARAVIA = 397,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Staraptor_(Pokémon) | Source} */
-  STARAPTOR,
+  STARAPTOR = 398,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bidoof_(Pokémon) | Source} */
-  BIDOOF,
+  BIDOOF = 399,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bibarel_(Pokémon) | Source} */
-  BIBAREL,
+  BIBAREL = 400,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kricketot_(Pokémon) | Source} */
-  KRICKETOT,
+  KRICKETOT = 401,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kricketune_(Pokémon) | Source} */
-  KRICKETUNE,
+  KRICKETUNE = 402,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shinx_(Pokémon) | Source} */
-  SHINX,
+  SHINX = 403,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Luxio_(Pokémon) | Source} */
-  LUXIO,
+  LUXIO = 404,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Luxray_(Pokémon) | Source} */
-  LUXRAY,
+  LUXRAY = 405,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Budew_(Pokémon) | Source} */
-  BUDEW,
+  BUDEW = 406,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Roserade_(Pokémon) | Source} */
-  ROSERADE,
+  ROSERADE = 407,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cranidos_(Pokémon) | Source} */
-  CRANIDOS,
+  CRANIDOS = 408,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rampardos_(Pokémon) | Source} */
-  RAMPARDOS,
+  RAMPARDOS = 409,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shieldon_(Pokémon) | Source} */
-  SHIELDON,
+  SHIELDON = 410,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bastiodon_(Pokémon) | Source} */
-  BASTIODON,
+  BASTIODON = 411,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Burmy_(Pokémon) | Source} */
-  BURMY,
+  BURMY = 412,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wormadam_(Pokémon) | Source} */
-  WORMADAM,
+  WORMADAM = 413,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mothim_(Pokémon) | Source} */
-  MOTHIM,
+  MOTHIM = 414,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Combee_(Pokémon) | Source} */
-  COMBEE,
+  COMBEE = 415,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vespiquen_(Pokémon) | Source} */
-  VESPIQUEN,
+  VESPIQUEN = 416,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pachirisu_(Pokémon) | Source} */
-  PACHIRISU,
+  PACHIRISU = 417,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Buizel_(Pokémon) | Source} */
-  BUIZEL,
+  BUIZEL = 418,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Floatzel_(Pokémon) | Source} */
-  FLOATZEL,
+  FLOATZEL = 419,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cherubi_(Pokémon) | Source} */
-  CHERUBI,
+  CHERUBI = 420,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cherrim_(Pokémon) | Source} */
-  CHERRIM,
+  CHERRIM = 421,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shellos_(Pokémon) | Source} */
-  SHELLOS,
+  SHELLOS = 422,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gastrodon_(Pokémon) | Source} */
-  GASTRODON,
+  GASTRODON = 423,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ambipom_(Pokémon) | Source} */
-  AMBIPOM,
+  AMBIPOM = 424,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drifloon_(Pokémon) | Source} */
-  DRIFLOON,
+  DRIFLOON = 425,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drifblim_(Pokémon) | Source} */
-  DRIFBLIM,
+  DRIFBLIM = 426,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Buneary_(Pokémon) | Source} */
-  BUNEARY,
+  BUNEARY = 427,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lopunny_(Pokémon) | Source} */
-  LOPUNNY,
+  LOPUNNY = 428,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mismagius_(Pokémon) | Source} */
-  MISMAGIUS,
+  MISMAGIUS = 429,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Honchkrow_(Pokémon) | Source} */
-  HONCHKROW,
+  HONCHKROW = 430,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glameow_(Pokémon) | Source} */
-  GLAMEOW,
+  GLAMEOW = 431,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Purugly_(Pokémon) | Source} */
-  PURUGLY,
+  PURUGLY = 432,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chingling_(Pokémon) | Source} */
-  CHINGLING,
+  CHINGLING = 433,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stunky_(Pokémon) | Source} */
-  STUNKY,
+  STUNKY = 434,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skuntank_(Pokémon) | Source} */
-  SKUNTANK,
+  SKUNTANK = 435,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bronzor_(Pokémon) | Source} */
-  BRONZOR,
+  BRONZOR = 436,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bronzong_(Pokémon) | Source} */
-  BRONZONG,
+  BRONZONG = 437,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bonsly_(Pokémon) | Source} */
-  BONSLY,
+  BONSLY = 438,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mime_Jr_(Pokémon) | Source} */
-  MIME_JR,
+  MIME_JR = 439,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Happiny_(Pokémon) | Source} */
-  HAPPINY,
+  HAPPINY = 440,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chatot_(Pokémon) | Source} */
-  CHATOT,
+  CHATOT = 441,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spiritomb_(Pokémon) | Source} */
-  SPIRITOMB,
+  SPIRITOMB = 442,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gible_(Pokémon) | Source} */
-  GIBLE,
+  GIBLE = 443,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gabite_(Pokémon) | Source} */
-  GABITE,
+  GABITE = 444,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Garchomp_(Pokémon) | Source} */
-  GARCHOMP,
+  GARCHOMP = 445,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Munchlax_(Pokémon) | Source} */
-  MUNCHLAX,
+  MUNCHLAX = 446,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Riolu_(Pokémon) | Source} */
-  RIOLU,
+  RIOLU = 447,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lucario_(Pokémon) | Source} */
-  LUCARIO,
+  LUCARIO = 448,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hippopotas_(Pokémon) | Source} */
-  HIPPOPOTAS,
+  HIPPOPOTAS = 449,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hippowdon_(Pokémon) | Source} */
-  HIPPOWDON,
+  HIPPOWDON = 450,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skorupi_(Pokémon) | Source} */
-  SKORUPI,
+  SKORUPI = 451,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drapion_(Pokémon) | Source} */
-  DRAPION,
+  DRAPION = 452,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Croagunk_(Pokémon) | Source} */
-  CROAGUNK,
+  CROAGUNK = 453,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toxicroak_(Pokémon) | Source} */
-  TOXICROAK,
+  TOXICROAK = 454,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Carnivine_(Pokémon) | Source} */
-  CARNIVINE,
+  CARNIVINE = 455,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Finneon_(Pokémon) | Source} */
-  FINNEON,
+  FINNEON = 456,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lumineon_(Pokémon) | Source} */
-  LUMINEON,
+  LUMINEON = 457,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mantyke_(Pokémon) | Source} */
-  MANTYKE,
+  MANTYKE = 458,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snover_(Pokémon) | Source} */
-  SNOVER,
+  SNOVER = 459,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Abomasnow_(Pokémon) | Source} */
-  ABOMASNOW,
+  ABOMASNOW = 460,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Weavile_(Pokémon) | Source} */
-  WEAVILE,
+  WEAVILE = 461,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magnezone_(Pokémon) | Source} */
-  MAGNEZONE,
+  MAGNEZONE = 462,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lickilicky_(Pokémon) | Source} */
-  LICKILICKY,
+  LICKILICKY = 463,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rhyperior_(Pokémon) | Source} */
-  RHYPERIOR,
+  RHYPERIOR = 464,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tangrowth_(Pokémon) | Source} */
-  TANGROWTH,
+  TANGROWTH = 465,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Electivire_(Pokémon) | Source} */
-  ELECTIVIRE,
+  ELECTIVIRE = 466,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magmortar_(Pokémon) | Source} */
-  MAGMORTAR,
+  MAGMORTAR = 467,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Togekiss_(Pokémon) | Source} */
-  TOGEKISS,
+  TOGEKISS = 468,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Yanmega_(Pokémon) | Source} */
-  YANMEGA,
+  YANMEGA = 469,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leafeon_(Pokémon) | Source} */
-  LEAFEON,
+  LEAFEON = 470,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glaceon_(Pokémon) | Source} */
-  GLACEON,
+  GLACEON = 471,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gliscor_(Pokémon) | Source} */
-  GLISCOR,
+  GLISCOR = 472,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mamoswine_(Pokémon) | Source} */
-  MAMOSWINE,
+  MAMOSWINE = 473,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Porygon_Z_(Pokémon) | Source} */
-  PORYGON_Z,
+  PORYGON_Z = 474,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gallade_(Pokémon) | Source} */
-  GALLADE,
+  GALLADE = 475,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Probopass_(Pokémon) | Source} */
-  PROBOPASS,
+  PROBOPASS = 476,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dusknoir_(Pokémon) | Source} */
-  DUSKNOIR,
+  DUSKNOIR = 477,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Froslass_(Pokémon) | Source} */
-  FROSLASS,
+  FROSLASS = 478,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rotom_(Pokémon) | Source} */
-  ROTOM,
+  ROTOM = 479,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Uxie_(Pokémon) | Source} */
-  UXIE,
+  UXIE = 480,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mesprit_(Pokémon) | Source} */
-  MESPRIT,
+  MESPRIT = 481,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Azelf_(Pokémon) | Source} */
-  AZELF,
+  AZELF = 482,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dialga_(Pokémon) | Source} */
-  DIALGA,
+  DIALGA = 483,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Palkia_(Pokémon) | Source} */
-  PALKIA,
+  PALKIA = 484,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heatran_(Pokémon) | Source} */
-  HEATRAN,
+  HEATRAN = 485,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Regigigas_(Pokémon) | Source} */
-  REGIGIGAS,
+  REGIGIGAS = 486,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Giratina_(Pokémon) | Source} */
-  GIRATINA,
+  GIRATINA = 487,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cresselia_(Pokémon) | Source} */
-  CRESSELIA,
+  CRESSELIA = 488,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Phione_(Pokémon) | Source} */
-  PHIONE,
+  PHIONE = 489,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Manaphy_(Pokémon) | Source} */
-  MANAPHY,
+  MANAPHY = 490,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Darkrai_(Pokémon) | Source} */
-  DARKRAI,
+  DARKRAI = 491,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shaymin_(Pokémon) | Source} */
-  SHAYMIN,
+  SHAYMIN = 492,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arceus_(Pokémon) | Source} */
-  ARCEUS,
+  ARCEUS = 493,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Victini_(Pokémon) | Source} */
-  VICTINI,
+  VICTINI = 494,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snivy_(Pokémon) | Source} */
-  SNIVY,
+  SNIVY = 495,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Servine_(Pokémon) | Source} */
-  SERVINE,
+  SERVINE = 496,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Serperior_(Pokémon) | Source} */
-  SERPERIOR,
+  SERPERIOR = 497,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tepig_(Pokémon) | Source} */
-  TEPIG,
+  TEPIG = 498,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pignite_(Pokémon) | Source} */
-  PIGNITE,
+  PIGNITE = 499,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Emboar_(Pokémon) | Source} */
-  EMBOAR,
+  EMBOAR = 500,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Oshawott_(Pokémon) | Source} */
-  OSHAWOTT,
+  OSHAWOTT = 501,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dewott_(Pokémon) | Source} */
-  DEWOTT,
+  DEWOTT = 502,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Samurott_(Pokémon) | Source} */
-  SAMUROTT,
+  SAMUROTT = 503,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Patrat_(Pokémon) | Source} */
-  PATRAT,
+  PATRAT = 504,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Watchog_(Pokémon) | Source} */
-  WATCHOG,
+  WATCHOG = 505,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lillipup_(Pokémon) | Source} */
-  LILLIPUP,
+  LILLIPUP = 506,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Herdier_(Pokémon) | Source} */
-  HERDIER,
+  HERDIER = 507,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stoutland_(Pokémon) | Source} */
-  STOUTLAND,
+  STOUTLAND = 508,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Purrloin_(Pokémon) | Source} */
-  PURRLOIN,
+  PURRLOIN = 509,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Liepard_(Pokémon) | Source} */
-  LIEPARD,
+  LIEPARD = 510,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pansage_(Pokémon) | Source} */
-  PANSAGE,
+  PANSAGE = 511,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Simisage_(Pokémon) | Source} */
-  SIMISAGE,
+  SIMISAGE = 512,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pansear_(Pokémon) | Source} */
-  PANSEAR,
+  PANSEAR = 513,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Simisear_(Pokémon) | Source} */
-  SIMISEAR,
+  SIMISEAR = 514,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Panpour_(Pokémon) | Source} */
-  PANPOUR,
+  PANPOUR = 515,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Simipour_(Pokémon) | Source} */
-  SIMIPOUR,
+  SIMIPOUR = 516,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Munna_(Pokémon) | Source} */
-  MUNNA,
+  MUNNA = 517,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Musharna_(Pokémon) | Source} */
-  MUSHARNA,
+  MUSHARNA = 518,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pidove_(Pokémon) | Source} */
-  PIDOVE,
+  PIDOVE = 519,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tranquill_(Pokémon) | Source} */
-  TRANQUILL,
+  TRANQUILL = 520,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Unfezant_(Pokémon) | Source} */
-  UNFEZANT,
+  UNFEZANT = 521,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blitzle_(Pokémon) | Source} */
-  BLITZLE,
+  BLITZLE = 522,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zebstrika_(Pokémon) | Source} */
-  ZEBSTRIKA,
+  ZEBSTRIKA = 523,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Roggenrola_(Pokémon) | Source} */
-  ROGGENROLA,
+  ROGGENROLA = 524,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Boldore_(Pokémon) | Source} */
-  BOLDORE,
+  BOLDORE = 525,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gigalith_(Pokémon) | Source} */
-  GIGALITH,
+  GIGALITH = 526,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Woobat_(Pokémon) | Source} */
-  WOOBAT,
+  WOOBAT = 527,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swoobat_(Pokémon) | Source} */
-  SWOOBAT,
+  SWOOBAT = 528,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drilbur_(Pokémon) | Source} */
-  DRILBUR,
+  DRILBUR = 529,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Excadrill_(Pokémon) | Source} */
-  EXCADRILL,
+  EXCADRILL = 530,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Audino_(Pokémon) | Source} */
-  AUDINO,
+  AUDINO = 531,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Timburr_(Pokémon) | Source} */
-  TIMBURR,
+  TIMBURR = 532,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gurdurr_(Pokémon) | Source} */
-  GURDURR,
+  GURDURR = 533,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Conkeldurr_(Pokémon) | Source} */
-  CONKELDURR,
+  CONKELDURR = 534,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tympole_(Pokémon) | Source} */
-  TYMPOLE,
+  TYMPOLE = 535,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Palpitoad_(Pokémon) | Source} */
-  PALPITOAD,
+  PALPITOAD = 536,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Seismitoad_(Pokémon) | Source} */
-  SEISMITOAD,
+  SEISMITOAD = 537,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Throh_(Pokémon) | Source} */
-  THROH,
+  THROH = 538,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sawk_(Pokémon) | Source} */
-  SAWK,
+  SAWK = 539,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sewaddle_(Pokémon) | Source} */
-  SEWADDLE,
+  SEWADDLE = 540,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swadloon_(Pokémon) | Source} */
-  SWADLOON,
+  SWADLOON = 541,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Leavanny_(Pokémon) | Source} */
-  LEAVANNY,
+  LEAVANNY = 542,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Venipede_(Pokémon) | Source} */
-  VENIPEDE,
+  VENIPEDE = 543,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Whirlipede_(Pokémon) | Source} */
-  WHIRLIPEDE,
+  WHIRLIPEDE = 544,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scolipede_(Pokémon) | Source} */
-  SCOLIPEDE,
+  SCOLIPEDE = 545,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cottonee_(Pokémon) | Source} */
-  COTTONEE,
+  COTTONEE = 546,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Whimsicott_(Pokémon) | Source} */
-  WHIMSICOTT,
+  WHIMSICOTT = 547,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Petilil_(Pokémon) | Source} */
-  PETILIL,
+  PETILIL = 548,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lilligant_(Pokémon) | Source} */
-  LILLIGANT,
+  LILLIGANT = 549,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Basculin_(Pokémon) | Source} */
-  BASCULIN,
+  BASCULIN = 550,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandile_(Pokémon) | Source} */
-  SANDILE,
+  SANDILE = 551,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Krokorok_(Pokémon) | Source} */
-  KROKOROK,
+  KROKOROK = 552,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Krookodile_(Pokémon) | Source} */
-  KROOKODILE,
+  KROOKODILE = 553,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Darumaka_(Pokémon) | Source} */
-  DARUMAKA,
+  DARUMAKA = 554,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Darmanitan_(Pokémon) | Source} */
-  DARMANITAN,
+  DARMANITAN = 555,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Maractus_(Pokémon) | Source} */
-  MARACTUS,
+  MARACTUS = 556,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dwebble_(Pokémon) | Source} */
-  DWEBBLE,
+  DWEBBLE = 557,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crustle_(Pokémon) | Source} */
-  CRUSTLE,
+  CRUSTLE = 558,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scraggy_(Pokémon) | Source} */
-  SCRAGGY,
+  SCRAGGY = 559,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scrafty_(Pokémon) | Source} */
-  SCRAFTY,
+  SCRAFTY = 560,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sigilyph_(Pokémon) | Source} */
-  SIGILYPH,
+  SIGILYPH = 561,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Yamask_(Pokémon) | Source} */
-  YAMASK,
+  YAMASK = 562,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cofagrigus_(Pokémon) | Source} */
-  COFAGRIGUS,
+  COFAGRIGUS = 563,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tirtouga_(Pokémon) | Source} */
-  TIRTOUGA,
+  TIRTOUGA = 564,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Carracosta_(Pokémon) | Source} */
-  CARRACOSTA,
+  CARRACOSTA = 565,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Archen_(Pokémon) | Source} */
-  ARCHEN,
+  ARCHEN = 566,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Archeops_(Pokémon) | Source} */
-  ARCHEOPS,
+  ARCHEOPS = 567,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trubbish_(Pokémon) | Source} */
-  TRUBBISH,
+  TRUBBISH = 568,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Garbodor_(Pokémon) | Source} */
-  GARBODOR,
+  GARBODOR = 569,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zorua_(Pokémon) | Source} */
-  ZORUA,
+  ZORUA = 570,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zoroark_(Pokémon) | Source} */
-  ZOROARK,
+  ZOROARK = 571,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Minccino_(Pokémon) | Source} */
-  MINCCINO,
+  MINCCINO = 572,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cinccino_(Pokémon) | Source} */
-  CINCCINO,
+  CINCCINO = 573,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gothita_(Pokémon) | Source} */
-  GOTHITA,
+  GOTHITA = 574,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gothorita_(Pokémon) | Source} */
-  GOTHORITA,
+  GOTHORITA = 575,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gothitelle_(Pokémon) | Source} */
-  GOTHITELLE,
+  GOTHITELLE = 576,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Solosis_(Pokémon) | Source} */
-  SOLOSIS,
+  SOLOSIS = 577,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Duosion_(Pokémon) | Source} */
-  DUOSION,
+  DUOSION = 578,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Reuniclus_(Pokémon) | Source} */
-  REUNICLUS,
+  REUNICLUS = 579,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ducklett_(Pokémon) | Source} */
-  DUCKLETT,
+  DUCKLETT = 580,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swanna_(Pokémon) | Source} */
-  SWANNA,
+  SWANNA = 581,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vanillite_(Pokémon) | Source} */
-  VANILLITE,
+  VANILLITE = 582,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vanillish_(Pokémon) | Source} */
-  VANILLISH,
+  VANILLISH = 583,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vanilluxe_(Pokémon) | Source} */
-  VANILLUXE,
+  VANILLUXE = 584,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Deerling_(Pokémon) | Source} */
-  DEERLING,
+  DEERLING = 585,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sawsbuck_(Pokémon) | Source} */
-  SAWSBUCK,
+  SAWSBUCK = 586,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Emolga_(Pokémon) | Source} */
-  EMOLGA,
+  EMOLGA = 587,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Karrablast_(Pokémon) | Source} */
-  KARRABLAST,
+  KARRABLAST = 588,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Escavalier_(Pokémon) | Source} */
-  ESCAVALIER,
+  ESCAVALIER = 589,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Foongus_(Pokémon) | Source} */
-  FOONGUS,
+  FOONGUS = 590,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Amoonguss_(Pokémon) | Source} */
-  AMOONGUSS,
+  AMOONGUSS = 591,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Frillish_(Pokémon) | Source} */
-  FRILLISH,
+  FRILLISH = 592,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jellicent_(Pokémon) | Source} */
-  JELLICENT,
+  JELLICENT = 593,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Alomomola_(Pokémon) | Source} */
-  ALOMOMOLA,
+  ALOMOMOLA = 594,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Joltik_(Pokémon) | Source} */
-  JOLTIK,
+  JOLTIK = 595,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Galvantula_(Pokémon) | Source} */
-  GALVANTULA,
+  GALVANTULA = 596,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ferroseed_(Pokémon) | Source} */
-  FERROSEED,
+  FERROSEED = 597,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ferrothorn_(Pokémon) | Source} */
-  FERROTHORN,
+  FERROTHORN = 598,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Klink_(Pokémon) | Source} */
-  KLINK,
+  KLINK = 599,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Klang_(Pokémon) | Source} */
-  KLANG,
+  KLANG = 600,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Klinklang_(Pokémon) | Source} */
-  KLINKLANG,
+  KLINKLANG = 601,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tynamo_(Pokémon) | Source} */
-  TYNAMO,
+  TYNAMO = 602,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eelektrik_(Pokémon) | Source} */
-  EELEKTRIK,
+  EELEKTRIK = 603,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eelektross_(Pokémon) | Source} */
-  EELEKTROSS,
+  EELEKTROSS = 604,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Elgyem_(Pokémon) | Source} */
-  ELGYEM,
+  ELGYEM = 605,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Beheeyem_(Pokémon) | Source} */
-  BEHEEYEM,
+  BEHEEYEM = 606,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Litwick_(Pokémon) | Source} */
-  LITWICK,
+  LITWICK = 607,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lampent_(Pokémon) | Source} */
-  LAMPENT,
+  LAMPENT = 608,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chandelure_(Pokémon) | Source} */
-  CHANDELURE,
+  CHANDELURE = 609,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Axew_(Pokémon) | Source} */
-  AXEW,
+  AXEW = 610,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fraxure_(Pokémon) | Source} */
-  FRAXURE,
+  FRAXURE = 611,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Haxorus_(Pokémon) | Source} */
-  HAXORUS,
+  HAXORUS = 612,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cubchoo_(Pokémon) | Source} */
-  CUBCHOO,
+  CUBCHOO = 613,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Beartic_(Pokémon) | Source} */
-  BEARTIC,
+  BEARTIC = 614,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cryogonal_(Pokémon) | Source} */
-  CRYOGONAL,
+  CRYOGONAL = 615,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shelmet_(Pokémon) | Source} */
-  SHELMET,
+  SHELMET = 616,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Accelgor_(Pokémon) | Source} */
-  ACCELGOR,
+  ACCELGOR = 617,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stunfisk_(Pokémon) | Source} */
-  STUNFISK,
+  STUNFISK = 618,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mienfoo_(Pokémon) | Source} */
-  MIENFOO,
+  MIENFOO = 619,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mienshao_(Pokémon) | Source} */
-  MIENSHAO,
+  MIENSHAO = 620,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Druddigon_(Pokémon) | Source} */
-  DRUDDIGON,
+  DRUDDIGON = 621,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Golett_(Pokémon) | Source} */
-  GOLETT,
+  GOLETT = 622,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Golurk_(Pokémon) | Source} */
-  GOLURK,
+  GOLURK = 623,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pawniard_(Pokémon) | Source} */
-  PAWNIARD,
+  PAWNIARD = 624,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bisharp_(Pokémon) | Source} */
-  BISHARP,
+  BISHARP = 625,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bouffalant_(Pokémon) | Source} */
-  BOUFFALANT,
+  BOUFFALANT = 626,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rufflet_(Pokémon) | Source} */
-  RUFFLET,
+  RUFFLET = 627,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Braviary_(Pokémon) | Source} */
-  BRAVIARY,
+  BRAVIARY = 628,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vullaby_(Pokémon) | Source} */
-  VULLABY,
+  VULLABY = 629,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mandibuzz_(Pokémon) | Source} */
-  MANDIBUZZ,
+  MANDIBUZZ = 630,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heatmor_(Pokémon) | Source} */
-  HEATMOR,
+  HEATMOR = 631,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Durant_(Pokémon) | Source} */
-  DURANT,
+  DURANT = 632,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Deino_(Pokémon) | Source} */
-  DEINO,
+  DEINO = 633,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zweilous_(Pokémon) | Source} */
-  ZWEILOUS,
+  ZWEILOUS = 634,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hydreigon_(Pokémon) | Source} */
-  HYDREIGON,
+  HYDREIGON = 635,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Larvesta_(Pokémon) | Source} */
-  LARVESTA,
+  LARVESTA = 636,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Volcarona_(Pokémon) | Source} */
-  VOLCARONA,
+  VOLCARONA = 637,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cobalion_(Pokémon) | Source} */
-  COBALION,
+  COBALION = 638,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Terrakion_(Pokémon) | Source} */
-  TERRAKION,
+  TERRAKION = 639,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Virizion_(Pokémon) | Source} */
-  VIRIZION,
+  VIRIZION = 640,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tornadus_(Pokémon) | Source} */
-  TORNADUS,
+  TORNADUS = 641,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thundurus_(Pokémon) | Source} */
-  THUNDURUS,
+  THUNDURUS = 642,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Reshiram_(Pokémon) | Source} */
-  RESHIRAM,
+  RESHIRAM = 643,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zekrom_(Pokémon) | Source} */
-  ZEKROM,
+  ZEKROM = 644,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Landorus_(Pokémon) | Source} */
-  LANDORUS,
+  LANDORUS = 645,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kyurem_(Pokémon) | Source} */
-  KYUREM,
+  KYUREM = 646,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Keldeo_(Pokémon) | Source} */
-  KELDEO,
+  KELDEO = 647,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meloetta_(Pokémon) | Source} */
-  MELOETTA,
+  MELOETTA = 648,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Genesect_(Pokémon) | Source} */
-  GENESECT,
+  GENESECT = 649,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chespin_(Pokémon) | Source} */
-  CHESPIN,
+  CHESPIN = 650,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quilladin_(Pokémon) | Source} */
-  QUILLADIN,
+  QUILLADIN = 651,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chesnaught_(Pokémon) | Source} */
-  CHESNAUGHT,
+  CHESNAUGHT = 652,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fennekin_(Pokémon) | Source} */
-  FENNEKIN,
+  FENNEKIN = 653,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Braixen_(Pokémon) | Source} */
-  BRAIXEN,
+  BRAIXEN = 654,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Delphox_(Pokémon) | Source} */
-  DELPHOX,
+  DELPHOX = 655,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Froakie_(Pokémon) | Source} */
-  FROAKIE,
+  FROAKIE = 656,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Frogadier_(Pokémon) | Source} */
-  FROGADIER,
+  FROGADIER = 657,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Greninja_(Pokémon) | Source} */
-  GRENINJA,
+  GRENINJA = 658,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bunnelby_(Pokémon) | Source} */
-  BUNNELBY,
+  BUNNELBY = 659,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Diggersby_(Pokémon) | Source} */
-  DIGGERSBY,
+  DIGGERSBY = 660,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fletchling_(Pokémon) | Source} */
-  FLETCHLING,
+  FLETCHLING = 661,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fletchinder_(Pokémon) | Source} */
-  FLETCHINDER,
+  FLETCHINDER = 662,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Talonflame_(Pokémon) | Source} */
-  TALONFLAME,
+  TALONFLAME = 663,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scatterbug_(Pokémon) | Source} */
-  SCATTERBUG,
+  SCATTERBUG = 664,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spewpa_(Pokémon) | Source} */
-  SPEWPA,
+  SPEWPA = 665,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vivillon_(Pokémon) | Source} */
-  VIVILLON,
+  VIVILLON = 666,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Litleo_(Pokémon) | Source} */
-  LITLEO,
+  LITLEO = 667,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pyroar_(Pokémon) | Source} */
-  PYROAR,
+  PYROAR = 668,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flabebe_(Pokémon) | Source} */
-  FLABEBE,
+  FLABEBE = 669,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Floette_(Pokémon) | Source} */
-  FLOETTE,
+  FLOETTE = 670,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Florges_(Pokémon) | Source} */
-  FLORGES,
+  FLORGES = 671,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skiddo_(Pokémon) | Source} */
-  SKIDDO,
+  SKIDDO = 672,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gogoat_(Pokémon) | Source} */
-  GOGOAT,
+  GOGOAT = 673,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pancham_(Pokémon) | Source} */
-  PANCHAM,
+  PANCHAM = 674,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pangoro_(Pokémon) | Source} */
-  PANGORO,
+  PANGORO = 675,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Furfrou_(Pokémon) | Source} */
-  FURFROU,
+  FURFROU = 676,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Espurr_(Pokémon) | Source} */
-  ESPURR,
+  ESPURR = 677,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meowstic_(Pokémon) | Source} */
-  MEOWSTIC,
+  MEOWSTIC = 678,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Honedge_(Pokémon) | Source} */
-  HONEDGE,
+  HONEDGE = 679,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Doublade_(Pokémon) | Source} */
-  DOUBLADE,
+  DOUBLADE = 680,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aegislash_(Pokémon) | Source} */
-  AEGISLASH,
+  AEGISLASH = 681,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spritzee_(Pokémon) | Source} */
-  SPRITZEE,
+  SPRITZEE = 682,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aromatisse_(Pokémon) | Source} */
-  AROMATISSE,
+  AROMATISSE = 683,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Swirlix_(Pokémon) | Source} */
-  SWIRLIX,
+  SWIRLIX = 684,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slurpuff_(Pokémon) | Source} */
-  SLURPUFF,
+  SLURPUFF = 685,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Inkay_(Pokémon) | Source} */
-  INKAY,
+  INKAY = 686,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malamar_(Pokémon) | Source} */
-  MALAMAR,
+  MALAMAR = 687,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Binacle_(Pokémon) | Source} */
-  BINACLE,
+  BINACLE = 688,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Barbaracle_(Pokémon) | Source} */
-  BARBARACLE,
+  BARBARACLE = 689,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skrelp_(Pokémon) | Source} */
-  SKRELP,
+  SKRELP = 690,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragalge_(Pokémon) | Source} */
-  DRAGALGE,
+  DRAGALGE = 691,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clauncher_(Pokémon) | Source} */
-  CLAUNCHER,
+  CLAUNCHER = 692,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clawitzer_(Pokémon) | Source} */
-  CLAWITZER,
+  CLAWITZER = 693,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Helioptile_(Pokémon) | Source} */
-  HELIOPTILE,
+  HELIOPTILE = 694,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Heliolisk_(Pokémon) | Source} */
-  HELIOLISK,
+  HELIOLISK = 695,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tyrunt_(Pokémon) | Source} */
-  TYRUNT,
+  TYRUNT = 696,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tyrantrum_(Pokémon) | Source} */
-  TYRANTRUM,
+  TYRANTRUM = 697,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Amaura_(Pokémon) | Source} */
-  AMAURA,
+  AMAURA = 698,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Aurorus_(Pokémon) | Source} */
-  AURORUS,
+  AURORUS = 699,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sylveon_(Pokémon) | Source} */
-  SYLVEON,
+  SYLVEON = 700,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hawlucha_(Pokémon) | Source} */
-  HAWLUCHA,
+  HAWLUCHA = 701,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dedenne_(Pokémon) | Source} */
-  DEDENNE,
+  DEDENNE = 702,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Carbink_(Pokémon) | Source} */
-  CARBINK,
+  CARBINK = 703,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Goomy_(Pokémon) | Source} */
-  GOOMY,
+  GOOMY = 704,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sliggoo_(Pokémon) | Source} */
-  SLIGGOO,
+  SLIGGOO = 705,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Goodra_(Pokémon) | Source} */
-  GOODRA,
+  GOODRA = 706,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Klefki_(Pokémon) | Source} */
-  KLEFKI,
+  KLEFKI = 707,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Phantump_(Pokémon) | Source} */
-  PHANTUMP,
+  PHANTUMP = 708,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trevenant_(Pokémon) | Source} */
-  TREVENANT,
+  TREVENANT = 709,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pumpkaboo_(Pokémon) | Source} */
-  PUMPKABOO,
+  PUMPKABOO = 710,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gourgeist_(Pokémon) | Source} */
-  GOURGEIST,
+  GOURGEIST = 711,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bergmite_(Pokémon) | Source} */
-  BERGMITE,
+  BERGMITE = 712,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Avalugg_(Pokémon) | Source} */
-  AVALUGG,
+  AVALUGG = 713,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Noibat_(Pokémon) | Source} */
-  NOIBAT,
+  NOIBAT = 714,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Noivern_(Pokémon) | Source} */
-  NOIVERN,
+  NOIVERN = 715,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Xerneas_(Pokémon) | Source} */
-  XERNEAS,
+  XERNEAS = 716,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Yveltal_(Pokémon) | Source} */
-  YVELTAL,
+  YVELTAL = 717,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zygarde_(Pokémon) | Source} */
-  ZYGARDE,
+  ZYGARDE = 718,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Diancie_(Pokémon) | Source} */
-  DIANCIE,
+  DIANCIE = 719,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hoopa_(Pokémon) | Source} */
-  HOOPA,
+  HOOPA = 720,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Volcanion_(Pokémon) | Source} */
-  VOLCANION,
+  VOLCANION = 721,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rowlet_(Pokémon) | Source} */
-  ROWLET,
+  ROWLET = 722,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dartrix_(Pokémon) | Source} */
-  DARTRIX,
+  DARTRIX = 723,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Decidueye_(Pokémon) | Source} */
-  DECIDUEYE,
+  DECIDUEYE = 724,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Litten_(Pokémon) | Source} */
-  LITTEN,
+  LITTEN = 725,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Torracat_(Pokémon) | Source} */
-  TORRACAT,
+  TORRACAT = 726,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Incineroar_(Pokémon) | Source} */
-  INCINEROAR,
+  INCINEROAR = 727,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Popplio_(Pokémon) | Source} */
-  POPPLIO,
+  POPPLIO = 728,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Brionne_(Pokémon) | Source} */
-  BRIONNE,
+  BRIONNE = 729,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Primarina_(Pokémon) | Source} */
-  PRIMARINA,
+  PRIMARINA = 730,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pikipek_(Pokémon) | Source} */
-  PIKIPEK,
+  PIKIPEK = 731,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Trumbeak_(Pokémon) | Source} */
-  TRUMBEAK,
+  TRUMBEAK = 732,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toucannon_(Pokémon) | Source} */
-  TOUCANNON,
+  TOUCANNON = 733,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Yungoos_(Pokémon) | Source} */
-  YUNGOOS,
+  YUNGOOS = 734,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gumshoos_(Pokémon) | Source} */
-  GUMSHOOS,
+  GUMSHOOS = 735,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grubbin_(Pokémon) | Source} */
-  GRUBBIN,
+  GRUBBIN = 736,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charjabug_(Pokémon) | Source} */
-  CHARJABUG,
+  CHARJABUG = 737,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Vikavolt_(Pokémon) | Source} */
-  VIKAVOLT,
+  VIKAVOLT = 738,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crabrawler_(Pokémon) | Source} */
-  CRABRAWLER,
+  CRABRAWLER = 739,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crabominable_(Pokémon) | Source} */
-  CRABOMINABLE,
+  CRABOMINABLE = 740,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Oricorio_(Pokémon) | Source} */
-  ORICORIO,
+  ORICORIO = 741,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cutiefly_(Pokémon) | Source} */
-  CUTIEFLY,
+  CUTIEFLY = 742,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ribombee_(Pokémon) | Source} */
-  RIBOMBEE,
+  RIBOMBEE = 743,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rockruff_(Pokémon) | Source} */
-  ROCKRUFF,
+  ROCKRUFF = 744,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lycanroc_(Pokémon) | Source} */
-  LYCANROC,
+  LYCANROC = 745,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wishiwashi_(Pokémon) | Source} */
-  WISHIWASHI,
+  WISHIWASHI = 746,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mareanie_(Pokémon) | Source} */
-  MAREANIE,
+  MAREANIE = 747,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toxapex_(Pokémon) | Source} */
-  TOXAPEX,
+  TOXAPEX = 748,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mudbray_(Pokémon) | Source} */
-  MUDBRAY,
+  MUDBRAY = 749,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mudsdale_(Pokémon) | Source} */
-  MUDSDALE,
+  MUDSDALE = 750,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dewpider_(Pokémon) | Source} */
-  DEWPIDER,
+  DEWPIDER = 751,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Araquanid_(Pokémon) | Source} */
-  ARAQUANID,
+  ARAQUANID = 752,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fomantis_(Pokémon) | Source} */
-  FOMANTIS,
+  FOMANTIS = 753,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lurantis_(Pokémon) | Source} */
-  LURANTIS,
+  LURANTIS = 754,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Morelull_(Pokémon) | Source} */
-  MORELULL,
+  MORELULL = 755,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shiinotic_(Pokémon) | Source} */
-  SHIINOTIC,
+  SHIINOTIC = 756,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Salandit_(Pokémon) | Source} */
-  SALANDIT,
+  SALANDIT = 757,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Salazzle_(Pokémon) | Source} */
-  SALAZZLE,
+  SALAZZLE = 758,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stufful_(Pokémon) | Source} */
-  STUFFUL,
+  STUFFUL = 759,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bewear_(Pokémon) | Source} */
-  BEWEAR,
+  BEWEAR = 760,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bounsweet_(Pokémon) | Source} */
-  BOUNSWEET,
+  BOUNSWEET = 761,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Steenee_(Pokémon) | Source} */
-  STEENEE,
+  STEENEE = 762,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tsareena_(Pokémon) | Source} */
-  TSAREENA,
+  TSAREENA = 763,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Comfey_(Pokémon) | Source} */
-  COMFEY,
+  COMFEY = 764,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Oranguru_(Pokémon) | Source} */
-  ORANGURU,
+  ORANGURU = 765,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Passimian_(Pokémon) | Source} */
-  PASSIMIAN,
+  PASSIMIAN = 766,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wimpod_(Pokémon) | Source} */
-  WIMPOD,
+  WIMPOD = 767,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Golisopod_(Pokémon) | Source} */
-  GOLISOPOD,
+  GOLISOPOD = 768,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandygast_(Pokémon) | Source} */
-  SANDYGAST,
+  SANDYGAST = 769,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Palossand_(Pokémon) | Source} */
-  PALOSSAND,
+  PALOSSAND = 770,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pyukumuku_(Pokémon) | Source} */
-  PYUKUMUKU,
+  PYUKUMUKU = 771,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Type_Null_(Pokémon) | Source} */
-  TYPE_NULL,
+  TYPE_NULL = 772,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Silvally_(Pokémon) | Source} */
-  SILVALLY,
+  SILVALLY = 773,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Minior_(Pokémon) | Source} */
-  MINIOR,
+  MINIOR = 774,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Komala_(Pokémon) | Source} */
-  KOMALA,
+  KOMALA = 775,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Turtonator_(Pokémon) | Source} */
-  TURTONATOR,
+  TURTONATOR = 776,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Togedemaru_(Pokémon) | Source} */
-  TOGEDEMARU,
+  TOGEDEMARU = 777,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mimikyu_(Pokémon) | Source} */
-  MIMIKYU,
+  MIMIKYU = 778,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bruxish_(Pokémon) | Source} */
-  BRUXISH,
+  BRUXISH = 779,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drampa_(Pokémon) | Source} */
-  DRAMPA,
+  DRAMPA = 780,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dhelmise_(Pokémon) | Source} */
-  DHELMISE,
+  DHELMISE = 781,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Jangmo_O_(Pokémon) | Source} */
-  JANGMO_O,
+  JANGMO_O = 782,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hakamo_O_(Pokémon) | Source} */
-  HAKAMO_O,
+  HAKAMO_O = 783,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kommo_O_(Pokémon) | Source} */
-  KOMMO_O,
+  KOMMO_O = 784,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tapu_Koko_(Pokémon) | Source} */
-  TAPU_KOKO,
+  TAPU_KOKO = 785,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tapu_Lele_(Pokémon) | Source} */
-  TAPU_LELE,
+  TAPU_LELE = 786,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tapu_Bulu_(Pokémon) | Source} */
-  TAPU_BULU,
+  TAPU_BULU = 787,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tapu_Fini_(Pokémon) | Source} */
-  TAPU_FINI,
+  TAPU_FINI = 788,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cosmog_(Pokémon) | Source} */
-  COSMOG,
+  COSMOG = 789,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cosmoem_(Pokémon) | Source} */
-  COSMOEM,
+  COSMOEM = 790,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Solgaleo_(Pokémon) | Source} */
-  SOLGALEO,
+  SOLGALEO = 791,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lunala_(Pokémon) | Source} */
-  LUNALA,
+  LUNALA = 792,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nihilego_(Pokémon) | Source} */
-  NIHILEGO,
+  NIHILEGO = 793,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Buzzwole_(Pokémon) | Source} */
-  BUZZWOLE,
+  BUZZWOLE = 794,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pheromosa_(Pokémon) | Source} */
-  PHEROMOSA,
+  PHEROMOSA = 795,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Xurkitree_(Pokémon) | Source} */
-  XURKITREE,
+  XURKITREE = 796,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Celesteela_(Pokémon) | Source} */
-  CELESTEELA,
+  CELESTEELA = 797,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kartana_(Pokémon) | Source} */
-  KARTANA,
+  KARTANA = 798,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Guzzlord_(Pokémon) | Source} */
-  GUZZLORD,
+  GUZZLORD = 799,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Necrozma_(Pokémon) | Source} */
-  NECROZMA,
+  NECROZMA = 800,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Magearna_(Pokémon) | Source} */
-  MAGEARNA,
+  MAGEARNA = 801,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Marshadow_(Pokémon) | Source} */
-  MARSHADOW,
+  MARSHADOW = 802,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poipole_(Pokémon) | Source} */
-  POIPOLE,
+  POIPOLE = 803,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Naganadel_(Pokémon) | Source} */
-  NAGANADEL,
+  NAGANADEL = 804,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stakataka_(Pokémon) | Source} */
-  STAKATAKA,
+  STAKATAKA = 805,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blacephalon_(Pokémon) | Source} */
-  BLACEPHALON,
+  BLACEPHALON = 806,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zeraora_(Pokémon) | Source} */
-  ZERAORA,
+  ZERAORA = 807,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meltan_(Pokémon) | Source} */
-  MELTAN,
+  MELTAN = 808,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Melmetal_(Pokémon) | Source} */
-  MELMETAL,
+  MELMETAL = 809,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grookey_(Pokémon) | Source} */
-  GROOKEY,
+  GROOKEY = 810,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thwackey_(Pokémon) | Source} */
-  THWACKEY,
+  THWACKEY = 811,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rillaboom_(Pokémon) | Source} */
-  RILLABOOM,
+  RILLABOOM = 812,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scorbunny_(Pokémon) | Source} */
-  SCORBUNNY,
+  SCORBUNNY = 813,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raboot_(Pokémon) | Source} */
-  RABOOT,
+  RABOOT = 814,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cinderace_(Pokémon) | Source} */
-  CINDERACE,
+  CINDERACE = 815,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sobble_(Pokémon) | Source} */
-  SOBBLE,
+  SOBBLE = 816,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drizzile_(Pokémon) | Source} */
-  DRIZZILE,
+  DRIZZILE = 817,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Inteleon_(Pokémon) | Source} */
-  INTELEON,
+  INTELEON = 818,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skwovet_(Pokémon) | Source} */
-  SKWOVET,
+  SKWOVET = 819,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Greedent_(Pokémon) | Source} */
-  GREEDENT,
+  GREEDENT = 820,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rookidee_(Pokémon) | Source} */
-  ROOKIDEE,
+  ROOKIDEE = 821,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Corvisquire_(Pokémon) | Source} */
-  CORVISQUIRE,
+  CORVISQUIRE = 822,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Corviknight_(Pokémon) | Source} */
-  CORVIKNIGHT,
+  CORVIKNIGHT = 823,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Blipbug_(Pokémon) | Source} */
-  BLIPBUG,
+  BLIPBUG = 824,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dottler_(Pokémon) | Source} */
-  DOTTLER,
+  DOTTLER = 825,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Orbeetle_(Pokémon) | Source} */
-  ORBEETLE,
+  ORBEETLE = 826,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nickit_(Pokémon) | Source} */
-  NICKIT,
+  NICKIT = 827,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Thievul_(Pokémon) | Source} */
-  THIEVUL,
+  THIEVUL = 828,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gossifleur_(Pokémon) | Source} */
-  GOSSIFLEUR,
+  GOSSIFLEUR = 829,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eldegoss_(Pokémon) | Source} */
-  ELDEGOSS,
+  ELDEGOSS = 830,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wooloo_(Pokémon) | Source} */
-  WOOLOO,
+  WOOLOO = 831,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dubwool_(Pokémon) | Source} */
-  DUBWOOL,
+  DUBWOOL = 832,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chewtle_(Pokémon) | Source} */
-  CHEWTLE,
+  CHEWTLE = 833,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drednaw_(Pokémon) | Source} */
-  DREDNAW,
+  DREDNAW = 834,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Yamper_(Pokémon) | Source} */
-  YAMPER,
+  YAMPER = 835,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Boltund_(Pokémon) | Source} */
-  BOLTUND,
+  BOLTUND = 836,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rolycoly_(Pokémon) | Source} */
-  ROLYCOLY,
+  ROLYCOLY = 837,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Carkol_(Pokémon) | Source} */
-  CARKOL,
+  CARKOL = 838,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Coalossal_(Pokémon) | Source} */
-  COALOSSAL,
+  COALOSSAL = 839,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Applin_(Pokémon) | Source} */
-  APPLIN,
+  APPLIN = 840,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flapple_(Pokémon) | Source} */
-  FLAPPLE,
+  FLAPPLE = 841,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Appletun_(Pokémon) | Source} */
-  APPLETUN,
+  APPLETUN = 842,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Silicobra_(Pokémon) | Source} */
-  SILICOBRA,
+  SILICOBRA = 843,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandaconda_(Pokémon) | Source} */
-  SANDACONDA,
+  SANDACONDA = 844,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cramorant_(Pokémon) | Source} */
-  CRAMORANT,
+  CRAMORANT = 845,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arrokuda_(Pokémon) | Source} */
-  ARROKUDA,
+  ARROKUDA = 846,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Barraskewda_(Pokémon) | Source} */
-  BARRASKEWDA,
+  BARRASKEWDA = 847,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toxel_(Pokémon) | Source} */
-  TOXEL,
+  TOXEL = 848,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toxtricity_(Pokémon) | Source} */
-  TOXTRICITY,
+  TOXTRICITY = 849,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sizzlipede_(Pokémon) | Source} */
-  SIZZLIPEDE,
+  SIZZLIPEDE = 850,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Centiskorch_(Pokémon) | Source} */
-  CENTISKORCH,
+  CENTISKORCH = 851,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clobbopus_(Pokémon) | Source} */
-  CLOBBOPUS,
+  CLOBBOPUS = 852,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grapploct_(Pokémon) | Source} */
-  GRAPPLOCT,
+  GRAPPLOCT = 853,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sinistea_(Pokémon) | Source} */
-  SINISTEA,
+  SINISTEA = 854,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Polteageist_(Pokémon) | Source} */
-  POLTEAGEIST,
+  POLTEAGEIST = 855,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hatenna_(Pokémon) | Source} */
-  HATENNA,
+  HATENNA = 856,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hattrem_(Pokémon) | Source} */
-  HATTREM,
+  HATTREM = 857,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hatterene_(Pokémon) | Source} */
-  HATTERENE,
+  HATTERENE = 858,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Impidimp_(Pokémon) | Source} */
-  IMPIDIMP,
+  IMPIDIMP = 859,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Morgrem_(Pokémon) | Source} */
-  MORGREM,
+  MORGREM = 860,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grimmsnarl_(Pokémon) | Source} */
-  GRIMMSNARL,
+  GRIMMSNARL = 861,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Obstagoon_(Pokémon) | Source} */
-  OBSTAGOON,
+  OBSTAGOON = 862,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Perrserker_(Pokémon) | Source} */
-  PERRSERKER,
+  PERRSERKER = 863,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cursola_(Pokémon) | Source} */
-  CURSOLA,
+  CURSOLA = 864,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sirfetchd_(Pokémon) | Source} */
-  SIRFETCHD,
+  SIRFETCHD = 865,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mr_Rime_(Pokémon) | Source} */
-  MR_RIME,
+  MR_RIME = 866,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Runerigus_(Pokémon) | Source} */
-  RUNERIGUS,
+  RUNERIGUS = 867,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Milcery_(Pokémon) | Source} */
-  MILCERY,
+  MILCERY = 868,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Alcremie_(Pokémon) | Source} */
-  ALCREMIE,
+  ALCREMIE = 869,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Falinks_(Pokémon) | Source} */
-  FALINKS,
+  FALINKS = 870,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pincurchin_(Pokémon) | Source} */
-  PINCURCHIN,
+  PINCURCHIN = 871,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Snom_(Pokémon) | Source} */
-  SNOM,
+  SNOM = 872,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Frosmoth_(Pokémon) | Source} */
-  FROSMOTH,
+  FROSMOTH = 873,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stonjourner_(Pokémon) | Source} */
-  STONJOURNER,
+  STONJOURNER = 874,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eiscue_(Pokémon) | Source} */
-  EISCUE,
+  EISCUE = 875,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Indeedee_(Pokémon) | Source} */
-  INDEEDEE,
+  INDEEDEE = 876,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Morpeko_(Pokémon) | Source} */
-  MORPEKO,
+  MORPEKO = 877,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cufant_(Pokémon) | Source} */
-  CUFANT,
+  CUFANT = 878,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Copperajah_(Pokémon) | Source} */
-  COPPERAJAH,
+  COPPERAJAH = 879,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dracozolt_(Pokémon) | Source} */
-  DRACOZOLT,
+  DRACOZOLT = 880,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arctozolt_(Pokémon) | Source} */
-  ARCTOZOLT,
+  ARCTOZOLT = 881,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dracovish_(Pokémon) | Source} */
-  DRACOVISH,
+  DRACOVISH = 882,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arctovish_(Pokémon) | Source} */
-  ARCTOVISH,
+  ARCTOVISH = 883,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Duraludon_(Pokémon) | Source} */
-  DURALUDON,
+  DURALUDON = 884,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dreepy_(Pokémon) | Source} */
-  DREEPY,
+  DREEPY = 885,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Drakloak_(Pokémon) | Source} */
-  DRAKLOAK,
+  DRAKLOAK = 886,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dragapult_(Pokémon) | Source} */
-  DRAGAPULT,
+  DRAGAPULT = 887,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zacian_(Pokémon) | Source} */
-  ZACIAN,
+  ZACIAN = 888,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zamazenta_(Pokémon) | Source} */
-  ZAMAZENTA,
+  ZAMAZENTA = 889,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Eternatus_(Pokémon) | Source} */
-  ETERNATUS,
+  ETERNATUS = 890,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kubfu_(Pokémon) | Source} */
-  KUBFU,
+  KUBFU = 891,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Urshifu_(Pokémon) | Source} */
-  URSHIFU,
+  URSHIFU = 892,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zarude_(Pokémon) | Source} */
-  ZARUDE,
+  ZARUDE = 893,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Regieleki_(Pokémon) | Source} */
-  REGIELEKI,
+  REGIELEKI = 894,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Regidrago_(Pokémon) | Source} */
-  REGIDRAGO,
+  REGIDRAGO = 895,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glastrier_(Pokémon) | Source} */
-  GLASTRIER,
+  GLASTRIER = 896,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spectrier_(Pokémon) | Source} */
-  SPECTRIER,
+  SPECTRIER = 897,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Calyrex_(Pokémon) | Source} */
-  CALYREX,
+  CALYREX = 898,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wyrdeer_(Pokémon) | Source} */
-  WYRDEER,
+  WYRDEER = 899,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kleavor_(Pokémon) | Source} */
-  KLEAVOR,
+  KLEAVOR = 900,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ursaluna_(Pokémon) | Source} */
-  URSALUNA,
+  URSALUNA = 901,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Basculegion_(Pokémon) | Source} */
-  BASCULEGION,
+  BASCULEGION = 902,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sneasler_(Pokémon) | Source} */
-  SNEASLER,
+  SNEASLER = 903,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Overqwil_(Pokémon) | Source} */
-  OVERQWIL,
+  OVERQWIL = 904,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Enamorus_(Pokémon) | Source} */
-  ENAMORUS,
+  ENAMORUS = 905,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sprigatito_(Pokémon) | Source} */
-  SPRIGATITO,
+  SPRIGATITO = 906,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Floragato_(Pokémon) | Source} */
-  FLORAGATO,
+  FLORAGATO = 907,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meowscarada_(Pokémon) | Source} */
-  MEOWSCARADA,
+  MEOWSCARADA = 908,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fuecoco_(Pokémon) | Source} */
-  FUECOCO,
+  FUECOCO = 909,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Crocalor_(Pokémon) | Source} */
-  CROCALOR,
+  CROCALOR = 910,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Skeledirge_(Pokémon) | Source} */
-  SKELEDIRGE,
+  SKELEDIRGE = 911,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quaxly_(Pokémon) | Source} */
-  QUAXLY,
+  QUAXLY = 912,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quaxwell_(Pokémon) | Source} */
-  QUAXWELL,
+  QUAXWELL = 913,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Quaquaval_(Pokémon) | Source} */
-  QUAQUAVAL,
+  QUAQUAVAL = 914,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lechonk_(Pokémon) | Source} */
-  LECHONK,
+  LECHONK = 915,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Oinkologne_(Pokémon) | Source} */
-  OINKOLOGNE,
+  OINKOLOGNE = 916,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tarountula_(Pokémon) | Source} */
-  TAROUNTULA,
+  TAROUNTULA = 917,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Spidops_(Pokémon) | Source} */
-  SPIDOPS,
+  SPIDOPS = 918,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nymble_(Pokémon) | Source} */
-  NYMBLE,
+  NYMBLE = 919,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lokix_(Pokémon) | Source} */
-  LOKIX,
+  LOKIX = 920,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pawmi_(Pokémon) | Source} */
-  PAWMI,
+  PAWMI = 921,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pawmo_(Pokémon) | Source} */
-  PAWMO,
+  PAWMO = 922,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pawmot_(Pokémon) | Source} */
-  PAWMOT,
+  PAWMOT = 923,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tandemaus_(Pokémon) | Source} */
-  TANDEMAUS,
+  TANDEMAUS = 924,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Maushold_(Pokémon) | Source} */
-  MAUSHOLD,
+  MAUSHOLD = 925,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fidough_(Pokémon) | Source} */
-  FIDOUGH,
+  FIDOUGH = 926,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dachsbun_(Pokémon) | Source} */
-  DACHSBUN,
+  DACHSBUN = 927,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Smoliv_(Pokémon) | Source} */
-  SMOLIV,
+  SMOLIV = 928,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dolliv_(Pokémon) | Source} */
-  DOLLIV,
+  DOLLIV = 929,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arboliva_(Pokémon) | Source} */
-  ARBOLIVA,
+  ARBOLIVA = 930,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Squawkabilly_(Pokémon) | Source} */
-  SQUAWKABILLY,
+  SQUAWKABILLY = 931,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Nacli_(Pokémon) | Source} */
-  NACLI,
+  NACLI = 932,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Naclstack_(Pokémon) | Source} */
-  NACLSTACK,
+  NACLSTACK = 933,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Garganacl_(Pokémon) | Source} */
-  GARGANACL,
+  GARGANACL = 934,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Charcadet_(Pokémon) | Source} */
-  CHARCADET,
+  CHARCADET = 935,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Armarouge_(Pokémon) | Source} */
-  ARMAROUGE,
+  ARMAROUGE = 936,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ceruledge_(Pokémon) | Source} */
-  CERULEDGE,
+  CERULEDGE = 937,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tadbulb_(Pokémon) | Source} */
-  TADBULB,
+  TADBULB = 938,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bellibolt_(Pokémon) | Source} */
-  BELLIBOLT,
+  BELLIBOLT = 939,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wattrel_(Pokémon) | Source} */
-  WATTREL,
+  WATTREL = 940,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kilowattrel_(Pokémon) | Source} */
-  KILOWATTREL,
+  KILOWATTREL = 941,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Maschiff_(Pokémon) | Source} */
-  MASCHIFF,
+  MASCHIFF = 942,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Mabosstiff_(Pokémon) | Source} */
-  MABOSSTIFF,
+  MABOSSTIFF = 943,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Shroodle_(Pokémon) | Source} */
-  SHROODLE,
+  SHROODLE = 944,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Grafaiai_(Pokémon) | Source} */
-  GRAFAIAI,
+  GRAFAIAI = 945,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bramblin_(Pokémon) | Source} */
-  BRAMBLIN,
+  BRAMBLIN = 946,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Brambleghast_(Pokémon) | Source} */
-  BRAMBLEGHAST,
+  BRAMBLEGHAST = 947,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toedscool_(Pokémon) | Source} */
-  TOEDSCOOL,
+  TOEDSCOOL = 948,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Toedscruel_(Pokémon) | Source} */
-  TOEDSCRUEL,
+  TOEDSCRUEL = 949,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Klawf_(Pokémon) | Source} */
-  KLAWF,
+  KLAWF = 950,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Capsakid_(Pokémon) | Source} */
-  CAPSAKID,
+  CAPSAKID = 951,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scovillain_(Pokémon) | Source} */
-  SCOVILLAIN,
+  SCOVILLAIN = 952,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rellor_(Pokémon) | Source} */
-  RELLOR,
+  RELLOR = 953,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rabsca_(Pokémon) | Source} */
-  RABSCA,
+  RABSCA = 954,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flittle_(Pokémon) | Source} */
-  FLITTLE,
+  FLITTLE = 955,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Espathra_(Pokémon) | Source} */
-  ESPATHRA,
+  ESPATHRA = 956,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tinkatink_(Pokémon) | Source} */
-  TINKATINK,
+  TINKATINK = 957,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tinkatuff_(Pokémon) | Source} */
-  TINKATUFF,
+  TINKATUFF = 958,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tinkaton_(Pokémon) | Source} */
-  TINKATON,
+  TINKATON = 959,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wiglett_(Pokémon) | Source} */
-  WIGLETT,
+  WIGLETT = 960,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wugtrio_(Pokémon) | Source} */
-  WUGTRIO,
+  WUGTRIO = 961,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bombirdier_(Pokémon) | Source} */
-  BOMBIRDIER,
+  BOMBIRDIER = 962,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Finizen_(Pokémon) | Source} */
-  FINIZEN,
+  FINIZEN = 963,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Palafin_(Pokémon) | Source} */
-  PALAFIN,
+  PALAFIN = 964,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Varoom_(Pokémon) | Source} */
-  VAROOM,
+  VAROOM = 965,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Revavroom_(Pokémon) | Source} */
-  REVAVROOM,
+  REVAVROOM = 966,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cyclizar_(Pokémon) | Source} */
-  CYCLIZAR,
+  CYCLIZAR = 967,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Orthworm_(Pokémon) | Source} */
-  ORTHWORM,
+  ORTHWORM = 968,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glimmet_(Pokémon) | Source} */
-  GLIMMET,
+  GLIMMET = 969,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Glimmora_(Pokémon) | Source} */
-  GLIMMORA,
+  GLIMMORA = 970,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Greavard_(Pokémon) | Source} */
-  GREAVARD,
+  GREAVARD = 971,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Houndstone_(Pokémon) | Source} */
-  HOUNDSTONE,
+  HOUNDSTONE = 972,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flamigo_(Pokémon) | Source} */
-  FLAMIGO,
+  FLAMIGO = 973,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cetoddle_(Pokémon) | Source} */
-  CETODDLE,
+  CETODDLE = 974,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Cetitan_(Pokémon) | Source} */
-  CETITAN,
+  CETITAN = 975,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Veluza_(Pokémon) | Source} */
-  VELUZA,
+  VELUZA = 976,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dondozo_(Pokémon) | Source} */
-  DONDOZO,
+  DONDOZO = 977,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tatsugiri_(Pokémon) | Source} */
-  TATSUGIRI,
+  TATSUGIRI = 978,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Annihilape_(Pokémon) | Source} */
-  ANNIHILAPE,
+  ANNIHILAPE = 979,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Clodsire_(Pokémon) | Source} */
-  CLODSIRE,
+  CLODSIRE = 980,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Farigiraf_(Pokémon) | Source} */
-  FARIGIRAF,
+  FARIGIRAF = 981,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dudunsparce_(Pokémon) | Source} */
-  DUDUNSPARCE,
+  DUDUNSPARCE = 982,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Kingambit_(Pokémon) | Source} */
-  KINGAMBIT,
+  KINGAMBIT = 983,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Great_Tusk_(Pokémon) | Source} */
-  GREAT_TUSK,
+  GREAT_TUSK = 984,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Scream_Tail_(Pokémon) | Source} */
-  SCREAM_TAIL,
+  SCREAM_TAIL = 985,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Brute_Bonnet_(Pokémon) | Source} */
-  BRUTE_BONNET,
+  BRUTE_BONNET = 986,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Flutter_Mane_(Pokémon) | Source} */
-  FLUTTER_MANE,
+  FLUTTER_MANE = 987,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Slither_Wing_(Pokémon) | Source} */
-  SLITHER_WING,
+  SLITHER_WING = 988,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sandy_Shocks_(Pokémon) | Source} */
-  SANDY_SHOCKS,
+  SANDY_SHOCKS = 989,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Treads_(Pokémon) | Source} */
-  IRON_TREADS,
+  IRON_TREADS = 990,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Bundle_(Pokémon) | Source} */
-  IRON_BUNDLE,
+  IRON_BUNDLE = 991,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Hands_(Pokémon) | Source} */
-  IRON_HANDS,
+  IRON_HANDS = 992,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Jugulis_(Pokémon) | Source} */
-  IRON_JUGULIS,
+  IRON_JUGULIS = 993,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Moth_(Pokémon) | Source} */
-  IRON_MOTH,
+  IRON_MOTH = 994,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Thorns_(Pokémon) | Source} */
-  IRON_THORNS,
+  IRON_THORNS = 995,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Frigibax_(Pokémon) | Source} */
-  FRIGIBAX,
+  FRIGIBAX = 996,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Arctibax_(Pokémon) | Source} */
-  ARCTIBAX,
+  ARCTIBAX = 997,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Baxcalibur_(Pokémon) | Source} */
-  BAXCALIBUR,
+  BAXCALIBUR = 998,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gimmighoul_(Pokémon) | Source} */
-  GIMMIGHOUL,
+  GIMMIGHOUL = 999,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gholdengo_(Pokémon) | Source} */
-  GHOLDENGO,
+  GHOLDENGO = 1000,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Wo_Chien_(Pokémon) | Source} */
-  WO_CHIEN,
+  WO_CHIEN = 1001,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chien_Pao_(Pokémon) | Source} */
-  CHIEN_PAO,
+  CHIEN_PAO = 1002,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ting_Lu_(Pokémon) | Source} */
-  TING_LU,
+  TING_LU = 1003,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Chi_Yu_(Pokémon) | Source} */
-  CHI_YU,
+  CHI_YU = 1004,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Roaring_Moon_(Pokémon) | Source} */
-  ROARING_MOON,
+  ROARING_MOON = 1005,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Valiant_(Pokémon) | Source} */
-  IRON_VALIANT,
+  IRON_VALIANT = 1006,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Koraidon_(Pokémon) | Source} */
-  KORAIDON,
+  KORAIDON = 1007,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Miraidon_(Pokémon) | Source} */
-  MIRAIDON,
+  MIRAIDON = 1008,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Walking_Wake_(Pokémon) | Source} */
-  WALKING_WAKE,
+  WALKING_WAKE = 1009,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Leaves_(Pokémon) | Source} */
-  IRON_LEAVES,
+  IRON_LEAVES = 1010,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Dipplin_(Pokémon) | Source} */
-  DIPPLIN,
+  DIPPLIN = 1011,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poltchageist_(Pokémon) | Source} */
-  POLTCHAGEIST,
+  POLTCHAGEIST = 1012,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Sinistcha_(Pokémon) | Source} */
-  SINISTCHA,
+  SINISTCHA = 1013,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Okidogi_(Pokémon) | Source} */
-  OKIDOGI,
+  OKIDOGI = 1014,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Munkidori_(Pokémon) | Source} */
-  MUNKIDORI,
+  MUNKIDORI = 1015,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Fezandipiti_(Pokémon) | Source} */
-  FEZANDIPITI,
+  FEZANDIPITI = 1016,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ogerpon_(Pokémon) | Source} */
-  OGERPON,
+  OGERPON = 1017,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Archaludon_(Pokémon) | Source} */
-  ARCHALUDON,
+  ARCHALUDON = 1018,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Hydrapple_(Pokémon) | Source} */
-  HYDRAPPLE,
+  HYDRAPPLE = 1019,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Gouging_Fire_(Pokémon) | Source} */
-  GOUGING_FIRE,
+  GOUGING_FIRE = 1020,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raging_Bolt_(Pokémon) | Source} */
-  RAGING_BOLT,
+  RAGING_BOLT = 1021,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Boulder_(Pokémon) | Source} */
-  IRON_BOULDER,
+  IRON_BOULDER = 1022,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Iron_Crown_(Pokémon) | Source} */
-  IRON_CROWN,
+  IRON_CROWN = 1023,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Terapagos_(Pokémon) | Source} */
-  TERAPAGOS,
+  TERAPAGOS = 1024,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pecharunt_(Pokémon) | Source} */
-  PECHARUNT,
+  PECHARUNT = 1025,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Rattata_(Pokémon) | Source} */
   ALOLA_RATTATA = 2019,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Raticate_(Pokémon) | Source} */
@@ -2163,16 +2163,34 @@ export enum Species {
   PALDEA_WOOPER = 8194,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ursaluna_(Pokémon) | Source} */
   BLOODMOON_URSALUNA = 8901,
-};
+}
 
 export const defaultStarterSpecies: Species[] = [
-  Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
-  Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE,
-  Species.TREECKO, Species.TORCHIC, Species.MUDKIP,
-  Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP,
-  Species.SNIVY, Species.TEPIG, Species.OSHAWOTT,
-  Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
-  Species.ROWLET, Species.LITTEN, Species.POPPLIO,
-  Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
-  Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
+  Species.BULBASAUR,
+  Species.CHARMANDER,
+  Species.SQUIRTLE,
+  Species.CHIKORITA,
+  Species.CYNDAQUIL,
+  Species.TOTODILE,
+  Species.TREECKO,
+  Species.TORCHIC,
+  Species.MUDKIP,
+  Species.TURTWIG,
+  Species.CHIMCHAR,
+  Species.PIPLUP,
+  Species.SNIVY,
+  Species.TEPIG,
+  Species.OSHAWOTT,
+  Species.CHESPIN,
+  Species.FENNEKIN,
+  Species.FROAKIE,
+  Species.ROWLET,
+  Species.LITTEN,
+  Species.POPPLIO,
+  Species.GROOKEY,
+  Species.SCORBUNNY,
+  Species.SOBBLE,
+  Species.SPRIGATITO,
+  Species.FUECOCO,
+  Species.QUAXLY,
 ];

@@ -5,7 +5,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
-import {Button} from "../enums/buttons";
+import { Button } from "../enums/buttons";
 
 export type TargetSelectCallback = (cursor: integer) => void;
 
@@ -23,11 +23,10 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.cursor = -1;
   }
 
-  setup(): void { }
+  setup(): void {}
 
   show(args: any[]): boolean {
-    if (args.length < 3)
-      return false;
+    if (args.length < 3) return false;
 
     super.show(args);
 
@@ -35,12 +34,16 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.move = args[1] as Moves;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
 
-    this.targets = getMoveTargets(this.scene.getPlayerField()[this.fieldIndex], this.move).targets;
+    this.targets = getMoveTargets(
+      this.scene.getPlayerField()[this.fieldIndex],
+      this.move,
+    ).targets;
 
-    if (!this.targets.length)
-      return false;
+    if (!this.targets.length) return false;
 
-    this.setCursor(this.targets.indexOf(this.cursor) > -1 ? this.cursor : this.targets[0]);
+    this.setCursor(
+      this.targets.indexOf(this.cursor) > -1 ? this.cursor : this.targets[0],
+    );
 
     return true;
   }
@@ -56,26 +59,41 @@ export default class TargetSelectUiHandler extends UiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1)
-            success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
+          if (
+            this.cursor < BattlerIndex.ENEMY &&
+            this.targets.findIndex((t) => t >= BattlerIndex.ENEMY) > -1
+          )
+            success = this.setCursor(
+              this.targets.find((t) => t >= BattlerIndex.ENEMY),
+            );
           break;
         case Button.DOWN:
-          if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1)
-            success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
+          if (
+            this.cursor >= BattlerIndex.ENEMY &&
+            this.targets.findIndex((t) => t < BattlerIndex.ENEMY) > -1
+          )
+            success = this.setCursor(
+              this.targets.find((t) => t < BattlerIndex.ENEMY),
+            );
           break;
         case Button.LEFT:
-          if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1)
+          if (
+            this.cursor % 2 &&
+            this.targets.findIndex((t) => t === this.cursor - 1) > -1
+          )
             success = this.setCursor(this.cursor - 1);
           break;
         case Button.RIGHT:
-          if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1)
+          if (
+            !(this.cursor % 2) &&
+            this.targets.findIndex((t) => t === this.cursor + 1) > -1
+          )
             success = this.setCursor(this.cursor + 1);
           break;
       }
     }
 
-    if (success)
-      ui.playSelect();
+    if (success) ui.playSelect();
 
     return success;
   }
@@ -88,23 +106,21 @@ export default class TargetSelectUiHandler extends UiHandler {
     if (this.targetFlashTween) {
       this.targetFlashTween.stop();
       const lastTarget = this.scene.getField()[lastCursor];
-      if (lastTarget)
-        lastTarget.setAlpha(1);
+      if (lastTarget) lastTarget.setAlpha(1);
     }
 
     const target = this.scene.getField()[cursor];
 
     this.targetFlashTween = this.scene.tweens.add({
-      targets: [ target ],
+      targets: [target],
       alpha: 0,
       loop: -1,
       duration: Utils.fixedInt(250),
-      ease: 'Sine.easeIn',
+      ease: "Sine.easeIn",
       yoyo: true,
-      onUpdate: t => {
-        if (target)
-          target.setAlpha(t.getValue());
-      }
+      onUpdate: (t) => {
+        if (target) target.setAlpha(t.getValue());
+      },
     });
 
     return ret;
@@ -116,8 +132,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       this.targetFlashTween = null;
     }
-    if (target)
-      target.setAlpha(1);
+    if (target) target.setAlpha(1);
   }
 
   clear() {

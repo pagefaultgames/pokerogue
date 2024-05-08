@@ -2,9 +2,9 @@ import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
 
 export enum PokemonIconAnimMode {
-  NONE,
-  PASSIVE,
-  ACTIVE
+  NONE = 0,
+  PASSIVE = 1,
+  ACTIVE = 2,
 }
 
 type PokemonIcon = Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
@@ -20,8 +20,8 @@ export default class PokemonIconAnimHandler {
     const onAlternate = (tween: Phaser.Tweens.Tween) => {
       const value = tween.getValue();
       this.toggled = !!value;
-      for (let i of this.icons.keys())
-          i.y += this.getModeYDelta(this.icons.get(i)) * (this.toggled ? 1 : -1);
+      for (const i of this.icons.keys())
+        i.y += this.getModeYDelta(this.icons.get(i)) * (this.toggled ? 1 : -1);
     };
     scene.tweens.addCounter({
       duration: Utils.fixedInt(200),
@@ -30,7 +30,7 @@ export default class PokemonIconAnimHandler {
       yoyo: true,
       repeat: -1,
       onRepeat: onAlternate,
-      onYoyo: onAlternate
+      onYoyo: onAlternate,
     });
   }
 
@@ -45,16 +45,15 @@ export default class PokemonIconAnimHandler {
     }
   }
 
-  addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
-    if (!Array.isArray(icons))
-      icons = [ icons ];
-    for (let i of icons) {
-      if (this.icons.has(i) && this.icons.get(i) === mode)
-        continue;
+  addOrUpdate(
+    icons: PokemonIcon | PokemonIcon[],
+    mode: PokemonIconAnimMode,
+  ): void {
+    if (!Array.isArray(icons)) icons = [icons];
+    for (const i of icons) {
+      if (this.icons.has(i) && this.icons.get(i) === mode) continue;
       if (this.toggled) {
-        const lastYDelta = this.icons.has(i)
-          ? this.icons.get(i)
-          : 0;
+        const lastYDelta = this.icons.has(i) ? this.icons.get(i) : 0;
         const yDelta = this.getModeYDelta(mode);
         i.y += yDelta + lastYDelta;
       }
@@ -63,19 +62,16 @@ export default class PokemonIconAnimHandler {
   }
 
   remove(icons: PokemonIcon | PokemonIcon[]): void {
-    if (!Array.isArray(icons))
-      icons = [ icons ];
-    for (let i of icons) {
-      if (this.toggled)
-        i.y -= this.getModeYDelta(this.icons.get(i));
+    if (!Array.isArray(icons)) icons = [icons];
+    for (const i of icons) {
+      if (this.toggled) i.y -= this.getModeYDelta(this.icons.get(i));
       this.icons.delete(i);
     }
   }
 
   removeAll(): void {
-    for (let i of this.icons.keys()) {
-      if (this.toggled)
-        i.y -= this.getModeYDelta(this.icons.get(i));
+    for (const i of this.icons.keys()) {
+      if (this.toggled) i.y -= this.getModeYDelta(this.icons.get(i));
       this.icons.delete(i);
     }
   }

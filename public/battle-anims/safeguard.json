@@ -255,18 +255,8 @@
         "target": 2,
         "graphicFrame": 1,
         "opacity": -1,
-        "color": [
-          100,
-          0,
-          0,
-          0
-        ],
-        "flash": [
-          1,
-          0,
-          0,
-          0
-        ],
+        "color": [100, 0, 0, 0],
+        "flash": [1, 0, 0, 0],
         "focus": 1
       },
       {

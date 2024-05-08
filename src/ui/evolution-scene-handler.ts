@@ -1,8 +1,8 @@
 import BattleScene from "../battle-scene";
+import { Button } from "../enums/buttons";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import {Button} from "../enums/buttons";
 
 export default class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
@@ -21,11 +21,14 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    this.evolutionContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
+    this.evolutionContainer = this.scene.add.container(
+      0,
+      -this.scene.game.canvas.height / 6,
+    );
     ui.add(this.evolutionContainer);
 
-    const messageBg = this.scene.add.sprite(0, 0, 'bg', this.scene.windowType);
-		messageBg.setOrigin(0, 1);
+    const messageBg = this.scene.add.sprite(0, 0, "bg", this.scene.windowType);
+    messageBg.setOrigin(0, 1);
     messageBg.setVisible(false);
     ui.add(messageBg);
 
@@ -35,17 +38,17 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     this.messageContainer.setVisible(false);
     ui.add(this.messageContainer);
 
-    const message = addTextObject(this.scene, 0, 0, '', TextStyle.MESSAGE, {
+    const message = addTextObject(this.scene, 0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
-        width: 1780
-      }
+        width: 1780,
+      },
     });
     this.messageContainer.add(message);
 
     this.message = message;
 
-    const prompt = this.scene.add.sprite(0, 0, 'prompt');
+    const prompt = this.scene.add.sprite(0, 0, "prompt");
     prompt.setVisible(false);
     prompt.setOrigin(0, 0);
     this.messageContainer.add(prompt);
@@ -55,7 +58,7 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
   show(_args: any[]): boolean {
     super.show(_args);
-    
+
     this.scene.ui.bringToTop(this.evolutionContainer);
     this.scene.ui.bringToTop(this.messageBg);
     this.scene.ui.bringToTop(this.messageContainer);
@@ -97,4 +100,4 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     this.messageContainer.setVisible(false);
     this.messageBg.setVisible(false);
   }
-}  
+}

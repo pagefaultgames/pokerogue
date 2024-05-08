@@ -10,15 +10,29 @@ export default class TrainerData {
   public partnerName: string;
 
   constructor(source: Trainer | any) {
-    const sourceTrainer = source instanceof Trainer ? source as Trainer : null;
-    this.trainerType = sourceTrainer ? sourceTrainer.config.trainerType : source.trainerType;
-    this.variant = source.hasOwnProperty('variant') ? source.variant : source.female ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
+    const sourceTrainer =
+      source instanceof Trainer ? (source as Trainer) : null;
+    this.trainerType = sourceTrainer
+      ? sourceTrainer.config.trainerType
+      : source.trainerType;
+    this.variant = source.hasOwnProperty("variant")
+      ? source.variant
+      : source.female
+        ? TrainerVariant.FEMALE
+        : TrainerVariant.DEFAULT;
     this.partyTemplateIndex = source.partyMemberTemplateIndex;
     this.name = source.name;
     this.partnerName = source.partnerName;
   }
 
   toTrainer(scene: BattleScene): Trainer {
-    return new Trainer(scene, this.trainerType, this.variant, this.partyTemplateIndex, this.name, this.partnerName);
+    return new Trainer(
+      scene,
+      this.trainerType,
+      this.variant,
+      this.partyTemplateIndex,
+      this.name,
+      this.partnerName,
+    );
   }
 }

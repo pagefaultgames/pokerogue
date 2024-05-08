@@ -5,13 +5,17 @@ import { Species } from "./data/enums/species";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
-import { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from './overrides';
+import {
+  STARTING_BIOME_OVERRIDE,
+  STARTING_LEVEL_OVERRIDE,
+  STARTING_MONEY_OVERRIDE,
+} from "./overrides";
 
 export enum GameModes {
-  CLASSIC,
-  ENDLESS,
-  SPLICED_ENDLESS,
-  DAILY
+  CLASSIC = 0,
+  ENDLESS = 1,
+  SPLICED_ENDLESS = 2,
+  DAILY = 3,
 }
 
 interface GameModeConfig {
@@ -46,8 +50,7 @@ export class GameMode implements GameModeConfig {
   }
 
   getStartingLevel(): integer {
-    if (STARTING_LEVEL_OVERRIDE)
-      return STARTING_LEVEL_OVERRIDE;
+    if (STARTING_LEVEL_OVERRIDE) return STARTING_LEVEL_OVERRIDE;
     switch (this.modeId) {
       case GameModes.DAILY:
         return 20;
@@ -69,10 +72,15 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getWaveForDifficulty(waveIndex: integer, ignoreCurveChanges: boolean = false): integer {
+  getWaveForDifficulty(
+    waveIndex: integer,
+    ignoreCurveChanges = false,
+  ): integer {
     switch (this.modeId) {
       case GameModes.DAILY:
-        return waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0);
+        return (
+          waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0)
+        );
       default:
         return waveIndex;
     }
@@ -80,18 +88,30 @@ export class GameMode implements GameModeConfig {
 
   isWaveTrainer(waveIndex: integer, arena: Arena): boolean {
     if (this.isDaily)
-      return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
-    if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex))
+      return (
+        waveIndex % 10 === 5 ||
+        (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex))
+      );
+    if (
+      waveIndex % 30 === (arena.scene.offsetGym ? 0 : 20) &&
+      !this.isWaveFinal(waveIndex)
+    )
       return true;
     else if (waveIndex % 10 !== 1 && waveIndex % 10) {
       const trainerChance = arena.getTrainerChance();
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
-        for (let w = Math.max(waveIndex - 3, waveBase + 2); w <= Math.min(waveIndex + 3, waveBase + 9); w++) {
-          if (w === waveIndex)
-            continue;
-          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || fixedBattles.hasOwnProperty(w)) {
+        for (
+          let w = Math.max(waveIndex - 3, waveBase + 2);
+          w <= Math.min(waveIndex + 3, waveBase + 9);
+          w++
+        ) {
+          if (w === waveIndex) continue;
+          if (
+            w % 30 === (arena.scene.offsetGym ? 0 : 20) ||
+            fixedBattles.hasOwnProperty(w)
+          ) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
@@ -100,29 +120,44 @@ export class GameMode implements GameModeConfig {
               if (!Utils.randSeedInt(waveTrainerChance))
                 allowTrainerBattle = false;
             }, w);
-            if (!allowTrainerBattle)
-              break;
+            if (!allowTrainerBattle) break;
           }
         }
       }
-      return allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance);
+      return (
+        allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance)
+      );
     }
     return false;
   }
-  
-  isTrainerBoss(waveIndex: integer, biomeType: Biome, offsetGym: boolean): boolean {
+
+  isTrainerBoss(
+    waveIndex: integer,
+    biomeType: Biome,
+    offsetGym: boolean,
+  ): boolean {
     switch (this.modeId) {
       case GameModes.DAILY:
         return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
       default:
-        return (waveIndex % 30) === (offsetGym ? 0 : 20) && (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex));
+        return (
+          waveIndex % 30 === (offsetGym ? 0 : 20) &&
+          (biomeType !== Biome.END ||
+            this.isClassic ||
+            this.isWaveFinal(waveIndex))
+        );
     }
   }
 
   getOverrideSpecies(waveIndex: integer): PokemonSpecies {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
-      const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
-        && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
+      const allFinalBossSpecies = allSpecies.filter(
+        (s) =>
+          (s.subLegendary || s.legendary || s.mythical) &&
+          s.baseTotal >= 600 &&
+          s.speciesId !== Species.ETERNATUS &&
+          s.speciesId !== Species.ARCEUS,
+      );
       return Utils.randSeedItem(allFinalBossSpecies);
     }
 
@@ -164,20 +199,37 @@ export class GameMode implements GameModeConfig {
   getName(): string {
     switch (this.modeId) {
       case GameModes.CLASSIC:
-        return 'Classic';
+        return "Classic";
       case GameModes.ENDLESS:
-        return 'Endless';
+        return "Endless";
       case GameModes.SPLICED_ENDLESS:
-        return 'Endless (Spliced)';
+        return "Endless (Spliced)";
       case GameModes.DAILY:
-        return 'Daily Run';
+        return "Daily Run";
     }
   }
 }
 
 export const gameModes = Object.freeze({
-  [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true }),
-  [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true }),
-  [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true }),
-  [GameModes.DAILY]: new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true })
+  [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, {
+    isClassic: true,
+    hasTrainers: true,
+    hasFixedBattles: true,
+  }),
+  [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, {
+    isEndless: true,
+    hasShortBiomes: true,
+    hasRandomBosses: true,
+  }),
+  [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, {
+    isEndless: true,
+    hasShortBiomes: true,
+    hasRandomBosses: true,
+    isSplicedOnly: true,
+  }),
+  [GameModes.DAILY]: new GameMode(GameModes.DAILY, {
+    isDaily: true,
+    hasTrainers: true,
+    hasNoShop: true,
+  }),
 });

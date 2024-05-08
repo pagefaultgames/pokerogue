@@ -1,29 +1,29 @@
 import BattleScene from "../battle-scene";
-import i18next from '../plugins/i18n';
+import i18next from "../plugins/i18n";
 
 export enum PokeballType {
-  POKEBALL,
-  GREAT_BALL,
-  ULTRA_BALL,
-  ROGUE_BALL,
-  MASTER_BALL,
-  LUXURY_BALL
-};
+  POKEBALL = 0,
+  GREAT_BALL = 1,
+  ULTRA_BALL = 2,
+  ROGUE_BALL = 3,
+  MASTER_BALL = 4,
+  LUXURY_BALL = 5,
+}
 
 export function getPokeballAtlasKey(type: PokeballType): string {
   switch (type) {
     case PokeballType.POKEBALL:
-      return 'pb';
+      return "pb";
     case PokeballType.GREAT_BALL:
-      return 'gb';
+      return "gb";
     case PokeballType.ULTRA_BALL:
-      return 'ub';
+      return "ub";
     case PokeballType.ROGUE_BALL:
-      return 'rb';
+      return "rb";
     case PokeballType.MASTER_BALL:
-      return 'mb';
+      return "mb";
     case PokeballType.LUXURY_BALL:
-      return 'lb';
+      return "lb";
   }
 }
 
@@ -31,22 +31,22 @@ export function getPokeballName(type: PokeballType): string {
   let ret: string;
   switch (type) {
     case PokeballType.POKEBALL:
-      ret = i18next.t('pokeball:pokeBall');
+      ret = i18next.t("pokeball:pokeBall");
       break;
     case PokeballType.GREAT_BALL:
-      ret = i18next.t('pokeball:greatBall');
+      ret = i18next.t("pokeball:greatBall");
       break;
     case PokeballType.ULTRA_BALL:
-      ret = i18next.t('pokeball:ultraBall');
+      ret = i18next.t("pokeball:ultraBall");
       break;
     case PokeballType.ROGUE_BALL:
-      ret = i18next.t('pokeball:rogueBall');
+      ret = i18next.t("pokeball:rogueBall");
       break;
     case PokeballType.MASTER_BALL:
-      ret = i18next.t('pokeball:masterBall');
+      ret = i18next.t("pokeball:masterBall");
       break;
     case PokeballType.LUXURY_BALL:
-      ret = i18next.t('pokeball:luxuryBall');
+      ret = i18next.t("pokeball:luxuryBall");
       break;
   }
   return ret;
@@ -86,20 +86,27 @@ export function getPokeballTintColor(type: PokeballType): number {
   }
 }
 
-export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: integer, callback: Function) {
+export function doPokeballBounceAnim(
+  scene: BattleScene,
+  pokeball: Phaser.GameObjects.Sprite,
+  y1: number,
+  y2: number,
+  baseBounceDuration: integer,
+  callback: Function,
+) {
   let bouncePower = 1;
   let bounceYOffset = y1;
   let bounceY = y2;
-  let yd = y2 - y1;
+  const yd = y2 - y1;
 
   const doBounce = () => {
     scene.tweens.add({
       targets: pokeball,
       y: y2,
       duration: bouncePower * baseBounceDuration,
-      ease: 'Cubic.easeIn',
+      ease: "Cubic.easeIn",
       onComplete: () => {
-        scene.playSound('pb_bounce_1', { volume: bouncePower });
+        scene.playSound("pb_bounce_1", { volume: bouncePower });
 
         bouncePower = bouncePower > 0.01 ? bouncePower * 0.5 : 0;
 
@@ -111,12 +118,11 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
             targets: pokeball,
             y: bounceY,
             duration: bouncePower * baseBounceDuration,
-            ease: 'Cubic.easeOut',
-            onComplete: () => doBounce()
+            ease: "Cubic.easeOut",
+            onComplete: () => doBounce(),
           });
-        } else if (callback)
-          callback();
-      }
+        } else if (callback) callback();
+      },
     });
   };
 

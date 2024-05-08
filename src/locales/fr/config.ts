@@ -11,18 +11,17 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 
-
 export const frConfig = {
-    ability: ability,
-    battle: battle,
-    commandUiHandler: commandUiHandler,
-    fightUiHandler: fightUiHandler,
-    menuUiHandler: menuUiHandler,
-    menu: menu,
-    move: move,
-    pokeball: pokeball,
-    pokemonStat: pokemonStat,
-    pokemon: pokemon,
-    starterSelectUiHandler: starterSelectUiHandler,
-    tutorial: tutorial
-}
+  ability: ability,
+  battle: battle,
+  commandUiHandler: commandUiHandler,
+  fightUiHandler: fightUiHandler,
+  menuUiHandler: menuUiHandler,
+  menu: menu,
+  move: move,
+  pokeball: pokeball,
+  pokemonStat: pokemonStat,
+  pokemon: pokemon,
+  starterSelectUiHandler: starterSelectUiHandler,
+  tutorial: tutorial,
+};

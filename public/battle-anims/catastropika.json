@@ -2199,12 +2199,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          106,
-          255,
-          255
-        ],
+        "tone": [255, 106, 255, 255],
         "priority": 1,
         "focus": 3
       }
@@ -2282,12 +2277,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          106,
-          255,
-          255
-        ],
+        "tone": [255, 106, 255, 255],
         "priority": 1,
         "focus": 3
       }
@@ -2364,12 +2354,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          255,
-          106,
-          255,
-          255
-        ],
+        "tone": [255, 106, 255, 255],
         "priority": 1,
         "focus": 3
       }

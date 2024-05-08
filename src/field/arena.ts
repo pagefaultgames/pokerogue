@@ -1,10 +1,23 @@
 import BattleScene from "../battle-scene";
-import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
+import {
+  BiomePoolTier,
+  PokemonPools,
+  BiomeTierTrainerPools,
+  biomePokemonPools,
+  biomeTrainerPools,
+} from "../data/biomes";
 import { Biome } from "../data/enums/biome";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
-import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
+import {
+  Weather,
+  WeatherType,
+  getTerrainClearMessage,
+  getTerrainStartMessage,
+  getWeatherClearMessage,
+  getWeatherStartMessage,
+} from "../data/weather";
 import { CommonAnimPhase, WeatherEffectPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
@@ -16,9 +29,14 @@ import { BattlerIndex } from "../battle";
 import { Moves } from "../data/enums/moves";
 import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
-import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
+import {
+  PostTerrainChangeAbAttr,
+  PostWeatherChangeAbAttr,
+  applyPostTerrainChangeAbAttrs,
+  applyPostWeatherChangeAbAttrs,
+} from "../data/ability";
 import Pokemon from "./pokemon";
-import { WEATHER_OVERRIDE } from '../overrides';
+import { WEATHER_OVERRIDE } from "../overrides";
 
 export class Arena {
   public scene: BattleScene;
@@ -58,63 +76,88 @@ export class Arena {
     const timeOfDay = this.getTimeOfDay();
     if (timeOfDay !== this.lastTimeOfDay) {
       this.pokemonPool = {};
-      for (let tier of Object.keys(biomePokemonPools[this.biomeType]))
-        this.pokemonPool[tier] = Object.assign([], biomePokemonPools[this.biomeType][tier][TimeOfDay.ALL]).concat(biomePokemonPools[this.biomeType][tier][timeOfDay]);
+      for (const tier of Object.keys(biomePokemonPools[this.biomeType]))
+        this.pokemonPool[tier] = Object.assign(
+          [],
+          biomePokemonPools[this.biomeType][tier][TimeOfDay.ALL],
+        ).concat(biomePokemonPools[this.biomeType][tier][timeOfDay]);
       this.lastTimeOfDay = timeOfDay;
     }
   }
 
-  randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
+  randomSpecies(
+    waveIndex: integer,
+    level: integer,
+    attempt?: integer,
+  ): PokemonSpecies {
     const overrideSpecies = this.scene.gameMode.getOverrideSpecies(waveIndex);
-    if (overrideSpecies)
-      return overrideSpecies;
-    const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
-      && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
+    if (overrideSpecies) return overrideSpecies;
+    const isBoss =
+      !!this.scene.getEncounterBossSegments(waveIndex, level) &&
+      !!this.pokemonPool[BiomePoolTier.BOSS].length &&
+      (this.biomeType !== Biome.END ||
+        this.scene.gameMode.isClassic ||
+        this.scene.gameMode.isWaveFinal(waveIndex));
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
-      ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+      ? tierValue >= 156
+        ? BiomePoolTier.COMMON
+        : tierValue >= 32
+          ? BiomePoolTier.UNCOMMON
+          : tierValue >= 6
+            ? BiomePoolTier.RARE
+            : tierValue >= 1
+              ? BiomePoolTier.SUPER_RARE
+              : BiomePoolTier.ULTRA_RARE
+      : tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (!this.pokemonPool[tier].length) {
-      console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
+      console.log(
+        `Downgraded rarity tier from ${BiomePoolTier[tier]} to ${
+          BiomePoolTier[tier - 1]
+        }`,
+      );
       tier--;
     }
     const tierPool = this.pokemonPool[tier];
     let ret: PokemonSpecies;
     let regen = false;
-    if (!tierPool.length)
-      ret = this.scene.randomSpecies(waveIndex, level);
+    if (!tierPool.length) ret = this.scene.randomSpecies(waveIndex, level);
     else {
       const entry = tierPool[Utils.randSeedInt(tierPool.length)];
       let species: Species;
-      if (typeof entry === 'number')
-        species = entry as Species;
+      if (typeof entry === "number") species = entry as Species;
       else {
         const levelThresholds = Object.keys(entry);
         for (let l = levelThresholds.length - 1; l >= 0; l--) {
-          const levelThreshold = parseInt(levelThresholds[l]);
+          const levelThreshold = Number.parseInt(levelThresholds[l]);
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1)
               species = speciesIds[Utils.randSeedInt(speciesIds.length)];
-            else
-              species = speciesIds[0];
+            else species = speciesIds[0];
             break;
           }
         }
       }
-      
+
       ret = getPokemonSpecies(species);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
         switch (true) {
-          case (ret.baseTotal >= 720):
+          case ret.baseTotal >= 720:
             regen = level < 90;
             break;
-          case (ret.baseTotal >= 670):
+          case ret.baseTotal >= 670:
             regen = level < 70;
             break;
-          case (ret.baseTotal >= 580):
+          case ret.baseTotal >= 580:
             regen = level < 50;
             break;
           default:
@@ -125,33 +168,68 @@ export class Arena {
     }
 
     if (regen && (attempt || 0) < 10) {
-      console.log('Incompatible level: regenerating...');
+      console.log("Incompatible level: regenerating...");
       return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
     }
 
-    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss, this.scene.gameMode);
+    const newSpeciesId = ret.getWildSpeciesForLevel(
+      level,
+      true,
+      isBoss,
+      this.scene.gameMode,
+    );
     if (newSpeciesId !== ret.speciesId) {
-      console.log('Replaced', Species[ret.speciesId], 'with', Species[newSpeciesId]);
+      console.log(
+        "Replaced",
+        Species[ret.speciesId],
+        "with",
+        Species[newSpeciesId],
+      );
       ret = getPokemonSpecies(newSpeciesId);
     }
     return ret;
   }
 
   randomTrainerType(waveIndex: integer): TrainerType {
-    const isBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
-      && this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType, this.scene.offsetGym);
-    console.log(isBoss, this.trainerPool)
+    const isBoss =
+      !!this.trainerPool[BiomePoolTier.BOSS].length &&
+      this.scene.gameMode.isTrainerBoss(
+        waveIndex,
+        this.biomeType,
+        this.scene.offsetGym,
+      );
+    console.log(isBoss, this.trainerPool);
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
-      ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+      ? tierValue >= 156
+        ? BiomePoolTier.COMMON
+        : tierValue >= 32
+          ? BiomePoolTier.UNCOMMON
+          : tierValue >= 6
+            ? BiomePoolTier.RARE
+            : tierValue >= 1
+              ? BiomePoolTier.SUPER_RARE
+              : BiomePoolTier.ULTRA_RARE
+      : tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (tier && !this.trainerPool[tier].length) {
-      console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
+      console.log(
+        `Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${
+          BiomePoolTier[tier - 1]
+        }`,
+      );
       tier--;
     }
     const tierPool = this.trainerPool[tier] || [];
-    return !tierPool.length ? TrainerType.BREEDER : tierPool[Utils.randSeedInt(tierPool.length)];
+    return !tierPool.length
+      ? TrainerType.BREEDER
+      : tierPool[Utils.randSeedInt(tierPool.length)];
   }
 
   getSpeciesFormIndex(species: PokemonSpecies): integer {
@@ -275,72 +353,134 @@ export class Arena {
 
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
-    this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
+    this.scene.unshiftPhase(
+      new CommonAnimPhase(
+        this.scene,
+        undefined,
+        undefined,
+        CommonAnim.SUNNY + (weather - 1),
+      ),
+    );
     this.scene.queueMessage(getWeatherStartMessage(weather));
-    return true
+    return true;
   }
 
   trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
     // override hook for debugging
-    if (WEATHER_OVERRIDE)
-      return this.trySetWeatherOverride(WEATHER_OVERRIDE);
-    
-    if (this.weather?.weatherType === (weather || undefined))
-      return false;
+    if (WEATHER_OVERRIDE) return this.trySetWeatherOverride(WEATHER_OVERRIDE);
+
+    if (this.weather?.weatherType === (weather || undefined)) return false;
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
-    this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
-    
+    this.weather = weather
+      ? new Weather(weather, hasPokemonSource ? 5 : 0)
+      : null;
+
     if (this.weather) {
-      this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
-      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
+      this.scene.tryReplacePhase(
+        (phase) =>
+          phase instanceof WeatherEffectPhase &&
+          phase.weather.weatherType === oldWeatherType,
+        new WeatherEffectPhase(this.scene, this.weather),
+      );
+      this.scene.unshiftPhase(
+        new CommonAnimPhase(
+          this.scene,
+          undefined,
+          undefined,
+          CommonAnim.SUNNY + (weather - 1),
+        ),
+      );
       this.scene.queueMessage(getWeatherStartMessage(weather));
     } else {
-      this.scene.tryRemovePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType);
+      this.scene.tryRemovePhase(
+        (phase) =>
+          phase instanceof WeatherEffectPhase &&
+          phase.weather.weatherType === oldWeatherType,
+      );
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
     }
 
-    this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
-      pokemon.findAndRemoveTags(t => 'weatherTypes' in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
-      applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
-    });
-    
+    this.scene
+      .getField(true)
+      .filter((p) => p.isOnField())
+      .map((pokemon) => {
+        pokemon.findAndRemoveTags(
+          (t) =>
+            "weatherTypes" in t &&
+            !(t.weatherTypes as WeatherType[]).find((t) => t === weather),
+        );
+        applyPostWeatherChangeAbAttrs(
+          PostWeatherChangeAbAttr,
+          pokemon,
+          weather,
+        );
+      });
+
     return true;
   }
 
-  trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {
-    if (this.terrain?.terrainType === (terrain || undefined))
-      return false;
+  trySetTerrain(
+    terrain: TerrainType,
+    hasPokemonSource: boolean,
+    ignoreAnim = false,
+  ): boolean {
+    if (this.terrain?.terrainType === (terrain || undefined)) return false;
 
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
-    this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    
+    this.terrain = terrain
+      ? new Terrain(terrain, hasPokemonSource ? 5 : 0)
+      : null;
+
     if (this.terrain) {
       if (!ignoreAnim)
-        this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
+        this.scene.unshiftPhase(
+          new CommonAnimPhase(
+            this.scene,
+            undefined,
+            undefined,
+            CommonAnim.MISTY_TERRAIN + (terrain - 1),
+          ),
+        );
       this.scene.queueMessage(getTerrainStartMessage(terrain));
-    } else
-      this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
+    } else this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
 
-    this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
-      pokemon.findAndRemoveTags(t => 'terrainTypes' in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
-      applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
-    });
-    
+    this.scene
+      .getField(true)
+      .filter((p) => p.isOnField())
+      .map((pokemon) => {
+        pokemon.findAndRemoveTags(
+          (t) =>
+            "terrainTypes" in t &&
+            !(t.terrainTypes as TerrainType[]).find((t) => t === terrain),
+        );
+        applyPostTerrainChangeAbAttrs(
+          PostTerrainChangeAbAttr,
+          pokemon,
+          terrain,
+        );
+      });
+
     return true;
   }
 
   isMoveWeatherCancelled(move: Move) {
-    return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(move);
+    return (
+      this.weather &&
+      !this.weather.isEffectSuppressed(this.scene) &&
+      this.weather.isMoveWeatherCancelled(move)
+    );
   }
 
   isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+    return (
+      this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move)
+    );
   }
 
-  getTerrainType() : TerrainType {
+  getTerrainType(): TerrainType {
     return this.terrain?.terrainType || TerrainType.NONE;
   }
 
@@ -406,16 +546,16 @@ export class Arena {
         return TimeOfDay.NIGHT;
     }
 
-    const waveCycle = ((this.scene.currentBattle?.waveIndex || 0) + this.scene.waveCycleOffset) % 40;
+    const waveCycle =
+      ((this.scene.currentBattle?.waveIndex || 0) +
+        this.scene.waveCycleOffset) %
+      40;
 
-    if (waveCycle < 15)
-      return TimeOfDay.DAY;
+    if (waveCycle < 15) return TimeOfDay.DAY;
 
-    if (waveCycle < 20)
-      return TimeOfDay.DUSK;
+    if (waveCycle < 20) return TimeOfDay.DUSK;
 
-    if (waveCycle < 35)
-      return TimeOfDay.NIGHT;
+    if (waveCycle < 35) return TimeOfDay.NIGHT;
 
     return TimeOfDay.DAWN;
   }
@@ -441,19 +581,22 @@ export class Arena {
   getDayTint(): [integer, integer, integer] {
     switch (this.biomeType) {
       case Biome.ABYSS:
-        return [ 64, 64, 64 ];
+        return [64, 64, 64];
       default:
-        return [ 128, 128, 128 ];
+        return [128, 128, 128];
     }
   }
 
   getDuskTint(): [integer, integer, integer] {
-    if (!this.isOutside())
-      return [ 0, 0, 0 ];
+    if (!this.isOutside()) return [0, 0, 0];
 
     switch (this.biomeType) {
       default:
-        return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
+        return [98, 48, 73].map((c) => Math.round((c + 128) / 2)) as [
+          integer,
+          integer,
+          integer,
+        ];
     }
   }
 
@@ -465,74 +608,120 @@ export class Arena {
         return this.getDayTint();
     }
 
-    if (!this.isOutside())
-      return [ 64, 64, 64 ];
+    if (!this.isOutside()) return [64, 64, 64];
 
     switch (this.biomeType) {
       default:
-        return [ 48, 48, 98 ];
+        return [48, 48, 98];
     }
   }
 
-  setIgnoreAbilities(ignoreAbilities: boolean = true): void {
+  setIgnoreAbilities(ignoreAbilities = true): void {
     this.ignoreAbilities = ignoreAbilities;
   }
 
-  applyTagsForSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide, ...args: any[]): void {
-    let tags = typeof tagType === 'string'
-      ? this.tags.filter(t => t.tagType === tagType)
-      : this.tags.filter(t => t instanceof tagType);
-    if (side !== ArenaTagSide.BOTH)
-      tags = tags.filter(t => t.side === side);
-    tags.forEach(t => t.apply(this, args));
-	}
-  
-  applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
-    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
-	}
+  applyTagsForSide(
+    tagType: ArenaTagType | { new (...args: any[]): ArenaTag },
+    side: ArenaTagSide,
+    ...args: any[]
+  ): void {
+    let tags =
+      typeof tagType === "string"
+        ? this.tags.filter((t) => t.tagType === tagType)
+        : this.tags.filter((t) => t instanceof tagType);
+    if (side !== ArenaTagSide.BOTH) tags = tags.filter((t) => t.side === side);
+    tags.forEach((t) => t.apply(this, args));
+  }
 
-  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
+  applyTags(
+    tagType: ArenaTagType | { new (...args: any[]): ArenaTag },
+    ...args: any[]
+  ): void {
+    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
+  }
+
+  addTag(
+    tagType: ArenaTagType,
+    turnCount: integer,
+    sourceMove: Moves,
+    sourceId: integer,
+    side: ArenaTagSide = ArenaTagSide.BOTH,
+    targetIndex?: BattlerIndex,
+  ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
+    const newTag = getArenaTag(
+      tagType,
+      turnCount || 0,
+      sourceMove,
+      sourceId,
+      targetIndex,
+      side,
+    );
     this.tags.push(newTag);
     newTag.onAdd(this);
 
     return true;
   }
 
-  getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
+  getTag(tagType: ArenaTagType | { new (...args: any[]): ArenaTag }): ArenaTag {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
-    return typeof(tagType) === 'string'
-      ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
-      : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
+  getTagOnSide(
+    tagType: ArenaTagType | { new (...args: any[]): ArenaTag },
+    side: ArenaTagSide,
+  ): ArenaTag {
+    return typeof tagType === "string"
+      ? this.tags.find(
+          (t) =>
+            t.tagType === tagType &&
+            (side === ArenaTagSide.BOTH ||
+              t.side === ArenaTagSide.BOTH ||
+              t.side === side),
+        )
+      : this.tags.find(
+          (t) =>
+            t instanceof tagType &&
+            (side === ArenaTagSide.BOTH ||
+              t.side === ArenaTagSide.BOTH ||
+              t.side === side),
+        );
   }
 
   findTags(tagPredicate: (t: ArenaTag) => boolean): ArenaTag[] {
     return this.findTagsOnSide(tagPredicate, ArenaTagSide.BOTH);
   }
 
-  findTagsOnSide(tagPredicate: (t: ArenaTag) => boolean, side: ArenaTagSide): ArenaTag[] {
-    return this.tags.filter(t => tagPredicate(t) && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
+  findTagsOnSide(
+    tagPredicate: (t: ArenaTag) => boolean,
+    side: ArenaTagSide,
+  ): ArenaTag[] {
+    return this.tags.filter(
+      (t) =>
+        tagPredicate(t) &&
+        (side === ArenaTagSide.BOTH ||
+          t.side === ArenaTagSide.BOTH ||
+          t.side === side),
+    );
   }
 
   lapseTags(): void {
-    this.tags.filter(t => !(t.lapse(this))).forEach(t => {
-      t.onRemove(this);
-      this.tags.splice(this.tags.indexOf(t), 1);
-    });
+    this.tags
+      .filter((t) => !t.lapse(this))
+      .forEach((t) => {
+        t.onRemove(this);
+        this.tags.splice(this.tags.indexOf(t), 1);
+      });
   }
 
   removeTag(tagType: ArenaTagType): boolean {
     const tags = this.tags;
-    const tag = tags.find(t => t.tagType === tagType);
+    const tag = tags.find((t) => t.tagType === tagType);
     if (tag) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
@@ -548,8 +737,7 @@ export class Arena {
     }
     return !!tag;
   }
-  
-  
+
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);
@@ -582,23 +770,23 @@ export class Arena {
       case Biome.BEACH:
         return 3.462;
       case Biome.LAKE:
-        return 5.350;
+        return 5.35;
       case Biome.SEABED:
         return 2.629;
       case Biome.MOUNTAIN:
         return 4.018;
       case Biome.BADLANDS:
-        return 17.790;
+        return 17.79;
       case Biome.CAVE:
-        return 14.240;
+        return 14.24;
       case Biome.DESERT:
         return 1.143;
       case Biome.ICE_CAVE:
-        return 15.010;
+        return 15.01;
       case Biome.MEADOW:
         return 3.891;
       case Biome.POWER_PLANT:
-        return 2.810;
+        return 2.81;
       case Biome.VOLCANO:
         return 5.116;
       case Biome.GRAVEYARD:
@@ -608,11 +796,11 @@ export class Arena {
       case Biome.FACTORY:
         return 4.985;
       case Biome.RUINS:
-        return 2.270;
+        return 2.27;
       case Biome.WASTELAND:
         return 6.336;
       case Biome.ABYSS:
-        return 5.130;
+        return 5.13;
       case Biome.SPACE:
         return 21.347;
       case Biome.CONSTRUCTION_SITE:
@@ -638,11 +826,11 @@ export class Arena {
 export function getBiomeKey(biome: Biome): string {
   switch (biome) {
     case Biome.METROPOLIS:
-      return 'slum';
+      return "slum";
     case Biome.JUNGLE:
-      return 'tall_grass';
+      return "tall_grass";
     case Biome.ISLAND:
-      return 'beach';
+      return "beach";
   }
   return Biome[biome].toLowerCase();
 }
@@ -688,66 +876,85 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.addFieldSprite(0, 0, 'plains_a', null, 1);
+    this.base = scene.addFieldSprite(0, 0, "plains_a", null, 1);
     this.base.setOrigin(0, 0);
 
-    this.props = !player ?
-      new Array(3).fill(null).map(() => {
-        const ret = scene.addFieldSprite(0, 0, 'plains_b', null, 1);
-        ret.setOrigin(0, 0);
-        ret.setVisible(false);
-        return ret;
-      }) : [];
+    this.props = !player
+      ? new Array(3).fill(null).map(() => {
+          const ret = scene.addFieldSprite(0, 0, "plains_b", null, 1);
+          ret.setOrigin(0, 0);
+          ret.setVisible(false);
+          return ret;
+        })
+      : [];
   }
 
   setBiome(biome: Biome, propValue?: integer): void {
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
-    const baseKey = `${biomeKey}_${this.player ? 'a' : 'b'}`;
-    
+    const baseKey = `${biomeKey}_${this.player ? "a" : "b"}`;
+
     if (biome !== this.biome) {
       this.base.setTexture(baseKey);
 
       if (this.base.texture.frameTotal > 1) {
-        const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
+        const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, {
+          zeroPad: 4,
+          suffix: ".png",
+          start: 1,
+          end: this.base.texture.frameTotal - 1,
+        });
         this.scene.anims.create({
           key: baseKey,
           frames: baseFrameNames,
           frameRate: 12,
-          repeat: -1
+          repeat: -1,
         });
         this.base.play(baseKey);
-      } else
-        this.base.stop();
+      } else this.base.stop();
 
       this.add(this.base);
     }
 
     if (!this.player) {
-      (this.scene as BattleScene).executeWithSeedOffset(() => {
-        this.propValue = propValue === undefined
-          ? hasProps ? Utils.randSeedInt(8) : 0
-          : propValue;
-        this.props.forEach((prop, p) => {
-          const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`;
-          prop.setTexture(propKey);
+      (this.scene as BattleScene).executeWithSeedOffset(
+        () => {
+          this.propValue =
+            propValue === undefined
+              ? hasProps
+                ? Utils.randSeedInt(8)
+                : 0
+              : propValue;
+          this.props.forEach((prop, p) => {
+            const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ""}`;
+            prop.setTexture(propKey);
 
-          if (hasProps && prop.texture.frameTotal > 1) {
-            const propFrameNames = this.scene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
-            this.scene.anims.create({
-              key: propKey,
-              frames: propFrameNames,
-              frameRate: 12,
-              repeat: -1
-            });
-            prop.play(propKey);
-          } else
-            prop.stop();
+            if (hasProps && prop.texture.frameTotal > 1) {
+              const propFrameNames = this.scene.anims.generateFrameNames(
+                propKey,
+                {
+                  zeroPad: 4,
+                  suffix: ".png",
+                  start: 1,
+                  end: prop.texture.frameTotal - 1,
+                },
+              );
+              this.scene.anims.create({
+                key: propKey,
+                frames: propFrameNames,
+                frameRate: 12,
+                repeat: -1,
+              });
+              prop.play(propKey);
+            } else prop.stop();
 
-          prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
-          this.add(prop);
-        });
-      }, (this.scene as BattleScene).currentBattle?.waveIndex || 0, (this.scene as BattleScene).waveSeed);
+            prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
+            this.add(prop);
+          });
+        },
+        (this.scene as BattleScene).currentBattle?.waveIndex || 0,
+        (this.scene as BattleScene).waveSeed,
+      );
     }
   }
 }

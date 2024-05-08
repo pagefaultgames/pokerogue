@@ -4,52 +4,72 @@ import { TextStyle, getBBCodeFrag } from "../ui/text";
 import { UiTheme } from "#app/enums/ui-theme";
 
 export enum Nature {
-  HARDY,
-  LONELY,
-  BRAVE,
-  ADAMANT,
-  NAUGHTY,
-  BOLD,
-  DOCILE,
-  RELAXED,
-  IMPISH,
-  LAX,
-  TIMID,
-  HASTY,
-  SERIOUS,
-  JOLLY,
-  NAIVE,
-  MODEST,
-  MILD,
-  QUIET,
-  BASHFUL,
-  RASH,
-  CALM,
-  GENTLE,
-  SASSY,
-  CAREFUL,
-  QUIRKY
+  HARDY = 0,
+  LONELY = 1,
+  BRAVE = 2,
+  ADAMANT = 3,
+  NAUGHTY = 4,
+  BOLD = 5,
+  DOCILE = 6,
+  RELAXED = 7,
+  IMPISH = 8,
+  LAX = 9,
+  TIMID = 10,
+  HASTY = 11,
+  SERIOUS = 12,
+  JOLLY = 13,
+  NAIVE = 14,
+  MODEST = 15,
+  MILD = 16,
+  QUIET = 17,
+  BASHFUL = 18,
+  RASH = 19,
+  CALM = 20,
+  GENTLE = 21,
+  SASSY = 22,
+  CAREFUL = 23,
+  QUIRKY = 24,
 }
 
-export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+export function getNatureName(
+  nature: Nature,
+  includeStatEffects = false,
+  forStarterSelect = false,
+  ignoreBBCode = false,
+  uiTheme: UiTheme = UiTheme.DEFAULT,
+): string {
   let ret = Utils.toReadableString(Nature[nature]);
   if (includeStatEffects) {
     const stats = Utils.getEnumValues(Stat).slice(1);
     let increasedStat: Stat = null;
     let decreasedStat: Stat = null;
-    for (let stat of stats) {
+    for (const stat of stats) {
       const multiplier = getNatureStatMultiplier(nature, stat);
-      if (multiplier > 1)
-        increasedStat = stat;
-      else if (multiplier < 1)
-        decreasedStat = stat;
+      if (multiplier > 1) increasedStat = stat;
+      else if (multiplier < 1) decreasedStat = stat;
     }
-    const textStyle = forStarterSelect ? TextStyle.SUMMARY_ALT : TextStyle.WINDOW;
-    const getTextFrag = !ignoreBBCode ? (text: string, style: TextStyle) => getBBCodeFrag(text, style, uiTheme) : (text: string, style: TextStyle) => text;
+    const textStyle = forStarterSelect
+      ? TextStyle.SUMMARY_ALT
+      : TextStyle.WINDOW;
+    const getTextFrag = !ignoreBBCode
+      ? (text: string, style: TextStyle) => getBBCodeFrag(text, style, uiTheme)
+      : (text: string, style: TextStyle) => text;
     if (increasedStat && decreasedStat)
-      ret = `${getTextFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(`, textStyle)}${getTextFrag(`+${getStatName(increasedStat, true)}`, TextStyle.SUMMARY_PINK)}${getTextFrag('/', textStyle)}${getTextFrag(`-${getStatName(decreasedStat, true)}`, TextStyle.SUMMARY_BLUE)}${getTextFrag(')', textStyle)}`;
+      ret = `${getTextFrag(
+        `${ret}${!forStarterSelect ? "\n" : " "}(`,
+        textStyle,
+      )}${getTextFrag(
+        `+${getStatName(increasedStat, true)}`,
+        TextStyle.SUMMARY_PINK,
+      )}${getTextFrag("/", textStyle)}${getTextFrag(
+        `-${getStatName(decreasedStat, true)}`,
+        TextStyle.SUMMARY_BLUE,
+      )}${getTextFrag(")", textStyle)}`;
     else
-      ret = getTextFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(-)`, textStyle);
+      ret = getTextFrag(
+        `${ret}${!forStarterSelect ? "\n" : " "}(-)`,
+        textStyle,
+      );
   }
   return ret;
 }

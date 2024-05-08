@@ -318,12 +318,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          60,
-          60,
-          60,
-          0
-        ],
+        "tone": [60, 60, 60, 0],
         "priority": 1,
         "focus": 3
       }
@@ -364,12 +359,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          125,
-          125,
-          125,
-          0
-        ],
+        "tone": [125, 125, 125, 0],
         "priority": 1,
         "focus": 3
       }
@@ -410,12 +400,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          185,
-          185,
-          185,
-          0
-        ],
+        "tone": [185, 185, 185, 0],
         "priority": 1,
         "focus": 3
       }
@@ -456,12 +441,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          255,
-          255,
-          255,
-          0
-        ],
+        "tone": [255, 255, 255, 0],
         "priority": 1,
         "focus": 3
       }
@@ -502,12 +482,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          255,
-          255,
-          255,
-          0
-        ],
+        "tone": [255, 255, 255, 0],
         "priority": 1,
         "focus": 3
       }
@@ -548,12 +523,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          185,
-          185,
-          185,
-          0
-        ],
+        "tone": [185, 185, 185, 0],
         "priority": 1,
         "focus": 3
       }
@@ -594,12 +564,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          125,
-          125,
-          125,
-          0
-        ],
+        "tone": [125, 125, 125, 0],
         "priority": 1,
         "focus": 3
       }
@@ -640,12 +605,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "tone": [
-          60,
-          60,
-          60,
-          0
-        ],
+        "tone": [60, 60, 60, 0],
         "priority": 1,
         "focus": 3
       }

@@ -1,31 +1,33 @@
 export enum Type {
   UNKNOWN = -1,
   NORMAL = 0,
-  FIGHTING,
-  FLYING,
-  POISON,
-  GROUND,
-  ROCK,
-  BUG,
-  GHOST,
-  STEEL,
-  FIRE,
-  WATER,
-  GRASS,
-  ELECTRIC,
-  PSYCHIC,
-  ICE,
-  DRAGON,
-  DARK,
-  FAIRY,
-  STELLAR
-};
+  FIGHTING = 1,
+  FLYING = 2,
+  POISON = 3,
+  GROUND = 4,
+  ROCK = 5,
+  BUG = 6,
+  GHOST = 7,
+  STEEL = 8,
+  FIRE = 9,
+  WATER = 10,
+  GRASS = 11,
+  ELECTRIC = 12,
+  PSYCHIC = 13,
+  ICE = 14,
+  DRAGON = 15,
+  DARK = 16,
+  FAIRY = 17,
+  STELLAR = 18,
+}
 
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
-export function getTypeDamageMultiplier(attackType: integer, defType: integer): TypeDamageMultiplier {
-  if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN)
-    return 1;
+export function getTypeDamageMultiplier(
+  attackType: integer,
+  defType: integer,
+): TypeDamageMultiplier {
+  if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN) return 1;
 
   switch (defType) {
     case Type.NORMAL:
@@ -281,7 +283,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.STEEL:
         case Type.FIRE:
         case Type.GRASS:
-         case Type.ICE:
+        case Type.ICE:
         case Type.FAIRY:
           return 0.5;
         default:
@@ -497,50 +499,50 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
       }
     case Type.STELLAR:
       return 1;
-  } 
+  }
 }
 
-export function getTypeRgb(type: Type): [ integer, integer, integer ] {
+export function getTypeRgb(type: Type): [integer, integer, integer] {
   switch (type) {
     case Type.NORMAL:
-      return [ 168, 168, 120 ]; 
+      return [168, 168, 120];
     case Type.FIGHTING:
-      return [ 192, 48, 40 ]; 
+      return [192, 48, 40];
     case Type.FLYING:
-      return [ 168, 144, 240 ]; 
+      return [168, 144, 240];
     case Type.POISON:
-      return [ 160, 64, 160 ]; 
+      return [160, 64, 160];
     case Type.GROUND:
-      return [ 224, 192, 104 ]; 
+      return [224, 192, 104];
     case Type.ROCK:
-      return [ 184, 160, 56 ]; 
+      return [184, 160, 56];
     case Type.BUG:
-      return [ 168, 184, 32 ];
+      return [168, 184, 32];
     case Type.GHOST:
-      return [ 112, 88, 152 ]; 
+      return [112, 88, 152];
     case Type.STEEL:
-      return [ 184, 184, 208 ]; 
+      return [184, 184, 208];
     case Type.FIRE:
-      return [ 240, 128, 48 ]; 
+      return [240, 128, 48];
     case Type.WATER:
-      return [ 104, 144, 240 ];
+      return [104, 144, 240];
     case Type.GRASS:
-      return [ 120, 200, 80 ]; 
+      return [120, 200, 80];
     case Type.ELECTRIC:
-      return [ 248, 208, 48 ]; 
+      return [248, 208, 48];
     case Type.PSYCHIC:
-      return [ 248, 88, 136 ]; 
+      return [248, 88, 136];
     case Type.ICE:
-      return [ 152, 216, 216 ]; 
+      return [152, 216, 216];
     case Type.DRAGON:
-      return [ 112, 56, 248 ];
+      return [112, 56, 248];
     case Type.DARK:
-      return [ 112, 88, 72 ];
+      return [112, 88, 72];
     case Type.FAIRY:
-      return [ 232, 136, 200 ]; 
+      return [232, 136, 200];
     case Type.STELLAR:
-      return [ 255, 255, 255 ];
+      return [255, 255, 255];
     default:
-      return [ 0, 0, 0 ];
+      return [0, 0, 0];
   }
 }

@@ -126,12 +126,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          30,
-          0,
-          0,
-          0
-        ],
+        "tone": [30, 0, 0, 0],
         "locked": true,
         "priority": 1,
         "focus": 3
@@ -194,12 +189,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          40,
-          0,
-          0,
-          0
-        ],
+        "tone": [40, 0, 0, 0],
         "priority": 1,
         "focus": 3
       },
@@ -262,12 +252,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          50,
-          0,
-          0,
-          0
-        ],
+        "tone": [50, 0, 0, 0],
         "priority": 1,
         "focus": 3
       },
@@ -306,12 +291,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          50,
-          0,
-          0,
-          0
-        ],
+        "tone": [50, 0, 0, 0],
         "priority": 1,
         "focus": 3
       },
@@ -351,12 +331,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          40,
-          0,
-          0,
-          0
-        ],
+        "tone": [40, 0, 0, 0],
         "locked": true,
         "priority": 1,
         "focus": 3
@@ -397,12 +372,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          30,
-          0,
-          0,
-          0
-        ],
+        "tone": [30, 0, 0, 0],
         "priority": 1,
         "focus": 3
       },
@@ -441,12 +411,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          20,
-          0,
-          0,
-          0
-        ],
+        "tone": [20, 0, 0, 0],
         "priority": 1,
         "focus": 3
       },
@@ -486,12 +451,7 @@
         "target": 1,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          10,
-          0,
-          0,
-          0
-        ],
+        "tone": [10, 0, 0, 0],
         "locked": true,
         "priority": 1,
         "focus": 3

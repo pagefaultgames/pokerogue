@@ -68,12 +68,7 @@
           "target": 2,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            1,
-            0,
-            0,
-            0
-          ],
+          "color": [1, 0, 0, 0],
           "priority": 1,
           "focus": 2
         }
@@ -1251,12 +1246,7 @@
           "target": 2,
           "graphicFrame": 0,
           "opacity": 255,
-          "color": [
-            1,
-            0,
-            0,
-            0
-          ],
+          "color": [1, 0, 0, 0],
           "priority": 1,
           "focus": 2
         }

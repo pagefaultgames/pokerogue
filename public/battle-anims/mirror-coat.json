@@ -39,12 +39,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -56,12 +51,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -180,12 +170,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -197,12 +182,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -321,12 +301,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -338,12 +313,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -462,12 +432,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -479,12 +444,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -603,12 +563,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -620,12 +575,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -744,12 +694,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -761,12 +706,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -885,12 +825,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -902,12 +837,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -1026,12 +956,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -1043,12 +968,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -1258,12 +1178,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -1275,12 +1190,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -1412,12 +1322,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -1429,12 +1334,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -1566,12 +1466,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -1583,12 +1478,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -1720,12 +1610,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -1737,12 +1622,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -1874,12 +1754,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -1891,12 +1766,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -2028,12 +1898,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -2045,12 +1910,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -2182,12 +2042,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -2199,12 +2054,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -2440,12 +2290,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -2457,12 +2302,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -2607,12 +2447,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -2624,12 +2459,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -2774,12 +2604,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -2791,12 +2616,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -2941,12 +2761,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -2958,12 +2773,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -3108,12 +2918,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -3125,12 +2930,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -3275,12 +3075,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -3292,12 +3087,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -3442,12 +3232,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "focus": 2
         },
         {
@@ -3459,12 +3244,7 @@
           "target": 0,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 2
         },
@@ -3656,12 +3436,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -3674,12 +3449,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -3798,12 +3568,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -3816,12 +3581,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -3940,12 +3700,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -3958,12 +3713,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4082,12 +3832,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4100,12 +3845,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4224,12 +3964,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4242,12 +3977,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4366,12 +4096,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4384,12 +4109,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4508,12 +4228,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4526,12 +4241,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4650,12 +4360,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4668,12 +4373,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4883,12 +4583,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -4901,12 +4596,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5038,12 +4728,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5056,12 +4741,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5193,12 +4873,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5211,12 +4886,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5348,12 +5018,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5366,12 +5031,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5503,12 +5163,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5521,12 +5176,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5658,12 +5308,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5676,12 +5321,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5813,12 +5453,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -5831,12 +5466,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6072,12 +5702,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6090,12 +5715,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6240,12 +5860,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6258,12 +5873,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6408,12 +6018,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6426,12 +6031,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 125,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6576,12 +6176,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6594,12 +6189,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 100,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6744,12 +6334,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6762,12 +6347,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 75,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6912,12 +6492,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -6930,12 +6505,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 50,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -7080,12 +6650,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },
@@ -7098,12 +6663,7 @@
           "target": 1,
           "graphicFrame": 0,
           "opacity": 25,
-          "tone": [
-            0,
-            0,
-            117,
-            0
-          ],
+          "tone": [0, 0, 117, 0],
           "priority": 1,
           "focus": 1
         },

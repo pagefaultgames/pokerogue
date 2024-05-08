@@ -117,12 +117,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },
@@ -175,12 +170,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },
@@ -233,12 +223,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },
@@ -291,12 +276,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },
@@ -573,12 +553,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },
@@ -631,12 +606,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },
@@ -689,12 +659,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },
@@ -747,12 +712,7 @@
         "target": 2,
         "graphicFrame": 18,
         "opacity": 150,
-        "tone": [
-          -255,
-          -255,
-          -255,
-          0
-        ],
+        "tone": [-255, -255, -255, 0],
         "priority": 2,
         "focus": 2
       },

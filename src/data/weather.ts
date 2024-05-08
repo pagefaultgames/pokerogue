@@ -9,16 +9,16 @@ import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
 
 export enum WeatherType {
-  NONE,
-  SUNNY,
-  RAIN,
-  SANDSTORM,
-  HAIL,
-  SNOW,
-  FOG,
-  HEAVY_RAIN,
-  HARSH_SUN,
-  STRONG_WINDS
+  NONE = 0,
+  SUNNY = 1,
+  RAIN = 2,
+  SANDSTORM = 3,
+  HAIL = 4,
+  SNOW = 5,
+  FOG = 6,
+  HEAVY_RAIN = 7,
+  HARSH_SUN = 8,
+  STRONG_WINDS = 9,
 }
 
 export class Weather {
@@ -31,10 +31,8 @@ export class Weather {
   }
 
   lapse(): boolean {
-    if (this.isImmutable())
-      return true;
-    if (this.turnsLeft)
-      return !!--this.turnsLeft;
+    if (this.isImmutable()) return true;
+    if (this.turnsLeft) return !!--this.turnsLeft;
 
     return true;
   }
@@ -63,7 +61,9 @@ export class Weather {
   isTypeDamageImmune(type: Type): boolean {
     switch (this.weatherType) {
       case WeatherType.SANDSTORM:
-        return type === Type.GROUND || type === Type.ROCK || type === Type.STEEL;
+        return (
+          type === Type.GROUND || type === Type.ROCK || type === Type.STEEL
+        );
       case WeatherType.HAIL:
         return type === Type.ICE;
     }
@@ -75,17 +75,13 @@ export class Weather {
     switch (this.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
-        if (attackType === Type.FIRE)
-          return 1.5;
-        if (attackType === Type.WATER)
-          return 0.5;
+        if (attackType === Type.FIRE) return 1.5;
+        if (attackType === Type.WATER) return 0.5;
         break;
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
-        if (attackType === Type.FIRE)
-          return 0.5;
-        if (attackType === Type.WATER)
-          return 1.5;
+        if (attackType === Type.FIRE) return 0.5;
+        if (attackType === Type.WATER) return 1.5;
         break;
     }
 
@@ -106,11 +102,22 @@ export class Weather {
   isEffectSuppressed(scene: BattleScene): boolean {
     const field = scene.getField(true);
 
-    for (let pokemon of field) {
-      let suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
+    for (const pokemon of field) {
+      let suppressWeatherEffectAbAttr = pokemon
+        .getAbility()
+        .getAttrs(SuppressWeatherEffectAbAttr)
+        .find(() => true) as SuppressWeatherEffectAbAttr;
       if (!suppressWeatherEffectAbAttr)
-        suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr : null;
-      if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable))
+        suppressWeatherEffectAbAttr = pokemon.hasPassive()
+          ? (pokemon
+              .getPassiveAbility()
+              .getAttrs(SuppressWeatherEffectAbAttr)
+              .find(() => true) as SuppressWeatherEffectAbAttr)
+          : null;
+      if (
+        suppressWeatherEffectAbAttr &&
+        (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable)
+      )
         return true;
     }
 
@@ -121,23 +128,23 @@ export class Weather {
 export function getWeatherStartMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
-      return 'The sunlight got bright!';
+      return "The sunlight got bright!";
     case WeatherType.RAIN:
-      return 'A downpour started!';
+      return "A downpour started!";
     case WeatherType.SANDSTORM:
-      return 'A sandstorm brewed!';
+      return "A sandstorm brewed!";
     case WeatherType.HAIL:
-      return 'It started to hail!';
+      return "It started to hail!";
     case WeatherType.SNOW:
-      return 'It started to snow!';
+      return "It started to snow!";
     case WeatherType.FOG:
-      return 'A thick fog emerged!'
+      return "A thick fog emerged!";
     case WeatherType.HEAVY_RAIN:
-      return 'A heavy downpour started!'
+      return "A heavy downpour started!";
     case WeatherType.HARSH_SUN:
-      return 'The sunlight got hot!'
+      return "The sunlight got hot!";
     case WeatherType.STRONG_WINDS:
-      return 'A heavy wind began!';
+      return "A heavy wind began!";
   }
 
   return null;
@@ -146,34 +153,37 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
 export function getWeatherLapseMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
-      return 'The sunlight is strong.';
+      return "The sunlight is strong.";
     case WeatherType.RAIN:
-      return 'The downpour continues.';
+      return "The downpour continues.";
     case WeatherType.SANDSTORM:
-      return 'The sandstorm rages.';
+      return "The sandstorm rages.";
     case WeatherType.HAIL:
-      return 'Hail continues to fall.';
+      return "Hail continues to fall.";
     case WeatherType.SNOW:
-      return 'The snow is falling down.';
+      return "The snow is falling down.";
     case WeatherType.FOG:
-      return 'The fog continues.';
+      return "The fog continues.";
     case WeatherType.HEAVY_RAIN:
-      return 'The heavy downpour continues.'
+      return "The heavy downpour continues.";
     case WeatherType.HARSH_SUN:
-      return 'The sun is scorching hot.'
+      return "The sun is scorching hot.";
     case WeatherType.STRONG_WINDS:
-      return 'The wind blows intensely.';
+      return "The wind blows intensely.";
   }
 
   return null;
 }
 
-export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
+export function getWeatherDamageMessage(
+  weatherType: WeatherType,
+  pokemon: Pokemon,
+): string {
   switch (weatherType) {
     case WeatherType.SANDSTORM:
-      return getPokemonMessage(pokemon, ' is buffeted\nby the sandstorm!');
+      return getPokemonMessage(pokemon, " is buffeted\nby the sandstorm!");
     case WeatherType.HAIL:
-      return getPokemonMessage(pokemon, ' is pelted\nby the hail!');
+      return getPokemonMessage(pokemon, " is pelted\nby the hail!");
   }
 
   return null;
@@ -182,23 +192,23 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
 export function getWeatherClearMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
-      return 'The sunlight faded.';
+      return "The sunlight faded.";
     case WeatherType.RAIN:
-      return 'The rain stopped.';
+      return "The rain stopped.";
     case WeatherType.SANDSTORM:
-      return 'The sandstorm subsided.';
+      return "The sandstorm subsided.";
     case WeatherType.HAIL:
-      return 'The hail stopped.';
+      return "The hail stopped.";
     case WeatherType.SNOW:
-      return 'The snow stopped.';
+      return "The snow stopped.";
     case WeatherType.FOG:
-      return 'The fog disappeared.'
+      return "The fog disappeared.";
     case WeatherType.HEAVY_RAIN:
-      return 'The heavy rain stopped.'
+      return "The heavy rain stopped.";
     case WeatherType.HARSH_SUN:
-      return 'The harsh sunlight faded.'
+      return "The harsh sunlight faded.";
     case WeatherType.STRONG_WINDS:
-      return 'The heavy wind stopped.';
+      return "The heavy wind stopped.";
   }
 
   return null;
@@ -207,33 +217,44 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
 export function getTerrainStartMessage(terrainType: TerrainType): string {
   switch (terrainType) {
     case TerrainType.MISTY:
-      return 'Mist swirled around the battlefield!';
+      return "Mist swirled around the battlefield!";
     case TerrainType.ELECTRIC:
-      return 'An electric current ran across the battlefield!';
+      return "An electric current ran across the battlefield!";
     case TerrainType.GRASSY:
-      return 'Grass grew to cover the battlefield!';
+      return "Grass grew to cover the battlefield!";
     case TerrainType.PSYCHIC:
-      return 'The battlefield got weird!';
+      return "The battlefield got weird!";
   }
 }
 
 export function getTerrainClearMessage(terrainType: TerrainType): string {
   switch (terrainType) {
     case TerrainType.MISTY:
-      return 'The mist disappeared from the battlefield.';
+      return "The mist disappeared from the battlefield.";
     case TerrainType.ELECTRIC:
-      return 'The electricity disappeared from the battlefield.';
+      return "The electricity disappeared from the battlefield.";
     case TerrainType.GRASSY:
-      return 'The grass disappeared from the battlefield.';
+      return "The grass disappeared from the battlefield.";
     case TerrainType.PSYCHIC:
-      return 'The weirdness disappeared from the battlefield!';
+      return "The weirdness disappeared from the battlefield!";
   }
 }
 
-export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
+export function getTerrainBlockMessage(
+  pokemon: Pokemon,
+  terrainType: TerrainType,
+): string {
   if (terrainType === TerrainType.MISTY)
-    return getPokemonMessage(pokemon, ` surrounds itself with a protective mist!`);
-  return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain!`);
+    return getPokemonMessage(
+      pokemon,
+      ` surrounds itself with a protective mist!`,
+    );
+  return getPokemonMessage(
+    pokemon,
+    ` is protected by the ${Utils.toReadableString(
+      TerrainType[terrainType],
+    )} Terrain!`,
+  );
 }
 
 interface WeatherPoolEntry {
@@ -241,14 +262,14 @@ interface WeatherPoolEntry {
   weight: integer;
 }
 
-export function getRandomWeatherType(arena: any /* Importing from arena causes a circular dependency */): WeatherType {
+export function getRandomWeatherType(
+  arena: any /* Importing from arena causes a circular dependency */,
+): WeatherType {
   let weatherPool: WeatherPoolEntry[] = [];
   const hasSun = arena.getTimeOfDay() < 2;
   switch (arena.biomeType) {
     case Biome.GRASS:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 7 }
-      ];
+      weatherPool = [{ weatherType: WeatherType.NONE, weight: 7 }];
       if (hasSun)
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 3 });
       break;
@@ -263,26 +284,26 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
     case Biome.FOREST:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 5 }
+        { weatherType: WeatherType.RAIN, weight: 5 },
       ];
       break;
     case Biome.SEA:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.RAIN, weight: 12 }
+        { weatherType: WeatherType.RAIN, weight: 12 },
       ];
       break;
     case Biome.SWAMP:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
         { weatherType: WeatherType.RAIN, weight: 4 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
     case Biome.BEACH:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 3 }
+        { weatherType: WeatherType.RAIN, weight: 3 },
       ];
       if (hasSun)
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
@@ -291,26 +312,22 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 10 },
         { weatherType: WeatherType.RAIN, weight: 5 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
     case Biome.SEABED:
-      weatherPool = [
-        { weatherType: WeatherType.RAIN, weight: 1 }
-      ];
+      weatherPool = [{ weatherType: WeatherType.RAIN, weight: 1 }];
       break;
     case Biome.BADLANDS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.SANDSTORM, weight: 2 }
+        { weatherType: WeatherType.SANDSTORM, weight: 2 },
       ];
       if (hasSun)
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       break;
     case Biome.DESERT:
-      weatherPool = [
-        { weatherType: WeatherType.SANDSTORM, weight: 2 }
-      ];
+      weatherPool = [{ weatherType: WeatherType.SANDSTORM, weight: 2 }];
       if (hasSun)
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       break;
@@ -318,36 +335,37 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
         { weatherType: WeatherType.SNOW, weight: 4 },
-        { weatherType: WeatherType.HAIL, weight: 1 }
+        { weatherType: WeatherType.HAIL, weight: 1 },
       ];
       break;
     case Biome.MEADOW:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 2 }
-      ];
+      weatherPool = [{ weatherType: WeatherType.NONE, weight: 2 }];
       if (hasSun)
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
     case Biome.VOLCANO:
       weatherPool = [
-        { weatherType: hasSun ? WeatherType.SUNNY : WeatherType.NONE, weight: 1 }
+        {
+          weatherType: hasSun ? WeatherType.SUNNY : WeatherType.NONE,
+          weight: 1,
+        },
       ];
       break;
     case Biome.GRAVEYARD:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
     case Biome.JUNGLE:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 2 }
+        { weatherType: WeatherType.RAIN, weight: 2 },
       ];
       break;
     case Biome.SNOWY_FOREST:
       weatherPool = [
         { weatherType: WeatherType.SNOW, weight: 7 },
-        { weatherType: WeatherType.HAIL, weight: 1 }
+        { weatherType: WeatherType.HAIL, weight: 1 },
       ];
       break;
     case Biome.ISLAND:
@@ -362,18 +380,15 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
 
   if (weatherPool.length > 1) {
     let totalWeight = 0;
-    weatherPool.forEach(w => totalWeight += w.weight);
+    weatherPool.forEach((w) => (totalWeight += w.weight));
 
     const rand = Utils.randSeedInt(totalWeight);
     let w = 0;
-    for (let weather of weatherPool) {
+    for (const weather of weatherPool) {
       w += weather.weight;
-      if (rand < w)
-        return weather.weatherType;
+      if (rand < w) return weather.weatherType;
     }
   }
 
-  return weatherPool.length
-    ? weatherPool[0].weatherType
-    : WeatherType.NONE;
+  return weatherPool.length ? weatherPool[0].weatherType : WeatherType.NONE;
 }

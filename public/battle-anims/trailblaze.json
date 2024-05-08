@@ -264,12 +264,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          0,
-          0,
-          0,
-          255
-        ],
+        "tone": [0, 0, 0, 255],
         "priority": 1,
         "focus": 2
       },
@@ -332,12 +327,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          0,
-          0,
-          0,
-          140
-        ],
+        "tone": [0, 0, 0, 140],
         "priority": 1,
         "focus": 2
       },

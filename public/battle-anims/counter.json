@@ -12,12 +12,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          50,
-          50,
-          50,
-          0
-        ],
+        "tone": [50, 50, 50, 0],
         "priority": 1,
         "focus": 3
       },
@@ -45,12 +40,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          100,
-          100,
-          100,
-          0
-        ],
+        "tone": [100, 100, 100, 0],
         "priority": 1,
         "focus": 3
       },
@@ -78,12 +68,7 @@
         "target": 0,
         "graphicFrame": 0,
         "opacity": 255,
-        "tone": [
-          50,
-          50,
-          50,
-          0
-        ],
+        "tone": [50, 50, 50, 0],
         "priority": 1,
         "focus": 3
       },
@@ -257,12 +242,7 @@
         "target": 2,
         "graphicFrame": 17,
         "opacity": 180,
-        "tone": [
-          220,
-          0,
-          0,
-          0
-        ],
+        "tone": [220, 0, 0, 0],
         "priority": 1,
         "focus": 3
       }
@@ -314,12 +294,7 @@
         "target": 2,
         "graphicFrame": 17,
         "opacity": 255,
-        "tone": [
-          220,
-          0,
-          0,
-          0
-        ],
+        "tone": [220, 0, 0, 0],
         "priority": 1,
         "focus": 3
       }
@@ -371,12 +346,7 @@
         "target": 2,
         "graphicFrame": 17,
         "opacity": 255,
-        "tone": [
-          220,
-          0,
-          0,
-          0
-        ],
+        "tone": [220, 0, 0, 0],
         "priority": 1,
         "focus": 3
       }
@@ -429,12 +399,7 @@
         "target": 2,
         "graphicFrame": 17,
         "opacity": 255,
-        "tone": [
-          220,
-          0,
-          0,
-          0
-        ],
+        "tone": [220, 0, 0, 0],
         "priority": 1,
         "focus": 3
       }
@@ -487,12 +452,7 @@
         "target": 2,
         "graphicFrame": 17,
         "opacity": 170,
-        "tone": [
-          220,
-          0,
-          0,
-          0
-        ],
+        "tone": [220, 0, 0, 0],
         "priority": 1,
         "focus": 3
       }

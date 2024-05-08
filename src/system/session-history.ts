@@ -1,17 +1,17 @@
 import { GameModes } from "../game-mode";
-import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
+import PokemonData from "./pokemon-data";
 
 export enum SessionHistoryResult {
-  ACTIVE,
-  WIN,
-  LOSS
+  ACTIVE = 0,
+  WIN = 1,
+  LOSS = 2,
 }
 
 export interface SessionHistory {
   seed: string;
   playTime: integer;
-  result: SessionHistoryResult,
+  result: SessionHistoryResult;
   gameMode: GameModes;
   party: PokemonData[];
   modifiers: PersistentModifierData[];

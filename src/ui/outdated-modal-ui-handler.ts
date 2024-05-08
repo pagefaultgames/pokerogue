@@ -9,7 +9,7 @@ export default class OutdatedModalUiHandler extends ModalUiHandler {
   }
 
   getModalTitle(): string {
-    return '';
+    return "";
   }
 
   getWidth(): number {
@@ -21,17 +21,24 @@ export default class OutdatedModalUiHandler extends ModalUiHandler {
   }
 
   getMargin(): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   getButtonLabels(): string[] {
-    return [ ];
+    return [];
   }
 
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, 'Your client is currently outdated.\nPlease reload to update the game.\n\nIf this error persists, please clear your browser cache.', TextStyle.WINDOW, { fontSize: '48px', align: 'center' });
+    const label = addTextObject(
+      this.scene,
+      this.getWidth() / 2,
+      this.getHeight() / 2,
+      "Your client is currently outdated.\nPlease reload to update the game.\n\nIf this error persists, please clear your browser cache.",
+      TextStyle.WINDOW,
+      { fontSize: "48px", align: "center" },
+    );
     label.setOrigin(0.5, 0.5);
 
     this.modalContainer.add(label);
@@ -39,9 +46,9 @@ export default class OutdatedModalUiHandler extends ModalUiHandler {
 
   show(args: any[]): boolean {
     const config: ModalConfig = {
-      buttonActions: []
+      buttonActions: [],
     };
 
-    return super.show([ config ]);
+    return super.show([config]);
   }
 }

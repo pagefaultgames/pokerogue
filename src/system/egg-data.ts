@@ -7,7 +7,7 @@ export default class EggData {
   public timestamp: integer;
 
   constructor(source: Egg | any) {
-    const sourceEgg = source instanceof Egg ? source as Egg : null;
+    const sourceEgg = source instanceof Egg ? (source as Egg) : null;
     this.id = sourceEgg ? sourceEgg.id : source.id;
     this.gachaType = sourceEgg ? sourceEgg.gachaType : source.gachaType;
     this.hatchWaves = sourceEgg ? sourceEgg.hatchWaves : source.hatchWaves;
