@@ -4167,8 +4167,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.ROAR, Type.NORMAL, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr)
-      .soundBased()
-      .hidesTarget(),
+      .soundBased(),
     new StatusMove(Moves.SING, Type.NORMAL, 55, 15, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased(),
