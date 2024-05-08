@@ -59,7 +59,7 @@ import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
-import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE } from './overrides';
+import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE, DOUBLE_BATTLE_OVERRIDE } from './overrides';
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 
@@ -841,6 +841,9 @@ export default class BattleScene extends SceneBase {
 				newDouble = newTrainer.variant === TrainerVariant.DOUBLE;
 		} else if (!battleConfig)
 			newDouble = !!double;
+
+		if (DOUBLE_BATTLE_OVERRIDE)
+			newDouble = true;
 
 		const lastBattle = this.currentBattle;
 

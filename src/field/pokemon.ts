@@ -43,7 +43,11 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
+<<<<<<< HEAD
 import { ABILITY_OVERRIDE, MOVE_OVERRIDE, MOVE_OVERRIDE_2, MOVE_OVERRIDE_3, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_MOVE_OVERRIDE_2, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
+=======
+import { ABILITY_OVERRIDE, MOVE_OVERRIDE, MOVE_OVERRIDE_2, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_MOVE_OVERRIDE_2, OPP_PASSIVE_ABILITY_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE, PASSIVE_ABILITY_OVERRIDE } from '../overrides';
+>>>>>>> main
 import { BerryType } from '../data/berry';
 import i18next from '../plugins/i18n';
 
@@ -813,6 +817,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getPassiveAbility(): Ability {
+    if (PASSIVE_ABILITY_OVERRIDE && this.isPlayer())
+      return allAbilities[PASSIVE_ABILITY_OVERRIDE];
+    if (OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer())
+      return allAbilities[OPP_PASSIVE_ABILITY_OVERRIDE];
+
     let starterSpeciesId = this.species.speciesId;
     while (pokemonPrevolutions.hasOwnProperty(starterSpeciesId))
       starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
@@ -820,6 +829,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   } 
 
   hasPassive(): boolean {
+    if ((PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer()) || (OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer()))
+      return true;
     return this.passive || this.isBoss();
   }
 
@@ -903,14 +914,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.isTerastallized() ? 2 : 1;
     const types = this.getTypes(true, true);
 
-    const ignorableImmunities = source?.getAbility()?.getAttrs(IgnoreTypeImmunityAbAttr) || [];
-    const cancelled = new Utils.BooleanHolder(false);
+    let multiplier = types.map(defType => {
+      if (source) {
+        const ignoreImmunity = new Utils.BooleanHolder(false);
+        applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        if (ignoreImmunity.value)
+          return 1;
+      }
 
-    let multiplier = types.map(defType => 
-      ignorableImmunities.some(attr => attr.apply(source, false, cancelled, [moveType, defType]))
-      ? 1
-      : getTypeDamageMultiplier(moveType, defType)
-    ).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
+      return getTypeDamageMultiplier(moveType, defType);
+    }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2)
@@ -1703,18 +1716,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  cry(soundConfig?: Phaser.Types.Sound.SoundConfig): AnySound {
-    const cry = this.getSpeciesForm().cry(this.scene, soundConfig);
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound {
+    const scene = sceneOverride || this.scene;
+    const cry = this.getSpeciesForm().cry(scene, soundConfig);
     let duration = cry.totalDuration * 1000;
     if (this.fusionSpecies) {
-      let fusionCry = this.getFusionSpeciesForm().cry(this.scene, soundConfig, true);
+      let fusionCry = this.getFusionSpeciesForm().cry(scene, soundConfig, true);
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
-      this.scene.time.delayedCall(Utils.fixedInt(Math.ceil(duration * 0.4)), () => {
+      scene.time.delayedCall(Utils.fixedInt(Math.ceil(duration * 0.4)), () => {
         try {
-          SoundFade.fadeOut(this.scene, cry, Utils.fixedInt(Math.ceil(duration * 0.2)));
-          fusionCry = this.getFusionSpeciesForm().cry(this.scene, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig));
-          SoundFade.fadeIn(this.scene, fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), this.scene.masterVolume * this.scene.seVolume, 0);
+          SoundFade.fadeOut(scene, cry, Utils.fixedInt(Math.ceil(duration * 0.2)));
+          fusionCry = this.getFusionSpeciesForm().cry(scene, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig));
+          SoundFade.fadeIn(scene, fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), scene.masterVolume * scene.seVolume, 0);
         } catch (err) {
           console.error(err);
         }
@@ -3128,6 +3142,7 @@ export class PokemonBattleData {
   public hitCount: integer = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
+  public abilitiesApplied: Abilities[] = [];
 }
 
 export class PokemonBattleSummonData {
