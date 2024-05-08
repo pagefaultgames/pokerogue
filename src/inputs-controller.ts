@@ -35,6 +35,8 @@ export class InputsController {
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Time;
     private player: Map<String, GamepadMapping> = new Map();
+    private analogStickThreshold = 0.5;
+    private axisTime = 0;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -88,6 +90,7 @@ export class InputsController {
     }
 
     update(): void {
+        this.checkAxis(); // for analog support
         // reversed to let the cancel button have a kinda priority on the action button
         for (const b of Utils.getEnumValues(Button).reverse()) {
             if (!this.interactions.hasOwnProperty(b)) continue;
@@ -98,6 +101,44 @@ export class InputsController {
                 });
                 this.setLastProcessedMovementTime(b);
             }
+        }
+    }
+
+    checkAxis(): void {
+        if (!this.scene.gamepadSupport || !this.gamepads?.length) return;
+        const gamepad = this.gamepads[0];
+
+		const leftStickX = gamepad.axes[0].getValue();
+		const leftStickY = gamepad.axes[1].getValue();
+        if (!leftStickX || !leftStickY) return;
+
+        let input = null;
+
+        if (Math.abs(leftStickX) > Math.abs(leftStickY)) {
+            if (leftStickX < -this.analogStickThreshold) {
+                input = Button.LEFT;
+            } else if (leftStickX > this.analogStickThreshold) {
+                input = Button.RIGHT;
+            }
+        } else if(Math.abs(leftStickY) > Math.abs(leftStickX)) {
+            if (leftStickY < -this.analogStickThreshold) {
+                input = Button.UP;
+            } else if (leftStickY > this.analogStickThreshold) {
+                input = Button.DOWN;
+            }
+        }
+
+        if (this.time.now - this.axisTime < repeatInputDelayMillis) return;
+        if (input !== null) {
+            this.events.emit('input_down', {
+                controller_type: 'keyboard',
+                button: input,
+            });
+            this.events.emit('input_up', {
+                controller_type: 'keyboard',
+                button: input,
+            });
+            this.axisTime = this.time.now;
         }
     }
 
@@ -251,16 +292,26 @@ export class InputsController {
         }
     }
 
-    setLastProcessedMovementTime(button: Button): void {
+    setLastProcessedMovementTime(button: Button, axis:boolean = false): void {
         if (!this.interactions.hasOwnProperty(button)) return;
-        this.setButtonLock(button);
+        if (axis) {
+            this.buttonLock = button;
+            this.buttonLock2 = null;
+        } else {
+            this.setButtonLock(button);
+        }
         this.interactions[button].pressTime = this.time.now;
         this.interactions[button].isPressed = true;
     }
 
-    delLastProcessedMovementTime(button: Button): void {
+    delLastProcessedMovementTime(button: Button, axis:boolean = false): void {
         if (!this.interactions.hasOwnProperty(button)) return;
-        this.releaseButtonLock(button);
+        if (axis) {
+            this.buttonLock = null;
+            this.buttonLock2 = null;
+        } else {
+            this.releaseButtonLock(button);
+        }
         this.interactions[button].pressTime = null;
         this.interactions[button].isPressed = false;
     }
