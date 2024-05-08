@@ -833,6 +833,11 @@ export class HealAttr extends MoveEffectAttr {
   }
 }
 
+ /**
+   * Cures the user's party of non-volatile status conditions, ie. Heal Bell, Aromatherapy
+   * @param {string} message Message to display after using move
+   * @param {Abilities} abilityCondition Skips mons with this ability, ie. Soundproof
+   */
 export class PartyStatusCureAttr extends MoveEffectAttr {
   private message: string;
   private abilityCondition: Abilities;
