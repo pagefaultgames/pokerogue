@@ -429,20 +429,16 @@ export class TrainerConfig {
   }
 
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
-    let ret = this.name;
-
-    if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble)
+    if (trainerSlot === TrainerSlot.NONE && variant === TrainerVariant.DOUBLE && this.nameDouble)
       return this.nameDouble;
     
-    if (this.hasGenders) {
-      if (this.nameFemale) {
-        if (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER))
-          return this.nameFemale;
-      } else
-        ret += !variant ? '♂' : '♀';
-    }
+    if (!this.hasGenders) 
+      return this.name;
 
-    return ret;
+    if (this.nameFemale && (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER))) 
+      return this.nameFemale;
+
+    return `${this.name}${variant === TrainerVariant.DEFAULT ? '♂' : '♀'}`;
   }
 
   loadAssets(scene: BattleScene, variant: TrainerVariant): Promise<void> {
