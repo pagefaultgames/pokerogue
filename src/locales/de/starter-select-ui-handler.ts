@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 /**
- * The menu namespace holds most miscellaneous text that isn"t directly part of the game"s
+ * The menu namespace holds most miscellaneous text that isn't directly part of the game's
  * contents or directly related to Pokemon data. This includes menu navigation, settings,
  * account interactions, descriptive text, etc.
  */
