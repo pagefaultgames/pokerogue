@@ -1,0 +1,5 @@
+# Run this command to always ignore formatting commits in `git blame`
+# git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Format and lint files with biome
+8e2d745dfb02b72f70ddefc62c0546cccb21c3e0
