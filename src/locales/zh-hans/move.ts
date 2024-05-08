@@ -7,15 +7,15 @@ export const move: MoveTranslationEntries = {
   },
   karateChop: {
     name: "空手劈",
-    effect: "TODO",
+    effect: "用锋利的手刀劈向对手进行攻击。容易击中要害。",
   },
   doubleSlap: {
     name: "连环巴掌",
-    effect: "TODO",
+    effect: "用连环巴掌拍打对手进行攻击。连续攻击２～５次。",
   },
   cometPunch: {
     name: "连续拳",
-    effect: "TODO",
+    effect: "用拳头怒涛般的殴打对手进行攻击。连续攻击２～５次。",
   },
   megaPunch: {
     name: "百万吨重拳",
@@ -51,7 +51,7 @@ export const move: MoveTranslationEntries = {
   },
   razorWind: {
     name: "旋风刀",
-    effect: "TODO",
+    effect: "制造风之刃，于第２回合攻击对手。容易击中要害。",
   },
   swordsDance: {
     name: "剑舞",
@@ -103,11 +103,11 @@ export const move: MoveTranslationEntries = {
   },
   jumpKick: {
     name: "飞踢",
-    effect: "TODO",
+    effect: "使出高高的腾空踢攻击对手。如果踢偏则自己会受到伤害。",
   },
   rollingKick: {
     name: "回旋踢",
-    effect: "TODO",
+    effect: "一边使身体快速旋转，一边踢飞对手进行攻击。有时会使对手畏缩。",
   },
   sandAttack: {
     name: "泼沙",
@@ -151,7 +151,7 @@ export const move: MoveTranslationEntries = {
   },
   doubleEdge: {
     name: "舍身冲撞",
-    effect: "TODO",
+    effect: "拼命地猛撞向对手进行攻击。自己也会受到不小的伤害。",
   },
   tailWhip: {
     name: "摇尾巴",
@@ -163,7 +163,7 @@ export const move: MoveTranslationEntries = {
   },
   twineedle: {
     name: "双针",
-    effect: "TODO",
+    effect: "将２根针刺入对手，连续２次给予伤害。有时会让对手陷入中毒状态。",
   },
   pinMissile: {
     name: "飞弹针",
@@ -195,7 +195,7 @@ export const move: MoveTranslationEntries = {
   },
   sonicBoom: {
     name: "音爆",
-    effect: "TODO",
+    effect: "将冲击波撞向对手进行攻击。必定会给予20的伤害。",
   },
   disable: {
     name: "定身法",
@@ -263,7 +263,7 @@ export const move: MoveTranslationEntries = {
   },
   submission: {
     name: "地狱翻滚",
-    effect: "TODO",
+    effect: "将对手连同自己一起摔向地面进行攻击。自己也会受到少许伤害。",
   },
   lowKick: {
     name: "踢倒",
@@ -327,7 +327,7 @@ export const move: MoveTranslationEntries = {
   },
   dragonRage: {
     name: "龙之怒",
-    effect: "TODO",
+    effect: "将愤怒的冲击波撞向对手进行攻击。必定会给予40的伤害。",
   },
   fireSpin: {
     name: "火焰旋涡",
@@ -383,7 +383,7 @@ export const move: MoveTranslationEntries = {
   },
   meditate: {
     name: "瑜伽姿势",
-    effect: "TODO",
+    effect: "唤醒身体深处沉睡的力量，从而提高自己的攻击。",
   },
   agility: {
     name: "高速移动",
@@ -395,7 +395,7 @@ export const move: MoveTranslationEntries = {
   },
   rage: {
     name: "愤怒",
-    effect: "TODO",
+    effect: "如果在使出招式后受到攻击的话，会因愤怒的力量而提高攻击。",
   },
   teleport: {
     name: "瞬间移动",
@@ -447,7 +447,7 @@ export const move: MoveTranslationEntries = {
   },
   barrier: {
     name: "屏障",
-    effect: "TODO",
+    effect: "制造坚固的壁障，从而大幅提高自己的防御。",
   },
   lightScreen: {
     name: "光墙",
@@ -467,7 +467,7 @@ export const move: MoveTranslationEntries = {
   },
   bide: {
     name: "忍耐",
-    effect: "TODO",
+    effect: "在２回合内忍受攻击，受到的伤害会２倍返还给对手。",
   },
   metronome: {
     name: "挥指",
@@ -475,7 +475,7 @@ export const move: MoveTranslationEntries = {
   },
   mirrorMove: {
     name: "鹦鹉学舌",
-    effect: "TODO",
+    effect: "模仿对手使用的招式，自己也使用相同招式。",
   },
   selfDestruct: {
     name: "自爆",
@@ -483,7 +483,7 @@ export const move: MoveTranslationEntries = {
   },
   eggBomb: {
     name: "炸蛋",
-    effect: "TODO",
+    effect: "向对手用力投掷大大的蛋进行攻击。",
   },
   lick: {
     name: "舌舔",
@@ -499,7 +499,7 @@ export const move: MoveTranslationEntries = {
   },
   boneClub: {
     name: "骨棒",
-    effect: "TODO",
+    effect: "用手中的骨头殴打对手进行攻击。有时会使对手畏缩。",
   },
   fireBlast: {
     name: "大字爆炎",
@@ -511,7 +511,7 @@ export const move: MoveTranslationEntries = {
   },
   clamp: {
     name: "贝壳夹击",
-    effect: "TODO",
+    effect: "用非常坚固且厚实的贝壳，在４～５回合内夹住对手进行攻击。",
   },
   swift: {
     name: "高速星星",
@@ -519,15 +519,15 @@ export const move: MoveTranslationEntries = {
   },
   skullBash: {
     name: "火箭头锤",
-    effect: "TODO",
+    effect: "第１回合把头缩进去，从而提高防御。第２回合攻击对手。",
   },
   spikeCannon: {
     name: "尖刺加农炮",
-    effect: "TODO",
+    effect: "向对手发射锐针进行攻击。连续攻击２～５次。",
   },
   constrict: {
     name: "缠绕",
-    effect: "TODO",
+    effect: "用触手或青藤等缠绕进行攻击。有时会降低对手的速度。",
   },
   amnesia: {
     name: "瞬间失忆",
@@ -559,7 +559,7 @@ export const move: MoveTranslationEntries = {
   },
   barrage: {
     name: "投球",
-    effect: "TODO",
+    effect: "向对手投掷圆形物体进行攻击。连续攻击２～５次。",
   },
   leechLife: {
     name: "吸血",
@@ -579,11 +579,11 @@ export const move: MoveTranslationEntries = {
   },
   bubble: {
     name: "泡沫",
-    effect: "TODO",
+    effect: "向对手用力吹起无数泡泡进行攻击。有时会降低对手的速度。",
   },
   dizzyPunch: {
     name: "迷昏拳",
-    effect: "TODO",
+    effect: "有节奏地出拳攻击对手。有时会使对手混乱。",
   },
   spore: {
     name: "蘑菇孢子",
@@ -591,11 +591,11 @@ export const move: MoveTranslationEntries = {
   },
   flash: {
     name: "闪光",
-    effect: "TODO",
+    effect: "使出光芒，从而降低对手的命中率。也可在阴暗的洞窟里照亮四周。",
   },
   psywave: {
     name: "精神波",
-    effect: "TODO",
+    effect: "向对手发射神奇的念波进行攻击。每次使用，伤害都会改变。",
   },
   splash: {
     name: "跃起",
@@ -631,11 +631,11 @@ export const move: MoveTranslationEntries = {
   },
   hyperFang: {
     name: "必杀门牙",
-    effect: "TODO",
+    effect: "用锋利的门牙牢牢地咬住对手进行攻击。有时会使对手畏缩。",
   },
   sharpen: {
     name: "棱角化",
-    effect: "TODO",
+    effect: "增加身体的角，变得棱棱角角，从而提高自己的攻击。",
   },
   conversion: {
     name: "纹理",
@@ -675,15 +675,15 @@ export const move: MoveTranslationEntries = {
   },
   spiderWeb: {
     name: "蛛网",
-    effect: "TODO",
+    effect: "将黏糊糊的细丝一层一层缠住对手，使其不能从战斗中逃走。",
   },
   mindReader: {
     name: "心之眼",
-    effect: "TODO",
+    effect: "用心感受对手的行动，下次攻击必定会击中对手。",
   },
   nightmare: {
     name: "恶梦",
-    effect: "TODO",
+    effect: "让在睡眠状态下的对手做恶梦，每回合会缓缓减少HP。",
   },
   flameWheel: {
     name: "火焰轮",
@@ -739,7 +739,7 @@ export const move: MoveTranslationEntries = {
   },
   feintAttack: {
     name: "出奇一击",
-    effect: "TODO",
+    effect: "悄悄地靠近对手，趁其不备进行殴打。攻击必定会命中。",
   },
   sweetKiss: {
     name: "天使之吻",
@@ -763,7 +763,7 @@ export const move: MoveTranslationEntries = {
   },
   spikes: {
     name: "撒菱",
-    effect: "TODO",
+    effect: "在对手的脚下扔撒菱。对替换出场的对手的宝可梦给予伤害。",
   },
   zapCannon: {
     name: "电磁炮",
@@ -771,7 +771,7 @@ export const move: MoveTranslationEntries = {
   },
   foresight: {
     name: "识破",
-    effect: "TODO",
+    effect: "使出后对幽灵属性宝可梦没有效果的招式以及闪避率高的对手，变得能够打中。",
   },
   destinyBond: {
     name: "同命",
@@ -863,7 +863,7 @@ export const move: MoveTranslationEntries = {
   },
   return: {
     name: "报恩",
-    effect: "TODO",
+    effect: "为了训练家而全力攻击对手。亲密度越高，威力越大。",
   },
   present: {
     name: "礼物",
@@ -871,7 +871,7 @@ export const move: MoveTranslationEntries = {
   },
   frustration: {
     name: "迁怒",
-    effect: "TODO",
+    effect: "为了发泄不满而全力攻击对手。亲密度越低，威力越大。",
   },
   safeguard: {
     name: "神秘守护",
@@ -887,7 +887,7 @@ export const move: MoveTranslationEntries = {
   },
   magnitude: {
     name: "震级",
-    effect: "TODO",
+    effect: "晃动地面，攻击自己周围所有的宝可梦。招式的威力会有各种变化。",
   },
   dynamicPunch: {
     name: "爆裂拳",
@@ -911,7 +911,7 @@ export const move: MoveTranslationEntries = {
   },
   pursuit: {
     name: "追打",
-    effect: "TODO",
+    effect: "当对手替换宝可梦上场时使出此招式的话，能够以２倍的威力进行攻击。",
   },
   rapidSpin: {
     name: "高速旋转",
@@ -931,7 +931,7 @@ export const move: MoveTranslationEntries = {
   },
   vitalThrow: {
     name: "借力摔",
-    effect: "TODO",
+    effect: "会在对手之后进行攻击。但是自己的攻击必定会命中。",
   },
   morningSun: {
     name: "晨光",
@@ -947,7 +947,7 @@ export const move: MoveTranslationEntries = {
   },
   hiddenPower: {
     name: "觉醒力量",
-    effect: "TODO",
+    effect: "招式的属性会随着使用此招式的宝可梦而改变。",
   },
   crossChop: {
     name: "十字劈",
