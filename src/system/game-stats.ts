@@ -66,7 +66,7 @@ export class GameStats {
     this.legendaryPokemonHatched = source?.legendaryPokemonHatched || 0;
     this.mythicalPokemonSeen = source?.mythicalPokemonSeen || 0;
     this.mythicalPokemonCaught = source?.mythicalPokemonCaught || 0;
-    this.mythicalPokemonHatched = source?.mythicalPokemonCaught || 0;
+    this.mythicalPokemonHatched = source?.mythicalPokemonHatched || 0;
     this.shinyPokemonSeen = source?.shinyPokemonSeen || 0;
     this.shinyPokemonCaught = source?.shinyPokemonCaught || 0;
     this.shinyPokemonHatched = source?.shinyPokemonHatched || 0;
