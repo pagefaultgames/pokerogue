@@ -13,10 +13,10 @@
 		"test:watch": "vitest watch --coverage"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "1.7.3",
 		"@vitest/coverage-istanbul": "^1.4.0",
 		"axios": "^1.6.2",
 		"axios-cache-interceptor": "^1.3.2",
-		"eslint": "^8.25.0",
 		"jsdom": "^24.0.0",
 		"json-beautify": "^1.1.1",
 		"phaser3spectorjs": "^0.0.8",

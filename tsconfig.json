@@ -1,20 +1,20 @@
 {
-	"compilerOptions": {
-		"target": "ES2020",
-		"module": "ES2020",
-		"moduleResolution": "Bundler",
-		"resolveJsonModule": true,
-		"esModuleInterop": true,
-		"strictNullChecks": false,
-		"sourceMap": false,
-		"strict": false,
-		"rootDir": "./src",
-		"baseUrl": "./src",
-		"paths": {
-			"#app/*": ["*.ts"],
-			"#app": ["."]
-		},
-		"outDir": "./build",
-		"noEmit": true
-	}
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strictNullChecks": false,
+    "sourceMap": false,
+    "strict": false,
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "#app/*": ["*.ts"],
+      "#app": ["."]
+    },
+    "outDir": "./build",
+    "noEmit": true
+  }
 }
