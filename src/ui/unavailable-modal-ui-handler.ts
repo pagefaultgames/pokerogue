@@ -55,8 +55,8 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 	  else {
 	    clearInterval(this.reconnectTimer);
 	    this.reconnectInterval *= 2;
-	    if (this.reconnectInterval >= 300000) {
-		    this.reconnectInterval = 300000; // 300 seconds (5 minutes) maximum delay.
+	    if (this.reconnectInterval >= 60000) {
+		    this.reconnectInterval = 60000; // 1 minute maximum delay.
 	    }
 	    this.reconnectTimer = setInterval(this.tryReconnect, this.reconnectInterval);
 	  }
