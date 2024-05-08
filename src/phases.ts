@@ -1,8 +1,8 @@
-import BattleScene, { bypassLogin, startingWave } from "./battle-scene";
+import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -55,7 +55,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
-import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./data/pokemon-species";
 import i18next from './plugins/i18n';
 import { Abilities } from "./data/enums/abilities";
 import { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE } from './overrides';
@@ -3142,8 +3142,16 @@ export class FaintPhase extends PokemonPhase {
     alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon));
     if (pokemon.turnData?.attacksReceived?.length) {
       const defeatSource = this.scene.getPokemonById(pokemon.turnData.attacksReceived[0].sourceId);
-      if (defeatSource?.isOnField())
+      if (defeatSource?.isOnField()) {
         applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
+        const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
+        const pvattrs = pvmove.getAttrs(PostVictoryStatChangeAttr);
+        if (pvattrs.length) {
+          for (let pvattr of pvattrs) {
+            pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);
+          }
+        }
+      }
     }
 
     if (this.player) {
@@ -3472,8 +3480,40 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
   }
 }
 
+export class RibbonModifierRewardPhase extends ModifierRewardPhase {
+  private species: PokemonSpecies;
+
+  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc, species: PokemonSpecies) {
+    super(scene, modifierTypeFunc);
+
+    this.species = species;
+  }
+
+  doReward(): Promise<void> {
+    return new Promise<void>(resolve => {
+      const newModifier = this.modifierType.newModifier();
+      this.scene.addModifier(newModifier).then(() => {
+        this.scene.gameData.saveSystem().then(success => {
+          if (success) {
+            this.scene.playSound('level_up_fanfare');
+            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.arenaBg.setVisible(false);
+            this.scene.ui.fadeIn(250).then(() => {
+              this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+                resolve();
+              }, null, true, 1500);
+            });
+          } else
+            this.scene.reset(true);
+        });
+      });
+    })
+  }
+}
+
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
+  private firstRibbons: PokemonSpecies[] = [];
 
   constructor(scene: BattleScene, victory?: boolean) {
     super(scene);
@@ -3525,6 +3565,13 @@ export class GameOverPhase extends BattlePhase {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
+            for (let pokemon of this.scene.getParty()) {
+              this.awardRibbon(pokemon);
+
+              if (pokemon.species.getRootSpeciesId() != pokemon.species.getRootSpeciesId(true)) {
+                this.awardRibbon(pokemon, true);
+              }
+            }
           } else if (this.scene.gameMode.isDaily && success[1])
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
         }
@@ -3536,8 +3583,12 @@ export class GameOverPhase extends BattlePhase {
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
           this.handleUnlocks();
-          if (this.victory && !firstClear && success[1])
-            this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
+          if (this.victory && success[1]) {
+            for (let species of this.firstRibbons)
+              this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
+            if (!firstClear)
+              this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
+          }
           this.scene.reset();
           this.scene.unshiftPhase(new TitlePhase(this.scene));
           this.end();
@@ -3554,6 +3605,15 @@ export class GameOverPhase extends BattlePhase {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.SPLICED_ENDLESS_MODE));
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+    }
+  }
+
+  awardRibbon(pokemon: Pokemon, forStarter: boolean = false): void {
+    const speciesId = getPokemonSpecies(pokemon.species.speciesId)
+    const speciesRibbonCount = this.scene.gameData.incrementRibbonCount(speciesId, forStarter);
+    // first time classic win, award voucher
+    if (speciesRibbonCount === 1) {
+      this.firstRibbons.push(getPokemonSpecies(pokemon.species.getRootSpeciesId(forStarter)));
     }
   }
 }

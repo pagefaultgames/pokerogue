@@ -1856,6 +1856,19 @@ function getAnticipationCondition(): AbAttrCondition {
   };
 }
 
+/**
+ * Creates an ability condition that causes the ability to fail if that ability
+ * has already been used by that pokemon that battle. It requires an ability to
+ * be specified due to current limitations in how conditions on abilities work.
+ * @param {Abilities} ability The ability to check if it's already been applied
+ * @returns {AbAttrCondition} The condition
+ */
+function getOncePerBattleCondition(ability: Abilities): AbAttrCondition {
+  return (pokemon: Pokemon) => {
+    return !pokemon.battleData?.abilitiesApplied.includes(ability);
+  }
+}
+
 export class ForewarnAbAttr extends PostSummonAbAttr {
   constructor() {
     super(true);
@@ -2513,11 +2526,11 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.defenderType !== (args[1] as Type)) {
-      return false;
+    if (this.defenderType === (args[1] as Type) && this.allowedMoveTypes.includes(args[0] as Type)) {
+      cancelled.value = true;
+      return true;
     }
-
-    return this.allowedMoveTypes.some(type => type === (args[0] as Type));
+    return false;
   }
 }
 
@@ -2552,6 +2565,9 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
         return applyNextAbAttr();
       pokemon.scene.setPhaseQueueSplice();
       const onApplySuccess = () => {
+        if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
+          pokemon.battleData.abilitiesApplied.push(ability.id);
+        }
         if (attr.showAbility && !quiet) {
           if (showAbilityInstant)
             pokemon.scene.abilityBar.showAbility(pokemon, passive);
@@ -3049,7 +3065,7 @@ export function initAbilities() {
     new Ability(Abilities.FRISK, 4)
       .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => move.getAttrs(RecoilAttr).length && move.id !== Moves.STRUGGLE, 1.2),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.RECKLESS_MOVE), 1.2),
     new Ability(Abilities.MULTITYPE, 4)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -3410,9 +3426,11 @@ export function initAbilities() {
     new Ability(Abilities.NEUROFORCE, 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, 8)
-      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true),
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true)
+      .condition(getOncePerBattleCondition(Abilities.INTREPID_SWORD)),
     new Ability(Abilities.DAUNTLESS_SHIELD, 8)
-      .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true),
+      .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true)
+      .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
       .unimplemented(),
     new Ability(Abilities.BALL_FETCH, 8)
@@ -3619,9 +3637,11 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
-      .ignorable(), // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
+      .ignorable() // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
+      .partial(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
-      .unimplemented(),
+      .attr(PostSummonStatChangeAbAttr, BattleStat.EVA, -1)
+      .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),
     new Ability(Abilities.HOSPITALITY, 9)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)

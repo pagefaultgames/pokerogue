@@ -1639,7 +1639,8 @@ export const trainerTypeDialogue = {
   },
   [TrainerType.HAU]: {
     encounter: [
-      `I wonder if a Trainer battles differently depending on whether they're from a warm region or a cold region. Let's test it out!`,
+      `I wonder if a Trainer battles differently depending on whether they're from a warm region or a cold region.
+      $Let's test it out!`,
     ],
     victory: [
       `That was awesome! I think I kinda understand your vibe a little better now!`,

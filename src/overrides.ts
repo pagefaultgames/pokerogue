@@ -12,12 +12,15 @@ export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
 export const STARTING_MONEY_OVERRIDE = 0;
 export const WEATHER_OVERRIDE = WeatherType.NONE;
+export const DOUBLE_BATTLE_OVERRIDE = false;
 
 export const ABILITY_OVERRIDE = Abilities.NONE;
+export const PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const MOVE_OVERRIDE = Moves.NONE;
 export const MOVE_OVERRIDE_2 = Moves.NONE;
 export const OPP_SPECIES_OVERRIDE = 0;
 export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
+export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_MOVE_OVERRIDE = Moves.NONE;
 export const OPP_MOVE_OVERRIDE_2 = Moves.NONE;
 
