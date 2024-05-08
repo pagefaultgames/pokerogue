@@ -3414,7 +3414,8 @@ export function initAbilities() {
     new Ability(Abilities.BALL_FETCH, 8)
       .unimplemented(),
     new Ability(Abilities.COTTON_DOWN, 8)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.SPD, -1, false, true),
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.SPD, -1, false, true)
+      .bypassFaint(),
     new Ability(Abilities.PROPELLER_TAIL, 8)
       .unimplemented(),
     new Ability(Abilities.MIRROR_ARMOR, 8)
