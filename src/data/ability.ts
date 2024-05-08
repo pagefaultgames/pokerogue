@@ -2016,6 +2016,10 @@ export class PostTurnAbAttr extends AbAttr {
   }
 }
 
+/**
+ * After the turn ends, resets the status of either the ability holder or their ally
+ * @param {boolean} allyTarget Whether to target ally, defaults to false (self-target)
+ */
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   private allyTarget: boolean;
   private target: Pokemon;
