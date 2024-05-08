@@ -292,26 +292,16 @@ export class InputsController {
         }
     }
 
-    setLastProcessedMovementTime(button: Button, axis:boolean = false): void {
+    setLastProcessedMovementTime(button: Button): void {
         if (!this.interactions.hasOwnProperty(button)) return;
-        if (axis) {
-            this.buttonLock = button;
-            this.buttonLock2 = null;
-        } else {
-            this.setButtonLock(button);
-        }
+        this.setButtonLock(button);
         this.interactions[button].pressTime = this.time.now;
         this.interactions[button].isPressed = true;
     }
 
-    delLastProcessedMovementTime(button: Button, axis:boolean = false): void {
+    delLastProcessedMovementTime(button: Button): void {
         if (!this.interactions.hasOwnProperty(button)) return;
-        if (axis) {
-            this.buttonLock = null;
-            this.buttonLock2 = null;
-        } else {
-            this.releaseButtonLock(button);
-        }
+        this.releaseButtonLock(button);
         this.interactions[button].pressTime = null;
         this.interactions[button].isPressed = false;
     }
