@@ -328,13 +328,17 @@ export class RememberMoveModifierType extends PokemonModifierType {
   }
 }
 
-export class DoubleBattleChanceBoosterModifierType extends ModifierType {
+export class DoubleBattleChanceModifierType extends ModifierType {
   public battleCount: integer;
 
-  constructor(name: string, battleCount: integer) {
-    super(name, `Doubles the chance of an encounter being a double battle for ${battleCount} battles`, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, this.battleCount),
+  constructor(name: string, battleCount: integer, modifier: integer) {
+    if (modifier < 0) {
+      super(name, `Avoid encounter being a double battle for ${battleCount} battles`, (_type, _args) => new Modifiers.DoubleBattleChanceModifier(this, this.battleCount, modifier),
+      null, 'repel');
+    } else {
+      super(name, `Doubles the chance of an encounter being a double battle for ${battleCount} battles`, (_type, _args) => new Modifiers.DoubleBattleChanceModifier(this, this.battleCount, modifier),
       null, 'lure');
-
+    }
     this.battleCount = battleCount;
   }
 }
@@ -811,13 +815,13 @@ export const modifierTypes = {
   PP_UP: () => new PokemonPpUpModifierType('PP Up', 1),
   PP_MAX: () => new PokemonPpUpModifierType('PP Max', 3),
 
-  /*REPEL: () => new DoubleBattleChanceBoosterModifierType('Repel', 5),
-  SUPER_REPEL: () => new DoubleBattleChanceBoosterModifierType('Super Repel', 10),
-  MAX_REPEL: () => new DoubleBattleChanceBoosterModifierType('Max Repel', 25),*/
+  REPEL: () => new DoubleBattleChanceModifierType('Repel', 5, -1),
+  SUPER_REPEL: () => new DoubleBattleChanceModifierType('Super Repel', 10, -1),
+  MAX_REPEL: () => new DoubleBattleChanceModifierType('Max Repel', 25, -1),
 
-  LURE: () => new DoubleBattleChanceBoosterModifierType('Lure', 5),
-  SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType('Super Lure', 10),
-  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType('Max Lure', 25),
+  LURE: () => new DoubleBattleChanceModifierType('Lure', 5, 1),
+  SUPER_LURE: () => new DoubleBattleChanceModifierType('Super Lure', 10, 1),
+  MAX_LURE: () => new DoubleBattleChanceModifierType('Max Lure', 25, 1),
 
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs)
@@ -991,6 +995,7 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.LURE, 2),
+    new WeightedModifierType(modifierTypes.REPEL, 2),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 1),
@@ -1035,6 +1040,7 @@ const modifierPool: ModifierPool = {
     }, 3),
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, 4),
+    new WeightedModifierType(modifierTypes.SUPER_REPEL, 4),
     new WeightedModifierType(modifierTypes.NUGGET, 5),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
@@ -1054,6 +1060,7 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 24),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
+    new WeightedModifierType(modifierTypes.MAX_REPEL, 4),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, 12),
     new WeightedModifierType(modifierTypes.PP_UP, 9),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),

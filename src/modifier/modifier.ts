@@ -282,19 +282,21 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   }
 }
 
-export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
-  constructor(type: ModifierTypes.DoubleBattleChanceBoosterModifierType, battlesLeft: integer, stackCount?: integer) {
+export class DoubleBattleChanceModifier extends LapsingPersistentModifier {
+  private modifier;
+  constructor(type: ModifierTypes.DoubleBattleChanceModifierType, battlesLeft: integer, modifier: integer, stackCount?: integer) {
     super(type, battlesLeft, stackCount);
+    this.modifier = modifier;
   }
 
   match(modifier: Modifier): boolean {
-    if (modifier instanceof DoubleBattleChanceBoosterModifier)
-      return (modifier as DoubleBattleChanceBoosterModifier).battlesLeft === this.battlesLeft;
+    if (modifier instanceof DoubleBattleChanceModifier)
+      return (modifier as DoubleBattleChanceModifier).battlesLeft === this.battlesLeft;
     return false;
   }
 
-  clone(): DoubleBattleChanceBoosterModifier {
-    return new DoubleBattleChanceBoosterModifier(this.type as ModifierTypes.DoubleBattleChanceBoosterModifierType, this.battlesLeft, this.stackCount);
+  clone(): DoubleBattleChanceModifier {
+    return new DoubleBattleChanceModifier(this.type as ModifierTypes.DoubleBattleChanceModifierType, this.battlesLeft, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -303,8 +305,11 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   apply(args: any[]): boolean {
     const doubleBattleChance = args[0] as Utils.NumberHolder;
-    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
-
+    if (this.modifier < 0){
+      doubleBattleChance.value = Number.MAX_SAFE_INTEGER;
+    } else {
+      doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
+    }
     return true;
   }
 }
