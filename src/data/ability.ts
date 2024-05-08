@@ -2107,11 +2107,11 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
 }
 
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
-  
+
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
     for(let oppo of pokemon.getOpponents()) {
-      if(oppo.status.effect == StatusEffect.SLEEP) {
+      if(oppo.status !== undefined && oppo.status.effect == StatusEffect.SLEEP) {
         oppo.damageAndUpdate(Math.ceil(oppo.getMaxHp() * (1 / 8)), HitResult.OTHER);
         pokemon.scene.queueMessage(getPokemonMessage(oppo, ' is tormeted!'));
         hadEffect = true;
