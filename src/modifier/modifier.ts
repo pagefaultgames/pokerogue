@@ -2004,7 +2004,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     super(type, stackCount);
 
     // Hardcode temporarily
-    this.healPercent = 3;
+    this.healPercent = 2;
   }
 
   match(modifier: Modifier): boolean {
@@ -2033,7 +2033,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 10;
+    return 15;
   }
 }
 

@@ -24,7 +24,7 @@ export const menu: SimpleTranslationEntries = {
   "confirmPassword": "Confirmer le MDP",
   "registrationAgeWarning": "Vous confirmez en vous inscrivant que vous avez 13 ans ou plus.",
   "backToLogin": "Retour",
-  "failedToLoadSaveData": "Échec du chargement des données. Veuillez recharger la page.\nSi cela continue, veuillez contacter l’administrateur.",
+  "failedToLoadSaveData": "Échec du chargement des données. Veuillez recharger\nla page. Si cela persiste, contactez l’administrateur.",
   "sessionSuccess": "Session chargée avec succès.",
   "failedToLoadSession": "Vos données de session n’ont pas pu être chargées.\nElles pourraient être corrompues.",
   "boyOrGirl": "Es-tu un garçon ou une fille ?",
