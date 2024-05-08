@@ -59,7 +59,7 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh-hans'],
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh_hans'],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -80,7 +80,7 @@ export function initI18n(): void {
       de: {
         ...deConfig
       },
-      zh-hans: {
+      zh_hans: {
         ...zhHansConfig
       }
     },

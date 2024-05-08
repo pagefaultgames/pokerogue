@@ -199,6 +199,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 handler: () => changeLocaleHandler('de')
               },
               {
+                label: 'Chinese (Simplified)',
+                handler: () => changeLocaleHandler('zh_hans')
+              },
+              {
                 label: 'Cancel',
                 handler: () => cancelHandler()
               }
