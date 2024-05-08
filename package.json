@@ -10,7 +10,8 @@
 		"preview": "vite preview",
 		"test": "vitest run",
 		"test:cov": "vitest run --coverage",
-		"test:watch": "vitest watch --coverage"
+		"test:watch": "vitest watch --coverage",
+		"lint": "vite-plugin-linter"
 	},
 	"devDependencies": {
 		"@vitest/coverage-istanbul": "^1.4.0",
@@ -24,6 +25,7 @@
 		"typescript": "^5.0.3",
 		"vite": "^4.5.0",
 		"vite-plugin-fs": "^0.4.4",
+		"vite-plugin-linter": "^2.1.1",
 		"vitest": "^1.4.0",
 		"vitest-canvas-mock": "^0.3.3"
 	},
