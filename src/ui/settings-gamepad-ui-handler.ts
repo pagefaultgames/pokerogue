@@ -194,14 +194,14 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     const lastCursor = this.optionCursors[settingIndex];
 
     const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-    lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));
-    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
+    lastValueLabel?.setColor(this.getTextColor(TextStyle.WINDOW));
+    lastValueLabel?.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
 
     this.optionCursors[settingIndex] = cursor;
 
     const newValueLabel = this.optionValueLabels[settingIndex][cursor];
-    newValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
-    newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
+    newValueLabel?.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
+    newValueLabel?.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
       this.scene.gameData.saveSetting(setting, cursor)

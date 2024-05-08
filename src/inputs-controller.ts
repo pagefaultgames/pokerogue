@@ -36,6 +36,8 @@ export class InputsController {
     private time: Time;
     private player: Map<String, GamepadMapping> = new Map();
 
+    public customGamepadMapping = new Map();
+
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.time = this.scene.time;
