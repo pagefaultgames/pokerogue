@@ -4561,7 +4561,7 @@ export class PartyStatusCurePhase extends BattlePhase {
         pokemon.resetStatus(false);
         pokemon.updateInfo(true);
       } else {
-        if (pokemon.getAbility().id !== this.abilityCondition) {
+        if (!pokemon.hasAbility(this.abilityCondition)) {
           pokemon.resetStatus();
           pokemon.updateInfo(true);
         }
