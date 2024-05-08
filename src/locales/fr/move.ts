@@ -1563,7 +1563,7 @@ export const move: MoveTranslationEntries = {
   },
   "heartSwap": {
     name: "Permucœur",
-    effect: "Cette capacité ne peut pas être utilisée. Il est recommandé de l’oublier, même s’il sera impossible de se la remémorer une fois oubliée."
+    effect: "Le lanceur utilise un pouvoir psychique pour échanger ses changements de stats avec la cible."
   },
   "aquaRing": {
     name: "Anneau Hydro",
