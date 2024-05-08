@@ -4534,6 +4534,13 @@ export class AddEnemyBuffModifierPhase extends Phase {
   }
 }
 
+/**
+ * Cures the party of all non-volatile status conditions, shows a message
+ * @param {BattleScene} scene The current scene
+ * * @param {Pokemon} user The user of the move that cures the party
+ * * @param {string} message The message that should be displayed
+ * * @param {Abilities} abilityCondition Pokemon with this ability will not be affected ie. Soundproof
+ */
 export class PartyStatusCurePhase extends BattlePhase {
   private user: Pokemon;
   private message: string;
