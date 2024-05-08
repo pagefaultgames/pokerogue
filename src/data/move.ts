@@ -2598,6 +2598,9 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
 
 export class TypelessAttr extends MoveAttr { }
 
+export class BypassRedirectAttr extends MoveAttr { }
+
+
 export class DisableMoveAttr extends MoveEffectAttr {
   constructor() {
     super(false);
@@ -6061,7 +6064,7 @@ export function initMoves() {
       .attr(DiscourageFrequentUseAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SNIPE_SHOT, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
-      .partial(),
+      .attr(BypassRedirectAttr),
     new AttackMove(Moves.JAW_LOCK, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
