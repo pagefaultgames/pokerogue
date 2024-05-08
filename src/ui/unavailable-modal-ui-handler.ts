@@ -6,10 +6,12 @@ import { updateUserInfo } from "#app/account";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectTimer: number;
+  private reconnectInterval: number;
   private reconnectCallback: () => void;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
+    this.reconnectInterval = 5000;
   }
 
   getModalTitle(): string {
@@ -41,6 +43,23 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
     this.modalContainer.add(label);
   }
 
+  tryReconnect(): void {
+        updateUserInfo().then(response => {
+          if (response[0] || [200, 400].includes(response[1])) {
+            clearInterval(this.reconnectTimer);
+            this.reconnectTimer = null;
+	    this.reconnectInterval = 5000;
+            this.scene.playSound('pb_bounce_1');
+            this.reconnectCallback();
+          }
+	  else {
+	    clearInterval(this.reconnectTimer);
+	    this.reconnectInterval *= 2;
+	    this.reconnectTimer = setInterval(this.tryReconnect, reconnectInterval);
+	  }
+        });
+  }
+
   show(args: any[]): boolean {
     if (args.length >= 1 && args[0] instanceof Function) {
       const config: ModalConfig = {
@@ -49,16 +68,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
       this.reconnectCallback = args[0];
 
-      this.reconnectTimer = setInterval(() => {
-        updateUserInfo().then(response => {
-          if (response[0] || [200, 400].includes(response[1])) {
-            clearInterval(this.reconnectTimer);
-            this.reconnectTimer = null;
-            this.scene.playSound('pb_bounce_1');
-            this.reconnectCallback();
-          }
-        })
-      }, 5000);
+      this.reconnectTimer = setInterval(this.tryReconnect, this.reconnectInterval);
 
       return super.show([ config ]);
     }
