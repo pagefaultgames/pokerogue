@@ -9,6 +9,23 @@ import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext';
 import TransitionImagePackPlugin from 'phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js';
 import { LoadingScene } from './loading-scene';
 
+
+// Catch global errors and display them in an alert so users can report the issue.
+window.onerror = function (message, source, lineno, colno, error) {
+	console.error(error);
+	let errorString = `Received unhandled error. Open browser console and click OK to see details.\nError: ${message}\nSource: ${source}\nLine: ${lineno}\nColumn: ${colno}\nStack: ${error.stack}`;
+	//alert(errorString);
+	// Avoids logging the error a second time.
+	return true;
+};
+
+// Catch global promise rejections and display them in an alert so users can report the issue.
+window.addEventListener('unhandledrejection', (event) => {	
+	let errorString = `Received unhandled promise rejection. Open browser console and click OK to see details.\nReason: ${event.reason}`;
+	console.error(event.reason);
+	//alert(errorString);
+});
+
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL,
 	parent: 'app',
@@ -76,7 +93,21 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 
 document.fonts.load('16px emerald').then(() => document.fonts.load('10px pkmnems'));
 
-const game = new Phaser.Game(config);
-game.sound.pauseOnBlur = false;
+let game;
+
+const startGame = () => {
+	game = new Phaser.Game(config);
+	game.sound.pauseOnBlur = false;
+};
+
+fetch('/manifest.json')
+	.then(res => res.json())
+	.then(jsonResponse => {
+		startGame();
+		game['manifest'] = jsonResponse.manifest;
+	}).catch(() => {
+		// Manifest not found (likely local build)
+		startGame();
+	});
 
 export default game;

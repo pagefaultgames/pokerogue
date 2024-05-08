@@ -241,10 +241,12 @@ export class EggHatchPhase extends Phase {
 
   doReveal(): void {
     const isShiny = this.pokemon.isShiny();
-    if (this.pokemon.species.mythical)
-      this.scene.validateAchv(achvs.HATCH_MYTHICAL);
+    if (this.pokemon.species.subLegendary)
+      this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
     if (this.pokemon.species.legendary)
       this.scene.validateAchv(achvs.HATCH_LEGENDARY);
+    if (this.pokemon.species.mythical)
+      this.scene.validateAchv(achvs.HATCH_MYTHICAL);
     if (isShiny)
       this.scene.validateAchv(achvs.HATCH_SHINY);
     this.eggContainer.setVisible(false);
@@ -416,6 +418,7 @@ export class EggHatchPhase extends Phase {
       }
 
       ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
+      ret.variant = ret.shiny ? ret.generateVariant() : 0;
 
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
