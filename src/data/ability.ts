@@ -2106,6 +2106,18 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    for(let oppo of pokemon.getOpponents()) {
+      if(oppo.status.effect == StatusEffect.SLEEP) {
+        oppo.damageAndUpdate(Math.ceil(oppo.getMaxHp() * (1 / 8)), HitResult.OTHER);
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 export class PostBiomeChangeAbAttr extends AbAttr { }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
@@ -3050,7 +3062,7 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.BAD_DREAMS, 4)
-      .unimplemented(),
+      .attr(PostTurnHurtIfSleepingAbAttr),
     new Ability(Abilities.PICKPOCKET, 5)
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
     new Ability(Abilities.SHEER_FORCE, 5)
