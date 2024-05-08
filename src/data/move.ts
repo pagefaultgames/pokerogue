@@ -3110,9 +3110,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       if (!player && !user.scene.currentBattle.battleType) {
         if (this.batonPass)
           return false;
-        //U-turn et al should not switch a wild mon out, including status moves that don't target the user, but a player's Dragon Tail can
-        if (this.user && (move.category !== MoveCategory.STATUS || move.moveTarget !== MoveTarget.USER))
-          return false;
         // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
         if (!(user.scene.currentBattle.waveIndex % 10))
           return false;
