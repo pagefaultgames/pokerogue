@@ -5132,7 +5132,6 @@ export function initMoves() {
       .attr(RecoilAttr, false, 0.33)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
-      .condition(failOnGravityCondition)
       .recklessMove(),
     new AttackMove(Moves.FORCE_PALM, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, 30, 0, 4)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
