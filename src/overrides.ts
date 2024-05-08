@@ -16,8 +16,8 @@ export const DOUBLE_BATTLE_OVERRIDE = false;
 
 export const ABILITY_OVERRIDE = Abilities.BAD_DREAMS;
 export const PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
-export const MOVE_OVERRIDE = Moves.SLEEP_POWDER;
-export const MOVE_OVERRIDE_2 = Moves.HYDRO_CANNON;
+export const MOVE_OVERRIDE = Moves.DARK_VOID;
+export const MOVE_OVERRIDE_2 = Moves.HYPER_BEAM;
 export const OPP_SPECIES_OVERRIDE = 0;
 export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
