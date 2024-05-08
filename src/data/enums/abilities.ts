@@ -119,7 +119,6 @@ export enum Abilities {
   SNOW_WARNING,
   HONEY_GATHER,
   FRISK,
-  /** {@link https://bulbapedia.bulbagarden.net/wiki/Reckless_(Ability) | Source} */
   RECKLESS,
   MULTITYPE,
   FLOWER_GIFT,
