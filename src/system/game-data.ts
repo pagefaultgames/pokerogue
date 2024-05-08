@@ -55,10 +55,7 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     case GameDataType.SYSTEM:
       return 'data';
     case GameDataType.SESSION:
-      let ret = 'sessionData';
-      if (slotId)
-        ret += slotId;
-      return ret;
+      return `sessionData${slotId ? slotId : ''}`;
     case GameDataType.SETTINGS:
       return 'settings';
     case GameDataType.TUTORIALS:
