@@ -1561,6 +1561,29 @@ export class StatChangeAttr extends MoveEffectAttr {
   }
 }
 
+export class PostVictoryStatChangeAttr extends MoveAttr {
+  private stats: BattleStat[];
+  private levels: integer;
+  private condition: MoveConditionFunc;
+  private showMessage: boolean;
+
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
+    super();
+    this.stats = typeof(stats) === 'number'
+      ? [ stats as BattleStat ]
+      : stats as BattleStat[];
+    this.levels = levels;
+    this.condition = condition || null;
+    this.showMessage = showMessage;
+  }
+  applyPostVictory(user: Pokemon, target: Pokemon, move: Move): void {
+    if(this.condition && !this.condition(user, target, move))
+      return false;
+    const statChangeAttr = new StatChangeAttr(this.stats, this.levels, this.showMessage);
+    statChangeAttr.apply(user, target, move);
+  }
+}
+
 export class AcupressureStatChangeAttr extends MoveEffectAttr {
   constructor() {
     super();
@@ -1575,7 +1598,7 @@ export class AcupressureStatChangeAttr extends MoveEffectAttr {
       return true;
     }
     return false;
-  }  
+  }
 }
 
 export class GrowthStatChangeAttr extends StatChangeAttr {
@@ -5565,7 +5588,7 @@ export function initMoves() {
       .attr(AddArenaTrapTagAttr, ArenaTagType.STICKY_WEB)
       .target(MoveTarget.ENEMY_SIDE),
     new AttackMove(Moves.FELL_STINGER, Type.BUG, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 6)
-      .partial(),
+      .attr(PostVictoryStatChangeAttr, BattleStat.ATK, 3, true ),
     new AttackMove(Moves.PHANTOM_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(ChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, 'vanished\ninstantly!', BattlerTagType.HIDDEN)
       .ignoresProtect()
