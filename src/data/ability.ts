@@ -3052,6 +3052,7 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
       .attr(BonusCritAbAttr)
+      //MISSING: Should also affect rate of wild pokemon holding items.
       .partial(),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr,4)
@@ -3104,6 +3105,7 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .ignorable()
+      //MISSING: Also should transform cherrim.
       .partial(),
     new Ability(Abilities.BAD_DREAMS, 4)
       .unimplemented(),
@@ -3200,7 +3202,9 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1)
       .ignorable(),
     new Ability(Abilities.PRANKSTER, 5)
-      .attr(IncrementMovePriorityAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS)
+      //MISSING: Dark Types are Immune
+      .partial(),
     new Ability(Abilities.SAND_FORCE, 5)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK, 1.3)
       .attr(MoveTypePowerBoostAbAttr, Type.GROUND, 1.3)
@@ -3220,6 +3224,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.VICTORY_STAR, 5)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.1)
+      //MISSING: Should also apply to allies.
       .partial(),
     new Ability(Abilities.TURBOBLAZE, 5)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a blazing aura!'))
@@ -3255,6 +3260,7 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
+      //MISSING: Should also apply to allies.
       .partial(),
     new Ability(Abilities.STANCE_CHANGE, 6)
       .attr(UncopiableAbilityAbAttr)
@@ -3316,6 +3322,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
+      //MISSING: Should also make minior immune to status until it changes form.
       .partial(),
     new Ability(Abilities.STAKEOUT, 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON, 2),
@@ -3362,6 +3369,7 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .ignorable()
+      //Ability is still janky.
       .partial(),
     new Ability(Abilities.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, p => p.getFormKey() ? 2 : 1)
@@ -3510,6 +3518,7 @@ export function initAbilities() {
     new Ability(Abilities.WANDERING_SPIRIT, 8)
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint()
+      //MISSING: If swapping with rock head from a recoil move, the rock head pokemon should lose its ability first, and take recoil.
       .partial(),
     new Ability(Abilities.GORILLA_TACTICS, 8)
       .unimplemented(),
@@ -3519,10 +3528,13 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, '\'s Neutralizing Gas filled the area!'))
+      //Has weird interactions with some abilities still.
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
-      .ignorable(),
+      .ignorable()
+      //MISSING: Should also apply to allies
+      .partial(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 1 : 0)
@@ -3579,6 +3591,7 @@ export function initAbilities() {
     new Ability(Abilities.WIND_RIDER, 9)
       .attr(MoveImmunityStatChangeAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.WIND_MOVE), BattleStat.ATK, 1)
       .ignorable()
+      //MISSING: Should also be buffed in tailwind.
       .partial(),
     new Ability(Abilities.GUARD_DOG, 9)
       .attr(PostIntimidateStatChangeAbAttr, [BattleStat.ATK], 1, true)
@@ -3588,6 +3601,7 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK),
     new Ability(Abilities.WIND_POWER, 9)
       .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.hasFlag(MoveFlags.WIND_MOVE), BattlerTagType.CHARGED)
+      //MISSING: Should also be buffed in tailwind.
       .partial(),
     new Ability(Abilities.ZERO_TO_HERO, 9)
       .attr(UncopiableAbilityAbAttr)
@@ -3619,6 +3633,7 @@ export function initAbilities() {
     new Ability(Abilities.GOOD_AS_GOLD, 9)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().category === MoveCategory.STATUS)
       .ignorable()
+      //MISSING: Needs more polish for niche situations where a simple blanket status move immunity isn't enough.
       .partial(),
     new Ability(Abilities.VESSEL_OF_RUIN, 9)
       .ignorable()
@@ -3661,6 +3676,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
       .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS)
+      //MISSING: These status moves should also have reduced priority.
       .partial(),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
