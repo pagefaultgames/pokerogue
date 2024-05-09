@@ -18,7 +18,7 @@ import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import { WEATHER_OVERRIDE } from '../overrides';
+import * as Overrides from '../overrides';
 
 export class Arena {
   public scene: BattleScene;
@@ -273,6 +273,11 @@ export class Arena {
     return 131 / 180;
   }
 
+  /**
+   * Sets weather to the override specified in overrides.ts
+   * @param weather new weather to set of type WeatherType
+   * @returns true to force trySetWeather to return true
+   */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
     this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -280,10 +285,15 @@ export class Arena {
     return true
   }
 
+  /**
+   * Attempts to set a new weather to the battle
+   * @param weather new weather to set of type WeatherType
+   * @param hasPokemonSource is the new weather from a pokemon
+   * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
+   */
   trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
-    // override hook for debugging
-    if (WEATHER_OVERRIDE)
-      return this.trySetWeatherOverride(WEATHER_OVERRIDE);
+    if (Overrides.WEATHER_OVERRIDE)
+      return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     
     if (this.weather?.weatherType === (weather || undefined))
       return false;
