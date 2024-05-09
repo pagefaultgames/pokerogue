@@ -37,7 +37,7 @@ import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
 import {Button} from "../enums/buttons";
-import GamepadBindingUiHandler from "./ui/gamepad-binding-ui-handler";
+import GamepadBindingUiHandler from "./gamepad-binding-ui-handler";
 
 export enum Mode {
   MESSAGE,
