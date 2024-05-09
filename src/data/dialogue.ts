@@ -1920,7 +1920,8 @@ export const trainerTypeDialogue = {
   },
   [TrainerType.WULFRIC]: {
     encounter: [
-      `You know what? We all talk big about what you learn from battling and bonds and all that, but really, I just do it 'cause it's fun. 
+      `You know what? We all talk big about what you learn from battling and bonds and all that…
+      $But really, I just do it 'cause it's fun. 
       $Who cares about the grandstanding? Let's get to battling!`,
     ],
     victory: [
