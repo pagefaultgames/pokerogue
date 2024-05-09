@@ -1729,12 +1729,14 @@ export class StealStatsAttr extends MoveEffectAttr
         for (let s = 0; s < target.summonData.battleStats.length; s++)
         {
             user.summonData.battleStats[s] += target.summonData.battleStats[s];
+            if(target.summonData.battleStats[s] > 0 )
+              isStatStolen = true;
             target.summonData.battleStats[s] = 0;
         }
         target.updateInfo();
         user.updateInfo();
         if (isStatStolen)
-            target.scene.queueMessage(getPokemonMessage(user, `stole the target's boosted stats!`));
+            target.scene.queueMessage(getPokemonMessage(user, `stole the targets boosted stats!`));
         return true;
     }
 }
