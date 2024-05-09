@@ -117,7 +117,9 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         super.show(args);
 
         const settings: object = localStorage.hasOwnProperty('settingsGamepad') ? JSON.parse(localStorage.getItem('settingsGamepad')) : {};
-        Object.keys(settingGamepadDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingGamepadDefaults[setting]));
+        // in the menu, for each line, we set the cursor position for each option, either on the previously selected, or the default value.
+        // if it's the default gamepad, we always want it by default to be on the very first option. never on "Change"
+        Object.keys(settingGamepadDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? ( setting === SettingGamepad.Default_Controller ? 0 : settings[setting]) : settingGamepadDefaults[setting]));
 
         this.settingsContainer.setVisible(true);
         this.setCursor(0);
