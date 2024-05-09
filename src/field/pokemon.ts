@@ -1324,7 +1324,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (typeBoost) {
             power.value *= typeBoost.boostValue;
             if (typeBoost.oneUse) {
-              this.removeTag(typeBoost.tagType);
+              source.removeTag(typeBoost.tagType);
             }
           }
           const arenaAttackTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(type, source.isGrounded());

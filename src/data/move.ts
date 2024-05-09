@@ -4790,7 +4790,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new SelfStatusMove(Moves.CHARGE, Type.ELECTRIC, -1, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
-      .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, true),
+      .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, false),
     new StatusMove(Moves.TAUNT, Type.DARK, 100, 20, -1, 0, 3)
       .unimplemented(),
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
