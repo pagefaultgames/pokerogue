@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -1134,9 +1134,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         movePool.push([levelMove[1], weight]);
     }
 
-    if (this.isBoss()) // Bosses never get self ko moves
-      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttr).length);
-
     if (this.hasTrainer()) {
       const tms = Object.keys(tmSpecies);
       for (let tm of tms) {
@@ -1185,18 +1182,35 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    if (this.isBoss()) // Bosses never get self ko moves
+      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttr).length);
+    if (this.hasTrainer()) {
+      // Trainers never get OHKO moves
+      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(OneHitKOAttr).length);
+      // Half the weight of self KO moves
+      movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttr).length ? 0.5 : 1)]);
+      // Trainers get a weight bump to stat buffing moves
+      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatChangeAttr).some(a => (a as StatChangeAttr).levels > 1 && (a as StatChangeAttr).selfTarget) ? 1.25 : 1)]);
+      // Trainers get a weight decrease to multiturn moves
+      movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(ChargeAttr).length || !!allMoves[m[0]].getAttrs(RechargeAttr).length ? 0.7 : 1)]);
+    }
+
+    // Weight towards higher power moves, by reducing the power of moves below the highest power.
+    // Caps max power at 90 to avoid something like hyper beam ruining the stats.
+    // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
+    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
+    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
+
+    // Weight damaging moves against the lower stat
+    const worseCategory: MoveCategory = this.stats[Stat.ATK] > this.stats[Stat.SPATK] ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
+    const statRatio = worseCategory === MoveCategory.PHYSICAL ? this.stats[Stat.ATK]/this.stats[Stat.SPATK] : this.stats[Stat.SPATK]/this.stats[Stat.ATK];
+    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === worseCategory ? statRatio : 1)]);
+
     let weightMultiplier = 0.9; // The higher this is the more the game weights towards higher level moves. At 0 all moves are equal weight.
     if (this.hasTrainer())
       weightMultiplier += 0.7;
     if (this.isBoss())
       weightMultiplier += 0.4;
-
-    // Weight towards higher power moves, by reducing the power of moves below the highest power.
-    // Caps max power at 90 to avoid something like hyper beam ruining the stats.
-    // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
-    let maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
-    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
-
     const baseWeights: [Moves, number][] = movePool.map(m => [m[0], Math.ceil(Math.pow(m[1], weightMultiplier)*100)]);
 
     if (this.hasTrainer() || this.isBoss()) { // Trainers and bosses always force a stab move
