@@ -68,11 +68,11 @@ export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
  * Some items are generated based on a sub-type (i.e. berries), to override those: 
  * @example [{name: "BERRY", count: 5, type: BerryType.SITRUS}]
  * types are listed in interface below
- * - TempBattleStat is for X items (Dire hit is separate)
- * - Stat is for vitamins
- * - Nature is for mints
- * - Type is for Tera Shard
- * - BerryType is for Berries
+ * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
+ * - Stat is for BASE_STAT_BOOSTER / Vitamin
+ * - Nature is for MINT
+ * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
+ * - BerryType is for BERRY
  */
 interface ModifierOverride {
     name: string,
@@ -82,5 +82,5 @@ interface ModifierOverride {
 export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = []; 
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = []; 
 
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [{name: "LUCKY_EGG"}]; 
+export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
 export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
