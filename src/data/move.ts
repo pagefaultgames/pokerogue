@@ -1,6 +1,6 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PartyEffectPhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -50,7 +50,8 @@ export enum MoveTarget {
   ALL,
   USER_SIDE,
   ENEMY_SIDE,
-  BOTH_SIDES
+  BOTH_SIDES,
+  PARTY
 }
 
 export enum MoveFlags {
@@ -829,6 +830,34 @@ export class HealAttr extends MoveEffectAttr {
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
+  }
+}
+
+/**
+ * Cures the user's party of non-volatile status conditions, ie. Heal Bell, Aromatherapy
+ * @param {string} message Message to display after using move
+ * @param {Abilities} abilityCondition Skips mons with this ability, ie. Soundproof
+ */
+export class PartyStatusCureAttr extends MoveEffectAttr {
+  private message: string;
+  private abilityCondition: Abilities;
+
+  constructor(message: string, abilityCondition: Abilities) {
+    super();
+
+    this.message = message;
+    this.abilityCondition = abilityCondition;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    this.addPartyCurePhase(user);
+  }
+
+  addPartyCurePhase(user: Pokemon) {
+    user.scene.unshiftPhase(new PartyStatusCurePhase(user.scene, user, this.message, this.abilityCondition));
   }
 }
 
@@ -4003,6 +4032,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
 
   switch (moveTarget) {
     case MoveTarget.USER:
+    case MoveTarget.PARTY:
       set = [ user];
       break;
     case MoveTarget.NEAR_OTHER:
@@ -4628,9 +4658,9 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
+      .attr(PartyStatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
       .soundBased()
-      .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .target(MoveTarget.PARTY),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, 0, 2)
@@ -4901,8 +4931,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .attr(PartyStatusCureAttr, "A soothing aroma wafted through the area!", Abilities.SAP_SIPPER)
+      .target(MoveTarget.PARTY),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
     new AttackMove(Moves.AIR_CUTTER, Type.FLYING, MoveCategory.SPECIAL, 60, 95, 25, -1, 0, 3)
