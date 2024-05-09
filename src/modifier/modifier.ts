@@ -2181,8 +2181,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
 
 export function modifiersOverride(scene: Phaser.Scene, player: boolean = true): void {
   const modifierOverride = player ? STARTING_MODIFIER_OVERRIDE : OPP_MODIFIER_OVERRIDE;
-  // if no override, do nothing
-  if (!modifierOverride || modifierOverride.length === 0 || !scene) return;
+  if (!modifierOverride || modifierOverride.length === 0 || !scene) return; // if no override, do nothing
   // if it's the opponent, we clear all his current modifiers to avoid stacking
   if (!player) {
     scene.enemyModifiers = [];
@@ -2191,8 +2190,7 @@ export function modifiersOverride(scene: Phaser.Scene, player: boolean = true): 
   modifierOverride.forEach(item => {
     const modifierName = item[0];
     const qty = item[1] || 1;
-    // if the modifier does not exist, we skip it
-    if (!modifierTypes.hasOwnProperty(modifierName)) return;
+    if (!modifierTypes.hasOwnProperty(modifierName)) return; // if the modifier does not exist, we skip it
     const modifierType = modifierTypes[modifierName]();
     const modifier = modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier() as PersistentModifier;
     modifier.stackCount = qty;
@@ -2206,22 +2204,17 @@ export function modifiersOverride(scene: Phaser.Scene, player: boolean = true): 
 
 export function itemHeldsOverride(scene: Phaser.Scene, pokemon: Pokemon, player: boolean = true): void {
   const heldItemsOverride = player ? STARTING_HELD_ITEMS_OVERRIDE : OPP_HELD_ITEMS_OVERRIDE;
-  // if no override, do nothing
-  if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) return;
+  if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) return; // if no override, do nothing
   // we loop through all the itemName given in the override file
   heldItemsOverride.forEach(item => {
       const itemName = item[0];
       const qty = item[1] || 1;
-      // if the item does not exist, we skip it
-      if (!modifierTypes.hasOwnProperty(itemName)) return;
-      // we retrieve the item in the list
-      const modifierType = modifierTypes[itemName]();
+      if (!modifierTypes.hasOwnProperty(itemName)) return; // if the item does not exist, we skip it
+      const modifierType = modifierTypes[itemName](); // we retrieve the item in the list
       // we create the item
       const itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier((pokemon) as PersistentModifier) as PokemonHeldItemModifier;
-      // we assign the created item to the pokemon
-      itemModifier.pokemonId = pokemon.id;
-      // we say how many items we want
-      itemModifier.stackCount = qty;
+      itemModifier.pokemonId = pokemon.id; // we assign the created item to the pokemon
+      itemModifier.stackCount = qty; // we say how many items we want
       if (player) {
           scene.addModifier(itemModifier as PokemonHeldItemModifier, true, false, false, true);
       } else {
