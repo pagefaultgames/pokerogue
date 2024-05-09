@@ -2,7 +2,41 @@ import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
+import {
+  allMoves,
+  applyMoveAttrs,
+  BypassSleepAttr,
+  ChargeAttr,
+  applyFilteredMoveAttrs,
+  HitsTagAttr,
+  MissEffectAttr,
+  MoveAttr,
+  MoveEffectAttr,
+  MoveFlags,
+  MultiHitAttr,
+  OverrideMoveEffectAttr,
+  VariableAccuracyAttr,
+  MoveTarget,
+  OneHitKOAttr,
+  getMoveTargets,
+  MoveTargetSet,
+  MoveEffectTrigger,
+  CopyMoveAttr,
+  AttackMove,
+  SelfStatusMove,
+  DelayedAttackAttr,
+  RechargeAttr,
+  PreMoveMessageAttr,
+  HealStatusEffectAttr,
+  IgnoreOpponentStatChangesAttr,
+  NoEffectAttr,
+  FixedDamageAttr,
+  PostVictoryStatChangeAttr,
+  OneHitKOAccuracyAttr,
+  ForceSwitchOutAttr,
+  VariableTargetAttr,
+  SacrificialAttr
+} from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -2270,13 +2304,20 @@ export class MovePhase extends BattlePhase {
 
       if (this.move.moveId)
         this.showMoveText();
-      
-      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
+
+      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || (!targets.length && !this.move.getMove().getAttrs(SacrificialAttr).length)) {
         moveQueue.shift();
         this.cancel();
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
         return this.end();
       }
+
+      if (targets.length === 0 && this.move.getMove().getAttrs(SacrificialAttr).length) {
+        // Add the user as a target if the move is sacrificial
+        targets.push(this.pokemon);
+      }
+
+
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
@@ -2441,8 +2482,16 @@ export class MoveEffectPhase extends PokemonPhase {
 
       // Move animation only needs one target
       new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
+        // Check if the user is in the targets list for sacrificial moves
+        if (this.move.getMove().getAttrs(SacrificialAttr).length && !targets.includes(user)) {
+          targets.push(user);
+          targetHitChecks[user.getBattlerIndex()] = true;
+        }
         for (let target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
+            if (this.move.getMove().getAttrs(SacrificialAttr).length && target !== user) {
+              continue;
+            }
             user.turnData.hitCount = 1;
             user.turnData.hitsLeft = 1;
             this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
