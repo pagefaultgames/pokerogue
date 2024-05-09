@@ -1959,8 +1959,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  resetStatus(): void {
+  /**
+  * Resets the status of a pokemon
+  * @param revive whether revive should be cured, defaults to true
+  */
+  resetStatus(revive: boolean = true): void {
     const lastStatus = this.status?.effect;
+    if (!revive && lastStatus === StatusEffect.FAINT) {
+      return;
+    }
     this.status = undefined;
     if (lastStatus === StatusEffect.SLEEP) {
       this.setFrameRate(12);
