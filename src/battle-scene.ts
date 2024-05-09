@@ -1952,7 +1952,7 @@ export default class BattleScene extends SceneBase {
 					};
 				}) : [],
 				nature: getNatureName(pokemon.nature, false, false, true),
-				ability: pokemon.getAbility().name,
+				ability: pokemon.isPlayer() ? pokemon.getAbility().name : "",
 				hiddenAbility: pokemon.getPassiveAbility().name,
 				pokedexEntry: pokemon.species.speciesId.toString(),
 				stats: pokemon.isPlayer() ?  pokemon.stats.map(p => p) : [],
