@@ -116,13 +116,26 @@ export class LoginPhase extends Phase {
         }
         return null;
       } else {
-        this.scene.gameData.loadSystem().then(success => {
-          if (success || bypassLogin)
-            this.end();
-          else {
-            this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.ui.showText(i18next.t('menu:failedToLoadSaveData'));
+        this.scene.gameData.getLastSystemRemoteSave().then(timestamp => {
+          let localLastSave = this.scene.gameData.getLastSystemLocalSave();
+          let loadSource = undefined
+
+          if (localLastSave > timestamp) {
+            console.log("LocalSave is the most recent, loading from it.")
+            loadSource = () => this.scene.gameData.loadSystemLocal()
+          } else {
+            console.log("LocalSave is outdated, loading from remote.")
+            loadSource = () => this.scene.gameData.loadSystem()
           }
+
+          loadSource().then(success => {
+            if (success || bypassLogin)
+              this.end();
+            else {
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText(i18next.t('menu:failedToLoadSaveData'));
+            }
+          });
         });
       }
     });
@@ -400,7 +413,7 @@ export class ReloadSessionPhase extends Phase {
       else
         delayElapsed = true;
     });
-
+    // This is called when previous sync with the server failed, no need to fetch local data
     this.scene.gameData.loadSystem().then(() => {
       if (delayElapsed)
         this.end();
@@ -436,7 +449,8 @@ export class SelectGenderPhase extends Phase {
             handler: () => {
               this.scene.gameData.gender = PlayerGender.MALE;
               this.scene.gameData.saveSetting(Setting.Player_Gender, 0);
-              this.scene.gameData.saveSystem().then(() => this.end());
+              this.scene.gameData.saveSystem().then(() => console.log("System data synced"));
+              this.scene.gameData.saveSystemLocal().then(() => this.end());
               return true;
             }
           },
@@ -445,7 +459,8 @@ export class SelectGenderPhase extends Phase {
             handler: () => {
               this.scene.gameData.gender = PlayerGender.FEMALE;
               this.scene.gameData.saveSetting(Setting.Player_Gender, 1);
-              this.scene.gameData.saveSystem().then(() => this.end());
+              this.scene.gameData.saveSystem().then(() => console.log("System data synced"));
+              this.scene.gameData.saveSystemLocal().then(() => this.end());
               return true;
             }
           }
@@ -771,12 +786,23 @@ export class EncounterPhase extends BattlePhase {
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
-          this.scene.gameData.saveSystem().then(success => {
+          this.scene.gameData.saveSystemLocal().then(success => {
             this.scene.disableMenu = false;
             if (!success)
               return this.scene.reset(true);
             this.scene.gameData.saveSession(this.scene, true).then(() => this.doEncounter());
           });
+          
+          // Syncing with the server every 3 waves
+          if (battle.waveIndex % 5 == 0) {
+            this.scene.gameData.saveSystem().then(success => {
+              if (!success) {
+                console.log("Failed to sync system with server")
+              } else {
+                console.log("Synced system with server.")
+              }
+            })
+          }
         } else
           this.doEncounter();
       });

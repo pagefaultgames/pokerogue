@@ -247,6 +247,39 @@ export class GameData {
     this.initStarterData();
   }
 
+  public saveSystemLocal(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      this.scene.ui.savingIcon.show();
+      const data: SystemSaveData = {
+        trainerId: this.trainerId,
+        secretId: this.secretId,
+        gender: this.gender,
+        dexData: this.dexData,
+        starterData: this.starterData,
+        gameStats: this.gameStats,
+        unlocks: this.unlocks,
+        achvUnlocks: this.achvUnlocks,
+        voucherUnlocks: this.voucherUnlocks,
+        voucherCounts: this.voucherCounts,
+        eggs: this.eggs.map(e => new EggData(e)),
+        gameVersion: this.scene.game.config.gameVersion,
+        timestamp: new Date().getTime()
+      };
+
+      console.log(data)
+
+      const maxIntAttrValue = Math.pow(2, 31);
+      const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
+      
+      localStorage.setItem('data_bak', localStorage.getItem('data'));
+
+      localStorage.setItem('data', btoa(systemData));
+
+      this.scene.ui.savingIcon.hide();
+      return resolve(true);
+    });
+  }
+
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();
@@ -299,6 +332,153 @@ export class GameData {
     });
   }
 
+  public getLastSystemLocalSave(): int {
+    if (!localStorage.hasOwnProperty('data'))
+        return -1
+
+    return this.parseSystemData(atob(localStorage.getItem('data'))).timestamp;
+  }
+
+  public getLastSystemRemoteSave(): Promise<int> {
+    return new Promise<int>(resolve => {
+      Utils.apiFetch(`savedata/get?datatype=${GameDataType.SYSTEM}`, true)
+      .then(response => response.text())
+      .then(response => {
+        if (!response.length || response[0] !== '{') {
+          if (response.startsWith('failed to open save file')) {
+            this.scene.queueMessage('Save data could not be found. If this is a new account, you can safely ignore this message.', null, true);
+            return resolve(-1);
+          } else if (response.indexOf('Too many connections') > -1) {
+            this.scene.queueMessage('Too many people are trying to connect and the server is overloaded. Please try again later.', null, true);
+            return resolve(-1);
+          }
+          console.error(response);
+          return resolve(-1);
+        }
+        return resolve(this.parseSystemData(response).timestamp)
+      });
+    });
+  }
+
+  public loadSystemLocal(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (!localStorage.hasOwnProperty('data'))
+        return resolve(false)
+
+      const handleSystemData = (systemDataStr: string) => {
+        try {
+          const systemData = this.parseSystemData(systemDataStr);
+
+          console.debug(systemData);
+
+          /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
+          
+          if (versions[0] !== versions[1]) {
+            const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
+          }*/
+
+          this.trainerId = systemData.trainerId;
+          this.secretId = systemData.secretId;
+
+          this.gender = systemData.gender;
+
+          this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+
+          const initStarterData = !systemData.starterData;
+
+          if (initStarterData) {
+            this.initStarterData();
+
+            if (systemData['starterMoveData']) {
+              const starterMoveData = systemData['starterMoveData'];
+              for (let s of Object.keys(starterMoveData))
+                this.starterData[s].moveset = starterMoveData[s];
+            }
+
+            if (systemData['starterEggMoveData']) {
+              const starterEggMoveData = systemData['starterEggMoveData'];
+              for (let s of Object.keys(starterEggMoveData))
+                this.starterData[s].eggMoves = starterEggMoveData[s];
+            }
+
+            this.migrateStarterAbilities(systemData, this.starterData);
+          } else {
+            if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
+              this.migrateStarterAbilities(systemData);
+            //this.fixVariantData(systemData);
+            this.fixStarterData(systemData);
+            // Migrate ability starter data if empty for caught species
+            Object.keys(systemData.starterData).forEach(sd => {
+              if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
+                systemData.starterData[sd].abilityAttr = 1;
+            });
+            this.starterData = systemData.starterData;
+          }
+
+          if (systemData.gameStats) {
+            if (systemData.gameStats.legendaryPokemonCaught !== undefined && systemData.gameStats.subLegendaryPokemonCaught === undefined)
+              this.fixLegendaryStats(systemData);
+            this.gameStats = systemData.gameStats;
+          }
+
+          if (systemData.unlocks) {
+            for (let key of Object.keys(systemData.unlocks)) {
+              if (this.unlocks.hasOwnProperty(key))
+                this.unlocks[key] = systemData.unlocks[key];
+            }
+          }
+
+          if (systemData.achvUnlocks) {
+            for (let a of Object.keys(systemData.achvUnlocks)) {
+              if (achvs.hasOwnProperty(a))
+                this.achvUnlocks[a] = systemData.achvUnlocks[a];
+            } 
+          }
+
+          if (systemData.voucherUnlocks) {
+            for (let v of Object.keys(systemData.voucherUnlocks)) {
+              if (vouchers.hasOwnProperty(v))
+                this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+            }
+          }
+
+          if (systemData.voucherCounts) {
+            Utils.getEnumKeys(VoucherType).forEach(key => {
+              const index = VoucherType[key];
+              this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
+            });
+          }
+
+          this.eggs = systemData.eggs
+            ? systemData.eggs.map(e => e.toEgg())
+            : [];
+
+          this.dexData = Object.assign(this.dexData, systemData.dexData);
+          this.consolidateDexData(this.dexData);
+          this.defaultDexData = null;
+
+          if (initStarterData) {
+            const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+            for (let s of starterIds) {
+              this.starterData[s].candyCount += this.dexData[s].caughtCount;
+              this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
+              if (this.dexData[s].caughtAttr & DexAttr.SHINY)
+                this.starterData[s].candyCount += 4;
+            }
+          }
+
+          resolve(true);
+        } catch (err) {
+          console.error(err);
+          resolve(false);
+        }
+      }
+
+      handleSystemData(atob(localStorage.getItem('data')));
+      return resolve(true)
+    });
+  }
+  
   public loadSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin && !localStorage.hasOwnProperty('data'))

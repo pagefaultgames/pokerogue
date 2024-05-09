@@ -310,6 +310,10 @@ export default class MenuUiHandler extends MessageUiHandler {
             error = true;
           break;
         case MenuOptions.LOG_OUT:
+          // Syncing system to the server before logout
+          // this way we can safely overwrite local save later
+          this.scene.gameData.saveSystem().then(() => console.log("System data synced."));
+
           success = true;
           const doLogout = () => {
             Utils.apiFetch('account/logout', true).then(res => {
