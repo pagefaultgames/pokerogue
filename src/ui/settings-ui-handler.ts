@@ -122,7 +122,7 @@ export default class SettingsUiHandler extends UiHandler {
 
   processInput(button: Button): boolean {
     const ui = this.getUi();
-    const rowsToDisplay = 9;
+    const rowsToDisplay = 9; // we can fit 9 rows on the screen
 
     let success = false;
 
@@ -139,21 +139,36 @@ export default class SettingsUiHandler extends UiHandler {
             else
               success = this.setScrollCursor(this.scrollCursor - 1);
           } else {
+              // we land here if cursor is equal to 0, it means we are at the top of the menu.
+              // so by clicking on UP, we want to go to the bottom
+              // to do that, first, we say, on the screen, we want the lastest element visible to be selected
+              // we do that with the setCursor method
               const successA = this.setCursor(rowsToDisplay - 1);
+              // if we stop here, our cursor will be on the 9th element of the menu. but we want the latest one
+              // to do so, we fix the scroll to the bottom
+              // the scrolls go from 0 to the amount of element minus how many element we can fit on the screen
               const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
-              success = successA && successB;
+              success = successA && successB; // success is just there to play the little validation sound effect
           }
           break;
         case Button.DOWN:
           if (cursor < this.optionValueLabels.length - 1) {
-            if (this.cursor < rowsToDisplay - 1)
+            if (this.cursor < rowsToDisplay - 1) // if the visual cursor is in the frame of 0 to 8
               success = this.setCursor(this.cursor + 1);
             else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
               success = this.setScrollCursor(this.scrollCursor + 1);
           } else {
+              // we land here if cursor is equal to how many element there is in the menu.
+              // why is cursor = this.cursor + this.scrollCursor ? Remember:
+              // the scrolls go from 0 to the amount of element minus how many element we can fit on the screen
+              // this.cursor go rom 0 to how many element we can fit on the screen
+              // the max combination of both of them, give the latest element
+              // so by clicking on DOWN, we want to go to the top
+              // to do that, first, we say, on the screen, we want the first element visible to be selected
               const successA = this.setCursor(0);
+              // and then we set the scroll to the minimum -> 0
               const successB = this.setScrollCursor(0);
-              success = successA && successB;
+              success = successA && successB; // success is just there to play the little validation sound effect
           }
           break;
         case Button.LEFT:
