@@ -101,6 +101,11 @@ export default class BattleScene extends SceneBase {
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
 	public expGainsSpeed: integer = 0;
+	//expParty can be:
+	// 0 - default - the normal exp gain display, nothing changed
+	// 1 - Only level up - we display the level up in the small frame instead of a message
+	// 2 - Skip - no level up frame nor message
+	// 1 & 2 still are compatible with stats display, level up, new move, ...
 	public expParty: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
