@@ -3320,7 +3320,7 @@ export function initAbilities() {
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .unimplemented(),
     new Ability(Abilities.WATER_COMPACTION, 7)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER, BattleStat.DEF, 2),
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
       .unimplemented(),
     new Ability(Abilities.SHIELDS_DOWN, 7)
