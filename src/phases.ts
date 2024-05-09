@@ -1702,16 +1702,26 @@ export class CommandPhase extends FieldPhase {
           const move = playerPokemon.getMoveset()[cursor];
           this.scene.ui.setMode(Mode.MESSAGE);
 
-          // Decides between a Disabled, Not Implemented, or No PP translation message
+          // Decides between a Disabled, Choice Locked, Not Implemented, or No PP translation message
           const errorMessage = 
             playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
+            playerPokemon.summonData.choicedMove !== Moves.NONE ? 'battle:moveChoiced' : 
             move.getName().endsWith(' (N)') ? 'battle:moveNotImplemented' : 'battle:moveNoPP';
           const moveName = move.getName().replace(' (N)', ''); // Trims off the indicator
+          
+          if (playerPokemon.summonData.choicedMove === Moves.NONE || playerPokemon.summonData.choicedMove === playerPokemon.summonData.disabledMove){
+            this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+              this.scene.ui.clearText();
+              this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+            }, null, true);
+          }
 
-          this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
-            this.scene.ui.clearText();
-            this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
-          }, null, true);
+          else {
+            this.scene.ui.showText(i18next.t(errorMessage, { pokemonName: playerPokemon.name, moveName: allMoves[playerPokemon.summonData.choicedMove].name }), null, () => {
+              this.scene.ui.clearText();
+              this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+            }, null, true);
+          }
         }
         break;
       case Command.BALL:
@@ -2195,6 +2205,8 @@ export class MovePhase extends BattlePhase {
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
+      if (this.move.moveId && this.pokemon.summonData.choicedMove !== Moves.NONE && this.pokemon.summonData.choicedMove !== this.move.moveId)
+        this.scene.queueMessage(getPokemonMessage(this.pokemon ,` is locked into ${allMoves[this.pokemon.summonData.choicedMove].name}!`)); 
       return this.end();
     }
 

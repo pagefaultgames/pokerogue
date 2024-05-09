@@ -3119,6 +3119,7 @@ export class PokemonSummonData {
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
+  public choicedMove: Moves = Moves.NONE;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
 
@@ -3197,7 +3198,7 @@ export class PokemonMove {
   }
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId)
+    if (this.moveId && (pokemon.summonData?.disabledMove === this.moveId || (pokemon.summonData?.choicedMove !== Moves.NONE && pokemon.summonData?.choicedMove !== this.moveId)))
       return false;
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(' (N)');
   }
