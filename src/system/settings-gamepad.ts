@@ -1,81 +1,120 @@
 import BattleScene from "../battle-scene";
 import {SettingDefaults, SettingOptions} from "#app/system/settings";
-import {Button} from "../enums/buttons";
+import SettingsGamepadUiHandler from "#app/ui/settings-gamepad-ui-handler";
+import {Mode} from "#app/ui/ui";
 
 export enum SettingGamepad {
-  Gamepad_Support = "GAMEPAD_SUPPORT",
-  Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
-  Button_Action = "BUTTON_ACTION",
-  Button_Cancel = "BUTTON_CANCEL",
-  Button_Menu = "BUTTON_MENU",
-  Button_Stats = "BUTTON_STATS",
-  Button_Cycle_Shiny = "BUTTON_CYCLE_SHINY",
-  Button_Cycle_Form = "BUTTON_CYCLE_FORM",
-  Button_Cycle_Gender = "BUTTON_CYCLE_GENDER",
-  Button_Cycle_Ability = "BUTTON_CYCLE_ABILITY",
-  Button_Cycle_Nature = "BUTTON_CYCLE_NATURE",
-  Button_Cycle_Variant = "BUTTON_CYCLE_VARIANT",
-  Button_Speed_Up = "BUTTON_SPEED_UP",
-  Button_Slow_Down = "BUTTON_SLOW_DOWN",
+    Default_Controller = "DEFAULT_CONTROLLER",
+    Gamepad_Support = "GAMEPAD_SUPPORT",
+    Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
+    // Button_Action = "BUTTON_ACTION",
+    // Button_Cancel = "BUTTON_CANCEL",
+    // Button_Menu = "BUTTON_MENU",
+    // Button_Stats = "BUTTON_STATS",
+    // Button_Cycle_Shiny = "BUTTON_CYCLE_SHINY",
+    // Button_Cycle_Form = "BUTTON_CYCLE_FORM",
+    // Button_Cycle_Gender = "BUTTON_CYCLE_GENDER",
+    // Button_Cycle_Ability = "BUTTON_CYCLE_ABILITY",
+    // Button_Cycle_Nature = "BUTTON_CYCLE_NATURE",
+    // Button_Cycle_Variant = "BUTTON_CYCLE_VARIANT",
+    // Button_Speed_Up = "BUTTON_SPEED_UP",
+    // Button_Slow_Down = "BUTTON_SLOW_DOWN",
 }
 
 export const settingGamepadOptions: SettingOptions = {
-  [SettingGamepad.Gamepad_Support]: [ 'Auto', 'Disabled' ],
-  [SettingGamepad.Swap_A_and_B]: [ 'Enabled', 'Disabled' ],
-  [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
-  [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
-  [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Change'],
-  [SettingGamepad.Button_Stats]: [`KEY ${Button.STATS.toString()}`, 'Change'],
-  [SettingGamepad.Button_Cycle_Shiny]: [`KEY ${Button.RB.toString()}`, 'Change'],
-  [SettingGamepad.Button_Cycle_Form]: [`KEY ${Button.LB.toString()}`, 'Change'],
-  [SettingGamepad.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, 'Change'],
-  [SettingGamepad.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, 'Change'],
-  [SettingGamepad.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, 'Change'],
-  [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, 'Change'],
-  [SettingGamepad.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, 'Change'],
-  [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Change']
+    [SettingGamepad.Default_Controller]: [ 'Default', 'Change' ],
+    [SettingGamepad.Gamepad_Support]: [ 'Auto', 'Disabled' ],
+    [SettingGamepad.Swap_A_and_B]: [ 'Enabled', 'Disabled' ],
+    // [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Stats]: [`KEY ${Button.STATS.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Cycle_Shiny]: [`KEY ${Button.RB.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Cycle_Form]: [`KEY ${Button.LB.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, 'Change'],
+    // [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Change']
 };
 
 export const settingGamepadDefaults: SettingDefaults = {
-  [SettingGamepad.Gamepad_Support]: 0,
-  [SettingGamepad.Swap_A_and_B]: 1, // Set to 'Disabled' by default
-  [SettingGamepad.Button_Action]: Button.ACTION,
-  [SettingGamepad.Button_Cancel]: Button.CANCEL,
-  [SettingGamepad.Button_Menu]: Button.MENU,
-  [SettingGamepad.Button_Stats]: Button.STATS,
-  [SettingGamepad.Button_Cycle_Shiny]: Button.RB,
-  [SettingGamepad.Button_Cycle_Form]: Button.LB,
-  [SettingGamepad.Button_Cycle_Gender]: Button.CYCLE_GENDER,
-  [SettingGamepad.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
-  [SettingGamepad.Button_Cycle_Nature]: Button.CYCLE_NATURE,
-  [SettingGamepad.Button_Cycle_Variant]: Button.CYCLE_VARIANT,
-  [SettingGamepad.Button_Speed_Up]: Button.SPEED_UP,
-  [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
+    [SettingGamepad.Default_Controller]: 0,
+    [SettingGamepad.Gamepad_Support]: 0,
+    [SettingGamepad.Swap_A_and_B]: 1, // Set to 'Disabled' by default
+    // [SettingGamepad.Button_Action]: Button.ACTION,
+    // [SettingGamepad.Button_Cancel]: Button.CANCEL,
+    // [SettingGamepad.Button_Menu]: Button.MENU,
+    // [SettingGamepad.Button_Stats]: Button.STATS,
+    // [SettingGamepad.Button_Cycle_Shiny]: Button.RB,
+    // [SettingGamepad.Button_Cycle_Form]: Button.LB,
+    // [SettingGamepad.Button_Cycle_Gender]: Button.CYCLE_GENDER,
+    // [SettingGamepad.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
+    // [SettingGamepad.Button_Cycle_Nature]: Button.CYCLE_NATURE,
+    // [SettingGamepad.Button_Cycle_Variant]: Button.CYCLE_VARIANT,
+    // [SettingGamepad.Button_Speed_Up]: Button.SPEED_UP,
+    // [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
 };
 
-export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
-  switch (setting) {
-    case SettingGamepad.Gamepad_Support:
-      scene.gamepadSupport = settingGamepadOptions[setting][value] !== 'Disabled';
-      break;
-    case SettingGamepad.Swap_A_and_B:
-      scene.abSwapped = settingGamepadOptions[setting][value] !== 'Disabled';
-      break;
-    case SettingGamepad.Button_Action:
-    case SettingGamepad.Button_Cancel:
-    case SettingGamepad.Button_Menu:
-    case SettingGamepad.Button_Stats:
-    case SettingGamepad.Button_Cycle_Shiny:
-    case SettingGamepad.Button_Cycle_Form:
-    case SettingGamepad.Button_Cycle_Gender:
-    case SettingGamepad.Button_Cycle_Ability:
-    case SettingGamepad.Button_Cycle_Nature:
-    case SettingGamepad.Button_Cycle_Variant:
-    case SettingGamepad.Button_Speed_Up:
-    case SettingGamepad.Button_Slow_Down:
-      scene.inputController.customGamepadMapping[setting] = value;
-      break;
-  }
+function truncateString(str: String, maxLength: number = 10) {
+    if (str.length > maxLength) {
+        return str.slice(0, maxLength - 3) + "..."; // Subtract 3 to accommodate the ellipsis
+    }
+    return str;
+}
 
-  return true;
+export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer, gamepads?: Array<String>): boolean {
+    switch (setting) {
+        case SettingGamepad.Gamepad_Support:
+            console.log('setting:', setting, settingGamepadOptions[setting][value]);
+            scene.inputController.setGamepadSupport(settingGamepadOptions[setting][value] !== 'Disabled');
+            break;
+        case SettingGamepad.Swap_A_and_B:
+            console.log('settingGamepadOptions[setting][value]:', settingGamepadOptions[setting][value]);
+            console.log('settingGamepadOptions[setting]:', settingGamepadOptions[setting]);
+            console.log('value:', value);
+            scene.abSwapped = settingGamepadOptions[setting][value] !== 'Disabled';
+            break;
+        // case SettingGamepad.Button_Action:
+        // case SettingGamepad.Button_Cancel:
+        // case SettingGamepad.Button_Menu:
+        // case SettingGamepad.Button_Stats:
+        // case SettingGamepad.Button_Cycle_Shiny:
+        // case SettingGamepad.Button_Cycle_Form:
+        // case SettingGamepad.Button_Cycle_Gender:
+        // case SettingGamepad.Button_Cycle_Ability:
+        // case SettingGamepad.Button_Cycle_Nature:
+        // case SettingGamepad.Button_Cycle_Variant:
+        // case SettingGamepad.Button_Speed_Up:
+        // case SettingGamepad.Button_Slow_Down:
+        //   scene.inputController.customGamepadMapping[setting] = value;
+        //   break;
+        case SettingGamepad.Default_Controller:
+            if (value) {
+                if (scene.ui && gamepads) {
+                    const cancelHandler = () => {
+                        scene.ui.revertMode();
+                        (scene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(SettingGamepad.Default_Controller), 0, true);
+                        return false;
+                    };
+                    const changeGamepadHandler = (gamepad: string) => {
+                        scene.inputController.setChosenGamepad(gamepad);
+                        localStorage.setItem('chosenGamepad', gamepad);
+                        cancelHandler();
+                        return true;
+                    };
+                    scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+                        options: [...gamepads.map((g) => ({label: truncateString(g, 30), handler: () => changeGamepadHandler(g)})), {
+                            label: 'Cancel',
+                            handler: cancelHandler,
+                        }]
+                    });
+                    return false;
+                }
+            }
+            break;
+    }
+
+    return true;
 }

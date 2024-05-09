@@ -142,12 +142,6 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       } else
         return false;
       break;
-    case Setting.Gamepad_Support:
-      scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
-      break;
-    case Setting.Swap_A_and_B:
-      scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
-      break;
     case Setting.Touch_Controls:
       scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
       const touchControls = document.getElementById('touchControls');

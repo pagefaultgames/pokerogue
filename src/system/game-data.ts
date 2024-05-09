@@ -226,6 +226,7 @@ export class GameData {
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.loadSettings();
+    this.loadGamepadSettings();
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
@@ -465,48 +466,66 @@ export class GameData {
 
   public saveSetting(setting: Setting, valueIndex: integer): boolean {
     let settings: object = {};
-    let settingsGamepad: object = {};
     if (localStorage.hasOwnProperty('settings'))
       settings = JSON.parse(localStorage.getItem('settings'));
-    if (localStorage.hasOwnProperty('settingsGamepad'))
-      settingsGamepad = JSON.parse(localStorage.getItem('settingsGamepad'));
 
     setSetting(this.scene, setting as Setting, valueIndex);
-    setSettingGamepad(this.scene, settingsGamepad as SettingGamepad, valueIndex);
 
     Object.keys(settingDefaults).forEach(s => {
       if (s === setting)
         settings[s] = valueIndex;
     });
 
+
+    localStorage.setItem('settings', JSON.stringify(settings));
+
+    return true;
+  }
+
+  public saveGamepadSetting(setting: SettingGamepad, valueIndex: integer): boolean {
+    let settingsGamepad: object = {};
+    if (localStorage.hasOwnProperty('settingsGamepad'))
+      settingsGamepad = JSON.parse(localStorage.getItem('settingsGamepad'));
+
+    let gamepadsConnected = null;
+    if (localStorage.hasOwnProperty('gamepadsConnected')) {
+      gamepadsConnected = JSON.parse(localStorage.getItem('gamepadsConnected'));
+    }
+    setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex, gamepadsConnected);
     Object.keys(settingGamepadDefaults).forEach(s => {
       if (s === setting)
         settingsGamepad[s] = valueIndex;
     });
-
-    localStorage.setItem('settings', JSON.stringify(settings));
     localStorage.setItem('settingsGamepad', JSON.stringify(settingsGamepad));
-
     return true;
   }
 
   private loadSettings(): boolean {
     Object.values(Setting).map(setting => setting as Setting).forEach(setting => setSetting(this.scene, setting, settingDefaults[setting]));
-    Object.values(SettingGamepad).map(setting => setting as SettingGamepad).forEach(setting => setSettingGamepad(this.scene, setting, settingGamepadDefaults[setting]));
 
     if (!localStorage.hasOwnProperty('settings'))
       return false;
-    if (!localStorage.hasOwnProperty('settingsGamepad'))
-      return false;
 
     const settings = JSON.parse(localStorage.getItem('settings'));
-    const settingsGamepad = JSON.parse(localStorage.getItem('settingsGamepad'));
 
     for (let setting of Object.keys(settings))
       setSetting(this.scene, setting as Setting, settings[setting]);
+  }
+
+  private loadGamepadSettings(): boolean {
+    Object.values(SettingGamepad).map(setting => setting as SettingGamepad).forEach(setting => setSettingGamepad(this.scene, setting, settingGamepadDefaults[setting]));
+
+    if (!localStorage.hasOwnProperty('settingsGamepad'))
+      return false;
+
+    let gamepadConnected = null;
+    if (localStorage.hasOwnProperty('gamepadConnected')) {
+      gamepadConnected = JSON.parse(localStorage.getItem('gamepadConnected'));
+    }
+    const settingsGamepad = JSON.parse(localStorage.getItem('settingsGamepad'));
 
     for (let setting of Object.keys(settingsGamepad))
-      setSettingGamepad(this.scene, setting as SettingGamepad, settingGamepadDefaults[setting]);
+      setSettingGamepad(this.scene, setting as SettingGamepad, settingsGamepad[setting], gamepadConnected);
   }
 
   public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {

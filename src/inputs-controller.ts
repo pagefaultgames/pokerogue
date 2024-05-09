@@ -39,6 +39,7 @@ export class InputsController {
     private gamepadSupport: boolean = true;
 
     public customGamepadMapping = new Map();
+    public chosenGamepad;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -60,6 +61,10 @@ export class InputsController {
 
     init(): void {
         this.events = new Phaser.Events.EventEmitter();
+
+        if (localStorage.hasOwnProperty('chosenGamepad')) {
+            this.chosenGamepad = localStorage.getItem('chosenGamepad');
+        }
 		// Handle the game losing focus
 		this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
 			this.loseFocus()
@@ -69,6 +74,7 @@ export class InputsController {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
                 this.refreshGamepads();
                 this.setupGamepad(thisGamepad);
+                this.populateSetting();
             }, this);
 
             // Check to see if the gamepad has already been setup by the browser
@@ -101,6 +107,10 @@ export class InputsController {
         }
     }
 
+    setChosenGamepad(gamepad: String): void {
+        this.chosenGamepad = gamepad;
+    }
+
     update(): void {
         // reversed to let the cancel button have a kinda priority on the action button
         for (const b of Utils.getEnumValues(Button).reverse()) {
@@ -120,6 +130,13 @@ export class InputsController {
                 this.setLastProcessedMovementTime(b, this.interactions[b].source);
             }
         }
+    }
+
+    populateSetting(): void {
+        const gamepadsName = this.gamepads.map(g => g.id);
+        localStorage.setItem('gamepadsConnected', JSON.stringify(gamepadsName));
+        if (!this.chosenGamepad) this.chosenGamepad = gamepadsName[0];
+        localStorage.setItem('chosenGamepad', this.chosenGamepad);
     }
 
     setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
