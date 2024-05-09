@@ -1719,6 +1719,26 @@ export class ResetStatsAttr extends MoveEffectAttr {
   }
 }
 
+export class StealStatsAttr extends MoveEffectAttr
+{
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean
+    {
+        if (!super.apply(user, target, move, args))
+            return false;
+        let isStatStolen = false;
+        for (let s = 0; s < target.summonData.battleStats.length; s++)
+        {
+            user.summonData.battleStats[s] += target.summonData.battleStats[s];
+            target.summonData.battleStats[s] = 0;
+        }
+        target.updateInfo();
+        user.updateInfo();
+        if (isStatStolen)
+            target.scene.queueMessage(getPokemonMessage(user, `stole the target's boosted stats!`));
+        return true;
+    }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -5970,6 +5990,7 @@ export function initMoves() {
     new AttackMove(Moves.PRISMATIC_LASER, Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, 0, 7)
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
+      .attr(StealStatsAttr)
       .partial(),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
