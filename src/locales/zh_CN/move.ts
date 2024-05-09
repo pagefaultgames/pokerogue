@@ -11,11 +11,11 @@ export const move: MoveTranslationEntries = {
   },
   "doubleSlap": {
     name: "连环巴掌",
-    effect: "用连环巴掌拍打对手进行攻击。连续攻击2~5次。" 
+    effect: "用连环巴掌拍打对手进行攻击。连续攻击２～５次。"
   },
   "cometPunch": {
     name: "连续拳",
-    effect: "用拳头怒涛般的殴打对手进行攻击。连续攻击2~5次。"
+    effect: "用拳头怒涛般的殴打对手进行攻击。连续攻击２～５次。"
   },
   "megaPunch": {
     name: "百万吨重拳",
@@ -27,7 +27,7 @@ export const move: MoveTranslationEntries = {
   },
   "firePunch": {
     name: "火焰拳",
-    effect: "用充满火焰的拳头攻击对手。有时会让对手陷入灼伤状态。" 
+    effect: "用充满火焰的拳头攻击对手。有时会让对手陷入灼伤状态。"
   },
   "icePunch": {
     name: "冰冻拳",
@@ -43,22 +43,22 @@ export const move: MoveTranslationEntries = {
   },
   "viseGrip": {
     name: "夹住",
-    effect: "将对手从两侧夹住,给予伤害。" 
+    effect: "将对手从两侧夹住，给予伤害。"
   },
   "guillotine": {
-    name: "断头钳",
+    name: "极落钳",
     effect: "用大钳子或剪刀等夹断对手进行攻击。只要命中就会一击昏厥。"
   },
   "razorWind": {
     name: "旋风刀",
-    effect: "制造风之刃,于第2回合攻击对手。容易击中要害。"
+    effect: "制造风之刃，于第２回合攻击对手。容易击中要害。"
   },
   "swordsDance": {
     name: "剑舞",
     effect: "激烈地跳起战舞提高气势。大幅提高自己的攻击。"
   },
   "cut": {
-    name: "居合斩",
+    name: "居合劈",
     effect: "用镰刀或爪子等切斩对手进行攻击。"
   },
   "gust": {
@@ -67,19 +67,19 @@ export const move: MoveTranslationEntries = {
   },
   "wingAttack": {
     name: "翅膀攻击",
-    effect: "大大地展开美丽的翅膀,将其撞向对手进行攻击。"
+    effect: "大大地展开美丽的翅膀，将其撞向对手进行攻击。"
   },
   "whirlwind": {
     name: "吹飞",
-    effect: "吹飞对手,强制拉后备宝可梦上场。如果对手为野生宝可梦,战斗将直接结束。"
+    effect: "吹飞对手，强制拉后备宝可梦上场。如果对手为野生宝可梦，战斗将直接结束。"
   },
   "fly": {
     name: "飞翔",
-    effect: "第1回合飞上天空,第2回合攻击对手。"
+    effect: "第１回合飞上天空，第２回合攻击对手。"
   },
   "bind": {
     name: "绑紧",
-    effect: "使用长长的身体或藤蔓等,在4~5回合内绑紧对手进行攻击。"
+    effect: "使用长长的身体或藤蔓等，在４～５回合内绑紧对手进行攻击。"
   },
   "slam": {
     name: "摔打",
@@ -95,7 +95,7 @@ export const move: MoveTranslationEntries = {
   },
   "doubleKick": {
     name: "二连踢",
-    effect: "用2只脚踢飞对手进行攻击。连续2次给予伤害。" 
+    effect: "用２只脚踢飞对手进行攻击。连续２次给予伤害。"
   },
   "megaKick": {
     name: "百万吨重踢",
@@ -107,15 +107,15 @@ export const move: MoveTranslationEntries = {
   },
   "rollingKick": {
     name: "回旋踢",
-    effect: "一边使身体快速旋转,一边踢飞对手进行攻击。有时会使对手畏缩。"
+    effect: "一边使身体快速旋转，一边踢飞对手进行攻击。有时会使对手畏缩。"
   },
   "sandAttack": {
     name: "泼沙",
-    effect: "向对手脸上泼沙子,从而降低命中率。"
+    effect: "向对手脸上泼沙子，从而降低命中率。"
   },
   "headbutt": {
     name: "头锤",
-    effect: "将头伸出,笔直地扑向对手进行攻击。有时会使对手畏缩。"
+    effect: "将头伸出，笔直地扑向对手进行攻击。有时会使对手畏缩。"
   },
   "hornAttack": {
     name: "角撞",
@@ -123,7 +123,7 @@ export const move: MoveTranslationEntries = {
   },
   "furyAttack": {
     name: "乱击",
-    effect: "用角或喙刺向对手进行攻击。连续攻击2~5次。"
+    effect: "用角或喙刺向对手进行攻击。连续攻击２～５次。"
   },
   "hornDrill": {
     name: "角钻",
@@ -131,7 +131,7 @@ export const move: MoveTranslationEntries = {
   },
   "tackle": {
     name: "撞击",
-    effect: "用整个身体撞向对手进行攻击。" 
+    effect: "用整个身体撞向对手进行攻击。"
   },
   "bodySlam": {
     name: "泰山压顶",
@@ -139,7 +139,7 @@ export const move: MoveTranslationEntries = {
   },
   "wrap": {
     name: "紧束",
-    effect: "使用长长的身体或藤蔓等,在4~5回合内紧束对手进行攻击。"
+    effect: "使用长长的身体或藤蔓等，在４～５回合内紧束对手进行攻击。"
   },
   "takeDown": {
     name: "猛撞",
@@ -147,7 +147,7 @@ export const move: MoveTranslationEntries = {
   },
   "thrash": {
     name: "大闹一番",
-    effect: "在2~3回合内,乱打一气地攻击对手。大闹一番后自己会陷入混乱。"
+    effect: "在２～３回合内，乱打一气地攻击对手。大闹一番后自己会陷入混乱。"
   },
   "doubleEdge": {
     name: "舍身冲撞",
@@ -155,7 +155,7 @@ export const move: MoveTranslationEntries = {
   },
   "tailWhip": {
     name: "摇尾巴",
-    effect: "可爱地左右摇晃尾巴,诱使对手疏忽大意。会降低对手的防御。"
+    effect: "可爱地左右摇晃尾巴，诱使对手疏忽大意。会降低对手的防御。"
   },
   "poisonSting": {
     name: "毒针",
@@ -163,15 +163,15 @@ export const move: MoveTranslationEntries = {
   },
   "twineedle": {
     name: "双针",
-    effect: "将2根针刺入对手,连续2次给予伤害。有时会让对手陷入中毒状态。"
+    effect: "将２根针刺入对手，连续２次给予伤害。有时会让对手陷入中毒状态。"
   },
   "pinMissile": {
     name: "飞弹针",
-    effect: "向对手发射锐针进行攻击。连续攻击2~5次。"
+    effect: "向对手发射锐针进行攻击。连续攻击２～５次。"
   },
   "leer": {
     name: "瞪眼",
-    effect: "用犀利的眼神使其害怕,从而降低对手的防御。" 
+    effect: "用犀利的眼神使其害怕，从而降低对手的防御。"
   },
   "bite": {
     name: "咬住",
@@ -179,19 +179,19 @@ export const move: MoveTranslationEntries = {
   },
   "growl": {
     name: "叫声",
-    effect: "让对手听可爱的叫声,引开注意力使其疏忽,从而降低对手的攻击。"
+    effect: "让对手听可爱的叫声，引开注意力使其疏忽，从而降低对手的攻击。"
   },
   "roar": {
     name: "吼叫",
-    effect: "放走对手,强制拉后备宝可梦上场。如果对手为野生宝可梦,战斗将直接结束。"
+    effect: "放走对手，强制拉后备宝可梦上场。如果对手为野生宝可梦，战斗将直接结束。"
   },
   "sing": {
     name: "唱歌",
-    effect: "让对手听舒适、美妙的歌声,从而陷入睡眠状态。"
+    effect: "让对手听舒适、美妙的歌声，从而陷入睡眠状态。"
   },
   "supersonic": {
     name: "超音波",
-    effect: "从身体发出特殊的音波,从而使对手混乱。"
+    effect: "从身体发出特殊的音波，从而使对手混乱。"
   },
   "sonicBoom": {
     name: "音爆",
@@ -199,7 +199,7 @@ export const move: MoveTranslationEntries = {
   },
   "disable": {
     name: "定身法",
-    effect: "阻碍对手行动,之前使出的招式将在4回合内无法使用。" 
+    effect: "阻碍对手行动，之前使出的招式将在４回合内无法使用。"
   },
   "acid": {
     name: "溶解液",
@@ -215,11 +215,11 @@ export const move: MoveTranslationEntries = {
   },
   "mist": {
     name: "白雾",
-    effect: "用白雾覆盖身体。在5回合内不会让对手降低自己的能力。"
+    effect: "用白雾覆盖身体。在５回合内不会让对手降低自己的能力。"
   },
   "waterGun": {
     name: "水枪",
-    effect: "向对手猛烈地喷射水流进行攻击。" 
+    effect: "向对手猛烈地喷射水流进行攻击。"
   },
   "hydroPump": {
     name: "水炮",
@@ -243,7 +243,7 @@ export const move: MoveTranslationEntries = {
   },
   "bubbleBeam": {
     name: "泡沫光线",
-    effect: "向对手猛烈地喷射泡沫进行攻击。有时会降低对手的速度。" 
+    effect: "向对手猛烈地喷射泡沫进行攻击。有时会降低对手的速度。"
   },
   "auroraBeam": {
     name: "极光束",
@@ -259,19 +259,19 @@ export const move: MoveTranslationEntries = {
   },
   "drillPeck": {
     name: "啄钻",
-    effect: "一边旋转,一边将尖喙刺入对手进行攻击。"
+    effect: "一边旋转，一边将尖喙刺入对手进行攻击。"
   },
   "submission": {
-    name: "地狱翻滚",
+    name: "深渊翻滚",
     effect: "将对手连同自己一起摔向地面进行攻击。自己也会受到少许伤害。"
   },
   "lowKick": {
     name: "踢倒",
-    effect: "用力踢对手的脚,使其摔倒进行攻击。对手越重,威力越大。" 
+    effect: "用力踢对手的脚，使其摔倒进行攻击。对手越重，威力越大。"
   },
   "counter": {
     name: "双倍奉还",
-    effect: "从对手那里受到物理攻击的伤害将以2倍返还给同一个对手。"
+    effect: "从对手那里受到物理攻击的伤害将以２倍返还给同一个对手。"
   },
   "seismicToss": {
     name: "地球上投",
@@ -283,47 +283,47 @@ export const move: MoveTranslationEntries = {
   },
   "absorb": {
     name: "吸取",
-    effect: "吸取对手的养分进行攻击。可以回复给予对手伤害的一半HP。"
+    effect: "吸取对手的养分进行攻击。可以回复给予对手伤害的一半ＨＰ。"
   },
   "megaDrain": {
     name: "超级吸取",
-    effect: "吸取对手的养分进行攻击。可以回复给予对手伤害的一半HP。"
+    effect: "吸取对手的养分进行攻击。可以回复给予对手伤害的一半ＨＰ。"
   },
   "leechSeed": {
     name: "寄生种子",
-    effect: "植入寄生种子后,将在每回合一点一点吸取对手的HP,从而用来回复自己的HP。" 
+    effect: "植入寄生种子后，将在每回合一点一点吸取对手的ＨＰ，从而用来回复自己的ＨＰ。"
   },
   "growth": {
     name: "生长",
-    effect: "让身体一下子长大,从而提高攻击和特攻。"
+    effect: "让身体一下子长大，从而提高攻击和特攻。"
   },
   "razorLeaf": {
     name: "飞叶快刀",
-    effect: "飞出叶片,切斩对手进行攻击。容易击中要害。"
+    effect: "飞出叶片，切斩对手进行攻击。容易击中要害。"
   },
   "solarBeam": {
     name: "日光束",
-    effect: "第1回合收集满满的日光,第2回合发射光束进行攻击。"
+    effect: "第１回合收集满满的日光，第２回合发射光束进行攻击。"
   },
   "poisonPowder": {
     name: "毒粉",
-    effect: "撒出毒粉,从而让对手陷入中毒状态。"
+    effect: "撒出毒粉，从而让对手陷入中毒状态。"
   },
   "stunSpore": {
     name: "麻痹粉",
-    effect: "撒出麻痹粉,从而让对手陷入麻痹状态。" 
+    effect: "撒出麻痹粉，从而让对手陷入麻痹状态。"
   },
   "sleepPowder": {
     name: "催眠粉",
-    effect: "撒出催眠粉,从而让对手陷入睡眠状态。"
+    effect: "撒出催眠粉，从而让对手陷入睡眠状态。"
   },
   "petalDance": {
     name: "花瓣舞",
-    effect: "在2~3回合内,散落花瓣攻击对手。之后自己会陷入混乱。"
+    effect: "在２～３回合内，散落花瓣攻击对手。之后自己会陷入混乱。"
   },
   "stringShot": {
     name: "吐丝",
-    effect: "用口中吐出的丝缠绕对手,从而大幅降低对手的速度。"
+    effect: "用口中吐出的丝缠绕对手，从而大幅降低对手的速度。"
   },
   "dragonRage": {
     name: "龙之怒",
@@ -331,7 +331,7 @@ export const move: MoveTranslationEntries = {
   },
   "fireSpin": {
     name: "火焰旋涡",
-    effect: "将对手困在激烈的火焰旋涡中,在4~5回合内进行攻击。" 
+    effect: "将对手困在激烈的火焰旋涡中，在４～５回合内进行攻击。"
   },
   "thunderShock": {
     name: "电击",
@@ -343,7 +343,7 @@ export const move: MoveTranslationEntries = {
   },
   "thunderWave": {
     name: "电磁波",
-    effect: "向对手发出微弱的电击,从而让对手陷入麻痹状态。"
+    effect: "向对手发出微弱的电击，从而让对手陷入麻痹状态。"
   },
   "thunder": {
     name: "打雷",
@@ -351,11 +351,11 @@ export const move: MoveTranslationEntries = {
   },
   "rockThrow": {
     name: "落石",
-    effect: "拿起小岩石,投掷对手进行攻击。" 
+    effect: "拿起小岩石，投掷对手进行攻击。"
   },
   "earthquake": {
     name: "地震",
-    effect: "利用地震的冲击,攻击自己周围所有的宝可梦。"
+    effect: "利用地震的冲击，攻击自己周围所有的宝可梦。"
   },
   "fissure": {
     name: "地裂",
@@ -363,11 +363,11 @@ export const move: MoveTranslationEntries = {
   },
   "dig": {
     name: "挖洞",
-    effect: "第1回合钻入地底,第2回合攻击对手。"
+    effect: "第１回合钻入地底，第２回合攻击对手。"
   },
   "toxic": {
     name: "剧毒",
-    effect: "让对手陷入剧毒状态。随着回合的推进,中毒伤害会增加。" 
+    effect: "让对手陷入剧毒状态。随着回合的推进，中毒伤害会增加。"
   },
   "confusion": {
     name: "念力",
@@ -379,15 +379,15 @@ export const move: MoveTranslationEntries = {
   },
   "hypnosis": {
     name: "催眠术",
-    effect: "施以诱导睡意的暗示,让对手陷入睡眠状态。"
+    effect: "施以诱导睡意的暗示，让对手陷入睡眠状态。"
   },
   "meditate": {
     name: "瑜伽姿势",
-    effect: "唤醒身体深处沉睡的力量,从而提高自己的攻击。" 
+    effect: "唤醒身体深处沉睡的力量，从而提高自己的攻击。"
   },
   "agility": {
     name: "高速移动",
-    effect: "让身体放松变得轻盈,以便高速移动。大幅提高自己的速度。"
+    effect: "让身体放松变得轻盈，以便高速移动。大幅提高自己的速度。"
   },
   "quickAttack": {
     name: "电光一闪",
@@ -395,91 +395,91 @@ export const move: MoveTranslationEntries = {
   },
   "rage": {
     name: "愤怒",
-    effect: "如果在使出招式后受到攻击的话,会因愤怒的力量而提高攻击。"
+    effect: "如果在使出招式后受到攻击的话，会因愤怒的力量而提高攻击。"
   },
   "teleport": {
     name: "瞬间移动",
-    effect: "当有后备宝可梦时使用,就可以进行替换。野生的宝可梦使用则会逃走。" 
+    effect: "当有后备宝可梦时使用，就可以进行替换。野生的宝可梦使用则会逃走。"
   },
   "nightShade": {
     name: "黑夜魔影",
-    effect: "显示恐怖幻影,只给予对手和自己等级相同的伤害。"
+    effect: "显示恐怖幻影，只给予对手和自己等级相同的伤害。"
   },
   "mimic": {
     name: "模仿",
-    effect: "可以将对手最后使用的招式,在战斗内变成自己的招式。"
+    effect: "可以将对手最后使用的招式，在战斗内变成自己的招式。"
   },
   "screech": {
     name: "刺耳声",
-    effect: "发出不由自主想要捂起耳朵的刺耳声,从而大幅降低对手的防御。"
+    effect: "发出不由自主想要捂起耳朵的刺耳声，从而大幅降低对手的防御。"
   },
   "doubleTeam": {
     name: "影子分身",
-    effect: "通过快速移动来制造分身,扰乱对手,从而提高闪避率。" 
+    effect: "通过快速移动来制造分身，扰乱对手，从而提高闪避率。"
   },
   "recover": {
     name: "自我再生",
-    effect: "让细胞再生,从而回复自己最大HP的一半。"
+    effect: "让细胞再生，从而回复自己最大ＨＰ的一半。"
   },
   "harden": {
     name: "变硬",
-    effect: "全身使劲,让身体变硬,从而提高自己的防御。"
+    effect: "全身使劲，让身体变硬，从而提高自己的防御。"
   },
   "minimize": {
     name: "变小",
-    effect: "蜷缩身体显得很小,从而大幅提高自己的闪避率。"
+    effect: "蜷缩身体显得很小，从而大幅提高自己的闪避率。"
   },
   "smokescreen": {
     name: "烟幕",
-    effect: "向对手喷出烟或墨汁等,从而降低对手的命中率。"
+    effect: "向对手喷出烟或墨汁等，从而降低对手的命中率。"
   },
   "confuseRay": {
     name: "奇异之光",
-    effect: "显示奇怪的光,扰乱对手。使对手混乱。" 
+    effect: "显示奇怪的光，扰乱对手。使对手混乱。"
   },
   "withdraw": {
     name: "缩入壳中",
-    effect: "缩入壳里保护身体,从而提高自己的防御。"
+    effect: "缩入壳里保护身体，从而提高自己的防御。"
   },
   "defenseCurl": {
     name: "变圆",
-    effect: "将身体蜷曲变圆,从而提高自己的防御。"
+    effect: "将身体蜷曲变圆，从而提高自己的防御。"
   },
   "barrier": {
     name: "屏障",
-    effect: "制造坚固的壁障,从而大幅提高自己的防御。"
+    effect: "制造坚固的壁障，从而大幅提高自己的防御。"
   },
   "lightScreen": {
     name: "光墙",
-    effect: "利用神奇的墙壁,在5回合内减弱从对手那里受到的特殊攻击的伤害。"
+    effect: "利用神奇的墙壁，在５回合内减弱从对手那里受到的特殊攻击的伤害。"
   },
   "haze": {
     name: "黑雾",
-    effect: "升起黑雾,将正在场上战斗的全体宝可梦的能力变回原点。" 
+    effect: "升起黑雾，将正在场上战斗的全体宝可梦的能力变回原点。"
   },
   "reflect": {
     name: "反射壁",
-    effect: "利用神奇的墙壁,在5回合内减弱从对手那里受到的物理攻击的伤害。"
+    effect: "利用神奇的墙壁，在５回合内减弱从对手那里受到的物理攻击的伤害。"
   },
   "focusEnergy": {
     name: "聚气",
-    effect: "深深地吸口气,集中精神。自己的攻击会变得容易击中要害。"
+    effect: "深深地吸口气，集中精神。自己的攻击会变得容易击中要害。"
   },
   "bide": {
     name: "忍耐",
-    effect: "在2回合内忍受攻击,受到的伤害会2倍返还给对手。"
+    effect: "在２回合内忍受攻击，受到的伤害会２倍返还给对手。"
   },
   "metronome": {
     name: "挥指",
-    effect: "挥动手指刺激自己的大脑,从许多的招式中随机使出1个。" 
+    effect: "挥动手指刺激自己的大脑，从许多的招式中随机使出１个。"
   },
   "mirrorMove": {
     name: "鹦鹉学舌",
-    effect: "模仿对手使用的招式,自己也使用相同招式。"
+    effect: "模仿对手使用的招式，自己也使用相同招式。"
   },
   "selfDestruct": {
-    name: "自爆",
-    effect: "引发爆炸,攻击自己周围所有的宝可梦。使用后陷入昏厥。"
+    name: "玉石俱碎",
+    effect: "引发爆炸，攻击自己周围所有的宝可梦。使用后陷入昏厥。"
   },
   "eggBomb": {
     name: "炸蛋",
@@ -487,11 +487,11 @@ export const move: MoveTranslationEntries = {
   },
   "lick": {
     name: "舌舔",
-    effect: "用长长的舌头,舔遍对手进行攻击。有时会让对手陷入麻痹状态。"
+    effect: "用长长的舌头，舔遍对手进行攻击。有时会让对手陷入麻痹状态。"
   },
   "smog": {
     name: "浊雾",
-    effect: "将肮脏的浓雾吹向对手进行攻击。有时会让对手陷入中毒状态。" 
+    effect: "将肮脏的浓雾吹向对手进行攻击。有时会让对手陷入中毒状态。"
   },
   "sludge": {
     name: "污泥攻击",
@@ -507,11 +507,11 @@ export const move: MoveTranslationEntries = {
   },
   "waterfall": {
     name: "攀瀑",
-    effect: "以惊人的气势扑向对手。有时会使对手畏缩。" 
+    effect: "以惊人的气势扑向对手。有时会使对手畏缩。"
   },
   "clamp": {
     name: "贝壳夹击",
-    effect: "用非常坚固且厚实的贝壳,在4~5回合内夹住对手进行攻击。"
+    effect: "用非常坚固且厚实的贝壳，在４～５回合内夹住对手进行攻击。"
   },
   "swift": {
     name: "高速星星",
@@ -519,11 +519,11 @@ export const move: MoveTranslationEntries = {
   },
   "skullBash": {
     name: "火箭头锤",
-    effect: "第1回合把头缩进去,从而提高防御。第2回合攻击对手。"
+    effect: "第１回合把头缩进去，从而提高防御。第２回合攻击对手。"
   },
   "spikeCannon": {
     name: "尖刺加农炮",
-    effect: "向对手发射锐针进行攻击。连续攻击2~5次。" 
+    effect: "向对手发射锐针进行攻击。连续攻击２～５次。"
   },
   "constrict": {
     name: "缠绕",
@@ -531,15 +531,15 @@ export const move: MoveTranslationEntries = {
   },
   "amnesia": {
     name: "瞬间失忆",
-    effect: "将头脑清空,瞬间忘记某事,从而大幅提高自己的特防。"
+    effect: "将头脑清空，瞬间忘记某事，从而大幅提高自己的特防。"
   },
   "kinesis": {
     name: "折弯汤匙",
-    effect: "折弯汤匙引开注意,从而降低对手的命中率。"
+    effect: "折弯汤匙引开注意，从而降低对手的命中率。"
   },
   "softBoiled": {
     name: "生蛋",
-    effect: "回复自己最大HP的一半。" 
+    effect: "回复自己最大ＨＰ的一半。"
   },
   "highJumpKick": {
     name: "飞膝踢",
@@ -547,23 +547,23 @@ export const move: MoveTranslationEntries = {
   },
   "glare": {
     name: "大蛇瞪眼",
-    effect: "用腹部的花纹使对手害怕,从而让其陷入麻痹状态。"
+    effect: "用腹部的花纹使对手害怕，从而让其陷入麻痹状态。"
   },
   "dreamEater": {
     name: "食梦",
-    effect: "吃掉正在睡觉的对手的梦进行攻击。回复对手所受到伤害的一半HP。"
+    effect: "吃掉正在睡觉的对手的梦进行攻击。回复对手所受到伤害的一半ＨＰ。"
   },
   "poisonGas": {
     name: "毒瓦斯",
-    effect: "将毒瓦斯吹到对手的脸上,从而让对手陷入中毒状态。" 
+    effect: "将毒瓦斯吹到对手的脸上，从而让对手陷入中毒状态。"
   },
   "barrage": {
     name: "投球",
-    effect: "向对手投掷圆形物体进行攻击。连续攻击2~5次。"
+    effect: "向对手投掷圆形物体进行攻击。连续攻击２～５次。"
   },
   "leechLife": {
     name: "吸血",
-    effect: "吸取血液攻击对手。可以回复给予对手伤害的一半HP。"
+    effect: "吸取血液攻击对手。可以回复给予对手伤害的一半ＨＰ。"
   },
   "lovelyKiss": {
     name: "恶魔之吻",
@@ -571,11 +571,11 @@ export const move: MoveTranslationEntries = {
   },
   "skyAttack": {
     name: "神鸟猛击",
-    effect: "第2回合攻击对手。偶尔使对手畏缩。也容易击中要害。" 
+    effect: "第２回合攻击对手。偶尔使对手畏缩。也容易击中要害。"
   },
   "transform": {
     name: "变身",
-    effect: "变身成对手宝可梦的样子,能够使用和对手完全相同的招式。"
+    effect: "变身成对手宝可梦的样子，能够使用和对手完全相同的招式。"
   },
   "bubble": {
     name: "泡沫",
@@ -587,23 +587,23 @@ export const move: MoveTranslationEntries = {
   },
   "spore": {
     name: "蘑菇孢子",
-    effect: "沙沙沙地撒满具有催眠效果的孢子,从而让对手陷入睡眠状态。" 
+    effect: "沙沙沙地撒满具有催眠效果的孢子，从而让对手陷入睡眠状态。"
   },
   "flash": {
     name: "闪光",
-    effect: "使出光芒,从而降低对手的命中率。也可在阴暗的洞窟里照亮四周。"
+    effect: "使出光芒，从而降低对手的命中率。也可在阴暗的洞窟里照亮四周。"
   },
   "psywave": {
     name: "精神波",
-    effect: "向对手发射神奇的念波进行攻击。每次使用,伤害都会改变。"
+    effect: "向对手发射神奇的念波进行攻击。每次使用，伤害都会改变。"
   },
   "splash": {
     name: "跃起",
-    effect: "也不攻击只是一蹦一蹦地跳,什么都不会发生……" 
+    effect: "也不攻击只是一蹦一蹦地跳，什么都不会发生……"
   },
   "acidArmor": {
     name: "溶化",
-    effect: "通过细胞的变化进行液化,从而大幅提高自己的防御。" 
+    effect: "通过细胞的变化进行液化，从而大幅提高自己的防御。"
   },
   "crabhammer": {
     name: "蟹钳锤",
@@ -611,31 +611,31 @@ export const move: MoveTranslationEntries = {
   },
   "explosion": {
     name: "大爆炸",
-    effect: "引发大爆炸,攻击自己周围所有的宝可梦。使用后自己会陷入昏厥。"
+    effect: "引发大爆炸，攻击自己周围所有的宝可梦。使用后自己会陷入昏厥。"
   },
   "furySwipes": {
     name: "乱抓",
-    effect: "用爪子或镰刀等抓对手进行攻击。连续攻击2~5次。"
+    effect: "用爪子或镰刀等抓对手进行攻击。连续攻击２～５次。"
   },
   "bonemerang": {
     name: "骨头回力镖",
-    effect: "用手中的骨头投掷对手,来回连续2次给予伤害。" 
+    effect: "用手中的骨头投掷对手，来回连续２次给予伤害。"
   },
   "rest": {
     name: "睡觉",
-    effect: "连续睡上2回合。回复自己的全部HP以及治愈所有异常状态。"
+    effect: "连续睡上２回合。回复自己的全部ＨＰ以及治愈所有异常状态。"
   },
   "rockSlide": {
     name: "岩崩",
     effect: "将大岩石猛烈地撞向对手进行攻击。有时会使对手畏缩。"
   },
   "hyperFang": {
-    name: "必杀门牙",
+    name: "终结门牙",
     effect: "用锋利的门牙牢牢地咬住对手进行攻击。有时会使对手畏缩。"
   },
   "sharpen": {
     name: "棱角化",
-    effect: "增加身体的角,变得棱棱角角,从而提高自己的攻击。" 
+    effect: "增加身体的角，变得棱棱角角，从而提高自己的攻击。"
   },
   "conversion": {
     name: "纹理",
@@ -643,67 +643,67 @@ export const move: MoveTranslationEntries = {
   },
   "triAttack": {
     name: "三重攻击",
-    effect: "用3种光线进行攻击。有时会让对手陷入麻痹、灼伤或冰冻的状态。"
+    effect: "用３种光线进行攻击。有时会让对手陷入麻痹、灼伤或冰冻的状态。"
   },
   "superFang": {
     name: "愤怒门牙",
-    effect: "用锋利的门牙猛烈地咬住对手进行攻击。对手的HP减半。"
+    effect: "用锋利的门牙猛烈地咬住对手进行攻击。对手的ＨＰ减半。"
   },
   "slash": {
     name: "劈开",
-    effect: "用爪子或镰刀等劈开对手进行攻击。容易击中要害。" 
+    effect: "用爪子或镰刀等劈开对手进行攻击。容易击中要害。"
   },
   "substitute": {
     name: "替身",
-    effect: "削减少许自己的HP,制造分身。分身将成为自己的替身。"
+    effect: "削减少许自己的ＨＰ，制造分身。分身将成为自己的替身。"
   },
   "struggle": {
     name: "挣扎",
-    effect: "当自己的PP耗尽时,努力挣扎攻击对手。自己也会受到少许伤害。"
+    effect: "当自己的ＰＰ耗尽时，努力挣扎攻击对手。自己也会受到少许伤害。"
   },
   "sketch": {
     name: "写生",
-    effect: "将对手使用的招式变成自己的招式。使用1次后写生消失。"
+    effect: "将对手使用的招式变成自己的招式。使用１次后写生消失。"
   },
   "tripleKick": {
     name: "三连踢",
-    effect: "连续3次踢对手进行攻击。每踢中一次,威力就会提高。" 
+    effect: "连续３次踢对手进行攻击。每踢中一次，威力就会提高。"
   },
   "thief": {
     name: "小偷",
-    effect: "攻击的同时盗取道具。当自己携带道具时,不会去盗取。"
+    effect: "攻击的同时盗取道具。当自己携带道具时，不会去盗取。"
   },
   "spiderWeb": {
     name: "蛛网",
-    effect: "将黏糊糊的细丝一层一层缠住对手,使其不能从战斗中逃走。"
+    effect: "将黏糊糊的细丝一层一层缠住对手，使其不能从战斗中逃走。"
   },
   "mindReader": {
     name: "心之眼",
-    effect: "用心感受对手的行动,下次攻击必定会击中对手。"
+    effect: "用心感受对手的行动，下次攻击必定会击中对手。"
   },
   "nightmare": {
     name: "恶梦",
-    effect: "让在睡眠状态下的对手做恶梦,每回合会缓缓减少HP。" 
+    effect: "让在睡眠状态下的对手做恶梦，每回合会缓缓减少HP。"
   },
   "flameWheel": {
     name: "火焰轮",
-    effect: "让火焰覆盖全身,猛撞向对手进行攻击。有时会让对手陷入灼伤状态。"
+    effect: "让火焰覆盖全身，猛撞向对手进行攻击。有时会让对手陷入灼伤状态。"
   },
   "snore": {
     name: "打鼾",
-    effect: "在自己睡觉时,发出噪音进行攻击。有时会使对手畏缩。"
+    effect: "在自己睡觉时，发出噪音进行攻击。有时会使对手畏缩。"
   },
   "curse": {
     name: "诅咒",
-    effect: "使用该招式的宝可梦,其属性是幽灵属性或其他属性时,效果会不一样。"
+    effect: "使用该招式的宝可梦，其属性是幽灵属性或其他属性时，效果会不一样。"
   },
   "flail": {
     name: "抓狂",
-    effect: "抓狂般乱打进行攻击。自己的HP越少,招式的威力越大。" 
+    effect: "抓狂般乱打进行攻击。自己的ＨＰ越少，招式的威力越大。"
   },
   "conversion2": {
-    name: "纹理2",
-    effect: "为了可以抵抗对手最后使用的招式,从而使自己的属性发生变化。"
+    name: "纹理２",
+    effect: "为了可以抵抗对手最后使用的招式，从而使自己的属性发生变化。"
   },
   "aeroblast": {
     name: "气旋攻击",
@@ -711,15 +711,15 @@ export const move: MoveTranslationEntries = {
   },
   "cottonSpore": {
     name: "棉孢子",
-    effect: "将棉花般柔软的孢子紧贴对手,从而大幅降低对手的速度。"
+    effect: "将棉花般柔软的孢子紧贴对手，从而大幅降低对手的速度。"
   },
   "reversal": {
-    name: "起死回生",
-    effect: "竭尽全力进行攻击。自己的HP越少,招式的威力越大。" 
+    name: "绝处逢生",
+    effect: "竭尽全力进行攻击。自己的ＨＰ越少，招式的威力越大。"
   },
   "spite": {
     name: "怨恨",
-    effect: "对对手最后使用的招式怀有怨恨,减少4PP该招式。"
+    effect: "对对手最后使用的招式怀有怨恨，减少４ＰＰ该招式。"
   },
   "powderSnow": {
     name: "细雪",
@@ -731,23 +731,23 @@ export const move: MoveTranslationEntries = {
   },
   "machPunch": {
     name: "音速拳",
-    effect: "以迅雷不及掩耳之势出拳。必定能够先制攻击。" 
+    effect: "以迅雷不及掩耳之势出拳。必定能够先制攻击。"
   },
   "scaryFace": {
-    name: "鬼面",
-    effect: "用恐怖的表情瞪着对手,使其害怕,从而大幅降低对手的速度。"
+    name: "可怕面孔",
+    effect: "用恐怖的表情瞪着对手，使其害怕，从而大幅降低对手的速度。"
   },
   "feintAttack": {
     name: "出奇一击",
-    effect: "悄悄地靠近对手,趁其不备进行殴打。攻击必定会命中。"
+    effect: "悄悄地靠近对手，趁其不备进行殴打。攻击必定会命中。"
   },
   "sweetKiss": {
     name: "天使之吻",
-    effect: "像天使般可爱地亲吻对手,从而使对手混乱。"
+    effect: "像天使般可爱地亲吻对手，从而使对手混乱。"
   },
   "bellyDrum": {
     name: "腹鼓",
-    effect: "将自己的HP减少到最大HP的一半,从而最大限度提高自己的攻击。" 
+    effect: "将自己的ＨＰ减少到最大ＨＰ的一半，从而最大限度提高自己的攻击。"
   },
   "sludgeBomb": {
     name: "污泥炸弹",
@@ -759,7 +759,7 @@ export const move: MoveTranslationEntries = {
   },
   "octazooka": {
     name: "章鱼桶炮",
-    effect: "向对手的脸等喷出墨汁进行攻击。有时会降低对手的命中率。" 
+    effect: "向对手的脸等喷出墨汁进行攻击。有时会降低对手的命中率。"
   },
   "spikes": {
     name: "撒菱",
@@ -771,19 +771,19 @@ export const move: MoveTranslationEntries = {
   },
   "foresight": {
     name: "识破",
-    effect: "使出后对幽灵属性宝可梦没有效果的招式以及闪避率高的对手,变得能够打中。" 
+    effect: "使出后对幽灵属性宝可梦没有效果的招式以及闪避率高的对手，变得能够打中。"
   },
   "destinyBond": {
     name: "同命",
-    effect: "使出招式后,当受到对手攻击陷入昏厥时,对手也会一同昏厥。连续使出则会失败。"
+    effect: "使出招式后，当受到对手攻击陷入昏厥时，对手也会一同昏厥。连续使出则会失败。"
   },
   "perishSong": {
-    name: "灭亡之歌",
-    effect: "倾听歌声的宝可梦经过3回合陷入昏厥。替换后效果消失。"
+    name: "终焉之歌",
+    effect: "倾听歌声的宝可梦经过３回合陷入昏厥。替换后效果消失。"
   },
   "icyWind": {
     name: "冰冻之风",
-    effect: "将结冰的冷气吹向对手进行攻击。会降低对手的速度。" 
+    effect: "将结冰的冷气吹向对手进行攻击。会降低对手的速度。"
   },
   "detect": {
     name: "看穿",
@@ -791,27 +791,27 @@ export const move: MoveTranslationEntries = {
   },
   "boneRush": {
     name: "骨棒乱打",
-    effect: "用坚硬的骨头殴打对手进行攻击。连续攻击2~5次。"
+    effect: "用坚硬的骨头殴打对手进行攻击。连续攻击２～５次。"
   },
   "lockOn": {
     name: "锁定",
-    effect: "紧紧瞄准对手，下次攻击必定会打中。" 
+    effect: "紧紧瞄准对手，下次攻击必定会打中。"
   },
   "outrage": {
     name: "逆鳞",
-    effect: "在2~3回合内，乱打一气地进行攻击。大闹一番后自己会陷入混乱。"
+    effect: "在２～３回合内，乱打一气地进行攻击。大闹一番后自己会陷入混乱。"
   },
   "sandstorm": {
     name: "沙暴",
-    effect: "在5回合内扬起沙暴，除岩石、地面和钢属性以外的宝可梦，都会受到伤害。岩石属性的特防还会提高。"
+    effect: "在５回合内扬起沙暴，除岩石、地面和钢属性以外的宝可梦，都会受到伤害。岩石属性的特防还会提高。"
   },
   "gigaDrain": {
     name: "终极吸取",
-    effect: "吸取对手的养分进行攻击。可以回复给予对手伤害的一半ＨＰ。" 
+    effect: "吸取对手的养分进行攻击。可以回复给予对手伤害的一半ＨＰ。"
   },
   "endure": {
     name: "挺住",
-    effect: "即使受到攻击，也至少会留下1ＨＰ。连续使出则容易失败。"
+    effect: "即使受到攻击，也至少会留下１ＨＰ。连续使出则容易失败。"
   },
   "charm": {
     name: "撒娇",
@@ -819,11 +819,11 @@ export const move: MoveTranslationEntries = {
   },
   "rollout": {
     name: "滚动",
-    effect: "在5回合内连续滚动攻击对手。招式每次击中，威力就会提高。"
+    effect: "在５回合内连续滚动攻击对手。招式每次击中，威力就会提高。"
   },
   "falseSwipe": {
     name: "点到为止",
-    effect: "对手的ＨＰ至少会留下1ＨＰ，如此般手下留情地攻击。" 
+    effect: "对手的ＨＰ至少会留下１ＨＰ，如此般手下留情地攻击。"
   },
   "swagger": {
     name: "虚张声势",
@@ -839,7 +839,7 @@ export const move: MoveTranslationEntries = {
   },
   "furyCutter": {
     name: "连斩",
-    effect: "用镰刀或爪子等切斩对手进行攻击。连续击中，威力就会提高。" 
+    effect: "用镰刀或爪子等切斩对手进行攻击。连续击中，威力就会提高。"
   },
   "steelWing": {
     name: "钢翼",
@@ -855,7 +855,7 @@ export const move: MoveTranslationEntries = {
   },
   "sleepTalk": {
     name: "梦话",
-    effect: "从自己已学会的招式中任意使出1个。只能在自己睡觉时使用。" 
+    effect: "从自己已学会的招式中任意使出１个。只能在自己睡觉时使用。"
   },
   "healBell": {
     name: "治愈铃声",
@@ -871,11 +871,11 @@ export const move: MoveTranslationEntries = {
   },
   "frustration": {
     name: "迁怒",
-    effect: "为了发泄不满而全力攻击对手。亲密度越低，威力越大。" 
+    effect: "为了发泄不满而全力攻击对手。亲密度越低，威力越大。"
   },
   "safeguard": {
     name: "神秘守护",
-    effect: "在5回合内被神奇的力量守护，从而不会陷入异常状态。"
+    effect: "在５回合内被神奇的力量守护，从而不会陷入异常状态。"
   },
   "painSplit": {
     name: "分担痛楚",
@@ -887,7 +887,7 @@ export const move: MoveTranslationEntries = {
   },
   "magnitude": {
     name: "震级",
-    effect: "晃动地面，攻击自己周围所有的宝可梦。招式的威力会有各种变化。" 
+    effect: "晃动地面，攻击自己周围所有的宝可梦。招式的威力会有各种变化。"
   },
   "dynamicPunch": {
     name: "爆裂拳",
@@ -899,7 +899,7 @@ export const move: MoveTranslationEntries = {
   },
   "dragonBreath": {
     name: "龙息",
-    effect: "将强烈的气息吹向对手进行攻击。有时会让对手陷入麻痹状态。" 
+    effect: "将强烈的气息吹向对手进行攻击。有时会让对手陷入麻痹状态。"
   },
   "batonPass": {
     name: "接棒",
@@ -907,11 +907,11 @@ export const move: MoveTranslationEntries = {
   },
   "encore": {
     name: "再来一次",
-    effect: "让对手接受再来一次，连续3次使出最后使用的招式。"
+    effect: "让对手接受再来一次，连续３次使出最后使用的招式。"
   },
   "pursuit": {
     name: "追打",
-    effect: "当对手替换宝可梦上场时使出此招式的话，能够以2倍的威力进行攻击。" 
+    effect: "当对手替换宝可梦上场时使出此招式的话，能够以２倍的威力进行攻击。"
   },
   "rapidSpin": {
     name: "高速旋转",
@@ -923,7 +923,7 @@ export const move: MoveTranslationEntries = {
   },
   "ironTail": {
     name: "铁尾",
-    effect: "使用坚硬的尾巴摔打对手进行攻击。有时会降低对手的防御。" 
+    effect: "使用坚硬的尾巴摔打对手进行攻击。有时会降低对手的防御。"
   },
   "metalClaw": {
     name: "金属爪",
@@ -935,7 +935,7 @@ export const move: MoveTranslationEntries = {
   },
   "morningSun": {
     name: "晨光",
-    effect: "回复自己的ＨＰ。根据天气的不同，回复量也会有所变化。" 
+    effect: "回复自己的ＨＰ。根据天气的不同，回复量也会有所变化。"
   },
   "synthesis": {
     name: "光合作用",
@@ -947,7 +947,7 @@ export const move: MoveTranslationEntries = {
   },
   "hiddenPower": {
     name: "觉醒力量",
-    effect: "招式的属性会随着使用此招式的宝可梦而改变。" 
+    effect: "招式的属性会随着使用此招式的宝可梦而改变。"
   },
   "crossChop": {
     name: "十字劈",
@@ -959,11 +959,11 @@ export const move: MoveTranslationEntries = {
   },
   "rainDance": {
     name: "求雨",
-    effect: "在5回合内一直降雨，从而提高水属性的招式威力。火属性的招式威力则降低。" 
+    effect: "在５回合内一直降雨，从而提高水属性的招式威力。火属性的招式威力则降低。"
   },
   "sunnyDay": {
     name: "大晴天",
-    effect: "在5回合内让日照变得强烈，从而提高火属性的招式威力。水属性的招式威力则降低。"
+    effect: "在５回合内让日照变得强烈，从而提高火属性的招式威力。水属性的招式威力则降低。"
   },
   "crunch": {
     name: "咬碎",
@@ -971,7 +971,7 @@ export const move: MoveTranslationEntries = {
   },
   "mirrorCoat": {
     name: "镜面反射",
-    effect: "从对手那里受到特殊攻击的伤害将以2倍返还给同一个对手。" 
+    effect: "从对手那里受到特殊攻击的伤害将以２倍返还给同一个对手。"
   },
   "psychUp": {
     name: "自我暗示",
@@ -983,7 +983,7 @@ export const move: MoveTranslationEntries = {
   },
   "ancientPower": {
     name: "原始之力",
-    effect: "用原始之力进行攻击。有时会提高自己所有的能力。" 
+    effect: "用原始之力进行攻击。有时会提高自己所有的能力。"
   },
   "shadowBall": {
     name: "暗影球",
@@ -1031,7 +1031,7 @@ export const move: MoveTranslationEntries = {
   },
   "hail": {
     name: "冰雹",
-    effect: "在５回合内一直降冰雹，除冰属性的宝可梦以外，给予全体宝可梦伤害。岩石属性的特防还会提高。" 
+    effect: "在５回合内一直降冰雹，除冰属性的宝可梦以外，给予全体宝可梦伤害。"
   },
   "torment": {
     name: "无理取闹",
@@ -1039,10 +1039,10 @@ export const move: MoveTranslationEntries = {
   },
   "flatter": {
     name: "吹捧",
-    effect: "吹捧对手，使其混乱。同时还会提高对手的特攻。" 
+    effect: "吹捧对手，使其混乱。同时还会提高对手的特攻。"
   },
   "willOWisp": {
-    name: "鬼火",
+    name: "磷火",
     effect: "放出怪异的火焰，从而让对手陷入灼伤状态。"
   },
   "memento": {
@@ -1067,14 +1067,14 @@ export const move: MoveTranslationEntries = {
   },
   "naturePower": {
     name: "自然之力",
-    effect: "用自然之力进行攻击。根据所使用场所的不同，使出的招式也会有所变化。" 
+    effect: "用自然之力进行攻击。根据所使用场所的不同，使出的招式也会有所变化。"
   },
   "charge": {
     name: "充电",
     effect: "变为充电状态，提高下次使出的电属性的招式威力。自己的特防也会提高。"
   },
   "taunt": {
-    name: "挑衅", 
+    name: "挑衅",
     effect: "使对手愤怒。在３回合内让对手只能使出给予伤害的招式。"
   },
   "helpingHand": {
@@ -1083,19 +1083,19 @@ export const move: MoveTranslationEntries = {
   },
   "trick": {
     name: "戏法",
-    effect: "抓住对手的空隙，交换自己和对手的持有物。" 
+    effect: "抓住对手的空隙，交换自己和对手的持有物。"
   },
   "rolePlay": {
     name: "扮演",
     effect: "扮演对手，让自己的特性变得和对手相同。"
   },
   "wish": {
-    name: "祈愿", 
-    effect: "在下一回合回复自己或是替换出场的宝可梦最大ＨＰ的一半。" 
+    name: "祈愿",
+    effect: "在下一回合回复自己或是替换出场的宝可梦最大ＨＰ的一半。"
   },
   "assist": {
-    name: "借助", 
-    effect: "向同伴紧急求助，从我方宝可梦已学会的招式中随机使用１个。" 
+    name: "借助",
+    effect: "向同伴紧急求助，从我方宝可梦已学会的招式中随机使用１个。"
   },
   "ingrain": {
     name: "扎根",
@@ -1106,7 +1106,7 @@ export const move: MoveTranslationEntries = {
     effect: "发挥惊人的力量攻击对手。自己的攻击和防御会降低。"
   },
   "magicCoat": {
-    name: "魔法反射", 
+    name: "魔法反射",
     effect: "当对手使出会变成异常状态的招式或寄生种子等时，会将对手的招式反射回去。"
   },
   "recycle": {
@@ -1139,7 +1139,7 @@ export const move: MoveTranslationEntries = {
   },
   "skillSwap": {
     name: "特性互换",
-    effect: "利用超能力互换自己和对手的特性。" 
+    effect: "利用超能力互换自己和对手的特性。"
   },
   "imprison": {
     name: "封印",
@@ -1151,11 +1151,11 @@ export const move: MoveTranslationEntries = {
   },
   "grudge": {
     name: "怨念",
-    effect: "因对手的招式而陷入昏厥时给对手施加怨念，让该招式的ＰＰ变成０。" 
+    effect: "因对手的招式而陷入昏厥时给对手施加怨念，让该招式的ＰＰ变成０。"
   },
   "snatch": {
     name: "抢夺",
-    effect: "将对手打算使用的回复招式或能力变化招式夺为己用。" 
+    effect: "将对手打算使用的回复招式或能力变化招式夺为己用。"
   },
   "secretPower": {
     name: "秘密之力",
@@ -1163,7 +1163,7 @@ export const move: MoveTranslationEntries = {
   },
   "dive": {
     name: "潜水",
-    effect: "第１回合潜入水中，第２回合浮上来进行攻击。" 
+    effect: "第１回合潜入水中，第２回合浮上来进行攻击。"
   },
   "armThrust": {
     name: "猛推",
@@ -1179,7 +1179,7 @@ export const move: MoveTranslationEntries = {
   },
   "lusterPurge": {
     name: "洁净光芒",
-    effect: "释放耀眼的光芒进行攻击。有时会降低对手的特防。" 
+    effect: "释放耀眼的光芒进行攻击。有时会降低对手的特防。"
   },
   "mistBall": {
     name: "薄雾球",
@@ -1195,11 +1195,11 @@ export const move: MoveTranslationEntries = {
   },
   "blazeKick": {
     name: "火焰踢",
-    effect: "攻击对手后，有时会使其陷入灼伤状态。也容易击中要害。" 
+    effect: "攻击对手后，有时会使其陷入灼伤状态。也容易击中要害。"
   },
   "mudSport": {
     name: "玩泥巴",
-    effect: "一旦使用此招式，周围就会弄得到处是泥。在５回合内减弱电属性的招式。" 
+    effect: "一旦使用此招式，周围就会弄得到处是泥。在５回合内减弱电属性的招式。"
   },
   "iceBall": {
     name: "冰球",
@@ -1207,7 +1207,7 @@ export const move: MoveTranslationEntries = {
   },
   "needleArm": {
     name: "尖刺臂",
-    effect: "用带刺的手臂猛烈地挥舞进行攻击。有时会使对手畏缩。" 
+    effect: "用带刺的手臂猛烈地挥舞进行攻击。有时会使对手畏缩。"
   },
   "slackOff": {
     name: "偷懒",
@@ -1215,7 +1215,7 @@ export const move: MoveTranslationEntries = {
   },
   "hyperVoice": {
     name: "巨声",
-    effect: "给予对手又吵又响的巨大震动进行攻击。" 
+    effect: "给予对手又吵又响的巨大震动进行攻击。"
   },
   "poisonFang": {
     name: "剧毒牙",
@@ -1223,7 +1223,7 @@ export const move: MoveTranslationEntries = {
   },
   "crushClaw": {
     name: "撕裂爪",
-    effect: "用坚硬的锐爪劈开对手进行攻击。有时会降低对手的防御。" 
+    effect: "用坚硬的锐爪劈开对手进行攻击。有时会降低对手的防御。"
   },
   "blastBurn": {
     name: "爆炸烈焰",
@@ -1251,7 +1251,7 @@ export const move: MoveTranslationEntries = {
   },
   "fakeTears": {
     name: "假哭",
-    effect: "装哭流泪。使对手不知所措，从而大幅降低对手的特防。" 
+    effect: "装哭流泪。使对手不知所措，从而大幅降低对手的特防。"
   },
   "airCutter": {
     name: "空气利刃",
@@ -1267,7 +1267,7 @@ export const move: MoveTranslationEntries = {
   },
   "rockTomb": {
     name: "岩石封锁",
-    effect: "投掷岩石进行攻击。封住对手的行动，从而降低速度。" 
+    effect: "投掷岩石进行攻击。封住对手的行动，从而降低速度。"
   },
   "silverWind": {
     name: "银色旋风",
@@ -1275,7 +1275,7 @@ export const move: MoveTranslationEntries = {
   },
   "metalSound": {
     name: "金属音",
-    effect: "让对手听摩擦金属般讨厌的声音。大幅降低对手的特防。" 
+    effect: "让对手听摩擦金属般讨厌的声音。大幅降低对手的特防。"
   },
   "grassWhistle": {
     name: "草笛",
@@ -1287,11 +1287,11 @@ export const move: MoveTranslationEntries = {
   },
   "cosmicPower": {
     name: "宇宙力量",
-    effect: "汲取宇宙中神秘的力量，从而提高自己的防御和特防。" 
+    effect: "汲取宇宙中神秘的力量，从而提高自己的防御和特防。"
   },
   "waterSpout": {
     name: "喷水",
-    effect: "掀起潮水进行攻击。自己的ＨＰ越少，招式的威力越小。" 
+    effect: "掀起潮水进行攻击。自己的ＨＰ越少，招式的威力越小。"
   },
   "signalBeam": {
     name: "信号光束",
@@ -1310,7 +1310,7 @@ export const move: MoveTranslationEntries = {
     effect: "用冲向天空般高高的上勾拳顶起对手进行攻击。"
   },
   "sandTomb": {
-    name: "流沙地狱",
+    name: "流沙深渊",
     effect: "将对手困在铺天盖地的沙暴中，在４～５回合内进行攻击。"
   },
   "sheerCold": {
@@ -1335,7 +1335,7 @@ export const move: MoveTranslationEntries = {
   },
   "ironDefense": {
     name: "铁壁",
-    effect: "将皮肤变得坚硬如铁，从而大幅提高自己的防御。" 
+    effect: "将皮肤变得坚硬如铁，从而大幅提高自己的防御。"
   },
   "block": {
     name: "挡路",
@@ -1443,7 +1443,7 @@ export const move: MoveTranslationEntries = {
   },
   "healingWish": {
     name: "治愈之愿",
-    effect: "虽然自己陷入昏厥，但可以治愈后备上场的宝可梦的异常状态以及回复ＨＰ。" 
+    effect: "虽然自己陷入昏厥，但可以治愈后备上场的宝可梦的异常状态以及回复ＨＰ。"
   },
   "brine": {
     name: "盐水",
@@ -1519,7 +1519,7 @@ export const move: MoveTranslationEntries = {
   },
   "gastroAcid": {
     name: "胃液",
-    effect: "将胃液吐向对手的身体。沾上的胃液会消除对手的特性效果。" 
+    effect: "将胃液吐向对手的身体。沾上的胃液会消除对手的特性效果。"
   },
   "luckyChant": {
     name: "幸运咒语",
@@ -1563,7 +1563,8 @@ export const move: MoveTranslationEntries = {
   },
   "heartSwap": {
     name: "心灵互换",
-    effect: "利用超能力互换自己和对手之间的能力变化。"},
+    effect: "利用超能力互换自己和对手之间的能力变化。"
+  },
   "aquaRing": {
     name: "水流环",
     effect: "在自己身体的周围覆盖用水制造的幕。每回合回复ＨＰ。"
@@ -1609,12 +1610,12 @@ export const move: MoveTranslationEntries = {
     effect: "将外壳坚硬的大种子，从上方砸下攻击对手。"
   },
   "airSlash": {
-    name: "空气斩",
-    effect: "用连天空也能劈开的空气斩进行攻击。有时会使对手畏缩。"
+    name: "空气之刃",
+    effect: "用连天空也能劈开的空气之刃进行攻击。有时会使对手畏缩。"
   },
   "xScissor": {
     name: "十字剪",
-    effect: "将镰刀或爪子像剪刀般地交叉，顺势劈开对手。" 
+    effect: "将镰刀或爪子像剪刀般地交叉，顺势劈开对手。"
   },
   "bugBuzz": {
     name: "虫鸣",
@@ -1622,7 +1623,7 @@ export const move: MoveTranslationEntries = {
   },
   "dragonPulse": {
     name: "龙之波动",
-    effect: "从大大的口中掀起冲击波攻击对手。" 
+    effect: "从大大的口中掀起冲击波攻击对手。"
   },
   "dragonRush": {
     name: "龙之俯冲",
@@ -1658,7 +1659,7 @@ export const move: MoveTranslationEntries = {
   },
   "switcheroo": {
     name: "掉包",
-    effect: "用一闪而过的速度交换自己和对手的持有物。" 
+    effect: "用一闪而过的速度交换自己和对手的持有物。"
   },
   "gigaImpact": {
     name: "终极冲击",
@@ -1682,7 +1683,7 @@ export const move: MoveTranslationEntries = {
   },
   "shadowClaw": {
     name: "暗影爪",
-    effect: "以影子做成的锐爪，劈开对手。容易击中要害。" 
+    effect: "以影子做成的锐爪，劈开对手。容易击中要害。"
   },
   "thunderFang": {
     name: "雷电牙",
@@ -1722,7 +1723,7 @@ export const move: MoveTranslationEntries = {
   },
   "rockClimb": {
     name: "攀岩",
-    effect: "发动猛撞攻击，有时会使对手混乱。是宝可表的秘传招式之一。" 
+    effect: "发动猛撞攻击，有时会使对手混乱。是宝可表的秘传招式之一。"
   },
   "defog": {
     name: "清除浓雾",
@@ -1842,7 +1843,7 @@ export const move: MoveTranslationEntries = {
   },
   "lunarDance": {
     name: "新月舞",
-    effect: "虽然自己陷入昏厥，但可以治愈后备上场的宝可梦的全部状态。" 
+    effect: "虽然自己陷入昏厥，但可以治愈后备上场的宝可梦的全部状态。"
   },
   "crushGrip": {
     name: "捏碎",
@@ -1950,7 +1951,7 @@ export const move: MoveTranslationEntries = {
   },
   "flameCharge": {
     name: "蓄能焰袭",
-    effect: "让火焰覆盖全身，攻击对手积蓄力量来提高自己的速度。"
+    effect: "让火焰覆盖全身，攻击对手。积蓄力量来提高自己的速度。"
   },
   "coil": {
     name: "盘蜷",
@@ -2037,7 +2038,7 @@ export const move: MoveTranslationEntries = {
     effect: "扔飞对手，强制拉后备宝可梦上场。如果对手为野生宝可梦，战斗将直接结束。"
   },
   "incinerate": {
-    name: "烧尽",
+    name: "烧净",
     effect: "用火焰攻击对手。对手携带树果等时，会烧掉，使其不能使用。"
   },
   "quash": {
@@ -2065,7 +2066,7 @@ export const move: MoveTranslationEntries = {
     effect: "当对手未携带道具时，能够将自己携带的道具交给对手。"
   },
   "inferno": {
-    name: "炼狱",
+    name: "烈火深渊",
     effect: "用烈焰包裹住对手进行攻击。让对手陷入灼伤状态。"
   },
   "waterPledge": {
@@ -2281,8 +2282,8 @@ export const move: MoveTranslationEntries = {
     effect: "给周围全体宝可梦造成伤害。可以回复给予伤害的一半HP。"
   },
   "forestsCurse": {
-    name: "森林诅咒",
-    effect: "向对手施加森林诅咒。中了诅咒的对手会被追加草属性。"
+    name: "森林咒术",
+    effect: "向对手施加森林咒术。中了咒术的对手会被追加草属性。"
   },
   "petalBlizzard": {
     name: "落英缤纷",
@@ -2330,7 +2331,7 @@ export const move: MoveTranslationEntries = {
   },
   "playRough": {
     name: "嬉闹",
-    effect:"与对手嬉闹并攻击。有时会降低对手的攻击。"
+    effect: "与对手嬉闹并攻击。有时会降低对手的攻击。"
   },
   "fairyWind": {
     name: "妖精之风",
@@ -2441,7 +2442,7 @@ export const move: MoveTranslationEntries = {
     effect: "在攻击的时候手下留情，从而使对手的ＨＰ至少会留下１ＨＰ。"
   },
   "infestation": {
-    name: "死缠烂打",
+    name: "纠缠不休",
     effect: "在４～５回合内死缠烂打地进行攻击。在此期间对手将无法逃走。"
   },
   "powerUpPunch": {
@@ -2449,7 +2450,7 @@ export const move: MoveTranslationEntries = {
     effect: "通过反复击打对手，使自己的拳头慢慢变硬。打中对手攻击就会提高。"
   },
   "oblivionWing": {
-    name: "死亡之翼",
+    name: "归天之翼",
     effect: "从锁定的对手身上吸取ＨＰ。回复给予对手伤害的一半以上的ＨＰ。"
   },
   "thousandArrows": {
@@ -2697,7 +2698,7 @@ export const move: MoveTranslationEntries = {
     effect: "启动齿轮，提高特性为正电和负电的宝可梦的攻击和特攻。"
   },
   "throatChop": {
-    name: "地狱突刺",
+    name: "深渊突刺",
     effect: "受到此招式攻击的对手，会因为地狱般的痛苦，在２回合内，变得无法使出声音类招式。"
   },
   "pollenPuff": {
@@ -2949,7 +2950,7 @@ export const move: MoveTranslationEntries = {
     effect: "恶行恶相地进行攻击。制造一道能减弱对手物理攻击的神奇墙壁。"
   },
   "sappySeed": {
-    name: "茁茁轰炸",
+    name: "茁茁炸弹",
     effect: "长出巨大的藤蔓，播撒种子进行攻击。种子每回合都会吸取对手的HP。"
   },
   "freezyFrost": {
@@ -3272,138 +3273,6 @@ export const move: MoveTranslationEntries = {
     name: "水流连打",
     effect: "将水之流派修炼至大成的仿若行云流水般的３次连击。必定会击中要害。"
   },
-  "gMaxWildfire": {
-    name: "超极巨地狱灭焰",
-    effect: "超极巨化的喷火龙使出的火属性攻击。可在４回合内给予对手伤害。"
-  },
-  "gMaxBefuddle": {
-    name: "超极巨蝶影蛊惑",
-    effect: "超极巨化的巴大蝶使出的虫属性攻击。会让对手陷入中毒、麻痹或睡眠状态。"
-  },
-  "gMaxVoltCrash": {
-    name: "超极巨万雷轰顶",
-    effect: "超极巨化的皮卡丘使出的电属性攻击。会让对手陷入麻痹状态。"
-  },
-  "gMaxGoldRush": {
-    name: "超极巨特大金币",
-    effect: "超极巨化的喵喵使出的一般属性攻击。会让对手陷入混乱状态，并可获得金钱。"
-  },
-  "gMaxChiStrike": {
-    name: "超极巨会心一击",
-    effect: "超极巨化的怪力使出的格斗属性攻击。会变得容易击中要害。"
-  },
-  "gMaxTerror": {
-    name: "超极巨幻影幽魂",
-    effect: "超极巨化的耿鬼使出的幽灵属性攻击。会踩住对手的影子，让其无法被替换。"
-  },
-  "gMaxResonance": {
-    name: "超极巨极光旋律",
-    effect: "超极巨化的拉普拉斯使出的冰属性攻击。可在５回合内减弱受到的伤害。"
-  },
-  "gMaxCuddle": {
-    name: "超极巨热情拥抱",
-    effect: "超极巨化的伊布使出的一般属性攻击。会让对手陷入着迷状态。"
-  },
-  "gMaxReplenish": {
-    name: "超极巨资源再生",
-    effect: "超极巨化的卡比兽使出的一般属性攻击。会让吃掉的树果再生。"
-  },
-  "gMaxMalodor": {
-    name: "超极巨臭气冲天",
-    effect: "超极巨化的灰尘山使出的毒属性攻击。会让对手陷入中毒状态。"
-  },
-  "gMaxStonesurge": {
-    name: "超极巨岩阵以待",
-    effect: "超极巨化的暴噬龟使出的水属性攻击。会发射无数锐利的岩石。"
-  },
-  "gMaxWindRage": {
-    name: "超极巨旋风袭卷",
-    effect: "超极巨化的钢铠鸦使出的飞行属性攻击。可消除反射壁和光墙。"
-  },
-  "gMaxStunShock": {
-    name: "超极巨异毒电场",
-    effect: "超极巨化的颤弦蝾螈使出的电属性攻击。会让对手陷入中毒或麻痹状态。"
-  },
-  "gMaxFinale": {
-    name: "超极巨幸福圆满",
-    effect: "超极巨化的霜奶仙使出的妖精属性攻击。可回复我方的ＨＰ。"
-  },
-  "gMaxDepletion": {
-    name: "超极巨劣化衰变",
-    effect: "超极巨化的铝钢龙使出的龙属性攻击。可减少对手最后使用的招式的ＰＰ。"
-  },
-  "gMaxGravitas": {
-    name: "超极巨天道七星",
-    effect: "超极巨化的以欧路普使出的超能力属性攻击。在５回合内重力会产生变化。"
-  },
-  "gMaxVolcalith": {
-    name: "超极巨炎石喷发",
-    effect: "超极巨化的巨炭山使出的岩石属性攻击。可在４回合内给予对手伤害。"
-  },
-  "gMaxSandblast": {
-    name: "超极巨沙尘漫天",
-    effect: "超极巨化的沙螺蟒使出的地面属性攻击。在４～５回合内会狂刮沙暴。"
-  },
-  "gMaxSnooze": {
-    name: "超极巨睡魔降临",
-    effect: "超极巨化的长毛巨魔使出的恶属性攻击。会通过打大哈欠让对手产生睡意。"
-  },
-  "gMaxTartness": {
-    name: "超极巨酸不溜丢",
-    effect: "超极巨化的苹裹龙使出的草属性攻击。会降低对手的闪避率。"
-  },
-  "gMaxSweetness": {
-    name: "超极巨琼浆玉液",
-    effect: "超极巨化的丰蜜龙使出的草属性攻击。会治愈我方的异常状态。"
-  },
-  "gMaxSmite": {
-    name: "超极巨天谴雷诛",
-    effect: "超极巨化的布莉姆温使出的妖精属性攻击。会让对手陷入混乱状态。"
-  },
-  "gMaxSteelsurge": {
-    name: "超极巨钢铁阵法",
-    effect: "超极巨化的大王铜象使出的钢属性攻击。会发射无数锐利的刺。"
-  },
-  "gMaxMeltdown": {
-    name: "超极巨液金熔击",
-    effect: "超极巨化的美录梅塔使出的钢属性攻击。会让对手无法连续使出相同的招式。"
-  },
-  "gMaxFoamBurst": {
-    name: "超极巨激漩泡涡",
-    effect: "超极巨化的巨钳蟹使出的水属性攻击。会大幅降低对手的速度。"
-  },
-  "gMaxCentiferno": {
-    name: "超极巨百火焚野",
-    effect: "超极巨化的焚焰蚣使出的火属性攻击。可在４～５回合内将对手困在火焰中。"
-  },
-  "gMaxVineLash": {
-    name: "超极巨灰飞鞭灭",
-    effect: "超极巨化的妙蛙花使出的草属性攻击。可在４回合内给予对手伤害。"
-  },
-  "gMaxCannonade": {
-    name: "超极巨水炮轰灭",
-    effect: "超极巨化的水箭龟使出的水属性攻击。可在４回合内给予对手伤害。"
-  },
-  "gMaxOneBlow": {
-    name: "超极巨夺命一击",
-    effect: "超极巨化的武道熊师使出的恶属性攻击。是可以无视极巨防壁的一击。"
-  },
-  "gMaxRapidFlow": {
-    name: "超极巨流水连击",
-    effect: "超极巨化的武道熊师使出的水属性攻击。是可以无视极巨防壁的连击。"
-  },
-  "gMaxDrumSolo": {
-    name: "超极巨狂擂乱打",
-    effect: "超极巨化的轰擂金刚猩使出的草属性攻击。不会受到对手特性的干扰。"
-  },
-  "gMaxFireball": {
-    name: "超极巨破阵火球",
-    effect: "超极巨化的闪焰王牌使出的火属性攻击。不会受到对手特性的干扰。"
-  },
-  "gMaxHydrosnipe": {
-    name: "超极巨狙击神射",
-    effect: "超极巨化的千面避役使出的水属性攻击。不会受到对手特性的干扰。"
-  },
   "thunderCage": {
     name: "雷电囚笼",
     effect: "将对手困在电流四溅的囚笼中，在４～５回合内进行攻击。"
@@ -3532,6 +3401,138 @@ export const move: MoveTranslationEntries = {
     name: "勇气填充",
     effect: "鼓起冲劲，治愈自己的异常状态，同时提高自己的特攻和特防。"
   },
+  "gMaxWildfire": {
+    name: "超极巨深渊灭焰",
+    effect: "超极巨化的喷火龙使出的火属性攻击。可在４回合内给予对手伤害。"
+  },
+  "gMaxBefuddle": {
+    name: "超极巨蝶影蛊惑",
+    effect: "超极巨化的巴大蝶使出的虫属性攻击。会让对手陷入中毒、麻痹或睡眠状态。"
+  },
+  "gMaxVoltCrash": {
+    name: "超极巨万雷轰顶",
+    effect: "超极巨化的皮卡丘使出的电属性攻击。会让对手陷入麻痹状态。"
+  },
+  "gMaxGoldRush": {
+    name: "超极巨特大金币",
+    effect: "超极巨化的喵喵使出的一般属性攻击。会让对手陷入混乱状态，并可获得金钱。"
+  },
+  "gMaxChiStrike": {
+    name: "超极巨会心一击",
+    effect: "超极巨化的怪力使出的格斗属性攻击。会变得容易击中要害。"
+  },
+  "gMaxTerror": {
+    name: "超极巨幻影幽魂",
+    effect: "超极巨化的耿鬼使出的幽灵属性攻击。会踩住对手的影子，让其无法被替换。"
+  },
+  "gMaxResonance": {
+    name: "超极巨极光旋律",
+    effect: "超极巨化的拉普拉斯使出的冰属性攻击。可在５回合内减弱受到的伤害。"
+  },
+  "gMaxCuddle": {
+    name: "超极巨热情拥抱",
+    effect: "超极巨化的伊布使出的一般属性攻击。会让对手陷入着迷状态。"
+  },
+  "gMaxReplenish": {
+    name: "超极巨资源再生",
+    effect: "超极巨化的卡比兽使出的一般属性攻击。会让吃掉的树果再生。"
+  },
+  "gMaxMalodor": {
+    name: "超极巨臭气冲天",
+    effect: "超极巨化的灰尘山使出的毒属性攻击。会让对手陷入中毒状态。"
+  },
+  "gMaxStonesurge": {
+    name: "超极巨岩阵以待",
+    effect: "超极巨化的暴噬龟使出的水属性攻击。会发射无数锐利的岩石。"
+  },
+  "gMaxWindRage": {
+    name: "超极巨旋风袭卷",
+    effect: "超极巨化的钢铠鸦使出的飞行属性攻击。可消除反射壁和光墙。"
+  },
+  "gMaxStunShock": {
+    name: "超极巨异毒电场",
+    effect: "超极巨化的颤弦蝾螈使出的电属性攻击。会让对手陷入中毒或麻痹状态。"
+  },
+  "gMaxFinale": {
+    name: "超极巨幸福圆满",
+    effect: "超极巨化的霜奶仙使出的妖精属性攻击。可回复我方的ＨＰ。"
+  },
+  "gMaxDepletion": {
+    name: "超极巨劣化衰变",
+    effect: "超极巨化的铝钢龙使出的龙属性攻击。可减少对手最后使用的招式的ＰＰ。"
+  },
+  "gMaxGravitas": {
+    name: "超极巨天道七星",
+    effect: "超极巨化的以欧路普使出的超能力属性攻击。在５回合内重力会产生变化。"
+  },
+  "gMaxVolcalith": {
+    name: "超极巨炎石喷发",
+    effect: "超极巨化的巨炭山使出的岩石属性攻击。可在４回合内给予对手伤害。"
+  },
+  "gMaxSandblast": {
+    name: "超极巨沙尘漫天",
+    effect: "超极巨化的沙螺蟒使出的地面属性攻击。在４～５回合内会狂刮沙暴。"
+  },
+  "gMaxSnooze": {
+    name: "超极巨睡魔降临",
+    effect: "超极巨化的长毛巨魔使出的恶属性攻击。会通过打大哈欠让对手产生睡意。"
+  },
+  "gMaxTartness": {
+    name: "超极巨酸不溜丢",
+    effect: "超极巨化的苹裹龙使出的草属性攻击。会降低对手的闪避率。"
+  },
+  "gMaxSweetness": {
+    name: "超极巨琼浆玉液",
+    effect: "超极巨化的丰蜜龙使出的草属性攻击。会治愈我方的异常状态。"
+  },
+  "gMaxSmite": {
+    name: "超极巨天谴雷诛",
+    effect: "超极巨化的布莉姆温使出的妖精属性攻击。会让对手陷入混乱状态。"
+  },
+  "gMaxSteelsurge": {
+    name: "超极巨钢铁阵法",
+    effect: "超极巨化的大王铜象使出的钢属性攻击。会发射无数锐利的刺。"
+  },
+  "gMaxMeltdown": {
+    name: "超极巨液金熔击",
+    effect: "超极巨化的美录梅塔使出的钢属性攻击。会让对手无法连续使出相同的招式。"
+  },
+  "gMaxFoamBurst": {
+    name: "超极巨激漩泡涡",
+    effect: "超极巨化的巨钳蟹使出的水属性攻击。会大幅降低对手的速度。"
+  },
+  "gMaxCentiferno": {
+    name: "超极巨百火焚野",
+    effect: "超极巨化的焚焰蚣使出的火属性攻击。可在４～５回合内将对手困在火焰中。"
+  },
+  "gMaxVineLash": {
+    name: "超极巨灰飞鞭灭",
+    effect: "超极巨化的妙蛙花使出的草属性攻击。可在４回合内给予对手伤害。"
+  },
+  "gMaxCannonade": {
+    name: "超极巨水炮轰灭",
+    effect: "超极巨化的水箭龟使出的水属性攻击。可在４回合内给予对手伤害。"
+  },
+  "gMaxDrumSolo": {
+    name: "超极巨狂擂乱打",
+    effect: "超极巨化的轰擂金刚猩使出的草属性攻击。不会受到对手特性的干扰。"
+  },
+  "gMaxFireball": {
+    name: "超极巨破阵火球",
+    effect: "超极巨化的闪焰王牌使出的火属性攻击。不会受到对手特性的干扰。"
+  },
+  "gMaxHydrosnipe": {
+    name: "超极巨狙击神射",
+    effect: "超极巨化的千面避役使出的水属性攻击。不会受到对手特性的干扰。"
+  },
+  "gMaxOneBlow": {
+    name: "超极巨夺命一击",
+    effect: "超极巨化的武道熊师使出的恶属性攻击。是可以无视极巨防壁的一击。"
+  },
+  "gMaxRapidFlow": {
+    name: "超极巨流水连击",
+    effect: "超极巨化的武道熊师使出的水属性攻击。是可以无视极巨防壁的连击。"
+  },
   "teraBlast": {
     name: "太晶爆发",
     effect: "太晶化时，会放出太晶属性的能量攻击。比较自己的攻击和特攻，用数值相对较高的一项给予对方伤害。（其他属性）／用攻击和特攻数值较高的一项给予伤害。对正处于太晶化的对手效果绝佳。自己的攻击和特攻会降低。（星晶）"
@@ -3605,7 +3606,7 @@ export const move: MoveTranslationEntries = {
     effect: "削减自己的ＨＰ，大幅提高攻击和特攻以及速度。"
   },
   "kowtowCleave": {
-    name: "仆斩",
+    name: "仆刀",
     effect: "下跪让对手大意后发起袭击劈向对手。攻击必定会命中。"
   },
   "flowerTrick": {
