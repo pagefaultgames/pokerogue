@@ -46,7 +46,7 @@ export const battle: SimpleTranslationEntries = {
   "runAwayCannotEscape": "Fuite impossible !",
   "escapeVerbSwitch": "le changement",
   "escapeVerbFlee": "la fuite",
-  "notDisabled": "{{moveName}} n’est plus sous entrave !",
+  "notDisabled": "La capacité {{moveName}}\nde {{pokemonName}} n’est plus sous entrave !",
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "eggHatching": "Oh ?",
   "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?"
