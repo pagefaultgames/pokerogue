@@ -3680,7 +3680,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
         // instead of displaying the exp gain in the small frame, we display the new level
         // we use the same method for mode 0 & 1, by giving a parameter saying to display the exp or the level
         this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
-            setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
+            setTimeout(() => this.end(), 800 / Math.pow(2, this.scene.expGainsSpeed/2));
         });
       } else {
         this.end();
