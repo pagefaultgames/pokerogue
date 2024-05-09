@@ -174,6 +174,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterValueLabels: Phaser.GameObjects.Text[];
   private shinyIcons: Phaser.GameObjects.Image[][];
   private hiddenAbilityIcons: Phaser.GameObjects.Image[];
+  private classicWinIcons: Phaser.GameObjects.Image[];
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -410,6 +411,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return ret;
     });
 
+    this.classicWinIcons = new Array(81).fill(null).map((_, i) => {
+      const x = (i % 9) * 18;
+      const y = Math.floor(i / 9) * 18;
+      const ret = this.scene.add.image(x + 153, y + 21, 'champion_ribbon');
+      ret.setOrigin(0, 0);
+      ret.setScale(0.5);
+      ret.setVisible(false);
+      this.starterSelectContainer.add(ret);
+      return ret;
+    });
+
     this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
@@ -450,7 +462,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCandyDarknessOverlay.setScale(0.5);
     this.pokemonCandyDarknessOverlay.setOrigin(0, 0);
     this.pokemonCandyDarknessOverlay.setTint(0x000000);
-    this.pokemonCandyDarknessOverlay.setAlpha(0.5);
+    this.pokemonCandyDarknessOverlay.setAlpha(0.50);
     this.pokemonCandyDarknessOverlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
     this.starterSelectContainer.add(this.pokemonCandyDarknessOverlay);
 
@@ -1086,7 +1098,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       // starterMoveData doesn't have base form moves or is using the single form format
       if (!this.scene.gameData.starterData[speciesId].moveset || Array.isArray(this.scene.gameData.starterData[speciesId].moveset))
         this.scene.gameData.starterData[speciesId].moveset = { [props.formIndex]: this.starterMoveset.slice(0) as StarterMoveset };
-      const starterMoveData = this.scene.gameData.starterData[speciesId].moveset[props.formIndex];
+      const starterMoveData = this.scene.gameData.starterData[speciesId].moveset;
 
       // starterMoveData doesn't have active form moves
       if (!starterMoveData.hasOwnProperty(props.formIndex))
@@ -1192,6 +1204,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.shinyIcons[s][v].setTint(getVariantTint(speciesVariants[v] === DexAttr.DEFAULT_VARIANT ? 0 : speciesVariants[v] === DexAttr.VARIANT_2 ? 1 : 2));
         }
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
+        this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
       }
     } else {
       changed = super.setCursor(cursor);
@@ -1318,7 +1331,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonCandyDarknessOverlay.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
           }
 
-          this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
           this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
         }
         this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);

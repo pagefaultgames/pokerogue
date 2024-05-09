@@ -50,6 +50,8 @@ export default class SummaryUiHandler extends UiHandler {
   private candyShadow: Phaser.GameObjects.Sprite;
   private candyIcon: Phaser.GameObjects.Sprite;
   private candyOverlay: Phaser.GameObjects.Sprite;
+  private candyCountText: Phaser.GameObjects.Text;
+  private championRibbon: Phaser.GameObjects.Image;
   private statusContainer: Phaser.GameObjects.Container;
   private status: Phaser.GameObjects.Image;
   private summaryPageContainer: Phaser.GameObjects.Container;
@@ -142,12 +144,6 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokeball.setOrigin(0, 1);
     this.summaryContainer.add(this.pokeball);
 
-    this.candyShadow = this.scene.add.sprite(13, -140, 'candy');
-    this.candyShadow.setTint(0x141414)
-    this.candyShadow.setScale(0.8);
-    this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
-    this.summaryContainer.add(this.candyShadow);
-
     this.candyIcon = this.scene.add.sprite(13, -140, 'candy');
     this.candyIcon.setScale(0.8);
     this.summaryContainer.add(this.candyIcon);
@@ -155,6 +151,24 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyOverlay = this.scene.add.sprite(13, -140, 'candy_overlay');
     this.candyOverlay.setScale(0.8);
     this.summaryContainer.add(this.candyOverlay);
+
+    this.candyShadow = this.scene.add.sprite(13, -140, 'candy');
+    this.candyShadow.setTint(0x000000);
+    this.candyShadow.setAlpha(0.50);
+    this.candyShadow.setScale(0.8);
+    this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
+    this.summaryContainer.add(this.candyShadow);
+
+    this.candyCountText = addTextObject(this.scene, 20, -146, 'x0', TextStyle.WINDOW_ALT, { fontSize: '76px' });
+    this.candyCountText.setOrigin(0, 0);
+    this.summaryContainer.add(this.candyCountText);
+
+    this.championRibbon = this.scene.add.image(88, -146, 'champion_ribbon');
+    this.championRibbon.setOrigin(0, 0);
+    //this.championRibbon.setScale(0.8);
+    this.championRibbon.setScale(1.25);
+    this.summaryContainer.add(this.championRibbon);
+    this.championRibbon.setVisible(false);
 
     this.levelText = addTextObject(this.scene, 36, -17, '', TextStyle.SUMMARY_ALT);
     this.levelText.setOrigin(0, 1);
@@ -275,6 +289,11 @@ export default class SummaryUiHandler extends UiHandler {
       this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
+    if(this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0)
+      this.championRibbon.setVisible(true);
+    else
+      this.championRibbon.setVisible(false);
+
     var currentFriendship = this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].friendship;
     if (!currentFriendship || currentFriendship === undefined)
       currentFriendship = 0;
@@ -287,8 +306,9 @@ export default class SummaryUiHandler extends UiHandler {
       this.candyShadow.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
-    this.candyIcon.setCrop(0,candyCropY,16, 16);
-    this.candyOverlay.setCrop(0,candyCropY,16, 16);
+    this.candyCountText.setText(`x${this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`);
+
+    this.candyShadow.setCrop(0,0,16, candyCropY);
 
     const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
