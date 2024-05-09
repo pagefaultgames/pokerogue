@@ -13,5 +13,7 @@ export function getPokemonPrefix(pokemon: Pokemon): string {
       return pokemon.hasTrainer() ? 'Foe ' : 'Wild ';
     case BattleSpec.FINAL_BOSS:
       return 'Foe ';
+    default: 
+      return '';
   }
 }
