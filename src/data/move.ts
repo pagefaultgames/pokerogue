@@ -2329,14 +2329,13 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
   }
 }
 
-export class IceNoEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.ICE)) {
-      multiplier.value = 0;
-      return true;
+      (args[0] as Utils.BooleanHolder).value = false;
+      return false;
     }
-    return false;
+    return true;
   }
 }
 
@@ -2359,7 +2358,7 @@ export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
-export class SheerColdAttr extends OneHitKOAccuracyAttr {
+export class SheerColdAccuracyAttr extends OneHitKOAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
       if (user.level < target.level) {
@@ -4654,9 +4653,9 @@ export function initMoves() {
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
     new AttackMove(Moves.SHEER_COLD, Type.ICE, MoveCategory.SPECIAL, 200, 20, 5, -1, 0, 3)
+      .attr(IceNoEffectTypeAttr)
       .attr(OneHitKOAttr)
-      .attr(IceNoEffectTypeMultiplierAttr)
-      .attr(SheerColdAttr),
+      .attr(SheerColdAccuracyAttr),
     new AttackMove(Moves.MUDDY_WATER, Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, 30, 0, 3)
       .attr(StatChangeAttr, BattleStat.ACC, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
