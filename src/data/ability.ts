@@ -1025,8 +1025,6 @@ export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   }
 }
 
-
-
 export class FieldVariableMovePowerAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     //const power = args[0] as Utils.NumberHolder;
@@ -1226,8 +1224,6 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
       && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
   }
 }
-
-
 
 export class PostVictoryAbAttr extends AbAttr {
   applyPostVictory(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
