@@ -3077,8 +3077,28 @@ export class DamagePhase extends PokemonPhase {
             this.getPokemon().updateInfo().then(() => this.end());
         }
       });
-    } else
+    } else {
       this.getPokemon().updateInfo().then(() => this.end());
+    }
+
+    // Check if the damage was enough to faint the pokemon
+    if (this.getPokemon().isFainted()) {
+      // Check if the pokemon has a reviver_seed
+      const hasReviverSeed = this.getPokemon().getHeldItems().find(i => i.type.id === 'REVIVER_SEED');
+
+        // If the Pokémon has a reviver seed, consume it and revive the Pokémon
+      if (hasReviverSeed) {
+        const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
+
+
+        if (instantReviveModifier) {
+          if (!--instantReviveModifier.stackCount)
+            this.scene.removeModifier(instantReviveModifier);
+          this.scene.updateModifiers(this.player)
+        }
+
+      }
+    }
   }
 
   end() {
@@ -3122,6 +3142,11 @@ export class FaintPhase extends PokemonPhase {
 
   start() {
     super.start();
+
+    // Check if the pokemon has fainted and end the phase if it hasn't fainted (e.g. due to endure or reviver seed)
+    if (!this.getPokemon().isFainted())
+      return this.end();
+
 
     if (!this.preventEndure) {
       const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
