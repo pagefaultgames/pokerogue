@@ -1200,6 +1200,9 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overriden, a random berry will be picked from the target's inventory.
+ */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
   constructor() {
@@ -1207,9 +1210,9 @@ export class EatBerryAttr extends MoveEffectAttr {
     this.chosenBerry = undefined;
   }
 /**
- * Cut's the user's Max HP in half and displays the appropriate recoil message
+ * Causes the target to eat a berry.
  * @param {Pokemon} user Pokemon that used the move
- * @param {Pokemon} target Pokemon that is
+ * @param {Pokemon} target Pokemon that is eating a berry
  * @param {Move} move Move with this attribute
  * @param {any[]} args N/A
  * @returns {boolean} true if the function succeeds
@@ -1225,12 +1228,12 @@ export class EatBerryAttr extends MoveEffectAttr {
       this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     }
 
-    getBerryEffectFunc(this.chosenBerry.berryType)(target);
+    getBerryEffectFunc(this.chosenBerry.berryType)(target); // target eats the berry
 
     const preserve = new Utils.BooleanHolder(false);
     target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
 
-    if (!preserve.value){
+    if (!preserve.value){ // remove the eaten berry if not preserved
       if (!--this.chosenBerry.stackCount)
         target.scene.removeModifier(this.chosenBerry);
       target.scene.updateModifiers(target.isPlayer());
@@ -1264,16 +1267,16 @@ export class StealEatBerryAttr extends EatBerryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
     if(cancelled.value == true)
       return false;
     
     const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
 
-    if (heldBerries.length) {
+    if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
       this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
 
-      if (this.chosenBerry.stackCount == 1)
+      if (this.chosenBerry.stackCount == 1) // remove modifier if its the last berry
         target.scene.removeModifier(this.chosenBerry);
       target.scene.updateModifiers(target.isPlayer());
 
