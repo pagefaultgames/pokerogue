@@ -66,8 +66,10 @@ export class InputsController {
     init(): void {
         this.events = new Phaser.Events.EventEmitter();
 
+        // at the launch, we retrieved the previously chosen gamepad
         if (localStorage.hasOwnProperty('chosenGamepad')) {
             this.chosenGamepad = localStorage.getItem('chosenGamepad');
+            this.initChosenGamepad(this.chosenGamepad, false)
         }
 		// Handle the game losing focus
 		this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
@@ -80,8 +82,9 @@ export class InputsController {
                 this.setupGamepad(thisGamepad);
                 this.onReconnect(thisGamepad);
             }, this);
+
             this.scene.input.gamepad.on('disconnected', function (thisGamepad) {
-                this.onDisconnect(thisGamepad);
+                this.onDisconnect(thisGamepad); // when a gamepad is disconnected
             }, this);
 
             // Check to see if the gamepad has already been setup by the browser
@@ -147,13 +150,16 @@ export class InputsController {
         return this.gamepads.filter(g => !this.disconnectedGamepads.includes(g.id)).map(g => g.id);
     }
 
-    initChosenGamepad(gamepadName?: String): void {
+    initChosenGamepad(gamepadName?: String, save: boolean = true): void {
+        // if we have a gamepad name in parameter, we set the chosen gamepad with this value
         let name = gamepadName;
         if (gamepadName)
             this.chosenGamepad = gamepadName;
         else
-            name = this.chosenGamepad;
-        localStorage.setItem('chosenGamepad', name);
+            name = this.chosenGamepad; // otherwise we use the chosen gamepad's name
+        if (save) // we always set the session variable unless it's called from init()
+            localStorage.setItem('chosenGamepad', name);
+        // we update the ui with the chosen gamepad
         const handler = this.scene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
         handler && handler.updateChosenGamepadDisplay()
     }
@@ -165,31 +171,43 @@ export class InputsController {
     }
 
     onDisconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
+        // We need to add the disconnected gamepad into a local array
+        // Because Phaser keep in memory the previously connected gamepad
+        // If we don't do that, we have no way to determine if the gamepad is connected or not.
+        // We want to know that because we want to hide it in the selection menu of gamepad to use
         this.disconnectedGamepads.push(thisGamepad.id);
+        // we look for gamepads still connected by substracting the 2 arrays
         const gamepadsLeft = this.gamepads.filter(g => !this.disconnectedGamepads.includes(g.id)).map(g => g);
+        // we check if the chosen gamepad is still connected
         const chosenIsConnected = gamepadsLeft.some(g => g.id === this.chosenGamepad);
+        // if the chosen gamepad is disconnected, and we got others gamepad connected
         if (!chosenIsConnected && gamepadsLeft?.length) {
+            // We remove the previously chosen gamepad
             this.clearChosenGamepad();
+            // and we set the first of the gamepad still connected as the chosen one.
             this.setChosenGamepad(gamepadsLeft[0].id);
             return;
         }
     }
 
     onReconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
-        if (this.disconnectedGamepads.some(g => g === thisGamepad.id)) {
-            this.disconnectedGamepads = this.disconnectedGamepads.filter(g => g !== thisGamepad.id);
-        }
+        // We check if a gamepad reconnect by looking in the disconnectedGamepads array if is there
+        // If he is there, we remove it.
+        this.disconnectedGamepads = this.disconnectedGamepads.filter(g => g !== thisGamepad.id);
+        // if (this.disconnectedGamepads.some(g => g === thisGamepad.id)) {
+        // }
     }
 
     setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
+        // we fetch all the gamepads name
         const allGamepads = this.getGamepadsName();
         for (const gamepad of allGamepads) {
+            // for each gamepad, we set its mapping in this.player
             const gamepadID = gamepad.toLowerCase();
             const mappedPad = this.mapGamepad(gamepadID);
             if (!this.player[gamepad]) this.player[gamepad] = {};
             this.player[gamepad]['mapping'] = mappedPad.gamepadMapping;
         }
-        if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
 
     refreshGamepads(): void {
@@ -228,7 +246,7 @@ export class InputsController {
     }
 
     gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-        if (!this.chosenGamepad)
+        if (!this.chosenGamepad) // at the very first input, if we have not yet a chosen gamepad, we set it
             this.setChosenGamepad(pad.id);
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.chosenGamepad.toLowerCase()) return;
         const actionMapping = this.getActionGamepadMapping();
