@@ -61,6 +61,8 @@ export const settingGamepadDefaults: SettingDefaults = {
 export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
     switch (setting) {
         case SettingGamepad.Gamepad_Support:
+            // if we change the value of the gamepad support, we call a method in the inputController to
+            // activate or deactivate the controller listener
             scene.inputController.setGamepadSupport(settingGamepadOptions[setting][value] !== 'Disabled');
             break;
         case SettingGamepad.Swap_A_and_B:
