@@ -1238,7 +1238,8 @@ export class EatBerryAttr extends MoveEffectAttr {
         target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
       target.scene.updateModifiers(target.isPlayer());
 }
-
+    this.chosenBerry = undefined;
+    
     return true;
   }
 
