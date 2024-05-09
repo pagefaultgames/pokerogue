@@ -2038,7 +2038,7 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     if (this.target?.status) {
 	
       this.target.scene.queueMessage(getPokemonMessage(this.target, getStatusEffectHealText(this.target.status?.effect)));
-      this.target.resetStatus();
+      this.target.resetStatus(false);
       this.target.updateInfo();
       return true;
     }
