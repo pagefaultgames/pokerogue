@@ -792,8 +792,8 @@ export class EncounterPhase extends BattlePhase {
               return this.scene.reset(true);
             this.scene.gameData.saveSession(this.scene, true).then(() => this.doEncounter());
           });
-          
-          // Syncing with the server every 3 waves
+
+          // Syncing with the server every 5 waves
           if (battle.waveIndex % 5 == 0) {
             this.scene.gameData.saveSystem().then(success => {
               if (!success) {
