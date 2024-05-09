@@ -14,7 +14,7 @@ export const STARTING_MONEY_OVERRIDE = 0;
 export const WEATHER_OVERRIDE = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE = false;
 
-export const ABILITY_OVERRIDE = Abilities.CURSED_BODY;
+export const ABILITY_OVERRIDE = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const MOVE_OVERRIDE = Moves.NONE;
 export const MOVE_OVERRIDE_2 = Moves.NONE;
