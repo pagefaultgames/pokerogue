@@ -1,5 +1,5 @@
 import { Arena } from "../field/arena";
-import { ArenaTag, getArenaTag } from "../data/arena-tag";
+import { ArenaTag, loadArenaTag } from "../data/arena-tag";
 import { Biome } from "../data/enums/biome";
 import { Weather } from "../data/weather";
 
@@ -15,7 +15,7 @@ export default class ArenaData {
     const arenaTags: ArenaTag[] = sourceArena ? sourceArena.tags : source.tags;
     this.tags = [];
     for (let tag of arenaTags) {
-      this.tags.push(getArenaTag(tag.tagType, tag.turnCount, tag.sourceMove, tag.sourceId, tag.side, tag?.targetIndex))
+      this.tags.push(loadArenaTag(tag))
     }
   }
 }

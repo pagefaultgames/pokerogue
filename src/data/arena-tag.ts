@@ -54,6 +54,18 @@ export abstract class ArenaTag {
       ? allMoves[this.sourceMove].name
       : null;
   }
+
+  /**
+  * When given an arena tag or json representing one, load the data for it.
+  * This is meant to be inherited from by any arena tag with custom attributes
+  * @param {ArenaTag | any} source An arena tag, or json representing one
+  */
+  loadTag(source: ArenaTag | any): void {
+    this.turnCount = source.turnCount;
+    this.sourceMove = source.sourceMove;
+    this.sourceId = source.sourceId;
+    this.side = source.side;
+  }
 }
 
 export class MistTag extends ArenaTag {
@@ -169,6 +181,17 @@ class WishTag extends ArenaTag {
       arena.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(), this.healHp, null, true, false));
     }
   }
+
+  /**
+  * Given a WishTag or json representing one, load the data for it.
+  * @param {WishTag | any} source A WishTag
+  */
+  loadTag(source: WishTag | any): void {
+    super.loadTag(source);
+    this.battlerIndex = source.battlerIndex as BattlerIndex;
+    this.triggerMessage = source.triggerMessage;
+    this.healHp = source.healHp;
+  }
 }
 
 export class WeakenMoveTypeTag extends ArenaTag {
@@ -187,6 +210,15 @@ export class WeakenMoveTypeTag extends ArenaTag {
     }
 
     return false;
+  }
+
+  /**
+  * Given a WeakenMoveTypeTag or json representing one, load the data for it.
+  * @param {WeakenMoveTypeTag | any} source A WeakenMoveTypeTag
+  */
+  loadTag(source: WeakenMoveTypeTag | any): void {
+    super.loadTag(source);
+    this.weakenedType = source.weakenedType as Type;
   }
 }
 
@@ -251,6 +283,16 @@ export class ArenaTrapTag extends ArenaTag {
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
     return pokemon.isGrounded() ? 1 : Phaser.Math.Linear(0, 1 / Math.pow(2, this.layers), Math.min(pokemon.getHpRatio(), 0.5) * 2);
+  }
+
+  /**
+  * Given an ArenaTrapTag or json representing one, load the data for it.
+  * @param {ArenaTrapTag | any} source An ArenaTrapTag
+  */
+  loadTag(source: ArenaTrapTag | any): void {
+    super.loadTag(source);
+    this.layers = source.layers;
+    this.maxLayers = source.maxLayers;
   }
 }
 
@@ -331,6 +373,15 @@ class ToxicSpikesTag extends ArenaTrapTag {
       return 1.25;
     return super.getMatchupScoreMultiplier(pokemon);
   }
+
+  /**
+  * Given a ToxicSpikesTag or json representing one, load the data for it.
+  * @param {ToxicSpikesTag | any} source A ToxicSpikesTag
+  */
+  loadTag(source: ToxicSpikesTag | any): void {
+    super.loadTag(source);
+    this.neutralized = source.neutralized;
+  }
 }
 
 class DelayedAttackTag extends ArenaTag {
@@ -352,6 +403,15 @@ class DelayedAttackTag extends ArenaTag {
   }
 
   onRemove(arena: Arena): void { }
+
+  /**
+  * Given a DelayedAttackTag or json representing one, load the data for it.
+  * @param {DelayedAttackTag | any} source A DelayedAttackTag
+  */
+  loadTag(source: DelayedAttackTag | any): void {
+    super.loadTag(source);
+    this.targetIndex = source.targetIndex;
+  }
 }
 
 class StealthRockTag extends ArenaTrapTag {
@@ -530,4 +590,15 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     case ArenaTagType.TAILWIND:
       return new TailwindTag(turnCount, sourceId, side);
   }
+}
+
+/**
+  * When given an arena tag or json representing one, creates the actual ArenaTag object with the same data loaded.
+  * @param {ArenaTag | any} source An arena tag, or json representing one.
+  * @return {ArenaTag} The valid arena tag with correct data loaded.
+  */
+export function loadArenaTag(source: ArenaTag | any): ArenaTag {
+  const tag = getArenaTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId, source.side, source?.targetIndex);
+  tag.loadTag(source);
+  return tag;
 }
