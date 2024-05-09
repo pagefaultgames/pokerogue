@@ -4,7 +4,7 @@ import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePh
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, modifiersOverride, itemHeldsOverride } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { Phase } from './phase';
@@ -615,6 +615,8 @@ export default class BattleScene extends SceneBase {
 		if (Overrides.OPP_SPECIES_OVERRIDE)
 			species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+		modifiersOverride(this, false);
+		itemHeldsOverride(this, pokemon, false);
 		if (boss && !dataSource) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
@@ -1765,6 +1767,13 @@ export default class BattleScene extends SceneBase {
 
 			this.updateModifiers(false).then(() => resolve());
 		});
+	}
+
+	clearEnemyModifiers(): void {
+		const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
+		for (let m of modifiersToRemove)
+			this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
+		this.updateModifiers(false).then(() => this.updateUIPositions());
 	}
 
 	clearEnemyHeldItemModifiers(): void {
