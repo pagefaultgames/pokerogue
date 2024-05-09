@@ -1,12 +1,12 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { CommonAnimPhase, FaintPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
+import Pokemon, { MoveResult, HitResult, PokemonMove } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
+import { ChargeAttr, MoveCategory, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
 import { Abilities } from "./enums/abilities";
@@ -1249,6 +1249,50 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class GrudgeTag extends BattlerTag {
+  private sourceIndex: integer;
+
+  constructor(sourceId: integer) {
+    super(BattlerTagType.GRUDGE, BattlerTagLapseType.PRE_MOVE, 2, Moves.GRUDGE, sourceId);
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.sourceIndex = source.sourceIndex;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " wants its target to bear a grudge!"));
+    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    const effectPhase = pokemon.scene.getCurrentPhase();
+    if (effectPhase instanceof FaintPhase && pokemon.turnData?.attacksReceived?.length) {
+      const attackMoveResult = pokemon.turnData.attacksReceived[0];
+      const defeatSource = pokemon.scene.getPokemonById(attackMoveResult.sourceId);
+      if (defeatSource?.isOnField()) {
+        const faintingMove = defeatSource.getMoveset().find((move: PokemonMove) => move.moveId === attackMoveResult.move)
+        faintingMove.usePp(faintingMove.getMovePp())
+        defeatSource.scene.queueMessage(getPokemonMessage(defeatSource, `'s ${faintingMove.getName()} lost all of its PP due to the grudge!`));
+      }
+    }
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    
+    return super.lapse(pokemon, lapseType);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
     case BattlerTagType.RECHARGING:
@@ -1354,6 +1398,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new SaltCuredTag(sourceId);
     case BattlerTagType.CURSED:
       return new CursedTag(sourceId);
+    case BattlerTagType.GRUDGE:
+      return new GrudgeTag(sourceId);
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:

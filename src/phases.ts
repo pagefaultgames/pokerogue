@@ -3195,6 +3195,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
+    pokemon.resetSummonData();
     this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
     pokemon.faintCry(() => {
