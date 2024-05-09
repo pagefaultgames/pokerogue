@@ -6,7 +6,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
     "STATS": "数据统计",
     "VOUCHERS": "兑换券",
     "EGG_LIST": "蛋列表",
-    "EGG_GACHA": "蛋扭蛋",
+    "EGG_GACHA": "扭蛋机",
     "MANAGE_DATA": "管理数据",
     "COMMUNITY": "社区",
     "RETURN_TO_TITLE": "返回标题画面",
@@ -19,5 +19,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
     "importData": "导入数据",
     "exportData": "导出数据",
     "cancel": "取消",
-    "losingProgressionWarning": "你将失去自战斗开始以来的所有进度。是否继续？"
+    "losingProgressionWarning": "你将失去自战斗开始以来的所有进度。是否\n继续？"
 } as const;
