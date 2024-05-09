@@ -88,33 +88,28 @@ export default class Battle {
     }
 
     private initBattleSpec(): void {
-        let spec = BattleSpec.DEFAULT;
-        if (this.gameMode.isClassic) {
-            if (this.waveIndex === 200)
-                spec = BattleSpec.FINAL_BOSS;
-        }
-        this.battleSpec = spec;
+        this.battleSpec = this.gameMode.isClassic && this.waveIndex === 200 
+            ? BattleSpec.FINAL_BOSS 
+            : BattleSpec.DEFAULT;
     }
 
     private getLevelForWave(): integer {
-        let levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
-        let baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
+        const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
+        const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
         const bossMultiplier = 1.2;
 
         if (!(this.waveIndex % 10)) {
-            const ret = Math.floor(baseLevel * bossMultiplier);
+            const levelForWave = Math.floor(baseLevel * bossMultiplier);
             if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250))
-                return Math.ceil(ret / 25) * 25;
-            let levelOffset = 0;
-            if (!this.gameMode.isWaveFinal(this.waveIndex))
-                levelOffset = Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(levelWaveIndex / 10));
-            return ret + levelOffset;
+                return Math.ceil(levelForWave / 25) * 25;
+            const levelOffset = !this.gameMode.isWaveFinal(this.waveIndex) 
+                ? Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(levelWaveIndex / 10))
+                : 0;
+            return levelForWave + levelOffset;
         }
 
-        let levelOffset = 0;
-        
         const deviation = 10 / levelWaveIndex;
-        levelOffset = Math.abs(this.randSeedGaussForLevel(deviation));
+        const levelOffset = Math.abs(this.randSeedGaussForLevel(deviation));
 
         return Math.max(Math.round(baseLevel + levelOffset), 1);
     }
