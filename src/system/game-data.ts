@@ -673,8 +673,7 @@ export class GameData {
           });
 
           scene.arena.weather = sessionData.arena.weather;
-          // TODO
-          //scene.arena.tags = sessionData.arena.tags;
+          scene.arena.tags = sessionData.arena.tags;
 
           const modifiersModule = await import('../modifier/modifier');
 

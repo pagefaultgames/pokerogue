@@ -496,7 +496,7 @@ class TailwindTag extends ArenaTag {
   }
 }
 
-export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
+export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): ArenaTag {
   switch (tagType) {
     case ArenaTagType.MIST:
       return new MistTag(turnCount, sourceId, side);
