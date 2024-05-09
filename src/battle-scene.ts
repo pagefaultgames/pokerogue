@@ -101,11 +101,18 @@ export default class BattleScene extends SceneBase {
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
 	public expGainsSpeed: integer = 0;
-	//expParty can be:
-	// 0 - default - the normal exp gain display, nothing changed
-	// 1 - Only level up - we display the level up in the small frame instead of a message
-	// 2 - Skip - no level up frame nor message
-	// 1 & 2 still are compatible with stats display, level up, new move, ...
+	/**
+	 * Defines the experience gain display mode.
+	 *
+	 * @remarks
+	 * The `expParty` can have several modes:
+	 * - `0` - Default: The normal experience gain display, nothing changed.
+	 * - `1` - Only level up: Displays the level up in the small frame instead of a message.
+	 * - `2` - Skip: No level up frame nor message.
+	 *
+	 * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
+	 * @default 0 - Uses the default normal experience gain display.
+	 */
 	public expParty: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
