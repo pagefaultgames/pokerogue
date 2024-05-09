@@ -2055,13 +2055,30 @@ export class PostTurnAbAttr extends AbAttr {
   }
 }
 
+/**
+ * After the turn ends, resets the status of either the ability holder or their ally
+ * @param {boolean} allyTarget Whether to target ally, defaults to false (self-target)
+ */
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
+  private allyTarget: boolean;
+  private target: Pokemon;
+
+  constructor(allyTarget: boolean = false) {
+    super(true);
+    this.allyTarget = allyTarget;
+  }
+
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    if (pokemon.status) {
+    if (this.allyTarget) {
+      this.target = pokemon.getAlly();
+    } else {
+      this.target = pokemon;
+    }
+    if (this.target?.status) {
 	
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status?.effect)));
-      pokemon.resetStatus();
-      pokemon.updateInfo();
+      this.target.scene.queueMessage(getPokemonMessage(this.target, getStatusEffectHealText(this.target.status?.effect)));
+      this.target.resetStatus(false);
+      this.target.updateInfo();
       return true;
     }
 	
@@ -3109,7 +3126,7 @@ export function initAbilities() {
       .attr(PostDefendMoveDisableAbAttr, 30)
       .bypassFaint(),
     new Ability(Abilities.HEALER, 5)
-      .unimplemented(),
+      .conditionalAttr(pokemon => pokemon.getAlly() && Utils.randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
     new Ability(Abilities.FRIEND_GUARD, 5)
       .ignorable()
       .unimplemented(),
