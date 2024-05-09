@@ -2205,7 +2205,7 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId]);
 
-    if (!this.canMove() && (this.pokemon.summonData.disabledMove !== this.pokemon.summonData.choicedMove)) { // patch for choice item - disable interaction
+    if (!this.canMove() && (this.move.moveId !== Moves.STRUGGLE)) { // patch for choice item - disable interaction
       if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       if (this.move.moveId && this.pokemon.summonData.choicedMove !== Moves.NONE && this.pokemon.summonData.choicedMove !== this.move.moveId)

@@ -3650,7 +3650,8 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
 
     user.summonData.moveset = user.getMoveset().slice(0);
     user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id, 0, 0);
-
+    user.summonData.choicedMove = user.summonData.choicedMove === move.id ? copiedMove.id : user.summonData.choicedMove;
+  
     user.scene.queueMessage(getPokemonMessage(user, ` copied\n${copiedMove.name}!`));
 
     return true;

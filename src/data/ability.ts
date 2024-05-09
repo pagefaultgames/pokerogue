@@ -1185,9 +1185,12 @@ export class PostAttackLockMoveAbAttr extends PostAttackAbAttr {
   }
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (!this.condition(pokemon, attacker, move.getMove())) return false;
+    console.log(`locked in the move: ${allMoves[pokemon.summonData.choicedMove].name}!`)
 
-    pokemon.summonData.choicedMove = move.moveId;
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon ,` is locked into ${allMoves[pokemon.summonData.choicedMove].name}!`));
+    if (!(move.moveId === Moves.MIMIC || move.moveId === Moves.TRANSFORM)){
+      pokemon.summonData.choicedMove = move.moveId;
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon ,` is locked into ${allMoves[pokemon.summonData.choicedMove].name}!`));
+    }
     return true;
   }  
 }
