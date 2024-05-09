@@ -12,7 +12,7 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 
 
-export const chsConfig = {
+export const zhCnConfig = {
     ability: ability,
     battle: battle,
     commandUiHandler: commandUiHandler,
