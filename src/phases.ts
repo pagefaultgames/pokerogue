@@ -4564,6 +4564,9 @@ export class PartyStatusCurePhase extends BattlePhase {
         if (!pokemon.hasAbility(this.abilityCondition)) {
           pokemon.resetStatus();
           pokemon.updateInfo(true);
+        } else {
+          // Manually show ability bar, since we're not hooked into the targeting system
+          pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
         }
       }
     }
