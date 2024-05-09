@@ -108,10 +108,13 @@ export class InputsController {
     }
 
     setGamepadSupport(value: boolean): void {
+        // value is true if we activate gamepad
+        // value is false if we deactivate gamepad
         if (value) {
             this.gamepadSupport = true;
         } else {
             this.gamepadSupport = false;
+            // if we disable the gamepad, we want to release every key pressed
             this.deactivatePressedKey();
         }
     }
@@ -125,14 +128,21 @@ export class InputsController {
         // reversed to let the cancel button have a kinda priority on the action button
         for (const b of Utils.getEnumValues(Button).reverse()) {
             if (
-                this.interactions.hasOwnProperty(b) &&
-                this.repeatInputDurationJustPassed(b) &&
-                this.interactions[b].isPressed
+                this.interactions.hasOwnProperty(b) && // if the button is in the interactions dict
+                this.repeatInputDurationJustPassed(b) && // if we hold enough the button
+                this.interactions[b].isPressed // if the button is pressed
             ) {
+                // if the gamepad support is disable and the source is a gamepad
+                // we don't want to repeat the button
+                // even if we have disabled the gamepad, at the exact moment of the change in the menu
+                // we can be here and have an infinite loop since the code can't know we
+                // have released the key since the gamepad is not there anymore
+                // if it's an input sent by another gamepad than the chosen one, we prevent it
                 if (
                     (!this.gamepadSupport && this.interactions[b].source === 'gamepad') ||
                     (this.interactions[b].sourceName !== null && this.interactions[b].sourceName !== this.chosenGamepad)
                 ) {
+                    // we delete the latest interracted button
                     this.delLastProcessedMovementTime(b);
                     return;
                 }
@@ -353,6 +363,7 @@ export class InputsController {
         }
     }
 
+    // added source so when we repeat the key, we can also tell from which source the key is from
     setLastProcessedMovementTime(button: Button, source: String = 'keyboard', sourceName: String): void {
         if (!this.interactions.hasOwnProperty(button)) return;
         this.setButtonLock(button);
