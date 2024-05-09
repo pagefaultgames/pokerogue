@@ -1969,6 +1969,5 @@ export default class BattleScene extends SceneBase {
 			rewards: rewards ? rewards.map(r => r.type.name) : [],
 		};
 		(window as any).gameInfo = gameInfo;
-		console.log(gameInfo);
 	}
 }
