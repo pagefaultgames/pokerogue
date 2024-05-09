@@ -149,6 +149,8 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
         return false;
       break;
     case Setting.Gamepad_Support:
+      // if we change the value of the gamepad support, we call a method in the inputController to
+      // activate or deactivate the controller listener
       scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
       break;
     case Setting.Swap_A_and_B:
