@@ -9,7 +9,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "confirmStartTeam":'使用这些宝可梦开始游戏吗？',
     "growthRate": "成长速度：",
     "ability": "特性：",
-    "passive": "被动：",
+    "passive": "梦特：",
     "nature": "性格：",
     "eggMoves": '蛋招式',
     "start": "开始",
@@ -27,6 +27,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleAbility": 'E: 切换特性',
     "cycleNature": 'N: 切换性格',
     "cycleVariant": 'V: 切换变种',
-    "enablePassive": "启用被动",
-    "disablePassive": "禁用被动"
+    "enablePassive": "启用梦特",
+    "disablePassive": "禁用梦特"
 }
