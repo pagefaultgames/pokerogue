@@ -725,9 +725,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ? this.summonData.moveset
       : this.moveset;
 
-    const overideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
-    if (overideArray.length > 0) {
-      overideArray.forEach((move: Moves, index: number) => {
+    // Overrides moveset based on arrays specified in overrides.ts
+    const overrideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
+    if (overrideArray.length > 0) {
+      overrideArray.forEach((move: Moves, index: number) => {
         this.moveset[index] = new PokemonMove(move, Math.min(this.moveset[index].ppUsed, allMoves[move].pp))
       });
     }
@@ -819,8 +820,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return allAbilities[starterPassiveAbilities[starterSpeciesId]];
   } 
 
+  /**
+   * Checks if a pokemon has a passive either from: 
+   *  - bought with starter candy
+   *  - set by override
+   *  - is a boss pokemon
+   * @returns whether or not a pokemon should have a passive
+   */
   hasPassive(): boolean {
-    if ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer()) || (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer()))
+    // returns override if valid for current case
+    if ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer()) ||
+        (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer()))
       return true;
     return this.passive || this.isBoss();
   }

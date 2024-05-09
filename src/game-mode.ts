@@ -45,6 +45,13 @@ export class GameMode implements GameModeConfig {
     Object.assign(this, config);
   }
 
+  /**
+   * Returns either: 
+   * - override from overrides.ts
+   * - 20 for Daily Runs
+   * - 5 for all other modes
+   * @returns starting level
+   */
   getStartingLevel(): integer {
     if (Overrides.STARTING_LEVEL_OVERRIDE)
       return Overrides.STARTING_LEVEL_OVERRIDE;

@@ -2178,7 +2178,12 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
   }
 }
 
-export function modifiersOverride(scene: BattleScene, player: boolean = true): void {
+/**
+ * Uses override from overrides.ts to set PersistentModifiers for starting a new game
+ * @param scene current BattleScene
+ * @param player is this for player for enemy
+ */
+export function overrideModifiers(scene: BattleScene, player: boolean = true): void {
   const modifierOverride = player ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;
   if (!modifierOverride || modifierOverride.length === 0 || !scene) return; // if no override, do nothing
   // if it's the opponent, we clear all his current modifiers to avoid stacking
@@ -2201,7 +2206,12 @@ export function modifiersOverride(scene: BattleScene, player: boolean = true): v
   });
 }
 
-export function itemHeldsOverride(scene: BattleScene, pokemon: Pokemon, player: boolean = true): void {
+/**
+ * Uses override from overrides.ts to set PokemonHeldItemModifiers for starting a new game
+ * @param scene current BattleScene
+ * @param player is this for player for enemy
+ */
+export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, player: boolean = true): void {
   const heldItemsOverride = player ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) return; // if no override, do nothing
   // we loop through all the itemName given in the override file
