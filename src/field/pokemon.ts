@@ -3232,4 +3232,13 @@ export class PokemonMove {
   getName(): string {
     return this.getMove().name;
   }
+
+  /**
+  * Copies an existing move or creates a valid PokemonMove object from json representing one
+  * @param {PokemonMove | any} source The data for the move to copy
+  * @return {PokemonMove} A valid pokemonmove object
+  */
+  static loadMove(source: PokemonMove | any): PokemonMove {
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual);
+  }
 }
