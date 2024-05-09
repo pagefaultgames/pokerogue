@@ -6069,7 +6069,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, 2)
       .attr(EatBerryAttr)
       .condition((user, target, move) => target.scene.findModifiers(m => m instanceof BerryModifier
-        && (m as BerryModifier).pokemonId === target.id, target.isPlayer()).length > 0 )
+        && (m as BerryModifier).pokemonId === target.id, target.isPlayer()).length > 0 ) // move fails if the target has no berries
       .target(MoveTarget.USER),
     new SelfStatusMove(Moves.NO_RETREAT, Type.FIGHTING, -1, 5, 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
