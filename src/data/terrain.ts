@@ -54,7 +54,7 @@ export class Terrain {
       case TerrainType.PSYCHIC:
         if (!move.getAttrs(ProtectAttr).length) {
           const priority = new Utils.IntegerHolder(move.priority);
-          applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);
+          applyAbAttrs(IncrementMovePriorityAbAttr, user, null, false, move, priority);
           return priority.value > 0 && user.getOpponents().filter(o => targets.includes(o.getBattlerIndex())).length > 0;
         }
     }
