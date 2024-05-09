@@ -1253,7 +1253,7 @@ export class GrudgeTag extends BattlerTag {
   private sourceIndex: integer;
 
   constructor(sourceId: integer) {
-    super(BattlerTagType.GRUDGE, BattlerTagLapseType.PRE_MOVE, 2, Moves.GRUDGE, sourceId);
+    super(BattlerTagType.GRUDGE, BattlerTagLapseType.PRE_MOVE, 1, Moves.GRUDGE, sourceId);
   }
 
   /**
@@ -1285,11 +1285,6 @@ export class GrudgeTag extends BattlerTag {
         defeatSource.scene.queueMessage(getPokemonMessage(defeatSource, `'s ${faintingMove.getName()} lost all of its PP due to the grudge!`));
       }
     }
-  }
-
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    
-    return super.lapse(pokemon, lapseType);
   }
 }
 
