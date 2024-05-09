@@ -251,9 +251,9 @@ export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.hp === pokemon.getMaxHp() && pokemon.getMaxHp() >= 1 && (args[0] as Utils.NumberHolder).value >= pokemon.hp){ //Checks if pokemon hp is full and if the damage is higher or equal to defender hp
       return pokemon.addTag(BattlerTagType.STURDY, 1); //activates sturdy
-    } else {
-      return false
-    } 
+    }
+    
+    return false
   }
 }
 
