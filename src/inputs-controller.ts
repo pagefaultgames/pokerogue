@@ -69,7 +69,6 @@ export class InputsController {
         // at the launch, we retrieved the previously chosen gamepad
         if (localStorage.hasOwnProperty('chosenGamepad')) {
             this.chosenGamepad = localStorage.getItem('chosenGamepad');
-            this.initChosenGamepad(this.chosenGamepad, false)
         }
 		// Handle the game losing focus
 		this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
@@ -150,15 +149,14 @@ export class InputsController {
         return this.gamepads.filter(g => !this.disconnectedGamepads.includes(g.id)).map(g => g.id);
     }
 
-    initChosenGamepad(gamepadName?: String, save: boolean = true): void {
+    initChosenGamepad(gamepadName?: String): void {
         // if we have a gamepad name in parameter, we set the chosen gamepad with this value
         let name = gamepadName;
         if (gamepadName)
             this.chosenGamepad = gamepadName;
         else
             name = this.chosenGamepad; // otherwise we use the chosen gamepad's name
-        if (save) // we always set the session variable unless it's called from init()
-            localStorage.setItem('chosenGamepad', name);
+        localStorage.setItem('chosenGamepad', name);
         // we update the ui with the chosen gamepad
         const handler = this.scene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
         handler && handler.updateChosenGamepadDisplay()
@@ -194,8 +192,6 @@ export class InputsController {
         // We check if a gamepad reconnect by looking in the disconnectedGamepads array if is there
         // If he is there, we remove it.
         this.disconnectedGamepads = this.disconnectedGamepads.filter(g => g !== thisGamepad.id);
-        // if (this.disconnectedGamepads.some(g => g === thisGamepad.id)) {
-        // }
     }
 
     setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
@@ -208,6 +204,7 @@ export class InputsController {
             if (!this.player[gamepad]) this.player[gamepad] = {};
             this.player[gamepad]['mapping'] = mappedPad.gamepadMapping;
         }
+        if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
 
     refreshGamepads(): void {
