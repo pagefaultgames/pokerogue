@@ -4,16 +4,8 @@ import { GameDataType, getDataTypeKey } from "./game-data";
 describe("game-data", () => {
   describe("getDataTypeKey", () => {
     beforeAll(() => {
-      // Error when importing biomes (imported by different files)
-      vi.mock('../data/biomes', () => ({
-        biomeLinks: {},
-        BiomePoolTier: {},
-        PokemonPools: {},
-        getBiomeName: () => "",
-        BiomeTierTrainerPools: {},
-        biomePokemonPools: {},
-        biomeTrainerPools: {},
-      }));
+      // Prevent errors
+      vi.mock('../data/biomes', () => ({}));
     });
 
     afterAll(() => {

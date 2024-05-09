@@ -8,22 +8,12 @@ describe("trainer-config", () => {
     let trainerConfig: TrainerConfig;
     
     beforeAll(() => {
-      // Error when importing biomes / voucher (imported by different files)
-      vi.mock('./biomes', () => ({
-        biomeLinks: {},
-        BiomePoolTier: {},
-        PokemonPools: {},
-        getBiomeName: () => "",
-        BiomeTierTrainerPools: {},
-        biomePokemonPools: {},
-        biomeTrainerPools: {},
-      }));
+      // Prevent errors
+      vi.mock('./biomes', () => ({}));
       vi.mock('../system/voucher', () => ({
-        vouchers: {},
         VoucherType: {},
-        getVoucherTypeIcon: () => "",
-        Voucher: {},
         getVoucherTypeName: () => "",
+        getVoucherTypeIcon: () => "",
       }));
     });
 
