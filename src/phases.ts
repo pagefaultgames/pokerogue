@@ -2211,6 +2211,7 @@ export class MovePhase extends BattlePhase {
       ? new Utils.IntegerHolder(this.targets[0])
       : null;
       if (moveTarget) {
+	  //If user has an ability preventing moves from being redirected, or is using a move that can not be redirected (i.e. Snipe Shot), don't redirect it.
           if (!(this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length) )
           {
             this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
