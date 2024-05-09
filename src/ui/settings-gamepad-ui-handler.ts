@@ -6,6 +6,7 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
 import {
+    noOptionsCursors,
     SettingGamepad,
     settingGamepadDefaults,
     settingGamepadOptions
@@ -210,14 +211,16 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
         const lastCursor = this.optionCursors[settingIndex];
 
-        const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-        lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));
-        lastValueLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
+        if (!noOptionsCursors.includes(setting)) {
+            const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
+            lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));
+            lastValueLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
 
-        this.optionCursors[settingIndex] = cursor;
-        const newValueLabel = this.optionValueLabels[settingIndex][cursor];
-        newValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
-        newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
+            this.optionCursors[settingIndex] = cursor;
+            const newValueLabel = this.optionValueLabels[settingIndex][cursor];
+            newValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
+            newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
+        }
 
         if (save) {
             if (SettingGamepad[setting] !== SettingGamepad.Default_Controller)

@@ -37,6 +37,7 @@ import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
 import {Button} from "../enums/buttons";
+import GamepadBindingUiHandler from "./ui/gamepad-binding-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -58,6 +59,7 @@ export enum Mode {
   MENU_OPTION_SELECT,
   SETTINGS,
   SETTINGS_GAMEPAD,
+  GAMEPAD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
   VOUCHERS,
@@ -88,7 +90,9 @@ const noTransitionModes = [
   Mode.OPTION_SELECT,
   Mode.MENU,
   Mode.MENU_OPTION_SELECT,
+  Mode.GAMEPAD_BINDING,
   Mode.SETTINGS,
+  Mode.SETTINGS_GAMEPAD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
   Mode.VOUCHERS,
@@ -140,6 +144,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
       new SettingsGamepadUiHandler(scene),
+      new GamepadBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),

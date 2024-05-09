@@ -8,6 +8,7 @@ import pad_dualshock from "./configs/pad_dualshock";
 import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
+import {SettingGamepad} from "./system/settings-gamepad";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -252,6 +253,12 @@ export class InputsController {
         return gamepadMapping;
     }
 
+    getButtonLabel(button: Phaser.Input.Gamepad.Button) {
+        const mapping = this.player[this.chosenGamepad]['mapping'];
+        console.log('mapping', mapping);
+        return Object.keys(mapping).find(key => mapping[key] === button.index);
+    }
+
     gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
         if (!this.chosenGamepad) // at the very first input, if we have not yet a chosen gamepad, we set it
             this.setChosenGamepad(pad.id);
@@ -410,5 +417,9 @@ export class InputsController {
     releaseButtonLock(button: Button): void {
         if (this.buttonLock === button) this.buttonLock = null;
         else if (this.buttonLock2 === button) this.buttonLock2 = null;
+    }
+
+    setBind(setting: SettingGamepad, button: Button) {
+        console.log('button,', button);
     }
 }

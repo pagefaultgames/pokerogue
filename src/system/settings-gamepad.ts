@@ -1,15 +1,16 @@
 import BattleScene from "../battle-scene";
-import {SettingDefaults, SettingOptions} from "#app/system/settings";
-import SettingsGamepadUiHandler from "#app/ui/settings-gamepad-ui-handler";
+import {SettingDefaults, SettingOptions} from "./settings";
+import SettingsGamepadUiHandler from "../ui/settings-gamepad-ui-handler";
 import {Mode} from "#app/ui/ui";
 import {truncateString} from "../utils";
+import {Button} from "../enums/buttons";
 
 export enum SettingGamepad {
     Default_Controller = "DEFAULT_CONTROLLER",
     Gamepad_Support = "GAMEPAD_SUPPORT",
     Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
-    // Button_Action = "BUTTON_ACTION",
-    // Button_Cancel = "BUTTON_CANCEL",
+    Button_Action = "BUTTON_ACTION",
+    Button_Cancel = "BUTTON_CANCEL",
     // Button_Menu = "BUTTON_MENU",
     // Button_Stats = "BUTTON_STATS",
     // Button_Cycle_Shiny = "BUTTON_CYCLE_SHINY",
@@ -26,8 +27,8 @@ export const settingGamepadOptions: SettingOptions = {
     [SettingGamepad.Default_Controller]: [ 'Default', 'Change' ],
     [SettingGamepad.Gamepad_Support]: [ 'Auto', 'Disabled' ],
     [SettingGamepad.Swap_A_and_B]: [ 'Enabled', 'Disabled' ],
-    // [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
-    // [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
+    [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
+    [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
     // [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Change'],
     // [SettingGamepad.Button_Stats]: [`KEY ${Button.STATS.toString()}`, 'Change'],
     // [SettingGamepad.Button_Cycle_Shiny]: [`KEY ${Button.RB.toString()}`, 'Change'],
@@ -44,8 +45,8 @@ export const settingGamepadDefaults: SettingDefaults = {
     [SettingGamepad.Default_Controller]: 0,
     [SettingGamepad.Gamepad_Support]: 0,
     [SettingGamepad.Swap_A_and_B]: 1, // Set to 'Disabled' by default
-    // [SettingGamepad.Button_Action]: Button.ACTION,
-    // [SettingGamepad.Button_Cancel]: Button.CANCEL,
+    [SettingGamepad.Button_Action]: 0,
+    [SettingGamepad.Button_Cancel]: 0,
     // [SettingGamepad.Button_Menu]: Button.MENU,
     // [SettingGamepad.Button_Stats]: Button.STATS,
     // [SettingGamepad.Button_Cycle_Shiny]: Button.RB,
@@ -58,6 +59,11 @@ export const settingGamepadDefaults: SettingDefaults = {
     // [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
 };
 
+export const noOptionsCursors : Array<SettingGamepad> = [
+    SettingGamepad.Button_Action,
+    SettingGamepad.Button_Cancel,
+];
+
 export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
     switch (setting) {
         case SettingGamepad.Gamepad_Support:
@@ -68,8 +74,8 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
         case SettingGamepad.Swap_A_and_B:
             scene.abSwapped = settingGamepadOptions[setting][value] !== 'Disabled';
             break;
-        // case SettingGamepad.Button_Action:
-        // case SettingGamepad.Button_Cancel:
+        case SettingGamepad.Button_Action:
+        case SettingGamepad.Button_Cancel:
         // case SettingGamepad.Button_Menu:
         // case SettingGamepad.Button_Stats:
         // case SettingGamepad.Button_Cycle_Shiny:
@@ -80,8 +86,22 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
         // case SettingGamepad.Button_Cycle_Variant:
         // case SettingGamepad.Button_Speed_Up:
         // case SettingGamepad.Button_Slow_Down:
-        //   scene.inputController.customGamepadMapping[setting] = value;
-        //   break;
+            if (value) {
+                if (scene.ui) {
+                    const cancelHandler = () => {
+                        scene.ui.revertMode();
+                        (scene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(setting), 0, true);
+                        return false;
+                    };
+                    scene.ui.setOverlayMode(Mode.GAMEPAD_BINDING, {
+                        options: [{
+                            label: 'Press a button on your gamepad',
+                            handler: cancelHandler,
+                        }]
+                    });
+                }
+            }
+            break;
         case SettingGamepad.Default_Controller:
             if (value) {
                 const gp = scene.inputController.getGamepadsName();
