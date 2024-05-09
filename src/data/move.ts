@@ -1206,7 +1206,14 @@ export class EatBerryAttr extends MoveEffectAttr {
     super(true, MoveEffectTrigger.HIT);
     this.chosenBerry = undefined;
   }
-
+/**
+ * Cut's the user's Max HP in half and displays the appropriate recoil message
+ * @param {Pokemon} user Pokemon that used the move
+ * @param {Pokemon} target Pokemon that is
+ * @param {Move} move Move with this attribute
+ * @param {any[]} args N/A
+ * @returns {boolean} true if the function succeeds
+ */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
@@ -1238,12 +1245,22 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
 }
-
+/**
+ *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
+ *  Used for Pluck & Bug Bite.
+ */
 export class StealEatBerryAttr extends EatBerryAttr {
   constructor() {
     super();
   }
-
+/**
+ * User steals a random berry from the target and then eats it.
+ * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
+ * @param {Pokemon} target Pokemon that will have its berry stolen
+ * @param {Move} move Move with this attribute
+ * @param {any[]} args N/A
+ * @returns {boolean} true if the function succeeds
+ */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
     const cancelled = new Utils.BooleanHolder(false);
