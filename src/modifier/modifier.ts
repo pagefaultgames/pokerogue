@@ -2192,7 +2192,7 @@ export function overrideModifiers(scene: BattleScene, player: boolean = true): v
   }
   // we loop through all the modifier name given in the override file
   modifierOverride.forEach(item => {
-    const modifierName = item.modifierName;
+    const modifierName = item.name;
     const qty = item.count || 1;
     if (!modifierTypes.hasOwnProperty(modifierName)) return; // if the modifier does not exist, we skip it
     const modifierType: ModifierType = modifierTypes[modifierName]();
@@ -2216,12 +2216,17 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, player: 
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) return; // if no override, do nothing
   // we loop through all the itemName given in the override file
   heldItemsOverride.forEach(item => {
-      const itemName = item.modifierName;
+      const itemName = item.name;
       const qty = item.count || 1;
       if (!modifierTypes.hasOwnProperty(itemName)) return; // if the item does not exist, we skip it
       const modifierType: ModifierType = modifierTypes[itemName](); // we retrieve the item in the list
+      var itemModifier: PokemonHeldItemModifier;
+      if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
+        itemModifier = modifierType.generateType(null, [item.type]).withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
+      } else {
+        itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
+      }
       // we create the item
-      const itemModifier: PokemonHeldItemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
       itemModifier.pokemonId = pokemon.id; // we assign the created item to the pokemon
       itemModifier.stackCount = qty; // we say how many items we want
       if (player) {
