@@ -2,6 +2,7 @@ import BattleScene from "../battle-scene";
 import {SettingDefaults, SettingOptions} from "#app/system/settings";
 import SettingsGamepadUiHandler from "#app/ui/settings-gamepad-ui-handler";
 import {Mode} from "#app/ui/ui";
+import {truncateString} from "../utils";
 
 export enum SettingGamepad {
     Default_Controller = "DEFAULT_CONTROLLER",
@@ -57,13 +58,6 @@ export const settingGamepadDefaults: SettingDefaults = {
     // [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
 };
 
-function truncateString(str: String, maxLength: number = 10) {
-    if (str.length > maxLength) {
-        return str.slice(0, maxLength - 3) + "..."; // Subtract 3 to accommodate the ellipsis
-    }
-    return str;
-}
-
 export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
     switch (setting) {
         case SettingGamepad.Gamepad_Support:
@@ -97,7 +91,6 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
                     };
                     const changeGamepadHandler = (gamepad: string) => {
                         scene.inputController.setChosenGamepad(gamepad);
-                        localStorage.setItem('chosenGamepad', gamepad);
                         cancelHandler();
                         return true;
                     };

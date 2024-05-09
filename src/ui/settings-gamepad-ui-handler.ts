@@ -10,6 +10,7 @@ import {
     settingGamepadDefaults,
     settingGamepadOptions
 } from "../system/settings-gamepad";
+import {truncateString} from "../utils";
 
 export default class SettingsGamepadUiHandler extends UiHandler {
     private settingsContainer: Phaser.GameObjects.Container;
@@ -191,6 +192,15 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         this.cursorObj.setPositionRelative(this.optionsBg, 4, 4 + (this.cursor + this.scrollCursor) * 16);
 
         return ret;
+    }
+
+    updateChosenGamepadDisplay(): void {
+        for (const [index, key] of Object.keys(SettingGamepad).entries()) {
+            const setting = SettingGamepad[key]
+            if (setting === SettingGamepad.Default_Controller) {
+                this.optionValueLabels[index][0].setText(truncateString(this.scene.inputController.chosenGamepad, 30));
+            }
+        }
     }
 
     setOptionCursor(settingIndex: integer, cursor: integer, save?: boolean): boolean {

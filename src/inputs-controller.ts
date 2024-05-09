@@ -6,6 +6,8 @@ import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
 import {Button} from "./enums/buttons";
+import {Mode} from "./ui/ui";
+import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -34,17 +36,19 @@ export class InputsController {
     private buttonLock2: Button;
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Time;
-    private player: Map<String, GamepadMapping> = new Map();
+    private player;
 
     private gamepadSupport: boolean = true;
 
     public customGamepadMapping = new Map();
     public chosenGamepad: String;
+    private disconnectedGamepads: Array<String> = new Array();
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.time = this.scene.time;
         this.buttonKeys = [];
+        this.player = {};
 
         for (const b of Utils.getEnumValues(Button)) {
             this.interactions[b] = {
@@ -74,6 +78,10 @@ export class InputsController {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
                 this.refreshGamepads();
                 this.setupGamepad(thisGamepad);
+                this.onReconnect(thisGamepad);
+            }, this);
+            this.scene.input.gamepad.on('disconnected', function (thisGamepad) {
+                this.onDisconnect(thisGamepad);
             }, this);
 
             // Check to see if the gamepad has already been setup by the browser
@@ -108,7 +116,7 @@ export class InputsController {
 
     setChosenGamepad(gamepad: String): void {
         this.deactivatePressedKey();
-        this.chosenGamepad = gamepad;
+        this.initChosenGamepad(gamepad)
     }
 
     update(): void {
@@ -136,17 +144,52 @@ export class InputsController {
     }
 
     getGamepadsName(): Array<String> {
-        return this.gamepads.map(g => g.id);
+        return this.gamepads.filter(g => !this.disconnectedGamepads.includes(g.id)).map(g => g.id);
+    }
+
+    initChosenGamepad(gamepadName?: String): void {
+        let name = gamepadName;
+        if (gamepadName)
+            this.chosenGamepad = gamepadName;
+        else
+            name = this.chosenGamepad;
+        localStorage.setItem('chosenGamepad', name);
+        const handler = this.scene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
+        handler && handler.updateChosenGamepadDisplay()
+    }
+
+    clearChosenGamepad() {
+        this.chosenGamepad = null;
+        if (localStorage.hasOwnProperty('chosenGamepad'))
+            localStorage.removeItem('chosenGamepad');
+    }
+
+    onDisconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
+        this.disconnectedGamepads.push(thisGamepad.id);
+        const gamepadsLeft = this.gamepads.filter(g => !this.disconnectedGamepads.includes(g.id)).map(g => g);
+        const chosenIsConnected = gamepadsLeft.some(g => g.id === this.chosenGamepad);
+        if (!chosenIsConnected && gamepadsLeft?.length) {
+            this.clearChosenGamepad();
+            this.setChosenGamepad(gamepadsLeft[0].id);
+            return;
+        }
+    }
+
+    onReconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
+        if (this.disconnectedGamepads.some(g => g === thisGamepad.id)) {
+            this.disconnectedGamepads = this.disconnectedGamepads.filter(g => g !== thisGamepad.id);
+        }
     }
 
     setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
-        let gamepadID = this.chosenGamepad?.toLowerCase() || thisGamepad.id.toLowerCase();
-        const mappedPad = this.mapGamepad(gamepadID);
-        this.player['mapping'] = mappedPad.gamepadMapping;
-        if (!this.chosenGamepad) {
-            this.chosenGamepad = thisGamepad.id;
-            localStorage.setItem('chosenGamepad', this.chosenGamepad);
+        const allGamepads = this.getGamepadsName();
+        for (const gamepad of allGamepads) {
+            const gamepadID = gamepad.toLowerCase();
+            const mappedPad = this.mapGamepad(gamepadID);
+            if (!this.player[gamepad]) this.player[gamepad] = {};
+            this.player[gamepad]['mapping'] = mappedPad.gamepadMapping;
         }
+        if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
 
     refreshGamepads(): void {
@@ -162,29 +205,31 @@ export class InputsController {
 
     getActionGamepadMapping(): ActionGamepadMapping {
         const gamepadMapping = {};
-        if (!this.player?.mapping) return gamepadMapping;
-        gamepadMapping[this.player.mapping.LC_N] = Button.UP;
-        gamepadMapping[this.player.mapping.LC_S] = Button.DOWN;
-        gamepadMapping[this.player.mapping.LC_W] = Button.LEFT;
-        gamepadMapping[this.player.mapping.LC_E] = Button.RIGHT;
-        gamepadMapping[this.player.mapping.TOUCH] = Button.SUBMIT;
-        gamepadMapping[this.player.mapping.RC_S] = this.scene.abSwapped ? Button.CANCEL : Button.ACTION;
-        gamepadMapping[this.player.mapping.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
-        gamepadMapping[this.player.mapping.SELECT] = Button.STATS;
-        gamepadMapping[this.player.mapping.START] = Button.MENU;
-        gamepadMapping[this.player.mapping.RB] = Button.RB;
-        gamepadMapping[this.player.mapping.LB] = Button.LB;
-        gamepadMapping[this.player.mapping.LT] = Button.CYCLE_GENDER;
-        gamepadMapping[this.player.mapping.RT] = Button.CYCLE_ABILITY;
-        gamepadMapping[this.player.mapping.RC_W] = Button.CYCLE_NATURE;
-        gamepadMapping[this.player.mapping.RC_N] = Button.CYCLE_VARIANT;
-        gamepadMapping[this.player.mapping.LS] = Button.SPEED_UP;
-        gamepadMapping[this.player.mapping.RS] = Button.SLOW_DOWN;
+        if (!this.player[this.chosenGamepad] || !this.player[this.chosenGamepad]?.mapping || !this.chosenGamepad) return gamepadMapping;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_N] = Button.UP;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_S] = Button.DOWN;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_W] = Button.LEFT;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_E] = Button.RIGHT;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.TOUCH] = Button.SUBMIT;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_S] = this.scene.abSwapped ? Button.CANCEL : Button.ACTION;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.SELECT] = Button.STATS;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.START] = Button.MENU;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RB] = Button.RB;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LB] = Button.LB;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LT] = Button.CYCLE_GENDER;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RT] = Button.CYCLE_ABILITY;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_W] = Button.CYCLE_NATURE;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_N] = Button.CYCLE_VARIANT;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LS] = Button.SPEED_UP;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RS] = Button.SLOW_DOWN;
 
         return gamepadMapping;
     }
 
     gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
+        if (!this.chosenGamepad)
+            this.setChosenGamepad(pad.id);
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.chosenGamepad.toLowerCase()) return;
         const actionMapping = this.getActionGamepadMapping();
         const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
@@ -198,7 +243,7 @@ export class InputsController {
     }
 
     gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-        if (!this.gamepadSupport || pad.id.toLowerCase() !== this.chosenGamepad.toLowerCase()) return;
+        if (!this.gamepadSupport || pad.id !== this.chosenGamepad) return;
         const actionMapping = this.getActionGamepadMapping();
         const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
         if (buttonUp !== undefined) {

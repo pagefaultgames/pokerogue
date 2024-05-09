@@ -357,3 +357,10 @@ export function rgbHexToRgba(hex: string) {
 export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
+
+export function truncateString(str: String, maxLength: number = 10) {
+    if (str.length > maxLength) {
+        return str.slice(0, maxLength - 3) + "..."; // Subtract 3 to accommodate the ellipsis
+    }
+    return str;
+}
