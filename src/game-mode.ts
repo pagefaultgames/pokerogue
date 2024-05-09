@@ -46,11 +46,10 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * Returns either: 
+   * @returns either: 
    * - override from overrides.ts
    * - 20 for Daily Runs
    * - 5 for all other modes
-   * @returns starting level
    */
   getStartingLevel(): integer {
     if (Overrides.STARTING_LEVEL_OVERRIDE)
@@ -63,10 +62,22 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * @returns either:
+   * - override from overrides.ts
+   * - 1000
+   */
   getStartingMoney(): integer {
     return Overrides.STARTING_MONEY_OVERRIDE || 1000;
   }
 
+  /**
+   * @param scene current BattleScene
+   * @returns either:
+   * - random biome for Daily mode
+   * - override from overrides.ts
+   * - Town
+   */
   getStartingBiome(scene: BattleScene): Biome {
     switch (this.modeId) {
       case GameModes.DAILY:
