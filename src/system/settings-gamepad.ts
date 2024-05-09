@@ -64,16 +64,12 @@ function truncateString(str: String, maxLength: number = 10) {
     return str;
 }
 
-export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer, gamepads?: Array<String>): boolean {
+export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
     switch (setting) {
         case SettingGamepad.Gamepad_Support:
-            console.log('setting:', setting, settingGamepadOptions[setting][value]);
             scene.inputController.setGamepadSupport(settingGamepadOptions[setting][value] !== 'Disabled');
             break;
         case SettingGamepad.Swap_A_and_B:
-            console.log('settingGamepadOptions[setting][value]:', settingGamepadOptions[setting][value]);
-            console.log('settingGamepadOptions[setting]:', settingGamepadOptions[setting]);
-            console.log('value:', value);
             scene.abSwapped = settingGamepadOptions[setting][value] !== 'Disabled';
             break;
         // case SettingGamepad.Button_Action:
@@ -92,7 +88,8 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
         //   break;
         case SettingGamepad.Default_Controller:
             if (value) {
-                if (scene.ui && gamepads) {
+                const gp = scene.inputController.getGamepadsName();
+                if (scene.ui && gp) {
                     const cancelHandler = () => {
                         scene.ui.revertMode();
                         (scene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(SettingGamepad.Default_Controller), 0, true);
@@ -105,7 +102,7 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
                         return true;
                     };
                     scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-                        options: [...gamepads.map((g) => ({label: truncateString(g, 30), handler: () => changeGamepadHandler(g)})), {
+                        options: [...gp.map((g) => ({label: truncateString(g, 30), handler: () => changeGamepadHandler(g)})), {
                             label: 'Cancel',
                             handler: cancelHandler,
                         }]

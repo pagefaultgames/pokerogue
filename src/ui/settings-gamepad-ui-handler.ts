@@ -116,7 +116,6 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         super.show(args);
 
         const settings: object = localStorage.hasOwnProperty('settingsGamepad') ? JSON.parse(localStorage.getItem('settingsGamepad')) : {};
-        console.log('from here');
         Object.keys(settingGamepadDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingGamepadDefaults[setting]));
 
         this.settingsContainer.setVisible(true);

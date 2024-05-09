@@ -39,7 +39,7 @@ export class InputsController {
     private gamepadSupport: boolean = true;
 
     public customGamepadMapping = new Map();
-    public chosenGamepad;
+    public chosenGamepad: String;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -74,7 +74,6 @@ export class InputsController {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
                 this.refreshGamepads();
                 this.setupGamepad(thisGamepad);
-                this.populateSetting();
             }, this);
 
             // Check to see if the gamepad has already been setup by the browser
@@ -108,6 +107,7 @@ export class InputsController {
     }
 
     setChosenGamepad(gamepad: String): void {
+        this.deactivatePressedKey();
         this.chosenGamepad = gamepad;
     }
 
@@ -119,7 +119,10 @@ export class InputsController {
                 this.repeatInputDurationJustPassed(b) &&
                 this.interactions[b].isPressed
             ) {
-                if (!this.gamepadSupport && this.interactions[b].source === 'gamepad') {
+                if (
+                    (!this.gamepadSupport && this.interactions[b].source === 'gamepad') ||
+                    (this.interactions[b].sourceName !== null && this.interactions[b].sourceName !== this.chosenGamepad)
+                ) {
                     this.delLastProcessedMovementTime(b);
                     return;
                 }
@@ -127,22 +130,23 @@ export class InputsController {
                     controller_type: this.interactions[b].source,
                     button: b,
                 });
-                this.setLastProcessedMovementTime(b, this.interactions[b].source);
+                this.setLastProcessedMovementTime(b, this.interactions[b].source, this.interactions[b].sourceName);
             }
         }
     }
 
-    populateSetting(): void {
-        const gamepadsName = this.gamepads.map(g => g.id);
-        localStorage.setItem('gamepadsConnected', JSON.stringify(gamepadsName));
-        if (!this.chosenGamepad) this.chosenGamepad = gamepadsName[0];
-        localStorage.setItem('chosenGamepad', this.chosenGamepad);
+    getGamepadsName(): Array<String> {
+        return this.gamepads.map(g => g.id);
     }
 
     setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
         let gamepadID = this.chosenGamepad?.toLowerCase() || thisGamepad.id.toLowerCase();
         const mappedPad = this.mapGamepad(gamepadID);
         this.player['mapping'] = mappedPad.gamepadMapping;
+        if (!this.chosenGamepad) {
+            this.chosenGamepad = thisGamepad.id;
+            localStorage.setItem('chosenGamepad', this.chosenGamepad);
+        }
     }
 
     refreshGamepads(): void {
@@ -189,7 +193,7 @@ export class InputsController {
                 controller_type: 'gamepad',
                 button: buttonDown,
             });
-            this.setLastProcessedMovementTime(buttonDown, 'gamepad');
+            this.setLastProcessedMovementTime(buttonDown, 'gamepad', pad.id);
         }
     }
 
@@ -289,12 +293,13 @@ export class InputsController {
         }
     }
 
-    setLastProcessedMovementTime(button: Button, source: String = 'keyboard'): void {
+    setLastProcessedMovementTime(button: Button, source: String = 'keyboard', sourceName: String): void {
         if (!this.interactions.hasOwnProperty(button)) return;
         this.setButtonLock(button);
         this.interactions[button].pressTime = this.time.now;
         this.interactions[button].isPressed = true;
         this.interactions[button].source = source;
+        this.interactions[button].sourceName = sourceName;
     }
 
     delLastProcessedMovementTime(button: Button): void {
@@ -303,6 +308,7 @@ export class InputsController {
         this.interactions[button].pressTime = null;
         this.interactions[button].isPressed = false;
         this.interactions[button].source = null;
+        this.interactions[button].sourceName = null;
     }
 
     deactivatePressedKey(): void {
@@ -313,6 +319,7 @@ export class InputsController {
                 this.interactions[b].pressTime = null;
                 this.interactions[b].isPressed = false;
                 this.interactions[b].source = null;
+                this.interactions[b].sourceName = null;
             }
         }
     }
