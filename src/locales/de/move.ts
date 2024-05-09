@@ -2,44 +2,44 @@ import { MoveTranslationEntries } from "#app/plugins/i18n";
 
 export const move: MoveTranslationEntries = {
   "pound": {
-    name: "Pound",
-    effect: "The target is physically pounded with a long tail, a foreleg, or the like."
+    name: "Klaps",
+    effect: "Ein Hieb mit den Vorderbeinen oder dem Schweif."
   },
   "karateChop": {
-    name: "Karate Chop",
-    effect: "The target is attacked with a sharp chop. Critical hits land more easily."
+    name: "Karateschlag",
+    effect: "Gute Möglichkeit, einen Volltreffer zu landen."
   },
   "doubleSlap": {
-    name: "Double Slap",
-    effect: "The target is slapped repeatedly, back and forth, two to five times in a row."
+    name: "Duplexhieb",
+    effect: "Trifft das Ziel zwei- bis fünfmal hintereinander mit einem Duplexhieb."
   },
   "cometPunch": {
-    name: "Comet Punch",
-    effect: "The target is hit with a flurry of punches that strike two to five times in a row."
+    name: "Kometenhieb",
+    effect: "Trifft das Ziel zwei- bis fünfmal hintereinander mit kräftigen Hieben."
   },
   "megaPunch": {
-    name: "Mega Punch",
-    effect: "The target is slugged by a punch thrown with muscle-packed power."
+    name: "Megahieb",
+    effect: "Ein unglaublich kräftiger Hieb."
   },
   "payDay": {
-    name: "Pay Day",
-    effect: "Numerous coins are hurled at the target to inflict damage. Money is earned after the battle."
+    name: "Zahltag",
+    effect: "Das Ziel wird mit Münzen beworfen. Das Geld wird nach dem Kampf aufgesammelt."
   },
   "firePunch": {
-    name: "Fire Punch",
-    effect: "The target is punched with a fiery fist. This may also leave the target with a burn."
+    name: "Feuerschlag",
+    effect: "Feuriger Schlag, der dem Ziel eventuell Verbrennungen zufügt."
   },
   "icePunch": {
-    name: "Ice Punch",
-    effect: "The target is punched with an icy fist. This may also leave the target frozen."
+    name: "Eishieb",
+    effect: "Ein eisiger Schlag, der das Ziel eventuell einfriert."
   },
   "thunderPunch": {
-    name: "Thunder Punch",
-    effect: "The target is punched with an electrified fist. This may also leave the target with paralysis."
+    name: "Donnerschlag",
+    effect: "Ein elektrischer Schlag, der das Ziel eventuell paralysiert."
   },
   "scratch": {
-    name: "Scratch",
-    effect: "Hard, pointed, sharp claws rake the target to inflict damage."
+    name: "Kratzer",
+    effect: "Das Ziel wird mit scharfen Klauen zerkratzt."
   },
   "viseGrip": {
     name: "Vise Grip",
@@ -47,3263 +47,3263 @@ export const move: MoveTranslationEntries = {
   },
   "guillotine": {
     name: "Guillotine",
-    effect: "A vicious, tearing attack with big pincers. The target faints instantly if this attack hits."
+    effect: "Kräftige Scheren-Attacke. Führt beim Ziel sofort zum K.O."
   },
   "razorWind": {
-    name: "Razor Wind",
-    effect: "In this two-turn attack, blades of wind hit opposing Pokémon on the second turn. Critical hits land more easily."
+    name: "Klingensturm",
+    effect: "Eine Attacke, die über zwei Runden geht. Hohe Volltrefferquote."
   },
   "swordsDance": {
-    name: "Swords Dance",
-    effect: "A frenetic dance to uplift the fighting spirit. This sharply raises the user's Attack stat."
+    name: "Schwerttanz",
+    effect: "Ein wilder Kampftanz, der den eigenen Angriffs-Wert stark erhöht."
   },
   "cut": {
-    name: "Cut",
-    effect: "The target is cut with a scythe or claw."
+    name: "Zerschneider",
+    effect: "Ein Basisangriff mit Schere oder Klaue. Damit können kleine Bäume gefällt werden."
   },
   "gust": {
-    name: "Gust",
-    effect: "A gust of wind is whipped up by wings and launched at the target to inflict damage."
+    name: "Windstoß",
+    effect: "Trifft das Ziel mit einem Windstoß durch einen Flügelschlag."
   },
   "wingAttack": {
-    name: "Wing Attack",
-    effect: "The target is struck with large, imposing wings spread wide to inflict damage."
+    name: "Flügelschlag",
+    effect: "Trifft das Ziel mit ausgebreiteten Flügeln."
   },
   "whirlwind": {
-    name: "Whirlwind",
-    effect: "The target is blown away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    name: "Wirbelwind",
+    effect: "Weht das Ziel weg und ersetzt es durch ein anderes Pokémon. In der Wildnis endet der Kampf."
   },
   "fly": {
-    name: "Fly",
-    effect: "The user flies up into the sky and then strikes its target on the next turn."
+    name: "Fliegen",
+    effect: "Steigt in Runde 1 empor und trifft das Ziel in Runde 2."
   },
   "bind": {
-    name: "Bind",
-    effect: "Things such as long bodies or tentacles are used to bind and squeeze the target for four to five turns."
+    name: "Klammergriff",
+    effect: "Umklammert und quetscht das Ziel über vier bis fünf Runden."
   },
   "slam": {
     name: "Slam",
-    effect: "The target is slammed with a long tail, vines, or the like to inflict damage."
+    effect: "Schlag mit einem langen Schweif, einer Ranke oder Ähnlichem."
   },
   "vineWhip": {
-    name: "Vine Whip",
-    effect: "The target is struck with slender, whiplike vines to inflict damage."
+    name: "Rankenhieb",
+    effect: "Peitschenähnlicher Schlag mit Ranken."
   },
   "stomp": {
-    name: "Stomp",
-    effect: "The target is stomped with a big foot. This may also make the target flinch."
+    name: "Stampfer",
+    effect: "Stampfen mit dem Fuß. Das Ziel schreckt eventuell zurück."
   },
   "doubleKick": {
-    name: "Double Kick",
-    effect: "The target is quickly kicked twice in succession using both feet."
+    name: "Doppelkick",
+    effect: "Der Anwender tritt in einer Runde zweimal schnell zu."
   },
   "megaKick": {
-    name: "Mega Kick",
-    effect: "The target is attacked by a kick launched with muscle-packed power."
+    name: "Megakick",
+    effect: "Das Ziel wird mit einem extrem heftigen Tritt angegriffen."
   },
   "jumpKick": {
-    name: "Jump Kick",
-    effect: "The user jumps up high, then strikes with a kick. If the kick misses, the user hurts itself."
+    name: "Sprungkick",
+    effect: "Der Angreifer hüpft hoch und tritt zu. Bei Misserfolg schadet er sich selbst."
   },
   "rollingKick": {
-    name: "Rolling Kick",
-    effect: "The user lashes out with a quick, spinning kick. This may also make the target flinch."
+    name: "Fegekick",
+    effect: "Heftiger Tritt aus einer schnellen Drehbewegung. Lässt das Ziel eventuell zurückschrecken."
   },
   "sandAttack": {
-    name: "Sand Attack",
-    effect: "Sand is hurled in the target's face, reducing the target's accuracy."
+    name: "Sandwirbel",
+    effect: "Senkt Genauigkeit des Zieles, indem ihm Sand ins Gesicht geworfen wird."
   },
   "headbutt": {
-    name: "Headbutt",
-    effect: "The user sticks out its head and attacks by charging straight into the target. This may also make the target flinch."
+    name: "Kopfnuss",
+    effect: "Rammt das Ziel mit einer Kopfnuss. Ziel schreckt eventuell zurück."
   },
   "hornAttack": {
-    name: "Horn Attack",
-    effect: "The target is jabbed with a sharply pointed horn to inflict damage."
+    name: "Hornattacke",
+    effect: "Spießt das Ziel mit einem spitzen Horn auf."
   },
   "furyAttack": {
-    name: "Fury Attack",
-    effect: "The target is jabbed repeatedly with a horn or beak two to five times in a row."
+    name: "Furienschlag",
+    effect: "Spießt das Ziel zwei- bis fünfmal mit spitzem Horn oder Schnabel auf."
   },
   "hornDrill": {
-    name: "Horn Drill",
-    effect: "The user stabs the target with a horn that rotates like a drill. The target faints instantly if this attack hits."
+    name: "Hornbohrer",
+    effect: "K.O.-Attacke, bei der ein Horn als Bohrer eingesetzt wird."
   },
   "tackle": {
     name: "Tackle",
-    effect: "A physical attack in which the user charges and slams into the target with its whole body."
+    effect: "Trifft das Ziel mit vollem Körpereinsatz."
   },
   "bodySlam": {
-    name: "Body Slam",
-    effect: "The user drops onto the target with its full body weight. This may also leave the target with paralysis."
+    name: "Bodyslam",
+    effect: "Trifft das Ziel mit vollem Körpereinsatz. Bewirkt eventuell Paralyse."
   },
   "wrap": {
-    name: "Wrap",
-    effect: "A long body, vines, or the like are used to wrap and squeeze the target for four to five turns."
+    name: "Wickel",
+    effect: "Umwickelt das Ziel über vier bis fünf Runden mit Ranken oder Ähnlichem und fügt ihm Schaden zu."
   },
   "takeDown": {
-    name: "Take Down",
-    effect: "A reckless, full-body charge attack for slamming into the target. This also damages the user a little."
+    name: "Bodycheck",
+    effect: "Rücksichtslose Attacke, bei der sich der Angreifer selbst leicht verletzt."
   },
   "thrash": {
-    name: "Thrash",
-    effect: "The user rampages and attacks for two to three turns. The user then becomes confused."
+    name: "Fuchtler",
+    effect: "Attacke über zwei bis drei Runden, die den Angreifer verwirrt."
   },
   "doubleEdge": {
-    name: "Double-Edge",
-    effect: "A reckless, life-risking tackle in which the user rushes the target. This also damages the user quite a lot."
+    name: "Risikotackle",
+    effect: "Lebensgefährlicher Angriff, bei dem sich der Angreifer selbst verletzt."
   },
   "tailWhip": {
-    name: "Tail Whip",
-    effect: "The user wags its tail cutely, making opposing Pokémon less wary and lowering their Defense stats."
+    name: "Rutenschlag",
+    effect: "Hieb mit dem Schweif. Senkt die Verteidigung des Zieles."
   },
   "poisonSting": {
-    name: "Poison Sting",
-    effect: "The user stabs the target with a poisonous stinger. This may also poison the target."
+    name: "Giftstachel",
+    effect: "Angriff mit Giftstachel. Das Ziel wird eventuell vergiftet."
   },
   "twineedle": {
-    name: "Twineedle",
-    effect: "The user damages the target twice in succession by jabbing it with two spikes. This may also poison the target."
+    name: "Duonadel",
+    effect: "Stacheln treffen das Ziel zweimal. Das Ziel wird eventuell vergiftet."
   },
   "pinMissile": {
-    name: "Pin Missile",
-    effect: "Sharp spikes are shot at the target in rapid succession. They hit two to five times in a row."
+    name: "Nadelrakete",
+    effect: "Spitze Nadeln treffen das Ziel zwei- bis fünfmal hintereinander."
   },
   "leer": {
-    name: "Leer",
-    effect: "The user gives opposing Pokémon an intimidating leer that lowers the Defense stat."
+    name: "Silberblick",
+    effect: "Gegnerischer Verteidigungs-Wert wird durch angsteinflößenden Blick gesenkt."
   },
   "bite": {
-    name: "Bite",
-    effect: "The target is bitten with viciously sharp fangs. This may also make the target flinch."
+    name: "Biss",
+    effect: "Beißt zu und lässt das Ziel eventuell zurückschrecken."
   },
   "growl": {
-    name: "Growl",
-    effect: "The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats."
+    name: "Heuler",
+    effect: "Der Anwender nimmt das Ziel für sich ein und senkt dessen Angriffs-Wert."
   },
   "roar": {
-    name: "Roar",
-    effect: "The target is scared off, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    name: "Brüller",
+    effect: "Verjagt das Ziel und ersetzt es durch ein anderes Pokémon. Beendet den Kampf in der Wildnis."
   },
   "sing": {
-    name: "Sing",
-    effect: "A soothing lullaby is sung in a calming voice that puts the target into a deep slumber."
+    name: "Gesang",
+    effect: "Ein Lied, das das Ziel in tiefen Schlaf versetzt."
   },
   "supersonic": {
-    name: "Supersonic",
-    effect: "The user generates odd sound waves from its body that confuse the target."
+    name: "Superschall",
+    effect: "Ausstoß bizarrer Schallwellen. Das Ziel wird verwirrt."
   },
   "sonicBoom": {
-    name: "Sonic Boom",
-    effect: "The target is hit with a destructive shock wave that always inflicts 20 HP damage."
+    name: "Ultraschall",
+    effect: "Das Ziel wird von einer Schockwelle getroffen, die stets 20 KP Schaden anrichtet."
   },
   "disable": {
-    name: "Disable",
-    effect: "For four turns, this move prevents the target from using the move it last used."
+    name: "Aussetzer",
+    effect: "Die zuletzt eingesetzte Attacke des Zieles wird für mehrere Runden blockiert."
   },
   "acid": {
-    name: "Acid",
-    effect: "Opposing Pokémon are attacked with a spray of harsh acid. This may also lower their Sp. Def stats."
+    name: "Säure",
+    effect: "Versprüht ätzende Flüssigkeit, die eventuell die Spezial-Verteidigung der Gegner in der Nähe des Anwenders senkt."
   },
   "ember": {
-    name: "Ember",
-    effect: "The target is attacked with small flames. This may also leave the target with a burn."
+    name: "Glut",
+    effect: "Schwache Feuer-Attacke, durch die das Ziel eventuell Verbrennungen erleidet."
   },
   "flamethrower": {
-    name: "Flamethrower",
-    effect: "The target is scorched with an intense blast of fire. This may also leave the target with a burn."
+    name: "Flammenwurf",
+    effect: "Starke Feuer-Attacke, durch die das Ziel eventuell Verbrennungen erleidet."
   },
   "mist": {
-    name: "Mist",
-    effect: "The user cloaks itself and its allies in a white mist that prevents any of their stats from being lowered for five turns."
+    name: "Weißnebel",
+    effect: "Anwender schützt das Team mit einem Nebel. Verhindert Statussenkungen für fünf Runden."
   },
   "waterGun": {
-    name: "Water Gun",
-    effect: "The target is blasted with a forceful shot of water."
+    name: "Aquaknarre",
+    effect: "Das Ziel wird mit Wasser bespritzt."
   },
   "hydroPump": {
-    name: "Hydro Pump",
-    effect: "The target is blasted by a huge volume of water launched under great pressure."
+    name: "Hydropumpe",
+    effect: "Spritzt eine Menge Wasser mit Hochdruck auf das Ziel."
   },
   "surf": {
-    name: "Surf",
-    effect: "The user attacks everything around it by swamping its surroundings with a giant wave."
+    name: "Surfer",
+    effect: "Eine Welle bricht über alle Pokémon in der Nähe des Anwenders herein."
   },
   "iceBeam": {
-    name: "Ice Beam",
-    effect: "The target is struck with an icy-cold beam of energy. This may also leave the target frozen."
+    name: "Eisstrahl",
+    effect: "Das Ziel wird von einem Eisstrahl getroffen und friert eventuell ein."
   },
   "blizzard": {
     name: "Blizzard",
-    effect: "A howling blizzard is summoned to strike opposing Pokémon. This may also leave the opposing Pokémon frozen."
+    effect: "Ein Schneesturm wütet, der das Ziel einfrieren kann."
   },
   "psybeam": {
-    name: "Psybeam",
-    effect: "The target is attacked with a peculiar ray. This may also leave the target confused."
+    name: "Psystrahl",
+    effect: "Feuert einen Strahl ab, der das Ziel verwirren kann."
   },
   "bubbleBeam": {
-    name: "Bubble Beam",
-    effect: "A spray of bubbles is forcefully ejected at the target. This may also lower the target's Speed stat."
+    name: "Blubbstrahl",
+    effect: "Versprüht Blasen, die eventuell den Initiative-Wert des Zieles senken."
   },
   "auroraBeam": {
-    name: "Aurora Beam",
-    effect: "The target is hit with a rainbow-colored beam. This may also lower the target's Attack stat."
+    name: "Aurorastrahl",
+    effect: "Regenbogenfarbener Strahl, der eventuell den Angriffs-Wert des Zieles senkt."
   },
   "hyperBeam": {
-    name: "Hyper Beam",
-    effect: "The target is attacked with a powerful beam. The user can't move on the next turn."
+    name: "Hyperstrahl",
+    effect: "Starke Attacke, die den Anwender zwingt, eine Runde auszusetzen."
   },
   "peck": {
-    name: "Peck",
-    effect: "The target is jabbed with a sharply pointed beak or horn."
+    name: "Pikser",
+    effect: "Greift das Ziel mit dem Schnabel oder Horn an."
   },
   "drillPeck": {
-    name: "Drill Peck",
-    effect: "A corkscrewing attack that strikes the target with a sharp beak acting as a drill."
+    name: "Bohrschnabel",
+    effect: "Korkenzieherangriff, bei dem der Schnabel als Bohrer dient."
   },
   "submission": {
-    name: "Submission",
-    effect: "The user grabs the target and recklessly dives for the ground. This also damages the user a little."
+    name: "Überroller",
+    effect: "Harte Körperattacke, bei der sich der Angreifer selbst leicht verletzt."
   },
   "lowKick": {
-    name: "Low Kick",
-    effect: "A powerful low kick that makes the target fall over. The heavier the target, the greater the move's power."
+    name: "Fußkick",
+    effect: "Ein Tritt, der das Ziel umwirft. Je schwerer das Ziel ist, desto mehr Schaden fügt ihm die Attacke zu."
   },
   "counter": {
-    name: "Counter",
-    effect: "A retaliation move that counters any physical attack, inflicting double the damage taken."
+    name: "Konter",
+    effect: "Kontert physische Treffer und fügt dem Ziel das Doppelte des Schadens zu, den der Anwender erlitten hat."
   },
   "seismicToss": {
-    name: "Seismic Toss",
-    effect: "The target is thrown using the power of gravity. It inflicts damage equal to the user's level."
+    name: "Geowurf",
+    effect: "Ziel wird mit der Kraft der Gravitation umgeworfen. Richtet Schaden gemäß Level des Angreifers an."
   },
   "strength": {
-    name: "Strength",
-    effect: "The target is slugged with a punch thrown at maximum power."
+    name: "Stärke",
+    effect: "Das Ziel wird extrem stark getroffen. Macht Verschieben von Felsen möglich."
   },
   "absorb": {
-    name: "Absorb",
-    effect: "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target."
+    name: "Absorber",
+    effect: "Attacke, die die Hälfte des Schadens absorbiert."
   },
   "megaDrain": {
-    name: "Mega Drain",
-    effect: "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target."
+    name: "Megasauger",
+    effect: "Attacke, die die Hälfte des Schadens absorbiert."
   },
   "leechSeed": {
-    name: "Leech Seed",
-    effect: "A seed is planted on the target. It steals some HP from the target every turn."
+    name: "Egelsamen",
+    effect: "Ziel wird bepflanzt und verliert jede Runde KP, die ein Pokémon aus dem Team des Anwenders heilen."
   },
   "growth": {
-    name: "Growth",
-    effect: "The user's body grows all at once, raising the Attack and Sp. Atk stats."
+    name: "Wachstum",
+    effect: "Der Körper wächst. Dadurch steigen Angriff und Spezial-Angriff."
   },
   "razorLeaf": {
-    name: "Razor Leaf",
-    effect: "Sharp-edged leaves are launched to slash at opposing Pokémon. Critical hits land more easily."
+    name: "Rasierblatt",
+    effect: "Trifft das Ziel mit Blättern. Hohe Volltrefferquote."
   },
   "solarBeam": {
-    name: "Solar Beam",
-    effect: "In this two-turn attack, the user gathers light, then blasts a bundled beam on the next turn."
+    name: "Solarstrahl",
+    effect: "Absorbiert Licht in Runde 1. In Runde 2 erfolgt der Angriff."
   },
   "poisonPowder": {
-    name: "Poison Powder",
-    effect: "The user scatters a cloud of poisonous dust that poisons the target."
+    name: "Giftpuder",
+    effect: "Verstreut giftigen Puder auf das Ziel."
   },
   "stunSpore": {
-    name: "Stun Spore",
-    effect: "The user scatters a cloud of numbing powder that paralyzes the target."
+    name: "Stachelspore",
+    effect: "Verstreut lähmenden Puder."
   },
   "sleepPowder": {
-    name: "Sleep Powder",
-    effect: "The user scatters a big cloud of sleep-inducing dust around the target."
+    name: "Schlafpuder",
+    effect: "Verstreut Schlafpuder, der das Ziel eventuell in Schlaf versetzt."
   },
   "petalDance": {
-    name: "Petal Dance",
-    effect: "The user attacks the target by scattering petals for two to three turns. The user then becomes confused."
+    name: "Blättertanz",
+    effect: "Angriff mit Blütenblättern für zwei bis drei Runden. Angreifer wird verwirrt."
   },
   "stringShot": {
-    name: "String Shot",
-    effect: "Opposing Pokémon are bound with silk blown from the user's mouth that harshly lowers the Speed stat."
+    name: "Fadenschuss",
+    effect: "Umwickelt Ziele in der Nähe mit Fäden aus dem Mund und senkt den Initiative-Wert."
   },
   "dragonRage": {
-    name: "Dragon Rage",
-    effect: "This attack hits the target with a shock wave of pure rage. This attack always inflicts 40 HP damage."
+    name: "Drachenwut",
+    effect: "Stößt eine wutgeladene Schockwelle aus, die stets 40 KP Schaden anrichtet."
   },
   "fireSpin": {
-    name: "Fire Spin",
-    effect: "The target becomes trapped within a fierce vortex of fire that rages for four to five turns."
+    name: "Feuerwirbel",
+    effect: "Das Ziel wird für vier bis fünf Runden in einem Feuerkreis gefangen."
   },
   "thunderShock": {
-    name: "Thunder Shock",
-    effect: "A jolt of electricity crashes down on the target to inflict damage. This may also leave the target with paralysis."
+    name: "Donnerschock",
+    effect: "Eine Elektro-Attacke, die das Ziel eventuell paralysiert."
   },
   "thunderbolt": {
-    name: "Thunderbolt",
-    effect: "A strong electric blast crashes down on the target. This may also leave the target with paralysis."
+    name: "Donnerblitz",
+    effect: "Eine starke Elektro-Attacke, die das Ziel eventuell paralysiert."
   },
   "thunderWave": {
-    name: "Thunder Wave",
-    effect: "The user launches a weak jolt of electricity that paralyzes the target."
+    name: "Donnerwelle",
+    effect: "Ein schwacher Stromstoß, der das Ziel paralysiert."
   },
   "thunder": {
-    name: "Thunder",
-    effect: "A wicked thunderbolt is dropped on the target to inflict damage. This may also leave the target with paralysis."
+    name: "Donner",
+    effect: "Eine verheerende Elektro-Attacke, die das Ziel eventuell paralysiert."
   },
   "rockThrow": {
-    name: "Rock Throw",
-    effect: "The user picks up and throws a small rock at the target to attack."
+    name: "Steinwurf",
+    effect: "Das Ziel wird mit einem kleinen Stein beworfen."
   },
   "earthquake": {
-    name: "Earthquake",
-    effect: "The user sets off an earthquake that strikes every Pokémon around it."
+    name: "Erdbeben",
+    effect: "Ein mächtiges Beben, das die anderen Pokémon in der Nähe des Anwenders trifft."
   },
   "fissure": {
-    name: "Fissure",
-    effect: "The user opens up a fissure in the ground and drops the target in. The target faints instantly if this attack hits."
+    name: "Geofissur",
+    effect: "Das Ziel wird in eine Erdspalte geworfen. Ist die Attacke erfolgreich, führt sie zu einem K.O."
   },
   "dig": {
-    name: "Dig",
-    effect: "The user burrows into the ground, then attacks on the next turn."
+    name: "Schaufler",
+    effect: "In Runde 1 gräbt sich der Anwender ein und in Runde 2 greift er an. Macht Flucht aus Höhlen möglich."
   },
   "toxic": {
-    name: "Toxic",
-    effect: "A move that leaves the target badly poisoned. Its poison damage worsens every turn."
+    name: "Toxin",
+    effect: "Vergiftet das Ziel mit einem potenten Toxin schwer. Vergiftung wird von Runde zu Runde stärker."
   },
   "confusion": {
-    name: "Confusion",
-    effect: "The target is hit by a weak telekinetic force. This may also confuse the target."
+    name: "Konfusion",
+    effect: "Das Ziel wird von schwacher telekinetischer Energie getroffen und eventuell verwirrt."
   },
   "psychic": {
-    name: "Psychic",
-    effect: "The target is hit by a strong telekinetic force. This may also lower the target's Sp. Def stat."
+    name: "Psychokinese",
+    effect: "Starke Psycho-Attacke, die eventuell die Spezial-Verteidigung des Zieles senkt."
   },
   "hypnosis": {
-    name: "Hypnosis",
-    effect: "The user employs hypnotic suggestion to make the target fall into a deep sleep."
+    name: "Hypnose",
+    effect: "Hypnose-Attacke, die das Ziel in Schlaf versetzt."
   },
   "meditate": {
-    name: "Meditate",
-    effect: "The user meditates to awaken the power deep within its body and raise its Attack stat."
+    name: "Meditation",
+    effect: "Anwender aktiviert Kräfte, die tief in seinem Inneren schlummern, und steigert so seinen Angriffs-Wert."
   },
   "agility": {
-    name: "Agility",
-    effect: "The user relaxes and lightens its body to move faster. This sharply raises the Speed stat."
+    name: "Agilität",
+    effect: "Entspannt den Körper, um den Initiative-Wert stark zu steigern."
   },
   "quickAttack": {
-    name: "Quick Attack",
-    effect: "The user lunges at the target at a speed that makes it almost invisible. This move always goes first."
+    name: "Ruckzuckhieb",
+    effect: "Sehr schneller Angriff mit Erstschlaggarantie."
   },
   "rage": {
-    name: "Rage",
-    effect: "As long as this move is in use, the power of rage raises the Attack stat each time the user is hit in battle."
+    name: "Raserei",
+    effect: "Erhöht Angriff des Anwenders, wenn dieser getroffen wird, solange die Attacke aktiviert ist."
   },
   "teleport": {
     name: "Teleport",
-    effect: "The user switches places with a party Pokémon in waiting, if any. If a wild Pokémon uses this move, it flees."
+    effect: "Der Anwender tauscht den Platz mit einem anderen Team-Mitglied, sofern vorhanden. Setzen wilde Pokémon die Attacke ein, ergreifen diese die Flucht."
   },
   "nightShade": {
-    name: "Night Shade",
-    effect: "The user makes the target see a frightening mirage. It inflicts damage equal to the user's level."
+    name: "Nachtnebel",
+    effect: "Das Ziel sieht eine Illusion. Richtet Schaden gemäß dem Level des Anwenders an."
   },
   "mimic": {
-    name: "Mimic",
-    effect: "The user copies the target's last move. The move can be used during battle until the Pokémon is switched out."
+    name: "Mimikry",
+    effect: "Kopiert die zuvor ausgeführte Attacke des Zieles. Kann im Kampf bis zur Auswechslung verwendet werden."
   },
   "screech": {
-    name: "Screech",
-    effect: "An earsplitting screech harshly lowers the target's Defense stat."
+    name: "Kreideschrei",
+    effect: "Stößt einen Schrei aus, um die Verteidigung des Zieles stark zu senken."
   },
   "doubleTeam": {
-    name: "Double Team",
-    effect: "By moving rapidly, the user makes illusory copies of itself to raise its evasiveness."
+    name: "Doppelteam",
+    effect: "Erzeugt durch schnelle Bewegungen Ebenbilder, um den Fluchtwert zu erhöhen."
   },
   "recover": {
-    name: "Recover",
-    effect: "Restoring its own cells, the user restores its own HP by half of its max HP."
+    name: "Genesung",
+    effect: "Eine Selbstheilung. KP des Anwenders werden um 50 % des maximalen Wertes aufgefüllt."
   },
   "harden": {
-    name: "Harden",
-    effect: "The user stiffens all the muscles in its body to raise its Defense stat."
+    name: "Härtner",
+    effect: "Stärkt die Muskulatur und erhöht den Verteidigungs-Wert."
   },
   "minimize": {
-    name: "Minimize",
-    effect: "The user compresses its body to make itself look smaller, which sharply raises its evasiveness."
+    name: "Komprimator",
+    effect: "Anwender schrumpft, um seinen Fluchtwert stark zu erhöhen."
   },
   "smokescreen": {
-    name: "Smokescreen",
-    effect: "The user releases an obscuring cloud of smoke or ink. This lowers the target's accuracy."
+    name: "Rauchwolke",
+    effect: "Senkt Genauigkeit des Zieles mit Rauch, Tinte oder Ähnlichem."
   },
   "confuseRay": {
-    name: "Confuse Ray",
-    effect: "The target is exposed to a sinister ray that triggers confusion."
+    name: "Konfusstrahl",
+    effect: "Ein fieser Strahl, der das Ziel verwirrt."
   },
   "withdraw": {
-    name: "Withdraw",
-    effect: "The user withdraws its body into its hard shell, raising its Defense stat."
+    name: "Panzerschutz",
+    effect: "Rückzug in den harten Panzer. Erhöht den Verteidigungs-Wert."
   },
   "defenseCurl": {
-    name: "Defense Curl",
-    effect: "The user curls up to conceal weak spots and raise its Defense stat."
+    name: "Einigler",
+    effect: "Verbirgt Schwächen durch Einrollen und hebt gleichzeitig den Verteidigungs-Wert."
   },
   "barrier": {
-    name: "Barrier",
-    effect: "The user throws up a sturdy wall that sharply raises its Defense stat."
+    name: "Barriere",
+    effect: "Erzeugt eine Barriere, die den Verteidigungs-Wert stark erhöht."
   },
   "lightScreen": {
-    name: "Light Screen",
-    effect: "A wondrous wall of light is put up to reduce damage from special attacks for five turns."
+    name: "Lichtschild",
+    effect: "Erzeugt eine Lichtwand und senkt den Schaden durch Spezial-Angriffe für fünf Runden."
   },
   "haze": {
-    name: "Haze",
-    effect: "The user creates a haze that eliminates every stat change among all the Pokémon engaged in battle."
+    name: "Dunkelnebel",
+    effect: "Erzeugt einen dunklen Nebel. Alle Veränderungen der Statuswerte der Kampfteilnehmer werden annulliert."
   },
   "reflect": {
-    name: "Reflect",
-    effect: "A wondrous wall of light is put up to reduce damage from physical attacks for five turns."
+    name: "Reflektor",
+    effect: "Eine mysteriöse Wand, die fünf Runden den Schaden von physischen gegnerischen Treffern reduziert."
   },
   "focusEnergy": {
-    name: "Focus Energy",
-    effect: "The user takes a deep breath and focuses so that critical hits land more easily."
+    name: "Energiefokus",
+    effect: "Anwender atmet ein und bündelt Kraft. Die Volltrefferquote steigt dadurch."
   },
   "bide": {
-    name: "Bide",
-    effect: "The user endures attacks for two turns, then strikes back to cause double the damage taken."
+    name: "Geduld",
+    effect: "Erträgt zwei Runden Angriffe und schlägt dann mit dem doppelten Wert des erlittenen Schadens zurück."
   },
   "metronome": {
-    name: "Metronome",
-    effect: "The user waggles a finger and stimulates its brain into randomly using nearly any move."
+    name: "Metronom",
+    effect: "Bewegt Finger, um das Gehirn zu stimulieren. Wählt zufällig eine Attacke aus."
   },
   "mirrorMove": {
-    name: "Mirror Move",
-    effect: "The user counters the target by mimicking the target's last move."
+    name: "Spiegeltrick",
+    effect: "Kopiert die letzte Attacke des Zieles und greift es an."
   },
   "selfDestruct": {
-    name: "Self-Destruct",
-    effect: "The user attacks everything around it by causing an explosion. The user faints upon using this move."
+    name: "Finale",
+    effect: "Anwender sprengt sich, richtet rundum Riesenschaden an und wird dabei besiegt."
   },
   "eggBomb": {
-    name: "Egg Bomb",
-    effect: "A large egg is hurled at the target with maximum force to inflict damage."
+    name: "Eierbombe",
+    effect: "Ein großes Ei wird auf das Ziel abgefeuert, um ihm zu schaden."
   },
   "lick": {
-    name: "Lick",
-    effect: "The target is licked with a long tongue, causing damage. This may also leave the target with paralysis."
+    name: "Schlecker",
+    effect: "Leck-Attacke mit langer Zunge. Das Ziel wird eventuell paralysiert."
   },
   "smog": {
     name: "Smog",
-    effect: "The target is attacked with a discharge of filthy gases. This may also poison the target."
+    effect: "Angriff mit Gas. Das Ziel kann eventuell vergiftet werden."
   },
   "sludge": {
-    name: "Sludge",
-    effect: "Unsanitary sludge is hurled at the target. This may also poison the target."
+    name: "Schlammbad",
+    effect: "Wirft Schlamm auf das Ziel. Dieses wird eventuell vergiftet."
   },
   "boneClub": {
-    name: "Bone Club",
-    effect: "The user clubs the target with a bone. This may also make the target flinch."
+    name: "Knochenkeule",
+    effect: "Schlägt das Ziel mit einer Keule und lässt es eventuell zurückschrecken."
   },
   "fireBlast": {
-    name: "Fire Blast",
-    effect: "The target is attacked with an intense blast of all-consuming fire. This may also leave the target with a burn."
+    name: "Feuersturm",
+    effect: "Feuersbrunst, die das Ziel versengt und ihm eventuell eine Verbrennung zufügt."
   },
   "waterfall": {
-    name: "Waterfall",
-    effect: "The user charges at the target and may make it flinch."
+    name: "Kaskade",
+    effect: "Eine mächtige Attacke, durch die das Ziel eventuell zurückschreckt."
   },
   "clamp": {
-    name: "Clamp",
-    effect: "The target is clamped and squeezed by the user's very thick and sturdy shell for four to five turns."
+    name: "Schnapper",
+    effect: "Fängt und quetscht das Ziel über vier bis fünf Runden durch die harte Schale des Anwenders."
   },
   "swift": {
-    name: "Swift",
-    effect: "Star-shaped rays are shot at opposing Pokémon. This attack never misses."
+    name: "Sternschauer",
+    effect: "Verschießt sternförmige Strahlen, die stets treffen, auf Ziele in der Umgebung."
   },
   "skullBash": {
-    name: "Skull Bash",
-    effect: "The user tucks in its head to raise its Defense stat on the first turn, then rams the target on the next turn."
+    name: "Schädelwumme",
+    effect: "Der Anwender erhöht in Runde 1 seine Verteidigung und greift in Runde 2 an."
   },
   "spikeCannon": {
-    name: "Spike Cannon",
-    effect: "Sharp spikes are shot at the target in rapid succession. They hit two to five times in a row."
+    name: "Dornkanone",
+    effect: "Spitze Nadeln treffen das Ziel zwei- bis fünfmal hintereinander."
   },
   "constrict": {
-    name: "Constrict",
-    effect: "The target is attacked with long, creeping tentacles, vines, or the like. This may also lower the target's  Speed stat."
+    name: "Umklammerung",
+    effect: "Angriff mit langen Tentakeln oder Ranken. Senkt eventuell den Initiative-Wert."
   },
   "amnesia": {
-    name: "Amnesia",
-    effect: "The user temporarily empties its mind to forget its concerns. This sharply raises the user's Sp. Def stat."
+    name: "Amnesie",
+    effect: "Gedächtnisverlust, der die Spezial-Verteidigung stark erhöht."
   },
   "kinesis": {
-    name: "Kinesis",
-    effect: "The user distracts the target by bending a spoon. This lowers the target's accuracy."
+    name: "Psykraft",
+    effect: "Lenkt Ziel durch Verbiegen eines Löffels ab. Senkt dessen Genauigkeit."
   },
   "softBoiled": {
-    name: "Soft-Boiled",
-    effect: "The user restores its own HP by up to half of its max HP."
+    name: "Weichei",
+    effect: "KP des Anwenders werden um 50 % der maximalen KP aufgefüllt."
   },
   "highJumpKick": {
-    name: "High Jump Kick",
-    effect: "The target is attacked with a knee kick from a jump. If it misses, the user is hurt instead."
+    name: "Turmkick",
+    effect: "Sprungtritt mit Knie. Bei Misserfolg verletzt sich der Anwender selbst."
   },
   "glare": {
-    name: "Glare",
-    effect: "The user intimidates the target with the pattern on its belly to cause paralysis."
+    name: "Schlangenblick",
+    effect: "Schüchtert Ziel mit dem Muster auf seinem Bauch ein, sodass dieses paralysiert wird."
   },
   "dreamEater": {
-    name: "Dream Eater",
-    effect: "The user eats the dreams of a sleeping target. The user's HP is restored by half the damage taken by the target."
+    name: "Traumfresser",
+    effect: "Attacke gegen schlafendes Ziel. Die Hälfte des zugefügten Schadens wird dem Anwender gutgeschrieben."
   },
   "poisonGas": {
-    name: "Poison Gas",
-    effect: "A cloud of poison gas is sprayed in the face of opposing Pokémon, poisoning those it hits."
+    name: "Giftwolke",
+    effect: "Hüllt Ziele in der Umgebung in Gas ein, das sie eventuell vergiftet."
   },
   "barrage": {
-    name: "Barrage",
-    effect: "Round objects are hurled at the target to strike two to five times in a row."
+    name: "Stakkato",
+    effect: "Wirft zwei- bis fünfmal runde Gegenstände auf das Ziel."
   },
   "leechLife": {
-    name: "Leech Life",
-    effect: "The user drains the target's blood. The user's HP is restored by half the damage taken by the target."
+    name: "Blutsauger",
+    effect: "Die Hälfte des zugefügten Schadens wird dem Anwender gutgeschrieben."
   },
   "lovelyKiss": {
-    name: "Lovely Kiss",
-    effect: "With a scary face, the user tries to force a kiss on the target. If it succeeds, the target falls asleep."
+    name: "Todeskuss",
+    effect: "Anwender zwingt dem Ziel einen Kuss auf, der Schlaf verursacht."
   },
   "skyAttack": {
-    name: "Sky Attack",
-    effect: "A second-turn attack move where critical hits land more easily. This may also make the target flinch."
+    name: "Himmelsfeger",
+    effect: "Anwender greift in der zweiten Runde mit hoher Volltrefferquote an. Ziel schreckt eventuell zurück."
   },
   "transform": {
-    name: "Transform",
-    effect: "The user transforms into a copy of the target right down to having the same move set."
+    name: "Wandler",
+    effect: "Anwender verwandelt sich in ein Abbild des Zieles und kann so auf die gleichen Attacken zugreifen."
   },
   "bubble": {
-    name: "Bubble",
-    effect: "A spray of countless bubbles is jetted at the opposing Pokémon. This may also lower their Speed stat."
+    name: "Blubber",
+    effect: "Angriff mit Blasen. Initiative-Wert des Zieles wird eventuell gesenkt."
   },
   "dizzyPunch": {
-    name: "Dizzy Punch",
-    effect: "The target is hit with rhythmically launched punches. This may also leave the target confused."
+    name: "Irrschlag",
+    effect: "Rhythmische Schläge, die das Ziel verwirren können."
   },
   "spore": {
-    name: "Spore",
-    effect: "The user scatters bursts of spores that induce sleep."
+    name: "Pilzspore",
+    effect: "Erzeugt eine Wolke aus einschläfernden Sporen."
   },
   "flash": {
-    name: "Flash",
-    effect: "The user flashes a bright light that cuts the target's accuracy."
+    name: "Blitz",
+    effect: "Erzeugt helles Licht, das die Genauigkeit des Zieles senkt."
   },
   "psywave": {
-    name: "Psywave",
-    effect: "The target is attacked with an odd psychic wave. The attack varies in intensity."
+    name: "Psywelle",
+    effect: "Anwender erzeugt eine mysteriöse Energiewelle, deren Intensität von Mal zu Mal anders ausfällt."
   },
   "splash": {
-    name: "Splash",
-    effect: "The user just flops and splashes around to no effect at all..."
+    name: "Platscher",
+    effect: "Nur ein Platscher, der überhaupt nichts bewirkt."
   },
   "acidArmor": {
-    name: "Acid Armor",
-    effect: "The user alters its cellular structure to liquefy itself, sharply raising its Defense stat."
+    name: "Säurepanzer",
+    effect: "Verflüssigt Körperzellen des Anwenders. Erhöht den Verteidigungs-Wert stark."
   },
   "crabhammer": {
-    name: "Crabhammer",
-    effect: "The target is hammered with a large pincer. Critical hits land more easily."
+    name: "Krabbhammer",
+    effect: "Schlägt mit Schere zu. Hohe Volltrefferquote."
   },
   "explosion": {
     name: "Explosion",
-    effect: "The user attacks everything around it by causing a tremendous explosion. The user faints upon using this move."
+    effect: "Anwender explodiert, richtet bei allen Pokémon in seiner Umgebung großen Schaden an und wird selbst kampfunfähig."
   },
   "furySwipes": {
-    name: "Fury Swipes",
-    effect: "The target is raked with sharp claws or scythes quickly two to five times in a row."
+    name: "Kratzfurie",
+    effect: "Beharkt das Ziel zwei- bis fünfmal mit scharfen Klauen oder Sicheln."
   },
   "bonemerang": {
-    name: "Bonemerang",
-    effect: "The user throws the bone it holds. The bone loops around to hit the target twice—coming and going."
+    name: "Knochmerang",
+    effect: "Ein Bumerang aus Knochen, der zweimal trifft."
   },
   "rest": {
-    name: "Rest",
-    effect: "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions."
+    name: "Erholung",
+    effect: "Anwender wird vollkommen geheilt und schläft die folgenden zwei Runden."
   },
   "rockSlide": {
-    name: "Rock Slide",
-    effect: "Large boulders are hurled at opposing Pokémon to inflict damage. This may also make the opposing Pokémon flinch."
+    name: "Steinhagel",
+    effect: "Schleudert riesige Felsen auf Ziele in der Umgebung, die eventuell zurückschrecken."
   },
   "hyperFang": {
-    name: "Hyper Fang",
-    effect: "The user bites hard on the target with its sharp front fangs. This may also make the target flinch."
+    name: "Hyperzahn",
+    effect: "Angriff mit scharfen Reißzähnen. Ziel schreckt eventuell zurück."
   },
   "sharpen": {
-    name: "Sharpen",
-    effect: "The user makes its edges more jagged,  which raises its Attack stat."
+    name: "Schärfer",
+    effect: "Anwender senkt die Polygonzahl, um Kanten zu erzeugen, die den Angriffs-Wert erhöhen."
   },
   "conversion": {
-    name: "Conversion",
-    effect: "The user changes its type to become the same type as the move at the top of the list of moves it knows."
+    name: "Umwandlung",
+    effect: "Wandelt den Typ des Anwenders in den Typ der ersten Attacke des Anwenders um."
   },
   "triAttack": {
-    name: "Tri Attack",
-    effect: "The user strikes with a simultaneous three-beam attack. This may also burn, freeze, or paralyze the target."
+    name: "Triplette",
+    effect: "Feuert drei Strahlen ab. Verursacht eventuell Paralyse, Verbrennung oder Einfrieren."
   },
   "superFang": {
-    name: "Super Fang",
-    effect: "The user chomps hard on the target with its sharp front fangs. This cuts the target's HP in half."
+    name: "Superzahn",
+    effect: "Greift mit scharfen Reißzähnen an. KP des Zieles werden halbiert."
   },
   "slash": {
-    name: "Slash",
-    effect: "The target is attacked with a slash of claws or blades. Critical hits land more easily."
+    name: "Schlitzer",
+    effect: "Hieb mit Klauen oder Ähnlichem. Hohe Volltrefferquote."
   },
   "substitute": {
-    name: "Substitute",
-    effect: "The user creates a substitute for itself using some of its HP. The substitute serves as the user's decoy."
+    name: "Delegator",
+    effect: "Anwender setzt eine kleine Menge an KP ein, um einen Doppelgänger zu erzeugen, der für ihn Schläge einsteckt."
   },
   "struggle": {
-    name: "Struggle",
-    effect: "This attack is used in desperation only if the user has no PP. It also damages the user a little."
+    name: "Verzweifler",
+    effect: "Angriff nur bei verbrauchten AP. Anwender verletzt sich selbst leicht."
   },
   "sketch": {
-    name: "Sketch",
-    effect: "It enables the user to permanently learn the move last used by the target. Once used, Sketch disappears."
+    name: "Nachahmer",
+    effect: "Anwender lernt die letzte Attacke des Zieles dauerhaft. Nachahmer verschwindet nach Gebrauch."
   },
   "tripleKick": {
-    name: "Triple Kick",
-    effect: "A consecutive three-kick attack that becomes more powerful with each successful hit."
+    name: "Dreifachkick",
+    effect: "Tritt das Ziel ein- bis dreimal nacheinander. Die Härte der Tritte nimmt von Treffer zu Treffer zu."
   },
   "thief": {
-    name: "Thief",
-    effect: "The user attacks and has a 30% chance to steal the target's held item simultaneously."
+    name: "Raub",
+    effect: "Erlaubt es, das Item des Zieles zu stehlen, solang der Anwender selbst keins bei sich trägt."
   },
   "spiderWeb": {
-    name: "Spider Web",
-    effect: "The user ensnares the target with thin, gooey silk so it can't flee from battle."
+    name: "Spinnennetz",
+    effect: "Wickelt das Ziel ein. Flucht oder Tausch unmöglich."
   },
   "mindReader": {
-    name: "Mind Reader",
-    effect: "The user senses the target's movements with its mind to ensure its next attack does not miss the target."
+    name: "Willensleser",
+    effect: "Ahnt Bewegungen des Zieles voraus, um zu gewährleisten, dass die nächste eigene Attacke trifft."
   },
   "nightmare": {
-    name: "Nightmare",
-    effect: "A sleeping target sees a nightmare that inflicts some damage every turn."
+    name: "Nachtmahr",
+    effect: "Dem schlafenden Ziel wird durch einen Alptraum in jeder Runde Schaden zugefügt, solang es schläft."
   },
   "flameWheel": {
-    name: "Flame Wheel",
-    effect: "The user cloaks itself in fire and charges at the target. This may also leave the target with a burn."
+    name: "Flammenrad",
+    effect: "Feuer-Attacke, die das Ziel eventuell verbrennt."
   },
   "snore": {
-    name: "Snore",
-    effect: "This attack can be used only if the user is asleep. The harsh noise may also make the target flinch."
+    name: "Schnarcher",
+    effect: "Attacke nur im Schlaf möglich. Ziel schreckt eventuell zurück."
   },
   "curse": {
-    name: "Curse",
-    effect: "A move that works differently for the Ghost type than for all other types."
+    name: "Fluch",
+    effect: "Attacke, deren Wirkung davon abhängt, ob der Anwender ein Geist-Pokémon ist."
   },
   "flail": {
-    name: "Flail",
-    effect: "The user flails about aimlessly to attack. The less HP the user has, the greater the move's power."
+    name: "Dreschflegel",
+    effect: "Attacke richtet mehr Schaden an, wenn eigene KP niedrig sind."
   },
   "conversion2": {
-    name: "Conversion 2",
-    effect: "The user changes its type to make itself resistant to the type of the attack the target used last."
+    name: "Umwandlung2",
+    effect: "Anwender ändert Typ und wird gegen letzten Angriffstyp resistent."
   },
   "aeroblast": {
-    name: "Aeroblast",
-    effect: "A vortex of air is shot at the target to inflict damage. Critical hits land more easily."
+    name: "Luftstoß",
+    effect: "Erzeugt Luftstrudel gegen das Ziel. Hohe Volltrefferquote."
   },
   "cottonSpore": {
-    name: "Cotton Spore",
-    effect: "The user releases cotton-like spores that cling to opposing Pokémon, which harshly lowers their Speed stats."
+    name: "Baumwollsaat",
+    effect: "Wattebäusche heften sich an das Ziel. Der Initiative-Wert sinkt stark."
   },
   "reversal": {
-    name: "Reversal",
-    effect: "An all-out attack that becomes more powerful the less HP the user has."
+    name: "Gegenschlag",
+    effect: "Richtet mehr Schaden an, wenn eigene KP niedrig sind."
   },
   "spite": {
-    name: "Spite",
-    effect: "The user unleashes its grudge on the move last used by the target by cutting 4 PP from it."
+    name: "Groll",
+    effect: "AP der letzten Attacke des Zieles werden um 4 gesenkt."
   },
   "powderSnow": {
-    name: "Powder Snow",
-    effect: "The user attacks with a chilling gust of powdery snow. This may also freeze opposing Pokémon."
+    name: "Pulverschnee",
+    effect: "Angriff mit Schnee. Das Ziel wird eventuell eingefroren."
   },
   "protect": {
-    name: "Protect",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession."
+    name: "Schutzschild",
+    effect: "Anwender weicht jeder Attacke aus. Scheitert eventuell bei Wiederholung."
   },
   "machPunch": {
-    name: "Mach Punch",
-    effect: "The user throws a punch at blinding speed. This move always goes first."
+    name: "Tempohieb",
+    effect: "Extrem schneller Hieb, der stets zuerst trifft."
   },
   "scaryFace": {
-    name: "Scary Face",
-    effect: "The user frightens the target with a scary face to harshly lower its Speed stat."
+    name: "Grimasse",
+    effect: "Jagt dem Ziel mit einer Grimasse Angst ein. Dessen Initiative-Wert sinkt stark."
   },
   "feintAttack": {
-    name: "Feint Attack",
-    effect: "The user approaches the target disarmingly, then throws a sucker punch. This attack never misses."
+    name: "Finte",
+    effect: "Anwender nähert sich mit Unschuldsmiene dem Ziel und schlägt zu, sobald dieses unachtsam wird. Ein Treffer ist gewiss."
   },
   "sweetKiss": {
-    name: "Sweet Kiss",
-    effect: "The user kisses the target with a sweet, angelic cuteness that causes confusion."
+    name: "Bitterkuss",
+    effect: "Anwender küsst das Ziel, das durch diese Niedlichkeit verwirrt wird."
   },
   "bellyDrum": {
-    name: "Belly Drum",
-    effect: "The user maximizes its Attack stat in exchange for HP equal to half its max HP."
+    name: "Bauchtrommel",
+    effect: "Der Anwender maximiert den Angriffs-Wert auf Kosten der Hälfte seiner maximalen KP."
   },
   "sludgeBomb": {
-    name: "Sludge Bomb",
-    effect: "Unsanitary sludge is hurled at the target. This may also poison the target."
+    name: "Matschbombe",
+    effect: "Wirft Schlamm auf das Ziel. Dieses wird eventuell vergiftet."
   },
   "mudSlap": {
-    name: "Mud-Slap",
-    effect: "The user hurls mud in the target's face to inflict damage and lower its accuracy."
+    name: "Lehmschelle",
+    effect: "Schadet dem Ziel durch Matsch. Dessen Genauigkeit sinkt."
   },
   "octazooka": {
     name: "Octazooka",
-    effect: "The user attacks by spraying ink in the target's face or eyes. This may also lower the target's accuracy."
+    effect: "Schießt mit Tinte, um Schaden anzurichten und die Genauigkeit zu senken."
   },
   "spikes": {
-    name: "Spikes",
-    effect: "The user lays a trap of spikes at the opposing team's feet. The trap hurts Pokémon that switch into battle."
+    name: "Stachler",
+    effect: "Der Anwender verteilt Stacheln, die gegnerische Pokémon verletzen, die in den Kampf gerufen werden."
   },
   "zapCannon": {
-    name: "Zap Cannon",
-    effect: "The user fires an electric blast like a cannon to inflict damage and cause paralysis."
+    name: "Blitzkanone",
+    effect: "Kanonenähnlicher Elektro-Schuss, der schadet und paralysiert."
   },
   "foresight": {
-    name: "Foresight",
-    effect: "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit."
+    name: "Scharfblick",
+    effect: "Erlaubt es, Geist-Pokémon mit Normal- und Kampf-Attacken anzugreifen. Ignoriert den Fluchtwert des Zieles."
   },
   "destinyBond": {
-    name: "Destiny Bond",
-    effect: "After using this move, if the user faints, the Pokémon that landed the knockout hit also faints. Its chance of failing rises if it is used in succession."
+    name: "Abgangsbund",
+    effect: "Wird der Anwender nach Einsatz dieser Attacke besiegt, führt dies auch beim Ziel zum K.O."
   },
   "perishSong": {
-    name: "Perish Song",
-    effect: "Any Pokémon that hears this song faints in three turns, unless it switches out of battle."
+    name: "Abgesang",
+    effect: "Wer diese Musik hört, wird nach drei Runden besiegt. Rettung ist durch den Eintausch eines neuen Pokémon möglich."
   },
   "icyWind": {
-    name: "Icy Wind",
-    effect: "The user attacks with a gust of chilled air. This also lowers opposing Pokémon's Speed stats."
+    name: "Eissturm",
+    effect: "Eis-Attacke, die dem Ziel Schaden zufügt und seinen Initiative-Wert senkt."
   },
   "detect": {
-    name: "Detect",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession."
+    name: "Scanner",
+    effect: "Anwender weicht jeder Attacke aus. Scheitert eventuell bei Wiederholung."
   },
   "boneRush": {
-    name: "Bone Rush",
-    effect: "The user strikes the target with a hard bone two to five times in a row."
+    name: "Knochenhatz",
+    effect: "Greift Ziel zwei- bis fünfmal in Folge mit einem harten Knochen an."
   },
   "lockOn": {
-    name: "Lock-On",
-    effect: "The user takes sure aim at the target. This ensures the next attack does not miss the target."
+    name: "Zielschuss",
+    effect: "Visiert das Ziel an und trifft in der nächsten Runde garantiert."
   },
   "outrage": {
-    name: "Outrage",
-    effect: "The user rampages and attacks for two to three turns. The user then becomes confused."
+    name: "Wutanfall",
+    effect: "Attacke über zwei bis drei Runden, die den Anwender verwirrt."
   },
   "sandstorm": {
-    name: "Sandstorm",
-    effect: "A five-turn sandstorm is summoned to hurt all combatants except Rock, Ground, and Steel types. It raises the Sp. Def stat of Rock types."
+    name: "Sandsturm",
+    effect: "Sandsturm für fünf Runden. Fügt Pokémon von jedem Typ außer Gestein, Boden und Stahl Schaden zu."
   },
   "gigaDrain": {
-    name: "Giga Drain",
-    effect: "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target."
+    name: "Gigasauger",
+    effect: "Das Ziel wird angegriffen und die Hälfte des zugefügten Schadens dem Angreifer als KP gutgeschrieben."
   },
   "endure": {
-    name: "Endure",
-    effect: "The user endures any attack with at least 1 HP. Its chance of failing rises if it is used in succession."
+    name: "Ausdauer",
+    effect: "Nach fatalen Attacken bleibt stets 1 KP übrig. Misserfolg bei Wiederholung möglich."
   },
   "charm": {
-    name: "Charm",
-    effect: "The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target's Attack stat."
+    name: "Charme",
+    effect: "Betört das Ziel und reduziert dessen Angriffs-Wert stark."
   },
   "rollout": {
-    name: "Rollout",
-    effect: "The user continually rolls into the target over five turns. It becomes more powerful each time it hits."
+    name: "Walzer",
+    effect: "Attacke, die fünf Runden dauert. Die Härte nimmt von Mal zu Mal zu."
   },
   "falseSwipe": {
-    name: "False Swipe",
-    effect: "A restrained attack that prevents the target from fainting. The target is left with at least 1 HP."
+    name: "Trugschlag",
+    effect: "Ein Angriff, der dem Ziel zumindest 1 KP lässt."
   },
   "swagger": {
-    name: "Swagger",
-    effect: "The user enrages and confuses the target. However, this also sharply raises the target's Attack stat."
+    name: "Angeberei",
+    effect: "Verwirrt das Ziel und erhöht dessen Angriffs-Wert stark."
   },
   "milkDrink": {
-    name: "Milk Drink",
-    effect: "The user restores its own HP by up to half of its max HP."
+    name: "Milchgetränk",
+    effect: "KP des Anwenders werden um 50 % der maximalen KP aufgefüllt."
   },
   "spark": {
-    name: "Spark",
-    effect: "The user throws an electrically charged tackle at the target. This may also leave the target with paralysis."
+    name: "Funkensprung",
+    effect: "Elektro-Hieb, der das Ziel paralysieren kann."
   },
   "furyCutter": {
-    name: "Fury Cutter",
-    effect: "The target is slashed with scythes or claws. This attack becomes more powerful if it hits in succession."
+    name: "Zornklinge",
+    effect: "Eine Attacke mit Scheren oder Klauen, deren Härte bei aufeinanderfolgenden Treffern zunimmt."
   },
   "steelWing": {
-    name: "Steel Wing",
-    effect: "The target is hit with wings of steel. This may also raise the user's Defense stat."
+    name: "Stahlflügel",
+    effect: "Trifft das Ziel mit Stahlflügeln. Verteidigungs-Wert des Anwenders steigt eventuell."
   },
   "meanLook": {
-    name: "Mean Look",
-    effect: "The user pins the target with a dark, arresting look. The target becomes unable to flee."
+    name: "Horrorblick",
+    effect: "Böser Blick, der die Flucht des Zieles vereitelt."
   },
   "attract": {
-    name: "Attract",
-    effect: "If it is the opposite gender of the user, the target becomes infatuated and less likely to attack."
+    name: "Anziehung",
+    effect: "Angriff auf Anwender vom anderen Geschlecht wird unwahrscheinlich."
   },
   "sleepTalk": {
-    name: "Sleep Talk",
-    effect: "While it is asleep, the user randomly uses one of the moves it knows."
+    name: "Schlafrede",
+    effect: "Anwender setzt per Zufall eine ihm bekannte Attacke im Schlaf ein."
   },
   "healBell": {
-    name: "Heal Bell",
-    effect: "The user makes a soothing bell chime to heal the status conditions of all the party Pokémon."
+    name: "Vitalglocke",
+    effect: "Läutet beruhigend und heilt alle Statusprobleme im Team."
   },
   "return": {
-    name: "Return",
-    effect: "This full-power attack grows more powerful the more the user likes its Trainer."
+    name: "Rückkehr",
+    effect: "Angriff, dessen Kraft bei Freundschaft zum Trainer größer wird."
   },
   "present": {
-    name: "Present",
-    effect: "The user attacks by giving the target a gift with a hidden trap. It restores HP sometimes, however."
+    name: "Geschenk",
+    effect: "Eine Bombe als Geschenk. Kann auch KP des Zieles wiederherstellen."
   },
   "frustration": {
     name: "Frustration",
-    effect: "This full-power attack grows more powerful the less the user likes its Trainer."
+    effect: "Die Attacke wird stärker, je weniger der Anwender seinen Trainer mag."
   },
   "safeguard": {
-    name: "Safeguard",
-    effect: "The user creates a protective field that prevents status conditions for five turns."
+    name: "Bodyguard",
+    effect: "Team des Anwenders ist fünf Runden vor Statusproblemen geschützt."
   },
   "painSplit": {
-    name: "Pain Split",
-    effect: "The user adds its HP to the target's HP, then equally shares the combined HP with the target."
+    name: "Leidteiler",
+    effect: "Addiert KP von Anwender und Ziel. Teilt sie gerecht auf."
   },
   "sacredFire": {
-    name: "Sacred Fire",
-    effect: "The target is razed with a mystical fire of great intensity. This may also leave the target with a burn."
+    name: "Läuterfeuer",
+    effect: "Mystische Feuer-Attacke, durch die das Ziel eventuell Verbrennungen erleidet."
   },
   "magnitude": {
-    name: "Magnitude",
-    effect: "The user attacks everything around it with a ground-shaking quake. Its power varies."
+    name: "Intensität",
+    effect: "Erdbebenartiger Angriff von zufälliger Stärke gegen andere Pokémon in der Umgebung des Anwenders."
   },
   "dynamicPunch": {
-    name: "Dynamic Punch",
-    effect: "The user punches the target with full, concentrated power. This confuses the target if it hits."
+    name: "Wuchtschlag",
+    effect: "Kräftiger Schlag, der das Ziel bei Erfolg verwirrt."
   },
   "megahorn": {
-    name: "Megahorn",
-    effect: "Using its tough and impressive horn, the user rams into the target with no letup."
+    name: "Vielender",
+    effect: "Brutaler Ramm-Angriff mit spitzem, beeindruckendem Horn."
   },
   "dragonBreath": {
-    name: "Dragon Breath",
-    effect: "The user exhales a mighty gust that inflicts damage. This may also leave the target with paralysis."
+    name: "Feuerodem",
+    effect: "Fegt das Ziel mit zerstörerisch heißem Atem weg. Paralysiert das Ziel eventuell."
   },
   "batonPass": {
-    name: "Baton Pass",
-    effect: "The user switches places with a party Pokémon in waiting and passes along any stat changes."
+    name: "Stafette",
+    effect: "Tauscht das eigene Pokémon aus. Alle Statusveränderungen bleiben bestehen."
   },
   "encore": {
-    name: "Encore",
-    effect: "The user compels the target to keep using the move it encored for three turns."
+    name: "Zugabe",
+    effect: "Das Ziel wiederholt die letzte Attacke drei Runden lang."
   },
   "pursuit": {
-    name: "Pursuit",
-    effect: "The power of this attack move is doubled if it's used on a target that's switching out of battle."
+    name: "Verfolgung",
+    effect: "Die Attacke richtet beim Ziel doppelten Schaden an, falls es ausgetauscht wird."
   },
   "rapidSpin": {
-    name: "Rapid Spin",
-    effect: "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat."
+    name: "Turbodreher",
+    effect: "Trifft das Ziel mit einer Dreh-Attacke. Befreit sich unter anderem von Wickel, Klammergriff, Egelsamen und Stachler."
   },
   "sweetScent": {
-    name: "Sweet Scent",
-    effect: "A sweet scent that harshly lowers opposing Pokémon's evasiveness."
+    name: "Lockduft",
+    effect: "Lockt Ziele an und senkt deren Fluchtwert. Lockt im Gras auch wilde Pokémon an."
   },
   "ironTail": {
-    name: "Iron Tail",
-    effect: "The target is slammed with a steel-hard tail. This may also lower the target's Defense stat."
+    name: "Eisenschweif",
+    effect: "Attacke mit hartem Eisenschweif. Senkt eventuell den Verteidigungs-Wert des Zieles."
   },
   "metalClaw": {
-    name: "Metal Claw",
-    effect: "The target is raked with steel claws. This may also raise the user's Attack stat."
+    name: "Metallklaue",
+    effect: "Klauen-Attacke, die eventuell den Angriffs-Wert des Anwenders erhöht."
   },
   "vitalThrow": {
-    name: "Vital Throw",
-    effect: "The user attacks last. In return, this throw move never misses."
+    name: "Überwurf",
+    effect: "Anwender greift als Letzter an, hat dafür aber eine Treffergarantie beim eigenen Angriff."
   },
   "morningSun": {
-    name: "Morning Sun",
-    effect: "The user restores its own HP. The amount of HP regained varies with the weather."
+    name: "Morgengrauen",
+    effect: "Füllt KP des Anwenders auf. Die Menge hängt vom Wetter ab."
   },
   "synthesis": {
-    name: "Synthesis",
-    effect: "The user restores its own HP. The amount of HP regained varies with the weather."
+    name: "Synthese",
+    effect: "Füllt KP des Anwenders auf. Die Menge hängt vom Wetter ab."
   },
   "moonlight": {
-    name: "Moonlight",
-    effect: "The user restores its own HP. The amount of HP regained varies with the weather."
+    name: "Mondschein",
+    effect: "Füllt KP des Anwenders auf. Die Menge hängt vom Wetter ab."
   },
   "hiddenPower": {
-    name: "Hidden Power",
-    effect: "A unique attack that varies in type depending on the Pokémon using it."
+    name: "Kraftreserve",
+    effect: "Wirkung und Typ der Attacke hängen vom Anwender ab."
   },
   "crossChop": {
-    name: "Cross Chop",
-    effect: "The user delivers a double chop with its forearms crossed. Critical hits land more easily."
+    name: "Kreuzhieb",
+    effect: "Doppelter Hieb mit den Unterarmen. Hohe Volltrefferquote."
   },
   "twister": {
-    name: "Twister",
-    effect: "The user whips up a vicious tornado to tear at opposing Pokémon. This may also make them flinch."
+    name: "Windhose",
+    effect: "Trifft Ziele in der Umgebung mit einem heftigen Wirbelsturm, was diese eventuell zurückschrecken lässt."
   },
   "rainDance": {
-    name: "Rain Dance",
-    effect: "The user summons a heavy rain that falls for five turns, powering up Water-type moves. It lowers the power of Fire-type moves."
+    name: "Regentanz",
+    effect: "Anwender erzeugt starken Regen. Die Stärke von Wasser-Attacken erhöht sich fünf Runden lang."
   },
   "sunnyDay": {
-    name: "Sunny Day",
-    effect: "The user intensifies the sun for five turns, powering up Fire-type moves. It lowers the power of Water-type moves."
+    name: "Sonnentag",
+    effect: "Die Sonne brennt unbarmherzig fünf Runden lang. Dadurch werden Attacken vom Typ Feuer verstärkt."
   },
   "crunch": {
-    name: "Crunch",
-    effect: "The user crunches up the target with sharp fangs. This may also lower the target's Defense stat."
+    name: "Knirscher",
+    effect: "Beißt mit scharfen Reißzähnen zu und senkt eventuell die Verteidigung."
   },
   "mirrorCoat": {
-    name: "Mirror Coat",
-    effect: "A retaliation move that counters any special attack, inflicting double the damage taken."
+    name: "Spiegelcape",
+    effect: "Kontert den Spezial-Angriff des Gegners mit doppeltem Schaden."
   },
   "psychUp": {
-    name: "Psych Up",
-    effect: "The user hypnotizes itself into copying any stat change made by the target."
+    name: "Psycho-Plus",
+    effect: "Der Anwender hypnotisiert sich selbst, um die Statusveränderungen des Zieles zu kopieren."
   },
   "extremeSpeed": {
-    name: "Extreme Speed",
-    effect: "The user charges the target at blinding speed. This move always goes first."
+    name: "Turbotempo",
+    effect: "Extrem schnelle und kraftvolle Attacke, die stets zuerst trifft."
   },
   "ancientPower": {
-    name: "Ancient Power",
-    effect: "The user attacks with a prehistoric power. This may also raise all the user's stats at once."
+    name: "Antik-Kraft",
+    effect: "Angriff mit antiker Kraft, der alle Statuswerte erhöhen kann."
   },
   "shadowBall": {
-    name: "Shadow Ball",
-    effect: "The user hurls a shadowy blob at the target. This may also lower the target's Sp. Def stat."
+    name: "Spukball",
+    effect: "Bewirft das Ziel mit gruseligem Ball und senkt eventuell die Spezial-Verteidigung."
   },
   "futureSight": {
-    name: "Future Sight",
-    effect: "Two turns after this move is used, a hunk of psychic energy attacks the target."
+    name: "Seher",
+    effect: "Zwei Runden, nachdem Seher eingesetzt wurde, erfolgt der Angriff."
   },
   "rockSmash": {
-    name: "Rock Smash",
-    effect: "The user attacks with a punch. This may also lower the target's Defense stat."
+    name: "Zertrümmerer",
+    effect: "Diese steinbrechende Attacke kann den Verteidigungs-Wert des Zieles senken und außerhalb von Kämpfen rissige Felsen zertrümmern."
   },
   "whirlpool": {
     name: "Whirlpool",
-    effect: "The user traps the target in a violent swirling whirlpool for four to five turns."
+    effect: "Das Ziel wird für vier bis fünf Runden in einer Wasserhose gefangen."
   },
   "beatUp": {
-    name: "Beat Up",
-    effect: "The user gets all party Pokémon to attack the target. The more party Pokémon, the greater the number of attacks."
+    name: "Prügler",
+    effect: "Das gesamte Team nimmt aktiv am Kampf teil. Je mehr Pokémon, desto höher die Anzahl der Angriffe."
   },
   "fakeOut": {
-    name: "Fake Out",
-    effect: "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle."
+    name: "Mogelhieb",
+    effect: "Diese Attacke trifft zuerst. Das Ziel schreckt zurück. Gelingt nur in der ersten Runde eines Kampfes."
   },
   "uproar": {
-    name: "Uproar",
-    effect: "The user attacks in an uproar for three turns. During that time, no Pokémon can fall asleep."
+    name: "Aufruhr",
+    effect: "Anwender greift an, indem er über drei Runden hinweg einen Aufruhr erzeugt. Verhindert Schlaf."
   },
   "stockpile": {
-    name: "Stockpile",
-    effect: "The user charges up power and raises both its Defense and Sp. Def stats. The move can be used three times."
+    name: "Horter",
+    effect: "Lädt Kraft für später auf. Erhöht Verteidigung und Spezial-Verteidigung. Kann bis zu dreimal eingesetzt werden."
   },
   "spitUp": {
-    name: "Spit Up",
-    effect: "The power stored using the move Stockpile is released at once in an attack. The more power is stored, the greater the move's power."
+    name: "Entfessler",
+    effect: "Entlädt die Kraft, die während des Einsatzes von Horter gesammelt wurde."
   },
   "swallow": {
-    name: "Swallow",
-    effect: "The power stored using the move Stockpile is absorbed by the user to heal its HP. Storing more power heals more HP."
+    name: "Verzehrer",
+    effect: "Absorbiert die gehortete Kraft, um KP aufzufüllen."
   },
   "heatWave": {
-    name: "Heat Wave",
-    effect: "The user attacks by exhaling hot breath on opposing Pokémon. This may also leave those Pokémon with a burn."
+    name: "Hitzewelle",
+    effect: "Ziele werden von Sturm aus heißer Luft getroffen und verbrennen sich eventuell."
   },
   "hail": {
-    name: "Hail",
-    effect: "The user summons a hailstorm lasting five turns. It damages all Pokémon except Ice types."
+    name: "Hagelsturm",
+    effect: "Hagelsturm für fünf Runden. Schadet allen, außer Eis-Pokémon."
   },
   "torment": {
-    name: "Torment",
-    effect: "The user torments and enrages the target, making it incapable of using the same move twice in a row."
+    name: "Folterknecht",
+    effect: "Erzürnt das Ziel, um wiederholten Einsatz derselben Attacke zu verhindern."
   },
   "flatter": {
-    name: "Flatter",
-    effect: "Flattery is used to confuse the target. However, this also raises the target's Sp. Atk stat."
+    name: "Schmeichler",
+    effect: "Schmeichelt dem Ziel, um es zu verwirren. Erhöht dessen Spezial-Angriff."
   },
   "willOWisp": {
-    name: "Will-O-Wisp",
-    effect: "The user shoots a sinister flame at the target to inflict a burn."
+    name: "Irrlicht",
+    effect: "Angriff mit unheimlicher Flamme, die das Ziel verbrennt."
   },
   "memento": {
-    name: "Memento",
-    effect: "The user faints when using this move. In return, this harshly lowers the target's Attack and Sp. Atk stats."
+    name: "Memento-Mori",
+    effect: "Der Anwender wird besiegt und senkt den Angriffs-Wert und den Spezial-Angriff des Zieles stark."
   },
   "facade": {
-    name: "Facade",
-    effect: "This attack move doubles its power if the user is poisoned, burned, or paralyzed."
+    name: "Fassade",
+    effect: "Doppelte Stärke nach Verbrennung, Paralyse oder Vergiftung."
   },
   "focusPunch": {
-    name: "Focus Punch",
-    effect: "The user focuses its mind before launching a punch. This move fails if the user is hit before it is used."
+    name: "Power-Punch",
+    effect: "Anwender konzentriert sich, bevor er angreift. Wird er vorher getroffen, ist die Attacke erfolglos."
   },
   "smellingSalts": {
-    name: "Smelling Salts",
-    effect: "This attack's power is doubled when used on a target with paralysis. This also cures the target's paralysis, however."
+    name: "Riechsalz",
+    effect: "Doppelt wirksam gegen paralysierte Ziele, heilt sie aber auch von der Paralyse."
   },
   "followMe": {
-    name: "Follow Me",
-    effect: "The user draws attention to itself, making all targets take aim only at the user."
+    name: "Spotlight",
+    effect: "Zieht Aufmerksamkeit auf sich. Gegner greift nur Anwender an."
   },
   "naturePower": {
-    name: "Nature Power",
-    effect: "This attack makes use of nature's power. Its effects vary depending on the user's environment."
+    name: "Natur-Kraft",
+    effect: "Angriff mit der Kraft der Natur, dessen Typ vom Ort abhängt, wo er durchgeführt wird."
   },
   "charge": {
-    name: "Charge",
-    effect: "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat."
+    name: "Ladevorgang",
+    effect: "Lädt Energie für die kommende Elektro-Attacke auf. Erhöht die Spezial-Verteidigung."
   },
   "taunt": {
-    name: "Taunt",
-    effect: "The target is taunted into a rage that allows it to use only attack moves for three turns."
+    name: "Verhöhner",
+    effect: "Bringt das Ziel in Rage. Dieses kann über drei Runden hinweg nur noch angreifen."
   },
   "helpingHand": {
-    name: "Helping Hand",
-    effect: "The user assists an ally by boosting the power of that ally's attack."
+    name: "Rechte Hand",
+    effect: "Anwender steigert die Kraft eines Angriffes eines Freundes."
   },
   "trick": {
-    name: "Trick",
-    effect: "The user catches the target off guard and swaps its held item with its own."
+    name: "Trickbetrug",
+    effect: "Der Anwender überrumpelt das Ziel und tauscht mit ihm die getragenen Items."
   },
   "rolePlay": {
-    name: "Role Play",
-    effect: "The user mimics the target completely, copying the target's Ability."
+    name: "Rollenspiel",
+    effect: "Parodiert das Ziel und kopiert seine Fähigkeit."
   },
   "wish": {
-    name: "Wish",
-    effect: "One turn after this move is used, the user's or its replacement's HP is restored by half the user's max HP."
+    name: "Wunschtraum",
+    effect: "Ein Wunsch füllt in der nächsten Runde 50 % der KP des Anwenders bei diesem oder einem eingewechselten Pokémon auf."
   },
   "assist": {
-    name: "Assist",
-    effect: "The user hurriedly and randomly uses a move among those known by ally Pokémon."
+    name: "Zuschuss",
+    effect: "Greift zufällig mit einer Attacke eines Mitstreiters an."
   },
   "ingrain": {
-    name: "Ingrain",
-    effect: "The user lays roots that restore its HP on every turn. Because it's rooted, it can't switch out."
+    name: "Verwurzler",
+    effect: "Verwurzelung füllt jede Runde KP auf. Austausch ist unmöglich."
   },
   "superpower": {
-    name: "Superpower",
-    effect: "The user attacks the target with great power. However, this also lowers the user's Attack and Defense stats."
+    name: "Kraftkoloss",
+    effect: "Starke Attacke, die jedoch auch den Angriff und die Verteidigung des Anwenders senkt."
   },
   "magicCoat": {
-    name: "Magic Coat",
-    effect: "Moves like Leech Seed and moves that inflict status conditions are blocked by a barrier and reflected back to the user of those moves."
+    name: "Magiemantel",
+    effect: "Egelsamen und alle Attacken mit Status verändernden Effekten prallen ab."
   },
   "recycle": {
-    name: "Recycle",
-    effect: "The user recycles a held item that has been used in battle so it can be used again."
+    name: "Aufbereitung",
+    effect: "Recycling eines getragenen Items, das zuvor im Kampf verwendet wurde."
   },
   "revenge": {
-    name: "Revenge",
-    effect: "This attack move's power is doubled if the user has been hurt by the opponent in the same turn."
+    name: "Vergeltung",
+    effect: "Schaden verdoppelt sich, wenn der Anwender in der Runde bereits Schaden vom Ziel des Angriffes genommen hat."
   },
   "brickBreak": {
-    name: "Brick Break",
-    effect: "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect."
+    name: "Durchbruch",
+    effect: "Ein beherzter Handkantenschlag. Durchbricht Barrieren wie Lichtschild und Reflektor."
   },
   "yawn": {
-    name: "Yawn",
-    effect: "The user lets loose a huge yawn that lulls the target into falling asleep on the next turn."
+    name: "Gähner",
+    effect: "Angreifer gähnt und das Ziel schläft in der nächsten Runde ein."
   },
   "knockOff": {
-    name: "Knock Off",
-    effect: "The user slaps down the target's held item, and that item can't be used in that battle. The move does more damage if the target has a held item."
+    name: "Abschlag",
+    effect: "Schlägt das Item des Zieles weg und vereitelt so dessen Gebrauch während des Kampfes. Mehr Schaden gegen Ziele, die ein Item bei sich tragen."
   },
   "endeavor": {
-    name: "Endeavor",
-    effect: "This attack move cuts down the target's HP to equal the user's HP."
+    name: "Notsituation",
+    effect: "Trifft nur, wenn KP des Anwenders geringer als KP des Zieles sind. Senkt dessen KP auf die Höhe der KP des Anwenders."
   },
   "eruption": {
     name: "Eruption",
-    effect: "The user attacks opposing Pokémon with explosive fury. The lower the user's HP, the lower the move's power."
+    effect: "Explosiver Angriff. Je höher die KP des Anwenders sind, desto mehr Schaden wird angerichtet."
   },
   "skillSwap": {
-    name: "Skill Swap",
-    effect: "The user employs its psychic power to exchange Abilities with the target."
+    name: "Fähigkeitstausch",
+    effect: "Anwender tauscht Fähigkeit mit dem Ziel."
   },
   "imprison": {
-    name: "Imprison",
-    effect: "If opposing Pokémon know any move also known by the user, they are prevented from using it."
+    name: "Begrenzer",
+    effect: "Hindert Gegner am Einsatz von Attacken, die der Anwender selbst auch kennt."
   },
   "refresh": {
-    name: "Refresh",
-    effect: "The user rests to cure itself of poisoning, a burn, or paralysis."
+    name: "Heilung",
+    effect: "Selbstheilung bei Vergiftung, Paralyse und Verbrennung."
   },
   "grudge": {
-    name: "Grudge",
-    effect: "If the user faints, the user's grudge fully depletes the PP of the opponent's move that knocked it out."
+    name: "Nachspiel",
+    effect: "Bei K.O. des Anwenders werden die AP der Attacke, durch die er besiegt wurde, auf 0 herabgesetzt."
   },
   "snatch": {
-    name: "Snatch",
-    effect: "The user steals the effects of any attempts to use a healing or stat-changing move."
+    name: "Übernahme",
+    effect: "Raubt den Effekt eingesetzter heilender oder Werte verändernder Attacken."
   },
   "secretPower": {
-    name: "Secret Power",
-    effect: "The additional effects of this attack depend upon where it was used."
+    name: "Geheimpower",
+    effect: "Angriff, der abhängig vom Anwendungsort einen unterschiedlichen Zusatz-Effekt hat."
   },
   "dive": {
-    name: "Dive",
-    effect: "Diving on the first turn, the user floats up and attacks on the next turn."
+    name: "Taucher",
+    effect: "Taucht in Runde 1 ab und greift in Runde 2 aus der Tiefe an."
   },
   "armThrust": {
-    name: "Arm Thrust",
-    effect: "The user lets loose a flurry of open-palmed arm thrusts that hit two to five times in a row."
+    name: "Armstoß",
+    effect: "Schläge mit geradem Arm, die das Ziel zwei- bis fünfmal treffen."
   },
   "camouflage": {
-    name: "Camouflage",
-    effect: "The user's type is changed depending on its environment, such as at water's edge, in grass, or in a cave."
+    name: "Tarnung",
+    effect: "Der Typ des Anwenders passt sich der Umgebung an, sei es im Wasser, im Gras oder in einer Höhle."
   },
   "tailGlow": {
-    name: "Tail Glow",
-    effect: "The user stares at flashing lights to focus its mind, drastically raising its Sp. Atk stat."
+    name: "Schweifglanz",
+    effect: "Ein blinkendes Licht, das den Spezial-Angriff drastisch erhöht."
   },
   "lusterPurge": {
-    name: "Luster Purge",
-    effect: "The user lets loose a damaging burst of light. This may also lower the target's Sp. Def stat."
+    name: "Scheinwerfer",
+    effect: "Angriff mit grellem Licht, der die Spezial-Verteidigung des Zieles eventuell senkt."
   },
   "mistBall": {
-    name: "Mist Ball",
-    effect: "A mist-like flurry of down envelops and damages the target. This may also lower the target's Sp. Atk stat."
+    name: "Nebelball",
+    effect: "Angriff mit einer Kugel aus Wasser, die Nebel enthält. Senkt eventuell den Spezial-Angriff des Zieles."
   },
   "featherDance": {
-    name: "Feather Dance",
-    effect: "The user covers the target's body with a mass of down that harshly lowers its Attack stat."
+    name: "Daunenreigen",
+    effect: "Hüllt das Ziel in Daunen und senkt dessen Angriffs-Wert stark."
   },
   "teeterDance": {
-    name: "Teeter Dance",
-    effect: "The user performs a wobbly dance that confuses the Pokémon around it."
+    name: "Taumeltanz",
+    effect: "Ein Wackeltanz, der andere Pokémon in der Umgebung des Anwenders verwirrt."
   },
   "blazeKick": {
-    name: "Blaze Kick",
-    effect: "The user launches a kick that lands a critical hit more easily. This may also leave the target with a burn."
+    name: "Feuerfeger",
+    effect: "Starker Tritt mit hoher Volltrefferquote. Verursacht eventuell Verbrennung."
   },
   "mudSport": {
-    name: "Mud Sport",
-    effect: "The user kicks up mud on the battlefield. This weakens Electric-type moves for five turns."
+    name: "Lehmsuhler",
+    effect: "Schwächt Elektro-Attacken, solang der Anwender am Kampf teilnimmt."
   },
   "iceBall": {
-    name: "Ice Ball",
-    effect: "The user attacks the target for five turns. The move's power increases each time it hits."
+    name: "Frostbeule",
+    effect: "Attacke, die fünf Runden dauert. Die Härte nimmt von Mal zu Mal zu."
   },
   "needleArm": {
-    name: "Needle Arm",
-    effect: "The user attacks by wildly swinging its thorny arms. This may also make the target flinch."
+    name: "Nietenranke",
+    effect: "Angriff mit dornigen Armen. Das Ziel schreckt eventuell zurück."
   },
   "slackOff": {
-    name: "Slack Off",
-    effect: "The user slacks off, restoring its own HP by up to half of its max HP."
+    name: "Tagedieb",
+    effect: "Durch Müßiggang werden KP des Anwenders um 50 % der maximalen KP aufgefüllt."
   },
   "hyperVoice": {
-    name: "Hyper Voice",
-    effect: "The user lets loose a horribly echoing shout with the power to inflict damage."
+    name: "Schallwelle",
+    effect: "Laute Attacke mit Schallwellen."
   },
   "poisonFang": {
-    name: "Poison Fang",
-    effect: "The user bites the target with toxic fangs. This may also leave the target badly poisoned."
+    name: "Giftzahn",
+    effect: "Angriff mit giftigen Reißzähnen. Das Ziel wird eventuell schwer vergiftet."
   },
   "crushClaw": {
-    name: "Crush Claw",
-    effect: "The user slashes the target with hard and sharp claws. This may also lower the target's Defense stat."
+    name: "Zermalmklaue",
+    effect: "Angriff mit scharfen Klauen. Senkt eventuell den Verteidigungs-Wert."
   },
   "blastBurn": {
-    name: "Blast Burn",
-    effect: "The target is razed by a fiery explosion. The user can't move on the next turn."
+    name: "Lohekanonade",
+    effect: "Das Ziel wird von starker Explosion getroffen. Angreifer setzt eine Runde aus."
   },
   "hydroCannon": {
-    name: "Hydro Cannon",
-    effect: "The target is hit with a watery blast. The user can't move on the next turn."
+    name: "Aquahaubitze",
+    effect: "Das Ziel wird von Wasserkanone getroffen. Angreifer setzt eine Runde aus."
   },
   "meteorMash": {
-    name: "Meteor Mash",
-    effect: "The target is hit with a hard punch fired like a meteor. This may also raise the user's Attack stat."
+    name: "Sternenhieb",
+    effect: "Angriff mit einem harten, schnellen Schlag. Erhöht eventuell Angriffs-Wert des Anwenders."
   },
   "astonish": {
-    name: "Astonish",
-    effect: "The user attacks the target while shouting in a startling fashion. This may also make the target flinch."
+    name: "Erstauner",
+    effect: "Anwender greift mit einem Schrei an. Ein Angriff, der das Ziel eventuell zurückschrecken lässt."
   },
   "weatherBall": {
-    name: "Weather Ball",
-    effect: "This attack move varies in power and type depending on the weather."
+    name: "Meteorologe",
+    effect: "Typ und Stärke der Attacke sind vom Wetter zum Zeitpunkt der Anwendung abhängig."
   },
   "aromatherapy": {
-    name: "Aromatherapy",
-    effect: "The user releases a soothing scent that heals all status conditions affecting the user's party."
+    name: "Aromakur",
+    effect: "Heilt alle Statusprobleme des Teams mit beruhigendem Duft."
   },
   "fakeTears": {
-    name: "Fake Tears",
-    effect: "The user feigns crying to fluster the target, harshly lowering its Sp. Def stat."
+    name: "Trugträne",
+    effect: "Täuscht Weinen vor, um die Spezial-Verteidigung des Zieles stark zu senken."
   },
   "airCutter": {
-    name: "Air Cutter",
-    effect: "The user launches razor-like wind to slash opposing Pokémon. Critical hits land more easily."
+    name: "Windschnitt",
+    effect: "Greift mit rasierklingenartigem Wind an. Hohe Volltrefferquote."
   },
   "overheat": {
-    name: "Overheat",
-    effect: "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    name: "Hitzekoller",
+    effect: "Angriff mit voller Kraft, der den Spezial-Angriff des Anwenders durch den Rückstoß stark senkt."
   },
   "odorSleuth": {
-    name: "Odor Sleuth",
-    effect: "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit."
+    name: "Schnüffler",
+    effect: "Erlaubt es, Geist-Pokémon mit Normal- und Kampf-Attacken anzugreifen. Ignoriert den Fluchtwert des Zieles."
   },
   "rockTomb": {
-    name: "Rock Tomb",
-    effect: "Boulders are hurled at the target. This also lowers the target's Speed stat by preventing its movement."
+    name: "Felsgrab",
+    effect: "Angriff mit Felsen. Bei Erfolg wird der Initiative-Wert des Zieles gesenkt."
   },
   "silverWind": {
-    name: "Silver Wind",
-    effect: "The target is attacked with powdery scales blown by the wind. This may also raise all the user's stats."
+    name: "Silberhauch",
+    effect: "Angriff mit Silberstaub. Eventuell werden alle Statuswerte des Anwenders erhöht."
   },
   "metalSound": {
-    name: "Metal Sound",
-    effect: "A horrible sound like scraping metal harshly lowers the target's Sp. Def stat."
+    name: "Metallsound",
+    effect: "Stößt einen spitzen Schrei aus, der die Spezial-Verteidigung des Zieles stark senkt."
   },
   "grassWhistle": {
-    name: "Grass Whistle",
-    effect: "The user plays a pleasant melody that lulls the target into a deep sleep."
+    name: "Grasflöte",
+    effect: "Versetzt das Ziel durch eine schöne Melodie in Tiefschlaf."
   },
   "tickle": {
-    name: "Tickle",
-    effect: "The user tickles the target into laughing, reducing its Attack and Defense stats."
+    name: "Spaßkanone",
+    effect: "Bringt das Ziel zum Lachen und senkt dadurch dessen Angriff und Verteidigung."
   },
   "cosmicPower": {
-    name: "Cosmic Power",
-    effect: "The user absorbs a mystical power from space to raise its Defense and Sp. Def stats."
+    name: "Kosmik-Kraft",
+    effect: "Erhöht Verteidigung und Spezial-Verteidigung durch eine mystische Kraft."
   },
   "waterSpout": {
-    name: "Water Spout",
-    effect: "The user spouts water to damage opposing Pokémon. The lower the user's HP, the lower the move's power."
+    name: "Fontränen",
+    effect: "Wasser-Attacke, die wirkungsvoller ist, wenn KP des Anwenders hoch sind."
   },
   "signalBeam": {
-    name: "Signal Beam",
-    effect: "The user attacks with a sinister beam of light. This may also confuse the target."
+    name: "Ampelleuchte",
+    effect: "Strahlenattacke, die das Ziel eventuell verwirrt."
   },
   "shadowPunch": {
-    name: "Shadow Punch",
-    effect: "The user throws a punch from the shadows. This attack never misses."
+    name: "Finsterfaust",
+    effect: "Angriff mit der Faust aus dem Schattenreich. Ausweichen unmöglich."
   },
   "extrasensory": {
-    name: "Extrasensory",
-    effect: "The user attacks with an odd, unseeable power. This may also make the target flinch."
+    name: "Sondersensor",
+    effect: "Besonderer Angriff mit einer unsichtbaren Kraft, die das Ziel eventuell zurückschrecken lässt."
   },
   "skyUppercut": {
-    name: "Sky Uppercut",
-    effect: "The user attacks the target with an uppercut thrown skyward with force."
+    name: "Himmelhieb",
+    effect: "Kinnhaken, der das Ziel gen Himmel schickt."
   },
   "sandTomb": {
-    name: "Sand Tomb",
-    effect: "The user traps the target inside a harshly raging sandstorm for four to five turns."
+    name: "Sandgrab",
+    effect: "Das Ziel leidet für vier bis fünf Runden in einer Sandhose."
   },
   "sheerCold": {
-    name: "Sheer Cold",
-    effect: "The target faints instantly. It's less likely to hit the target if it's used by Pokémon other than Ice types."
+    name: "Eiseskälte",
+    effect: "Angriff mit Kälte, die das Ziel bei Erfolg besiegt."
   },
   "muddyWater": {
-    name: "Muddy Water",
-    effect: "The user attacks by shooting muddy water at opposing Pokémon. This may also lower their accuracy."
+    name: "Lehmbrühe",
+    effect: "Greift mit Matsch an und senkt eventuell die Genauigkeit des Zieles."
   },
   "bulletSeed": {
-    name: "Bullet Seed",
-    effect: "The user forcefully shoots seeds at the target two to five times in a row."
+    name: "Kugelsaat",
+    effect: "Der Anwender wirft zwei- bis fünfmal in rascher Folge Samen auf das Ziel."
   },
   "aerialAce": {
-    name: "Aerial Ace",
-    effect: "The user confounds the target with speed, then slashes. This attack never misses."
+    name: "Aero-Ass",
+    effect: "Eine extrem schnelle Attacke, der das Ziel nicht ausweichen kann."
   },
   "icicleSpear": {
-    name: "Icicle Spear",
-    effect: "The user launches sharp icicles at the target two to five times in a row."
+    name: "Eisspeer",
+    effect: "Feuert zwei bis fünf Eiszapfen auf das Ziel."
   },
   "ironDefense": {
-    name: "Iron Defense",
-    effect: "The user hardens its body's surface like iron, sharply raising its Defense stat."
+    name: "Eisenabwehr",
+    effect: "Anwender stärkt den Körper, um den Verteidigungs-Wert stark zu erhöhen."
   },
   "block": {
-    name: "Block",
-    effect: "The user blocks the target's way with arms spread wide to prevent escape."
+    name: "Rückentzug",
+    effect: "Anwender versperrt den Fluchtweg des Zieles."
   },
   "howl": {
-    name: "Howl",
-    effect: "The user howls loudly to raise the spirit of itself and allies. This raises their Attack stats."
+    name: "Jauler",
+    effect: "Anwender jault, um seinen Kampfgeist und seinen Angriffs-Wert zu erhöhen."
   },
   "dragonClaw": {
-    name: "Dragon Claw",
-    effect: "The user slashes the target with huge sharp claws."
+    name: "Drachenklaue",
+    effect: "Das Ziel wird mit riesigen, scharfen Klauen stark verletzt."
   },
   "frenzyPlant": {
-    name: "Frenzy Plant",
-    effect: "The user slams the target with the roots of an enormous tree. The user can't move on the next turn."
+    name: "Flora-Statue",
+    effect: "Angriff mit dickem Ast. Der Angreifer muss eine Runde aussetzen."
   },
   "bulkUp": {
-    name: "Bulk Up",
-    effect: "The user tenses its muscles to bulk up its body, raising both its Attack and Defense stats."
+    name: "Protzer",
+    effect: "Pumpt den Körper auf, um den Angriff und die Verteidigung zu erhöhen."
   },
   "bounce": {
-    name: "Bounce",
-    effect: "The user bounces up high, then drops on the target on the second turn. This may also leave the target with paralysis."
+    name: "Sprungfeder",
+    effect: "Angreifer springt und landet in der nächsten Runde auf dem Ziel. Das Ziel wird eventuell paralysiert."
   },
   "mudShot": {
-    name: "Mud Shot",
-    effect: "The user attacks by hurling a blob of mud at the target. This also lowers the target's Speed stat."
+    name: "Lehmschuss",
+    effect: "Angriff mit Lehm, der den Initiative-Wert des Zieles senkt."
   },
   "poisonTail": {
-    name: "Poison Tail",
-    effect: "The user hits the target with its tail. This may also poison the target. Critical hits land more easily."
+    name: "Giftschweif",
+    effect: "Angriff mit hoher Volltrefferquote. Diese Schweifattacke vergiftet das Ziel eventuell."
   },
   "covet": {
-    name: "Covet",
-    effect: "The user endearingly approaches the target, then has a 30% chance to steal the target's held item."
+    name: "Bezirzer",
+    effect: "Bittet charmant um das getragene Item des Zieles und stiehlt es dann."
   },
   "voltTackle": {
-    name: "Volt Tackle",
-    effect: "The user electrifies itself and charges the target. This also damages the user quite a lot. This attack may leave the target with paralysis."
+    name: "Volttackle",
+    effect: "Angriff mit Elektro-Tackle. Der Anwender verletzt sich dabei. Das Ziel wird eventuell paralysiert."
   },
   "magicalLeaf": {
-    name: "Magical Leaf",
-    effect: "The user scatters curious leaves that chase the target. This attack never misses."
+    name: "Zauberblatt",
+    effect: "Magischer Blattangriff, dem nicht auszuweichen ist."
   },
   "waterSport": {
-    name: "Water Sport",
-    effect: "The user soaks the battlefield with water. This weakens Fire-type moves for five turns."
+    name: "Nassmacher",
+    effect: "Der Anwender lässt Wasser herabregnen und schwächt damit fünf Runden lang Feuer-Attacken."
   },
   "calmMind": {
-    name: "Calm Mind",
-    effect: "The user quietly focuses its mind and calms its spirit to raise its Sp. Atk and Sp. Def stats."
+    name: "Gedankengut",
+    effect: "Erhöht Spezial-Angriff und Spezial-Verteidigung durch Konzentration."
   },
   "leafBlade": {
-    name: "Leaf Blade",
-    effect: "The user handles a sharp leaf like a sword and attacks by cutting its target. Critical hits land more easily."
+    name: "Laubklinge",
+    effect: "Hieb mit scharfkantigem Blatt. Hohe Volltrefferquote."
   },
   "dragonDance": {
-    name: "Dragon Dance",
-    effect: "The user vigorously performs a mystic, powerful dance that raises its Attack and Speed stats."
+    name: "Drachentanz",
+    effect: "Ein mystischer Tanz, der den Angriffs- und Initiative-Wert erhöht."
   },
   "rockBlast": {
-    name: "Rock Blast",
-    effect: "The user hurls hard rocks at the target. Two to five rocks are launched in a row."
+    name: "Felswurf",
+    effect: "Wirft zwei- bis fünfmal in Folge Felsblöcke auf das Ziel."
   },
   "shockWave": {
-    name: "Shock Wave",
-    effect: "The user strikes the target with a quick jolt of electricity. This attack never misses."
+    name: "Schockwelle",
+    effect: "Angriff mit schnellem Elektro-Schlag. Ausweichen nicht möglich."
   },
   "waterPulse": {
-    name: "Water Pulse",
-    effect: "The user attacks the target with a pulsing blast of water. This may also confuse the target."
+    name: "Aquawelle",
+    effect: "Angriff mit Wasserwelle, die das Ziel eventuell verwirren kann."
   },
   "doomDesire": {
-    name: "Doom Desire",
-    effect: "Two turns after this move is used, a concentrated bundle of light blasts the target."
+    name: "Kismetwunsch",
+    effect: "Angriff mit gebündeltem Licht erfolgt zwei Runden nach Attackeneinsatz."
   },
   "psychoBoost": {
-    name: "Psycho Boost",
-    effect: "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    name: "Psyschub",
+    effect: "Angriff mit voller Kraft, der den Spezial-Angriff des Anwenders durch den Rückstoß stark senkt."
   },
   "roost": {
-    name: "Roost",
-    effect: "The user lands and rests its body. This move restores the user's HP by up to half of its max HP."
+    name: "Ruheort",
+    effect: "Anwender landet und ruht sich aus. KP des Anwenders werden um 50 % der maximalen KP aufgefüllt."
   },
   "gravity": {
-    name: "Gravity",
-    effect: "This move enables Flying-type Pokémon or Pokémon with the Levitate Ability to be hit by Ground-type moves. Moves that involve flying can't be used."
+    name: "Erdanziehung",
+    effect: "Die Gravitation wird für fünf Runden erhöht. Macht Fliegen unmöglich und verhindert Schwebe."
   },
   "miracleEye": {
-    name: "Miracle Eye",
-    effect: "Enables a Dark-type target to be hit by Psychic-type attacks. This also enables an evasive target to be hit."
+    name: "Wunderauge",
+    effect: "Erlaubt es, Unlicht-Pokémon mit Psycho-Attacken anzugreifen. Ignoriert den Fluchtwert des Zieles."
   },
   "wakeUpSlap": {
-    name: "Wake-Up Slap",
-    effect: "This attack inflicts big damage on a sleeping target. This also wakes the target up, however."
+    name: "Weckruf",
+    effect: "Richtet großen Schaden bei einem schlafenden Ziel an, weckt es aber auch auf."
   },
   "hammerArm": {
-    name: "Hammer Arm",
-    effect: "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however."
+    name: "Hammerarm",
+    effect: "Anwender trifft mit einem starken Hieb. Senkt Initiative des Anwenders."
   },
   "gyroBall": {
-    name: "Gyro Ball",
-    effect: "The user tackles the target with a high-speed spin. The slower the user compared to the target, the greater the move's power."
+    name: "Gyroball",
+    effect: "Angriff mit hoher Geschwindigkeit. Je niedriger die Initiative des Anwenders, desto höher der Schaden."
   },
   "healingWish": {
-    name: "Healing Wish",
-    effect: "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured."
+    name: "Heilopfer",
+    effect: "Anwender geht K.O. Das an seine Stelle tretende Pokémon hat volle KP. Statusprobleme werden geheilt."
   },
   "brine": {
-    name: "Brine",
-    effect: "If the target's HP is half or less, this attack will hit with double the power."
+    name: "Lake",
+    effect: "Hat das Ziel die Hälfte oder weniger seiner maximalen KP, trifft diese Attacke mit doppelter Kraft."
   },
   "naturalGift": {
-    name: "Natural Gift",
-    effect: "The user draws power to attack by using its held Berry. The Berry determines the move's type and power."
+    name: "Beerenkräfte",
+    effect: "Anwender zieht aus seiner derzeitigen Beere Kraft. Sie bestimmt Typ und Stärke der Attacke."
   },
   "feint": {
-    name: "Feint",
-    effect: "This attack hits a target using a move such as Protect or Detect. This also lifts the effects of those moves."
+    name: "Offenlegung",
+    effect: "Ziele, die Schutzschild oder Scanner verwenden, werden getroffen. Entfernt Effekte dieser Attacken."
   },
   "pluck": {
-    name: "Pluck",
-    effect: "The user pecks the target. If the target is holding a Berry, the user eats it and gains its effect."
+    name: "Pflücker",
+    effect: "Anwender pickt das Ziel, nimmt die Beere, falls das Ziel eine trägt, und erhält ihren Effekt."
   },
   "tailwind": {
-    name: "Tailwind",
-    effect: "The user whips up a turbulent whirlwind that ups the Speed stats of the user and its allies for four turns."
+    name: "Rückenwind",
+    effect: "Anwender erzeugt einen Wirbelwind, der die Initiative aller Pokémon im Team für vier Runden steigert."
   },
   "acupressure": {
-    name: "Acupressure",
-    effect: "The user applies pressure to stress points, sharply boosting one of its or its allies' stats."
+    name: "Akupressur",
+    effect: "Anwender erhöht Druck auf Stresspunkte und steigert einen Statuswert stark."
   },
   "metalBurst": {
-    name: "Metal Burst",
-    effect: "The user retaliates with much greater force against the opponent that last inflicted damage on it."
+    name: "Metallstoß",
+    effect: "Attacke mit großer Kraft gegen das Ziel, das dem Anwender in derselben Runde zuletzt Schaden zufügte."
   },
   "uTurn": {
-    name: "U-turn",
-    effect: "After making its attack, the user rushes back to switch places with a party Pokémon in waiting."
+    name: "Kehrtwende",
+    effect: "Nach der Attacke eilt der Anwender zurück und tauscht den Platz mit einem anderen Pokémon."
   },
   "closeCombat": {
-    name: "Close Combat",
-    effect: "The user fights the target up close without guarding itself. This also lowers the user's Defense and Sp. Def stats."
+    name: "Nahkampf",
+    effect: "Nahkampf-Attacke ohne Rücksicht auf Verluste. Senkt Verteidigung und Spezial-Verteidigung des Anwenders."
   },
   "payback": {
-    name: "Payback",
-    effect: "The user stores power, then attacks. If the user moves after the target, this attack's power will be doubled."
+    name: "Gegenstoß",
+    effect: "Der Anwender lädt die Attacke auf. Handelt das Ziel vor dem Anwender, verdoppelt sich die Kraft der Attacke."
   },
   "assurance": {
-    name: "Assurance",
-    effect: "If the target has already taken some damage in the same turn, this attack's power is doubled."
+    name: "Gewissheit",
+    effect: "Hat das Ziel während der Runde schon Schaden genommen, wird die Kraft der Attacke verdoppelt."
   },
   "embargo": {
-    name: "Embargo",
-    effect: "This move prevents the target from using its held item for five turns. Its Trainer is also prevented from using items on it."
+    name: "Itemsperre",
+    effect: "Verhindert, dass auf das Ziel Items verwendet werden."
   },
   "fling": {
-    name: "Fling",
-    effect: "The user flings its held item at the target to attack. This move's power and effects depend on the item."
+    name: "Schleuder",
+    effect: "Anwender schleudert sein Item auf das Ziel. Kraft und Effekt der Attacke hängen vom Item ab."
   },
   "psychoShift": {
-    name: "Psycho Shift",
-    effect: "Using its psychic power of suggestion, the user transfers its status conditions to the target."
+    name: "Psybann",
+    effect: "Anwender nutzt seine Suggestivkräfte, um eigene Statusprobleme auf das Ziel zu transferieren."
   },
   "trumpCard": {
-    name: "Trump Card",
-    effect: "The fewer PP this move has, the greater its power."
+    name: "Trumpfkarte",
+    effect: "Je weniger AP diese Attacke hat, desto mehr Angriffskraft besitzt sie."
   },
   "healBlock": {
-    name: "Heal Block",
-    effect: "For five turns, the user prevents the opposing team from using any moves, Abilities, or held items that recover HP."
+    name: "Heilblockade",
+    effect: "Anwender verhindert für fünf Runden, dass Ziele durch Attacken, Fähigkeiten oder Items KP regenerieren."
   },
   "wringOut": {
-    name: "Wring Out",
-    effect: "The user powerfully wrings the target. The more HP the target has, the greater the move's power."
+    name: "Auswringen",
+    effect: "Anwender presst sein Ziel aus. Je höher die KP des Zieles, desto kraftvoller die Attacke."
   },
   "powerTrick": {
-    name: "Power Trick",
-    effect: "The user employs its psychic power to switch its Attack stat with its Defense stat."
+    name: "Krafttrick",
+    effect: "Anwender setzt Psycho-Kräfte ein, um eigenen Angriffs- mit Verteidigungs-Wert auszutauschen."
   },
   "gastroAcid": {
-    name: "Gastro Acid",
-    effect: "The user hurls up its stomach acids on the target. The fluid eliminates the effect of the target's Ability."
+    name: "Magensäfte",
+    effect: "Anwender greift das Ziel mit eigenen Magensäften an. Entfernt Effekte von dessen Fähigkeit."
   },
   "luckyChant": {
-    name: "Lucky Chant",
-    effect: "The user chants an incantation toward the sky, preventing opposing Pokémon from landing critical hits for five turns."
+    name: "Beschwörung",
+    effect: "Anwender singt eine Beschwörungsformel, die Volltreffer gegen ihn verhindert."
   },
   "meFirst": {
-    name: "Me First",
-    effect: "The user cuts ahead of the target to copy and use the target's intended move with greater power. This move fails if it isn't used first."
+    name: "Egotrip",
+    effect: "Anwender stiehlt und führt die Attacke eines langsameren Zieles zuerst und mit größerer Kraft aus."
   },
   "copycat": {
-    name: "Copycat",
-    effect: "The user mimics the move used immediately before it. The move fails if no other move has been used yet."
+    name: "Imitator",
+    effect: "Anwender imitiert gerade verwendete Attacke. Dies schlägt fehl, falls zuvor keine Attacke verwendet wurde."
   },
   "powerSwap": {
-    name: "Power Swap",
-    effect: "The user employs its psychic power to switch changes to its Attack and Sp. Atk stats with the target."
+    name: "Krafttausch",
+    effect: "Psychische Kräfte tauschen Änderungen an Angriff und Spezial-Angriff mit denen des Zieles."
   },
   "guardSwap": {
-    name: "Guard Swap",
-    effect: "The user employs its psychic power to switch changes to its Defense and Sp. Def stats with the target."
+    name: "Schutztausch",
+    effect: "Psychische Kräfte tauschen Änderungen an Verteidigung und Spezial-Verteidigung mit denen des Zieles."
   },
   "punishment": {
-    name: "Punishment",
-    effect: "The more the target has powered up with stat changes, the greater the move's power."
+    name: "Strafattacke",
+    effect: "Je stärker das Ziel durch Statusveränderungen ist, desto stärker wirkt diese Attacke."
   },
   "lastResort": {
-    name: "Last Resort",
-    effect: "This move can be used only after the user has used all the other moves it knows in the battle."
+    name: "Zuflucht",
+    effect: "Diese Attacke kann nur eingesetzt werden, nachdem alle verfügbaren Attacken ausgeführt worden sind."
   },
   "worrySeed": {
-    name: "Worry Seed",
-    effect: "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia."
+    name: "Sorgensamen",
+    effect: "Ziel wird bepflanzt. Wandelt Fähigkeit in Insomnia um. Verhindert so Schlaf."
   },
   "suckerPunch": {
-    name: "Sucker Punch",
-    effect: "This move enables the user to attack first. This move fails if the target is not readying an attack."
+    name: "Tiefschlag",
+    effect: "Ermöglicht den Erstschlag. Gelingt aber nur, wenn das Ziel gerade eine Attacke vorbereitet."
   },
   "toxicSpikes": {
-    name: "Toxic Spikes",
-    effect: "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle."
+    name: "Giftspitzen",
+    effect: "Anwender legt eine Falle mit Giftdornen aus. In den Kampf eingewechselte gegnerische Pokémon werden vergiftet."
   },
   "heartSwap": {
-    name: "Heart Swap",
-    effect: "The user employs its psychic power to switch stat changes with the target."
+    name: "Statustausch",
+    effect: "Anwender setzt Psycho-Kräfte ein, um Statusveränderungen des Zieles mit den eigenen zu tauschen."
   },
   "aquaRing": {
-    name: "Aqua Ring",
-    effect: "The user envelops itself in a veil made of water. It regains some HP every turn."
+    name: "Wasserring",
+    effect: "Anwender umgibt sich mit einem Schleier aus Wasser. Dabei regeneriert er einige KP pro Runde."
   },
   "magnetRise": {
-    name: "Magnet Rise",
-    effect: "The user levitates using electrically generated magnetism for five turns."
+    name: "Magnetflug",
+    effect: "Anwender schwebt für fünf Runden durch elektrisch erzeugten Magnetismus."
   },
   "flareBlitz": {
-    name: "Flare Blitz",
-    effect: "The user cloaks itself in fire and charges the target. This also damages the user quite a lot. This attack may leave the target with a burn."
+    name: "Flammenblitz",
+    effect: "Anwender hüllt sich in Flammen und stürmt auf das Ziel zu, das sich eventuell verbrennt. Anwender nimmt selbst großen Schaden."
   },
   "forcePalm": {
-    name: "Force Palm",
-    effect: "The target is attacked with a shock wave. This may also leave the target with paralysis."
+    name: "Kraftwelle",
+    effect: "Das Ziel wird mit einer Schockwelle angegriffen, die es eventuell paralysiert."
   },
   "auraSphere": {
-    name: "Aura Sphere",
-    effect: "The user lets loose a blast of aura power from deep within its body at the target. This attack never misses."
+    name: "Aurasphäre",
+    effect: "Tief aus dem Inneren des Anwenders löst sich ein kraftvoller Stoß Auraenergie. Trifft in jedem Fall."
   },
   "rockPolish": {
-    name: "Rock Polish",
-    effect: "The user polishes its body to reduce drag. This sharply raises the Speed stat."
+    name: "Steinpolitur",
+    effect: "Anwender reduziert so gut wie möglich den Luftwiderstand. Kann Initiative-Wert stark steigern."
   },
   "poisonJab": {
-    name: "Poison Jab",
-    effect: "The target is stabbed with a tentacle, arm, or the like steeped in poison. This may also poison the target."
+    name: "Gifthieb",
+    effect: "Ziel wird mit vergiftetem Arm oder Tentakel verletzt. Es wird dabei eventuell vergiftet."
   },
   "darkPulse": {
-    name: "Dark Pulse",
-    effect: "The user releases a horrible aura imbued with dark thoughts. This may also make the target flinch."
+    name: "Finsteraura",
+    effect: "Anwender greift mit fürchterlicher Aura schlechter Gedanken an. Ziel schreckt eventuell zurück."
   },
   "nightSlash": {
-    name: "Night Slash",
-    effect: "The user slashes the target the instant an opportunity arises. Critical hits land more easily."
+    name: "Nachthieb",
+    effect: "Anwender greift bei der ersten Gelegenheit mit scharfen Klauen an. Hohe Volltrefferquote."
   },
   "aquaTail": {
-    name: "Aqua Tail",
-    effect: "The user attacks by swinging its tail as if it were a vicious wave in a raging storm."
+    name: "Nassschweif",
+    effect: "Anwender attackiert mit dem Schweif, als ob dieser eine brutale Welle in einem tosenden Sturm sei."
   },
   "seedBomb": {
-    name: "Seed Bomb",
-    effect: "The user slams a barrage of hard-shelled seeds down on the target from above."
+    name: "Samenbomben",
+    effect: "Anwender lässt eine Menge Samen mit harter Schale von oben auf das Ziel fallen."
   },
   "airSlash": {
-    name: "Air Slash",
-    effect: "The user attacks with a blade of air that slices even the sky. This may also make the target flinch."
+    name: "Luftschnitt",
+    effect: "Das Ziel wird mit einer Luftklinge angegriffen. Ziel schreckt eventuell zurück."
   },
   "xScissor": {
-    name: "X-Scissor",
-    effect: "The user slashes at the target by crossing its scythes or claws as if they were a pair of scissors."
+    name: "Kreuzschere",
+    effect: "Der Anwender führt eine Attacke aus, die einer Scherenbewegung ähnelt."
   },
   "bugBuzz": {
-    name: "Bug Buzz",
-    effect: "The user generates a damaging sound wave by vibration. This may also lower the target's Sp. Def stat."
+    name: "Käfergebrumm",
+    effect: "Anwender schlägt mit den Flügeln und erzeugt eine Schockwelle. Senkt eventuell Spezial-Verteidigung des Zieles."
   },
   "dragonPulse": {
-    name: "Dragon Pulse",
-    effect: "The target is attacked with a shock wave generated by the user's gaping mouth."
+    name: "Drachenpuls",
+    effect: "Das Ziel wird mit einer Schockwelle angegriffen, die aus dem offenen Maul des Anwenders kommt."
   },
   "dragonRush": {
-    name: "Dragon Rush",
-    effect: "The user tackles the target while exhibiting overwhelming menace. This may also make the target flinch."
+    name: "Drachenstoß",
+    effect: "Anwender führt einen gefährlichen Angriff aus. Das Ziel schreckt eventuell zurück."
   },
   "powerGem": {
-    name: "Power Gem",
-    effect: "The user attacks with a ray of light that sparkles as if it were made of gemstones."
+    name: "Juwelenkraft",
+    effect: "Anwender attackiert mit einem Lichtstrahl, der funkelt, als sei er aus Juwelen."
   },
   "drainPunch": {
-    name: "Drain Punch",
-    effect: "An energy-draining punch. The user's HP is restored by half the damage taken by the target."
+    name: "Ableithieb",
+    effect: "Entzieht dem Ziel Energie. Die Hälfte des Schadens wird den KP des Anwenders zugerechnet."
   },
   "vacuumWave": {
-    name: "Vacuum Wave",
-    effect: "The user whirls its fists to send a wave of pure vacuum at the target. This move always goes first."
+    name: "Vakuumwelle",
+    effect: "Ein Faustwirbel sendet eine Vakuumwelle auf das Ziel. Erstschlaggarantie."
   },
   "focusBlast": {
-    name: "Focus Blast",
-    effect: "The user heightens its mental focus and unleashes its power. This may also lower the target's Sp. Def stat."
+    name: "Fokusstoß",
+    effect: "Anwender erhöht seinen mentalen Fokus und greift dann an. Senkt eventuell Spezial-Verteidigung des Zieles."
   },
   "energyBall": {
-    name: "Energy Ball",
-    effect: "The user draws power from nature and fires it at the target. This may also lower the target's Sp. Def stat."
+    name: "Energieball",
+    effect: "Anwender zieht Kraft aus der Natur und feuert sie auf das Ziel. Senkt eventuell Spezial-Verteidigung des Zieles."
   },
   "braveBird": {
-    name: "Brave Bird",
-    effect: "The user tucks in its wings and charges from a low altitude. This also damages the user quite a lot."
+    name: "Sturzflug",
+    effect: "Anwender greift aus niedriger Höhe an. Er erleidet bei dieser Attacke selbst großen Schaden."
   },
   "earthPower": {
-    name: "Earth Power",
-    effect: "The user makes the ground under the target erupt with power. This may also lower the target's Sp. Def stat."
+    name: "Erdkräfte",
+    effect: "Der Boden unter dem Ziel erzittert durch die Kraft der Erde. Senkt eventuell Spezial-Verteidigung."
   },
   "switcheroo": {
-    name: "Switcheroo",
-    effect: "The user trades held items with the target faster than the eye can follow."
+    name: "Wechseldich",
+    effect: "Item wird in Windeseile mit dem Ziel getauscht."
   },
   "gigaImpact": {
-    name: "Giga Impact",
-    effect: "The user charges at the target using every bit of its power. The user can't move on the next turn."
+    name: "Gigastoß",
+    effect: "Anwender rennt mit seiner ganzen Kraft gegen das Ziel an und muss dann eine Runde ruhen."
   },
   "nastyPlot": {
-    name: "Nasty Plot",
-    effect: "The user stimulates its brain by thinking bad thoughts. This sharply raises the user's Sp. Atk stat."
+    name: "Ränkeschmied",
+    effect: "Anwender stimuliert sein Gehirn und hat finstere Gedanken. Steigert Spezial-Angriff stark."
   },
   "bulletPunch": {
-    name: "Bullet Punch",
-    effect: "The user strikes the target with tough punches as fast as bullets. This move always goes first."
+    name: "Patronenhieb",
+    effect: "Das Ziel wird von ultraschnellen Hieben getroffen. Erstschlaggarantie."
   },
   "avalanche": {
-    name: "Avalanche",
-    effect: "The power of this attack move is doubled if the user has been hurt by the target in the same turn."
+    name: "Lawine",
+    effect: "Wurde der Anwender in dieser Runde vom Ziel getroffen, macht diese Attacke doppelten Schaden."
   },
   "iceShard": {
-    name: "Ice Shard",
-    effect: "The user flash-freezes chunks of ice and hurls them at the target. This move always goes first."
+    name: "Eissplitter",
+    effect: "Das Ziel wird mit Eisklumpen beworfen. Diese Attacke hat Erstschlaggarantie."
   },
   "shadowClaw": {
-    name: "Shadow Claw",
-    effect: "The user slashes with a sharp claw made from shadows. Critical hits land more easily."
+    name: "Dunkelklaue",
+    effect: "Das Ziel wird mit scharfen Klauen aus der Schattenwelt attackiert. Hohe Volltrefferquote."
   },
   "thunderFang": {
-    name: "Thunder Fang",
-    effect: "The user bites with electrified fangs. This may also make the target flinch or leave it with paralysis."
+    name: "Donnerzahn",
+    effect: "Anwender beißt mit elektrifizierten Reißzähnen zu. Das Ziel schreckt eventuell zurück oder wird paralysiert."
   },
   "iceFang": {
-    name: "Ice Fang",
-    effect: "The user bites with cold-infused fangs. This may also make the target flinch or leave it frozen."
+    name: "Eiszahn",
+    effect: "Anwender beißt mit eiskalten Reißzähnen zu. Ziel schreckt eventuell zurück oder friert ein."
   },
   "fireFang": {
-    name: "Fire Fang",
-    effect: "The user bites with flame-cloaked fangs. This may also make the target flinch or leave it with a burn."
+    name: "Feuerzahn",
+    effect: "Anwender beißt mit flammenden Reißzähnen zu. Ziel schreckt eventuell zurück oder verbrennt sich."
   },
   "shadowSneak": {
-    name: "Shadow Sneak",
-    effect: "The user extends its shadow and attacks the target from behind. This move always goes first."
+    name: "Schattenstoß",
+    effect: "Anwender erweitert Schatten und greift das Ziel von hinten an. Erstschlaggarantie."
   },
   "mudBomb": {
-    name: "Mud Bomb",
-    effect: "The user launches a hard-packed mud ball to attack. This may also lower the target's accuracy."
+    name: "Schlammbombe",
+    effect: "Anwender greift mit einem festen Schlammklumpen an. Senkt eventuell Genauigkeit des Zieles."
   },
   "psychoCut": {
-    name: "Psycho Cut",
-    effect: "The user tears at the target with blades formed by psychic power. Critical hits land more easily."
+    name: "Psychoklinge",
+    effect: "Das Ziel wird mit Klingen attackiert, die aus Psycho-Energie bestehen. Hohe Volltrefferquote."
   },
   "zenHeadbutt": {
-    name: "Zen Headbutt",
-    effect: "The user focuses its willpower to its head and attacks the target. This may also make the target flinch."
+    name: "Zen-Kopfstoß",
+    effect: "Anwender konzentriert seinen Willen und rammt das Ziel. Dieses schreckt eventuell zurück."
   },
   "mirrorShot": {
-    name: "Mirror Shot",
-    effect: "The user lets loose a flash of energy at the target from its polished body. This may also lower the target's accuracy."
+    name: "Spiegelsalve",
+    effect: "Anwender feuert Energiestrahl aus seinem Körper ab. Senkt eventuell Genauigkeit des Zieles."
   },
   "flashCannon": {
-    name: "Flash Cannon",
-    effect: "The user gathers all its light energy and releases it all at once. This may also lower the target's Sp. Def stat."
+    name: "Lichtkanone",
+    effect: "Anwender sammelt Lichtenergie und feuert sie auf einmal ab. Senkt eventuell Spezial-Verteidigung des Zieles."
   },
   "rockClimb": {
-    name: "Rock Climb",
-    effect: "The user attacks the target by smashing into it with incredible force. This may also confuse the target."
+    name: "Kraxler",
+    effect: "Eine stürmische Attacke, die das Ziel eventuell verwirrt."
   },
   "defog": {
-    name: "Defog",
-    effect: "A strong wind blows away the target's barriers such as Reflect or Light Screen. This also lowers the target's evasiveness."
+    name: "Auflockern",
+    effect: "Starker Wind hebt Attacken wie Reflektor und Lichtschild des Zieles auf. Senkt außerdem den Fluchtwert."
   },
   "trickRoom": {
-    name: "Trick Room",
-    effect: "The user creates a bizarre area in which slower Pokémon get to move first for five turns."
+    name: "Bizarroraum",
+    effect: "Anwender erzeugt einen bizarren Raum, in dem langsame Pokémon fünf Runden lang zuerst agieren."
   },
   "dracoMeteor": {
     name: "Draco Meteor",
-    effect: "Comets are summoned down from the sky onto the target. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    effect: "Kometen werden heraufbeschworen. Der Rückstoß reduziert den Spezial-Angriff des Anwenders stark."
   },
   "discharge": {
-    name: "Discharge",
-    effect: "The user strikes everything around it by letting loose a flare of electricity. This may also cause paralysis."
+    name: "Ladungsstoß",
+    effect: "Anwender greift alle Pokémon im Umkreis mit Elektrizität an. Diese werden eventuell auch paralysiert."
   },
   "lavaPlume": {
-    name: "Lava Plume",
-    effect: "The user torches everything around it in an inferno of scarlet flames. This may also leave those it hits with a burn."
+    name: "Flammensturm",
+    effect: "Greift alles in seiner Umgebung mit tiefroten Flammen an. Ziel kann Verbrennungen erleiden."
   },
   "leafStorm": {
-    name: "Leaf Storm",
-    effect: "The user whips up a storm of leaves around the target. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    name: "Blättersturm",
+    effect: "Anwender erzeugt einen Sturm aus scharfen Blättern. Rückstoß senkt Spezial-Angriff des Anwenders stark."
   },
   "powerWhip": {
-    name: "Power Whip",
-    effect: "The user violently whirls its vines, tentacles, or the like to harshly lash the target."
+    name: "Blattgeißel",
+    effect: "Anwender wirbelt seine Ranken oder Tentakel peitschenartig gegen das Ziel."
   },
   "rockWrecker": {
-    name: "Rock Wrecker",
-    effect: "The user launches a huge boulder at the target to attack. The user can't move on the next turn."
+    name: "Felswerfer",
+    effect: "Anwender wirft einen riesigen Felsen auf das Ziel. In der nächsten Runde muss der Anwender ruhen."
   },
   "crossPoison": {
-    name: "Cross Poison",
-    effect: "A slashing attack with a poisonous blade that may also poison the target. Critical hits land more easily."
+    name: "Giftstreich",
+    effect: "Ein schneidender Hieb, der das Ziel eventuell vergiftet. Hat eine hohe Volltrefferquote."
   },
   "gunkShot": {
-    name: "Gunk Shot",
-    effect: "The user shoots filthy garbage at the target to attack. This may also poison the target."
+    name: "Mülltreffer",
+    effect: "Anwender schießt mit Müll auf das Ziel. Vergiftet dieses eventuell."
   },
   "ironHead": {
-    name: "Iron Head",
-    effect: "The user slams the target with its steel-hard head. This may also make the target flinch."
+    name: "Eisenschädel",
+    effect: "Ziel wird durch stahlharten Kopf des Anwenders getroffen und schreckt eventuell zurück."
   },
   "magnetBomb": {
-    name: "Magnet Bomb",
-    effect: "The user launches steel bombs that stick to the target. This attack never misses."
+    name: "Magnetbombe",
+    effect: "Ziel wird durch Haftbomben getroffen. Diese Attacke trifft immer."
   },
   "stoneEdge": {
-    name: "Stone Edge",
-    effect: "The user stabs the target from below with sharpened stones. Critical hits land more easily."
+    name: "Steinkante",
+    effect: "Anwender sticht das Ziel mit spitzen Steinen. Hohe Volltrefferquote."
   },
   "captivate": {
-    name: "Captivate",
-    effect: "If any opposing Pokémon is the opposite gender of the user, it is charmed, which harshly lowers its Sp. Atk stat."
+    name: "Liebreiz",
+    effect: "Charme-Attacke, die den Spezial-Angriff des Zieles stark senkt, falls es dem anderen Geschlecht angehört."
   },
   "stealthRock": {
-    name: "Stealth Rock",
-    effect: "The user lays a trap of levitating stones around the opposing team. The trap hurts opposing Pokémon that switch into battle."
+    name: "Tarnsteine",
+    effect: "Falle mit schwebenden Steinen. In den Kampf eingewechselte Ziele nehmen Schaden."
   },
   "grassKnot": {
-    name: "Grass Knot",
-    effect: "The user snares the target with grass and trips it. The heavier the target, the greater the move's power."
+    name: "Strauchler",
+    effect: "Ziel wird durch Gras ins Straucheln gebracht. Je schwerer das Ziel, desto mehr Schaden."
   },
   "chatter": {
-    name: "Chatter",
-    effect: "The user attacks the target with sound waves of deafening chatter. This confuses the target."
+    name: "Geschwätz",
+    effect: "Attacke mit Schallwellen. Verwirrt das Ziel."
   },
   "judgment": {
-    name: "Judgment",
-    effect: "The user releases countless shots of light at the target. This move's type varies depending on the kind of Plate the user is holding."
+    name: "Urteilskraft",
+    effect: "Anwender feuert unzählige Lichtstrahlen ab. Deren Typ hängt von der gehaltenen Tafel ab."
   },
   "bugBite": {
-    name: "Bug Bite",
-    effect: "The user bites the target. If the target is holding a Berry, the user eats it and gains its effect."
+    name: "Käferbiss",
+    effect: "Anwender beißt das Ziel. Trägt dieses eine Beere, isst der Anwender sie und erhält ihren Effekt."
   },
   "chargeBeam": {
-    name: "Charge Beam",
-    effect: "The user attacks the target with an electric charge. The user may use any remaining electricity to raise its Sp. Atk stat."
+    name: "Ladestrahl",
+    effect: "Ziel wird von einem Elektrostrahl getroffen. Steigert eventuell Spezial-Angriff des Anwenders."
   },
   "woodHammer": {
-    name: "Wood Hammer",
-    effect: "The user slams its rugged body into the target to attack. This also damages the user quite a lot."
+    name: "Holzhammer",
+    effect: "Anwender attackiert mit seinem robusten Körper. Er erleidet dabei auch selbst großen Schaden."
   },
   "aquaJet": {
-    name: "Aqua Jet",
-    effect: "The user lunges at the target at a speed that makes it almost invisible. This move always goes first."
+    name: "Wasserdüse",
+    effect: "Bei dieser Erstschlag-Attacke stürzt sich der Anwender so schnell auf das Ziel, dass er quasi unsichtbar wird."
   },
   "attackOrder": {
-    name: "Attack Order",
-    effect: "The user calls out its underlings to pummel the target. Critical hits land more easily."
+    name: "Schlagbefehl",
+    effect: "Anwender ruft seine Untergebenen zum Angriff. Hat eine hohe Volltrefferquote."
   },
   "defendOrder": {
-    name: "Defend Order",
-    effect: "The user calls out its underlings to shield its body, raising its Defense and Sp. Def stats."
+    name: "Blockbefehl",
+    effect: "Untergebene bilden einen lebenden Schild um den Anwender. Steigert Verteidigung und Spezial-Verteidigung."
   },
   "healOrder": {
-    name: "Heal Order",
-    effect: "The user calls out its underlings to heal it. The user regains up to half of its max HP."
+    name: "Heilbefehl",
+    effect: "Untergebene heilen den Anwender. KP des Anwenders werden um 50 % der maximalen KP aufgefüllt."
   },
   "headSmash": {
-    name: "Head Smash",
-    effect: "The user attacks the target with a hazardous, full-power headbutt. This also damages the user terribly."
+    name: "Kopfstoß",
+    effect: "Anwender greift unter Einsatz seines Lebens mit einem Kopfstoß an und nimmt dabei selbst jede Menge Schaden."
   },
   "doubleHit": {
-    name: "Double Hit",
-    effect: "The user slams the target with a long tail, vines, or a tentacle. The target is hit twice in a row."
+    name: "Doppelschlag",
+    effect: "Anwender trifft das Ziel mit dem Schweif oder Ähnlichem. Ziel wird doppelt getroffen."
   },
   "roarOfTime": {
-    name: "Roar of Time",
-    effect: "The user blasts the target with power that distorts even time. The user can't move on the next turn."
+    name: "Zeitenlärm",
+    effect: "Anwender attackiert mit einer Kraft, die selbst die Zeit verzerrt. In der nächsten Runde muss er ruhen."
   },
   "spacialRend": {
-    name: "Spacial Rend",
-    effect: "The user tears the target along with the space around it. Critical hits land more easily."
+    name: "Raumschlag",
+    effect: "Schwere, raumgreifende Attacke. Hohe Volltrefferquote."
   },
   "lunarDance": {
-    name: "Lunar Dance",
-    effect: "The user faints. In return, the Pokémon taking its place will have its status and HP fully restored."
+    name: "Lunartanz",
+    effect: "Anwender geht K.O. Das an seine Stelle tretende Pokémon hat dafür volle KP und AP. Statusprobleme werden geheilt."
   },
   "crushGrip": {
-    name: "Crush Grip",
-    effect: "The target is crushed with great force. The more HP the target has left, the greater this move's power."
+    name: "Quetschgriff",
+    effect: "Ziel wird mit großer Kraft getroffen. Je höher die KP des Zieles, desto stärker die Attacke."
   },
   "magmaStorm": {
-    name: "Magma Storm",
-    effect: "The target becomes trapped within a maelstrom of fire that rages for four to five turns."
+    name: "Lavasturm",
+    effect: "Das Ziel wird in einen Feuersog gezogen, der vier bis fünf Runden aktiv ist."
   },
   "darkVoid": {
-    name: "Dark Void",
-    effect: "Opposing Pokémon are dragged into a world of total darkness that makes them sleep."
+    name: "Schlummerort",
+    effect: "Das Ziel wird in eine Welt der Dunkelheit gezogen und in Schlaf versetzt."
   },
   "seedFlare": {
-    name: "Seed Flare",
-    effect: "The user emits a shock wave from its body to attack its target. This may also harshly lower the target's Sp. Def stat."
+    name: "Schocksamen",
+    effect: "Anwender erzeugt eine Schockwelle. Spezial-Verteidigung des Zieles wird stark gesenkt."
   },
   "ominousWind": {
-    name: "Ominous Wind",
-    effect: "The user blasts the target with a gust of repulsive wind. This may also raise all the user's stats at once."
+    name: "Unheilböen",
+    effect: "Das Ziel treffen abscheuliche Winde. Steigert eventuell alle Statuswerte des Anwenders."
   },
   "shadowForce": {
-    name: "Shadow Force",
-    effect: "The user disappears, then strikes the target on the next turn. This move hits even if the target protects itself."
+    name: "Schemenkraft",
+    effect: "Anwender verschwindet in Runde 1 und attackiert in Runde 2. Trifft auch, wenn sich das Ziel selbst schützt."
   },
   "honeClaws": {
-    name: "Hone Claws",
-    effect: "The user sharpens its claws to boost its Attack stat and accuracy."
+    name: "Klauenwetzer",
+    effect: "Wetzt seine Klauen, um sie zu schärfen. Erhöht Angriff und Genauigkeit des Anwenders."
   },
   "wideGuard": {
-    name: "Wide Guard",
-    effect: "The user and its allies are protected from wide-ranging attacks for one turn."
+    name: "Rundumschutz",
+    effect: "Schützt eine Runde lang vor Angriffen, die alle Pokémon auf deiner Seite treffen."
   },
   "guardSplit": {
-    name: "Guard Split",
-    effect: "The user employs its psychic power to average its Defense and Sp. Def stats with those of the target."
+    name: "Schutzteiler",
+    effect: "Durch Psycho-Kräfte werden Verteidigung und Spezial-Verteidigung des Anwenders und des Zieles addiert und in zwei gleiche Hälften geteilt."
   },
   "powerSplit": {
-    name: "Power Split",
-    effect: "The user employs its psychic power to average its Attack and Sp. Atk stats with those of the target."
+    name: "Kraftteiler",
+    effect: "Durch Psycho-Kräfte werden Angriff und Spezial-Angriff des Anwenders und des Zieles addiert und in zwei gleiche Hälften geteilt."
   },
   "wonderRoom": {
-    name: "Wonder Room",
-    effect: "The user creates a bizarre area in which Pokémon's Defense and Sp. Def stats are swapped for five turns."
+    name: "Wunderraum",
+    effect: "Anwender erzeugt bizarren Raum, in dem über fünf Runden die Verteidigung aller Pokémon mit ihrer Spezial-Verteidigung getauscht wird."
   },
   "psyshock": {
-    name: "Psyshock",
-    effect: "The user materializes an odd psychic wave to attack the target. This attack does physical damage."
+    name: "Psychoschock",
+    effect: "Anwender erzeugt eine seltsame Energiewelle, die dem Ziel physischen Schaden zufügt."
   },
   "venoshock": {
-    name: "Venoshock",
-    effect: "The user drenches the target in a special poisonous liquid. This move's power is doubled if the target is poisoned."
+    name: "Giftschock",
+    effect: "Überschüttet das Ziel mit einer speziellen toxischen Flüssigkeit. Doppelt so stark gegen vergiftete Ziele."
   },
   "autotomize": {
-    name: "Autotomize",
-    effect: "The user sheds part of its body to make itself lighter and sharply raise its Speed stat."
+    name: "Autotomie",
+    effect: "Anwender trennt sich von überflüssigen Körperteilen und steigert seine Initiative stark. Sein Gewicht nimmt deutlich ab."
   },
   "ragePowder": {
-    name: "Rage Powder",
-    effect: "The user scatters a cloud of irritating powder to draw attention to itself. Opposing Pokémon aim only at the user."
+    name: "Wutpulver",
+    effect: "Anwender zieht gegnerische Aufmerksamkeit und Angriffe auf sich, indem er ein Wut erzeugendes Pulver über sich streut."
   },
   "telekinesis": {
-    name: "Telekinesis",
-    effect: "The user makes the target float with its psychic power. The target is easier to hit for three turns."
+    name: "Telekinese",
+    effect: "Bringt das Ziel durch Psycho-Kräfte zum Schweben. Dieses lässt sich so über drei Runden hinweg besonders leicht treffen."
   },
   "magicRoom": {
-    name: "Magic Room",
-    effect: "The user creates a bizarre area in which Pokémon's held items lose their effects for five turns."
+    name: "Magieraum",
+    effect: "Anwender erzeugt einen bizarren Raum, in dem über fünf Runden die Wirkung aller von Pokémon getragenen Items aufgehoben ist."
   },
   "smackDown": {
-    name: "Smack Down",
-    effect: "The user throws a stone or similar projectile to attack the target. A flying Pokémon will fall to the ground when it's hit."
+    name: "Katapult",
+    effect: "Greift das Ziel mit Steinen und Wurfgeschossen an. Fliegende Ziele fallen dabei vom Himmel und landen auf dem Boden."
   },
   "stormThrow": {
-    name: "Storm Throw",
-    effect: "The user strikes the target with a fierce blow. This attack always results in a critical hit."
+    name: "Bergsturm",
+    effect: "Ein Angriff mit voller Wucht und Volltreffergarantie."
   },
   "flameBurst": {
-    name: "Flame Burst",
-    effect: "The user attacks the target with a bursting flame. The bursting flame damages Pokémon next to the target as well."
+    name: "Funkenflug",
+    effect: "Bei Erfolg greift der Anwender mit berstenden Feuerblasen an. Die Funken der geplatzten Blasen treffen auch benachbarte Ziele."
   },
   "sludgeWave": {
-    name: "Sludge Wave",
-    effect: "The user strikes everything around it by swamping the area with a giant sludge wave. This may also poison those hit."
+    name: "Schlammwoge",
+    effect: "Greift Pokémon in der Nähe des Anwenders mit einer Schlammwelle an. Diese werden eventuell vergiftet."
   },
   "quiverDance": {
-    name: "Quiver Dance",
-    effect: "The user lightly performs a beautiful, mystic dance. This boosts the user's Sp. Atk, Sp. Def, and Speed stats."
+    name: "Falterreigen",
+    effect: "Anwender legt behände einen mystischen, formvollendeten Tanz aufs Parkett. Spezial-Angriff, Spezial-Verteidigung und Initiative steigen."
   },
   "heavySlam": {
-    name: "Heavy Slam",
-    effect: "The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move's power."
+    name: "Rammboss",
+    effect: "Anwender rammt das Ziel mit massivem Körper. Je schwerer er im Vergleich zum Ziel ist, desto stärker die Attacke."
   },
   "synchronoise": {
-    name: "Synchronoise",
-    effect: "Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it."
+    name: "Synchrolärm",
+    effect: "Fügt Pokémon vom selben Typ, die sich in der Nähe des Anwenders aufhalten, mit seltsamen Druckwellen Schaden zu."
   },
   "electroBall": {
-    name: "Electro Ball",
-    effect: "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move's power."
+    name: "Elektroball",
+    effect: "Je höher die Initiative des Anwenders im Vergleich zum Ziel ist, desto stärker trifft dieses eine geballte Ladung Strom."
   },
   "soak": {
-    name: "Soak",
-    effect: "The user shoots a torrent of water at the target and changes the target's type to Water."
+    name: "Überflutung",
+    effect: "Überschüttet das Ziel mit Unmengen an Wasser und ändert den Typ damit in Wasser um."
   },
   "flameCharge": {
-    name: "Flame Charge",
-    effect: "Cloaking itself in flame, the user attacks the target. Then, building up more power, the user raises its Speed stat."
+    name: "Nitroladung",
+    effect: "Anwender hüllt sich in Flammen und greift das Ziel an. Sammelt seine Energie und erhöht dadurch die eigene Initiative."
   },
   "coil": {
-    name: "Coil",
-    effect: "The user coils up and concentrates. This raises its Attack and Defense stats as well as its accuracy."
+    name: "Einrollen",
+    effect: "Anwender rollt sich zusammen und sammelt sich. Dabei werden Angriff, Verteidigung und Genauigkeit erhöht."
   },
   "lowSweep": {
-    name: "Low Sweep",
-    effect: "The user makes a swift attack on the target's legs, which lowers the target's Speed stat."
+    name: "Fußtritt",
+    effect: "Anwender greift mit blitzschnellen Bewegungen die Beine des Zieles an und senkt dessen Initiative."
   },
   "acidSpray": {
-    name: "Acid Spray",
-    effect: "The user spits fluid that works to melt the target. This harshly lowers the target's Sp. Def stat."
+    name: "Säurespeier",
+    effect: "Anwender greift an, indem er eine ätzende Flüssigkeit auf das Ziel speit. Senkt dessen Spezial-Verteidigung stark."
   },
   "foulPlay": {
-    name: "Foul Play",
-    effect: "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals."
+    name: "Schmarotzer",
+    effect: "Anwender macht sich die Kraft des Zieles zunutze. Je höher dessen Angriff, desto mehr Schaden richtet die Attacke an."
   },
   "simpleBeam": {
-    name: "Simple Beam",
-    effect: "The user's mysterious psychic wave changes the target's Ability to Simple."
+    name: "Wankelstrahl",
+    effect: "Bestrahlt das Ziel mit mysteriösen Energiewellen. Bei einem Treffer wird dessen Fähigkeit zu Wankelmut."
   },
   "entrainment": {
-    name: "Entrainment",
-    effect: "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's."
+    name: "Zwango",
+    effect: "Anwender tanzt zu einem seltsamem Rhythmus und zwingt das Ziel mitzumachen. Dieses nimmt dabei die Fähigkeit des Anwenders an."
   },
   "afterYou": {
-    name: "After You",
-    effect: "The user helps the target and makes it use its move right after the user."
+    name: "Galanterie",
+    effect: "Anwender ermöglicht dem Ziel direkt nach ihm zu handeln, solange der Anwender als Erstes zum Zug kommt."
   },
   "round": {
-    name: "Round",
-    effect: "The user attacks the target with a song. Others can join in the Round to increase the power of the attack."
+    name: "Kanon",
+    effect: "Angriff mit Gesang. Singt der Anwender mit allen im Kanon, steigt die Stärke."
   },
   "echoedVoice": {
-    name: "Echoed Voice",
-    effect: "The user attacks the target with an echoing voice. If this move is used every turn, its power is increased."
+    name: "Widerhall",
+    effect: "Angriff mit widerhallender Stimme. Wenn in jeder Runde ein Teilnehmer wiederholt die Attacke einsetzt, steigt die Stärke."
   },
   "chipAway": {
-    name: "Chip Away",
-    effect: "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage."
+    name: "Zermürben",
+    effect: "Eine durchdachte Attacke zu rechter Zeit. Richtet unabhängig von den Statusveränderungen des Zieles Schaden an."
   },
   "clearSmog": {
-    name: "Clear Smog",
-    effect: "The user attacks the target by throwing a clump of special mud. All stat changes are returned to normal."
+    name: "Klärsmog",
+    effect: "Anwender greift das Ziel mit spezialgefertigten Schlammklumpen an. Setzt Statusveränderungen zurück."
   },
   "storedPower": {
-    name: "Stored Power",
-    effect: "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power."
+    name: "Kraftvorrat",
+    effect: "Angriff mit angesparter Energie. Je höher die Statuswerte des Anwenders, desto stärker fällt die Attacke aus."
   },
   "quickGuard": {
-    name: "Quick Guard",
-    effect: "The user protects itself and its allies from priority moves."
+    name: "Rapidschutz",
+    effect: "Schützt Anwender und Mitstreiter vor gegnerischen Erstschlag-Attacken."
   },
   "allySwitch": {
-    name: "Ally Switch",
-    effect: "The user teleports using a strange power and switches places with one of its allies."
+    name: "Seitentausch",
+    effect: "Wundersame Kräfte teleportieren den Anwender an den Platz eines Mitstreiters."
   },
   "scald": {
-    name: "Scald",
-    effect: "The user shoots boiling hot water at its target. This may also leave the target with a burn."
+    name: "Siedewasser",
+    effect: "Heizt dem Ziel mit einem Schwall siedend heißen Kochwassers ein. Das Ziel erleidet dabei eventuell Verbrennungen."
   },
   "shellSmash": {
-    name: "Shell Smash",
-    effect: "The user breaks its shell, which lowers Defense and Sp. Def stats but sharply raises its Attack, Sp. Atk, and Speed stats."
+    name: "Hausbruch",
+    effect: "Anwender zerbricht seine Schale und senkt seine Verteidigung und Spezial-Verteidigung, aber dafür steigen Angriff, Spezial-Angriff und Initiative stark."
   },
   "healPulse": {
-    name: "Heal Pulse",
-    effect: "The user emits a healing pulse that restores the target's HP by up to half of its max HP."
+    name: "Heilwoge",
+    effect: "Anwender löst eine Schmerzen lindernde Welle aus und heilt dabei das Ziel mit der Hälfte seiner maximalen KP."
   },
   "hex": {
-    name: "Hex",
-    effect: "This relentless attack does massive damage to a target affected by status conditions."
+    name: "Bürde",
+    effect: "Eine Attacke, bei der der Anwender das Ziel bedrängt. Fügt Zielen mit Statusproblemen hohen Schaden zu."
   },
   "skyDrop": {
-    name: "Sky Drop",
-    effect: "The user takes the target into the sky, then drops it during the next turn. The target cannot attack while in the sky."
+    name: "Freier Fall",
+    effect: "Steigt in Runde 1 mit dem Ziel in die Luft auf und lässt es in Runde 2 fallen. Das Ziel kann dabei nicht angreifen."
   },
   "shiftGear": {
-    name: "Shift Gear",
-    effect: "The user rotates its gears, raising its Attack stat and sharply raising its Speed stat."
+    name: "Gangwechsel",
+    effect: "Durch Drehen der Zahnräder erhöht sich nicht nur der Angriffs-Wert, sondern auch die Initiative des Anwenders stark."
   },
   "circleThrow": {
-    name: "Circle Throw",
-    effect: "The target is thrown, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    name: "Überkopfwurf",
+    effect: "Schleudert das Ziel davon und bewirkt damit, dass ein anderes Pokémon eingewechselt wird. Beendet Kämpfe gegen wilde Pokémon."
   },
   "incinerate": {
-    name: "Incinerate",
-    effect: "The user attacks opposing Pokémon with fire. If a Pokémon is holding a certain item, such as a Berry, the item becomes burned up and unusable."
+    name: "Einäschern",
+    effect: "Eine Feuer-Attacke. Trägt das Ziel eine Beere oder ein ähnliches Item bei sich, wird dieses von den Flammen verzehrt und geht verloren."
   },
   "quash": {
-    name: "Quash",
-    effect: "The user suppresses the target and makes its move go last."
+    name: "Verzögerung",
+    effect: "Anwender stemmt sich gegen das Ziel und bewirkt, dass dieses erst als Letztes angreift."
   },
   "acrobatics": {
-    name: "Acrobatics",
-    effect: "The user nimbly strikes the target. If the user is not holding an item, this attack inflicts massive damage."
+    name: "Akrobatik",
+    effect: "Ein graziler Angriff auf das Ziel. Trägt der Anwender kein Item bei sich, richtet die Attacke großen Schaden an."
   },
   "reflectType": {
-    name: "Reflect Type",
-    effect: "The user reflects the target's type, making the user the same type as the target."
+    name: "Typenspiegel",
+    effect: "Anwender bildet das Ziel nach und nimmt dabei dessen Typ an."
   },
   "retaliate": {
-    name: "Retaliate",
-    effect: "The user gets revenge for a fainted ally. If an ally fainted in the previous turn, this move's power is increased."
+    name: "Heimzahlung",
+    effect: "Anwender nimmt Rache für einen besiegten Mitstreiter. Wurde in der vorigen Runde ein Mitstreiter besiegt, steigt die Kraft."
   },
   "finalGambit": {
-    name: "Final Gambit",
-    effect: "The user risks everything to attack its target. The user faints but does damage equal to its HP."
+    name: "Wagemut",
+    effect: "Ein Angriff, der dem Ziel Schaden in Höhe der aktuellen KP des Anwenders zufügt. Letzterer wird dadurch selbst besiegt."
   },
   "bestow": {
-    name: "Bestow",
-    effect: "The user passes its held item to the target when the target isn't holding an item."
+    name: "Offerte",
+    effect: "Trägt das Ziel gerade kein Item bei sich, erhält es das Item, das sich aktuell im Besitz des Anwenders befindet."
   },
   "inferno": {
     name: "Inferno",
-    effect: "The user attacks by engulfing the target in an intense fire. This leaves the target with a burn."
+    effect: "Anwender greift das Ziel an, indem er es mit dichten Flammen umhüllt. Ziel erleidet Verbrennungen."
   },
   "waterPledge": {
-    name: "Water Pledge",
-    effect: "A column of water hits the target. When used with its fire equivalent, its power increases and a rainbow appears."
+    name: "Wassersäulen",
+    effect: "Ein Angriff mit Wassersäulen. Mit Feuersäulen kombiniert steigt die Wirkung und ein Regenbogen erscheint."
   },
   "firePledge": {
-    name: "Fire Pledge",
-    effect: "A column of fire hits the target. When used with its grass equivalent, its power increases and a vast sea of fire appears."
+    name: "Feuersäulen",
+    effect: "Ein Angriff mit Feuersäulen. Mit Pflanzsäulen kombiniert steigt die Wirkung und die Umgebung wird zu einem Meer aus Feuer."
   },
   "grassPledge": {
-    name: "Grass Pledge",
-    effect: "A column of grass hits the target. When used with its water equivalent, its power increases and a vast swamp appears."
+    name: "Pflanzensäulen",
+    effect: "Ein Angriff mit Pflanzsäulen. Mit Wassersäulen kombiniert steigt die Wirkung und die Umgebung wird zu einem Sumpf."
   },
   "voltSwitch": {
-    name: "Volt Switch",
-    effect: "After making its attack, the user rushes back to switch places with a party Pokémon in waiting."
+    name: "Voltwechsel",
+    effect: "Anwender kehrt nach dem Angriff mit atemberaubender Geschwindigkeit zurück und tauscht Platz mit einem anderen Pokémon."
   },
   "struggleBug": {
-    name: "Struggle Bug",
-    effect: "While resisting, the user attacks opposing Pokémon. This lowers the Sp. Atk stats of those hit."
+    name: "Käfertrutz",
+    effect: "Anwender leistet Widerstand und greift an. Der Spezial-Angriff der Ziele sinkt."
   },
   "bulldoze": {
-    name: "Bulldoze",
-    effect: "The user strikes everything around it by stomping down on the ground. This lowers the Speed stats of those hit."
+    name: "Dampfwalze",
+    effect: "Anwender greift an, indem er den Boden um sich herum plattwalzt. Die Initiative aller betroffenen Pokémon sinkt."
   },
   "frostBreath": {
-    name: "Frost Breath",
-    effect: "The user blows its cold breath on the target. This attack always results in a critical hit."
+    name: "Eisesodem",
+    effect: "Anwender greift an, indem er dem Ziel eisigen Atem entgegenhaucht. Volltreffergarantie."
   },
   "dragonTail": {
-    name: "Dragon Tail",
-    effect: "The target is knocked away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    name: "Drachenrute",
+    effect: "Putzt das Ziel vom Feld und wechselt es mit einem anderen Pokémon aus. Beendet Kämpfe gegen wilde Pokémon."
   },
   "workUp": {
-    name: "Work Up",
-    effect: "The user is roused, and its Attack and Sp. Atk stats increase."
+    name: "Kraftschub",
+    effect: "Anwender erhält einen Kraftschub, der seinen Angriff und Spezial-Angriff erhöht."
   },
   "electroweb": {
-    name: "Electroweb",
-    effect: "The user attacks and captures opposing Pokémon using an electric net. This lowers their Speed stats."
+    name: "Elektronetz",
+    effect: "Fängt Ziele mit einem elektrischen Netz und senkt deren Initiative."
   },
   "wildCharge": {
-    name: "Wild Charge",
-    effect: "The user shrouds itself in electricity and smashes into its target. This also damages the user a little."
+    name: "Stromstoß",
+    effect: "Anwender erzeugt Spannung und greift an, indem er auf Kollisionskurs geht. Er selbst erleidet dabei ebenfalls leichten Schaden."
   },
   "drillRun": {
-    name: "Drill Run",
-    effect: "The user crashes into its target while rotating its body like a drill. Critical hits land more easily."
+    name: "Schlagbohrer",
+    effect: "Anwender rammt das Ziel, während er seinen Körper wie einen Bohrer dreht. Hohe Volltrefferquote."
   },
   "dualChop": {
-    name: "Dual Chop",
-    effect: "The user attacks its target by hitting it with brutal strikes. The target is hit twice in a row."
+    name: "Doppelhieb",
+    effect: "Versetzt dem Ziel mit massiven Extremitäten Hiebe. Angriff erfolgt zweimal hintereinander."
   },
   "heartStamp": {
-    name: "Heart Stamp",
-    effect: "The user unleashes a vicious blow after its cute act makes the target less wary. This may also make the target flinch."
+    name: "Herzstempel",
+    effect: "Verleitet Ziel durch Kokettieren zu Unachtsamkeit und verpasst ihm dann einen harten Schlag. Ziel schreckt eventuell zurück."
   },
   "hornLeech": {
-    name: "Horn Leech",
-    effect: "The user drains the target's energy with its horns. The user's HP is restored by half the damage taken by the target."
+    name: "Holzgeweih",
+    effect: "Greift Ziel mit Astgeweih an und zapft diesem Nährstoffe ab. Anwender wird um die Hälfte des zugefügten Schadens geheilt."
   },
   "sacredSword": {
-    name: "Sacred Sword",
-    effect: "The user attacks by slicing with a long horn. The target's stat changes don't affect this attack's damage."
+    name: "Sanctoklinge",
+    effect: "Schneideangriff mit langem Horn. Richtet Schaden unabhängig von Statusveränderungen des Zieles an."
   },
   "razorShell": {
-    name: "Razor Shell",
-    effect: "The user cuts its target with sharp shells. This may also lower the target's Defense stat."
+    name: "Kalkklinge",
+    effect: "Schneideangriff mit einer scharfen Muschelschale. Senkt eventuell die Verteidigung des Zieles."
   },
   "heatCrash": {
-    name: "Heat Crash",
-    effect: "The user slams its target with its flame-covered body. The more the user outweighs the target, the greater the move's power."
+    name: "Brandstempel",
+    effect: "Rempelattacke mit brennendem Körper. Je schwerer der Anwender im Vergleich zum Ziel ist, desto stärker die Attacke."
   },
   "leafTornado": {
-    name: "Leaf Tornado",
-    effect: "The user attacks its target by encircling it in sharp leaves. This attack may also lower the target's accuracy."
+    name: "Grasmixer",
+    effect: "Anwender greift an, indem er das Ziel in scharfes Blattwerk einwickelt. Kann die Genauigkeit senken."
   },
   "steamroller": {
-    name: "Steamroller",
-    effect: "The user crushes its target by rolling over the target with its rolled-up body. This may also make the target flinch."
+    name: "Quetschwalze",
+    effect: "Anwender rollt mit rundlichem Körper über das Ziel und drückt es platt. Ziel schreckt eventuell zurück."
   },
   "cottonGuard": {
-    name: "Cotton Guard",
-    effect: "The user protects itself by wrapping its body in soft cotton, which drastically raises the user's Defense stat."
+    name: "Watteschild",
+    effect: "Anwender schützt sich, indem er sich in einen luftigen Flaum hüllt. Erhöht die Verteidigung drastisch."
   },
   "nightDaze": {
-    name: "Night Daze",
-    effect: "The user lets loose a pitch-black shock wave at its target. This may also lower the target's accuracy."
+    name: "Nachtflut",
+    effect: "Anwender greift Ziel mit finsteren Schockwellen an. Senkt eventuell die Genauigkeit."
   },
   "psystrike": {
-    name: "Psystrike",
-    effect: "The user materializes an odd psychic wave to attack the target. This attack does physical damage."
+    name: "Psychostoß",
+    effect: "Anwender erzeugt seltsame Energiewellen, die dem Ziel physischen Schaden zufügen."
   },
   "tailSlap": {
-    name: "Tail Slap",
-    effect: "The user attacks by striking the target with its hard tail. It hits the target two to five times in a row."
+    name: "Kehrschelle",
+    effect: "Anwender greift das Ziel mit seiner schlagfesten Rute zwei- bis fünfmal hintereinander an."
   },
   "hurricane": {
-    name: "Hurricane",
-    effect: "The user attacks by wrapping its opponent in a fierce wind that flies up into the sky. This may also confuse the target."
+    name: "Orkan",
+    effect: "Anwender greift das Ziel an, indem er es mit heftigen Windböen umgibt. Ziel wird eventuell verwirrt."
   },
   "headCharge": {
-    name: "Head Charge",
-    effect: "The user charges its head into its target, using its powerful guard hair. This also damages the user a little."
+    name: "Steinschädel",
+    effect: "Rempelattacke mit ausgeflippter Retrofrisur. Anwender nimmt selbst leichten Schaden."
   },
   "gearGrind": {
-    name: "Gear Grind",
-    effect: "The user attacks by throwing steel gears at its target twice."
+    name: "Klikkdiskus",
+    effect: "Anwender greift an, indem er stählerne Zahnräder auf das Ziel schleudert. Angriff erfolgt zweimal hintereinander."
   },
   "searingShot": {
-    name: "Searing Shot",
-    effect: "The user torches everything around it in an inferno of scarlet flames. This may also leave those it hits with a burn."
+    name: "Flammenball",
+    effect: "Greift alles in seiner Umgebung mit tiefroten Flammen an. Ziel kann Verbrennungen erleiden."
   },
   "technoBlast": {
-    name: "Techno Blast",
-    effect: "The user fires a beam of light at its target. The move's type changes depending on the Drive the user holds."
+    name: "Techblaster",
+    effect: "Anwender feuert ein Lichtgeschoss auf das Ziel ab. Der Typ der Attacke hängt von dem des Moduls ab."
   },
   "relicSong": {
-    name: "Relic Song",
-    effect: "The user sings an ancient song and attacks by appealing to the hearts of the listening opposing Pokémon. This may also induce sleep."
+    name: "Urgesang",
+    effect: "Anwender greift mit Urgesang an, der Ziele in der Nähe im tiefsten Inneren anspricht. Diese schlafen eventuell ein."
   },
   "secretSword": {
-    name: "Secret Sword",
-    effect: "The user cuts with its long horn. The odd power contained in the horn does physical damage to the target."
+    name: "Mystoschwert",
+    effect: "Schneideangriff mit dem langen Schwert des Anwenders. Die mysteriöse Kraft aus dem Horn erzeugt physischen Schaden."
   },
   "glaciate": {
-    name: "Glaciate",
-    effect: "The user attacks by blowing freezing cold air at opposing Pokémon. This lowers their Speed stats."
+    name: "Eiszeit",
+    effect: "Anwender greift an, indem er dem Ziel klirrend kalte Luft entgegenbläst. Senkt die Initiative des Zieles."
   },
   "boltStrike": {
-    name: "Bolt Strike",
-    effect: "The user surrounds itself with a great amount of electricity and charges its target. This may also leave the target with paralysis."
+    name: "Blitzschlag",
+    effect: "Lädt seinen Körper mit einer gewaltigen Menge an Elektrizität auf und rammt damit das Ziel. Ziel wird eventuell paralysiert."
   },
   "blueFlare": {
-    name: "Blue Flare",
-    effect: "The user attacks by engulfing the target in an intense, yet beautiful, blue flame. This may also leave the target with a burn."
+    name: "Blauflammen",
+    effect: "Anwender greift an, indem er das Ziel in wunderschöne, intensivblaue Flammen hüllt, die es eventuell verbrennen."
   },
   "fieryDance": {
-    name: "Fiery Dance",
-    effect: "Cloaked in flames, the user attacks the target by dancing and flapping its wings. This may also raise the user's Sp. Atk stat."
+    name: "Feuerreigen",
+    effect: "Hüllt das Ziel mit einer Feuerhose in Flammen. Kann den Spezial-Angriff des Anwenders erhöhen."
   },
   "freezeShock": {
-    name: "Freeze Shock",
-    effect: "On the second turn, the user hits the target with electrically charged ice. This may also leave the target with paralysis."
+    name: "Frostvolt",
+    effect: "Feuert in der zweiten Runde elektrisch geladene Eisklumpen auf das Ziel ab. Paralysiert das Ziel eventuell."
   },
   "iceBurn": {
-    name: "Ice Burn",
-    effect: "On the second turn, an ultracold, freezing wind surrounds the target. This may leave the target with a burn."
+    name: "Frosthauch",
+    effect: "Umgibt das Ziel in der nächsten Runde mit heftigen, alles gefrierenden Eisböen. Fügt dem Ziel eventuell Verbrennungen zu."
   },
   "snarl": {
-    name: "Snarl",
-    effect: "The user yells as if it's ranting about something, which lowers the Sp. Atk stats of opposing Pokémon."
+    name: "Standpauke",
+    effect: "Wäscht Zielen in der Nähe mit einer ausführlichen Standpauke den Kopf und senkt dabei deren Spezial-Angriff."
   },
   "icicleCrash": {
-    name: "Icicle Crash",
-    effect: "The user attacks by harshly dropping large icicles onto the target. This may also make the target flinch."
+    name: "Eiszapfhagel",
+    effect: "Lässt große, schwere Eiszapfen auf das Ziel herabregnen. Ziel schreckt eventuell zurück."
   },
   "vCreate": {
-    name: "V-create",
-    effect: "With a hot flame on its forehead, the user hurls itself at its target. This lowers the user's Defense, Sp. Def, and Speed stats."
+    name: "V-Generator",
+    effect: "Eine Verzweiflungsattacke. Anwender entfacht glühend heißes Feuer. Senkt dessen Verteidigung, Spezial-Verteidigung und Initiative."
   },
   "fusionFlare": {
-    name: "Fusion Flare",
-    effect: "The user brings down a giant flame. This move's power is increased when influenced by an enormous lightning bolt."
+    name: "Kreuzflamme",
+    effect: "Feuert eine monströse Flamme ab. Wird die Attacke durch einen gigantischen Blitz modifiziert, steigt die Stärke."
   },
   "fusionBolt": {
-    name: "Fusion Bolt",
-    effect: "The user throws down a giant lightning bolt. This move's power is increased when influenced by an enormous flame."
+    name: "Kreuzdonner",
+    effect: "Feuert einen monströsen Blitz ab. Wird die Attacke durch eine gigantische Flamme modifiziert, steigt die Stärke."
   },
   "flyingPress": {
     name: "Flying Press",
-    effect: "The user dives down onto the target from the sky. This move is Fighting and Flying type simultaneously."
+    effect: "Der Anwender stürzt sich aus der Luft auf das Ziel. Die Attacke gehört sowohl dem Typ Kampf als auch dem Typ Flug an."
   },
   "matBlock": {
-    name: "Mat Block",
-    effect: "Using a pulled-up mat as a shield, the user protects itself and its allies from damaging moves. This does not stop status moves."
+    name: "Tatami-Schild",
+    effect: "Der Anwender richtet eine Tatami-Matte auf, um sich und sein Team vor Schaden zu schützen. Kein Schutz vor Status-Attacken."
   },
   "belch": {
-    name: "Belch",
-    effect: "The user lets out a damaging belch at the target. The user must eat a held Berry to use this move."
+    name: "Rülpser",
+    effect: "Der Anwender fügt dem Ziel Schaden zu, indem er es anrülpst. Diese Attacke gelingt nur nach dem Konsum einer getragenen Beere."
   },
   "rototiller": {
-    name: "Rototiller",
-    effect: "Tilling the soil, the user makes it easier for plants to grow. This raises the Attack and Sp. Atk stats of Grass-type Pokémon."
+    name: "Pflüger",
+    effect: "Der Anwender pflügt den Boden und macht die Erde fruchtbarer. Erhöht den Angriff und den Spezial-Angriff von Pflanzen-Pokémon."
   },
   "stickyWeb": {
-    name: "Sticky Web",
-    effect: "The user weaves a sticky net around the opposing team, which lowers their Speed stats upon switching into battle."
+    name: "Klebenetz",
+    effect: "Der Anwender spinnt in der Umgebung des gegnerischen Teams ein klebriges Netz und senkt so die Initiative neu eingewechselter Pokémon."
   },
   "fellStinger": {
-    name: "Fell Stinger",
-    effect: "When the user knocks out a target with this move, the user's Attack stat rises drastically."
+    name: "Stachelfinale",
+    effect: "Gelingt es dem Anwender, das Ziel mit dieser Attacke zu besiegen, steigt sein Angriffs-Wert stark."
   },
   "phantomForce": {
-    name: "Phantom Force",
-    effect: "The user vanishes somewhere, then strikes the target on the next turn. This move hits even if the target protects itself."
+    name: "Phantomkraft",
+    effect: "Der Anwender verschwindet, um eine Runde lang seine Kraft zu sammeln und in der nächsten Runde anzugreifen. Durchbricht die Defensive des Zieles."
   },
   "trickOrTreat": {
-    name: "Trick-or-Treat",
-    effect: "The user takes the target trick-or-treating. This adds Ghost type to the target's type."
+    name: "Halloween",
+    effect: "Der Anwender lehrt das Ziel das Fürchten. Dieses nimmt dadurch zusätzlich den Typ Geist an."
   },
   "nobleRoar": {
-    name: "Noble Roar",
-    effect: "Letting out a noble roar, the user intimidates the target and lowers its Attack and Sp. Atk stats."
+    name: "Kampfgebrüll",
+    effect: "Der Anwender stößt ein Kampfgebrüll aus, das das Ziel einschüchtert und zugleich seinen Angriffs- und Spezial-Angriffs-Wert senkt."
   },
   "ionDeluge": {
-    name: "Ion Deluge",
-    effect: "The user disperses electrically charged particles, which changes Normal-type moves to Electric-type moves."
+    name: "Plasmaschauer",
+    effect: "Versprüht elektrisch geladene Partikel und bewirkt, dass Normal-Attacken den Typ Elektro annehmen."
   },
   "parabolicCharge": {
-    name: "Parabolic Charge",
-    effect: "The user attacks everything around it. The user's HP is restored by half the damage taken by those hit."
+    name: "Parabolladung",
+    effect: "Fügt allen Pokémon in der Umgebung Schaden zu. Der Anwender wird um die Hälfte des insgesamt angerichteten Schadens geheilt."
   },
   "forestsCurse": {
-    name: "Forest's Curse",
-    effect: "The user puts a forest curse on the target. The target is now Grass type as well."
+    name: "Waldesfluch",
+    effect: "Der Anwender belegt das Ziel mit einem Waldesfluch, durch den dieses zusätzlich den Typ Pflanze annimmt."
   },
   "petalBlizzard": {
-    name: "Petal Blizzard",
-    effect: "The user stirs up a violent petal blizzard and attacks everything around it."
+    name: "Blütenwirbel",
+    effect: "Der Anwender erzeugt einen turbulenten Blütenwirbel, der alle Pokémon in der Nähe erfasst und ihnen Schaden zufügt."
   },
   "freezeDry": {
-    name: "Freeze-Dry",
-    effect: "The user rapidly cools the target. This may also leave the target frozen. This move is super effective on Water types."
+    name: "Gefriertrockner",
+    effect: "Das Ziel wird stark abgekühlt und manchmal sogar eingefroren. Die Attacke ist sehr effektiv gegen Wasser-Pokémon."
   },
   "disarmingVoice": {
-    name: "Disarming Voice",
-    effect: "Letting out a charming cry, the user does emotional damage to opposing Pokémon. This attack never misses."
+    name: "Säuselstimme",
+    effect: "Der Anwender stößt einen bezirzenden Ruf aus, mit dem er das Ziel in seinen Bann schlägt und ihm immer mentalen Schaden zufügt."
   },
   "partingShot": {
-    name: "Parting Shot",
-    effect: "With a parting threat, the user lowers the target's Attack and Sp. Atk stats. Then it switches with a party Pokémon."
+    name: "Abgangstirade",
+    effect: "Schüchtert das Ziel mit einer Abgangstirade ein, sodass dessen Angriffs- und Spezial-Angriffs-Wert sinken. Danach wird der Anwender ausgewechselt."
   },
   "topsyTurvy": {
-    name: "Topsy-Turvy",
-    effect: "All stat changes affecting the target turn topsy-turvy and become the opposite of what they were."
+    name: "Invertigo",
+    effect: "Invertiert alle Statusveränderungen des Zieles."
   },
   "drainingKiss": {
-    name: "Draining Kiss",
-    effect: "The user steals the target's HP with a kiss. The user's HP is restored by over half of the damage taken by the target."
+    name: "Diebeskuss",
+    effect: "Der Anwender stiehlt dem Ziel mit einem Kuss KP. Die Höhe der Heilung beträgt mehr als die Hälfte des beim Ziel angerichteten Schadens."
   },
   "craftyShield": {
-    name: "Crafty Shield",
-    effect: "The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage."
+    name: "Trickschutz",
+    effect: "Schützt sich und Mitstreiter mit einer mysteriösen Macht vor Status-Attacken. Es werden jedoch weiterhin KP-Schäden erlitten."
   },
   "flowerShield": {
-    name: "Flower Shield",
-    effect: "The user raises the Defense stats of all Grass-type Pokémon in battle with a mysterious power."
+    name: "Floraschutz",
+    effect: "Erhöht mit einer mysteriösen Macht die Verteidigung aller am Kampf beteiligten Pflanzen-Pokémon."
   },
   "grassyTerrain": {
-    name: "Grassy Terrain",
-    effect: "The user turns the ground to grass for five turns. This restores the HP of Pokémon on the ground a little every turn and powers up Grass-type moves."
+    name: "Grasfeld",
+    effect: "Verwandelt den Untergrund fünf Runden lang in ein Grasfeld und heilt in jeder neuen Runde alle Pokémon, die den Boden berühren."
   },
   "mistyTerrain": {
-    name: "Misty Terrain",
-    effect: "This protects Pokémon on the ground from status conditions and halves damage from Dragon-type moves for five turns."
+    name: "Nebelfeld",
+    effect: "Verwandelt den Untergrund fünf Runden lang in ein Nebelfeld und schützt alle Pokémon, die den Boden berühren, vor Statusproblemen."
   },
   "electrify": {
-    name: "Electrify",
-    effect: "If the target is electrified before it uses a move during that turn, the target's move becomes Electric type."
+    name: "Elektrifizierung",
+    effect: "Kommt die Attacke zum Einsatz, bevor das Ziel seine Attacke ausführt, nimmt diese für die Dauer dieser Runde den Typ Elektro an."
   },
   "playRough": {
-    name: "Play Rough",
-    effect: "The user plays rough with the target and attacks it. This may also lower the target's Attack stat."
+    name: "Knuddler",
+    effect: "Der Anwender knuddelt das Ziel und greift es an. Gelegentlich sinkt dabei auch dessen Angriffs-Wert."
   },
   "fairyWind": {
-    name: "Fairy Wind",
-    effect: "The user stirs up a fairy wind and strikes the target with it."
+    name: "Feenbrise",
+    effect: "Lässt eine Feenbrise aufkommen, die das Ziel erfasst und ihm Schaden zufügt."
   },
   "moonblast": {
-    name: "Moonblast",
-    effect: "Borrowing the power of the moon, the user attacks the target. This may also lower the target's Sp. Atk stat."
+    name: "Mondgewalt",
+    effect: "Der Anwender macht sich die Kraft des Mondes zunutze, um anzugreifen. Gelegentlich wird dabei der Spezial-Angriff des Zieles gesenkt."
   },
   "boomburst": {
-    name: "Boomburst",
-    effect: "The user attacks everything around it with the destructive power of a terrible, explosive sound."
+    name: "Überschallknall",
+    effect: "Der Anwender greift alle Pokémon in der Umgebung mit einem gewaltigen Knall an."
   },
   "fairyLock": {
-    name: "Fairy Lock",
-    effect: "By locking down the battlefield, the user keeps all Pokémon from fleeing during the next turn."
+    name: "Feenschloss",
+    effect: "Der Anwender sperrt alle Pokémon ein und hindert sie damit in der nächsten Runde an der Flucht."
   },
   "kingsShield": {
-    name: "King's Shield",
-    effect: "The user takes a defensive stance while it protects itself from damage. It also lowers the Attack stat of any attacker that makes direct contact."
+    name: "Königsschild",
+    effect: "Der Anwender weicht dem gegnerischen Angriff aus und geht in die Defensive. Berührt ihn nun ein Pokémon, sinkt der Angriffs-Wert dieses Gegners."
   },
   "playNice": {
-    name: "Play Nice",
-    effect: "The user and the target become friends, and the target loses its will to fight. This lowers the target's Attack stat."
+    name: "Kameradschaft",
+    effect: "Der Anwender schließt mit dem Ziel Freundschaft und nimmt ihm seine Angriffslust. Der Angriffs-Wert des Zieles sinkt."
   },
   "confide": {
-    name: "Confide",
-    effect: "The user tells the target a secret, and the target loses its ability to concentrate. This lowers the target's Sp. Atk stat."
+    name: "Vertrauenssache",
+    effect: "Der Anwender vertraut dem Ziel ein Geheimnis an und stört auf diese Weise seine Konzentration. Der Spezial-Angriff des Zieles sinkt."
   },
   "diamondStorm": {
-    name: "Diamond Storm",
-    effect: "The user whips up a storm of diamonds to damage opposing Pokémon. This may also sharply raise the user's Defense stat."
+    name: "Diamantsturm",
+    effect: "Der Anwender beschwört einen zerstörerischen Diamantsturm herauf. Kann die Verteidigung des Anwenders erhöhen."
   },
   "steamEruption": {
-    name: "Steam Eruption",
-    effect: "The user immerses the target in superheated steam. This may also leave the target with a burn."
+    name: "Dampfschwall",
+    effect: "Der Anwender feuert einen siedend heißen Dampfschwall auf das Ziel ab. Dieses kann dabei Verbrennungen erleiden."
   },
   "hyperspaceHole": {
-    name: "Hyperspace Hole",
-    effect: "Using a hyperspace hole, the user appears right next to the target and strikes. This also hits a target using a move such as Protect or Detect."
+    name: "Dimensionsloch",
+    effect: "Der Anwender positioniert sich mithilfe eines Dimensionslochs direkt neben dem Ziel und durchbricht selbst Schutzschild und Scanner."
   },
   "waterShuriken": {
-    name: "Water Shuriken",
-    effect: "The user hits the target with throwing stars two to five times in a row. This move always goes first."
+    name: "Wasser-Shuriken",
+    effect: "Der Anwender schleudert dem Ziel Wurfsterne aus einem verdickten Sekret entgegen. Eine Serien-Attacke, die zwei- bis fünfmal trifft."
   },
   "mysticalFire": {
-    name: "Mystical Fire",
-    effect: "The user attacks by breathing a special, hot fire. This also lowers the target's Sp. Atk stat."
+    name: "Magieflamme",
+    effect: "Der Anwender greift das Ziel an, indem er ihm eine besondere, heiße Flamme entgegenbläst. Der Spezial-Angriff des Zieles sinkt."
   },
   "spikyShield": {
-    name: "Spiky Shield",
-    effect: "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact."
+    name: "Schutzstacheln",
+    effect: "Der Anwender weicht gegnerischen Angriffen aus. Gleichzeitig nehmen alle Pokémon, die mit ihm in Berührung kommen, Schaden."
   },
   "aromaticMist": {
-    name: "Aromatic Mist",
-    effect: "The user raises the Sp. Def stat of an ally Pokémon by using a mysterious aroma."
+    name: "Duftwolke",
+    effect: "Der Anwender erhöht mithilfe eines mysteriösen Duftes die Spezial-Verteidigung eines Mitstreiters."
   },
   "eerieImpulse": {
-    name: "Eerie Impulse",
-    effect: "The user's body generates an eerie impulse. Exposing the target to it harshly lowers the target's Sp. Atk stat."
+    name: "Mystowellen",
+    effect: "Der Körper des Anwenders erzeugt mysteriöse Wellen und senkt den Spezial-Angriff des Zieles dadurch stark."
   },
   "venomDrench": {
-    name: "Venom Drench",
-    effect: "Opposing Pokémon are drenched in an odd poisonous liquid. This lowers the Attack, Sp. Atk, and Speed stats of a poisoned target."
+    name: "Giftfalle",
+    effect: "Anwender bespritzt das Ziel mit einer speziellen Giftflüssigkeit. Senkt den Angriff, den Spezial- Angriff und die Initiative von vergifteten Zielen."
   },
   "powder": {
-    name: "Powder",
-    effect: "The user covers the target in a combustible powder. If the target uses a Fire-type move, the powder explodes and damages the target."
+    name: "Pulverschleuder",
+    effect: "Setzt das Ziel nach Einsatz von Pulverschleuder in derselben Runde eine Feuer-Attacke ein, kommt es zu einer Explosion, die ihm schadet."
   },
   "geomancy": {
-    name: "Geomancy",
-    effect: "The user absorbs energy and sharply raises its Sp. Atk, Sp. Def, and Speed stats on the next turn."
+    name: "Geokontrolle",
+    effect: "Der Anwender saugt in Runde 1 Energie auf. In Runde 2 steigen folgende Statuswerte stark: Spezial-Angriff, Spezial-Verteidigung und Initiative."
   },
   "magneticFlux": {
-    name: "Magnetic Flux",
-    effect: "The user manipulates magnetic fields, which raises the Defense and Sp. Def stats of ally Pokémon with the Plus or Minus Ability."
+    name: "Magnetregler",
+    effect: "Das Magnetfeld wird so manipuliert, dass Spezial- Verteidigung und Verteidigung von Team-Pokémon mit der Fähigkeit Plus oder Minus steigen."
   },
   "happyHour": {
-    name: "Happy Hour",
-    effect: "Using Happy Hour doubles the amount of prize money received after battle."
+    name: "Goldene Zeiten",
+    effect: "Nach Einsatz der Attacke Goldene Zeiten verdoppelt sich das Preisgeld, das du im Falle eines Sieges erhältst."
   },
   "electricTerrain": {
-    name: "Electric Terrain",
-    effect: "The user electrifies the ground for five turns, powering up Electric-type moves. Pokémon on the ground no longer fall asleep."
+    name: "Elektrofeld",
+    effect: "Verwandelt den Untergrund fünf Runden lang in ein Elektrofeld und hindert alle Pokémon, die den Boden berühren, am Einschlafen."
   },
   "dazzlingGleam": {
-    name: "Dazzling Gleam",
-    effect: "The user damages opposing Pokémon by emitting a powerful flash."
+    name: "Zauberschein",
+    effect: "Der Anwender feuert einen mächtigen Lichtblitz ab, der dem Ziel Schaden zufügt."
   },
   "celebrate": {
-    name: "Celebrate",
-    effect: "The Pokémon congratulates you on your special day!"
+    name: "Ehrentag",
+    effect: "Das Pokémon gratuliert dir zu deinem Geburtstag!"
   },
   "holdHands": {
-    name: "Hold Hands",
-    effect: "The user and an ally hold hands. This makes them very happy."
+    name: "Händchenhalten",
+    effect: "Der Anwender und ein Mitstreiter reichen einander die Hände und verfallen in einen Zustand tiefster Zufriedenheit."
   },
   "babyDollEyes": {
-    name: "Baby-Doll Eyes",
-    effect: "The user stares at the target with its baby-doll eyes, which lowers the target's Attack stat. This move always goes first."
+    name: "Kulleraugen",
+    effect: "Der Anwender erobert das Herz des Zieles, indem er es mit Kulleraugen ansieht. Senkt den Angriffs-Wert. Erstschlaggarantie."
   },
   "nuzzle": {
-    name: "Nuzzle",
-    effect: "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis."
+    name: "Wangenrubbler",
+    effect: "Der Anwender lädt seine Wangen elektrisch auf und greift an, indem er sich damit am Ziel reibt. Das Ziel wird paralysiert."
   },
   "holdBack": {
-    name: "Hold Back",
-    effect: "The user holds back when it attacks, and the target is left with at least 1 HP."
+    name: "Zurückhaltung",
+    effect: "Der Anwender hält sich beim Angriff zurück und sorgt auf diese Weise dafür, dass dem Ziel danach mindestens 1 KP verbleibt."
   },
   "infestation": {
-    name: "Infestation",
-    effect: "The target is infested and attacked for four to five turns. The target can't flee during this time."
+    name: "Plage",
+    effect: "Der Anwender fällt vier bis fünf Runden lang wie eine Plage über das Ziel her und greift es an. In diesem Zeitraum kann es nicht fliehen."
   },
   "powerUpPunch": {
-    name: "Power-Up Punch",
-    effect: "Striking opponents over and over makes the user's fists harder. Hitting a target raises the Attack stat."
+    name: "Steigerungshieb",
+    effect: "Die Fäuste des Anwenders härten durch wiederholtes Zuschlagen ab. Mit jedem Treffer steigt sein Angriffs-Wert."
   },
   "oblivionWing": {
-    name: "Oblivion Wing",
-    effect: "The user absorbs its target's HP. The user's HP is restored by over half of the damage taken by the target."
+    name: "Unheilsschwingen",
+    effect: "Der Anwender raubt dem Ziel KP. Die Höhe der Heilung beträgt mehr als die Hälfte des beim Ziel angerichteten Schadens."
   },
   "thousandArrows": {
-    name: "Thousand Arrows",
-    effect: "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground."
+    name: "Tausend Pfeile",
+    effect: "Die Attacke erfasst auch schwebende Pokémon. Erfasst sie ein Pokémon im Schwebe-Zustand, fällt es zu Boden."
   },
   "thousandWaves": {
-    name: "Thousand Waves",
-    effect: "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle."
+    name: "Tausend Wellen",
+    effect: "Der Anwender greift mit einer Welle an, die dicht über dem Boden verläuft und alle Pokémon, die sie erfasst, an der Flucht hindert."
   },
   "landsWrath": {
-    name: "Land's Wrath",
-    effect: "The user gathers the energy of the land and focuses that power on opposing Pokémon to damage them."
+    name: "Bodengewalt",
+    effect: "Der Anwender sammelt die Kraft des weiten Landes und greift an, indem er sie gebündelt auf das Ziel lenkt."
   },
   "lightOfRuin": {
-    name: "Light of Ruin",
-    effect: "Drawing power from the Eternal Flower, the user fires a powerful beam of light. This also damages the user quite a lot."
+    name: "Lux Calamitatis",
+    effect: "Die Attacke basiert auf der Kraft des Ewigblütlers, die als mächtiger Lichtstrahl abgefeuert wird. Der Anwender nimmt dabei selbst großen Schaden."
   },
   "originPulse": {
-    name: "Origin Pulse",
-    effect: "The user attacks opposing Pokémon with countless beams of light that glow a deep and brilliant blue."
+    name: "Ursprungswoge",
+    effect: "Der Anwender greift das Ziel mit unzähligen blau leuchtenden Strahlen an."
   },
   "precipiceBlades": {
-    name: "Precipice Blades",
-    effect: "The user attacks opposing Pokémon by manifesting the power of the land in fearsome blades of stone."
+    name: "Abgrundsklinge",
+    effect: "Der Anwender wandelt die Kraft des Erdreichs in Klingen um, mit denen er das Ziel angreift."
   },
   "dragonAscent": {
-    name: "Dragon Ascent",
-    effect: "After soaring upward, the user attacks its target by dropping out of the sky at high speeds. But it lowers its own Defense and Sp. Def stats in the process."
+    name: "Zenitstürmer",
+    effect: "Der Anwender greift das Ziel aus atemberaubender Höhe im Sturzflug an. Senkt Verteidigung und Spezial-Verteidigung des Anwenders."
   },
   "hyperspaceFury": {
-    name: "Hyperspace Fury",
-    effect: "Using its many arms, the user unleashes a barrage of attacks that ignore the effects of moves like Protect and Detect. But the user's Defense stat falls."
+    name: "Dimensionswahn",
+    effect: "Eine Angriffsserie mit vielen Armen, die die Wirkung von Schutzschild und Scanner durchbricht. Dabei sinkt die Verteidigung des Anwenders."
   },
   "breakneckBlitzPhysical": {
-    name: "Breakneck Blitz",
-    effect: "The user builds up its momentum using its Z-Power and crashes into the target at full speed. The power varies, depending on the original move."
+    name: "Hyper-Sprintangriff",
+    effect: "Der durch Z-Kraft energiegeladene Anwender rennt mit ganzer Kraft gegen das Ziel. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "breakneckBlitzSpecial": {
     name: "Breakneck Blitz",
     effect: "Dummy Data"
   },
   "allOutPummelingPhysical": {
-    name: "All-Out Pummeling",
-    effect: "The user rams an energy orb created by its Z-Power into the target with full force. The power varies, depending on the original move."
+    name: "Fulminante Faustschläge",
+    effect: "Aus Z-Kraft hergestellte Energiebälle prallen mit voller Wucht auf das Ziel. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "allOutPummelingSpecial": {
     name: "All-Out Pummeling",
     effect: "Dummy Data"
   },
   "supersonicSkystrikePhysical": {
-    name: "Supersonic Skystrike",
-    effect: "The user soars up with its Z-Power and plummets toward the target at full speed. The power varies, depending on the original move."
+    name: "Finaler Steilflug",
+    effect: "Der Anwender schwingt sich durch Z-Kraft in die Lüfte und stürzt sich dann auf das Ziel hinab. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "supersonicSkystrikeSpecial": {
     name: "Supersonic Skystrike",
     effect: "Dummy Data"
   },
   "acidDownpourPhysical": {
-    name: "Acid Downpour",
-    effect: "The user creates a poisonous swamp using its Z-Power and sinks the target into it at full force. The power varies, depending on the original move."
+    name: "Vernichtender Säureregen",
+    effect: "Der Anwender kreiert mit Z-Kraft ein giftiges Moor, in dem das Ziel versinkt. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "acidDownpourSpecial": {
     name: "Acid Downpour",
     effect: "Dummy Data"
   },
   "tectonicRagePhysical": {
-    name: "Tectonic Rage",
-    effect: "The user burrows deep into the ground and slams into the target with the full force of its Z-Power. The power varies, depending on the original move."
+    name: "Seismische Eruption",
+    effect: "Der Anwender zerrt das Ziel mit Z-Kraft tief in den Boden und kollidiert dort mit ihm. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "tectonicRageSpecial": {
     name: "Tectonic Rage",
     effect: "Dummy Data"
   },
   "continentalCrushPhysical": {
-    name: "Continental Crush",
-    effect: "The user summons a huge rock mountain using its Z-Power and drops it onto the target with full force. The power varies, depending on the original move."
+    name: "Apokalyptische Steinpresse",
+    effect: "Der Anwender beschwört mit Z-Kraft einen großen Felsen herbei und lässt ihn auf das Ziel fallen. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "continentalCrushSpecial": {
     name: "Continental Crush",
     effect: "Dummy Data"
   },
   "savageSpinOutPhysical": {
-    name: "Savage Spin-Out",
-    effect: "The user binds the target with full force with threads of silk that the user spits using its Z-Power. The power varies, depending on the original move."
+    name: "Wirbelnder Insektenhieb",
+    effect: "Mithilfe von Z-Kraft umwickelt der Anwender das Ziel mit Fäden. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "savageSpinOutSpecial": {
     name: "Savage Spin-Out",
     effect: "Dummy Data"
   },
   "neverEndingNightmarePhysical": {
-    name: "Never-Ending Nightmare",
-    effect: "Deep-seated grudges summoned by the user's Z-Power trap the target. The power varies, depending on the original move."
+    name: "Ewige Nacht",
+    effect: "Der Anwender beschwört mit Z-Kraft tiefen Groll herbei und lässt diesen auf das Ziel los. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "neverEndingNightmareSpecial": {
     name: "Never-Ending Nightmare",
     effect: "Dummy Data"
   },
   "corkscrewCrashPhysical": {
-    name: "Corkscrew Crash",
-    effect: "The user spins very fast and rams into the target with the full force of its Z-Power. The power varies, depending on the original move."
+    name: "Turbo-Spiralkombo",
+    effect: "Der Anwender wirbelt durch Z-Kraft sehr schnell umher und prallt mit dem Ziel zusammen. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "corkscrewCrashSpecial": {
     name: "Corkscrew Crash",
     effect: "Dummy Data"
   },
   "infernoOverdrivePhysical": {
-    name: "Inferno Overdrive",
-    effect: "The user breathes a stream of intense fire toward the target with the full force of its Z-Power. The power varies depending on the original move."
+    name: "Dynamische Maxiflamme",
+    effect: "Der Anwender speit dank Z-Kraft eine gewaltige Kugel aus Flammen auf das Ziel. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "infernoOverdriveSpecial": {
     name: "Inferno Overdrive",
     effect: "Dummy Data"
   },
   "hydroVortexPhysical": {
-    name: "Hydro Vortex",
-    effect: "The user creates a huge whirling current using its Z-Power to swallow the target with full force. The power varies, depending on the original move."
+    name: "Super-Wassertornado",
+    effect: "Der Anwender kreiert mit Z-Kraft einen riesigen Wasserstrudel, der das Ziel verschluckt. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "hydroVortexSpecial": {
     name: "Hydro Vortex",
     effect: "Dummy Data"
   },
   "bloomDoomPhysical": {
-    name: "Bloom Doom",
-    effect: "The user collects energy from plants using its Z-Power and attacks the target with full force. The power varies, depending on the original move."
+    name: "Brillante Blütenpracht",
+    effect: "Der Anwender leiht sich durch Z-Kraft die Energie von Wiesenblumen und greift das Ziel damit an. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "bloomDoomSpecial": {
     name: "Bloom Doom",
     effect: "Dummy Data"
   },
   "gigavoltHavocPhysical": {
-    name: "Gigavolt Havoc",
-    effect: "The user hits the target with a powerful electric current collected by its Z-Power. The power varies, depending on the original move."
+    name: "Gigavolt-Funkensalve",
+    effect: "Der Anwender greift das Ziel mit durch Z-Kraft gesammelter starker Elektrizität an. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "gigavoltHavocSpecial": {
     name: "Gigavolt Havoc",
     effect: "Dummy Data"
   },
   "shatteredPsychePhysical": {
-    name: "Shattered Psyche",
-    effect: "The user controls the target with its Z-Power and hurts the target with full force. The power varies, depending on the original move."
+    name: "Psycho-Schmetterschlag",
+    effect: "Der Anwender kontrolliert das Ziel mit Z-Kraft und macht ihm so das Leben schwer. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "shatteredPsycheSpecial": {
     name: "Shattered Psyche",
     effect: "Dummy Data"
   },
   "subzeroSlammerPhysical": {
-    name: "Subzero Slammer",
-    effect: "The user dramatically drops the temperature using its Z-Power and freezes the target with full force. The power varies, depending on the original move."
+    name: "Tobender Geofrost",
+    effect: "Der Anwender senkt mit Z-Kraft die Temperatur drastisch und lässt das Ziel einfrieren. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "subzeroSlammerSpecial": {
     name: "Subzero Slammer",
     effect: "Dummy Data"
   },
   "devastatingDrakePhysical": {
-    name: "Devastating Drake",
-    effect: "The user materializes its aura using its Z-Power and attacks the target with full force. The power varies, depending on the original move."
+    name: "Drastisches Drachendröhnen",
+    effect: "Der Anwender materialisiert durch Z-Kraft seine Aura und greift damit das Ziel an. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "devastatingDrakeSpecial": {
     name: "Devastating Drake",
     effect: "Dummy Data"
   },
   "blackHoleEclipsePhysical": {
-    name: "Black Hole Eclipse",
-    effect: "The user gathers dark energy using its Z-Power and sucks the target into it. The power varies, depending on the original move."
+    name: "Schwarzes Loch des Grauens",
+    effect: "Der Anwender sammelt mit Z-Kraft dunkle Energie an, die das Ziel verschlingt. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "blackHoleEclipseSpecial": {
     name: "Black Hole Eclipse",
     effect: "Dummy Data"
   },
   "twinkleTacklePhysical": {
-    name: "Twinkle Tackle",
-    effect: "The user creates a very charming space using its Z-Power and totally toys with the target. The power varies, depending on the original move."
+    name: "Entzückender Sternenstoß",
+    effect: "Der Anwender kreiert mit Z-Kraft eine zauberhafte Dimension und treibt dort sein Spiel mit dem Ziel. Die Stärke variiert je nach zugrunde liegender Attacke."
   },
   "twinkleTackleSpecial": {
     name: "Twinkle Tackle",
     effect: "Dummy Data"
   },
   "catastropika": {
-    name: "Catastropika",
-    effect: "The user, Pikachu, surrounds itself with the maximum amount of electricity using its Z-Power and pounces on its target with full force."
+    name: "Perfektes Pika-Projektil",
+    effect: "Pikachu umhüllt sich durch Z-Kraft mit gewaltiger elektrischer Energie und stürzt sich mit voller Kraft auf das Ziel."
   },
   "shoreUp": {
-    name: "Shore Up",
-    effect: "The user regains up to half of its max HP. It restores more HP in a sandstorm."
+    name: "Sandsammler",
+    effect: "KP des Anwenders werden um 50 % der maximalen KP aufgefüllt. Tobt ein Sandsturm, werden noch mehr KP aufgefüllt."
   },
   "firstImpression": {
-    name: "First Impression",
-    effect: "Although this move has great power, it only works the first turn each time the user enters battle."
+    name: "Überrumpler",
+    effect: "Eine sehr starke Attacke, die jedoch nur erfolgreich ist, wenn sie sofort eingesetzt wird, nachdem der Anwender das Kampffeld betreten hat."
   },
   "banefulBunker": {
-    name: "Baneful Bunker",
-    effect: "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact."
+    name: "Bunker",
+    effect: "Der Anwender wird vor Angriffen geschützt. Gleichzeitig werden alle Pokémon, die mit ihm in Berührung kommen, vergiftet."
   },
   "spiritShackle": {
-    name: "Spirit Shackle",
-    effect: "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping."
+    name: "Schattenfessel",
+    effect: "Der Anwender greift das Ziel an und näht zugleich dessen Schatten am Boden fest, sodass es nicht entkommen kann."
   },
   "darkestLariat": {
-    name: "Darkest Lariat",
-    effect: "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage."
+    name: "Dark Lariat",
+    effect: "Der Anwender wirbelt mit beiden Armen und prallt so auf das Ziel. Richtet unabhängig von den Statusveränderungen des Zieles Schaden an."
   },
   "sparklingAria": {
-    name: "Sparkling Aria",
-    effect: "The user bursts into song, emitting many bubbles. Any Pokémon suffering from a burn will be healed by the touch of these bubbles."
+    name: "Schaumserenade",
+    effect: "Durch Gesang erzeugte Blasen werden auf das Ziel geschleudert. Alle Pokémon, die dadurch Schaden erleiden, werden auch von Verbrennungen geheilt."
   },
   "iceHammer": {
-    name: "Ice Hammer",
-    effect: "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however."
+    name: "Eishammer",
+    effect: "Anwender trifft mit einem starken Hieb. Senkt Initiative des Anwenders."
   },
   "floralHealing": {
-    name: "Floral Healing",
-    effect: "The user restores the target's HP by up to half of its max HP. It restores more HP when the terrain is grass."
+    name: "Florakur",
+    effect: "KP des Zieles werden um 50 % der maximalen KP aufgefüllt. Die Wirkung steigt, wenn der Untergrund in ein Grasfeld verwandelt wurde."
   },
   "highHorsepower": {
-    name: "High Horsepower",
-    effect: "The user fiercely attacks the target using its entire body."
+    name: "Pferdestärke",
+    effect: "Der Anwender greift das Ziel mit einer heftigen Ganzkörper-Attacke an."
   },
   "strengthSap": {
-    name: "Strength Sap",
-    effect: "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat."
+    name: "Kraftabsorber",
+    effect: "Ein Angriff, der die KP des Anwenders um die Höhe des Angriffs-Werts des Zieles heilt. Anschließend wird der Angriff des Zieles gesenkt."
   },
   "solarBlade": {
-    name: "Solar Blade",
-    effect: "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn."
+    name: "Solarklinge",
+    effect: "Der Anwender absorbiert in der 1. Runde Licht, das er in der 2. Runde zu einem Schwert formt, mit dem er angreift."
   },
   "leafage": {
-    name: "Leafage",
-    effect: "The user attacks by pelting the target with leaves."
+    name: "Blattwerk",
+    effect: "Der Anwender greift das Ziel mit Blättern an."
   },
   "spotlight": {
-    name: "Spotlight",
-    effect: "The user shines a spotlight on the target so that only the target will be attacked during the turn."
+    name: "Rampenlicht",
+    effect: "Der Anwender lenkt die Aufmerksamkeit auf das Ziel, sodass in dieser Runde nur noch dieses Pokémon angegriffen wird."
   },
   "toxicThread": {
-    name: "Toxic Thread",
-    effect: "The user shoots poisonous threads to poison the target and lower the target's Speed stat."
+    name: "Giftfaden",
+    effect: "Der Anwender schießt giftige Fäden auf das Ziel, das dadurch vergiftet wird. Außerdem sinkt seine Initiative."
   },
   "laserFocus": {
-    name: "Laser Focus",
-    effect: "The user concentrates intensely. The attack on the next turn always results in a critical hit."
+    name: "Konzentration",
+    effect: "Der Anwender konzentriert sich, wodurch sein nächster Angriff garantiert ein Volltreffer wird."
   },
   "gearUp": {
-    name: "Gear Up",
-    effect: "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability."
+    name: "Hilfsmechanik",
+    effect: "Der Anwender erhöht mithilfe von Zahnrädern Angriff und Spezial-Angriff von Team-Pokémon mit der Fähigkeit Plus oder Minus."
   },
   "throatChop": {
-    name: "Throat Chop",
-    effect: "The user attacks the target's throat, and the resultant suffering prevents the target from using moves that emit sound for two turns."
+    name: "Neck Strike",
+    effect: "Das Pokémon, das von dieser Attacke getroffen wird, erleidet starke Schmerzen und kann deswegen zwei Runden lang keine Lärm-Attacken mehr einsetzen."
   },
   "pollenPuff": {
-    name: "Pollen Puff",
-    effect: "The user attacks the enemy with a pollen puff that explodes. If the target is an ally, it gives the ally a pollen puff that restores its HP instead."
+    name: "Pollenknödel",
+    effect: "Der Anwender greift mit einem Ball aus Pollen an, der beim Ziel explodiert. Mitstreiter werden von einem Ball getroffen, der ihre KP auffüllt."
   },
   "anchorShot": {
-    name: "Anchor Shot",
-    effect: "The user entangles the target with its anchor chain while attacking. The target becomes unable to flee."
+    name: "Ankerschuss",
+    effect: "Der Anwender greift das Ziel an, indem er es mit einer Ankerkette umwickelt. Dadurch wird das Ziel an der Flucht gehindert."
   },
   "psychicTerrain": {
-    name: "Psychic Terrain",
-    effect: "This protects Pokémon on the ground from priority moves and powers up Psychic-type moves for five turns."
+    name: "Psychofeld",
+    effect: "Verhindert für fünf Runden, dass Pokémon am Boden von Attacken mit hoher Erstschlagquote getroffen werden. Erhöht die Stärke von Psycho-Attacken."
   },
   "lunge": {
-    name: "Lunge",
-    effect: "The user makes a lunge at the target, attacking with full force. This also lowers the target's Attack stat."
+    name: "Anfallen",
+    effect: "Der Anwender greift das Ziel mit ganzer Kraft an, wodurch auch der Angriffs-Wert des Zieles sinkt."
   },
   "fireLash": {
-    name: "Fire Lash",
-    effect: "The user strikes the target with a burning lash. This also lowers the target's Defense stat."
+    name: "Feuerpeitsche",
+    effect: "Der Anwender greift das Ziel mit einer brennenden Peitsche an und senkt dabei zusätzlich dessen Verteidigungs-Wert."
   },
   "powerTrip": {
-    name: "Power Trip",
-    effect: "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power."
+    name: "Überheblichkeit",
+    effect: "Der Anwender prahlt mit seiner Stärke und greift das Ziel an. Dieser Angriff ist umso stärker, je weiter die Statuswerte des Anwenders erhöht sind."
   },
   "burnUp": {
-    name: "Burn Up",
-    effect: "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type."
+    name: "Ausbrennen",
+    effect: "Der Anwender nutzt das gesamte Feuer in seinem Körper, um großen Schaden auszuteilen. Die restliche Kampfdauer gehört er nicht mehr dem Typ Feuer an."
   },
   "speedSwap": {
-    name: "Speed Swap",
-    effect: "The user exchanges Speed stats with the target."
+    name: "Initiativetausch",
+    effect: "Der Anwender tauscht seinen Initiative-Wert mit dem des Zieles."
   },
   "smartStrike": {
-    name: "Smart Strike",
-    effect: "The user stabs the target with a sharp horn. This attack never misses."
+    name: "Schmalhorn",
+    effect: "Der Anwender durchbohrt das Ziel mit seinem spitzen Horn. Diese Attacke trifft immer."
   },
   "purify": {
-    name: "Purify",
-    effect: "The user heals the target's status condition. If the move succeeds, it also restores the user's own HP."
+    name: "Läuterung",
+    effect: "Der Anwender heilt das Statusproblem des Zieles und füllt dadurch seine eigenen KP auf."
   },
   "revelationDance": {
-    name: "Revelation Dance",
-    effect: "The user attacks the target by dancing very hard. The user's type determines the type of this move."
+    name: "Wecktanz",
+    effect: "Der Anwender tanzt und greift dabei das Ziel mit voller Kraft an. Die Attacke hat denselben Typ wie das Pokémon, das sie einsetzt."
   },
   "coreEnforcer": {
-    name: "Core Enforcer",
-    effect: "If the Pokémon the user has inflicted damage on have already used their moves, this move eliminates the effect of the target's Ability."
+    name: "Sanktionskern",
+    effect: "Hat das Pokémon, das durch diese Attacke Schaden genommen hat, in dieser Runde bereits gehandelt, verliert es seine Fähigkeit."
   },
   "tropKick": {
-    name: "Trop Kick",
-    effect: "The user lands an intense kick of tropical origins on the target. This also lowers the target's Attack stat."
+    name: "Tropenkick",
+    effect: "Der Anwender greift den Gegner mit einem heftigen Tritt tropischer Herkunft an. Dabei sinkt auch der Angriffs-Wert des Gegners."
   },
   "instruct": {
-    name: "Instruct",
-    effect: "The user instructs the target to use the target's last move again."
+    name: "Kommando",
+    effect: "Der Anwender befiehlt dem Ziel, dessen zuletzt ausgeführte Attacke sofort wieder einzusetzen."
   },
   "beakBlast": {
-    name: "Beak Blast",
-    effect: "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn."
+    name: "Schnabelkanone",
+    effect: "Der Anwender erhitzt zuerst seinen Schnabel und greift dann an. Pokémon, die ihn während des Erhitzens berühren, erleiden Verbrennungen."
   },
   "clangingScales": {
-    name: "Clanging Scales",
-    effect: "The user rubs the scales on its entire body and makes a huge noise to attack opposing Pokémon. The user's Defense stat goes down after the attack."
+    name: "Schuppenrasseln",
+    effect: "Der Anwender erzeugt durch das Rasseln mit seinen Schuppen ein lautes Geräusch und greift an. Anschließend sinkt seine Verteidigung."
   },
   "dragonHammer": {
-    name: "Dragon Hammer",
-    effect: "The user uses its body like a hammer to attack the target and inflict damage."
+    name: "Drachenhammer",
+    effect: "Der Anwender nutzt seinen Körper wie einen Hammer und stürzt sich auf das Ziel, wodurch dieses Schaden erleidet."
   },
   "brutalSwing": {
-    name: "Brutal Swing",
-    effect: "The user swings its body around violently to inflict damage on everything in its vicinity."
+    name: "Wirbler",
+    effect: "Der Anwender dreht schwungvoll seinen Körper und fügt den Pokémon in seiner Nähe dabei Schaden zu."
   },
   "auroraVeil": {
-    name: "Aurora Veil",
-    effect: "This move reduces damage from physical and special moves for five turns. This can be used only when it is snowing."
+    name: "Auroraschleier",
+    effect: "Diese Attacke schwächt fünf Runden lang den durch physische sowie durch Spezial-Attacken erhaltenen Schaden. Kann nur bei Hagel eingesetzt werden."
   },
   "sinisterArrowRaid": {
-    name: "Sinister Arrow Raid",
-    effect: "The user, Decidueye, creates countless arrows using its Z-Power and shoots the target with full force."
+    name: "Schatten-Pfeilregen",
+    effect: "Silvarro stellt mit Z-Kraft unzählige Pfeile her und lässt diese auf das Ziel niederprasseln."
   },
   "maliciousMoonsault": {
-    name: "Malicious Moonsault",
-    effect: "The user, Incineroar, strengthens its body using its Z-Power and crashes into the target with full force."
+    name: "Hyper Dark Crusher",
+    effect: "Mit seinem durch Z-Kraft gestählten Körper stürzt sich Fuegro mit ganzer Kraft auf das Ziel."
   },
   "oceanicOperetta": {
-    name: "Oceanic Operetta",
-    effect: "The user, Primarina, summons a massive amount of  water using its Z-Power and attacks the target with  full force."
+    name: "Grandiose Meeressymphonie",
+    effect: "Primarene ruft mit Z-Kraft große Mengen an Wasser herbei und greift damit das Ziel an."
   },
   "guardianOfAlola": {
-    name: "Guardian of Alola",
-    effect: "The user, the Land Spirit Pokémon, obtains Alola's energy using its Z-Power and attacks the target with full force. This reduces the target's HP greatly."
+    name: "Alolas Wächter",
+    effect: "Ein gewaltiger Angriff des Schutzpatrons, der durch Z-Kraft die Kraft Alolas erlangt hat. Reduziert die verbleibenden KP des Zieles stark."
   },
   "soulStealing7StarStrike": {
-    name: "Soul-Stealing 7-Star Strike",
-    effect: "After obtaining Z-Power, the user, Marshadow, punches and kicks the target consecutively with full force."
+    name: "Sternbild des Seelenraubes",
+    effect: "Marshadow schlägt mit durch Z-Kraft gestärkten Schlägen und Tritten in einer Serien-Attacke auf das Ziel ein."
   },
   "stokedSparksurfer": {
-    name: "Stoked Sparksurfer",
-    effect: "After obtaining Z-Power, the user, Alolan Raichu, attacks the target with full force. This move leaves the target with paralysis."
+    name: "Blitz-Wellenritt",
+    effect: "Das Alola-Raichu greift das Ziel mithilfe von Z-Kraft mit voller Wucht an und paralysiert es."
   },
   "pulverizingPancake": {
-    name: "Pulverizing Pancake",
-    effect: "Z-Power brings out the true capabilities of the user, Snorlax. The Pokémon moves its enormous body energetically and attacks the target with full force."
+    name: "Schluss mit lustig",
+    effect: "Relaxo wird von Z-Kraft erfüllt und macht Ernst. Es bringt seinen riesigen Körper in Schwung und stürzt sich mit ganzer Kraft auf das Ziel."
   },
   "extremeEvoboost": {
-    name: "Extreme Evoboost",
-    effect: "After obtaining Z-Power, the user, Eevee, gets energy from its evolved friends and boosts its stats sharply."
+    name: "Macht der Neun",
+    effect: "Evoli macht sich durch Z-Kraft die Stärke seiner Weiterentwicklungen zunutze und erhöht seine Statuswerte stark."
   },
   "genesisSupernova": {
-    name: "Genesis Supernova",
-    effect: "After obtaining Z-Power, the user, Mew, attacks the target with full force. The terrain will be charged with psychic energy."
+    name: "Supernova des Ursprungs",
+    effect: "Mew greift das Ziel mithilfe von Z-Kraft mit voller Wucht an. Der Untergrund wird dabei in ein Psychofeld verwandelt."
   },
   "shellTrap": {
-    name: "Shell Trap",
-    effect: "The user sets a shell trap. If the user is hit by a physical move, the trap will explode and inflict damage on opposing Pokémon."
+    name: "Panzerfalle",
+    effect: "Der Anwender legt eine Panzerfalle. Wird er von einer physischen Attacke getroffen, explodiert die Falle und fügt dem Angreifer Schaden zu."
   },
   "fleurCannon": {
-    name: "Fleur Cannon",
-    effect: "The user unleashes a strong beam. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    name: "Kanonenbouquet",
+    effect: "Der Anwender greift das Ziel mit einem gewaltigen Strahl an. Sein eigener Spezial-Angriff sinkt dadurch stark."
   },
   "psychicFangs": {
-    name: "Psychic Fangs",
-    effect: "The user bites the target with its psychic capabilities. This can also destroy Light Screen and Reflect."
+    name: "Psychobeißer",
+    effect: "Der Anwender beißt das Ziel mithilfe von Psycho-Kräften. Die Attacke durchbricht auch Barrieren wie Lichtschild und Reflektor."
   },
   "stompingTantrum": {
-    name: "Stomping Tantrum",
-    effect: "Driven by frustration, the user attacks the target. If the user's previous move has failed, the power of this move doubles."
+    name: "Fruststampfer",
+    effect: "Von Frust getrieben greift der Anwender an. Wenn seine vorige Attacke fehlgeschlagen ist, verdoppelt sich die Stärke der Attacke."
   },
   "shadowBone": {
-    name: "Shadow Bone",
-    effect: "The user attacks by beating the target with a bone that contains a spirit. This may also lower the target's Defense stat."
+    name: "Schattenknochen",
+    effect: "Der Anwender greift das Ziel mit einem Knochen an, in dem eine Seele haust. Senkt eventuell die Verteidigung des Zieles."
   },
   "accelerock": {
-    name: "Accelerock",
-    effect: "The user smashes into the target at high speed. This move always goes first."
+    name: "Turbofelsen",
+    effect: "Der Anwender prallt mit großer Geschwindigkeit auf das Ziel. Hohe Erstschlagquote."
   },
   "liquidation": {
-    name: "Liquidation",
-    effect: "The user slams into the target using a full-force blast of water. This may also lower the target's Defense stat."
+    name: "Aquadurchstoß",
+    effect: "Der Anwender greift das Ziel mit der Kraft des Wassers an. Senkt eventuell die Verteidigung des Zieles."
   },
   "prismaticLaser": {
-    name: "Prismatic Laser",
-    effect: "The user shoots powerful lasers using the power of a prism. The user can't move on the next turn."
+    name: "Prisma-Laser",
+    effect: "Der Anwender feuert mithilfe von Prisma-Kraft mächtige Lichtstrahlen ab. In der nächsten Runde kann er nicht handeln."
   },
   "spectralThief": {
-    name: "Spectral Thief",
-    effect: "The user hides in the target's shadow, steals the target's stat boosts, and then attacks."
+    name: "Diebesschatten",
+    effect: "Der Anwender schleicht sich in den Schatten des Zieles, stiehlt dessen erhöhte Statuswerte und fügt ihm Schaden zu."
   },
   "sunsteelStrike": {
-    name: "Sunsteel Strike",
-    effect: "The user slams into the target with the force of a meteor. This move can be used on the target regardless of its Abilities."
+    name: "Stahlgestirn",
+    effect: "Der Anwender stürzt mit der Gewalt eines Meteors auf das Ziel. Die Fähigkeit des Zieles wird dabei ignoriert."
   },
   "moongeistBeam": {
-    name: "Moongeist Beam",
-    effect: "The user emits a sinister ray to attack the target. This move can be used on the target regardless of its Abilities."
+    name: "Schattenstrahl",
+    effect: "Der Anwender greift mit einem unheimlichen Lichtstrahl an. Diese Attacke ignoriert die Fähigkeit des Zieles."
   },
   "tearfulLook": {
-    name: "Tearful Look",
-    effect: "The user gets teary eyed to make the target lose its combative spirit. This lowers the target's Attack and Sp. Atk stats."
+    name: "Tränendrüse",
+    effect: "Dem Anwender stehen Tränen in den Augen, wodurch das Ziel seinen Kampfeswillen verliert. Angriff und Spezial-Angriff des Zieles sinken."
   },
   "zingZap": {
-    name: "Zing Zap",
-    effect: "A strong electric blast crashes down on the target, giving it an electric shock. This may also make the target flinch."
+    name: "Elektropikser",
+    effect: "Der Anwender rammt das Ziel und schockt es mit starkem Strom. Das Ziel schreckt eventuell zurück."
   },
   "naturesMadness": {
-    name: "Nature's Madness",
-    effect: "The user hits the target with the force of nature. It halves the target's HP."
+    name: "Naturzorn",
+    effect: "Das Ziel wird vom Zorn der Natur getroffen und verliert dadurch die Hälfte seiner KP."
   },
   "multiAttack": {
-    name: "Multi-Attack",
-    effect: "Cloaking itself in high energy, the user slams into the target. The memory held determines the move's type."
+    name: "Multi-Angriff",
+    effect: "Der Anwender sammelt eine große Menge Energie und greift das Ziel damit an. Der Typ der Attacke hängt von dem der Disc ab."
   },
   "tenMillionVoltThunderbolt": {
     name: "10,000,000 Volt Thunderbolt",
     effect: "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily."
   },
   "mindBlown": {
-    name: "Mind Blown",
-    effect: "The user attacks everything around it by causing its own head to explode. This also damages the user."
+    name: "Knallkopf",
+    effect: "Der Anwender greift alle Pokémon in der Umgebung an, indem er seinen Kopf explodieren lässt. Dabei verletzt er sich auch selbst."
   },
   "plasmaFists": {
-    name: "Plasma Fists",
-    effect: "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves."
+    name: "Plasmafäuste",
+    effect: "Ein Angriff mit elektrisch geladenen Fäusten, der bewirkt, dass Normal-Attacken den Typ Elektro annehmen."
   },
   "photonGeyser": {
-    name: "Photon Geyser",
-    effect: "The user attacks a target with a pillar of light. This move inflicts Attack or Sp. Atk damage—whichever stat is higher for the user."
+    name: "Photonen-Geysir",
+    effect: "Ein Angriff mit einer Lichtsäule. Ist der Angriff höher als der Spezial-Angriff, wird die Höhe des Schadens durch den Angriff bestimmt und umgekehrt."
   },
   "lightThatBurnsTheSky": {
-    name: "Light That Burns the Sky",
-    effect: "This attack inflicts Attack or Sp. Atk damage—whichever stat is higher for the user, Necrozma. This move ignores the target's Ability."
+    name: "Licht des Erlöschens",
+    effect: "Ist der Angriff höher als der Spezial-Angriff, wird die Höhe des Schadens durch den Angriff bestimmt und umgekehrt. Ignoriert die Fähigkeit des Zieles."
   },
   "searingSunrazeSmash": {
-    name: "Searing Sunraze Smash",
-    effect: "After obtaining Z-Power, the user, Solgaleo, attacks the target with full force. This move can ignore the effect of the target's Ability."
+    name: "Schmetternde Sonnenwalze",
+    effect: "Solgaleo greift das Ziel mithilfe von Z-Kraft mit voller Wucht an. Ignoriert die Fähigkeit des Zieles."
   },
   "menacingMoonrazeMaelstrom": {
-    name: "Menacing Moonraze Maelstrom",
-    effect: "After obtaining Z-Power, the user, Lunala, attacks the target with full force. This move can ignore the effect of the target's Ability."
+    name: "Geballter Mondlaser",
+    effect: "Lunala greift das Ziel mithilfe von Z-Kraft mit voller Wucht an. Ignoriert die Fähigkeit des Zieles."
   },
   "letsSnuggleForever": {
-    name: "Let's Snuggle Forever",
-    effect: "After obtaining Z-Power, the user, Mimikyu, punches the target with full force."
+    name: "Herzliche Knuddelkloppe",
+    effect: "Mimigma greift das Ziel mithilfe von Z-Kraft mit voller Wucht und viel Liebe an."
   },
   "splinteredStormshards": {
-    name: "Splintered Stormshards",
-    effect: "After obtaining Z-Power, the user, Lycanroc, attacks the target with full force. This move negates the effect on the battlefield."
+    name: "Fataler Steinregen",
+    effect: "Wolwerock greift das Ziel mithilfe von Z-Kraft mit voller Wucht an. Herrschen besondere Feldeffekte, werden diese zusätzlich neutralisiert."
   },
   "clangorousSoulblaze": {
-    name: "Clangorous Soulblaze",
-    effect: "After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user's stats."
+    name: "Rasselnder Seelentanz",
+    effect: "Grandiras greift Gegner mithilfe von Z-Kraft mit voller Wucht an. Zusätzlich werden seine Statuswerte erhöht."
   },
   "zippyZap": {
-    name: "Zippy Zap",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and results in a critical hit."
+    name: "Britzelturbo",
+    effect: "Ein stürmischer Blitz-Angriff mit hoher Erstschlag- und Volltrefferquote."
   },
   "splishySplash": {
-    name: "Splishy Splash",
-    effect: "The user charges a huge wave with electricity and hits the opposing Pokémon with the wave. This may also leave the opposing Pokémon with paralysis."
+    name: "Plätschersurfer",
+    effect: "Pikachu greift das Ziel mit einer großen, elektrisch aufgeladenen Welle an. Das Ziel wird eventuell paralysiert."
   },
   "floatyFall": {
-    name: "Floaty Fall",
-    effect: "The user floats in the air, and then dives at a steep angle to attack the target. This may also make the target flinch."
+    name: "Schwebesturz",
+    effect: "Pikachu schwebt nach oben und stürzt dann unvermittelt auf das Ziel herab. Das Ziel schreckt eventuell zurück."
   },
   "pikaPapow": {
-    name: "Pika Papow",
-    effect: "The more Pikachu loves its Trainer, the greater the move's power. It never misses."
+    name: "Pika-Flash",
+    effect: "Je größer Pikachus Vertrauen zu seinem Trainer ist, desto stärker fällt dieser Angriff aus. Diese Attacke trifft immer."
   },
   "bouncyBubble": {
-    name: "Bouncy Bubble",
-    effect: "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by half the damage taken by the target."
+    name: "Blubbsauger",
+    effect: "Evoli greift mit Wasserblasen an. Evolis KP werden um die Hälfte des vom Wasser angerichteten Schadens geheilt."
   },
   "buzzyBuzz": {
-    name: "Buzzy Buzz",
-    effect: "The user shoots a jolt of electricity to attack the target. This also leaves the target with paralysis."
+    name: "Knisterladung",
+    effect: "Evoli greift das Ziel mit Elektrizität an, wodurch dieses paralysiert wird."
   },
   "sizzlySlide": {
-    name: "Sizzly Slide",
-    effect: "The user cloaks itself in fire and charges at the target. This also leaves the target with a burn."
+    name: "Flackerbrand",
+    effect: "Evoli hüllt sich in Flammen und stürzt sich beherzt auf das Ziel, welches dadurch Verbrennungen erleidet."
   },
   "glitzyGlow": {
-    name: "Glitzy Glow",
-    effect: "The user bombards the target with telekinetic force. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's special moves."
+    name: "Pulsieraura",
+    effect: "Evoli greift das Ziel gnadenlos mit telekinetischer Energie an. Dabei wird eine geheimnisvolle Wand erzeugt, die Spezial-Attacken des Ziels abschwächt."
   },
   "baddyBad": {
-    name: "Baddy Bad",
-    effect: "The user acts bad and attacks the target. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's physical moves."
+    name: "Quälzone",
+    effect: "Evoli zeigt sich von seiner dunklen Seite und greift an. Dabei wird eine geheimnisvolle Wand erzeugt, die physische Attacken des Ziels abschwächt."
   },
   "sappySeed": {
-    name: "Sappy Seed",
-    effect: "The user grows a gigantic stalk that scatters seeds to attack the target. The seeds drain the target's HP every turn."
+    name: "Sprießbomben",
+    effect: "Evoli lässt eine riesige Ranke wachsen, von der Samen herabfallen, die dem Ziel schaden und ihm in jeder Runde KP absaugen."
   },
   "freezyFrost": {
-    name: "Freezy Frost",
-    effect: "The user attacks with a crystal made of cold frozen haze. It eliminates every stat change among all the Pokémon engaged in battle."
+    name: "Klirrfrost",
+    effect: "Evoli greift mit einem schwarzen Kristall aus gefrorenem Nebel an. Die Statusveränderungen aller am Kampf beteiligten Pokémon werden zurückgesetzt."
   },
   "sparklySwirl": {
-    name: "Sparkly Swirl",
-    effect: "The user attacks the target by wrapping it with a whirlwind of an overpowering scent. This also heals all status conditions of the user's party."
+    name: "Glitzersturm",
+    effect: "Evoli greift an, indem es das Ziel in einen nahezu erstickend wohlriechenden Wirbelwind hüllt. Das Team des Anwenders wird von Statusproblemen geheilt."
   },
   "veeveeVolley": {
-    name: "Veevee Volley",
-    effect: "The more Eevee loves its Trainer, the greater the move's power. It never misses."
+    name: "Evo-Crash",
+    effect: "Je größer Evolis Vertrauen zu seinem Trainer ist, desto stärker fällt dieser Angriff aus. Diese Attacke trifft immer."
   },
   "doubleIronBash": {
-    name: "Double Iron Bash",
-    effect: "The user rotates, centering the hex nut in its chest, and then strikes with its arms twice in a row. This may also make the target flinch."
+    name: "Panzerfäuste",
+    effect: "Der Anwender rotiert um die Schraubenmutter in seinem Brustkorb und schlägt zweimal hintereinander mit den Armen zu. Das Ziel schreckt eventuell zurück."
   },
   "maxGuard": {
-    name: "Max Guard",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession."
+    name: "Dyna-Wall",
+    effect: "Anwender wehrt jede Attacke ab. Scheitert eventuell bei Wiederholung."
   },
   "dynamaxCannon": {
-    name: "Dynamax Cannon",
-    effect: "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200."
+    name: "Dynamax-Kanone",
+    effect: "Der Anwender schießt einen Strahl aus seinem Kern ab. Dynamaximierte Ziele erleiden doppelten Schaden."
   },
   "snipeShot": {
-    name: "Snipe Shot",
-    effect: "The user ignores the effects of opposing Pokémon's moves and Abilities that draw in moves, allowing this move to hit the chosen target."
+    name: "Präzisionsschuss",
+    effect: "Die Attacke richtet sich gegen das ausgewählte Ziel, unabhängig von Fähigkeiten oder Attacken, die Angriffe auf sich ziehen."
   },
   "jawLock": {
-    name: "Jaw Lock",
-    effect: "This move prevents the user and the target from switching out until either of them faints. The effect goes away if either of the Pokémon leaves the field."
+    name: "Fesselbiss",
+    effect: "Anwender und Ziel können nicht ausgetauscht werden, bis einer von ihnen kampfunfähig wird. Der Effekt endet, wenn eines der Pokémon das Kampffeld verlässt."
   },
   "stuffCheeks": {
-    name: "Stuff Cheeks",
-    effect: "The user eats its held Berry, then sharply raises its Defense stat."
+    name: "Backenstopfer",
+    effect: "Der Anwender frisst die Beere, die er trägt, wodurch seine Verteidigung stark erhöht wird."
   },
   "noRetreat": {
-    name: "No Retreat",
-    effect: "This move raises all the user's stats but prevents the user from switching out or fleeing."
+    name: "Finalformation",
+    effect: "Alle Statuswerte des Anwenders werden erhöht, aber dafür kann er weder ausgewechselt werden noch fliehen."
   },
   "tarShot": {
-    name: "Tar Shot",
-    effect: "The user pours sticky tar over the target, lowering the target's Speed stat. The target becomes weaker to Fire-type moves."
+    name: "Teerschuss",
+    effect: "Der Anwender übergießt das Ziel mit klebrigem Teer und senkt so dessen Initiative. Dadurch wird es schwach gegenüber Feuer-Attacken."
   },
   "magicPowder": {
-    name: "Magic Powder",
-    effect: "The user scatters a cloud of magic powder that changes the target to Psychic type."
+    name: "Magiepuder",
+    effect: "Das Ziel wird mit magischem Puder bestreut und nimmt den Typ Psycho an."
   },
   "dragonDarts": {
-    name: "Dragon Darts",
-    effect: "The user attacks twice using Dreepy. If there are two targets, this move hits each target once."
+    name: "Drachenpfeile",
+    effect: "Der Anwender greift zweimal mit Grolldra an. Bei zwei Zielen werden beide jeweils einmal angegriffen."
   },
   "teatime": {
     name: "Teatime",
-    effect: "The user has teatime with all the Pokémon in the battle. Each Pokémon eats its held Berry."
+    effect: "Der Anwender lädt alle am Kampf beteiligten Pokémon zu einem Teekränzchen ein, woraufhin diese die Beeren essen, die sie bei sich tragen."
   },
   "octolock": {
-    name: "Octolock",
-    effect: "The user locks the target in and prevents it from fleeing. This move also lowers the target's Defense and Sp. Def every turn."
+    name: "Octoklammer",
+    effect: "Das Ziel wird an der Flucht gehindert und seine Verteidigung und Spezial-Verteidigung sinken jede Runde."
   },
   "boltBeak": {
-    name: "Bolt Beak",
-    effect: "The user stabs the target with its electrified beak. If the user attacks before the target, the power of this move is doubled."
+    name: "Schockschnabel",
+    effect: "Der Anwender sticht mit einem elektrisch aufgeladenen Schnabel zu. Kommt er vor dem Ziel zum Zug, verdoppelt sich die Stärke der Attacke."
   },
   "fishiousRend": {
-    name: "Fishious Rend",
-    effect: "The user rends the target with its hard gills. If the user attacks before the target, the power of this move is doubled."
+    name: "Kiemenbiss",
+    effect: "Der Anwender beißt mit seinen harten Kiemen zu. Kommt er vor dem Ziel zum Zug, verdoppelt sich die Stärke der Attacke."
   },
   "courtChange": {
-    name: "Court Change",
-    effect: "With its mysterious power, the user swaps the effects on either side of the field."
+    name: "Seitenwechsel",
+    effect: "Durch eine mysteriöse Macht werden wirksame Effekte auf Mitstreiterseite und gegnerischer Seite getauscht."
   },
   "maxFlare": {
-    name: "Max Flare",
-    effect: "This is a Fire-type attack Dynamax Pokémon use. The user intensifies the sun for five turns."
+    name: "Dyna-Brand",
+    effect: "Eine Feuer-Attacke, die nur Dynamax-Pokémon einsetzen können. Die Sonne brennt unbarmherzig fünf Runden lang."
   },
   "maxFlutterby": {
-    name: "Max Flutterby",
-    effect: "This is a Bug-type attack Dynamax Pokémon use. This lowers the target's Sp. Atk stat."
+    name: "Dyna-Schwarm",
+    effect: "Eine Käfer-Attacke, die nur Dynamax-Pokémon einsetzen können. Senkt den Spezial-Angriff des Zieles."
   },
   "maxLightning": {
-    name: "Max Lightning",
-    effect: "This is an Electric-type attack Dynamax Pokémon use. The user turns the ground into Electric Terrain for five turns."
+    name: "Dyna-Gewitter",
+    effect: "Eine Elektro-Attacke, die nur Dynamax-Pokémon einsetzen können. Erzeugt fünf Runden lang ein Elektrofeld."
   },
   "maxStrike": {
-    name: "Max Strike",
-    effect: "This is a Normal-type attack Dynamax Pokémon use. This lowers the target's Speed stat."
+    name: "Dyna-Angriff",
+    effect: "Eine Normal-Attacke, die nur Dynamax-Pokémon einsetzen können. Senkt die Initiative des Zieles."
   },
   "maxKnuckle": {
-    name: "Max Knuckle",
-    effect: "This is a Fighting-type attack Dynamax Pokémon use. This raises ally Pokémon's Attack stats."
+    name: "Dyna-Faust",
+    effect: "Eine Kampf-Attacke, die nur Dynamax-Pokémon einsetzen können. Erhöht den Angriff der Mitstreiterseite."
   },
   "maxPhantasm": {
-    name: "Max Phantasm",
-    effect: "This is a Ghost-type attack Dynamax Pokémon use. This lowers the target's Defense stat."
+    name: "Dyna-Spuk",
+    effect: "Eine Geister-Attacke, die nur Dynamax-Pokémon einsetzen können. Senkt die Verteidigung des Zieles."
   },
   "maxHailstorm": {
-    name: "Max Hailstorm",
-    effect: "This is an Ice-type attack Dynamax Pokémon use. The user summons a hailstorm lasting five turns."
+    name: "Dyna-Frost",
+    effect: "Eine Eis-Attacke, die nur Dynamax-Pokémon einsetzen können. Lässt fünf Runden lang einen Hagelsturm toben."
   },
   "maxOoze": {
-    name: "Max Ooze",
-    effect: "This is a Poison-type attack Dynamax Pokémon use. This raises ally Pokémon's Sp. Atk stats."
+    name: "Dyna-Giftschwall",
+    effect: "Eine Gift-Attacke, die nur Dynamax-Pokémon einsetzen können. Erhöht den Spezial-Angriff der Mitstreiterseite."
   },
   "maxGeyser": {
-    name: "Max Geyser",
-    effect: "This is a Water-type attack Dynamax Pokémon use. The user summons a heavy rain that falls for five turns."
+    name: "Dyna-Flut",
+    effect: "Eine Wasser-Attacke, die nur Dynamax-Pokémon einsetzen können. Löst fünf Runden lang strömenden Regen aus."
   },
   "maxAirstream": {
-    name: "Max Airstream",
-    effect: "This is a Flying-type attack Dynamax Pokémon use. This raises ally Pokémon's Speed stats."
+    name: "Dyna-Düse",
+    effect: "Eine Flug-Attacke, die nur Dynamax-Pokémon einsetzen können. Erhöht die Initiative der Mitstreiterseite."
   },
   "maxStarfall": {
-    name: "Max Starfall",
-    effect: "This is a Fairy-type attack Dynamax Pokémon use. The user turns the ground into Misty Terrain for five turns."
+    name: "Dyna-Zauber",
+    effect: "Eine Feen-Attacke, die nur Dynamax-Pokémon einsetzen können. Erzeugt fünf Runden lang ein Nebelfeld."
   },
   "maxWyrmwind": {
-    name: "Max Wyrmwind",
-    effect: "This is a Dragon-type attack Dynamax Pokémon use. This lowers the target's Attack stat."
+    name: "Dyna-Wyrm",
+    effect: "Eine Drachen-Attacke, die nur Dynamax-Pokémon einsetzen können. Senkt den Angriff des Zieles."
   },
   "maxMindstorm": {
-    name: "Max Mindstorm",
-    effect: "This is a Psychic-type attack Dynamax Pokémon use. The user turns the ground into Psychic Terrain for five turns."
+    name: "Dyna-Kinese",
+    effect: "Eine Psycho-Attacke, die nur Dynamax-Pokémon einsetzen können. Erzeugt fünf Runden lang ein Psychofeld."
   },
   "maxRockfall": {
-    name: "Max Rockfall",
-    effect: "This is a Rock-type attack Dynamax Pokémon use. The user summons a sandstorm lasting five turns."
+    name: "Dyna-Brocken",
+    effect: "Eine Gesteins-Attacke, die nur Dynamax-Pokémon einsetzen können. Lässt fünf Runden lang einen Sandsturm toben."
   },
   "maxQuake": {
-    name: "Max Quake",
-    effect: "This is a Ground-type attack Dynamax Pokémon use. This raises ally Pokémon's Sp. Def stats."
+    name: "Dyna-Erdstoß",
+    effect: "Eine Boden-Attacke, die nur Dynamax-Pokémon einsetzen können. Erhöht die Spezial-Verteidigung der Mitstreiterseite."
   },
   "maxDarkness": {
-    name: "Max Darkness",
-    effect: "This is a Dark-type attack Dynamax Pokémon use. This lowers the target's Sp. Def stat."
+    name: "Dyna-Dunkel",
+    effect: "Eine Unlicht-Attacke, die nur Dynamax-Pokémon einsetzen können. Senkt die Spezial-Verteidigung des Zieles."
   },
   "maxOvergrowth": {
-    name: "Max Overgrowth",
-    effect: "This is a Grass-type attack Dynamax Pokémon use. The user turns the ground into Grassy Terrain for five turns."
+    name: "Dyna-Flora",
+    effect: "Eine Pflanzen-Attacke, die nur Dynamax-Pokémon einsetzen können. Erzeugt fünf Runden lang ein Grasfeld."
   },
   "maxSteelspike": {
-    name: "Max Steelspike",
-    effect: "This is a Steel-type attack Dynamax Pokémon use. This raises ally Pokémon's Defense stats."
+    name: "Dyna-Stahlzacken",
+    effect: "Eine Stahl-Attacke, die nur Dynamax-Pokémon einsetzen können. Erhöht die Verteidigung der Mitstreiterseite."
   },
   "clangorousSoul": {
-    name: "Clangorous Soul",
-    effect: "The user raises all its stats by using some of its HP."
+    name: "Seelentanz",
+    effect: "Der Anwender setzt eine kleine Menge an KP ein, um alle seine Statuswerte zu erhöhen."
   },
   "bodyPress": {
     name: "Body Press",
-    effect: "The user attacks by slamming its body into the target. The higher the user's Defense, the more damage it can inflict on the target."
+    effect: "Der Anwender greift mit seinem ganzen Körper an. Je höher seine Verteidigung ist, desto mehr Schaden richtet er an."
   },
   "decorate": {
-    name: "Decorate",
-    effect: "The user sharply raises the target's Attack and Sp. Atk stats by decorating the target."
+    name: "Verzierung",
+    effect: "Durch Verzierungen werden der Angriff und Spezial-Angriff des Zieles stark erhöht."
   },
   "drumBeating": {
-    name: "Drum Beating",
-    effect: "The user plays its drum, controlling the drum's roots to attack the target. This also lowers the target's Speed stat."
+    name: "Trommelschläge",
+    effect: "Der Anwender kontrolliert durch Trommeln Wurzeln, die das Ziel angreifen und dessen Initiative senken."
   },
   "snapTrap": {
-    name: "Snap Trap",
-    effect: "The user snares the target in a snap trap for four to five turns."
+    name: "Fangeisen",
+    effect: "Das Ziel wird vier bis fünf Runden lang in einem Fangeisen festgehalten und angegriffen."
   },
   "pyroBall": {
-    name: "Pyro Ball",
-    effect: "The user attacks by igniting a small stone and launching it as a fiery ball at the target. This may also leave the target with a burn."
+    name: "Feuerball",
+    effect: "Der Anwender greift mit einem Ball aus Feuer an, den er durch Anzünden eines kleinen Steins erzeugt. Fügt dem Ziel eventuell Verbrennungen zu."
   },
   "behemothBlade": {
-    name: "Behemoth Blade",
-    effect: "The user wields a large, powerful sword using its whole body and cuts the target in a vigorous attack."
+    name: "Gigantenhieb",
+    effect: "Der Anwender wird zu einem riesigen Schwert und greift das Ziel an. Dynamaximierte Ziele erleiden doppelten Schaden."
   },
   "behemothBash": {
-    name: "Behemoth Bash",
-    effect: "The user's body becomes a firm shield and slams into the target fiercely."
+    name: "Gigantenstoß",
+    effect: "Der Anwender wird zu einem riesigen Schild und greift das Ziel an. Dynamaximierte Ziele erleiden doppelten Schaden."
   },
   "auraWheel": {
-    name: "Aura Wheel",
-    effect: "Morpeko attacks and raises its Speed with the energy stored in its cheeks. This move's type changes depending on the user's form."
+    name: "Aura-Rad",
+    effect: "Mithilfe der in den Backentaschen gespeicherten Energie greift der Anwender an und erhöht seine Initiative. Der Typ der Attacke hängt von Morpekos Form ab."
   },
   "breakingSwipe": {
-    name: "Breaking Swipe",
-    effect: "The user swings its tough tail wildly and attacks opposing Pokémon. This also lowers their Attack stats."
+    name: "Breitseite",
+    effect: "Der Anwender schwingt heftig seinen robusten Schweif, um damit gegnerische Pokémon anzugreifen und ihren Angriffs-Wert zu senken."
   },
   "branchPoke": {
-    name: "Branch Poke",
-    effect: "The user attacks the target by poking it with a sharply pointed branch."
+    name: "Zweigstoß",
+    effect: "Der Anwender attackiert das Ziel mit einem spitzen Zweig."
   },
   "overdrive": {
     name: "Overdrive",
-    effect: "The user attacks opposing Pokémon by twanging a guitar or bass guitar, causing a huge echo and strong vibration."
+    effect: "Der Anwender haut in die Saiten seiner Gitarre oder seines Basses und erzeugt dröhnende, kraftvolle Vibrationen, die gegnerischen Pokémon schaden."
   },
   "appleAcid": {
-    name: "Apple Acid",
-    effect: "The user attacks the target with an acidic liquid created from tart apples. This also lowers the target's Sp. Def stat."
+    name: "Apfelsäure",
+    effect: "Der Anwender greift mit einer aus einem sauren Apfel hergestellten säurehaltigen Flüssigkeit an. Dabei wird die Spezial-Verteidigung des Zieles gesenkt."
   },
   "gravApple": {
-    name: "Grav Apple",
-    effect: "The user inflicts damage by dropping an apple from high above. This also lowers the target's Defense stat."
+    name: "Gravitation",
+    effect: "Ein Apfel fällt aus großer Höhe herab und richtet Schaden an. Dabei wird die Verteidigung des Zieles gesenkt."
   },
   "spiritBreak": {
-    name: "Spirit Break",
-    effect: "The user attacks the target with so much force that it could break the target's spirit. This also lowers the target's Sp. Atk stat."
+    name: "Seelenbruch",
+    effect: "Die Attacke trifft das Ziel mit so viel Wucht, dass es den Mut verliert. Dabei wird sein Spezial-Angriff gesenkt."
   },
   "strangeSteam": {
-    name: "Strange Steam",
-    effect: "The user attacks the target by emitting steam. This may also confuse the target."
+    name: "Wunderdampf",
+    effect: "Der Anwender stößt Dampf aus, mit dem er das Ziel angreift. Dieses wird eventuell verwirrt."
   },
   "lifeDew": {
-    name: "Life Dew",
-    effect: "The user scatters mysterious water around and restores the HP of itself and its ally Pokémon in the battle."
+    name: "Lebenstropfen",
+    effect: "Wundersames Wasser heilt die KP des Anwenders und seiner am Kampf beteiligten Mitstreiter."
   },
   "obstruct": {
-    name: "Obstruct",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession. Direct contact harshly lowers the attacker's Defense stat."
+    name: "Abblocker",
+    effect: "Der Anwender wehrt jede Attacke ab. Berührt ihn währenddessen ein Pokémon, sinkt dessen Verteidigung stark. Scheitert eventuell bei Wiederholung."
   },
   "falseSurrender": {
-    name: "False Surrender",
-    effect: "The user pretends to bow its head, but then it stabs the target with its disheveled hair. This attack never misses."
+    name: "Kniefalltrick",
+    effect: "Der Anwender tut so, als würde er sich verneigen, und sticht dann mit seinem zerzausten Fell zu. Diese Attacke trifft immer."
   },
   "meteorAssault": {
-    name: "Meteor Assault",
-    effect: "The user attacks wildly with its thick leek. The user can't move on the next turn, because the force of this move makes it stagger."
+    name: "Sternensturm",
+    effect: "Der Anwender greift mit seiner Lauchstange an. Von der Wucht der Attacke wird ihm jedoch so schwindelig, dass er in der nächsten Runde nicht handeln kann."
   },
   "eternabeam": {
-    name: "Eternabeam",
-    effect: "This is Eternatus's most powerful attack in its original form. The user can't move on the next turn."
+    name: "Unendynastrahlen",
+    effect: "Der mächtigste Angriff, über den Endynalos in seiner ursprünglichen Form verfügt. In der nächsten Runde kann der Anwender nicht handeln."
   },
   "steelBeam": {
-    name: "Steel Beam",
-    effect: "The user fires a beam of steel that it collected from its entire body. This also damages the user."
+    name: "Stahlstrahl",
+    effect: "Der Anwender schießt Stahl, den er in seinem ganzen Körper angesammelt hat, in Form eines mächtigen Strahls ab. Dabei verletzt er sich auch selbst."
   },
   "expandingForce": {
-    name: "Expanding Force",
-    effect: "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain."
+    name: "Flächenmacht",
+    effect: "Der Anwender greift das Ziel mit Psycho-Kräften an. Wenn ein Psychofeld aktiv ist, steigt die Stärke und es wird allen gegnerischen Pokémon Schaden zugefügt."
   },
   "steelRoller": {
-    name: "Steel Roller",
-    effect: "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain."
+    name: "Eisenwalze",
+    effect: "Der Anwender greift an und zerstört dabei etwaige Felder. Ist kein Feld aktiv, schlägt die Attacke fehl."
   },
   "scaleShot": {
-    name: "Scale Shot",
-    effect: "The user attacks by shooting scales two to five times in a row. This move boosts the user's Speed stat but lowers its Defense stat."
+    name: "Schuppenschuss",
+    effect: "Der Anwender greift das Ziel zwei- bis fünfmal hintereinander mit Schuppen-Geschossen an. Erhöht die eigene Initiative, aber senkt die Verteidigung."
   },
   "meteorBeam": {
-    name: "Meteor Beam",
-    effect: "In this two-turn attack, the user gathers space power and boosts its Sp. Atk stat, then attacks the target on the next turn."
+    name: "Meteorstrahl",
+    effect: "Der Anwender sammelt in Runde 1 kosmische Kräfte und erhöht damit seinen Spezial-Angriff, bevor er in Runde 2 das Ziel angreift."
   },
   "shellSideArm": {
-    name: "Shell Side Arm",
-    effect: "This move inflicts physical or special damage, whichever will be more effective. This may also poison the target."
+    name: "Muschelwaffe",
+    effect: "Je nachdem, was höher ausfällt, richtet diese Attacke entweder physischen oder Spezial-Schaden an. Das Ziel wird eventuell vergiftet."
   },
   "mistyExplosion": {
-    name: "Misty Explosion",
-    effect: "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain."
+    name: "Nebelexplosion",
+    effect: "Der Anwender greift alle Pokémon im Umkreis an und wird danach kampfunfähig. Die Stärke dieser Attacke steigt, wenn ein Nebelfeld aktiv ist."
   },
   "grassyGlide": {
-    name: "Grassy Glide",
-    effect: "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain."
+    name: "Grasrutsche",
+    effect: "Der Anwender rutscht über den Boden und greift das Ziel an. Ermöglicht den Erstschlag, wenn ein Grasfeld aktiv ist."
   },
   "risingVoltage": {
-    name: "Rising Voltage",
-    effect: "The user attacks with electric voltage rising from the ground. This move's power doubles when the target is on Electric Terrain."
+    name: "Hochspannung",
+    effect: "Der Anwender greift mit aus dem Boden aufsteigender Elektrizität an. Die Stärke der Attacke wird verdoppelt, wenn beim Gegner ein Elektrofeld aktiv ist."
   },
   "terrainPulse": {
-    name: "Terrain Pulse",
-    effect: "The user utilizes the power of the terrain to attack. This move's type and power changes depending on the terrain when it's used."
+    name: "Feldimpuls",
+    effect: "Der Anwender nutzt die Kraft des aktiven Feldes für seinen Angriff. Der Typ und die Stärke der Attacke ändern sich je nach Art des aktiven Feldes."
   },
   "skitterSmack": {
-    name: "Skitter Smack",
-    effect: "The user skitters behind the target to attack. This also lowers the target's Sp. Atk stat."
+    name: "Krabbelkracher",
+    effect: "Der Anwender kriecht hinter das Ziel, greift es an und senkt dabei dessen Spezial-Angriff."
   },
   "burningJealousy": {
-    name: "Burning Jealousy",
-    effect: "The user attacks with energy from jealousy. This leaves all opposing Pokémon that have had their stats boosted during the turn with a burn."
+    name: "Neidflammen",
+    effect: "Der Anwender greift mit der Energie seines Neids an und fügt allen gegnerischen Pokémon, deren Statuswerte in dieser Runde erhöht wurden, Verbrennungen zu."
   },
   "lashOut": {
-    name: "Lash Out",
-    effect: "The user lashes out to vent its frustration toward the target. If the user's stats were lowered during this turn, the power of this move is doubled."
+    name: "Frustventil",
+    effect: "Der Anwender entlädt seinen Frust in einem Angriff. Die Stärke der Attacke wird verdoppelt, wenn seine Statuswerte in dieser Runde gesenkt wurden."
   },
   "poltergeist": {
     name: "Poltergeist",
-    effect: "The user attacks the target by controlling the target's item. The move fails if the target doesn't have an item."
+    effect: "Der Anwender greift das Ziel mit dessen getragenem Item an. Die Attacke schlägt fehl, wenn das Ziel kein Item trägt."
   },
   "corrosiveGas": {
-    name: "Corrosive Gas",
-    effect: "The user surrounds everything around it with highly acidic gas and melts away items they hold."
+    name: "Korrosionsgas",
+    effect: "Der Anwender greift alle Pokémon im Umkreis mit einem ätzenden Gas an. Getragene Items werden dadurch zersetzt."
   },
   "coaching": {
     name: "Coaching",
-    effect: "The user properly coaches its ally Pokémon, boosting their Attack and Defense stats."
+    effect: "Der Anwender sorgt durch geschickte Anweisungen dafür, dass der Angriff und die Verteidigung seiner Mitstreiter steigen."
   },
   "flipTurn": {
-    name: "Flip Turn",
-    effect: "After making its attack, the user rushes back to switch places with a party Pokémon in waiting."
+    name: "Rollwende",
+    effect: "Nach der Attacke eilt der Anwender zurück und tauscht den Platz mit einem anderen Pokémon."
   },
   "tripleAxel": {
-    name: "Triple Axel",
-    effect: "A consecutive three-kick attack that becomes more powerful with each successful hit."
+    name: "Dreifach-Axel",
+    effect: "Tritt das Ziel ein- bis dreimal nacheinander. Die Härte der Tritte nimmt von Treffer zu Treffer zu."
   },
   "dualWingbeat": {
-    name: "Dual Wingbeat",
-    effect: "The user slams the target with its wings. The target is hit twice in a row."
+    name: "Doppelflügel",
+    effect: "Der Anwender trifft das Ziel zweimal hintereinander mit seinen Flügeln und fügt ihm so Schaden zu."
   },
   "scorchingSands": {
-    name: "Scorching Sands",
-    effect: "The user throws scorching sand at the target to attack. This may also leave the target with a burn."
+    name: "Brandsand",
+    effect: "Der Anwender greift das Ziel mit brennend heißem Sand an und fügt ihm eventuell Verbrennungen zu."
   },
   "jungleHealing": {
-    name: "Jungle Healing",
-    effect: "The user becomes one with the jungle, restoring HP and healing any status conditions of itself and its ally Pokémon in battle."
+    name: "Dschungelheilung",
+    effect: "Der Anwender wird eins mit dem Dschungel und heilt bei sich und seinen am Kampf beteiligten Mitstreitern KP und hebt jegliche Statusprobleme auf."
   },
   "wickedBlow": {
-    name: "Wicked Blow",
-    effect: "The user, having mastered the Dark style, strikes the target with a fierce blow. This attack always results in a critical hit."
+    name: "Finstertreffer",
+    effect: "Der Anwender hat den Stil des Unlichts gemeistert und führt einen fokussierten, harten Schlag mit Volltreffergarantie aus."
   },
   "surgingStrikes": {
-    name: "Surging Strikes",
-    effect: "The user, having mastered the Water style, strikes the target with a flowing motion three times in a row. This attack always results in a critical hit."
+    name: "Trefferschwall",
+    effect: "Der Anwender hat den Stil des Wassers gemeistert und führt mit fließenden Bewegungen drei Angriffe in Folge mit Volltreffergarantie aus."
   },
   "thunderCage": {
-    name: "Thunder Cage",
-    effect: "The user traps the target in a cage of sparking electricity for four to five turns."
+    name: "Blitzgefängnis",
+    effect: "Das Ziel wird für vier bis fünf Runden in einem elektrischen Käfig gefangen."
   },
   "dragonEnergy": {
-    name: "Dragon Energy",
-    effect: "Converting its life-force into power, the user attacks opposing Pokémon. The lower the user's HP, the lower the move's power."
+    name: "Drachenkräfte",
+    effect: "Der Anwender wandelt seine Lebenskraft in Energie um und greift gegnerische Pokémon an. Je höher seine KP sind, desto mehr Schaden wird angerichtet."
   },
   "freezingGlare": {
-    name: "Freezing Glare",
-    effect: "The user shoots its psychic power from its eyes to attack. This may also leave the target frozen."
+    name: "Eisiger Blick",
+    effect: "Der Anwender greift das Ziel mit Psycho-Kräften an, die er aus seinen Augen abschießt. Das Ziel friert eventuell ein."
   },
   "fieryWrath": {
-    name: "Fiery Wrath",
-    effect: "The user transforms its wrath into a fire-like aura to attack. This may also make opposing Pokémon flinch."
+    name: "Brennender Zorn",
+    effect: "Der Anwender wandelt seinen Zorn in eine flammende Aura um und greift damit gegnerische Pokémon an. Diese schrecken eventuell zurück."
   },
   "thunderousKick": {
-    name: "Thunderous Kick",
-    effect: "The user overwhelms the target with lightning-like movement before delivering a kick. This also lowers the target's Defense stat."
+    name: "Donnernder Tritt",
+    effect: "Der Anwender bringt das Ziel mit blitzschnellen Bewegungen durcheinander und tritt dann zu. Senkt die Verteidigung des Zieles."
   },
   "glacialLance": {
-    name: "Glacial Lance",
-    effect: "The user attacks by hurling a blizzard-cloaked icicle lance at opposing Pokémon."
+    name: "Blizzardlanze",
+    effect: "Der Anwender wirft eine in einen Blizzard gehüllte Lanze aus Eis auf gegnerische Pokémon."
   },
   "astralBarrage": {
-    name: "Astral Barrage",
-    effect: "The user attacks by sending a frightful amount of small ghosts at opposing Pokémon."
+    name: "Astralfragmente",
+    effect: "Der Anwender greift gegnerische Pokémon mit vielen kleinen Spukgestalten an."
   },
   "eerieSpell": {
-    name: "Eerie Spell",
-    effect: "The user attacks with its tremendous psychic power. This also removes 3 PP from the target's last move."
+    name: "Schauderspruch",
+    effect: "Der Anwender greift mit gewaltigen Psycho-Kräften an. Die AP der letzten Attacke des Zieles werden um 3 Punkte gesenkt."
   },
   "direClaw": {
     name: "Dire Claw",

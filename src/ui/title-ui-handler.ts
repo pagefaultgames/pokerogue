@@ -65,6 +65,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
         if (this.splashMessage === battleCountSplashMessage)
           this.splashMessageText.setText(battleCountSplashMessage.replace('{COUNT}', stats.battleCount.toLocaleString('en-US')));
+      })
+      .catch(err => {
+        console.error("Failed to fetch title stats:\n", err);
       });
   }
 
@@ -81,7 +84,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       this.updateTitleStats();
 
-      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 30000);
+      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 60000);
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],

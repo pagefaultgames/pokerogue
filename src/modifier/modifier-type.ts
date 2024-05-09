@@ -144,9 +144,16 @@ class AddPokeballModifierType extends ModifierType implements Localizable {
   }
 
   localize(): void {
+    // TODO: Actually use i18n to localize this description.
     this.name = `${this.count}x ${getPokeballName(this.pokeballType)}`;
-    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count}\nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
+    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count} (Inventory: {AMOUNT}) \nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
   }
+  
+  getDescription(scene: BattleScene): string {
+    this.localize();
+    return this.description.replace('{AMOUNT}', scene.pokeballCounts[this.pokeballType].toString());
+  }
+
 }
 
 class AddVoucherModifierType extends ModifierType {
@@ -299,7 +306,7 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
   protected nature: Nature;
 
   constructor(nature: Nature) {
-    super(`${getNatureName(nature)} Mint`, `Changes a Pokémon\'s nature to ${getNatureName(nature, true, true, true)}`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
+    super(`${getNatureName(nature)} Mint`, `Changes a Pokémon\'s nature to ${getNatureName(nature, true, true, true)} and permanently unlocks the nature for the starter.`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
       ((pokemon: PlayerPokemon) => {
         if (pokemon.getNature() === this.nature)
           return PartyUiHandler.NoEffectMessage;
@@ -948,7 +955,7 @@ export const modifierTypes = {
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 5%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5), 'wl_item_drop'),
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 2.5%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5), 'wl_guard_spec'),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
-  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 3% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 3), 'wl_potion'),
+  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 2% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 2), 'wl_potion'),
   ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
   ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
   ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Token', 10, StatusEffect.SLEEP, 'wl_awakening'),
@@ -997,7 +1004,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 9;
-    }, 3),
+    }, 27),
     new WeightedModifierType(modifierTypes.MAX_REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 3;
@@ -1058,7 +1065,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 8),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party.find(p => (pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].find(e => e.condition && e.condition instanceof SpeciesFriendshipEvolutionCondition)) || p.moveset.find(m => m.moveId === Moves.RETURN)) ? 16 : 0, 16),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 4),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 8),
@@ -1078,6 +1084,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 8),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 6),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
@@ -1151,7 +1158,7 @@ const enemyBuffModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 2),
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 2),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10000),
+    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
@@ -1162,12 +1169,12 @@ const enemyBuffModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 300)
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 5)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.ROGUE]: [ ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
   [ModifierTier.MASTER]: [ ].map(m => { m.setTier(ModifierTier.MASTER); return m; })

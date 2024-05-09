@@ -42,3 +42,5 @@ jobs:
             https://pokerogue.net/
             https://pokerogue.net/index.html
             https://pokerogue.net/manifest.json
+            https://pokerogue.net/manifest.webmanifest
+            https://pokerogue.net/service-worker.js

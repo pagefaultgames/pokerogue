@@ -19,7 +19,7 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 ### ❔ FAQ 
 
 **How do I test a new _______?**
-- In the `battle-scene.ts` file there are overrides for most values you'll need to change for testing
+- In the `src/overrides.ts` file there are overrides for most values you'll need to change for testing
 
 
 ## 🪧 To Do
