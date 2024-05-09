@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} 出现了。",
-  "trainerAppeared": "{{trainerName}}\nwould like to battle!",
+  "trainerAppeared": "{{trainerName}}\n想要和你对战!",
   "singleWildAppeared": "一只野生 {{pokemonName}} 出现了。!",
   "multiWildAppeared": "野生的 {{pokemonName1}}\n和 {{pokemonName2}} 出现了。!",
   "playerComeBack": "回来吧, {{pokemonName}}!",
@@ -12,7 +12,7 @@ export const battle: SimpleTranslationEntries = {
   "switchQuestion": "要更换\n{{pokemonName}}吗?",
   "trainerDefeated": `你击败了\n{{trainerName}}!`,
   "pokemonCaught": "{{pokemonName}} 被抓住了!",
-  "pokemon": "宝可梦上吧！",
+  "pokemon": "宝可梦",
   "sendOutPokemon": "上吧！ {{pokemonName}}!",
   "hitResultCriticalHit": "击中了要害！",
   "hitResultSuperEffective": "效果拔群！",
