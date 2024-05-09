@@ -77,6 +77,7 @@ export enum MoveFlags {
   WIND_MOVE         = 1 << 14,
   TRIAGE_MOVE       = 1 << 15,
   IGNORE_ABILITIES  = 1 << 16,
+  CALLS_OTHER_MOVES = 1 << 17,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -314,6 +315,11 @@ export default class Move implements Localizable {
 
   ignoresAbilities(ignoresAbilities?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
+    return this;
+  }
+
+  callsOtherMoves(callsOtherMoves?: boolean): this {
+    this.setFlag(MoveFlags.CALLS_OTHER_MOVES, callsOtherMoves);
     return this;
   }
 
@@ -2261,7 +2267,7 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
 
 export class ToxicAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-      if (user.isOfType(Type.POISON)) {
+      if (user.isOfType(Type.POISON) || user.hasAbility(Abilities.PROTEAN)) {
         const accuracy = args[0] as Utils.NumberHolder;
         accuracy.value = -1;
         return true;
@@ -4384,9 +4390,11 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.METRONOME, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr)
+      .callsOtherMoves()
       .ignoresVirtual(),
     new StatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
       .attr(CopyMoveAttr)
+      .callsOtherMoves()
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
@@ -4656,6 +4664,7 @@ export function initMoves() {
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
+      .callsOtherMoves()
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(PartyStatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
@@ -4817,6 +4826,7 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.NATURE_POWER, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(NaturePowerAttr)
+      .callsOtherMoves()
       .ignoresVirtual(),
     new SelfStatusMove(Moves.CHARGE, Type.ELECTRIC, -1, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
@@ -4835,6 +4845,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.WISH, 2, true),
     new SelfStatusMove(Moves.ASSIST, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(RandomMovesetMoveAttr, true)
+      .callsOtherMoves()
       .ignoresVirtual(),
     new SelfStatusMove(Moves.INGRAIN, Type.GRASS, -1, 20, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.INGRAIN, true, true),
@@ -4870,6 +4881,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.GRUDGE, Type.GHOST, -1, 5, -1, 0, 3)
       .unimplemented(),
     new SelfStatusMove(Moves.SNATCH, Type.DARK, -1, 10, -1, 4, 3)
+      .callsOtherMoves()
       .unimplemented(),
     new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
       .makesContact(false)
@@ -5127,11 +5139,13 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE)
       .unimplemented(),
     new StatusMove(Moves.ME_FIRST, Type.NORMAL, -1, 20, -1, 0, 4)
+      .callsOtherMoves()
       .ignoresVirtual()
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
     new SelfStatusMove(Moves.COPYCAT, Type.NORMAL, -1, 20, -1, 0, 4)
       .attr(CopyMoveAttr)
+      .callsOtherMoves()
       .ignoresVirtual(),
     new StatusMove(Moves.POWER_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),

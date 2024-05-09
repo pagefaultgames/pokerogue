@@ -964,6 +964,34 @@ export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
   }
 }
 
+export class PokemonTypeChangeAttr extends PreAttackAbAttr {
+  private condition: PokemonAttackCondition;
+
+  constructor(condition: PokemonAttackCondition){
+    super(true);
+    this.condition = condition;
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    const moveType = move.getMove().type;
+    let effectiveType = moveType;
+    if (args && args.length > 0 && args[0] instanceof Utils.IntegerHolder) {
+      effectiveType = args[0].value;
+    }
+
+    const pokemonType = pokemon.getTypes();
+    if(this.condition(pokemon, defender, move.getMove()))
+      if(pokemonType.length > 1 || pokemonType[0] != effectiveType){
+        pokemon.summonData.types = [effectiveType]
+        pokemon.updateInfo();
+    
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed into the ${Utils.toReadableString(Type[effectiveType])} type!`));
+        return true;
+      }
+    return false;
+  }
+}
+
 export class MoveTypeChangeAttr extends PreAttackAbAttr {
   private newType: Type;
   private powerMultiplier: number;
@@ -3236,7 +3264,8 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .unimplemented(),
+      .attr(PokemonTypeChangeAttr, (user, target, move) => !move.hasFlag(MoveFlags.CALLS_OTHER_MOVES) && move.id !== Moves.STRUGGLE && move.id !== Moves.REVELATION_DANCE && move.id !== Moves.CAMOUFLAGE)
+      .partial(),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -3458,7 +3487,8 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true)
       .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
-      .unimplemented(),
+    .attr(PokemonTypeChangeAttr, (user, target, move) => !move.hasFlag(MoveFlags.CALLS_OTHER_MOVES) && move.id !== Moves.STRUGGLE && move.id !== Moves.REVELATION_DANCE && move.id !== Moves.CAMOUFLAGE)
+    .partial(),
     new Ability(Abilities.BALL_FETCH, 8)
       .unimplemented(),
     new Ability(Abilities.COTTON_DOWN, 8)
