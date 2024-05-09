@@ -1324,7 +1324,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (typeBoost) {
             power.value *= typeBoost.boostValue;
             if (typeBoost.oneUse) {
-              this.removeTag(typeBoost.tagType);
+              source.removeTag(typeBoost.tagType);
             }
           }
           const arenaAttackTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(type, source.isGrounded());
@@ -1959,8 +1959,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  resetStatus(): void {
+  /**
+  * Resets the status of a pokemon
+  * @param revive whether revive should be cured, defaults to true
+  */
+  resetStatus(revive: boolean = true): void {
     const lastStatus = this.status?.effect;
+    if (!revive && lastStatus === StatusEffect.FAINT) {
+      return;
+    }
     this.status = undefined;
     if (lastStatus === StatusEffect.SLEEP) {
       this.setFrameRate(12);
@@ -3206,6 +3213,14 @@ export class PokemonMove {
     return allMoves[this.moveId];
   }
 
+  /**
+   * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
+   * @param {number} count Amount of PP to use
+   */
+  usePp(count: number = 1) {
+    this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
+  }
+
   getMovePp(): integer {
     return this.getMove().pp + this.ppUp * Math.max(Math.floor(this.getMove().pp / 5), 1);
   }
@@ -3216,5 +3231,14 @@ export class PokemonMove {
 
   getName(): string {
     return this.getMove().name;
+  }
+
+  /**
+  * Copies an existing move or creates a valid PokemonMove object from json representing one
+  * @param {PokemonMove | any} source The data for the move to copy
+  * @return {PokemonMove} A valid pokemonmove object
+  */
+  static loadMove(source: PokemonMove | any): PokemonMove {
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual);
   }
 }
