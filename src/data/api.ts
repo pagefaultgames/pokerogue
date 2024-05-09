@@ -429,7 +429,7 @@ export async function printPokemon() {
 export async function printAbilities() {
   const replaceText = true;
 
-  let abilityContent: string = await fs.readFile('./src/data/ability.ts');
+  let abilityContent: string = await fs.readFile('./src/data/abilitybak.ts');
   
   const api = new MainClient();
 

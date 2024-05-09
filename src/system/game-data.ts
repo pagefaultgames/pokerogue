@@ -569,7 +569,7 @@ export class GameData {
               resolve(true);
             });
         } else {
-          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, btoa(JSON.stringify(sessionData)));
+          localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
 
           console.debug('Session data saved');
 

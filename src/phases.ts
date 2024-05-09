@@ -23,7 +23,7 @@ import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFu
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
-import { getPokemonMessage, getPokemonPrefix } from "./messages";
+import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
@@ -2046,7 +2046,7 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
       
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
+        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { moveName: allMoves[pokemon.summonData.disabledMove].name })));
         pokemon.summonData.disabledMove = Moves.NONE;
       }
 
@@ -2158,7 +2158,6 @@ export class MovePhase extends BattlePhase {
   public targets: BattlerIndex[];
   protected followUp: boolean;
   protected ignorePp: boolean;
-  protected failed: boolean;
   protected cancelled: boolean;
 
   constructor(scene: BattleScene, pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp?: boolean, ignorePp?: boolean) {
@@ -2169,7 +2168,6 @@ export class MovePhase extends BattlePhase {
     this.move = move;
     this.followUp = !!followUp;
     this.ignorePp = !!ignorePp;
-    this.failed = false;
     this.cancelled = false;
   }
 
@@ -2177,12 +2175,6 @@ export class MovePhase extends BattlePhase {
     return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, this.ignorePp) && !!this.targets.length;
   }
 
-  /**Signifies the current move should fail but still use PP */
-  fail(): void {
-    this.failed = true;
-  }
-
-  /**Signifies the current move should cancel and retain PP */
   cancel(): void {
     this.cancelled = true;
   }
@@ -2222,7 +2214,7 @@ export class MovePhase extends BattlePhase {
           this.targets[0] = attacker.getBattlerIndex();
       }
       if (this.targets[0] === BattlerIndex.ATTACKER) {
-        this.fail(); // Marks the move as failed for later in doMove
+        this.cancel();
         this.showMoveText();
         this.showFailedText();
       }
@@ -2242,24 +2234,11 @@ export class MovePhase extends BattlePhase {
       this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
       
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
-      
-      let ppUsed = 1;
-      // Filter all opponents to include only those this move is targeting
-      const targetedOpponents = this.pokemon.getOpponents().filter(o => this.targets.includes(o.getBattlerIndex()));
-      for (let opponent of targetedOpponents) {
-        if (this.move.ppUsed + ppUsed >= this.move.getMovePp()) // If we're already at max PP usage, stop checking
-          break;
-        if (opponent.hasAbilityWithAttr(IncreasePpAbAttr)) // Accounting for abilities like Pressure
-          ppUsed++;
-      }
 	    
       if (!this.followUp && this.canMove() && !this.cancelled) {
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
       }
-      if (this.cancelled || this.failed) {
-        if (this.failed)
-          this.move.usePp(ppUsed); // Only use PP if the move failed
-
+      if (this.cancelled) {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
         return this.end();
       }
@@ -2274,12 +2253,23 @@ export class MovePhase extends BattlePhase {
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
         moveQueue.shift();
         this.cancel();
+      }
+
+      if (this.cancelled) {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
         return this.end();
       }
 
-      if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
-        this.move.usePp(ppUsed);
+      if (!moveQueue.length || !moveQueue.shift().ignorePP) {
+        this.move.ppUsed++;
+        const targetedOpponents = this.pokemon.getOpponents().filter(o => this.targets.includes(o.getBattlerIndex()));
+        for (let opponent of targetedOpponents) {
+          if (this.move.ppUsed === this.move.getMove().pp)
+            break;
+          if (opponent.hasAbilityWithAttr(IncreasePpAbAttr))
+            this.move.ppUsed = Math.min(this.move.ppUsed + 1, this.move.getMovePp());
+        }
+      }
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length)
         this.scene.currentBattle.lastMove = this.move.moveId;
