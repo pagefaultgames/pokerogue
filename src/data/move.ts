@@ -2597,9 +2597,11 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
 };
 
 export class TypelessAttr extends MoveAttr { }
-
+/**
+* Attribute used for moves which ignore redirection effects, and always target their original target, i.e. Snipe Shot
+* Bypasses Storm Drain, Follow Me, Ally Switch, and the like.
+*/ 
 export class BypassRedirectAttr extends MoveAttr { }
-
 
 export class DisableMoveAttr extends MoveEffectAttr {
   constructor() {
