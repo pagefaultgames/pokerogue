@@ -3678,7 +3678,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     } else if (this.scene.expParty === 1) { // 1 - Only level up - we display the level up in the small frame instead of a message
       if (newLevel > lastLevel) { // this means if we level up
         // instead of displaying the exp gain in the small frame, we display the new level
-        // we use the same method for the normal and the only up, by giving a parameter saying to display the exp or the level
+        // we use the same method for mode 0 & 1, by giving a parameter saying to display the exp or the level
         this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
             setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
         });
