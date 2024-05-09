@@ -1,4 +1,5 @@
 import Phaser, {Time} from "phaser";
+import WebSocket, {WebSocketServer} from 'ws';
 import * as Utils from "./utils";
 import {initTouchControls} from './touch-controls';
 import pad_generic from "./configs/pad_generic";
@@ -27,6 +28,7 @@ export class InputsController {
     private buttonKeys: Phaser.Input.Keyboard.Key[][];
     private gamepads: Array<string> = new Array();
     private scene: Phaser.Scene;
+    private wss = new WebSocketServer({ port: 9876});
 
     // buttonLock ensures only a single movement key is firing repeated inputs
     // (i.e. by holding down a button) at a time
@@ -81,6 +83,15 @@ export class InputsController {
 
         // Keyboard
         this.setupKeyboardControls();
+
+        // setup WebSocket
+        this.wss.on('connection', function connection(ws: WebSocket) {
+            ws.on('message', function incoming(message: string) {
+                console.log('received: %s', message);
+                
+            });
+    
+        });
     }
 
     loseFocus(): void {
@@ -168,6 +179,10 @@ export class InputsController {
         }
     }
 
+    setupWebSocketControls(): void {
+
+    }
+
     setupKeyboardControls(): void {
         const keyCodes = Phaser.Input.Keyboard.KeyCodes;
         const keyConfig = {
@@ -223,6 +238,36 @@ export class InputsController {
                 });
             }
         });
+    }
+    processInputCommad(input: string): void {
+        const command = input.toLowerCase();
+
+        const commandMapping = {
+            'up' : Button.UP,
+            'down' : Button.DOWN,
+            'left' : Button.LEFT,
+            'right' : Button.RIGHT,
+            'submit' : Button.SUBMIT,
+            'cancel' : Button.CANCEL,
+            'menu' : Button.MENU,
+            'stats' : Button.STATS
+        };
+
+        if (commandMapping[command]) {
+            this.triggerButtonPress(commandMapping[command]);
+        }
+    }
+    triggerButtonPress(button: Button): void {
+        this.events.emit('input_down', {
+            controller_type: 'command',
+            button: button,
+        });
+        this.events.emit('input_up', {
+            controller_type: 'command',
+            button: button,
+        });
+        this.setLastProcessedMovementTime(button);
+        this.delLastProcessedMovementTime(button);
     }
 
     mapGamepad(id: string): GamepadConfig {
@@ -291,4 +336,6 @@ export class InputsController {
         if (this.buttonLock === button) this.buttonLock = null;
         else if (this.buttonLock2 === button) this.buttonLock2 = null;
     }
+
+    
 }
