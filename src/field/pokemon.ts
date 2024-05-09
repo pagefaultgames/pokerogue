@@ -772,12 +772,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (forDefend && (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY) || this.getTag(BattlerTagType.GROUNDED))) {
-      const flyingIndex = types.indexOf(Type.FLYING);
-      if (flyingIndex > -1)
-        types.splice(flyingIndex, 1);
-    }
-
     if (!types.length) // become UNKNOWN if no types are present
       types.push(Type.UNKNOWN);
 
@@ -907,6 +901,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (moveType === Type.STELLAR)
       return this.isTerastallized() ? 2 : 1;
     const types = this.getTypes(true, true);
+
+    if (moveType === Type.GROUND && (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY) || this.getTag(BattlerTagType.GROUNDED))) {
+      const flyingIndex = types.indexOf(Type.FLYING);
+      if (flyingIndex > -1)
+        types.splice(flyingIndex, 1);
+    }
 
     const ignorableImmunities = source?.getAbility()?.getAttrs(IgnoreTypeImmunityAbAttr) || [];
     const cancelled = new Utils.BooleanHolder(false);
