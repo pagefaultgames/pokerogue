@@ -985,7 +985,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.stat = source.stat as Stat;
-    this.multiplier = this.multiplier;
+    this.multiplier = source.multiplier;
   }
 
   onAdd(pokemon: Pokemon): void {
