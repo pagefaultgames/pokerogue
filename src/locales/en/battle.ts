@@ -46,7 +46,7 @@ export const battle: SimpleTranslationEntries = {
   "runAwayCannotEscape": 'You can\'t escape!',
   "escapeVerbSwitch": "switching",
   "escapeVerbFlee": "fleeing",
-  "notDisabled": "{{moveName}} is disabled\nno more!",
+  "notDisabled": "{{pokemonName}}'s {{moveName}} is disabled\nno more!",
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?"
