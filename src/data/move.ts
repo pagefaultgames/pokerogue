@@ -1235,7 +1235,7 @@ export class EatBerryAttr extends MoveEffectAttr {
 
     if (!preserve.value){ // remove the eaten berry if not preserved
       if (!--this.chosenBerry.stackCount)
-        target.scene.removeModifier(this.chosenBerry);
+        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
       target.scene.updateModifiers(target.isPlayer());
 }
 
@@ -1277,7 +1277,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
       this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
 
       if (this.chosenBerry.stackCount == 1) // remove modifier if its the last berry
-        target.scene.removeModifier(this.chosenBerry);
+        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
       target.scene.updateModifiers(target.isPlayer());
 
       user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
