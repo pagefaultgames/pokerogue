@@ -1552,6 +1552,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return healAmount;
   }
 
+  changeStat(stat: Stat, value: integer) : void
+  {
+    this.stats[stat] = value;
+  }
+  
   isBossImmune(): boolean {
     return this.isBoss();
   }

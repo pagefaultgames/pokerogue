@@ -1755,6 +1755,59 @@ export class HpSplitAttr extends MoveEffectAttr {
   }
 }
 
+export class PowerSplitAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) : Promise<boolean> {
+    return new Promise(resolve => {
+
+      if (!super.apply(user, target, move, args))
+        return resolve(false);
+
+      const infoUpdates = [];
+
+      const attackValue = Math.floor((target.getStat(Stat.ATK) + user.getStat(Stat.ATK)) / 2);
+      user.changeStat(Stat.ATK, attackValue);
+      infoUpdates.push(user.updateInfo());
+      target.changeStat(Stat.ATK, attackValue);
+      infoUpdates.push(target.updateInfo());
+
+      const specialAttackValue = Math.floor((target.getStat(Stat.SPATK) + user.getStat(Stat.SPATK)) / 2);
+      user.changeStat(Stat.SPATK, specialAttackValue);
+      infoUpdates.push(user.updateInfo());
+      target.changeStat(Stat.SPATK, specialAttackValue);
+      infoUpdates.push(target.updateInfo());
+
+      return Promise.all(infoUpdates).then(() => resolve(true));
+    });
+  }
+}
+
+export class GuardSplitAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      if (!super.apply(user, target, move, args))
+        return resolve(false);
+
+      const infoUpdates = [];
+
+      const defenseValue = Math.floor((target.getStat(Stat.DEF) + user.getStat(Stat.DEF)) / 2);
+      user.changeStat(Stat.DEF, defenseValue);
+      infoUpdates.push(user.updateInfo());
+      target.changeStat(Stat.DEF, defenseValue);
+      infoUpdates.push(target.updateInfo());
+
+      const specialDefenseValue = Math.floor((target.getStat(Stat.SPDEF) + user.getStat(Stat.SPDEF)) / 2);
+      user.changeStat(Stat.SPDEF, specialDefenseValue);
+      infoUpdates.push(user.updateInfo());
+      target.changeStat(Stat.SPDEF, specialDefenseValue);
+      infoUpdates.push(target.updateInfo());
+
+
+      return Promise.all(infoUpdates).then(() => resolve(true));
+    });
+  }
+
+}
+
 export class VariablePowerAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     //const power = args[0] as Utils.NumberHolder;
@@ -5331,9 +5384,9 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE)
       .unimplemented(),
     new StatusMove(Moves.GUARD_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(GuardSplitAttr),
     new StatusMove(Moves.POWER_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(PowerSplitAttr),
     new StatusMove(Moves.WONDER_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
