@@ -84,7 +84,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       this.updateTitleStats();
 
-      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 30000);
+      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 60000);
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],

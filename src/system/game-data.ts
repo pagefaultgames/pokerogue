@@ -250,58 +250,52 @@ export class GameData {
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();
-      updateUserInfo().then(response => {
-        if (!response[0]) {
-          this.scene.ui.savingIcon.hide();
-          return resolve(false);
-        }
-        const data: SystemSaveData = {
-          trainerId: this.trainerId,
-          secretId: this.secretId,
-          gender: this.gender,
-          dexData: this.dexData,
-          starterData: this.starterData,
-          gameStats: this.gameStats,
-          unlocks: this.unlocks,
-          achvUnlocks: this.achvUnlocks,
-          voucherUnlocks: this.voucherUnlocks,
-          voucherCounts: this.voucherCounts,
-          eggs: this.eggs.map(e => new EggData(e)),
-          gameVersion: this.scene.game.config.gameVersion,
-          timestamp: new Date().getTime()
-        };
+      const data: SystemSaveData = {
+        trainerId: this.trainerId,
+        secretId: this.secretId,
+        gender: this.gender,
+        dexData: this.dexData,
+        starterData: this.starterData,
+        gameStats: this.gameStats,
+        unlocks: this.unlocks,
+        achvUnlocks: this.achvUnlocks,
+        voucherUnlocks: this.voucherUnlocks,
+        voucherCounts: this.voucherCounts,
+        eggs: this.eggs.map(e => new EggData(e)),
+        gameVersion: this.scene.game.config.gameVersion,
+        timestamp: new Date().getTime()
+      };
 
-        const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
+      const maxIntAttrValue = Math.pow(2, 31);
+      const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-        if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
-            .then(response => response.text())
-            .then(error => {
-              this.scene.ui.savingIcon.hide();
-              if (error) {
-                if (error.startsWith('client version out of date')) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith('session out of date')) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-                }
-                console.error(error);
-                return resolve(false);
+      if (!bypassLogin) {
+        Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
+          .then(response => response.text())
+          .then(error => {
+            this.scene.ui.savingIcon.hide();
+            if (error) {
+              if (error.startsWith('client version out of date')) {
+                this.scene.clearPhaseQueue();
+                this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+              } else if (error.startsWith('session out of date')) {
+                this.scene.clearPhaseQueue();
+                this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
-              resolve(true);
-            });
-        } else {
-          localStorage.setItem('data_bak', localStorage.getItem('data'));
+              console.error(error);
+              return resolve(false);
+            }
+            resolve(true);
+          });
+      } else {
+        localStorage.setItem('data_bak', localStorage.getItem('data'));
 
-          localStorage.setItem('data', btoa(systemData));
+        localStorage.setItem('data', btoa(systemData));
 
-          this.scene.ui.savingIcon.hide();
+        this.scene.ui.savingIcon.hide();
 
-          resolve(true);
-        }
-      });
+        resolve(true);
+      }
     });
   }
 
@@ -424,7 +418,7 @@ export class GameData {
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== '{') {
-              if (response.startsWith('failed to open save file')) {
+              if (response.startsWith('sql: no rows in result set')) {
                 this.scene.queueMessage('Save data could not be found. If this is a new account, you can safely ignore this message.', null, true);
                 return resolve(true);
               } else if (response.indexOf('Too many connections') > -1) {
@@ -575,7 +569,7 @@ export class GameData {
               resolve(true);
             });
         } else {
-          localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
+          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, btoa(JSON.stringify(sessionData)));
 
           console.debug('Session data saved');
 
