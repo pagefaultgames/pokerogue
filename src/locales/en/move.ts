@@ -2047,7 +2047,7 @@ export const move: MoveTranslationEntries = {
   },
   "acrobatics": {
     name: "Acrobatics",
-    effect: "The user nimbly strikes the target. The fewer held items higher the damage."
+    effect: "The user nimbly strikes the target. The fewer held items, higher the damage."
   },
   "reflectType": {
     name: "Reflect Type",
