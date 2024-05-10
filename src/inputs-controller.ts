@@ -66,8 +66,6 @@ export class InputsController {
 
     private gamepadSupport: boolean = true;
 
-    private gamepadSupport: boolean = true;
-
     public customGamepadMapping = new Map();
     public chosenGamepad: String;
     private disconnectedGamepads: Array<String> = new Array();
