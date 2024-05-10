@@ -44,6 +44,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
     - Arata Iiyoshi
     - Atsuhiro Ishizuna
   - Pokémon Black/White 2
+  - Firel (Additional biome themes)
   - edifette (Title screen music)
 
 ### 🎵 Sound Effects

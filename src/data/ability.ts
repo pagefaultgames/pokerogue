@@ -2395,6 +2395,8 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
   }
 }
 
+export class BlockRedirectAbAttr extends AbAttr { }
+
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   private statusEffect: StatusEffect;
 
@@ -3483,7 +3485,7 @@ export function initAbilities() {
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.SPD, -1, false, true)
       .bypassFaint(),
     new Ability(Abilities.PROPELLER_TAIL, 8)
-      .unimplemented(),
+      .attr(BlockRedirectAbAttr),
     new Ability(Abilities.MIRROR_ARMOR, 8)
       .ignorable()
       .unimplemented(),
@@ -3493,7 +3495,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .unimplemented(),
     new Ability(Abilities.STALWART, 8)
-      .unimplemented(),
+      .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => (move.type === Type.FIRE || move.type === Type.WATER) && move.category !== MoveCategory.STATUS, BattleStat.SPD, 6),
     new Ability(Abilities.PUNK_ROCK, 8)
