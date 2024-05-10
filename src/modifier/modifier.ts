@@ -918,6 +918,35 @@ export class PreserveBerryModifier extends PersistentModifier {
   }
 }
 
+export class ExtendScreenModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof ExtendScreenModifier;
+  }
+
+  clone() {
+    return new ExtendScreenModifier(this.type, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args[0] instanceof Pokemon && args[1] instanceof Utils.IntegerHolder;
+  }
+
+  apply(args: any[]): boolean {
+    if ((args[1] as Utils.IntegerHolder).value)
+      (args[1] as Utils.IntegerHolder).value = (args[1] as Utils.IntegerHolder).value + 3;
+
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
 export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
