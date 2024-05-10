@@ -1648,24 +1648,23 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
 }
 
 export class StockpileStatChangeAttr extends StatChangeAttr {
-  tagTypes = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
+  private tagTypes = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
+  private gainStats:boolean;
 
-  constructor(move: Moves = Moves.STOCKPILE) {
-    let l = 1;
+  constructor(gainStats:boolean = true) {
+    super([ BattleStat.DEF, BattleStat.SPDEF ], 1, true);
 
-    if (move === Moves.SPIT_UP || move === Moves.SWALLOW){
-      l = -1;
-    }
-
-    super([ BattleStat.DEF, BattleStat.SPDEF ], l, true);
+    this.gainStats = gainStats;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     const stock = getStockpiles(user);
-
-    if (this.levels < 0) {
+    
+    if (!this.gainStats) {
+      // levels become equal to the negative of stock
       this.levels = stock * -1;
 
+      // remove the stats equal to the number of stock
       for (let tagType of this.tagTypes)
         (this.selfTarget ? user : target).removeTag(tagType);
     }
@@ -3052,7 +3051,7 @@ export class StockpileAttr extends AddBattlerTagAttr {
 
     this.tagType = stockType;
 
-    if (!super.apply(user, target, move, args) || willFail)
+    if (willFail || !super.apply(user, target, move, args))
       return false;
 
     user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled ${stock+1}.`));
@@ -4889,17 +4888,17 @@ export function initMoves() {
       .partial(),
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(StockpileAttr)
-      .attr(StockpileStatChangeAttr, Moves.STOCKPILE)
+      .attr(StockpileStatChangeAttr)
       .condition(failOnMaxStockCondition)
       .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .attr(SpitUpPowerAttr)
-      .attr(StockpileStatChangeAttr, Moves.SPIT_UP)
+      .attr(StockpileStatChangeAttr, false)
       .condition(failOnNoStockCondition)
       .partial(),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(SwallowHealAttr, 1)
-      .attr(StockpileStatChangeAttr, Moves.SWALLOW)
+      .attr(StockpileStatChangeAttr, false)
       .condition(failOnNoStockCondition)
       .triageMove()
       .partial(),
