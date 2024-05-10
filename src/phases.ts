@@ -680,6 +680,8 @@ export class EncounterPhase extends BattlePhase {
   start() {
     super.start();
 
+    this.scene.updateGameInfo();
+
     this.scene.initSession();
 
     const loadEnemyAssets = [];
