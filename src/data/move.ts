@@ -1765,15 +1765,15 @@ export class PowerSplitAttr extends MoveEffectAttr {
       const infoUpdates = [];
 
       const attackValue = Math.floor((target.getStat(Stat.ATK) + user.getStat(Stat.ATK)) / 2);
-      user.changeStat(Stat.ATK, attackValue);
+      user.changeSummonStat(Stat.ATK, attackValue);
       infoUpdates.push(user.updateInfo());
-      target.changeStat(Stat.ATK, attackValue);
+      target.changeSummonStat(Stat.ATK, attackValue);
       infoUpdates.push(target.updateInfo());
 
       const specialAttackValue = Math.floor((target.getStat(Stat.SPATK) + user.getStat(Stat.SPATK)) / 2);
-      user.changeStat(Stat.SPATK, specialAttackValue);
+      user.changeSummonStat(Stat.SPATK, specialAttackValue);
       infoUpdates.push(user.updateInfo());
-      target.changeStat(Stat.SPATK, specialAttackValue);
+      target.changeSummonStat(Stat.SPATK, specialAttackValue);
       infoUpdates.push(target.updateInfo());
 
       return Promise.all(infoUpdates).then(() => resolve(true));

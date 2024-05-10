@@ -112,6 +112,7 @@ export default class PokemonData {
       this.summonData = new PokemonSummonData();
       if (!forHistory && source.summonData) {
         this.summonData.battleStats = source.summonData.battleStats;
+        this.summonData.stats = source.summonData.stats;
         this.summonData.moveQueue = source.summonData.moveQueue;
         this.summonData.disabledMove = source.summonData.disabledMove;
         this.summonData.disabledTurns = source.summonData.disabledTurns;
