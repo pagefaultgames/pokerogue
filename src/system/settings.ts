@@ -211,6 +211,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 handler: () => changeLocaleHandler('zh_CN')
               },
               {
+                label: 'にほんご',
+                handler: () => changeLocaleHandler('jp')
+              },
+              {
                 label: 'Cancel',
                 handler: () => cancelHandler()
               }
