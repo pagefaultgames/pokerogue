@@ -467,8 +467,6 @@ export default class SummaryUiHandler extends UiHandler {
           this.abilityContainer.descriptionText.setVisible(!this.abilityContainer.descriptionText.visible);
           this.abilityContainer.labelImage.setVisible(!this.abilityContainer.labelImage.visible);
 
-          
-
           this.passiveContainer.nameText.setVisible(!this.passiveContainer.descriptionText.visible);
           this.passiveContainer.descriptionText.setVisible(!this.passiveContainer.descriptionText.visible);
           this.passiveContainer.labelImage.setVisible(!this.passiveContainer.labelImage.visible);
