@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "Vapodrenaje",
-    effect: "Ataca lanzando proyectiles de agua y recupera una cantidad de PS equivalente a la mitad del daño causado.",
+    effect: "El usuario ataca disparando burbujas de agua al objetivo. A continuación, absorbe agua y restaura sus PS en un 100% del daño recibido por el objetivo.",
   },
   buzzyBuzz: {
     name: "Joltioparálisis",
