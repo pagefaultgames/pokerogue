@@ -2313,7 +2313,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.QUAXWELL, 9, false, false, false, "Practicing Pokémon", Type.WATER, null, 1.2, 21.5, Abilities.TORRENT, Abilities.NONE, Abilities.MOXIE, 410, 70, 85, 65, 65, 60, 65, 45, 50, 144, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.QUAQUAVAL, 9, false, false, false, "Dancer Pokémon", Type.WATER, Type.FIGHTING, 1.8, 61.9, Abilities.TORRENT, Abilities.NONE, Abilities.MOXIE, 530, 85, 120, 80, 85, 75, 85, 45, 50, 265, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.LECHONK, 9, false, false, false, "Hog Pokémon", Type.NORMAL, null, 0.5, 10.2, Abilities.AROMA_VEIL, Abilities.GLUTTONY, Abilities.THICK_FAT, 254, 54, 45, 40, 35, 45, 35, 255, 50, 51, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.OINKOLOGNE, 9, false, false, false, "Hog Pokémon", Type.NORMAL, null, 1, 120, Abilities.LINGERING_AROMA, Abilities.GLUTTONY, Abilities.THICK_FAT, 489, 110, 100, 75, 59, 80, 65, 100, 50, 171, GrowthRate.MEDIUM_FAST, 100, false, false,
+    new PokemonSpecies(Species.OINKOLOGNE, 9, false, false, false, "Hog Pokémon", Type.NORMAL, null, 1, 120, Abilities.LINGERING_AROMA, Abilities.GLUTTONY, Abilities.THICK_FAT, 489, 110, 100, 75, 59, 80, 65, 100, 50, 171, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Male", "male", Type.NORMAL, null, 1, 120, Abilities.LINGERING_AROMA, Abilities.GLUTTONY, Abilities.THICK_FAT, 489, 110, 100, 75, 59, 80, 65, 100, 50, 171, false, ""),
       new PokemonForm("Female", "female", Type.NORMAL, null, 1, 120, Abilities.AROMA_VEIL, Abilities.GLUTTONY, Abilities.THICK_FAT, 489, 115, 90, 70, 59, 90, 65, 100, 50, 171),
     ),
