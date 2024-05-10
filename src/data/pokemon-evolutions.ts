@@ -13,6 +13,7 @@ import { WeatherType } from "./weather";
 import { Biome } from "./enums/biome";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Nature } from "./nature";
+import { Abilities } from "./enums/abilities";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1392,9 +1393,10 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CRABOMINABLE, 1, EvolutionItem.ICE_STONE, null)
   ],
   [Species.ROCKRUFF]: [
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.scene.getSpeciesFormIndex(p.species) === 1), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), null)
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DAY) && (p.hasAbility(Abilities.OWN_TEMPO) === false)), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.hasAbility(Abilities.OWN_TEMPO)), null),
+    // new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.scene.getSpeciesFormIndex(p.species) === 1), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT) && (p.hasAbility(Abilities.OWN_TEMPO) === false)), null)
   ],
   [Species.STEENEE]: [
     new SpeciesEvolution(Species.TSAREENA, 28, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.STOMP).length > 0), SpeciesWildEvolutionDelay.LONG)
