@@ -1394,7 +1394,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
               applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled);
-              if (!burnDamageReductionCancelled.value)
+              if (!burnDamageReductionCancelled.value && !(battlerMove.getMove().id !== Moves.FACADE))
                 damage.value = Math.floor(damage.value / 2);
             }
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
