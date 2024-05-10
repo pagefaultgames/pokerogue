@@ -298,6 +298,11 @@ export default class MenuUiHandler extends MessageUiHandler {
           success = true;
           break;
         case MenuOptions.RETURN_TO_TITLE:
+          if (this.scene.getParty().length === 0) {
+            success = true;
+            this.scene.reset(true);
+          }
+
           if (this.scene.currentBattle) {
             success = true;
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
