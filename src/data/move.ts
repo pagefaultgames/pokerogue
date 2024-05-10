@@ -1775,6 +1775,29 @@ export class ResetStatsAttr extends MoveEffectAttr {
   }
 }
 
+export class SwapStatsAttr extends MoveEffectAttr
+{
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean
+    {
+        if (!super.apply(user, target, move, args))
+            return false;
+        let priorBoostArray : integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+        for (let s = 0; s < target.summonData.battleStats.length; s++)
+          {
+            priorBoostArray[s] = user.summonData.battleStats[s];
+          }
+        for (let s = 0; s < target.summonData.battleStats.length; s++)
+          {
+            user.summonData.battleStats[s] = target.summonData.battleStats[s];
+            target.summonData.battleStats[s] = priorBoostArray[s];
+          }
+        target.updateInfo();
+        user.updateInfo();
+        target.scene.queueMessage(getPokemonMessage(user, `swapped stat changes with the target!`));
+        return true;
+    }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -5176,7 +5199,7 @@ export function initMoves() {
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
     new StatusMove(Moves.HEART_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(SwapStatsAttr),
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
