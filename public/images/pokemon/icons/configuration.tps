@@ -80,7 +80,7 @@
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>256</int>
+            <int>512</int>
             <key>height</key>
             <int>1024</int>
         </QSize>
@@ -143,7 +143,7 @@
         <key>autoAliasEnabled</key>
         <true/>
         <key>trimSpriteNames</key>
-        <false/>
+        <true/>
         <key>prependSmartFolderName</key>
         <false/>
         <key>autodetectAnimations</key>
