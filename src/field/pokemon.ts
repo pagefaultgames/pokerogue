@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, IgnoreWeatherTypeDebuffAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -1053,8 +1053,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
-      if (!this.hasTrainer())
+      if (!this.hasTrainer()) {
+        if (new Date() < new Date('2024-05-13'))
+          shinyThreshold.value *= 3;
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      }
     } else
       shinyThreshold.value = thresholdOverride;
 
@@ -1335,7 +1338,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               source.removeTag(typeBoost.tagType);
             }
           }
-          const arenaAttackTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(type, source.isGrounded());
+          const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(type, source.isGrounded()));
+          applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
           if (this.scene.arena.getTerrainType() === TerrainType.GRASSY && this.isGrounded() && type === Type.GROUND && move.moveTarget === MoveTarget.ALL_NEAR_OTHERS)
             power.value /= 2;
           applyMoveAttrs(VariablePowerAttr, source, this, move, power);
@@ -1380,7 +1384,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (!isCritical) {
             this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, move.category, this.scene.currentBattle.double, screenMultiplier);
           } 
-          const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier) === 0;
+          const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
           const sourceTypes = source.getTypes();
           const matchesSourceType = sourceTypes[0] === type || (sourceTypes.length > 1 && sourceTypes[1] === type);
           let stabMultiplier = new Utils.NumberHolder(1);
@@ -1398,7 +1402,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
           if (!isTypeImmune) {
-            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * screenMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
               applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled);

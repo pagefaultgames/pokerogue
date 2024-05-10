@@ -1,42 +1,46 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const tutorial: SimpleTranslationEntries = {
-    "intro": `Welcome to PokéRogue! This is a battle-focused Pokémon fangame with roguelite elements.
-    $This game is not monetized and we claim no ownership of Pokémon nor of the copyrighted assets used.
-    $The game is a work in progress, but fully playable.\nFor bug reports, please use the Discord community.
-    $If the game runs slowly, please ensure 'Hardware Acceleration' is turned on in your browser settings.`,
+    "intro": `Willkommen bei PokéRogue! Dies ist ein kampforientiertes Pokémon-Fangame mit Roguelite-Elementen.
+    $Dieses Spiel ist nicht monetarisiert.
+    $Wir erheben keinen Eigentumsanspruch an Pokémon oder\nverwendeten, urheberrechtlich geschützten Inhalten.
+    $Das Spiel befindet sich noch in der Entwicklung, ist aber voll spielbar.
+    $Für Fehlerberichte nutze bitte den PokéRogue Discord-Server.
+    $Sollte das Spiel langsam laufen, überprüfe, ob in deinem Browser "Hardwarebeschleunigung" aktiviert ist.`,
     
-    "accessMenu": `To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.`,
+    "accessMenu": `Nutze M oder Esc, um das Menü zu öffnen. Dort hast du Zugriff auf die Einstellungen und andere Funktionen.`,
     
-    "menu": `From this menu you can access the settings.
-    $From the settings you can change game speed, window style, and other options.
-    $There are also various other features here, so be sure to check them all!`,
+    "menu": `In diesem Menü hast du Zugriff auf die Einstellungen.
+    $Dort kannst du u. A. die Spielgeschwin-\ndigkeit und das Fensterdesign ändern.
+    $Das Menü verbirgt noch andere Funktionen - probier' sie gerne aus!`,
 
-    "starterSelect": `From this screen, you can select your starters.\nThese are your initial party members.
-    $Each starter has a value. Your party can have up to\n6 members as long as the total does not exceed 10.
-    $You can also select gender, ability, and form depending on\nthe variants you've caught or hatched.
-    $The IVs for a species are also the best of every one you've\ncaught or hatched, so try to get lots of the same species!`,
+    "starterSelect": `Hier kannst du deine Starter-Pokémon auswählen.\nSie begleiten dich am Anfang deines Abenteuers.
+    $Jeder Starter hat einen Preis. Dein Team kann bis zu sechs\nMitglieder haben, solange der Gesamtpreis max. 10 beträgt.
+    $Du kannst Geschlecht, Fähigkeit und Form beliebig auswählen,\nsobald du sie mindestens einmal gefangen hast.
+    $Die DVs ergeben sich aus den Höchstwerten aller Pokémon,\ndie du bereits gefangen hast. 
+    $Es lohnt sich also, das selbe Pokémon mehrmals zu fangen!`,
 
-    "pokerus": `A daily random 3 selectable starters have a purple border.
-    $If you see a starter you own with one of these,\ntry adding it to your party. Be sure to check its summary!`,
+    "pokerus": `Jeden Tag haben drei zufällige Pokémon einen lila Rahmen.
+    $Wenn du eins von ihnen besitzt,
+    $nimm es doch mal mit und sieh dir seinen Bericht an!`,
 
-    "statChange": `Stat changes persist across battles as long as your Pokémon aren't recalled.
-    $Your Pokémon are recalled before a trainer battle and before entering a new biome.
-    $You can also view the stat changes for the Pokémon on the field by holding C or Shift.`,
+    "statChange": `Statuswertveränderungen halten solange an, wie dein Pokémon auf dem Feld bleibt.
+    $Pokémon werden am Anfang eines Trainerkampfes oder bei einem Arealwechsel automatisch zurückgerufen.
+    $Nutze C oder Shift, um aktuelle Statuswertveränderungen anzuzeigen.`,
 
-    "selectItem": `After every battle, you are given a choice of 3 random items.\nYou may only pick one.
-    $These range from consumables, to Pokémon held items, to passive permanent items.
-    $Most non-consumable item effects will stack in various ways.
-    $Some items will only show up if they can be used, such as evolution items.
-    $You can also transfer held items between Pokémon using the transfer option.
-    $The transfer option will appear in the bottom right once you have obtained a held item.
-    $You may purchase consumable items with money, and a larger variety will be available the further you get.
-    $Be sure to buy these before you pick your random item, as it will progress to the next battle once you do.`,
+    "selectItem": `Nach jedem Kampf kannst du aus 3 zufälligen Items exakt eines auswählen.
+    $Es gibt u. A. Heilitems, tragbare Items und Basis-Items, die dir einen permanenten Vorteil verschaffen.
+    $Die meisten tragbaren und permanenten Items werden stärker, wenn du sie mehrfach sammelst.
+    $Manche Items, wie Entwicklungssteine, tauchen nur auf, wenn du sie auch nutzen kannst.
+    $Mithilfe der "Transfer"-Option kannst du Items zwischen deinen Pokémon verschieben.
+    $Sie erscheint rechts unten, sobald du einem deiner Pokémon dein Item zum Tragen gegeben hast.
+    $Du kannst Heilitems auch gegen Geld erwerben. Je weiter du kommst, desto mehr stehen dir zur Auswahl.
+    $Erledige deine Einkäufe als erstes, denn sobald du dein zufälliges Item auswählst, beginnt der nächste Kampf.`,
 
-    "eggGacha": `From this screen, you can redeem your vouchers for\nPokémon eggs.
-    $Eggs have to be hatched and get closer to hatching after\nevery battle. Rarer eggs take longer to hatch.
-    $Hatched Pokémon also won't be added to your party, they will\nbe added to your starters.
-    $Pokémon hatched from eggs generally have better IVs than\nwild Pokémon.
-    $Some Pokémon can only even be obtained from eggs.
-    $There are 3 different machines to pull from with different\nbonuses, so pick the one that suits you best!`,
+    "eggGacha": `Hier kannst du deine Gutscheine gegen Pokémon-Eier\ntauschen.
+    $Eier schlüpfen, nachdem du eine gewisse Anzahl Kämpfe\nabsolviert hast. Je seltener das Ei, desto länger dauert es.
+    $Geschlüpfte Pokémon werden nicht deinem Team hinzugefügt,\nsondern deinen verfügbaren Startern.
+    $In der Regel haben sie bessere DVs als in der Wildnis\ngefangene Pokémon.
+    $Es gibt sogar Pokémon, die du nur aus Eiern erhalten kannst.
+    $Es gibt drei Gacha-Maschinen mit je unterschiedlichen Boni,\nalso such' dir die aus, die dir am besten gefällt!`,
 } as const;
