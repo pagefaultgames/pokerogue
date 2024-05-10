@@ -142,6 +142,14 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       } else
         return false;
       break;
+    case Setting.Gamepad_Support:
+      // if we change the value of the gamepad support, we call a method in the inputController to
+      // activate or deactivate the controller listener
+      scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
+      break;
+    case Setting.Swap_A_and_B:
+      scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
+      break;
     case Setting.Touch_Controls:
       scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
       const touchControls = document.getElementById('touchControls');
@@ -185,6 +193,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
               {
                 label: 'Deutsch',
                 handler: () => changeLocaleHandler('de')
+              },
+              {
+                label: '简体中文',
+                handler: () => changeLocaleHandler('zh_CN')
               },
               {
                 label: 'Cancel',

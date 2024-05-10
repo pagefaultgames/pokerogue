@@ -66,6 +66,8 @@ export class InputsController {
 
     private gamepadSupport: boolean = true;
 
+    private gamepadSupport: boolean = true;
+
     public customGamepadMapping = new Map();
     public chosenGamepad: String;
     private disconnectedGamepads: Array<String> = new Array();
@@ -114,9 +116,9 @@ export class InputsController {
         if (localStorage.hasOwnProperty('chosenGamepad')) {
             this.chosenGamepad = localStorage.getItem('chosenGamepad');
         }
-		this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
-			this.loseFocus()
-		})
+        this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
+            this.loseFocus()
+        })
 
         if (typeof this.scene.input.gamepad !== 'undefined') {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
@@ -353,7 +355,6 @@ export class InputsController {
         const key = Object.keys(mapping).find(key => mapping[key] === button.index);
         return [this.player[this.chosenGamepad]['type'], icons[key]];
     }
-
 
     /**
      * Handles the 'down' event for gamepad buttons, emitting appropriate events and updating the interaction state.

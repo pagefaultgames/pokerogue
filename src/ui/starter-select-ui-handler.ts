@@ -1098,7 +1098,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       // starterMoveData doesn't have base form moves or is using the single form format
       if (!this.scene.gameData.starterData[speciesId].moveset || Array.isArray(this.scene.gameData.starterData[speciesId].moveset))
         this.scene.gameData.starterData[speciesId].moveset = { [props.formIndex]: this.starterMoveset.slice(0) as StarterMoveset };
-      const starterMoveData = this.scene.gameData.starterData[speciesId].moveset[props.formIndex];
+      const starterMoveData = this.scene.gameData.starterData[speciesId].moveset;
 
       // starterMoveData doesn't have active form moves
       if (!starterMoveData.hasOwnProperty(props.formIndex))
