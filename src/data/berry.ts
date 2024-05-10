@@ -114,7 +114,8 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
           pokemon.resetStatus();
           pokemon.updateInfo();
-        } else if (pokemon.getTag(BattlerTagType.CONFUSED))
+        } 
+        if (pokemon.getTag(BattlerTagType.CONFUSED))
           pokemon.lapseTag(BattlerTagType.CONFUSED);
       };
     case BerryType.LIECHI:

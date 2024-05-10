@@ -33,6 +33,7 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveForgetSuccess": "{{pokemonName}} forgot how to\nuse {{moveName}}.",
   "levelCapUp": "The level cap\nhas increased to {{levelCap}}!",
   "moveNotImplemented": "{{moveName}} is not yet implemented and cannot be selected.",
+  "moveNoPP": "There's no PP left for\nthis move!",
   "moveDisabled": "{{moveName}} is disabled!",
   "noPokeballForce": "An unseen force\nprevents using Poké Balls.",
   "noPokeballTrainer": "You can't catch\nanother trainer's Pokémon!",
@@ -45,7 +46,7 @@ export const battle: SimpleTranslationEntries = {
   "runAwayCannotEscape": 'You can\'t escape!',
   "escapeVerbSwitch": "switching",
   "escapeVerbFlee": "fleeing",
-  "notDisabled": "{{moveName}} is disabled\nno more!",
+  "notDisabled": "{{pokemonName}}'s {{moveName}} is disabled\nno more!",
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?"
