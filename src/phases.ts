@@ -2207,23 +2207,22 @@ export class MovePhase extends BattlePhase {
     }
 
     // Move redirection abilities (ie. Storm Drain) only support single target moves
-      const moveTarget = this.targets.length === 1
-          ? new Utils.IntegerHolder(this.targets[0])
-          : null;
-      if (moveTarget) {
-          var oldTarget = moveTarget.value;
-          this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
-          //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
-          if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length)) {
-              //If an ability prevented this move from being redirected, display its ability pop up.
-              if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget != moveTarget.value) {
-                  this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
-              }
-              moveTarget.value = oldTarget;
-          }
-          this.targets[0] = moveTarget.value;
-      }
-
+const moveTarget = this.targets.length === 1
+        ? new Utils.IntegerHolder(this.targets[0])
+         : null;
+ if (moveTarget) {
+        var oldTarget = moveTarget.value;
+        this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
+  //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
+        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length)) {
+         //If an ability prevented this move from being redirected, display its ability pop up.
+         if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget != moveTarget.value) {
+                this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
+         }
+        moveTarget.value = oldTarget;
+	}
+ this.targets[0] = moveTarget.value;
+}
 
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
