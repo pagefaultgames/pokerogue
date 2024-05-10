@@ -1775,18 +1775,29 @@ export class ResetStatsAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves which swap the user and the target's stat changes.
+ */
 export class SwapStatsAttr extends MoveEffectAttr
 {
+    /**
+   * Swaps the user and the target's stat changes.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
     apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean
     {
         if (!super.apply(user, target, move, args))
-            return false;
-        let priorBoostArray : integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+            return false; //Exits if the move can't apply
+        let priorBoostArray : integer[] = [ 0, 0, 0, 0, 0, 0, 0 ]; //For storing user stat boosts
         for (let s = 0; s < target.summonData.battleStats.length; s++)
           {
-            priorBoostArray[s] = user.summonData.battleStats[s];
-            user.summonData.battleStats[s] = target.summonData.battleStats[s];
-            target.summonData.battleStats[s] = priorBoostArray[s];
+            priorBoostArray[s] = user.summonData.battleStats[s]; //Store user stat boosts
+            user.summonData.battleStats[s] = target.summonData.battleStats[s]; //Applies target boosts to self
+            target.summonData.battleStats[s] = priorBoostArray[s]; //Applies stored boosts to target
           }
         target.updateInfo();
         user.updateInfo();
