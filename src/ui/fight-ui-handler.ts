@@ -17,6 +17,8 @@ export default class FightUiHandler extends UiHandler {
   private ppText: Phaser.GameObjects.Text;
   private powerLabel: Phaser.GameObjects.Text;
   private powerText: Phaser.GameObjects.Text;
+  private accuracyLabel: Phaser.GameObjects.Text;
+  private accuracyText: Phaser.GameObjects.Text;
   private cursorObj: Phaser.GameObjects.Image;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
 
@@ -41,24 +43,35 @@ export default class FightUiHandler extends UiHandler {
     this.moveCategoryIcon.setVisible(false);
     ui.add(this.moveCategoryIcon);
 
-    this.ppLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -22, 'PP', TextStyle.TOOLTIP_CONTENT);
+    this.ppLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 74, -22, 'PP', TextStyle.TOOLTIP_CONTENT);
     this.ppLabel.setOrigin(0.0, 0.5);
     this.ppLabel.setVisible(false);
     this.ppLabel.setText(i18next.t('fightUiHandler:pp'));
     ui.add(this.ppLabel);
 
-    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -22, '--/--', TextStyle.TOOLTIP_CONTENT);
+    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 44, -22, '--/--', TextStyle.TOOLTIP_CONTENT);
     this.ppText.setOrigin(1, 0.5);
     this.ppText.setVisible(false);
     ui.add(this.ppText);
 
-    this.powerLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -12, 'POWER', TextStyle.TOOLTIP_CONTENT);
+    this.accuracyLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 38, -22, 'ACC', TextStyle.TOOLTIP_CONTENT);
+    this.accuracyLabel.setOrigin(0.0, 0.5);
+    this.accuracyLabel.setVisible(false);
+    this.accuracyLabel.setText(i18next.t('fightUiHandler:accuracy'))
+    ui.add(this.accuracyLabel);
+
+    this.accuracyText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 8, -22, '---', TextStyle.TOOLTIP_CONTENT);
+    this.accuracyText.setOrigin(1, 0.5);
+    this.accuracyText.setVisible(false);
+    ui.add(this.accuracyText);
+
+    this.powerLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 60, -12, 'POWER', TextStyle.TOOLTIP_CONTENT);
     this.powerLabel.setOrigin(0.0, 0.5);
     this.powerLabel.setVisible(false);
     this.powerLabel.setText(i18next.t('fightUiHandler:power'));
     ui.add(this.powerLabel);
 
-    this.powerText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -12, '---', TextStyle.TOOLTIP_CONTENT);
+    this.powerText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 22, -12, '---', TextStyle.TOOLTIP_CONTENT);
     this.powerText.setOrigin(1, 0.5);
     this.powerText.setVisible(false);
     ui.add(this.powerText);
@@ -152,11 +165,13 @@ export default class FightUiHandler extends UiHandler {
       this.moveCategoryIcon.setTexture('categories', MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
       const power = pokemonMove.getMove().power;
+      const accuracy = pokemonMove.getMove().accuracy;
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
 
       this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
       this.powerText.setText(`${power >= 0 ? power : '---'}`);
+      this.accuracyText.setText(`${accuracy >= 0 ? accuracy : '---'}`);
     }
 
     this.typeIcon.setVisible(hasMove);
@@ -164,6 +179,8 @@ export default class FightUiHandler extends UiHandler {
     this.ppText.setVisible(hasMove);
     this.powerLabel.setVisible(hasMove);
     this.powerText.setVisible(hasMove);
+    this.accuracyLabel.setVisible(hasMove);
+    this.accuracyText.setVisible(hasMove);
     this.moveCategoryIcon.setVisible(hasMove);
 
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
@@ -189,6 +206,8 @@ export default class FightUiHandler extends UiHandler {
     this.ppText.setVisible(false);
     this.powerLabel.setVisible(false);
     this.powerText.setVisible(false);
+    this.accuracyLabel.setVisible(false);
+    this.accuracyText.setVisible(false);
     this.moveCategoryIcon.setVisible(false);
     this.eraseCursor();
   }
