@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "Bollaslurp",
-    effect: "Chi la usa colpisce il bersaglio con una raffica di bolle, per poi assorbirle e recuperare una quantità di PS pari alla metà del danno inferto.",
+    effect: "L'utente attacca sparando bolle d'acqua contro il bersaglio. Assorbe quindi l'acqua e ripristina i suoi HP del 100% dei danni subiti dal bersaglio.",
   },
   buzzyBuzz: {
     name: "Elettrozap",
