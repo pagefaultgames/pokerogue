@@ -190,11 +190,14 @@ const systemShortKeys = {
   natureAttr: '$na',
   seenCount: '$s' ,
   caughtCount: '$c',
+  hatchedCount: '$hc',
   ivs: '$i',
   moveset: '$m',
   eggMoves: '$em',
   candyCount: '$x',
-  passive: '$p',
+  friendship: '$f',
+  abilityAttr: '$a',
+  passiveAttr: '$pa',
   valueReduction: '$vr',
   classicWinCount: '$wc'
 };
@@ -454,6 +457,10 @@ export class GameData {
   }
 
   private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+    if (!shorten) {
+      // Account for past key oversight
+      dataStr = dataStr.replace(/\$pAttr/g, '$pa');
+    }
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
     for (let k in fromKeys)

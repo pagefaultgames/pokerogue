@@ -3484,19 +3484,14 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.gameData.saveSystem().then(success => {
-          if (success) {
-            this.scene.playSound('level_up_fanfare');
-            this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.arenaBg.setVisible(false);
-            this.scene.ui.fadeIn(250).then(() => {
-              this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
-                this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-                resolve();
-              }, null, true, 1500);
-            });
-          } else
-            this.scene.reset(true);
+        this.scene.playSound('level_up_fanfare');
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.arenaBg.setVisible(false);
+        this.scene.ui.fadeIn(250).then(() => {
+          this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
+            this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+            resolve();
+          }, null, true, 1500);
         });
       });
     })
@@ -3516,18 +3511,13 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.gameData.saveSystem().then(success => {
-          if (success) {
-            this.scene.playSound('level_up_fanfare');
-            this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.arenaBg.setVisible(false);
-            this.scene.ui.fadeIn(250).then(() => {
-              this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
-                resolve();
-              }, null, true, 1500);
-            });
-          } else
-            this.scene.reset(true);
+        this.scene.playSound('level_up_fanfare');
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.arenaBg.setVisible(false);
+        this.scene.ui.fadeIn(250).then(() => {
+          this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+            resolve();
+          }, null, true, 1500);
         });
       });
     })
@@ -3548,7 +3538,7 @@ export class GameOverPhase extends BattlePhase {
     super.start();
 
     if (this.victory || !this.scene.enableRetries)
-      this.handleClearSession();
+      this.handleGameOver();
     else {
       this.scene.ui.showText(`Would you like to retry from the start of the battle?`, null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
@@ -3573,18 +3563,16 @@ export class GameOverPhase extends BattlePhase {
               this.end();
             });
           });
-        }, () => this.handleClearSession(), false, 0, 0, 1000);
+        }, () => this.handleGameOver(), false, 0, 0, 1000);
       });
     }
   }
 
-  handleClearSession(): void {
-    this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
-      if (!success[0])
-        return this.scene.reset(true);
+  handleGameOver(): void {
+    const doGameOver = (newClear: boolean) => {
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.victory && success[1]) {
+        if (this.victory && newClear) {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
@@ -3595,29 +3583,37 @@ export class GameOverPhase extends BattlePhase {
                 this.awardRibbon(pokemon, true);
               }
             }
-          } else if (this.scene.gameMode.isDaily && success[1])
+          } else if (this.scene.gameMode.isDaily && newClear)
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
         }
-        this.scene.gameData.saveSystem();
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
+        const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
+        activeBattlers.map(p => p.hideInfo());
         this.scene.ui.fadeOut(fadeDuration).then(() => {
+          [ this.scene.field, ...activeBattlers ].map(a => a.setVisible(false));
           this.scene.setFieldScale(1, true);
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
-          this.handleUnlocks();
-          if (this.victory && success[1]) {
+          if (newClear)
+            this.handleUnlocks();
+          if (this.victory && newClear) {
             for (let species of this.firstRibbons)
               this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
             if (!firstClear)
               this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           }
-          this.scene.reset();
-          this.scene.unshiftPhase(new TitlePhase(this.scene));
+          this.scene.pushPhase(new PostGameOverPhase(this.scene));
           this.end();
         });
       });
-    });
+    };
+    if (this.victory) {
+      Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
+        .then(response => response.json())
+        .then(newClear => doGameOver(newClear));
+    } else
+      doGameOver(false);
   }
 
   handleUnlocks(): void {
@@ -3653,19 +3649,36 @@ export class UnlockPhase extends Phase {
   start(): void {
     this.scene.time.delayedCall(2000, () => {
       this.scene.gameData.unlocks[this.unlockable] = true;
-      this.scene.gameData.saveSystem().then(success => {
-        if (success) {
-          this.scene.playSound('level_up_fanfare');
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.arenaBg.setVisible(false);
-          this.scene.ui.fadeIn(250).then(() => {
-            this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
-              this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-              this.end();
-            }, null, true, 1500);
-          });
-        } else
-          this.scene.reset(true);
+      this.scene.playSound('level_up_fanfare');
+      this.scene.ui.setMode(Mode.MESSAGE);
+      this.scene.arenaBg.setVisible(false);
+      this.scene.ui.fadeIn(250).then(() => {
+        this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+          this.end();
+        }, null, true, 1500);
+      });
+    });
+  }
+}
+
+export class PostGameOverPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    this.scene.gameData.saveSystem().then(success => {
+      if (!success)
+        return this.scene.reset(true);
+      this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
+        if (!success[0])
+          return this.scene.reset(true);
+        this.scene.reset();
+        this.scene.unshiftPhase(new TitlePhase(this.scene));
+        this.end();
       });
     });
   }
