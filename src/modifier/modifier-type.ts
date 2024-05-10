@@ -144,9 +144,16 @@ class AddPokeballModifierType extends ModifierType implements Localizable {
   }
 
   localize(): void {
+    // TODO: Actually use i18n to localize this description.
     this.name = `${this.count}x ${getPokeballName(this.pokeballType)}`;
-    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count}\nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
+    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count} (Inventory: {AMOUNT}) \nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
   }
+  
+  getDescription(scene: BattleScene): string {
+    this.localize();
+    return this.description.replace('{AMOUNT}', scene.pokeballCounts[this.pokeballType].toString());
+  }
+
 }
 
 class AddVoucherModifierType extends ModifierType {
@@ -299,7 +306,7 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
   protected nature: Nature;
 
   constructor(nature: Nature) {
-    super(`${getNatureName(nature)} Mint`, `Changes a Pokémon\'s nature to ${getNatureName(nature, true, true, true)}`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
+    super(`${getNatureName(nature)} Mint`, `Changes a Pokémon\'s nature to ${getNatureName(nature, true, true, true)} and permanently unlocks the nature for the starter.`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
       ((pokemon: PlayerPokemon) => {
         if (pokemon.getNature() === this.nature)
           return PartyUiHandler.NoEffectMessage;
@@ -948,7 +955,7 @@ export const modifierTypes = {
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 5%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5), 'wl_item_drop'),
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 2.5%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5), 'wl_guard_spec'),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
-  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 3% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 3), 'wl_potion'),
+  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 2% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 2), 'wl_potion'),
   ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
   ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
   ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Token', 10, StatusEffect.SLEEP, 'wl_awakening'),
@@ -997,7 +1004,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 9;
-    }, 3),
+    }, 27),
     new WeightedModifierType(modifierTypes.MAX_REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 3;

@@ -1639,7 +1639,8 @@ export const trainerTypeDialogue = {
   },
   [TrainerType.HAU]: {
     encounter: [
-      `I wonder if a Trainer battles differently depending on whether they're from a warm region or a cold region. Let's test it out!`,
+      `I wonder if a Trainer battles differently depending on whether they're from a warm region or a cold region.
+      $Let's test it out!`,
     ],
     victory: [
       `That was awesome! I think I kinda understand your vibe a little better now!`,
@@ -1919,7 +1920,8 @@ export const trainerTypeDialogue = {
   },
   [TrainerType.WULFRIC]: {
     encounter: [
-      `You know what? We all talk big about what you learn from battling and bonds and all that, but really, I just do it 'cause it's fun. 
+      `You know what? We all talk big about what you learn from battling and bonds and all that…
+      $But really, I just do it 'cause it's fun. 
       $Who cares about the grandstanding? Let's get to battling!`,
     ],
     victory: [
