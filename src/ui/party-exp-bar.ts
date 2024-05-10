@@ -44,7 +44,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
         if (newLevel > 200) { // if the level is greater than 200, we only display Lv. UP
           this.expText.setText('Lv. UP');
         } else { // otherwise we display Lv. Up and the new level
-          this.expText.setText(`Lv. UP : ${newLevel.toString()}`);
+          this.expText.setText(`Lv. UP: ${newLevel.toString()}`);
         }
       } else {
         // if we want to display the exp
