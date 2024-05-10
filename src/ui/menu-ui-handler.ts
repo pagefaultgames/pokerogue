@@ -151,7 +151,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    if (Utils.isLocal) {
+    if (Utils.isLocal ||  import.meta.env.VITE_IMPORT_DATA) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
