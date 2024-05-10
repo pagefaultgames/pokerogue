@@ -888,6 +888,33 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
   }
 }
 
+/**
+ * Attribute used for moves which ignore type-based debuffs from weather, namely Hydro Steam.
+ * Called during damage calculation after getting said debuff from getAttackTypeMultiplier in the Pokemon class.
+ */
+export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
+  public weather: WeatherType;
+  constructor(weather: WeatherType){
+    super();
+    this.weather = weather;
+  }
+  /**
+   * Changes the type-based weather modifier if this move's power would be reduced by it
+   * @param user Pokemon that used the move
+   * @param target N/A
+   * @param move Move with this attribute
+   * @param args Utils.NumberHolder for arenaAttackTypeMultiplier
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const weatherModifier=args[0] as Utils.NumberHolder;
+    //If the type-based attack power modifier due to weather (e.g. Water moves in Sun) is below 1, set it to 1
+    if (user.scene.arena.weather?.weatherType === this.weather)
+      weatherModifier.value = Math.max(weatherModifier.value, 1);
+    return true;
+  }
+}
+
 export abstract class WeatherHealAttr extends HealAttr {
   constructor() {
     super(0.5);
@@ -6666,7 +6693,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
-      .partial(),
+      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 1.5 : 1),
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
