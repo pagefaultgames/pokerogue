@@ -3745,11 +3745,20 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
     pokemon.updateInfo();
 
-    if (this.scene.expGainsSpeed < 3) {
-      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
-        if (newLevel > lastLevel)
-          this.end();
-        else
+    if (this.scene.expParty === 2) { // 2 - Skip - no level up frame nor message
+        this.end();
+    } else if (this.scene.expParty === 1) { // 1 - Only level up - we display the level up in the small frame instead of a message
+      if (newLevel > lastLevel) { // this means if we level up
+        // instead of displaying the exp gain in the small frame, we display the new level
+        // we use the same method for mode 0 & 1, by giving a parameter saying to display the exp or the level
+        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
+            setTimeout(() => this.end(), 800 / Math.pow(2, this.scene.expGainsSpeed/2));
+        });
+      } else {
+        this.end();
+      }
+    } else if (this.scene.expGainsSpeed < 3) {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
           setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
       });
     } else {
@@ -3780,6 +3789,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
 
     this.lastLevel = lastLevel;
     this.level = level;
+    this.scene = scene;
   }
 
   start() {
@@ -3794,8 +3804,15 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     const prevStats = pokemon.stats.slice(0);
     pokemon.calculateStats();
     pokemon.updateInfo();
-    this.scene.playSound('level_up_fanfare');
-    this.scene.ui.showText(i18next.t('battle:levelUp', { pokemonName: this.getPokemon().name, level: this.level }), null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
+    if (this.scene.expParty === 0) { // 0 - default - the normal exp gain display, nothing changed
+      this.scene.playSound('level_up_fanfare');
+      this.scene.ui.showText(i18next.t('battle:levelUp', { pokemonName: this.getPokemon().name, level: this.level }), null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
+    } else if (this.scene.expParty === 2) { // 2 - Skip - no level up frame nor message
+      this.end();
+    } else { // 1 - Only level up - we display the level up in the small frame instead of a message
+      // we still want to display the stats if activated
+      this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
+    }
     if (this.level <= 100) {
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (let lm of levelMoves)
