@@ -2213,7 +2213,7 @@ const moveTarget = this.targets.length === 1
  if (moveTarget) {
         var oldTarget = moveTarget.value;
         this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
-  //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
+	//Check if this move is immune to being redirected, and restore its target to the intended target if it is.
         if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length)) {
          //If an ability prevented this move from being redirected, display its ability pop up.
          if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget != moveTarget.value) {
