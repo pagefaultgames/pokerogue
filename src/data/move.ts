@@ -1782,12 +1782,10 @@ export class SwapStatsAttr extends MoveEffectAttr
         if (!super.apply(user, target, move, args))
             return false;
         let priorBoostArray : integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+            priorBoostArray[s] = user.summonData.battleStats[s];
         for (let s = 0; s < target.summonData.battleStats.length; s++)
           {
             priorBoostArray[s] = user.summonData.battleStats[s];
-          }
-        for (let s = 0; s < target.summonData.battleStats.length; s++)
-          {
             user.summonData.battleStats[s] = target.summonData.battleStats[s];
             target.summonData.battleStats[s] = priorBoostArray[s];
           }
