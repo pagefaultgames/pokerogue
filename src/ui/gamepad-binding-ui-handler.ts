@@ -12,8 +12,11 @@ export default class GamepadBindingUiHandler extends UiHandler {
     protected optionSelectBg: Phaser.GameObjects.NineSlice;
     private unlockText: Phaser.GameObjects.Text;
     private keyPressed: Phaser.GameObjects.Text;
+    private alreadyAssignedText: Phaser.GameObjects.Text;
     private listening: boolean = false;
     private buttonPressed = '';
+    private iconXbox: Phaser.GameObjects.Sprite;
+    private iconDualshock: Phaser.GameObjects.Sprite;
 
     constructor(scene: BattleScene, mode: Mode = Mode.GAMEPAD_BINDING) {
         super(scene, mode);
@@ -29,31 +32,58 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.optionSelectContainer.setVisible(false);
         ui.add(this.optionSelectContainer);
 
-        // this.optionSelectBg = addWindow(this.scene, this.scene.game.canvas.width / 12, -this.scene.game.canvas.height / 12, this.getWindowWidth(), -this.getWindowHeight());
+        this.titleBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + 28 + 22, this.getWindowWidth(), 24);
+        this.titleBg.setOrigin(0.5);
+        this.optionSelectContainer.add(this.titleBg);
+
+        this.unlockText = addTextObject(this.scene, 0, 0, 'Press a button...', TextStyle.WINDOW);
+        this.unlockText.setOrigin(0, 0);
+        this.unlockText.setPositionRelative(this.titleBg, 36, 4);
+        this.optionSelectContainer.add(this.unlockText);
+
         this.optionSelectBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());
         this.optionSelectBg.setOrigin(0.5);
         this.optionSelectContainer.add(this.optionSelectBg);
 
-        this.unlockText = addTextObject(this.scene, 0, 0, 'Press a button...', TextStyle.WINDOW);
-        this.unlockText.setOrigin(0, 0);
-        this.unlockText.setPositionRelative(this.optionSelectBg, 36, 4);
+        this.iconXbox = this.scene.add.sprite(0, 0, 'xbox');
+        this.iconXbox.setScale(0.2);
+        this.iconXbox.setPositionRelative(this.optionSelectBg, 0, 0);
+        this.iconXbox.setOrigin(0, 0);
+        this.iconXbox.setVisible(false);
 
-        this.keyPressed = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW);
-        this.keyPressed.setOrigin(0, 0);
-        this.keyPressed.setPositionRelative(this.unlockText, 0, 12);
-        this.keyPressed.setVisible(false);
+        this.iconDualshock = this.scene.add.sprite(0, 0, 'dualshock');
+        this.iconDualshock.setScale(0.2);
+        this.iconDualshock.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2, 0);
+        this.iconDualshock.setOrigin(0, 0);
+        this.iconDualshock.setVisible(false);
+
+        this.alreadyAssignedText = addTextObject(this.scene, 0, 0, 'already assigned to', TextStyle.WINDOW);
+        this.alreadyAssignedText.setOrigin(0, 0);
+        this.alreadyAssignedText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2, 24);
 
 
-        this.optionSelectContainer.add(this.unlockText);
-        this.optionSelectContainer.add(this.keyPressed);
+        this.optionSelectContainer.add(this.iconXbox);
+        this.optionSelectContainer.add(this.iconDualshock);
+        this.optionSelectContainer.add(this.alreadyAssignedText);
     }
 
     gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-        if (!this.listening) return;
+        if (!this.listening || pad.id !== this.scene.inputController?.chosenGamepad) return;
         this.buttonPressed = button.index;
-        const buttonLabel = this.scene.inputController.getButtonLabel(button);
-        this.keyPressed.setText(buttonLabel);
-        this.keyPressed.setVisible(true);
+        const [type, buttonIcon] = this.scene.inputController.getButtonLabel(button);
+        switch (type) {
+            case 'dualshock':
+                this.iconXbox.setVisible(false);
+                this.iconDualshock.setFrame(buttonIcon);
+                this.iconDualshock.setVisible(true);
+                break
+            case 'xbox':
+            default:
+                this.iconDualshock.setVisible(false);
+                this.iconXbox.setFrame(buttonIcon);
+                this.iconXbox.setVisible(true);
+                break
+        }
     }
 
     show(args: any[]): boolean {

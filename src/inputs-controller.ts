@@ -14,10 +14,15 @@ export interface GamepadMapping {
     [key: string]: number;
 }
 
+export interface IconsMapping {
+    [key: string]: string;
+}
+
 export interface GamepadConfig {
     padID: string;
     padType: string;
     gamepadMapping: GamepadMapping;
+    icons: IconsMapping;
 }
 
 export interface ActionGamepadMapping {
@@ -115,6 +120,7 @@ export class InputsController {
 
         if (typeof this.scene.input.gamepad !== 'undefined') {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
+                if (!thisGamepad) return;
                 this.refreshGamepads();
                 this.setupGamepad(thisGamepad);
                 this.onReconnect(thisGamepad);
@@ -281,6 +287,8 @@ export class InputsController {
             const mappedPad = this.mapGamepad(gamepadID);
             if (!this.player[gamepad]) this.player[gamepad] = {};
             this.player[gamepad]['mapping'] = mappedPad.gamepadMapping;
+            this.player[gamepad]['icons'] = mappedPad.icons;
+            this.player[gamepad]['type'] = mappedPad.padType;
         }
         if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
@@ -340,9 +348,10 @@ export class InputsController {
     }
 
     getButtonLabel(button: Phaser.Input.Gamepad.Button) {
+        const icons = this.player[this.chosenGamepad]['icons'];
         const mapping = this.player[this.chosenGamepad]['mapping'];
-        console.log('mapping', mapping);
-        return Object.keys(mapping).find(key => mapping[key] === button.index);
+        const key = Object.keys(mapping).find(key => mapping[key] === button.index);
+        return [this.player[this.chosenGamepad]['type'], icons[key]];
     }
 
 
@@ -360,6 +369,7 @@ export class InputsController {
      * - If mapped, emits an 'input_down' event with the controller type and button action, and updates the interaction of this button.
      */
     gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
+        if (!pad) return;
         if (!this.chosenGamepad) // at the very first input, if we have not yet a chosen gamepad, we set it
             this.setChosenGamepad(pad.id);
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.chosenGamepad.toLowerCase()) return;
@@ -388,6 +398,7 @@ export class InputsController {
      * - If mapped, emits an 'input_up' event with the controller type and button action, and clears the interaction for this button.
      */
     gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
+        if (!pad) return;
         if (!this.gamepadSupport || pad.id !== this.chosenGamepad) return;
         const actionMapping = this.getActionGamepadMapping();
         const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];

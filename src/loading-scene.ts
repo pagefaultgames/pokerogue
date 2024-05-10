@@ -211,6 +211,12 @@ export class LoadingScene extends SceneBase {
         this.loadAtlas(`pokemon_icons_${i}v`, '');
     }
 
+    // Free icons from:
+    // https://juliocacko.itch.io/free-input-prompts
+    this.loadAtlas('dualshock', 'inputs');
+    this.loadAtlas('nswitch', 'inputs');
+    this.loadAtlas('xbox', 'inputs');
+
     this.loadSe('select');
     this.loadSe('menu_open');
     this.loadSe('hit');
