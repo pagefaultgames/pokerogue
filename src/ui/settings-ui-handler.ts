@@ -120,14 +120,25 @@ export default class SettingsUiHandler extends UiHandler {
     return true;
   }
 
+  /**
+   * Processes input from a specified button.
+   * This method handles navigation through a UI menu, including movement through menu items
+   * and handling special actions like cancellation. Each button press may adjust the cursor
+   * position or the menu scroll, and plays a sound effect if the action was successful.
+   *
+   * @param button - The button pressed by the user.
+   * @returns `true` if the action associated with the button was successfully processed, `false` otherwise.
+   */
   processInput(button: Button): boolean {
     const ui = this.getUi();
-    const rowsToDisplay = 9; // we can fit 9 rows on the screen
+    // Defines the maximum number of rows that can be displayed on the screen.
+    const rowsToDisplay = 9;
 
     let success = false;
 
     if (button === Button.CANCEL) {
       success = true;
+      // Reverts UI to its previous state on cancel.
       this.scene.ui.revertMode();
     } else {
       const cursor = this.cursor + this.scrollCursor;
@@ -139,14 +150,10 @@ export default class SettingsUiHandler extends UiHandler {
             else
               success = this.setScrollCursor(this.scrollCursor - 1);
           } else {
-              // we land here if cursor is equal to 0, it means we are at the top of the menu.
-              // so by clicking on UP, we want to go to the bottom
-              // to do that, first, we say, on the screen, we want the lastest element visible to be selected
-              // we do that with the setCursor method
+              // When at the top of the menu and pressing UP, move to the bottommost item.
+              // First, set the cursor to the last visible element, preparing for the scroll to the end.
               const successA = this.setCursor(rowsToDisplay - 1);
-              // if we stop here, our cursor will be on the 9th element of the menu. but we want the latest one
-              // to do so, we fix the scroll to the bottom
-              // the scrolls go from 0 to the amount of element minus how many element we can fit on the screen
+              // Then, adjust the scroll to display the bottommost elements of the menu.
               const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
               success = successA && successB; // success is just there to play the little validation sound effect
           }
@@ -158,30 +165,27 @@ export default class SettingsUiHandler extends UiHandler {
             else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
               success = this.setScrollCursor(this.scrollCursor + 1);
           } else {
-              // we land here if cursor is equal to how many element there is in the menu.
-              // why is cursor = this.cursor + this.scrollCursor ? Remember:
-              // the scrolls go from 0 to the amount of element minus how many element we can fit on the screen
-              // this.cursor go rom 0 to how many element we can fit on the screen
-              // the max combination of both of them, give the latest element
-              // so by clicking on DOWN, we want to go to the top
-              // to do that, first, we say, on the screen, we want the first element visible to be selected
+              // When at the bottom of the menu and pressing DOWN, move to the topmost item.
+              // First, set the cursor to the first visible element, resetting the scroll to the top.
               const successA = this.setCursor(0);
-              // and then we set the scroll to the minimum -> 0
+              // Then, reset the scroll to start from the first element of the menu.
               const successB = this.setScrollCursor(0);
-              success = successA && successB; // success is just there to play the little validation sound effect
+              success = successA && successB; // Indicates a successful cursor and scroll adjustment.
           }
           break;
         case Button.LEFT:
-          if (this.optionCursors[cursor])
+          if (this.optionCursors[cursor]) // Moves the option cursor left, if possible.
             success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
           break;
         case Button.RIGHT:
+          // Moves the option cursor right, if possible.
           if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
             success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
           break;
       }
     }
 
+    // Plays a select sound effect if an action was successfully processed.
     if (success)
       ui.playSelect();
 
