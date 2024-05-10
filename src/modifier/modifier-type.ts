@@ -920,7 +920,7 @@ export const modifierTypes = {
   CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
   
   LIGHT_CLAY: () => new ModifierType('Light Clay', 'Aurora Veil, Light Screen, or Reflect lasts 8 turns instead of 5.',
-    (type, _args) => new Modifiers.ExtendScreenModifier(type), 'coin_case'),
+    (type, _args) => new Modifiers.ExtendScreenModifier(type), 'light_clay'),
 
   BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed',
     (type, _args) => new Modifiers.PreserveBerryModifier(type)),
