@@ -134,7 +134,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
     if (dataSource) {
-      this.id = dataSource.id;
+      this.id = dataSource.id
       this.hp = dataSource.hp;
       this.stats = dataSource.stats;
       this.ivs = dataSource.ivs;
@@ -1528,9 +1528,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const surviveDamage = new Utils.BooleanHolder(false);
 
     if (!preventEndure && this.hp - damage <= 0) {
+      // Endure prevents HP from going below 1 for the turn, Sturdy only prevents getting 100 to 0'ed by a single move
       if(this.hp >= 1 && this.getTag(BattlerTagType.ENDURING))
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING)
-      else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY))
+      else if (this.hp == this.getMaxHp() && this.getTag(BattlerTagType.STURDY))
         surviveDamage.value = this.lapseTag(BattlerTagType.STURDY)
       if (!surviveDamage.value)
         this.scene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
