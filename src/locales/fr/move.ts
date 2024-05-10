@@ -482,7 +482,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur explose en blessant tous les Pokémon autour de lui. Le lanceur tombe K.O."
   },
   "eggBomb": {
-    name: "Bombe Oeuf",
+    name: "Bombe Œuf",
     effect: "De toutes ses forces, le lanceur jette un gros œuf sur l’ennemi pour lui infliger des dégâts."
   },
   "lick": {
@@ -1426,7 +1426,7 @@ export const move: MoveTranslationEntries = {
     effect: "Pendant cinq tours, les Pokémon Vol ou qui ont Lévitation deviennent sensibles aux capacités Sol, et les capacités volantes deviennent inutilisables."
   },
   "miracleEye": {
-    name: "Oeil Miracle",
+    name: "Œil Miracle",
     effect: "Permet de toucher un Pokémon Ténèbres avec les capacités de type Psy ou de toucher un ennemi ayant beaucoup d’esquive."
   },
   "wakeUpSlap": {
@@ -1562,8 +1562,8 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur éparpille des pics autour de la cible, ce qui empoisonne les Pokémon entrant au combat de ce côté."
   },
   "heartSwap": {
-    name: "Permucoeur",
-    effect: "Cette capacité ne peut pas être utilisée. Il est recommandé de l’oublier, même s’il sera impossible de se la remémorer une fois oubliée."
+    name: "Permucœur",
+    effect: "Le lanceur utilise un pouvoir psychique pour échanger ses changements de stats avec la cible."
   },
   "aquaRing": {
     name: "Anneau Hydro",
@@ -2122,7 +2122,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur frappe l’ennemi deux fois d’affilée avec les parties les plus robustes de son corps."
   },
   "heartStamp": {
-    name: "Crève-Coeur",
+    name: "Crève-Cœur",
     effect: "Déconcentre l’ennemi avec des mouvements mignons avant de le frapper violemment. Peut aussi l’apeurer (30% de chances)."
   },
   "hornLeech": {
@@ -3742,7 +3742,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur remue son thé et en bombarde la cible. La moitié des dégâts infligés sont convertis en PV pour le lanceur. Cette capacité peut aussi brûler la cible."
   },
   "syrupBomb": {
-    name: "Bombe au sirop",
+    name: "Bombe au Sirop",
     effect: "Le lanceur jette une bombe qui recouvre la cible de sirop gluant et fait progressivement baisser la Vitesse de la cible pendant trois tours."
   },
   "ivyCudgel": {

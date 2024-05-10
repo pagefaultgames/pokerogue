@@ -11,6 +11,7 @@ import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/
 import { TrainerSlot } from "../data/trainer-config";
 import { Moves } from "../data/enums/moves";
 import { Variant } from "#app/data/variant";
+import { loadBattlerTag } from '../data/battler-tags';
 
 export default class PokemonData {
   public id: integer;
@@ -112,9 +113,18 @@ export default class PokemonData {
       if (!forHistory && source.summonData) {
         this.summonData.battleStats = source.summonData.battleStats;
         this.summonData.moveQueue = source.summonData.moveQueue;
-        this.summonData.tags = []; // TODO
-        this.summonData.moveset = source.summonData.moveset;
+        this.summonData.disabledMove = source.summonData.disabledMove;
+        this.summonData.disabledTurns = source.summonData.disabledTurns;
+        this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
+
+        this.summonData.ability = source.summonData.ability;
+        this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
         this.summonData.types = source.summonData.types;
+        
+        if (source.summonData.tags)
+          this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
+        else
+          this.summonData.tags = [];
       }
     }
   }
