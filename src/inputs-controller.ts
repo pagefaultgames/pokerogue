@@ -506,7 +506,6 @@ export class InputsController {
             return pad_dualshock;
         }
 
-            // return pad_dualshock;
         return pad_generic;
     }
 
@@ -652,7 +651,7 @@ export class InputsController {
 
     getActiveConfig() :GamepadConfig {
         if (this.configs[this.chosenGamepad]?.padID) return this.configs[this.chosenGamepad]
-        return pad_generic as GamepadConfig;
+        return null;
     }
 
     getPressedButtonLabel(button: Phaser.Input.Gamepad.Button) {

@@ -156,6 +156,17 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
             this.settingsContainer.add(optionsContainer);
         }
+        this.layout['noGamepads'] = new Map();
+        const optionsContainer = this.scene.add.container(0, 0);
+        optionsContainer.setVisible(false);
+        const label = addTextObject(this.scene, 8, 28, 'Please plug a controller or press a button', TextStyle.SETTINGS_LABEL);
+        label.setOrigin(0, 0);
+        optionsContainer.add(label);
+        this.settingsContainer.add(optionsContainer);
+
+        this.layout['noGamepads'].optionsContainer = optionsContainer;
+        this.layout['noGamepads'].label = label;
+
 
         ui.add(this.settingsContainer);
 
@@ -165,11 +176,18 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     updateBindings(): void {
         Object.keys(this.layout).forEach((key) => this.layout[key].optionsContainer.setVisible(false));
         const activeConfig = this.scene.inputController.getActiveConfig();
+        if (!activeConfig) {
+            const layout = this.layout['noGamepads'];
+            layout.optionsContainer.setVisible(true);
+            return;
+        }
         const configType = activeConfig.padType;
         this.cursorObj?.destroy();
         this.cursorObj = null;
         this.scrollCursor = null;
         const layout = this.layout[configType];
+        console.log('activeConfig', activeConfig);
+        console.log('layout', layout);
         this.keys = layout.keys;
         this.optionsContainer = layout.optionsContainer;
         this.optionsContainer.setVisible(true);
@@ -237,10 +255,12 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                     }
                     break;
                 case Button.LEFT:
+                    if (!this.optionCursors) return;
                     if (this.optionCursors[cursor])
                         success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
                     break;
                 case Button.RIGHT:
+                    if (!this.optionCursors) return;
                     if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
                         success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
                     break;
@@ -262,6 +282,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
     setCursor(cursor: integer): boolean {
         const ret = super.setCursor(cursor);
+        if (!this.optionsContainer) return ret;
 
         if (!this.cursorObj) {
             this.cursorObj = this.scene.add.nineslice(0, 0, 'summary_moves_cursor', null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
@@ -279,8 +300,9 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         for (const [index, key] of Object.keys(SettingGamepad).entries()) {
             const setting = SettingGamepad[key]
             if (setting === SettingGamepad.Default_Controller) {
-                for (const key of Object.keys(this.layout)) {
-                    this.layout[key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.chosenGamepad, 30));
+                for (const _key of Object.keys(this.layout)) {
+                    if (_key === 'noGamepads') continue;
+                    this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.chosenGamepad, 30));
                 }
             }
         }
@@ -324,6 +346,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     }
 
     updateSettingsScroll(): void {
+        if (!this.optionsContainer) return;
         this.optionsContainer.setY(-16 * this.scrollCursor);
 
         for (let s = 0; s < this.settingLabels.length; s++) {
