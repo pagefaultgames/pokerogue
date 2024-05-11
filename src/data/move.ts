@@ -1801,7 +1801,7 @@ export class SwapStatsAttr extends MoveEffectAttr
           }
         target.updateInfo();
         user.updateInfo();
-        target.scene.queueMessage(getPokemonMessage(user, ' swapped stat changes with the ') + getPokemonMessage(target, `!`));
+        target.scene.queueMessage(getPokemonMessage(user, ' switched stat changes with the target!'));
         return true;
     }
 }
