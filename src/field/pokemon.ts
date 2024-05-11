@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, IgnoreWeatherTypeDebuffAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, IgnoreWeatherTypeDebuffAttr, MultiHitType } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -1311,6 +1311,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
         const power = new Utils.NumberHolder(move.power);
+        if(move.getAttrs(MultiHitAttr).length && move.getAttrs(MultiHitAttr).find(attr => (attr as MultiHitAttr).multiHitType === MultiHitType._3_INCR)){
+          power.value *= this.battleData.hitCount + 1;
+        }
         const sourceTeraType = source.getTeraType();
         if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === type && power.value < 60 && move.priority <= 0 && !move.getAttrs(MultiHitAttr).length && !this.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id))
           power.value = 60;
