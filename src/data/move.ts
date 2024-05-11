@@ -1792,12 +1792,12 @@ export class SwapStatsAttr extends MoveEffectAttr
     {
         if (!super.apply(user, target, move, args))
             return false; //Exits if the move can't apply
-        let priorBoostArray : integer[] = [ 0, 0, 0, 0, 0, 0, 0 ]; //For storing user stat boosts
+        let priorBoost : integer; //For storing a stat boost
         for (let s = 0; s < target.summonData.battleStats.length; s++)
           {
-            priorBoostArray[s] = user.summonData.battleStats[s]; //Store user stat boosts
-            user.summonData.battleStats[s] = target.summonData.battleStats[s]; //Applies target boosts to self
-            target.summonData.battleStats[s] = priorBoostArray[s]; //Applies stored boosts to target
+            priorBoost = user.summonData.battleStats[s]; //Store user stat boost
+            user.summonData.battleStats[s] = target.summonData.battleStats[s]; //Applies target boost to self
+            target.summonData.battleStats[s] = priorBoost; //Applies stored boost to target
           }
         target.updateInfo();
         user.updateInfo();
