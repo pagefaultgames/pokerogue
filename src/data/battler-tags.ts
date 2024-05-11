@@ -1,7 +1,7 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
+import Pokemon, { MoveResult, HitResult, TurnMove } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
@@ -486,6 +486,53 @@ export class EncoreTag extends BattlerTag {
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s Encore\nended!'));
   }
+}
+
+export class TormentedTag extends BattlerTag {
+    public moveId: Moves;
+    constructor(sourceId: integer) {
+        super(BattlerTagType.TORMENTED, BattlerTagLapseType.TURN_END, 1, Moves.TORMENT, sourceId);
+    }
+    /**
+    * When given a battler tag or json representing one, load the data for it.
+    * @param {BattlerTag | any} source A battler tag
+    */
+    loadTag(source: BattlerTag | any): void {
+        super.loadTag(source);
+        this.moveId = source.moveId as Moves;
+    }
+
+    canAdd(pokemon: Pokemon): boolean {
+        if (pokemon.isMax())
+            return false;
+        return true;
+    }
+
+    onAdd(pokemon: Pokemon): void {
+        super.onAdd(pokemon);
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was subjected\nto torment!'));
+    }
+
+    onOverlap(pokemon: Pokemon): void {
+        super.onOverlap(pokemon);
+        //TODO: This is not official game text. Grab what the game actually says if this happens.
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready tormented!'));
+    }
+
+    //Extremely janky hack to just test sure that this works in the first place. Athebyne please don't ship this. At the end of every turn, disables the last move you've used, for one turn.
+    lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+        const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+        if (ret) {
+            const lastMove = pokemon.getLastXMoves(1)[0];
+            if (!lastMove)
+                return ret;
+            pokemon.summonData.disabledMove = lastMove.move;
+            pokemon.summonData.disabledTurns = 2;
+            
+            //pokemon.scene.queueMessage(disabledMove.getName(), `TORMENT TEST`);
+            return ret;
+        }
+    }
 }
 
 export class HelpingHandTag extends BattlerTag {
@@ -1270,7 +1317,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.CHARGING:
       return new ChargingTag(sourceMove, sourceId);
     case BattlerTagType.ENCORE:
-      return new EncoreTag(sourceId);
+          return new EncoreTag(sourceId);
+    case BattlerTagType.TORMENTED:
+          return new TormentedTag(sourceId);
     case BattlerTagType.HELPING_HAND:
       return new HelpingHandTag(sourceId);
     case BattlerTagType.INGRAIN:

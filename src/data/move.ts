@@ -2819,7 +2819,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.INFESTATION:
         return -3;
       case BattlerTagType.ENCORE:
-        return -2;
+            return -2;
+      case BattlerTagType.TORMENTED:
       case BattlerTagType.INGRAIN:
       case BattlerTagType.IGNORE_ACCURACY:
       case BattlerTagType.AQUA_RING:
@@ -4825,8 +4826,10 @@ export function initMoves() {
     new StatusMove(Moves.HAIL, Type.ICE, -1, 10, -1, 0, 3)
       .attr(WeatherChangeAttr, WeatherType.HAIL)
       .target(MoveTarget.BOTH_SIDES),
-    new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
-      .unimplemented(),
+      new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
+      .attr(AddBattlerTagAttr, BattlerTagType.TORMENTED, false, true)
+      .condition((user, target, move) => !target.getTag(BattlerTagType.TORMENTED) && !target.isMax())
+      .partial(),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)
       .attr(ConfuseAttr),
