@@ -60,6 +60,8 @@ const pad_dualshock = {
         RB: Button.CYCLE_SHINY,
         LT: Button.CYCLE_GENDER,
         RT: Button.CYCLE_ABILITY,
+        LS: Button.SPEED_UP,
+        RS: Button.SLOW_DOWN,
         LC_N: Button.UP,
         LC_S: Button.DOWN,
         LC_W: Button.LEFT,

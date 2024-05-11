@@ -74,14 +74,20 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
             this.optionsContainer.add(this.settingLabels[s]);
 
-            this.optionValueLabels.push(settingGamepadOptions[SettingGamepad[setting]].map((option, o) => {
+            const valueLabels = []
+            for (const [o, option] of settingGamepadOptions[SettingGamepad[setting]].entries()) {
+                if (noOptionsCursors.includes(SettingGamepad[setting])) {
+                    // need to find a way to fetch icons and display, maybe a placeholder.
+                    continue;
+                }
                 const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
                 valueLabel.setOrigin(0, 0);
 
                 this.optionsContainer.add(valueLabel);
 
-                return valueLabel;
-            }));
+                valueLabels.push(valueLabel);
+            }
+            this.optionValueLabels.push(valueLabels);
 
             const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
 
