@@ -1,1 +1,46 @@
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
+/**
+ * The menu namespace holds most miscellaneous text that isn't directly part of the game's
+ * contents or directly related to Pokemon data. This includes menu navigation, settings,
+ * account interactions, descriptive text, etc.
+ */
+export const menu: SimpleTranslationEntries = {
+    "cancel": "취소",
+    "continue": "이어하기",
+    "dailyRun": "일일 도전 (Beta)",
+    "loadGame": "불러오기",
+    "newGame": "새로운 게임",
+    "selectGameMode": "게임 모드를 선택해주세요.",
+    "logInOrCreateAccount": "로그인 또는 회원가입을 통해 게임을 시작할 수 있습니다. 이메일은 필요하지 않습니다!",
+    "username": "닉네임",
+    "password": "비밀번호",
+    "login": "로그인",
+    "register": "회원가입",
+    "emptyUsername": "닉네임은 비워둘 수 없습니다.",
+    "invalidLoginUsername": "입력하신 닉네임이 유효하지 않습니다.",
+    "invalidRegisterUsername": "닉네임에는 알파벳, 숫자, 밑줄만 포함되어야 합니다.",
+    "invalidLoginPassword": "입력하신 비밀번호가 유효하지 않습니다.",
+    "invalidRegisterPassword": "비밀번호는 6글자 이상이여야 합니다.",
+    "usernameAlreadyUsed": "입력하신 닉네임은 다른 사용자가 이용중입니다.",
+    "accountNonExistent": "입력하신 닉네임이 존재하지 않습니다.",
+    "unmatchingPassword": "입력하신 비밀번호가 일치하지 않습니다.",
+    "passwordNotMatchingConfirmPassword": "비밀번호가 비밀번호 재확인 값과 일치하지 않습니다.",
+    "confirmPassword": "비밀번호 확인",
+    "registrationAgeWarning": "회원가입을 통해, 귀하는 13세 이상임에 동의하게 됩니다.",
+    "backToLogin": "로그인 화면으로",
+    "failedToLoadSaveData": "저장 데이터를 로드하지 못했습니다. 페이지를 새로고침하세요.\n이 문제가 계속되면 관리자에게 문의하세요.",
+    "sessionSuccess": "세션을 성공적으로 불러왔습니다.",
+    "failedToLoadSession": "세션 데이터를 불러올 수 없습니다.\n데이터가 손상 되었을 수 있습니다.",
+    "boyOrGirl": "당신은 남자입니까, 여자입니까?",
+    "boy": "남자",
+    "girl": "여자",
+    "dailyRankings": "일일 랭킹",
+    "weeklyRankings": "주간 랭킹",
+    "noRankings": "랭킹 없음",
+    "loading": "로딩중…",
+    "playersOnline": "온라인 플레이어",
+    "empty":"비어 있음",
+    "yes":"네",
+    "no":"아니오",
+} as const;
