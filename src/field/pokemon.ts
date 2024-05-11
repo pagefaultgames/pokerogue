@@ -1263,7 +1263,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    while (movePool.length > 1 && this.moveset.length < 4) {
+    while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
       if (this.hasTrainer()) {
         // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
         // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
