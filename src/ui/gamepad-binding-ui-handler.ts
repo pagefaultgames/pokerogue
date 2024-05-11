@@ -163,9 +163,6 @@ export default class GamepadBindingUiHandler extends UiHandler {
                 break
             case Button.ACTION:
                 if (this.cursor === 0) {
-                    success = true;
-                    // Reverts UI to its previous state on cancel.
-                    // this.scene.ui.revertMode();
                     this.cancelFn();
                 } else {
                     success = true;
@@ -178,6 +175,8 @@ export default class GamepadBindingUiHandler extends UiHandler {
         // Plays a select sound effect if an action was successfully processed.
         if (success)
             ui.playSelect();
+        else
+            ui.playError();
 
         return success;
     }
@@ -189,13 +188,13 @@ export default class GamepadBindingUiHandler extends UiHandler {
             this.actionLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
             this.cancelLabel.setColor(this.getTextColor(TextStyle.WINDOW));
             this.cancelLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
-            return;
+            return true;
         }
         this.actionLabel.setColor(this.getTextColor(TextStyle.WINDOW));
         this.actionLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
         this.cancelLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
         this.cancelLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
-        return;
+        return true;
     }
 
     clear() {

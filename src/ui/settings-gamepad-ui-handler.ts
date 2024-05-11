@@ -105,7 +105,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                 for (const [o, option] of settingGamepadOptions[SettingGamepad[setting]].entries()) {
                     if (bindingSettings.includes(SettingGamepad[setting])) {
                         if (o) {
-                            const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+                            const valueLabel = addTextObject(this.scene, 0, 0, option, TextStyle.WINDOW);
                             valueLabel.setOrigin(0, 0);
                             optionsContainer.add(valueLabel);
                             valueLabels.push(valueLabel);
@@ -114,7 +114,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                         const key = getKeyForSettingName(config as GamepadConfig, SettingGamepad[setting]);
                         const icon = this.scene.add.sprite(0, 0, config.padType);
                         icon.setScale(0.1);
-                        icon.setOrigin(0, 0);
+                        icon.setOrigin(0, -0.1);
                         inputsIcons[key] = icon;
                         optionsContainer.add(icon);
                         valueLabels.push(icon);
