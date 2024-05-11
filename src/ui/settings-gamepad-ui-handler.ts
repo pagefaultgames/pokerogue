@@ -167,10 +167,10 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                     if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
                         success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
                     break;
-                case Button.LB:
+                case Button.CYCLE_FORM:
                     this.scene.ui.setMode(Mode.SETTINGS)
                     success = true;
-                case Button.RB:
+                case Button.CYCLE_SHINY:
                     this.scene.ui.setMode(Mode.SETTINGS)
                     success = true;
                     break;

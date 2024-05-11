@@ -66,7 +66,6 @@ export class InputsController {
 
     private gamepadSupport: boolean = true;
 
-    public customGamepadMapping = new Map();
     public chosenGamepad: String;
     private disconnectedGamepads: Array<String> = new Array();
 
@@ -287,6 +286,7 @@ export class InputsController {
             const mappedPad = this.mapGamepad(gamepadID);
             if (!this.player[gamepad]) this.player[gamepad] = {};
             this.player[gamepad]['mapping'] = mappedPad.gamepadMapping;
+            this.player[gamepad]['custom'] = mappedPad.gamepadMapping;
             this.player[gamepad]['icons'] = mappedPad.icons;
             this.player[gamepad]['type'] = mappedPad.padType;
         }
@@ -335,8 +335,8 @@ export class InputsController {
         gamepadMapping[this.player[this.chosenGamepad].mapping.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
         gamepadMapping[this.player[this.chosenGamepad].mapping.SELECT] = Button.STATS;
         gamepadMapping[this.player[this.chosenGamepad].mapping.START] = Button.MENU;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RB] = Button.RB;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LB] = Button.LB;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.RB] = Button.CYCLE_SHINY;
+        gamepadMapping[this.player[this.chosenGamepad].mapping.LB] = Button.CYCLE_FORM;
         gamepadMapping[this.player[this.chosenGamepad].mapping.LT] = Button.CYCLE_GENDER;
         gamepadMapping[this.player[this.chosenGamepad].mapping.RT] = Button.CYCLE_ABILITY;
         gamepadMapping[this.player[this.chosenGamepad].mapping.RC_W] = Button.CYCLE_NATURE;
@@ -440,8 +440,8 @@ export class InputsController {
             [Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
             [Button.MENU]: [keyCodes.ESC, keyCodes.M],
             [Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
-            [Button.RB]: [keyCodes.R],
-            [Button.LB]: [keyCodes.F],
+            [Button.CYCLE_SHINY]: [keyCodes.R],
+            [Button.CYCLE_FORM]: [keyCodes.F],
             [Button.CYCLE_GENDER]: [keyCodes.G],
             [Button.CYCLE_ABILITY]: [keyCodes.E],
             [Button.CYCLE_NATURE]: [keyCodes.N],

@@ -1,3 +1,6 @@
+import {SettingGamepad} from "../system/settings-gamepad";
+import {Button} from "#app/enums/buttons";
+
 /**
  * Generic pad mapping
  */
@@ -20,8 +23,7 @@ const pad_xbox360 = {
         LC_N: 12,
         LC_S: 13,
         LC_W: 14,
-        LC_E: 15,
-        MENU: 16
+        LC_E: 15
     },
     icons: {
         RC_S: "T_X_A_Color_Alt.png",
@@ -40,7 +42,26 @@ const pad_xbox360 = {
         LC_S: "T_X_Dpad_Down_Alt.png",
         LC_W: "T_X_Dpad_Left_Alt.png",
         LC_E: "T_X_Dpad_Right_Alt.png",
-        MENU: ""
+    },
+    setting: {
+        RC_S: SettingGamepad.Button_Action,
+        RC_E: SettingGamepad.Button_Cancel,
+    },
+    default: {
+        RC_S: Button.ACTION,
+        RC_E: Button.CANCEL,
+        RC_W: Button.CYCLE_NATURE,
+        RC_N: Button.CYCLE_VARIANT,
+        START: Button.MENU,
+        SELECT: Button.STATS,
+        LB: Button.CYCLE_FORM,
+        RB: Button.CYCLE_SHINY,
+        LT: Button.CYCLE_GENDER,
+        RT: Button.CYCLE_ABILITY,
+        LC_N: Button.UP,
+        LC_S: Button.DOWN,
+        LC_W: Button.LEFT,
+        LC_E: Button.RIGHT,
     }
 };
 

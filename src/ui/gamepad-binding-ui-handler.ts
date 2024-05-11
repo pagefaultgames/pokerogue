@@ -72,7 +72,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.iconDualshock.setOrigin(0.5);
         this.iconDualshock.setVisible(false);
 
-        this.alreadyAssignedText = addTextObject(this.scene, 0, 0, 'already assigned to', TextStyle.WINDOW);
+        this.alreadyAssignedText = addTextObject(this.scene, 0, 0, 'will swap with', TextStyle.WINDOW);
         this.alreadyAssignedText.setOrigin(0.5);
         this.alreadyAssignedText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
         this.alreadyAssignedText.setVisible(false);
@@ -87,9 +87,9 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.cancelLabel.setOrigin(0, 0.5);
         this.cancelLabel.setPositionRelative(this.actionBg, 10, this.actionBg.height / 2);
 
-        this.actionLabel = addTextObject(this.scene, 0, 0, 'Confirm', TextStyle.SETTINGS_LABEL);
+        this.actionLabel = addTextObject(this.scene, 0, 0, 'Confirm Swap', TextStyle.SETTINGS_LABEL);
         this.actionLabel.setOrigin(0, 0.5);
-        this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 45, this.actionBg.height / 2);
+        this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
 
 
         this.optionSelectContainer.add(this.iconXbox);

@@ -58,8 +58,8 @@ export class UiInputs {
         actions[Button.CANCEL] = () => this.buttonAb(Button.CANCEL);
         actions[Button.MENU] = () => this.buttonMenu();
         actions[Button.STATS] = () => this.buttonStats(true);
-        actions[Button.RB] = () => this.buttonCycleOption(Button.RB);
-        actions[Button.LB] = () => this.buttonCycleOption(Button.LB);
+        actions[Button.CYCLE_SHINY] = () => this.buttonCycleOption(Button.CYCLE_SHINY);
+        actions[Button.CYCLE_FORM] = () => this.buttonCycleOption(Button.CYCLE_FORM);
         actions[Button.CYCLE_GENDER] = () => this.buttonCycleOption(Button.CYCLE_GENDER);
         actions[Button.CYCLE_ABILITY] = () => this.buttonCycleOption(Button.CYCLE_ABILITY);
         actions[Button.CYCLE_NATURE] = () => this.buttonCycleOption(Button.CYCLE_NATURE);
