@@ -3486,7 +3486,6 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.arenaBg.setVisible(false);
         this.scene.ui.fadeIn(250).then(() => {
           this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
             this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
@@ -3513,7 +3512,6 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.arenaBg.setVisible(false);
         this.scene.ui.fadeIn(250).then(() => {
           this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
             resolve();
@@ -3651,7 +3649,6 @@ export class UnlockPhase extends Phase {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.playSound('level_up_fanfare');
       this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.arenaBg.setVisible(false);
       this.scene.ui.fadeIn(250).then(() => {
         this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
           this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
