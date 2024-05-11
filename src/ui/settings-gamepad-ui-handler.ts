@@ -16,6 +16,10 @@ import {
     getIconForSettingName,
     getKeyForSettingName
 } from "#app/configs/gamepad-utils";
+import pad_xbox360 from "#app/configs/pad_xbox360";
+import pad_dualshock from "#app/configs/pad_dualshock";
+import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
+import {GamepadConfig} from "#app/inputs-controller";
 
 export default class SettingsGamepadUiHandler extends UiHandler {
     private settingsContainer: Phaser.GameObjects.Container;
@@ -37,6 +41,9 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     private gamepads: Array<String>;
 
     private inputsIcons;
+
+    private layout = new Map();
+    private keys;
 
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);
@@ -67,99 +74,126 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2);
         this.optionsBg.setOrigin(0, 0);
 
-        this.optionsContainer = this.scene.add.container(0, 0);
-
-        this.settingLabels = [];
-        this.optionValueLabels = [];
-        this.inputsIcons = {};
-
-        Object.keys(SettingGamepad).forEach((setting, s) => {
-            let settingName = setting.replace(/\_/g, ' ');
-
-            this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
-            this.settingLabels[s].setOrigin(0, 0);
-
-            this.optionsContainer.add(this.settingLabels[s]);
-
-            const valueLabels = []
-            for (const [o, option] of settingGamepadOptions[SettingGamepad[setting]].entries()) {
-                if (noOptionsCursors.includes(SettingGamepad[setting])) {
-                    if (o) {
-                        const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
-                        valueLabel.setOrigin(0, 0);
-                        this.optionsContainer.add(valueLabel);
-                        valueLabels.push(valueLabel);
-                        continue;
-                    }
-                    const key = getKeyForSettingName(this.scene.inputController.getActiveConfig(), SettingGamepad[setting]);
-                    const icon = this.scene.add.sprite(0, 0, 'xbox');
-                    icon.setScale(0.1);
-                    icon.setOrigin(0, 0);
-                    this.inputsIcons[key] = icon;
-                    this.optionsContainer.add(icon);
-                    valueLabels.push(icon);
-                    continue;
-                }
-                const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
-                valueLabel.setOrigin(0, 0);
-
-                this.optionsContainer.add(valueLabel);
-
-                valueLabels.push(valueLabel);
-            }
-            this.optionValueLabels.push(valueLabels);
-
-            const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
-
-            const labelWidth =  Math.max(78, this.settingLabels[s].displayWidth + 8);
-
-            const totalSpace = (300 - labelWidth) - totalWidth / 6;
-            const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
-
-            let xOffset = 0;
-
-            for (let value of this.optionValueLabels[s]) {
-                value.setPositionRelative(this.settingLabels[s], labelWidth + xOffset, 0);
-                xOffset += value.width / 6 + optionSpacing;
-            }
-        });
-
-        this.optionCursors = Object.values(settingGamepadDefaults);
-
         this.settingsContainer.add(headerBg);
         this.settingsContainer.add(headerText);
         this.settingsContainer.add(gamepadText);
         this.settingsContainer.add(this.optionsBg);
-        this.settingsContainer.add(this.optionsContainer);
+
+        for (const config of [pad_xbox360, pad_dualshock, pad_unlicensedSNES]) {
+            this.layout[config.padType] = new Map();
+            const optionsContainer = this.scene.add.container(0, 0);
+            optionsContainer.setVisible(false);
+
+            const bindingSettings = Object.keys(config.setting).map(k=>config.setting[k]);
+
+            const settingLabels = [];
+            const optionValueLabels = [];
+            const inputsIcons = {};
+            Object.keys(SettingGamepad).forEach((setting, s) => {
+                let settingName = setting.replace(/\_/g, ' ');
+
+                settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
+                settingLabels[s].setOrigin(0, 0);
+
+                optionsContainer.add(settingLabels[s]);
+                const valueLabels = []
+                for (const [o, option] of settingGamepadOptions[SettingGamepad[setting]].entries()) {
+                    if (bindingSettings.includes(SettingGamepad[setting])) {
+                        if (o) {
+                            const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+                            valueLabel.setOrigin(0, 0);
+                            optionsContainer.add(valueLabel);
+                            valueLabels.push(valueLabel);
+                            continue;
+                        }
+                        const key = getKeyForSettingName(config as GamepadConfig, SettingGamepad[setting]);
+                        const icon = this.scene.add.sprite(0, 0, config.padType);
+                        icon.setScale(0.1);
+                        icon.setOrigin(0, 0);
+                        inputsIcons[key] = icon;
+                        optionsContainer.add(icon);
+                        valueLabels.push(icon);
+                        continue;
+                    }
+                    const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+                    valueLabel.setOrigin(0, 0);
+
+                    optionsContainer.add(valueLabel);
+
+                    valueLabels.push(valueLabel);
+                }
+                optionValueLabels.push(valueLabels);
+
+                const totalWidth = optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
+
+                const labelWidth =  Math.max(78, settingLabels[s].displayWidth + 8);
+
+                const totalSpace = (300 - labelWidth) - totalWidth / 6;
+                const optionSpacing = Math.floor(totalSpace / (optionValueLabels[s].length - 1));
+
+                let xOffset = 0;
+
+                for (let value of optionValueLabels[s]) {
+                    value.setPositionRelative(settingLabels[s], labelWidth + xOffset, 0);
+                    xOffset += value.width / 6 + optionSpacing;
+                }
+            });
+
+            const commonSettingKeys = Object.keys(SettingGamepad).slice(0, 3).map(key => SettingGamepad[key]);
+            const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.setting).map(k => config.setting[k])];
+            const optionCursors = Object.values(Object.keys(settingGamepadDefaults).filter(s => specificBindingKeys.includes(s)).map(k => settingGamepadDefaults[k]));
+
+            this.layout[config.padType].optionsContainer = optionsContainer;
+            this.layout[config.padType].inputsIcons = inputsIcons;
+            this.layout[config.padType].settingLabels = settingLabels;
+            this.layout[config.padType].optionValueLabels = optionValueLabels;
+            this.layout[config.padType].optionCursors = optionCursors
+            this.layout[config.padType].keys = specificBindingKeys
+            this.layout[config.padType].bindingSettings = bindingSettings
+
+            this.settingsContainer.add(optionsContainer);
+        }
 
         ui.add(this.settingsContainer);
-
-        this.setCursor(0);
-        this.setScrollCursor(0);
 
         this.settingsContainer.setVisible(false);
     }
 
     updateBindings(): void {
+        Object.keys(this.layout).forEach((key) => this.layout[key].optionsContainer.setVisible(false));
         const activeConfig = this.scene.inputController.getActiveConfig();
-        for (const elm of noOptionsCursors) {
+        const configType = activeConfig.padType;
+        const layout = this.layout[configType];
+        this.keys = layout.keys;
+        this.optionsContainer = layout.optionsContainer;
+        this.optionsContainer.setVisible(true);
+        this.settingLabels = layout.settingLabels;
+        this.optionValueLabels = layout.optionValueLabels;
+        this.optionCursors = layout.optionCursors;
+        this.inputsIcons = layout.inputsIcons;
+        const bindingSettings = layout.bindingSettings;
+
+        const settings: object = localStorage.hasOwnProperty('settingsGamepad') ? JSON.parse(localStorage.getItem('settingsGamepad')) : {};
+        this.keys.forEach((key, index) => {
+             this.setOptionCursor(index, settings.hasOwnProperty(key) ? settings[key] : this.optionCursors[index])
+        });
+
+        if (!activeConfig.custom) return;
+        for (const elm of bindingSettings) {
             const key = getKeyForSettingName(activeConfig, elm);
             const icon = getIconForSettingName(activeConfig, elm);
+            if (!this.inputsIcons[key]) debugger;
             this.inputsIcons[key].setFrame(icon);
         }
+        this.setCursor(0, true);
+        this.setScrollCursor(0, true);
     }
 
     show(args: any[]): boolean {
         super.show(args);
         this.updateBindings();
 
-        const settings: object = localStorage.hasOwnProperty('settingsGamepad') ? JSON.parse(localStorage.getItem('settingsGamepad')) : {};
-        // in the menu, for each line, we set the cursor position for each option, either on the previously selected, or the default value.
-        // if it's the default gamepad, we always want it by default to be on the very first option. never on "Change"
-        Object.keys(settingGamepadDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? ( setting === SettingGamepad.Default_Controller ? 0 : settings[setting]) : settingGamepadDefaults[setting]));
-
         this.settingsContainer.setVisible(true);
-        this.setCursor(0);
 
         this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
 
@@ -219,8 +253,13 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         return success;
     }
 
-    setCursor(cursor: integer): boolean {
+    setCursor(cursor: integer, override?: boolean): boolean {
         const ret = super.setCursor(cursor);
+
+        if (override) {
+            this.optionsContainer.remove(this.cursorObj);
+            this.cursorObj = null;
+        }
 
         if (!this.cursorObj) {
             this.cursorObj = this.scene.add.nineslice(0, 0, 'summary_moves_cursor', null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
@@ -237,7 +276,9 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         for (const [index, key] of Object.keys(SettingGamepad).entries()) {
             const setting = SettingGamepad[key]
             if (setting === SettingGamepad.Default_Controller) {
-                this.optionValueLabels[index][0].setText(truncateString(this.scene.inputController.chosenGamepad, 30));
+                for (const key of Object.keys(this.layout)) {
+                    this.layout[key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.chosenGamepad, 30));
+                }
             }
         }
     }
@@ -266,8 +307,8 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         return true;
     }
 
-    setScrollCursor(scrollCursor: integer): boolean {
-        if (scrollCursor === this.scrollCursor)
+    setScrollCursor(scrollCursor: integer, override?: boolean): boolean {
+        if (scrollCursor === this.scrollCursor && !override)
             return false;
 
         this.scrollCursor = scrollCursor;

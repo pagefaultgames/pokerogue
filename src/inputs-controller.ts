@@ -506,6 +506,7 @@ export class InputsController {
             return pad_dualshock;
         }
 
+            // return pad_dualshock;
         return pad_generic;
     }
 
