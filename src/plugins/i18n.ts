@@ -6,6 +6,7 @@ import { enConfig } from '#app/locales/en/config.js';
 import { esConfig } from '#app/locales/es/config.js';
 import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
+import { koConfig } from '#app/locales/ko/config.js';
 import { zhCnConfig } from '#app/locales/zh_CN/config.js';
 
 export interface SimpleTranslationEntries {
@@ -59,7 +60,7 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh_CN'],
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'ko', 'zh_CN'],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -79,6 +80,9 @@ export function initI18n(): void {
       },
       de: {
         ...deConfig
+      },
+      ko: {
+        ...koConfig
       },
       zh_CN: {
         ...zhCnConfig
