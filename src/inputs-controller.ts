@@ -257,18 +257,22 @@ export class InputsController {
         // If we don't do that, we have no way to determine if the gamepad is connected or not.
         // We want to know that because we want to hide it in the selection menu of gamepad to use
         this.disconnectedGamepads.push(thisGamepad.id);
-        // we look for gamepads still connected by substracting the 2 arrays
-        const gamepadsLeft = this.gamepads.filter(g => !this.disconnectedGamepads.includes(g.id)).map(g => g);
+        /** commented for now this code because i don't know anymore if it's good to do that
+         * for example i'm playing with a wireless gamepad that shutdown after 5 min
+         * i don't want my game to use my second controller when i turn back on my main gamepad
+         * we look for gamepads still connected by substracting the 2 arrays
+         */
+        // const gamepadsLeft = this.gamepads.filter(g => !this.disconnectedGamepads.includes(g.id)).map(g => g);
         // we check if the chosen gamepad is still connected
-        const chosenIsConnected = gamepadsLeft.some(g => g.id === this.chosenGamepad);
+        // const chosenIsConnected = gamepadsLeft.some(g => g.id === this.chosenGamepad);
         // if the chosen gamepad is disconnected, and we got others gamepad connected
-        if (!chosenIsConnected && gamepadsLeft?.length) {
+        // if (!chosenIsConnected && gamepadsLeft?.length) {
             // We remove the previously chosen gamepad
-            this.clearChosenGamepad();
+            // this.clearChosenGamepad();
             // and we set the first of the gamepad still connected as the chosen one.
-            this.setChosenGamepad(gamepadsLeft[0].id);
-            return;
-        }
+            // this.setChosenGamepad(gamepadsLeft[0].id);
+            // return;
+        // }
     }
 
     onReconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
