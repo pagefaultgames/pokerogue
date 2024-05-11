@@ -2401,7 +2401,7 @@ export class ReduceStatusEffectDurationAbAttr extends AbAttr {
 export class HealFromStatusAbAttr extends AbAttr {
   private healRatio: integer
   private statusEffects: StatusEffect[];
-  constructor(healRatio: integer,statusEffects: StatusEffect[]) {
+  constructor(healRatio: integer, statusEffects: StatusEffect[]) {
     super();
     this.healRatio = healRatio;
     this.statusEffects = statusEffects;
