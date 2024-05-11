@@ -1321,7 +1321,7 @@ export class BypassBurnDamageReductionAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.BooleanHolder).value = true;
 
-    return true 
+    return true; 
   }
 }
 

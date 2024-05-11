@@ -1405,7 +1405,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
-              applyMoveAttrs(BypassBurnDamageReductionAttr, source, this, move, burnDamageReductionCancelled)
+              applyMoveAttrs(BypassBurnDamageReductionAttr, source, this, move, burnDamageReductionCancelled);
 
               if(!burnDamageReductionCancelled.value){
                 applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled);
