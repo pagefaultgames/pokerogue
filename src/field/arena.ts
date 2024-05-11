@@ -18,7 +18,7 @@ import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import { WEATHER_OVERRIDE } from '../overrides';
+import * as Overrides from '../overrides';
 
 export class Arena {
   public scene: BattleScene;
@@ -273,6 +273,11 @@ export class Arena {
     return 131 / 180;
   }
 
+  /**
+   * Sets weather to the override specified in overrides.ts
+   * @param weather new weather to set of type WeatherType
+   * @returns true to force trySetWeather to return true
+   */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
     this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -280,10 +285,15 @@ export class Arena {
     return true
   }
 
+  /**
+   * Attempts to set a new weather to the battle
+   * @param weather new weather to set of type WeatherType
+   * @param hasPokemonSource is the new weather from a pokemon
+   * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
+   */
   trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
-    // override hook for debugging
-    if (WEATHER_OVERRIDE)
-      return this.trySetWeatherOverride(WEATHER_OVERRIDE);
+    if (Overrides.WEATHER_OVERRIDE)
+      return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     
     if (this.weather?.weatherType === (weather || undefined))
       return false;
@@ -572,7 +582,7 @@ export class Arena {
       case Biome.TALL_GRASS:
         return 9.608;
       case Biome.METROPOLIS:
-        return 4.867;
+        return 141.470;
       case Biome.FOREST:
         return 4.294;
       case Biome.SEA:
@@ -626,7 +636,7 @@ export class Arena {
       case Biome.ISLAND:
         return 2.751;
       case Biome.LABORATORY:
-        return 0.797;
+        return 114.862;
       case Biome.SLUM:
         return 1.221;
       case Biome.SNOWY_FOREST:
@@ -636,19 +646,12 @@ export class Arena {
 }
 
 export function getBiomeKey(biome: Biome): string {
-  switch (biome) {
-    case Biome.METROPOLIS:
-      return 'slum';
-    case Biome.JUNGLE:
-      return 'tall_grass';
-    case Biome.ISLAND:
-      return 'beach';
-  }
   return Biome[biome].toLowerCase();
 }
 
 export function getBiomeHasProps(biomeType: Biome): boolean {
   switch (biomeType) {
+    case Biome.METROPOLIS:
     case Biome.BEACH:
     case Biome.LAKE:
     case Biome.SEABED:
@@ -666,8 +669,11 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.WASTELAND:
     case Biome.ABYSS:
     case Biome.CONSTRUCTION_SITE:
+    case Biome.JUNGLE:
     case Biome.FAIRY_CAVE:
     case Biome.TEMPLE:
+    case Biome.SNOWY_FOREST:
+    case Biome.ISLAND:
     case Biome.LABORATORY:
     case Biome.END:
       return true;
