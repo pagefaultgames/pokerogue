@@ -101,9 +101,21 @@ export default class BattleScene extends SceneBase {
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
 	public expGainsSpeed: integer = 0;
+	/**
+	 * Defines the experience gain display mode.
+	 *
+	 * @remarks
+	 * The `expParty` can have several modes:
+	 * - `0` - Default: The normal experience gain display, nothing changed.
+	 * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
+	 * - `2` - Skip: No level up frame nor message.
+	 *
+	 * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
+	 * @default 0 - Uses the default normal experience gain display.
+	 */
+	public expParty: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
-	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	public abSwapped: boolean = false;
@@ -746,6 +758,8 @@ export default class BattleScene extends SceneBase {
 		[ this.luckLabelText, this.luckText ].map(t => t.setVisible(false));
 
 		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
+
+		this.field.setVisible(true);
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
