@@ -8,7 +8,12 @@ import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
 import {SettingGamepad} from "./system/settings-gamepad";
-import {getIconForCustomIndex, getKeyForButtonIndex} from "#app/configs/gamepad-utils";
+import {
+    getButtonIndexForKey,
+    getIconForCustomIndex,
+    getKeyForButtonIndex,
+    getKeyForSettingName
+} from "./configs/gamepad-utils";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -33,6 +38,7 @@ export interface GamepadConfig {
     icons: IconsMapping;
     setting: SettingMapping;
     default: DefaultMapping;
+    custom: DefaultMapping;
 }
 
 export interface ActionGamepadMapping {
@@ -321,10 +327,6 @@ export class InputsController {
         for (const [index, thisGamepad] of this.gamepads.entries()) {
             thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier
         }
-    }
-
-    getButtonLabel(button: Phaser.Input.Gamepad.Button) {
-        return getIconForCustomIndex(this.configs[this.chosenGamepad], button.index);
     }
 
     /**
@@ -647,5 +649,25 @@ export class InputsController {
 
     getActiveConfig() :GamepadConfig {
         return this.configs[this.chosenGamepad] || pad_generic;
+    }
+
+    getPressedButtonLabel(button: Phaser.Input.Gamepad.Button) {
+        return [this.configs[this.chosenGamepad].padType, getIconForCustomIndex(this.configs[this.chosenGamepad], button.index)];
+    }
+
+    getCurrentButtonLabel(target: SettingGamepad) {
+        const key = getKeyForSettingName(this.configs[this.chosenGamepad], target);
+        const id = getButtonIndexForKey(this.configs[this.chosenGamepad], key);
+        return getIconForCustomIndex(this.configs[this.chosenGamepad], id);
+    }
+
+    swapBinding(target, newBinding) {
+        this.deactivatePressedKey();
+        const keyTarget = getKeyForSettingName(this.configs[this.chosenGamepad], target);
+        const keyNewBinding = getKeyForButtonIndex(this.configs[this.chosenGamepad], newBinding);
+        const previousActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyNewBinding];
+        const ActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyTarget];
+        this.configs[this.chosenGamepad].custom[keyTarget] = previousActionForThisNewBinding;
+        this.configs[this.chosenGamepad].custom[keyNewBinding] = ActionForThisNewBinding;
     }
 }

@@ -139,6 +139,12 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         this.settingsContainer.setVisible(false);
     }
 
+    updateBindings(): void {
+        // for (const elm of noOptionsCursors) {
+        //     console.log('elm:', elm);
+        // }
+    }
+
     show(args: any[]): boolean {
         super.show(args);
 

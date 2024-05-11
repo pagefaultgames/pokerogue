@@ -102,9 +102,10 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
         case SettingGamepad.Button_Slow_Down:
             if (value) {
                 if (scene.ui) {
-                    const cancelHandler = () => {
+                    const cancelHandler = (success: boolean = false) => {
                         scene.ui.revertMode();
-                        return false;
+                        (scene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
+                        return success;
                     };
                     scene.ui.setOverlayMode(Mode.GAMEPAD_BINDING, {
                         target: setting,

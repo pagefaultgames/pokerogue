@@ -5,6 +5,7 @@ import {Button} from "../enums/buttons";
 import {addWindow} from "./ui-theme";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import Phaser from "phaser";
+import {SettingGamepad} from "../system/settings-gamepad";
 
 
 export default class GamepadBindingUiHandler extends UiHandler {
@@ -24,7 +25,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
     private previousIconXbox: Phaser.GameObjects.Sprite;
     private iconDualshock: Phaser.GameObjects.Sprite;
     private cancelFn;
-    private target;
+    private target: SettingGamepad;
 
     constructor(scene: BattleScene, mode: Mode = Mode.GAMEPAD_BINDING) {
         super(scene, mode);
@@ -104,7 +105,8 @@ export default class GamepadBindingUiHandler extends UiHandler {
         const blacklist = [12, 13, 14, 15];
         if (!this.listening || pad.id !== this.scene.inputController?.chosenGamepad || blacklist.includes(button.index) || this.buttonPressed !== null) return;
         this.buttonPressed = button.index;
-        const [type, buttonIcon] = this.scene.inputController.getButtonLabel(button);
+        const [type, buttonIcon] = this.scene.inputController.getPressedButtonLabel(button);
+        const assignedButtonIcon = this.scene.inputController.getCurrentButtonLabel(this.target);
         switch (type) {
             case 'dualshock':
                 this.iconXbox.setVisible(false);
@@ -118,6 +120,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
                 this.iconDualshock.setVisible(false);
                 this.iconXbox.setFrame(buttonIcon);
                 this.iconXbox.setVisible(true);
+                this.previousIconXbox.setFrame(assignedButtonIcon);
                 this.previousIconXbox.setVisible(true);
                 this.alreadyAssignedText.setVisible(true);
                 break
@@ -164,6 +167,10 @@ export default class GamepadBindingUiHandler extends UiHandler {
                     // Reverts UI to its previous state on cancel.
                     // this.scene.ui.revertMode();
                     this.cancelFn();
+                } else {
+                    success = true;
+                    this.scene.inputController.swapBinding(this.target, this.buttonPressed);
+                    this.cancelFn(success);
                 }
                 break;
         }
