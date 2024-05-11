@@ -1,6 +1,6 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MovePhase, NewBattlePhase, PartyEffectPhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -1775,6 +1775,37 @@ export class ResetStatsAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves which swap the user and the target's stat changes.
+ */
+export class SwapStatsAttr extends MoveEffectAttr
+{
+    /**
+   * Swaps the user and the target's stat changes.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean
+    {
+        if (!super.apply(user, target, move, args))
+            return false; //Exits if the move can't apply
+        let priorBoost : integer; //For storing a stat boost
+        for (let s = 0; s < target.summonData.battleStats.length; s++)
+          {
+            priorBoost = user.summonData.battleStats[s]; //Store user stat boost
+            user.summonData.battleStats[s] = target.summonData.battleStats[s]; //Applies target boost to self
+            target.summonData.battleStats[s] = priorBoost; //Applies stored boost to target
+          }
+        target.updateInfo();
+        user.updateInfo();
+        target.scene.queueMessage(getPokemonMessage(user, ' switched stat changes with the target!'));
+        return true;
+    }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -2653,6 +2684,11 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
 };
 
 export class TypelessAttr extends MoveAttr { }
+/**
+* Attribute used for moves which ignore redirection effects, and always target their original target, i.e. Snipe Shot
+* Bypasses Storm Drain, Follow Me, Ally Switch, and the like.
+*/ 
+export class BypassRedirectAttr extends MoveAttr { }
 
 export class DisableMoveAttr extends MoveEffectAttr {
   constructor() {
@@ -5176,7 +5212,7 @@ export function initMoves() {
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
     new StatusMove(Moves.HEART_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(SwapStatsAttr),
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
@@ -6172,7 +6208,8 @@ export function initMoves() {
       .attr(DiscourageFrequentUseAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SNIPE_SHOT, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
-      .partial(),
+      .attr(HighCritAttr)  
+      .attr(BypassRedirectAttr),
     new AttackMove(Moves.JAW_LOCK, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
@@ -6709,8 +6746,9 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, false)
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, 100, 0, 9)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true)
-      .attr(RemoveArenaTrapAttr),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true, null, true, true)
+      .attr(RemoveArenaTrapAttr)
+      .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.SNOWSCAPE, Type.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)
       .target(MoveTarget.BOTH_SIDES),

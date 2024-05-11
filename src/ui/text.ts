@@ -135,7 +135,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.MESSAGE:
       return !shadow ? '#f8f8f8' : '#6b5a73';
     case TextStyle.WINDOW:
-      case TextStyle.MOVE_INFO_CONTENT:
+    case TextStyle.MOVE_INFO_CONTENT:
     case TextStyle.TOOLTIP_CONTENT:
       if (uiTheme)
         return !shadow ? '#484848' : '#d0d0c8';
