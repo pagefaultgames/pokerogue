@@ -7,7 +7,6 @@ import { esConfig } from '#app/locales/es/config.js';
 import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
 import { zhCnConfig } from '#app/locales/zh_CN/config.js';
-
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -35,10 +34,17 @@ export interface Localizable {
 }
 
 export function initI18n(): void {
+  // Prevent reinitialization
+  if (isInitialized) {
+    return;
+  }
+  isInitialized = true;
   let lang = '';
 
   if (localStorage.getItem('prLang'))
     lang = localStorage.getItem('prLang');
+
+
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -101,6 +107,9 @@ declare module 'i18next' {
       pokemonStat: SimpleTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
     };
@@ -108,3 +117,9 @@ declare module 'i18next' {
 }
 
 export default i18next;
+
+export function getIsInitialized(): boolean {
+  return isInitialized;
+}
+
+let isInitialized = false;

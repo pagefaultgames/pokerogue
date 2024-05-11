@@ -1647,7 +1647,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.GRASS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.STUDENT ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.SCHOOL_KID ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -7270,7 +7270,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.STRIKER, [] ],
-    [ TrainerType.STUDENT, [
+    [ TrainerType.SCHOOL_KID, [
         [ Biome.GRASS, BiomePoolTier.COMMON ]
       ] 
     ],
