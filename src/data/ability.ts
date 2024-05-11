@@ -2259,13 +2259,17 @@ export class CheckTrappedAbAttr extends AbAttr {
     super(false);
   }
   
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon[], args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean {
+  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon[], args: any[]): boolean {
+    if (otherPokemon[0].getTypes().includes(Type.GHOST)){
+      trapped.value = false;
+      return false;
+    }
     trapped.value = true;
     return true;
   }
