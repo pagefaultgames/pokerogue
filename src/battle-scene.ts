@@ -1973,6 +1973,7 @@ export default class BattleScene extends SceneBase {
 	
 	updateGameInfo(): void {
 		const gameInfo = {
+			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
 			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
 			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
 			wave: this.currentBattle?.waveIndex || 0,

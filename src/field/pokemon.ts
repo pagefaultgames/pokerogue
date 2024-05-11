@@ -423,7 +423,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getFusionIconId(ignoreOverride?: boolean): string {
-    return this.getFusionSpeciesForm(ignoreOverride).getIconId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny, this.variant);
+    return this.getFusionSpeciesForm(ignoreOverride).getIconId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny, this.fusionVariant);
   }
 
   getSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
@@ -731,7 +731,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const overrideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
     if (overrideArray.length > 0) {
       overrideArray.forEach((move: Moves, index: number) => {
-        const ppUsed = this.moveset[index]?.ppUp || 0;
+        const ppUsed = this.moveset[index]?.ppUsed || 0;
         this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp))
       });
     }
