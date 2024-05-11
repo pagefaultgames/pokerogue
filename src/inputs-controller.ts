@@ -8,6 +8,7 @@ import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
 import {SettingGamepad} from "./system/settings-gamepad";
+import {getIconForCustomIndex, getKeyForButtonIndex} from "#app/configs/gamepad-utils";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -72,7 +73,7 @@ export class InputsController {
     private buttonLock2: Button;
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Phaser.Time.Clock;
-    private player;
+    private configs: Map<string, GamepadConfig> = new Map();
 
     private gamepadSupport: boolean = true;
 
@@ -94,7 +95,6 @@ export class InputsController {
         this.scene = scene;
         this.time = this.scene.time;
         this.buttonKeys = [];
-        this.player = {};
 
         for (const b of Utils.getEnumValues(Button)) {
             this.interactions[b] = {
@@ -295,15 +295,11 @@ export class InputsController {
         // we fetch all the gamepads name
         const allGamepads = this.getGamepadsName();
         for (const gamepad of allGamepads) {
-            // for each gamepad, we set its mapping in this.player
+            // for each gamepad, we set its mapping in this.configs
             const gamepadID = gamepad.toLowerCase();
-            const mappedPad = this.mapGamepad(gamepadID);
-            if (!this.player[gamepad]) this.player[gamepad] = {};
-            this.player[gamepad]['mapping'] = mappedPad.gamepadMapping;
-            this.player[gamepad]['custom'] = mappedPad.gamepadMapping;
-            this.player[gamepad]['icons'] = mappedPad.icons;
-            this.player[gamepad]['type'] = mappedPad.padType;
-            this.player[gamepad]['default'] = mappedPad.default;
+            const config = this.getConfig(gamepadID);
+            this.configs[gamepad] = config;
+            this.configs[gamepad].custom = {...config.default};
         }
         if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
@@ -327,46 +323,8 @@ export class InputsController {
         }
     }
 
-    /**
-     * Retrieves the current gamepad mapping for in-game actions.
-     *
-     * @returns An object mapping gamepad buttons to in-game actions based on the player's current gamepad configuration.
-     *
-     * @remarks
-     * This method constructs a mapping of gamepad buttons to in-game action buttons according to the player's
-     * current gamepad configuration. If no configuration is available, it returns an empty mapping.
-     * The mapping includes directional controls, action buttons, and system commands among others,
-     * adjusted for any custom settings such as swapped action buttons.
-     */
-    getActionGamepadMapping(): ActionGamepadMapping {
-        const gamepadMapping = {};
-        if (!this.player[this.chosenGamepad] || !this.player[this.chosenGamepad]?.mapping || !this.chosenGamepad) return gamepadMapping;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_N] = Button.UP;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_S] = Button.DOWN;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_W] = Button.LEFT;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LC_E] = Button.RIGHT;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.TOUCH] = Button.SUBMIT;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_S] = this.scene.abSwapped ? Button.CANCEL : Button.ACTION;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.SELECT] = Button.STATS;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.START] = Button.MENU;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RB] = Button.CYCLE_SHINY;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LB] = Button.CYCLE_FORM;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LT] = Button.CYCLE_GENDER;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RT] = Button.CYCLE_ABILITY;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_W] = Button.CYCLE_NATURE;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RC_N] = Button.CYCLE_VARIANT;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.LS] = Button.SPEED_UP;
-        gamepadMapping[this.player[this.chosenGamepad].mapping.RS] = Button.SLOW_DOWN;
-
-        return gamepadMapping;
-    }
-
     getButtonLabel(button: Phaser.Input.Gamepad.Button) {
-        const icons = this.player[this.chosenGamepad]['icons'];
-        const mapping = this.player[this.chosenGamepad]['mapping'];
-        const key = Object.keys(mapping).find(key => mapping[key] === button.index);
-        return [this.player[this.chosenGamepad]['type'], icons[key]];
+        return getIconForCustomIndex(this.configs[this.chosenGamepad], button.index);
     }
 
     /**
@@ -387,8 +345,8 @@ export class InputsController {
         if (!this.chosenGamepad) // at the very first input, if we have not yet a chosen gamepad, we set it
             this.setChosenGamepad(pad.id);
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.chosenGamepad.toLowerCase()) return;
-        const actionMapping = this.getActionGamepadMapping();
-        const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
+        const key = getKeyForButtonIndex(this.configs[pad.id], button.index);
+        const buttonDown = this.configs[pad.id].custom[key];
         if (buttonDown !== undefined) {
             this.events.emit('input_down', {
                 controller_type: 'gamepad',
@@ -414,8 +372,8 @@ export class InputsController {
     gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
         if (!pad) return;
         if (!this.gamepadSupport || pad.id !== this.chosenGamepad) return;
-        const actionMapping = this.getActionGamepadMapping();
-        const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
+        const key = getKeyForButtonIndex(this.configs[pad.id], button.index);
+        const buttonUp = this.configs[pad.id]?.custom[key];
         if (buttonUp !== undefined) {
             this.events.emit('input_up', {
                 controller_type: 'gamepad',
@@ -531,7 +489,7 @@ export class InputsController {
      * - If the ID contains '054c', it is identified as a DualShock gamepad.
      * If no specific identifiers are recognized, a generic gamepad configuration is returned.
      */
-    mapGamepad(id: string): GamepadConfig {
+    getConfig(id: string): GamepadConfig {
         id = id.toLowerCase();
 
         if (id.includes('081f') && id.includes('e401')) {
