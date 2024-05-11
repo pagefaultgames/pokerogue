@@ -8,7 +8,6 @@ import {Button} from "../enums/buttons";
 export enum SettingGamepad {
     Default_Controller = "DEFAULT_CONTROLLER",
     Gamepad_Support = "GAMEPAD_SUPPORT",
-    Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
     Button_Action = "BUTTON_ACTION",
     Button_Cancel = "BUTTON_CANCEL",
     Button_Menu = "BUTTON_MENU",
@@ -27,7 +26,6 @@ export enum SettingGamepad {
 export const settingGamepadOptions: SettingOptions = {
     [SettingGamepad.Default_Controller]: ['Default', 'Change'],
     [SettingGamepad.Gamepad_Support]: ['Auto', 'Disabled'],
-    [SettingGamepad.Swap_A_and_B]: ['Enabled', 'Disabled'],
     [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
     [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
     [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Change'],
@@ -46,7 +44,6 @@ export const settingGamepadOptions: SettingOptions = {
 export const settingGamepadDefaults: SettingDefaults = {
     [SettingGamepad.Default_Controller]: 0,
     [SettingGamepad.Gamepad_Support]: 0,
-    [SettingGamepad.Swap_A_and_B]: 1, // Set to 'Disabled' by default
     [SettingGamepad.Button_Action]: 0,
     [SettingGamepad.Button_Cancel]: 0,
     [SettingGamepad.Button_Menu]: 0,
@@ -84,9 +81,6 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
             // if we change the value of the gamepad support, we call a method in the inputController to
             // activate or deactivate the controller listener
             scene.inputController.setGamepadSupport(settingGamepadOptions[setting][value] !== 'Disabled');
-            break;
-        case SettingGamepad.Swap_A_and_B:
-            scene.abSwapped = settingGamepadOptions[setting][value] !== 'Disabled';
             break;
         case SettingGamepad.Button_Action:
         case SettingGamepad.Button_Cancel:

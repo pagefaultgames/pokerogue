@@ -90,7 +90,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
             const optionValueLabels = [];
             const inputsIcons = {};
 
-            const commonSettingKeys = Object.keys(SettingGamepad).slice(0, 3).map(key => SettingGamepad[key]);
+            const commonSettingKeys = Object.keys(SettingGamepad).slice(0, 2).map(key => SettingGamepad[key]);
             const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.setting).map(k => config.setting[k])];
             const optionCursors = Object.values(Object.keys(settingGamepadDefaults).filter(s => specificBindingKeys.includes(s)).map(k => settingGamepadDefaults[k]));
 
@@ -186,8 +186,6 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         this.cursorObj = null;
         this.scrollCursor = null;
         const layout = this.layout[configType];
-        console.log('activeConfig', activeConfig);
-        console.log('layout', layout);
         this.keys = layout.keys;
         this.optionsContainer = layout.optionsContainer;
         this.optionsContainer.setVisible(true);
