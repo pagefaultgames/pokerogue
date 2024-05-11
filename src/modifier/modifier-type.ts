@@ -21,6 +21,8 @@ import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
 import { Localizable } from '#app/plugins/i18n';
 import { getModifierTierTextTint } from '#app/ui/text';
+import { WeatherDamageImmunityModifier } from './modifier';
+import { Abilities } from '#app/data/enums/abilities.js';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -1075,6 +1077,15 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 4),
     new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(party[0].scene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
     new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(3 - rerollCount, 0) : 0, 3),
+    new WeightedModifierType(modifierTypes.SAFETY_GOGGLES, (party: Pokemon[]) => {
+      const hasRelevantMove: boolean = party.filter(p => p.getMoveset().filter(m => ([Moves.SANDSTORM, Moves.HAIL].includes(m.getMove().id)))).length > 0;
+      const hasRelevantAbility: boolean = party.filter(p => p.hasAbility(Abilities.SAND_SPIT) || p.hasAbility(Abilities.SAND_STREAM)).length > 0;
+      if (hasRelevantMove || hasRelevantAbility) {
+        return 10;
+      } else {
+        return 1;
+      }
+    }),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, 24),
