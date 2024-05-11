@@ -2,787 +2,787 @@ import { AbilityTranslationEntries } from "#app/plugins/i18n.js";
 
 export const ability: AbilityTranslationEntries = {
   stench: {
-    name: "Stench",
+    name: "악취",
     description: "By releasing stench when attacking, this Pokémon may cause the target to flinch.",
   },
   drizzle: {
-    name: "Drizzle",
+    name: "잔비",
     description: "The Pokémon makes it rain when it enters a battle.",
   },
   speedBoost: {
-    name: "Speed Boost",
+    name: "가속",
     description: "Its Speed stat is boosted every turn.",
   },
   battleArmor: {
-    name: "Battle Armor",
+    name: "전투무장",
     description: "Hard armor protects the Pokémon from critical hits.",
   },
   sturdy: {
-    name: "Sturdy",
+    name: "옹골참",
     description: "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.",
   },
   damp: {
-    name: "Damp",
+    name: "습기",
     description: "Prevents the use of explosive moves, such as Self-Destruct, by dampening its surroundings.",
   },
   limber: {
-    name: "Limber",
+    name: "유연",
     description: "Its limber body protects the Pokémon from paralysis.",
   },
   sandVeil: {
-    name: "Sand Veil",
+    name: "모래숨기",
     description: "Boosts the Pokémon's evasiveness in a sandstorm.",
   },
   static: {
-    name: "Static",
+    name: "정전기",
     description: "The Pokémon is charged with static electricity, so contact with it may cause paralysis.",
   },
   voltAbsorb: {
-    name: "Volt Absorb",
+    name: "축전",
     description: "Restores HP if hit by an Electric-type move instead of taking damage.",
   },
   waterAbsorb: {
-    name: "Water Absorb",
+    name: "저수",
     description: "Restores HP if hit by a Water-type move instead of taking damage.",
   },
   oblivious: {
-    name: "Oblivious",
+    name: "둔감",
     description: "The Pokémon is oblivious, and that keeps it from being infatuated or falling for taunts.",
   },
   cloudNine: {
-    name: "Cloud Nine",
+    name: "날씨부정",
     description: "Eliminates the effects of weather.",
   },
   compoundEyes: {
-    name: "Compound Eyes",
+    name: "복안",
     description: "The Pokémon's compound eyes boost its accuracy.",
   },
   insomnia: {
-    name: "Insomnia",
+    name: "불면",
     description: "The Pokémon is suffering from insomnia and cannot fall asleep.",
   },
   colorChange: {
-    name: "Color Change",
+    name: "변색",
     description: "The Pokémon's type becomes the type of the move used on it.",
   },
   immunity: {
-    name: "Immunity",
+    name: "면역",
     description: "The immune system of the Pokémon prevents it from getting poisoned.",
   },
   flashFire: {
-    name: "Flash Fire",
+    name: "타오르는불꽃",
     description: "Powers up the Pokémon's Fire-type moves if it's hit by one.",
   },
   shieldDust: {
-    name: "Shield Dust",
+    name: "인분",
     description: "This Pokémon's dust blocks the additional effects of attacks taken.",
   },
   ownTempo: {
-    name: "Own Tempo",
+    name: "마이페이스",
     description: "This Pokémon has its own tempo, and that prevents it from becoming confused.",
   },
   suctionCups: {
-    name: "Suction Cups",
+    name: "흡반",
     description: "This Pokémon uses suction cups to stay in one spot to negate all moves and items that force switching out.",
   },
   intimidate: {
-    name: "Intimidate",
+    name: "위협",
     description: "The Pokémon intimidates opposing Pokémon upon entering battle, lowering their Attack stat.",
   },
   shadowTag: {
-    name: "Shadow Tag",
+    name: "그림자밟기",
     description: "This Pokémon steps on the opposing Pokémon's shadow to prevent it from escaping.",
   },
   roughSkin: {
-    name: "Rough Skin",
+    name: "까칠한피부",
     description: "This Pokémon inflicts damage with its rough skin to the attacker on contact.",
   },
   wonderGuard: {
-    name: "Wonder Guard",
+    name: "불가사의부적",
     description: "Its mysterious power only lets supereffective moves hit the Pokémon.",
   },
   levitate: {
-    name: "Levitate",
+    name: "부유",
     description: "By floating in the air, the Pokémon receives full immunity to all Ground-type moves.",
   },
   effectSpore: {
-    name: "Effect Spore",
+    name: "포자",
     description: "Contact with the Pokémon may inflict poison, sleep, or paralysis on its attacker.",
   },
   synchronize: {
-    name: "Synchronize",
+    name: "싱크로",
     description: "The attacker will receive the same status condition if it inflicts a burn, poison, or paralysis to the Pokémon.",
   },
   clearBody: {
-    name: "Clear Body",
+    name: "클리어바디",
     description: "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.",
   },
   naturalCure: {
-    name: "Natural Cure",
+    name: "자연회복",
     description: "All status conditions heal when the Pokémon switches out.",
   },
   lightningRod: {
-    name: "Lightning Rod",
+    name: "피뢰침",
     description: "The Pokémon draws in all Electric-type moves. Instead of being hit by Electric-type moves, it boosts its Sp. Atk.",
   },
   sereneGrace: {
-    name: "Serene Grace",
+    name: "하늘의은총",
     description: "Boosts the likelihood of additional effects occurring when attacking.",
   },
   swiftSwim: {
-    name: "Swift Swim",
+    name: "쓱쓱",
     description: "Boosts the Pokémon's Speed stat in rain.",
   },
   chlorophyll: {
-    name: "Chlorophyll",
+    name: "엽록소",
     description: "Boosts the Pokémon's Speed stat in harsh sunlight.",
   },
   illuminate: {
-    name: "Illuminate",
+    name: "발광",
     description: "By illuminating its surroundings, the Pokémon raises the likelihood of meeting wild Pokémon and prevents its accuracy from being lowered.",
   },
   trace: {
-    name: "Trace",
+    name: "트레이스",
     description: "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.",
   },
   hugePower: {
-    name: "Huge Power",
+    name: "천하장사",
     description: "Doubles the Pokémon's Attack stat.",
   },
   poisonPoint: {
-    name: "Poison Point",
+    name: "독가시",
     description: "Contact with the Pokémon may poison the attacker.",
   },
   innerFocus: {
-    name: "Inner Focus",
+    name: "정신력",
     description: "The Pokémon's intensely focused, and that protects the Pokémon from flinching.",
   },
   magmaArmor: {
-    name: "Magma Armor",
+    name: "마그마의무장",
     description: "The Pokémon is covered with hot magma, which prevents the Pokémon from becoming frozen.",
   },
   waterVeil: {
-    name: "Water Veil",
+    name: "수의베일",
     description: "The Pokémon is covered with a water veil, which prevents the Pokémon from getting a burn.",
   },
   magnetPull: {
-    name: "Magnet Pull",
+    name: "자력",
     description: "Prevents Steel-type Pokémon from escaping using its magnetic force.",
   },
   soundproof: {
-    name: "Soundproof",
+    name: "방음",
     description: "Soundproofing gives the Pokémon full immunity to all sound-based moves.",
   },
   rainDish: {
-    name: "Rain Dish",
+    name: "젖은접시",
     description: "The Pokémon gradually regains HP in rain.",
   },
   sandStream: {
-    name: "Sand Stream",
+    name: "모래날림",
     description: "The Pokémon summons a sandstorm when it enters a battle.",
   },
   pressure: {
-    name: "Pressure",
+    name: "프레셔",
     description: "By putting pressure on the opposing Pokémon, it raises their PP usage.",
   },
   thickFat: {
-    name: "Thick Fat",
+    name: "두꺼운지방",
     description: "The Pokémon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.",
   },
   earlyBird: {
-    name: "Early Bird",
+    name: "일찍기상",
     description: "The Pokémon awakens from sleep twice as fast as other Pokémon.",
   },
   flameBody: {
-    name: "Flame Body",
+    name: "불꽃몸",
     description: "Contact with the Pokémon may burn the attacker.",
   },
   runAway: {
-    name: "Run Away",
+    name: "도주",
     description: "Enables a sure getaway from wild Pokémon.",
   },
   keenEye: {
-    name: "Keen Eye",
+    name: "날카로운눈",
     description: "Keen eyes prevent other Pokémon from lowering this Pokémon's accuracy.",
   },
   hyperCutter: {
-    name: "Hyper Cutter",
+    name: "괴력집게",
     description: "The Pokémon's proud of its powerful pincers. They prevent other Pokémon from lowering its Attack stat.",
   },
   pickup: {
-    name: "Pickup",
+    name: "픽업",
     description: "The Pokémon may pick up the item an opposing Pokémon held during a battle.",
   },
   truant: {
-    name: "Truant",
+    name: "게으름",
     description: "The Pokémon can't use a move if it had used a move on the previous turn.",
   },
   hustle: {
-    name: "Hustle",
+    name: "의욕",
     description: "Boosts the Attack stat, but lowers accuracy.",
   },
   cuteCharm: {
-    name: "Cute Charm",
+    name: "헤롱헤롱",
     description: "Contact with the Pokémon may cause infatuation.",
   },
   plus: {
-    name: "Plus",
+    name: "플러스",
     description: "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.",
   },
   minus: {
-    name: "Minus",
+    name: "마이너스",
     description: "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.",
   },
   forecast: {
-    name: "Forecast",
+    name: "기분파",
     description: "The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.",
   },
   stickyHold: {
-    name: "Sticky Hold",
+    name: "점착",
     description: "Items held by the Pokémon are stuck fast and cannot be removed by other Pokémon.",
   },
   shedSkin: {
-    name: "Shed Skin",
+    name: "탈피",
     description: "The Pokémon may heal its own status conditions by shedding its skin.",
   },
   guts: {
-    name: "Guts",
+    name: "근성",
     description: "It's so gutsy that having a status condition boosts the Pokémon's Attack stat.",
   },
   marvelScale: {
-    name: "Marvel Scale",
+    name: "이상한비늘",
     description: "The Pokémon's marvelous scales boost the Defense stat if it has a status condition.",
   },
   liquidOoze: {
-    name: "Liquid Ooze",
+    name: "해감액",
     description: "The oozed liquid has a strong stench, which damages attackers using any draining move.",
   },
   overgrow: {
-    name: "Overgrow",
+    name: "심록",
     description: "Powers up Grass-type moves when the Pokémon's HP is low.",
   },
   blaze: {
-    name: "Blaze",
+    name: "맹화",
     description: "Powers up Fire-type moves when the Pokémon's HP is low.",
   },
   torrent: {
-    name: "Torrent",
+    name: "급류",
     description: "Powers up Water-type moves when the Pokémon's HP is low.",
   },
   swarm: {
-    name: "Swarm",
+    name: "벌레의알림",
     description: "Powers up Bug-type moves when the Pokémon's HP is low.",
   },
   rockHead: {
-    name: "Rock Head",
+    name: "돌머리",
     description: "Protects the Pokémon from recoil damage.",
   },
   drought: {
-    name: "Drought",
+    name: "가뭄",
     description: "Turns the sunlight harsh when the Pokémon enters a battle.",
   },
   arenaTrap: {
-    name: "Arena Trap",
+    name: "개미지옥",
     description: "Prevents opposing Pokémon from fleeing.",
   },
   vitalSpirit: {
-    name: "Vital Spirit",
+    name: "의기양양",
     description: "The Pokémon is full of vitality, and that prevents it from falling asleep.",
   },
   whiteSmoke: {
-    name: "White Smoke",
+    name: "하얀연기",
     description: "The Pokémon is protected by its white smoke, which prevents other Pokémon from lowering its stats.",
   },
   purePower: {
-    name: "Pure Power",
+    name: "순수한힘",
     description: "Using its pure power, the Pokémon doubles its Attack stat.",
   },
   shellArmor: {
-    name: "Shell Armor",
+    name: "조가비갑옷",
     description: "A hard shell protects the Pokémon from critical hits.",
   },
   airLock: {
-    name: "Air Lock",
+    name: "에어록",
     description: "Eliminates the effects of weather.",
   },
   tangledFeet: {
-    name: "Tangled Feet",
+    name: "갈지자걸음",
     description: "Raises evasiveness if the Pokémon is confused.",
   },
   motorDrive: {
-    name: "Motor Drive",
+    name: "전기엔진",
     description: "Boosts its Speed stat if hit by an Electric-type move instead of taking damage.",
   },
   rivalry: {
-    name: "Rivalry",
+    name: "투쟁심",
     description: "Becomes competitive and deals more damage to Pokémon of the same gender, but deals less to Pokémon of the opposite gender.",
   },
   steadfast: {
-    name: "Steadfast",
+    name: "불굴의마음",
     description: "The Pokémon's determination boosts the Speed stat each time the Pokémon flinches.",
   },
   snowCloak: {
-    name: "Snow Cloak",
+    name: "눈숨기",
     description: "Boosts the Pokémon's evasiveness in snow.",
   },
   gluttony: {
-    name: "Gluttony",
+    name: "먹보",
     description: "Makes the Pokémon eat a held Berry when its HP drops to half or less, which is sooner than usual.",
   },
   angerPoint: {
-    name: "Anger Point",
+    name: "분노의경혈",
     description: "The Pokémon is angered when it takes a critical hit, and that maxes its Attack stat.",
   },
   unburden: {
-    name: "Unburden",
+    name: "곡예",
     description: "Boosts the Speed stat if the Pokémon's held item is used or lost.",
   },
   heatproof: {
-    name: "Heatproof",
+    name: "내열",
     description: "The heatproof body of the Pokémon halves the damage from Fire-type moves that hit it.",
   },
   simple: {
-    name: "Simple",
+    name: "단순",
     description: "The stat changes the Pokémon receives are doubled.",
   },
   drySkin: {
-    name: "Dry Skin",
+    name: "건조피부",
     description: "Restores HP in rain or when hit by Water-type moves. Reduces HP in harsh sunlight, and increases the damage received from Fire-type moves.",
   },
   download: {
-    name: "Download",
+    name: "다운로드",
     description: "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.",
   },
   ironFist: {
-    name: "Iron Fist",
+    name: "철주먹",
     description: "Powers up punching moves.",
   },
   poisonHeal: {
-    name: "Poison Heal",
+    name: "포이즌힐",
     description: "Restores HP if the Pokémon is poisoned instead of losing HP.",
   },
   adaptability: {
-    name: "Adaptability",
+    name: "적응력",
     description: "Powers up moves of the same type as the Pokémon.",
   },
   skillLink: {
-    name: "Skill Link",
+    name: "스킬링크",
     description: "Maximizes the number of times multistrike moves hit.",
   },
   hydration: {
-    name: "Hydration",
+    name: "촉촉바디",
     description: "Heals status conditions if it's raining.",
   },
   solarPower: {
-    name: "Solar Power",
+    name: "선파워",
     description: "Boosts the Sp. Atk stat in harsh sunlight, but HP decreases every turn.",
   },
   quickFeet: {
-    name: "Quick Feet",
+    name: "속보",
     description: "Boosts the Speed stat if the Pokémon has a status condition.",
   },
   normalize: {
-    name: "Normalize",
+    name: "노말스킨",
     description: "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.",
   },
   sniper: {
-    name: "Sniper",
+    name: "스나이파",
     description: "Powers up moves if they become critical hits when attacking.",
   },
   magicGuard: {
-    name: "Magic Guard",
+    name: "매직가드",
     description: "The Pokémon only takes damage from attacks.",
   },
   noGuard: {
-    name: "No Guard",
+    name: "노가드",
     description: "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.",
   },
   stall: {
-    name: "Stall",
+    name: "시간벌기",
     description: "The Pokémon moves after all other Pokémon do.",
   },
   technician: {
-    name: "Technician",
+    name: "테크니션",
     description: "Powers up the Pokémon's weaker moves.",
   },
   leafGuard: {
-    name: "Leaf Guard",
+    name: "리프가드",
     description: "Prevents status conditions in harsh sunlight.",
   },
   klutz: {
-    name: "Klutz",
+    name: "서투름",
     description: "The Pokémon can't use any held items.",
   },
   moldBreaker: {
-    name: "Mold Breaker",
+    name: "틀깨기",
     description: "Moves can be used on the target regardless of its Abilities.",
   },
   superLuck: {
-    name: "Super Luck",
+    name: "대운",
     description: "The Pokémon is so lucky that the critical-hit ratios of its moves are boosted.",
   },
   aftermath: {
-    name: "Aftermath",
+    name: "유폭",
     description: "Damages the attacker if it contacts the Pokémon with a finishing hit.",
   },
   anticipation: {
-    name: "Anticipation",
+    name: "위험예지",
     description: "The Pokémon can sense an opposing Pokémon's dangerous moves.",
   },
   forewarn: {
-    name: "Forewarn",
+    name: "예지몽",
     description: "When it enters a battle, the Pokémon can tell one of the moves an opposing Pokémon has.",
   },
   unaware: {
-    name: "Unaware",
+    name: "천진",
     description: "When attacking, the Pokémon ignores the target Pokémon's stat changes.",
   },
   tintedLens: {
-    name: "Tinted Lens",
+    name: "색안경",
     description: 'The Pokémon can use "not very effective" moves to deal regular damage.',
   },
   filter: {
-    name: "Filter",
+    name: "필터",
     description: "Reduces the power of supereffective attacks taken.",
   },
   slowStart: {
-    name: "Slow Start",
+    name: "슬로스타트",
     description: "For five turns, the Pokémon's Attack and Speed stats are halved.",
   },
   scrappy: {
-    name: "Scrappy",
+    name: "배짱",
     description: "The Pokémon can hit Ghost-type Pokémon with Normal- and Fighting-type moves.",
   },
   stormDrain: {
-    name: "Storm Drain",
+    name: "마중물",
     description: "Draws in all Water-type moves. Instead of being hit by Water-type moves, it boosts its Sp. Atk.",
   },
   iceBody: {
-    name: "Ice Body",
+    name: "아이스바디",
     description: "The Pokémon gradually regains HP in snow.",
   },
   solidRock: {
-    name: "Solid Rock",
+    name: "하드록",
     description: "Reduces the power of supereffective attacks taken.",
   },
   snowWarning: {
-    name: "Snow Warning",
+    name: "눈퍼뜨리기",
     description: "The Pokémon makes it snow when it enters a battle.",
   },
   honeyGather: {
-    name: "Honey Gather",
+    name: "꿀모으기",
     description: "The Pokémon may gather Honey after a battle.",
   },
   frisk: {
-    name: "Frisk",
+    name: "통찰",
     description: "When it enters a battle, the Pokémon can check an opposing Pokémon's held item.",
   },
   reckless: {
-    name: "Reckless",
+    name: "이판사판",
     description: "Powers up moves that have recoil damage.",
   },
   multitype: {
-    name: "Multitype",
+    name: "멀티타입",
     description: "Changes the Pokémon's type to match the Plate or Z-Crystal it holds.",
   },
   flowerGift: {
-    name: "Flower Gift",
+    name: "플라워기프트",
     description: "Boosts the Attack and Sp. Def stats of itself and allies in harsh sunlight.",
   },
   badDreams: {
-    name: "Bad Dreams",
+    name: "나이트메어",
     description: "Reduces the HP of sleeping opposing Pokémon.",
   },
   pickpocket: {
-    name: "Pickpocket",
+    name: "나쁜손버릇",
     description: "Steals an item from an attacker that made direct contact.",
   },
   sheerForce: {
-    name: "Sheer Force",
+    name: "우격다짐",
     description: "Removes additional effects to increase the power of moves when attacking.",
   },
   contrary: {
-    name: "Contrary",
+    name: "심술꾸러기",
     description: "Makes stat changes have an opposite effect.",
   },
   unnerve: {
-    name: "Unnerve",
+    name: "긴장감",
     description: "Unnerves opposing Pokémon and makes them unable to eat Berries.",
   },
   defiant: {
-    name: "Defiant",
+    name: "오기",
     description: "Boosts the Pokémon's Attack stat sharply when its stats are lowered.",
   },
   defeatist: {
-    name: "Defeatist",
+    name: "무기력",
     description: "Halves the Pokémon's Attack and Sp. Atk stats when its HP becomes half or less.",
   },
   cursedBody: {
-    name: "Cursed Body",
+    name: "저주받은바디",
     description: "May disable a move used on the Pokémon.",
   },
   healer: {
-    name: "Healer",
+    name: "치유의마음",
     description: "Sometimes heals an ally's status condition.",
   },
   friendGuard: {
-    name: "Friend Guard",
+    name: "프렌드가드",
     description: "Reduces damage done to allies.",
   },
   weakArmor: {
-    name: "Weak Armor",
+    name: "깨어진갑옷",
     description: "Physical attacks to the Pokémon lower its Defense stat but sharply raise its Speed stat.",
   },
   heavyMetal: {
-    name: "Heavy Metal",
+    name: "헤비메탈",
     description: "Doubles the Pokémon's weight.",
   },
   lightMetal: {
-    name: "Light Metal",
+    name: "라이트메탈",
     description: "Halves the Pokémon's weight.",
   },
   multiscale: {
-    name: "Multiscale",
+    name: "멀티스케일",
     description: "Reduces the amount of damage the Pokémon takes while its HP is full.",
   },
   toxicBoost: {
-    name: "Toxic Boost",
+    name: "독폭주",
     description: "Powers up physical attacks when the Pokémon is poisoned.",
   },
   flareBoost: {
-    name: "Flare Boost",
+    name: "열폭주",
     description: "Powers up special attacks when the Pokémon is burned.",
   },
   harvest: {
-    name: "Harvest",
+    name: "수확",
     description: "May create another Berry after one is used.",
   },
   telepathy: {
-    name: "Telepathy",
+    name: "텔레파시",
     description: "Anticipates an ally's attack and dodges it.",
   },
   moody: {
-    name: "Moody",
+    name: "변덕쟁이",
     description: "Raises one stat sharply and lowers another every turn.",
   },
   overcoat: {
-    name: "Overcoat",
+    name: "방진",
     description: "Protects the Pokémon from things like sand, hail, and powder.",
   },
   poisonTouch: {
-    name: "Poison Touch",
+    name: "독수",
     description: "May poison a target when the Pokémon makes contact.",
   },
   regenerator: {
-    name: "Regenerator",
+    name: "재생력",
     description: "Restores a little HP when withdrawn from battle.",
   },
   bigPecks: {
-    name: "Big Pecks",
+    name: "부풀린가슴",
     description: "Protects the Pokémon from Defense-lowering effects.",
   },
   sandRush: {
-    name: "Sand Rush",
+    name: "모래헤치기",
     description: "Boosts the Pokémon's Speed stat in a sandstorm.",
   },
   wonderSkin: {
-    name: "Wonder Skin",
+    name: "미라클스킨",
     description: "Makes status moves more likely to miss.",
   },
   analytic: {
-    name: "Analytic",
+    name: "애널라이즈",
     description: "Boosts move power when the Pokémon moves last.",
   },
   illusion: {
-    name: "Illusion",
+    name: "일루전",
     description: "Comes out disguised as the Pokémon in the party's last spot.",
   },
   imposter: {
-    name: "Imposter",
+    name: "괴짜",
     description: "The Pokémon transforms itself into the Pokémon it's facing.",
   },
   infiltrator: {
-    name: "Infiltrator",
+    name: "틈새포착",
     description: "Passes through the opposing Pokémon's barrier, substitute, and the like and strikes.",
   },
   mummy: {
-    name: "Mummy",
+    name: "미라",
     description: "Contact with the Pokémon changes the attacker's Ability to Mummy.",
   },
   moxie: {
-    name: "Moxie",
+    name: "자기과신",
     description: "The Pokémon shows moxie, and that boosts the Attack stat after knocking out any Pokémon.",
   },
   justified: {
-    name: "Justified",
+    name: "정의의마음",
     description: "Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.",
   },
   rattled: {
-    name: "Rattled",
+    name: "주눅",
     description: "Intimidate or being hit by a Dark-, Ghost-, or Bug-type move will scare the Pokémon and boost its Speed stat.",
   },
   magicBounce: {
-    name: "Magic Bounce",
+    name: "매직미러",
     description: "Reflects status moves instead of getting hit by them.",
   },
   sapSipper: {
-    name: "Sap Sipper",
+    name: "초식",
     description: "Boosts the Attack stat if hit by a Grass-type move instead of taking damage.",
   },
   prankster: {
-    name: "Prankster",
+    name: "짓궃은마음",
     description: "Gives priority to a status move.",
   },
   sandForce: {
-    name: "Sand Force",
+    name: "모래의힘",
     description: "Boosts the power of Rock-, Ground-, and Steel-type moves in a sandstorm.",
   },
   ironBarbs: {
-    name: "Iron Barbs",
+    name: "철가시",
     description: "Inflicts damage on the attacker upon contact with iron barbs.",
   },
   zenMode: {
-    name: "Zen Mode",
+    name: "달마모드",
     description: "Changes the Pokémon's shape when HP is half or less.",
   },
   victoryStar: {
-    name: "Victory Star",
+    name: "승리의별",
     description: "Boosts the accuracy of its allies and itself.",
   },
   turboblaze: {
-    name: "Turboblaze",
+    name: "터보블레이즈",
     description: "Moves can be used on the target regardless of its Abilities.",
   },
   teravolt: {
-    name: "Teravolt",
+    name: "테라볼티지",
     description: "Moves can be used on the target regardless of its Abilities.",
   },
   aromaVeil: {
-    name: "Aroma Veil",
+    name: "아로마베일",
     description: "Protects itself and its allies from attacks that limit their move choices.",
   },
   flowerVeil: {
-    name: "Flower Veil",
+    name: "플라워베일",
     description: "Ally Grass-type Pokémon are protected from status conditions and the lowering of their stats.",
   },
   cheekPouch: {
-    name: "Cheek Pouch",
+    name: "볼주머니",
     description: "Restores HP as well when the Pokémon eats a Berry.",
   },
   protean: {
-    name: "Protean",
+    name: "변환자재",
     description: "Changes the Pokémon's type to the type of the move it's about to use.",
   },
   furCoat: {
-    name: "Fur Coat",
+    name: "퍼코트",
     description: "Halves the damage from physical moves.",
   },
   magician: {
-    name: "Magician",
+    name: "매지션",
     description: "The Pokémon steals the held item of a Pokémon it hits with a move.",
   },
   bulletproof: {
-    name: "Bulletproof",
+    name: "방탄",
     description: "Protects the Pokémon from some ball and bomb moves.",
   },
   competitive: {
-    name: "Competitive",
+    name: "승기",
     description: "Boosts the Sp. Atk stat sharply when a stat is lowered.",
   },
   strongJaw: {
-    name: "Strong Jaw",
+    name: "옹골찬턱",
     description: "The Pokémon's strong jaw boosts the power of its biting moves.",
   },
   refrigerate: {
-    name: "Refrigerate",
+    name: "프리즈스킨",
     description: "Normal-type moves become Ice-type moves. The power of those moves is boosted a little.",
   },
   sweetVeil: {
-    name: "Sweet Veil",
+    name: "스위트베일",
     description: "Prevents itself and ally Pokémon from falling asleep.",
   },
   stanceChange: {
-    name: "Stance Change",
+    name: "배틀스위치",
     description: "The Pokémon changes its form to Blade Forme when it uses an attack move and changes to Shield Forme when it uses King's Shield.",
   },
   galeWings: {
-    name: "Gale Wings",
+    name: "질풍날개",
     description: "Gives priority to Flying-type moves when the Pokémon's HP is full.",
   },
   megaLauncher: {
-    name: "Mega Launcher",
+    name: "메가런처",
     description: "Powers up aura and pulse moves.",
   },
   grassPelt: {
-    name: "Grass Pelt",
+    name: "풀모피",
     description: "Boosts the Pokémon's Defense stat on Grassy Terrain.",
   },
   symbiosis: {
-    name: "Symbiosis",
+    name: "공생",
     description: "The Pokémon passes its item to an ally that has used up an item.",
   },
   toughClaws: {
-    name: "Tough Claws",
+    name: "단단한발톱",
     description: "Powers up moves that make direct contact.",
   },
   pixilate: {
-    name: "Pixilate",
+    name: "페어리스킨",
     description: "Normal-type moves become Fairy-type moves. The power of those moves is boosted a little.",
   },
   gooey: {
-    name: "Gooey",
+    name: "미끈미끈",
     description: "Contact with the Pokémon lowers the attacker's Speed stat.",
   },
   aerilate: {
-    name: "Aerilate",
+    name: "스카이스킨",
     description: "Normal-type moves become Flying-type moves. The power of those moves is boosted a little.",
   },
   parentalBond: {
-    name: "Parental Bond",
+    name: "부자유친",
     description: "Parent and child each attacks.",
   },
   darkAura: {
-    name: "Dark Aura",
+    name: "다크오라",
     description: "Powers up each Pokémon's Dark-type moves.",
   },
   fairyAura: {
-    name: "Fairy Aura",
+    name: "페어리오라",
     description: "Powers up each Pokémon's Fairy-type moves.",
   },
   auraBreak: {
-    name: "Aura Break",
+    name: "오라브레이크",
     description: 'The effects of "Aura" Abilities are reversed to lower the power of affected moves.',
   },
   primordialSea: {
-    name: "Primordial Sea",
+    name: "시작의바다",
     description: "The Pokémon changes the weather to nullify Fire-type attacks.",
   },
   desolateLand: {
-    name: "Desolate Land",
+    name: "끝의대지",
     description: "The Pokémon changes the weather to nullify Water-type attacks.",
   },
   deltaStream: {
-    name: "Delta Stream",
+    name: "델타스트림",
     description: "The Pokémon changes the weather to eliminate all of the Flying type's weaknesses.",
   },
   stamina: {
-    name: "Stamina",
+    name: "지구력",
     description: "Boosts the Defense stat when hit by an attack.",
   },
   wimpOut: {
-    name: "Wimp Out",
+    name: "도망태세",
     description: "The Pokémon cowardly switches out when its HP becomes half or less.",
   },
   emergencyExit: {
-    name: "Emergency Exit",
+    name: "위기회피",
     description: "The Pokémon, sensing danger, switches out when its HP becomes half or less.",
   },
   waterCompaction: {
-    name: "Water Compaction",
+    name: "꾸덕꾸덕굳기",
     description: "Boosts the Pokémon's Defense stat sharply when hit by a Water-type move.",
   },
   merciless: {
-    name: "Merciless",
+    name: "merciless",
     description: "The Pokémon's attacks become critical hits if the target is poisoned.",
   },
   shieldsDown: {
@@ -898,7 +898,7 @@ export const ability: AbilityTranslationEntries = {
     description: "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.",
   },
   rksSystem: {
-    name: "RKS System",
+    name: "AR시스템",
     description: "Changes the Pokémon's type to match the memory disc it holds.",
   },
   electricSurge: {
