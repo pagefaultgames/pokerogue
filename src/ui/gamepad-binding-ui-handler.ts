@@ -15,15 +15,13 @@ export default class GamepadBindingUiHandler extends UiHandler {
     protected actionBg: Phaser.GameObjects.NineSlice;
     protected optionSelectBg: Phaser.GameObjects.NineSlice;
     private unlockText: Phaser.GameObjects.Text;
-    private keyPressed: Phaser.GameObjects.Text;
-    private alreadyAssignedText: Phaser.GameObjects.Text;
+    private swapText: Phaser.GameObjects.Text;
     private actionLabel: Phaser.GameObjects.Text;
     private cancelLabel: Phaser.GameObjects.Text;
     private listening: boolean = false;
     private buttonPressed = null;
-    private iconXbox: Phaser.GameObjects.Sprite;
-    private previousIconXbox: Phaser.GameObjects.Sprite;
-    private iconDualshock: Phaser.GameObjects.Sprite;
+    private newButtonIcon: Phaser.GameObjects.Sprite;
+    private targetButtonIcon: Phaser.GameObjects.Sprite;
     private cancelFn;
     private target: SettingGamepad;
 
@@ -61,28 +59,22 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.optionSelectBg.setOrigin(0.5);
         this.optionSelectContainer.add(this.optionSelectBg);
 
-        this.iconXbox = this.scene.add.sprite(0, 0, 'xbox');
-        this.iconXbox.setScale(0.15);
-        this.iconXbox.setPositionRelative(this.optionSelectBg, 78, 16);
-        this.iconXbox.setOrigin(0.5);
-        this.iconXbox.setVisible(false);
+        this.newButtonIcon = this.scene.add.sprite(0, 0, 'xbox');
+        this.newButtonIcon.setScale(0.15);
+        this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 16);
+        this.newButtonIcon.setOrigin(0.5);
+        this.newButtonIcon.setVisible(false);
 
-        this.iconDualshock = this.scene.add.sprite(0, 0, 'dualshock');
-        this.iconDualshock.setScale(0.15);
-        this.iconDualshock.setPositionRelative(this.optionSelectBg, 78, 16);
-        this.iconDualshock.setOrigin(0.5);
-        this.iconDualshock.setVisible(false);
+        this.swapText = addTextObject(this.scene, 0, 0, 'will swap with', TextStyle.WINDOW);
+        this.swapText.setOrigin(0.5);
+        this.swapText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
+        this.swapText.setVisible(false);
 
-        this.alreadyAssignedText = addTextObject(this.scene, 0, 0, 'will swap with', TextStyle.WINDOW);
-        this.alreadyAssignedText.setOrigin(0.5);
-        this.alreadyAssignedText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
-        this.alreadyAssignedText.setVisible(false);
-
-        this.previousIconXbox = this.scene.add.sprite(0, 0, 'xbox');
-        this.previousIconXbox.setScale(0.15);
-        this.previousIconXbox.setPositionRelative(this.optionSelectBg, 78, 48);
-        this.previousIconXbox.setOrigin(0.5);
-        this.previousIconXbox.setVisible(false);
+        this.targetButtonIcon = this.scene.add.sprite(0, 0, 'xbox');
+        this.targetButtonIcon.setScale(0.15);
+        this.targetButtonIcon.setPositionRelative(this.optionSelectBg, 78, 48);
+        this.targetButtonIcon.setOrigin(0.5);
+        this.targetButtonIcon.setVisible(false);
 
         this.cancelLabel = addTextObject(this.scene, 0, 0, 'Cancel', TextStyle.SETTINGS_LABEL);
         this.cancelLabel.setOrigin(0, 0.5);
@@ -93,10 +85,9 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
 
 
-        this.optionSelectContainer.add(this.iconXbox);
-        this.optionSelectContainer.add(this.iconDualshock);
-        this.optionSelectContainer.add(this.alreadyAssignedText);
-        this.optionSelectContainer.add(this.previousIconXbox);
+        this.optionSelectContainer.add(this.newButtonIcon);
+        this.optionSelectContainer.add(this.swapText);
+        this.optionSelectContainer.add(this.targetButtonIcon);
         this.actionsContainer.add(this.actionLabel);
         this.actionsContainer.add(this.cancelLabel);
     }
@@ -107,24 +98,13 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.buttonPressed = button.index;
         const [type, buttonIcon] = this.scene.inputController.getPressedButtonLabel(button);
         const assignedButtonIcon = this.scene.inputController.getCurrentButtonLabel(this.target);
-        switch (type) {
-            case 'dualshock':
-                this.iconXbox.setVisible(false);
-                this.iconDualshock.setFrame(buttonIcon);
-                this.iconDualshock.setVisible(true);
-                this.previousIconXbox.setVisible(true);
-                this.alreadyAssignedText.setVisible(true);
-                break
-            case 'xbox':
-            default:
-                this.iconDualshock.setVisible(false);
-                this.iconXbox.setFrame(buttonIcon);
-                this.iconXbox.setVisible(true);
-                this.previousIconXbox.setFrame(assignedButtonIcon);
-                this.previousIconXbox.setVisible(true);
-                this.alreadyAssignedText.setVisible(true);
-                break
-        }
+        this.newButtonIcon.setTexture(type);
+        this.newButtonIcon.setFrame(buttonIcon);
+        this.targetButtonIcon.setTexture(type);
+        this.targetButtonIcon.setFrame(assignedButtonIcon);
+        this.newButtonIcon.setVisible(true);
+        this.targetButtonIcon.setVisible(true);
+        this.swapText.setVisible(true);
         this.setCursor(0);
         this.actionsContainer.setVisible(true);
     }
@@ -203,11 +183,8 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.cancelFn = null;
         this.optionSelectContainer.setVisible(false);
         this.actionsContainer.setVisible(false);
-        this.iconXbox.setVisible(false);
-        this.iconDualshock.setVisible(false);
-        this.previousIconXbox.setVisible(false);
-        this.alreadyAssignedText.setVisible(false);
-        this.iconXbox.setFrame(null);
-        this.iconDualshock.setFrame(null);
+        this.newButtonIcon.setVisible(false);
+        this.targetButtonIcon.setVisible(false);
+        this.swapText.setVisible(false);
     }
 }

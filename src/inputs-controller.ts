@@ -10,7 +10,7 @@ import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
 import {SettingGamepad} from "./system/settings-gamepad";
 import {
     getButtonIndexForKey,
-    getIconForCustomIndex, getIconForRebindedKey,
+    getIconForCustomIndex, getIconForRebindedKey, getIconForSettingName,
     getKeyForButtonIndex, getKeyForRebindedSettingName,
     getKeyForSettingName
 } from "./configs/gamepad-utils";
@@ -659,8 +659,7 @@ export class InputsController {
     }
 
     getCurrentButtonLabel(target: SettingGamepad) {
-        const key = getKeyForSettingName(this.configs[this.chosenGamepad], target);
-        return getIconForRebindedKey(this.configs[this.chosenGamepad], key);
+        return getIconForSettingName(this.configs[this.chosenGamepad], target);
     }
 
     swapBinding(target, newBinding) {
