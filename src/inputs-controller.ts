@@ -307,8 +307,9 @@ export class InputsController {
             // for each gamepad, we set its mapping in this.configs
             const gamepadID = gamepad.toLowerCase();
             const config = this.getConfig(gamepadID);
-            config.custom = this.configs[gamepad]?.custom || config.default;
+            config.custom = this.configs[gamepad]?.custom || {...config.default};
             this.configs[gamepad] = config;
+            this.scene.gameData?.saveCustomMapping(this.chosenGamepad, this.configs[gamepad]?.custom);
         }
         if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }

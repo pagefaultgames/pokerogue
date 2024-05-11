@@ -12,7 +12,10 @@ import {
     settingGamepadOptions
 } from "../system/settings-gamepad";
 import {truncateString} from "../utils";
-import {getIconForRebindedKey, getKeyForSettingName} from "#app/configs/gamepad-utils";
+import {
+    getIconForSettingName,
+    getKeyForSettingName
+} from "#app/configs/gamepad-utils";
 
 export default class SettingsGamepadUiHandler extends UiHandler {
     private settingsContainer: Phaser.GameObjects.Container;
@@ -141,7 +144,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         const activeConfig = this.scene.inputController.getActiveConfig();
         for (const elm of noOptionsCursors) {
             const key = getKeyForSettingName(activeConfig, elm);
-            const icon = getIconForRebindedKey(activeConfig, key);
+            const icon = getIconForSettingName(activeConfig, elm);
             this.inputsIcons[key].setFrame(icon);
         }
     }

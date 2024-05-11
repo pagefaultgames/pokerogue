@@ -59,7 +59,7 @@ const pad_xbox360 = {
     },
     default: {
         RC_S: Button.ACTION, //5
-        RC_E: Button.CANCEL,
+        RC_E: Button.CANCEL, // 6
         RC_W: Button.CYCLE_NATURE,
         RC_N: Button.CYCLE_VARIANT, //14
         START: Button.MENU, //7

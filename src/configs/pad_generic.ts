@@ -58,8 +58,8 @@ const pad_generic = {
         RS: SettingGamepad.Button_Slow_Down,
     },
     default: {
-        RC_S: Button.ACTION,
-        RC_E: Button.CANCEL,
+        RC_S: Button.ACTION, //5
+        RC_E: Button.CANCEL, // 6
         RC_W: Button.CYCLE_NATURE,
         RC_N: Button.CYCLE_VARIANT,
         START: Button.MENU,
