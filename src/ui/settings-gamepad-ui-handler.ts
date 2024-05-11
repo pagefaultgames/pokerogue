@@ -89,7 +89,13 @@ export default class SettingsGamepadUiHandler extends UiHandler {
             const settingLabels = [];
             const optionValueLabels = [];
             const inputsIcons = {};
-            Object.keys(SettingGamepad).forEach((setting, s) => {
+
+            const commonSettingKeys = Object.keys(SettingGamepad).slice(0, 3).map(key => SettingGamepad[key]);
+            const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.setting).map(k => config.setting[k])];
+            const optionCursors = Object.values(Object.keys(settingGamepadDefaults).filter(s => specificBindingKeys.includes(s)).map(k => settingGamepadDefaults[k]));
+
+            const settingGamepadFiltered = Object.keys(SettingGamepad).filter(_key => specificBindingKeys.includes(SettingGamepad[_key]));
+            settingGamepadFiltered.forEach((setting, s) => {
                 let settingName = setting.replace(/\_/g, ' ');
 
                 settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
@@ -139,9 +145,6 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                 }
             });
 
-            const commonSettingKeys = Object.keys(SettingGamepad).slice(0, 3).map(key => SettingGamepad[key]);
-            const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.setting).map(k => config.setting[k])];
-            const optionCursors = Object.values(Object.keys(settingGamepadDefaults).filter(s => specificBindingKeys.includes(s)).map(k => settingGamepadDefaults[k]));
 
             this.layout[config.padType].optionsContainer = optionsContainer;
             this.layout[config.padType].inputsIcons = inputsIcons;
@@ -194,6 +197,8 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         this.updateBindings();
 
         this.settingsContainer.setVisible(true);
+        this.setCursor(0);
+        this.setScrollCursor(0);
 
         this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
 
@@ -257,7 +262,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         const ret = super.setCursor(cursor);
 
         if (override) {
-            this.optionsContainer.remove(this.cursorObj);
+            Object.keys(this.layout).forEach(k => this.layout[k].optionsContainer.remove(this.cursorObj));
             this.cursorObj = null;
         }
 
@@ -273,6 +278,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     }
 
     updateChosenGamepadDisplay(): void {
+        this.updateBindings();
         for (const [index, key] of Object.keys(SettingGamepad).entries()) {
             const setting = SettingGamepad[key]
             if (setting === SettingGamepad.Default_Controller) {
