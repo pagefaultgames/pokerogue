@@ -644,4 +644,8 @@ export class InputsController {
     setBind(setting: SettingGamepad, button: Button) {
         console.log('button,', button);
     }
+
+    getActiveConfig() :GamepadConfig {
+        return this.configs[this.chosenGamepad] || pad_generic;
+    }
 }

@@ -1,4 +1,5 @@
 import {GamepadConfig} from "../inputs-controller";
+import {SettingGamepad} from "#app/system/settings-gamepad";
 
 
 export function getKeyForButtonIndex(config: GamepadConfig, index: integer): String {
@@ -12,4 +13,12 @@ export function getKeyForButtonIndex(config: GamepadConfig, index: integer): Str
 export function getIconForCustomIndex(config: GamepadConfig, index: integer): String {
     const key = getKeyForButtonIndex(config, index);
     return config.icons[key];
+}
+
+export function getKeyForSettingName(config: GamepadConfig, settingName: SettingGamepad) {
+    for (const key of Object.keys(config.setting)) {
+        const name = config.setting[key];
+        if (name === settingName) return key;
+    }
+    return null;
 }

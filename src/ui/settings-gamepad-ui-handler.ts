@@ -12,6 +12,7 @@ import {
     settingGamepadOptions
 } from "../system/settings-gamepad";
 import {truncateString} from "../utils";
+import {getKeyForSettingName} from "#app/configs/gamepad-utils";
 
 export default class SettingsGamepadUiHandler extends UiHandler {
     private settingsContainer: Phaser.GameObjects.Container;
@@ -31,6 +32,8 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     private reloadRequired: boolean;
     private reloadI18n: boolean;
     private gamepads: Array<String>;
+
+    private inputsIcons;
 
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);
@@ -65,6 +68,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
         this.settingLabels = [];
         this.optionValueLabels = [];
+        this.inputsIcons = {};
 
         Object.keys(SettingGamepad).forEach((setting, s) => {
             let settingName = setting.replace(/\_/g, ' ');
@@ -77,7 +81,22 @@ export default class SettingsGamepadUiHandler extends UiHandler {
             const valueLabels = []
             for (const [o, option] of settingGamepadOptions[SettingGamepad[setting]].entries()) {
                 if (noOptionsCursors.includes(SettingGamepad[setting])) {
-                    // need to find a way to fetch icons and display, maybe a placeholder.
+                    if (o) {
+                        const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+                        valueLabel.setOrigin(0, 0);
+                        this.optionsContainer.add(valueLabel);
+                        valueLabels.push(valueLabel);
+                        continue;
+                    }
+                    const key = getKeyForSettingName(this.scene.inputController.getActiveConfig(), SettingGamepad[setting]);
+                    const frame = this.scene.inputController.getActiveConfig().icons[key];
+                    const icon = this.scene.add.sprite(0, 0, 'xbox');
+                    icon.setScale(0.1);
+                    icon.setOrigin(0, 0);
+                    icon.setFrame(frame);
+                    this.inputsIcons[key] = icon;
+                    this.optionsContainer.add(icon);
+                    valueLabels.push(icon);
                     continue;
                 }
                 const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
