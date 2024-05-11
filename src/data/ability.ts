@@ -2413,6 +2413,7 @@ export class HealFromStatusAbAttr extends AbAttr {
     if (pokemon.status.effect === this.statusEffect || pokemon.status.effect === this.statusEffect2) {
       let healAmount: integer = Math.floor(pokemon.getMaxHp()*(this.healRatio/8));
       pokemon.heal(healAmount);
+      pokemon.status.incrementTurn();
       cancelled.value = true;
       return true;
     }
