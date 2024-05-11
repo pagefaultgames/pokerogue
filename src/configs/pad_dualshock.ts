@@ -1,3 +1,6 @@
+import {SettingGamepad} from "../system/settings-gamepad";
+import {Button} from "../enums/buttons";
+
 /**
  * Dualshock mapping
  */
@@ -21,7 +24,6 @@ const pad_dualshock = {
         LC_S: 13,
         LC_W: 14,
         LC_E: 15,
-        MENU: 16,
         TOUCH: 17
     },
     icons: {
@@ -41,8 +43,28 @@ const pad_dualshock = {
         LC_S: "T_P4_Dpad_Down_Default.png",
         LC_W: "T_P4_Dpad_Left_Default.png",
         LC_E: "T_P4_Dpad_Right_Default.png",
-        MENU: "",
         TOUCH: "T_P4_Touch_Pad_Default.png"
+    },
+    setting: {
+        RC_S: SettingGamepad.Button_Action,
+        RC_E: SettingGamepad.Button_Cancel,
+    },
+    default: {
+        RC_S: Button.ACTION,
+        RC_E: Button.CANCEL,
+        RC_W: Button.CYCLE_NATURE,
+        RC_N: Button.CYCLE_VARIANT,
+        START: Button.MENU,
+        SELECT: Button.STATS,
+        LB: Button.CYCLE_FORM,
+        RB: Button.CYCLE_SHINY,
+        LT: Button.CYCLE_GENDER,
+        RT: Button.CYCLE_ABILITY,
+        LC_N: Button.UP,
+        LC_S: Button.DOWN,
+        LC_W: Button.LEFT,
+        LC_E: Button.RIGHT,
+        TOUCH: Button.SUBMIT,
     }
 };
 

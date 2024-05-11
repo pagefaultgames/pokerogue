@@ -18,11 +18,21 @@ export interface IconsMapping {
     [key: string]: string;
 }
 
+export interface SettingMapping {
+    [key: string]: string;
+}
+
+export interface DefaultMapping {
+    [key: string]: Button;
+}
+
 export interface GamepadConfig {
     padID: string;
     padType: string;
     gamepadMapping: GamepadMapping;
     icons: IconsMapping;
+    setting: SettingMapping;
+    default: DefaultMapping;
 }
 
 export interface ActionGamepadMapping {
@@ -289,6 +299,7 @@ export class InputsController {
             this.player[gamepad]['custom'] = mappedPad.gamepadMapping;
             this.player[gamepad]['icons'] = mappedPad.icons;
             this.player[gamepad]['type'] = mappedPad.padType;
+            this.player[gamepad]['default'] = mappedPad.default;
         }
         if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
