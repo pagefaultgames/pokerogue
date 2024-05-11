@@ -38,6 +38,12 @@ const pad_unlicensedSNES = {
     setting: {
         RC_S: SettingGamepad.Button_Action,
         RC_E: SettingGamepad.Button_Cancel,
+        RC_W: SettingGamepad.Button_Cycle_Nature,
+        RC_N: SettingGamepad.Button_Cycle_Variant,
+        START: SettingGamepad.Button_Menu,
+        SELECT: SettingGamepad.Button_Stats,
+        LB: SettingGamepad.Button_Cycle_Form,
+        RB: SettingGamepad.Button_Cycle_Shiny,
     },
     default: {
         RC_S: Button.ACTION,
@@ -52,7 +58,6 @@ const pad_unlicensedSNES = {
         LC_S: Button.DOWN,
         LC_W: Button.LEFT,
         LC_E: Button.RIGHT,
-        TOUCH: Button.SUBMIT,
     }
 };
 

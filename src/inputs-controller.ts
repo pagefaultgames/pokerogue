@@ -1,4 +1,3 @@
-import Phaser, {Time} from "phaser";
 import * as Utils from "./utils";
 import {initTouchControls} from './touch-controls';
 import pad_generic from "./configs/pad_generic";
@@ -65,13 +64,14 @@ const repeatInputDelayMillis = 250;
  */
 export class InputsController {
     private buttonKeys: Phaser.Input.Keyboard.Key[][];
-    private gamepads: Array<string> = new Array();
+    private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = new Array();
     private scene: Phaser.Scene;
+    private events: Phaser.Events.EventEmitter;
 
     private buttonLock: Button;
     private buttonLock2: Button;
     private interactions: Map<Button, Map<string, boolean>> = new Map();
-    private time: Time;
+    private time: Phaser.Time.Clock;
     private player;
 
     private gamepadSupport: boolean = true;
@@ -118,7 +118,7 @@ export class InputsController {
      * Additionally, it manages the game's behavior when it loses focus to prevent unwanted game actions during this state.
      */
     init(): void {
-        this.events = new Phaser.Events.EventEmitter();
+        this.events = this.scene.game.events;
 
         if (localStorage.hasOwnProperty('chosenGamepad')) {
             this.chosenGamepad = localStorage.getItem('chosenGamepad');
@@ -206,16 +206,16 @@ export class InputsController {
         for (const b of Utils.getEnumValues(Button).reverse()) {
             if (
                 this.interactions.hasOwnProperty(b) &&
-                this.repeatInputDurationJustPassed(b) &&
+                this.repeatInputDurationJustPassed(b as Button) &&
                 this.interactions[b].isPressed
             ) {
                 // Prevents repeating button interactions when gamepad support is disabled.
                 if (
                     (!this.gamepadSupport && this.interactions[b].source === 'gamepad') ||
-                    (this.interactions[b].sourceName !== null && this.interactions[b].sourceName !== this.chosenGamepad)
+                    (this.interactions[b].sourceName && this.interactions[b].sourceName !== this.chosenGamepad)
                 ) {
                     // Deletes the last interaction for a button if gamepad is disabled.
-                    this.delLastProcessedMovementTime(b);
+                    this.delLastProcessedMovementTime(b as Button);
                     return;
                 }
                 // Emits an event for the button press.
@@ -223,7 +223,7 @@ export class InputsController {
                     controller_type: this.interactions[b].source,
                     button: b,
                 });
-                this.setLastProcessedMovementTime(b, this.interactions[b].source, this.interactions[b].sourceName);
+                this.setLastProcessedMovementTime(b as Button, this.interactions[b].source, this.interactions[b].sourceName);
             }
         }
     }
@@ -572,7 +572,7 @@ export class InputsController {
      *
      * Additionally, this method locks the button (by calling `setButtonLock`) to prevent it from being re-processed until it is released, ensuring that each press is handled distinctly.
      */
-    setLastProcessedMovementTime(button: Button, source: String = 'keyboard', sourceName: String): void {
+    setLastProcessedMovementTime(button: Button, source: String = 'keyboard', sourceName?: String): void {
         if (!this.interactions.hasOwnProperty(button)) return;
         this.setButtonLock(button);
         this.interactions[button].pressTime = this.time.now;

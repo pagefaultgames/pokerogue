@@ -48,6 +48,17 @@ const pad_dualshock = {
     setting: {
         RC_S: SettingGamepad.Button_Action,
         RC_E: SettingGamepad.Button_Cancel,
+        RC_W: SettingGamepad.Button_Cycle_Nature,
+        RC_N: SettingGamepad.Button_Cycle_Variant,
+        START: SettingGamepad.Button_Menu,
+        SELECT: SettingGamepad.Button_Stats,
+        LB: SettingGamepad.Button_Cycle_Form,
+        RB: SettingGamepad.Button_Cycle_Shiny,
+        LT: SettingGamepad.Button_Cycle_Gender,
+        RT: SettingGamepad.Button_Cycle_Ability,
+        LS: SettingGamepad.Button_Speed_Up,
+        RS: SettingGamepad.Button_Slow_Down,
+        TOUCH: SettingGamepad.Button_Submit,
     },
     default: {
         RC_S: Button.ACTION,

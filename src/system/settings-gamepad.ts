@@ -21,6 +21,7 @@ export enum SettingGamepad {
     Button_Cycle_Variant = "BUTTON_CYCLE_VARIANT",
     Button_Speed_Up = "BUTTON_SPEED_UP",
     Button_Slow_Down = "BUTTON_SLOW_DOWN",
+    Button_Submit = "BUTTON_SUBMIT",
 }
 
 export const settingGamepadOptions: SettingOptions = {
@@ -38,7 +39,8 @@ export const settingGamepadOptions: SettingOptions = {
     [SettingGamepad.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, 'Change'],
     [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, 'Change'],
     [SettingGamepad.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, 'Change'],
-    [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Change']
+    [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Change'],
+    [SettingGamepad.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, 'Change']
 };
 
 export const settingGamepadDefaults: SettingDefaults = {
@@ -57,6 +59,7 @@ export const settingGamepadDefaults: SettingDefaults = {
     [SettingGamepad.Button_Cycle_Variant]: 0,
     [SettingGamepad.Button_Speed_Up]: 0,
     [SettingGamepad.Button_Slow_Down]: 0,
+    [SettingGamepad.Button_Submit]: 0,
 };
 
 export const noOptionsCursors: Array<SettingGamepad> = [
@@ -72,6 +75,7 @@ export const noOptionsCursors: Array<SettingGamepad> = [
     SettingGamepad.Button_Cycle_Variant,
     SettingGamepad.Button_Speed_Up,
     SettingGamepad.Button_Slow_Down,
+    SettingGamepad.Button_Submit,
 ];
 
 export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {

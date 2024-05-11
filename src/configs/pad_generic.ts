@@ -42,11 +42,20 @@ const pad_generic = {
         LC_S: "T_X_Dpad_Down_Alt.png",
         LC_W: "T_X_Dpad_Left_Alt.png",
         LC_E: "T_X_Dpad_Right_Alt.png",
-        MENU: ""
     },
     setting: {
         RC_S: SettingGamepad.Button_Action,
         RC_E: SettingGamepad.Button_Cancel,
+        RC_W: SettingGamepad.Button_Cycle_Nature,
+        RC_N: SettingGamepad.Button_Cycle_Variant,
+        START: SettingGamepad.Button_Menu,
+        SELECT: SettingGamepad.Button_Stats,
+        LB: SettingGamepad.Button_Cycle_Form,
+        RB: SettingGamepad.Button_Cycle_Shiny,
+        LT: SettingGamepad.Button_Cycle_Gender,
+        RT: SettingGamepad.Button_Cycle_Ability,
+        LS: SettingGamepad.Button_Speed_Up,
+        RS: SettingGamepad.Button_Slow_Down,
     },
     default: {
         RC_S: Button.ACTION,
@@ -65,7 +74,6 @@ const pad_generic = {
         LC_S: Button.DOWN,
         LC_W: Button.LEFT,
         LC_E: Button.RIGHT,
-        TOUCH: Button.SUBMIT,
     }
 };
 
