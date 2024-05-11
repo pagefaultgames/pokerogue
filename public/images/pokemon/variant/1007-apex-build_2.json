@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1007-apex-build_2.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 95,
+				"h": 95
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 95,
+						"h": 92
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 95,
+						"h": 92
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:df56cc6866de03b2d9c064025758d9b6:22f824149f718f2ce41d0f61decfd5af:a0c3e4bbfd7401417648cb0fbab1b523$"
+	}
+}
