@@ -872,13 +872,13 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
   
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (!attacker.summonData.disabledMove) {
+    if (attacker.summonData.disabledMoves.length === 0) {
       if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
         this.attacker = attacker;
         this.move = move;
 
-        attacker.summonData.disabledMove = move.moveId;
-        attacker.summonData.disabledTurns = 4;
+        attacker.summonData.disabledMoves.push(move.moveId);
+        attacker.summonData.disabledTurns[move.moveId]=4;
         return true;
       }
     }

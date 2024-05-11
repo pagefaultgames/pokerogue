@@ -1708,7 +1708,7 @@ export class CommandPhase extends FieldPhase {
 
           // Decides between a Disabled, Not Implemented, or No PP translation message
           const errorMessage = 
-            playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
+            playerPokemon.summonData.disabledMoves.includes(move.moveId) ? 'battle:moveDisabled' :              
             move.getName().endsWith(' (N)') ? 'battle:moveNotImplemented' : 'battle:moveNoPP';
           const moveName = move.getName().replace(' (N)', ''); // Trims off the indicator
 
@@ -2048,11 +2048,12 @@ export class TurnEndPhase extends FieldPhase {
     
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
-      
-      if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
-        pokemon.summonData.disabledMove = Moves.NONE;
-      }
+      pokemon.disabledMoves.forEach(moveId => {
+        if (!--pokemon.disabledTurns[moveId]) { 
+          this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[moveId].name })));
+          pokemon.disabledMoves.delete(moveId);
+         }
+      });
 
       const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]), pokemon.isPlayer());
       if (hasUsableBerry)
@@ -2197,7 +2198,7 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
-      if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
+      if (this.move.moveId && this.pokemon.summonData.disabledMoves.includes(this.move.moveId))
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       return this.end();
     }

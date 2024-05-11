@@ -2711,8 +2711,8 @@ export class DisableMoveAttr extends MoveEffectAttr {
         return false;
       
       const disabledMove = target.getMoveset()[moveIndex];
-      target.summonData.disabledMove = disabledMove.moveId;
-      target.summonData.disabledTurns = 4;
+      target.summonData.disabledMoves.push(disabledMove.moveId);
+      target.summonData.disabledTurns[disabledMove.moveId] = 4;
 
       user.scene.queueMessage(getPokemonMessage(target, `'s ${disabledMove.getName()}\nwas disabled!`));
       
@@ -2724,7 +2724,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
   
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      if (target.summonData.disabledMove || target.isMax())
+      if (target.summonData.disabledMoves.length > 0 || target.isMax())
         return false;
 
       const moveQueue = target.getLastXMoves();
@@ -2747,6 +2747,36 @@ export class DisableMoveAttr extends MoveEffectAttr {
     return -5;
   }
 }
+
+export class DisableMovesWithSoundBasedFlagAtr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+      const currentDisabledMovesLenght = target.summonData.disabledMoves.length;
+      const targetMoves = target.getMoveset();
+      targetMoves.forEach(move => {
+
+      if (move.getMove().hasFlag(MoveFlags.SOUND_BASED)) {
+        target.summonData.disabledMoves.push(move.moveId);
+        target.summonData.disabledTurns[move.moveId] = 2;                      }
+    });
+    if (currentDisabledMovesLenght != target.summonData.disabledMoves.length) {
+      user.scene.queueMessage(getPokemonMessage(target, `is now unable to use sound-based moves!`));
+      return true;
+    }
+
+    return false;
+  }  
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return -5;
+  }
+}
+
 
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
@@ -6004,7 +6034,7 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new AttackMove(Moves.THROAT_CHOP, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7)
-      .partial(),
+      .attr(DisableMovesWithSoundBasedFlagAtr),
     new AttackMove(Moves.POLLEN_PUFF, Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .ballBombMove()
       .partial(),
