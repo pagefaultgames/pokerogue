@@ -31,7 +31,7 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveNotLearned": "{{pokemonName}} n’a pas appris\n{{moveName}}.",
   "learnMoveForgetQuestion": "Quelle capacité doit être oubliée ?",
   "learnMoveForgetSuccess": "{{pokemonName}} oublie comment\nutiliser {{moveName}}.",
-  "levelCapUp": "La limite de niveau\nest augmentée à {{levelCap}} !",
+  "levelCapUp": "La limite de niveau\na été augmentée à {{levelCap}} !",
   "moveNotImplemented": "{{moveName}} n’est pas encore implémenté et ne peut pas être sélectionné.",
   "moveNoPP": "Il n’y a plus de PP pour\ncette capacité !",
   "moveDisabled": "{{moveName}} est sous entrave !",
