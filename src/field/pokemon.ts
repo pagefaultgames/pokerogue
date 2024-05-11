@@ -1473,7 +1473,33 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             // requires passing in hitsLeft
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, source.turnData.hitsLeft);
             this.turnData.damageTaken += damage.value;
+            // eg: bullet seed 1 shots, double-slap 1 shots, this isbroken right now
+            if (this.isFainted() && (this.turnData.hitsLeft > 0 || this.turnData.hitCount > 1)) {
+              // also want to check if it was a multi hit move?
+              //const hitsTotal = this.turnData.hitCount - Math.max(this.turnData.hitsLeft, 0);
+              // multi hit move killed early, then queue how many hits were made before
+              this.scene.queueMessage(i18next.t('battle:attackHitsCount', { count: this.turnData.hitCount}));
+            }
+            // hitsLeft: for multi-hit moves, only want to render effectiveness text at end.
+            // also want to render if opponent is fainting?, or if you are fainting?
+            if (this.turnData.hitsLeft === 1 || this.isFainted()) {
+              switch (result as HitResult) {
+                case HitResult.SUPER_EFFECTIVE:
+                  this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
+                  break;
+                case HitResult.NOT_VERY_EFFECTIVE:
+                  this.scene.queueMessage(i18next.t('battle:hitResultNotVeryEffective'));
+                  break;
+                case HitResult.NO_EFFECT:
+                  this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
+                  break;
+                case HitResult.ONE_HIT_KO:  
+                  this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
+                  break;
+              }
+            }
 
+            // forbidden phasequeue splice udpate, idk what happens after this
             this.scene.setPhaseQueueSplice();
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
@@ -1486,6 +1512,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.turnData.attacksReceived.unshift(attackResult);
             if (source.isPlayer() && !this.isPlayer())
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
+
+            if (this.isFainted()) {
+              console.log(`${this.name} is fainting! ${this.turnData.hitCount}, ${this.turnData.hitsLeft}`)
+              this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
+              this.resetSummonData();
+            }
           }
 
           if (damage)
@@ -1528,10 +1560,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.hp = this.hp - damage;
     // checks and adds Fainted scene
-    if (this.isFainted()) {
-      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
-      this.resetSummonData();
-    }
 
     return damage;
   }
@@ -1543,23 +1571,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (critical)
       this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
 
-    // hitsLeft: for multi-hit moves, only want to render effectiveness text at end.
-    if (hitsLeft === 1) {
-      switch (result as HitResult) {
-        case HitResult.SUPER_EFFECTIVE:
-          this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
-          break;
-        case HitResult.NOT_VERY_EFFECTIVE:
-          this.scene.queueMessage(i18next.t('battle:hitResultNotVeryEffective'));
-          break;
-        case HitResult.NO_EFFECT:
-          this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
-          break;
-        case HitResult.ONE_HIT_KO:  
-          this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
-          break;
-      }
-    }
 
     damage = this.damage(damage, ignoreSegments, preventEndure);
     // Damage amount may have changed, but needed to be queued before calling damage function
