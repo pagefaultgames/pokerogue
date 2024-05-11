@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, IgnoreWeatherTypeDebuffAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -16,7 +16,7 @@ import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
 import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
-import { reverseCompatibleTms, tmSpecies } from '../data/tms';
+import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
@@ -46,6 +46,8 @@ import { TrainerSlot } from '../data/trainer-config';
 import * as Overrides from '../overrides';
 import { BerryType } from '../data/berry';
 import i18next from '../plugins/i18n';
+import { speciesEggMoves } from '../data/egg-moves';
+import { ModifierTier } from '../modifier/modifier-tier';
 
 export enum FieldPosition {
   CENTER,
@@ -1137,7 +1139,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   generateAndPopulateMoveset(): void {
     this.moveset = [];
-    let movePool: Moves[] = [];
+    let movePool: [Moves, number][] = [];
     const allLevelMoves = this.getLevelMoves(1, true, true);
     if (!allLevelMoves) {
       console.log(this.species.speciesId, 'ERROR');
@@ -1148,38 +1150,134 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const levelMove = allLevelMoves[m];
       if (this.level < levelMove[0])
         break;
-      if (movePool.indexOf(levelMove[1]) === -1) {
-        if (!allMoves[levelMove[1]].name.endsWith(' (N)'))
-          movePool.push(levelMove[1]);
-        else
-          movePool.unshift(levelMove[1]);
+      let weight = levelMove[0];
+      if (weight === 0) // Evo Moves
+        weight = 50;
+      if (weight === 1 && allMoves[levelMove[1]].power >= 80) // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight
+        weight = 40;
+      if (allMoves[levelMove[1]].name.endsWith(' (N)'))
+        weight /= 100; // Unimplemented level up moves are possible to generate, but 1% of their normal chance.
+      if (!movePool.some(m => m[0] === levelMove[1]))
+        movePool.push([levelMove[1], weight]);
+    }
+
+    if (this.hasTrainer()) {
+      const tms = Object.keys(tmSpecies);
+      for (let tm of tms) {
+        const moveId = parseInt(tm) as Moves;
+        let compatible = false;
+        for (let p of tmSpecies[tm]) {
+          if (Array.isArray(p)) {
+            if (p[0] === this.species.speciesId || (this.fusionSpecies && p[0] === this.fusionSpecies.speciesId) && p.slice(1).indexOf(this.species.forms[this.formIndex]) > -1) {
+              compatible = true;
+              break;
+            }
+          } else if (p === this.species.speciesId || (this.fusionSpecies && p === this.fusionSpecies.speciesId)) {
+            compatible = true;
+            break;
+          }
+        }
+        if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)')) {
+          if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15)
+            movePool.push([moveId, 4]);
+          else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30)
+            movePool.push([moveId, 8]);
+          else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50)
+            movePool.push([moveId, 14]);
+        }
+      }
+
+      if (this.level >= 25) { // No egg moves below level 25
+        for (let i = 0; i < 3; i++) {
+          const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
+          if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)'))
+            movePool.push([moveId, Math.min(this.level * 0.5, 40)]);
+        }
+        const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
+        if (this.level >= 60 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)')) // No rare egg moves before level 60
+          movePool.push([moveId, Math.min(this.level * 0.2, 20)]);
+        if (this.fusionSpecies) {
+          for (let i = 0; i < 3; i++) {
+            const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
+            if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)'))
+              movePool.push([moveId, Math.min(this.level * 0.5, 30)]);
+          }
+          const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
+          if (this.level >= 60 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)')) // No rare egg moves before level 60
+            movePool.push([moveId, Math.min(this.level * 0.2, 20)]);
+        }
       }
     }
 
-    if (this.isBoss())
-      movePool = movePool.filter(m => !allMoves[m].getAttrs(SacrificialAttr).length);
-
-    movePool.reverse();
-
-    const attackMovePool = movePool.filter(m => {
-      const move = allMoves[m];
-      return move.category !== MoveCategory.STATUS;
-    });
-
-    const easeType = this.hasTrainer() || this.isBoss() ? this.hasTrainer() && this.isBoss() ? 'Quart.easeIn' : 'Cubic.easeIn' : 'Sine.easeIn';
-
-    if (attackMovePool.length) {
-      const randomAttackMove = Utils.randSeedEasedWeightedItem(attackMovePool, easeType);
-      this.moveset.push(new PokemonMove(randomAttackMove, 0, 0));
-      console.log(allMoves[randomAttackMove]);
-      movePool.splice(movePool.findIndex(m => m === randomAttackMove), 1);
+    if (this.isBoss()) // Bosses never get self ko moves
+      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttr).length);
+    if (this.hasTrainer()) {
+      // Trainers never get OHKO moves
+      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(OneHitKOAttr).length);
+      // Half the weight of self KO moves
+      movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttr).length ? 0.5 : 1)]);
+      // Trainers get a weight bump to stat buffing moves
+      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatChangeAttr).some(a => (a as StatChangeAttr).levels > 1 && (a as StatChangeAttr).selfTarget) ? 1.25 : 1)]);
+      // Trainers get a weight decrease to multiturn moves
+      movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(ChargeAttr).length || !!allMoves[m[0]].getAttrs(RechargeAttr).length ? 0.7 : 1)]);
     }
 
-    while (movePool.length && this.moveset.length < 4) {
-      const randomMove = Utils.randSeedEasedWeightedItem(movePool, easeType);
-      this.moveset.push(new PokemonMove(randomMove, 0, 0));
-      console.log(allMoves[randomMove]);
-      movePool.splice(movePool.indexOf(randomMove), 1);
+    // Weight towards higher power moves, by reducing the power of moves below the highest power.
+    // Caps max power at 90 to avoid something like hyper beam ruining the stats.
+    // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
+    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
+    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
+
+    // Weight damaging moves against the lower stat
+    const worseCategory: MoveCategory = this.stats[Stat.ATK] > this.stats[Stat.SPATK] ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
+    const statRatio = worseCategory === MoveCategory.PHYSICAL ? this.stats[Stat.ATK]/this.stats[Stat.SPATK] : this.stats[Stat.SPATK]/this.stats[Stat.ATK];
+    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === worseCategory ? statRatio : 1)]);
+
+    let weightMultiplier = 0.9; // The higher this is the more the game weights towards higher level moves. At 0 all moves are equal weight.
+    if (this.hasTrainer())
+      weightMultiplier += 0.7;
+    if (this.isBoss())
+      weightMultiplier += 0.4;
+    const baseWeights: [Moves, number][] = movePool.map(m => [m[0], Math.ceil(Math.pow(m[1], weightMultiplier)*100)]);
+
+    if (this.hasTrainer() || this.isBoss()) { // Trainers and bosses always force a stab move
+      const stabMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS && this.isOfType(allMoves[m[0]].type));
+
+      if (stabMovePool.length) {
+        const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
+        let rand = Utils.randSeedInt(totalWeight);
+        let index = 0;
+        while (rand > stabMovePool[index][1])
+          rand -= stabMovePool[index++][1];
+        this.moveset.push(new PokemonMove(stabMovePool[index][0], 0, 0));
+      }
+    } else { // Normal wild pokemon just force a random damaging move
+      const attackMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS);
+      if (attackMovePool.length) {
+        const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
+        let rand = Utils.randSeedInt(totalWeight);
+        let index = 0;
+        while (rand > attackMovePool[index][1])
+          rand -= attackMovePool[index++][1];
+        this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
+      }
+    }
+
+    while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
+      if (this.hasTrainer()) {
+        // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
+        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
+        // Status moves remain unchanged on weight, this encourages 1-2
+        movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo.moveId)).map(m => [m[0], this.moveset.some(mo => mo.getMove().category !== MoveCategory.STATUS && mo.getMove().type === allMoves[m[0]].type) ? Math.ceil(Math.sqrt(m[1])) : allMoves[m[0]].category !== MoveCategory.STATUS ? Math.ceil(m[1]/Math.max(Math.pow(4, this.moveset.filter(mo => mo.getMove().power > 1).length)/8,0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1)) : m[1]]);
+      } else { // Non-trainer pokemon just use normal weights
+        movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo.moveId));
+      }
+      const totalWeight = movePool.reduce((v, m) => v + m[1], 0);
+      let rand = Utils.randSeedInt(totalWeight);
+      let index = 0;
+      while (rand > movePool[index][1])
+        rand -= movePool[index++][1];
+      this.moveset.push(new PokemonMove(movePool[index][0], 0, 0));
     }
 
     this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
