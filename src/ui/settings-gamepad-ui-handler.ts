@@ -1,9 +1,8 @@
 import BattleScene from "../battle-scene";
-import { hasTouchscreen, isMobile } from "../touch-controls";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
+import {TextStyle, addTextObject} from "./text";
+import {Mode} from "./ui";
 import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
+import {addWindow} from "./ui-theme";
 import {Button} from "../enums/buttons";
 import {
     noOptionsCursors,
@@ -84,7 +83,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
             const optionsContainer = this.scene.add.container(0, 0);
             optionsContainer.setVisible(false);
 
-            const bindingSettings = Object.keys(config.setting).map(k=>config.setting[k]);
+            const bindingSettings = Object.keys(config.setting).map(k => config.setting[k]);
 
             const settingLabels = [];
             const optionValueLabels = [];
@@ -132,7 +131,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
                 const totalWidth = optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
 
-                const labelWidth =  Math.max(78, settingLabels[s].displayWidth + 8);
+                const labelWidth = Math.max(78, settingLabels[s].displayWidth + 8);
 
                 const totalSpace = (300 - labelWidth) - totalWidth / 6;
                 const optionSpacing = Math.floor(totalSpace / (optionValueLabels[s].length - 1));
@@ -197,7 +196,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
         const settings: object = localStorage.hasOwnProperty('settingsGamepad') ? JSON.parse(localStorage.getItem('settingsGamepad')) : {};
         this.keys.forEach((key, index) => {
-             this.setOptionCursor(index, settings.hasOwnProperty(key) ? settings[key] : this.optionCursors[index])
+            this.setOptionCursor(index, settings.hasOwnProperty(key) ? settings[key] : this.optionCursors[index])
         });
 
         if (!activeConfig.custom) return;
@@ -227,6 +226,8 @@ export default class SettingsGamepadUiHandler extends UiHandler {
 
     processInput(button: Button): boolean {
         const ui = this.getUi();
+        // Defines the maximum number of rows that can be displayed on the screen.
+        const rowsToDisplay = 9;
 
         let success = false;
 
@@ -242,14 +243,28 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                             success = this.setCursor(this.cursor - 1);
                         else
                             success = this.setScrollCursor(this.scrollCursor - 1);
+                    } else {
+                        // When at the top of the menu and pressing UP, move to the bottommost item.
+                        // First, set the cursor to the last visible element, preparing for the scroll to the end.
+                        const successA = this.setCursor(rowsToDisplay - 1);
+                        // Then, adjust the scroll to display the bottommost elements of the menu.
+                        const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
+                        success = successA && successB; // success is just there to play the little validation sound effect
                     }
                     break;
                 case Button.DOWN:
-                    if (cursor < this.optionValueLabels.length) {
-                        if (this.cursor < 8)
+                    if (cursor < this.optionValueLabels.length - 1) {
+                        if (this.cursor < rowsToDisplay - 1)
                             success = this.setCursor(this.cursor + 1);
-                        else if (this.scrollCursor < this.optionValueLabels.length - 9)
+                        else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
                             success = this.setScrollCursor(this.scrollCursor + 1);
+                    } else {
+                        // When at the bottom of the menu and pressing DOWN, move to the topmost item.
+                        // First, set the cursor to the first visible element, resetting the scroll to the top.
+                        const successA = this.setCursor(0);
+                        // Then, reset the scroll to start from the first element of the menu.
+                        const successB = this.setScrollCursor(0);
+                        success = successA && successB; // Indicates a successful cursor and scroll adjustment.
                     }
                     break;
                 case Button.LEFT:
