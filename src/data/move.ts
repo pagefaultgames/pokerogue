@@ -1040,7 +1040,6 @@ export class MultiHitAttr extends MoveAttr {
         break;
       case MultiHitType._3_INCR:
         hitTimes = 3;
-        // TODO: Add power increase for every hit
         break;
       case MultiHitType._1_TO_10:
         {
