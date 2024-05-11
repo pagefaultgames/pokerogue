@@ -927,9 +927,5 @@ export const trainerConfigs: TrainerConfigs = {
 };
 
 (function () {
-    // I think we need to get the language that we are using here and then decide with a switch statment which language to load the dialogue in
-
-
-
-    initTrainerTypeDialogue();
+      initTrainerTypeDialogue();
 })();
