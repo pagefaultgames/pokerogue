@@ -1,6 +1,6 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MovePhase, NewBattlePhase, PartyEffectPhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -1794,6 +1794,37 @@ export class ResetStatsAttr extends MoveEffectAttr {
 
     return true;
   }
+}
+
+/**
+ * Attribute used for moves which swap the user and the target's stat changes.
+ */
+export class SwapStatsAttr extends MoveEffectAttr
+{
+    /**
+   * Swaps the user and the target's stat changes.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean
+    {
+        if (!super.apply(user, target, move, args))
+            return false; //Exits if the move can't apply
+        let priorBoost : integer; //For storing a stat boost
+        for (let s = 0; s < target.summonData.battleStats.length; s++)
+          {
+            priorBoost = user.summonData.battleStats[s]; //Store user stat boost
+            user.summonData.battleStats[s] = target.summonData.battleStats[s]; //Applies target boost to self
+            target.summonData.battleStats[s] = priorBoost; //Applies stored boost to target
+          }
+        target.updateInfo();
+        user.updateInfo();
+        target.scene.queueMessage(getPokemonMessage(user, ' switched stat changes with the target!'));
+        return true;
+    }
 }
 
 export class HpSplitAttr extends MoveEffectAttr {
@@ -5203,7 +5234,7 @@ export function initMoves() {
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
     new StatusMove(Moves.HEART_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(SwapStatsAttr),
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
