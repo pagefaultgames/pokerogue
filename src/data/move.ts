@@ -1318,6 +1318,15 @@ export class BypassSleepAttr extends MoveAttr {
 }
 
 export class BypassBurnDamageReductionAttr extends MoveAttr {
+
+    /**
+   * Prevents the move's damage from being reduced by burn
+   * @param user N/A
+   * @param target N/A
+   * @param move Move with this attribute
+   * @param args Utils.BooleanHolder for burnDamageReductionCancelled
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.BooleanHolder).value = true;
 
