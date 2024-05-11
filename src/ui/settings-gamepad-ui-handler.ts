@@ -12,7 +12,7 @@ import {
     settingGamepadOptions
 } from "../system/settings-gamepad";
 import {truncateString} from "../utils";
-import {getKeyForSettingName} from "#app/configs/gamepad-utils";
+import {getIconForRebindedKey, getKeyForSettingName} from "#app/configs/gamepad-utils";
 
 export default class SettingsGamepadUiHandler extends UiHandler {
     private settingsContainer: Phaser.GameObjects.Container;
@@ -89,11 +89,9 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                         continue;
                     }
                     const key = getKeyForSettingName(this.scene.inputController.getActiveConfig(), SettingGamepad[setting]);
-                    const frame = this.scene.inputController.getActiveConfig().icons[key];
                     const icon = this.scene.add.sprite(0, 0, 'xbox');
                     icon.setScale(0.1);
                     icon.setOrigin(0, 0);
-                    icon.setFrame(frame);
                     this.inputsIcons[key] = icon;
                     this.optionsContainer.add(icon);
                     valueLabels.push(icon);
@@ -140,13 +138,17 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     }
 
     updateBindings(): void {
-        // for (const elm of noOptionsCursors) {
-        //     console.log('elm:', elm);
-        // }
+        const activeConfig = this.scene.inputController.getActiveConfig();
+        for (const elm of noOptionsCursors) {
+            const key = getKeyForSettingName(activeConfig, elm);
+            const icon = getIconForRebindedKey(activeConfig, key);
+            this.inputsIcons[key].setFrame(icon);
+        }
     }
 
     show(args: any[]): boolean {
         super.show(args);
+        this.updateBindings();
 
         const settings: object = localStorage.hasOwnProperty('settingsGamepad') ? JSON.parse(localStorage.getItem('settingsGamepad')) : {};
         // in the menu, for each line, we set the cursor position for each option, either on the previously selected, or the default value.

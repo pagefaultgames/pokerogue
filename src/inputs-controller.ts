@@ -10,8 +10,8 @@ import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
 import {SettingGamepad} from "./system/settings-gamepad";
 import {
     getButtonIndexForKey,
-    getIconForCustomIndex,
-    getKeyForButtonIndex,
+    getIconForCustomIndex, getIconForRebindedKey,
+    getKeyForButtonIndex, getKeyForRebindedSettingName,
     getKeyForSettingName
 } from "./configs/gamepad-utils";
 
@@ -27,7 +27,7 @@ export interface SettingMapping {
     [key: string]: string;
 }
 
-export interface DefaultMapping {
+export interface MappingLayout {
     [key: string]: Button;
 }
 
@@ -37,8 +37,8 @@ export interface GamepadConfig {
     gamepadMapping: GamepadMapping;
     icons: IconsMapping;
     setting: SettingMapping;
-    default: DefaultMapping;
-    custom: DefaultMapping;
+    default: MappingLayout;
+    custom: MappingLayout;
 }
 
 export interface ActionGamepadMapping {
@@ -85,6 +85,8 @@ export class InputsController {
 
     public chosenGamepad: String;
     private disconnectedGamepads: Array<String> = new Array();
+
+    private pauseUpdate: boolean = false;
 
     /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
@@ -218,7 +220,8 @@ export class InputsController {
                 // Prevents repeating button interactions when gamepad support is disabled.
                 if (
                     (!this.gamepadSupport && this.interactions[b].source === 'gamepad') ||
-                    (this.interactions[b].sourceName && this.interactions[b].sourceName !== this.chosenGamepad)
+                    (this.interactions[b].sourceName && this.interactions[b].sourceName !== this.chosenGamepad) ||
+                    this.pauseUpdate
                 ) {
                     // Deletes the last interaction for a button if gamepad is disabled.
                     this.delLastProcessedMovementTime(b as Button);
@@ -304,8 +307,8 @@ export class InputsController {
             // for each gamepad, we set its mapping in this.configs
             const gamepadID = gamepad.toLowerCase();
             const config = this.getConfig(gamepadID);
+            config.custom = this.configs[gamepad]?.custom || config.default;
             this.configs[gamepad] = config;
-            this.configs[gamepad].custom = {...config.default};
         }
         if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
@@ -583,6 +586,7 @@ export class InputsController {
      * This method is typically called when needing to ensure that all inputs are neutralized.
      */
     deactivatePressedKey(): void {
+        this.pauseUpdate = true;
         this.releaseButtonLock(this.buttonLock);
         this.releaseButtonLock(this.buttonLock2);
         for (const b of Utils.getEnumValues(Button)) {
@@ -593,6 +597,7 @@ export class InputsController {
                 this.interactions[b].sourceName = null;
             }
         }
+        setTimeout(() => this.pauseUpdate = false, 500);
     }
 
     /**
@@ -643,12 +648,9 @@ export class InputsController {
         else if (this.buttonLock2 === button) this.buttonLock2 = null;
     }
 
-    setBind(setting: SettingGamepad, button: Button) {
-        console.log('button,', button);
-    }
-
     getActiveConfig() :GamepadConfig {
-        return this.configs[this.chosenGamepad] || pad_generic;
+        if (this.configs[this.chosenGamepad]?.padID) return this.configs[this.chosenGamepad]
+        return pad_generic as GamepadConfig;
     }
 
     getPressedButtonLabel(button: Phaser.Input.Gamepad.Button) {
@@ -657,17 +659,23 @@ export class InputsController {
 
     getCurrentButtonLabel(target: SettingGamepad) {
         const key = getKeyForSettingName(this.configs[this.chosenGamepad], target);
-        const id = getButtonIndexForKey(this.configs[this.chosenGamepad], key);
-        return getIconForCustomIndex(this.configs[this.chosenGamepad], id);
+        return getIconForRebindedKey(this.configs[this.chosenGamepad], key);
     }
 
     swapBinding(target, newBinding) {
-        this.deactivatePressedKey();
-        const keyTarget = getKeyForSettingName(this.configs[this.chosenGamepad], target);
+        this.pauseUpdate = true;
+        const keyTarget = getKeyForRebindedSettingName(this.configs[this.chosenGamepad], target)
         const keyNewBinding = getKeyForButtonIndex(this.configs[this.chosenGamepad], newBinding);
         const previousActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyNewBinding];
         const ActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyTarget];
         this.configs[this.chosenGamepad].custom[keyTarget] = previousActionForThisNewBinding;
         this.configs[this.chosenGamepad].custom[keyNewBinding] = ActionForThisNewBinding;
+        this.scene.gameData.saveCustomMapping(this.chosenGamepad, this.configs[this.chosenGamepad].custom);
+        setTimeout(() => this.pauseUpdate = false, 500);
+    }
+
+    loadConfig(gamepadName: String, customMappings: MappingLayout): void {
+        if (!this.configs[gamepadName]) this.configs[gamepadName] = {};
+        this.configs[gamepadName].custom = customMappings;
     }
 }

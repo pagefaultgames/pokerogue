@@ -58,12 +58,12 @@ const pad_xbox360 = {
         RS: SettingGamepad.Button_Slow_Down,
     },
     default: {
-        RC_S: Button.ACTION,
+        RC_S: Button.ACTION, //5
         RC_E: Button.CANCEL,
         RC_W: Button.CYCLE_NATURE,
-        RC_N: Button.CYCLE_VARIANT,
-        START: Button.MENU,
-        SELECT: Button.STATS,
+        RC_N: Button.CYCLE_VARIANT, //14
+        START: Button.MENU, //7
+        SELECT: Button.STATS, //8
         LB: Button.CYCLE_FORM,
         RB: Button.CYCLE_SHINY,
         LT: Button.CYCLE_GENDER,

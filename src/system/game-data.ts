@@ -30,6 +30,7 @@ import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
+import {MappingLayout} from "#app/inputs-controller";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -227,6 +228,7 @@ export class GameData {
     this.scene = scene;
     this.loadSettings();
     this.loadGamepadSettings();
+    this.loadCustomMapping();
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
@@ -480,6 +482,25 @@ export class GameData {
     localStorage.setItem('settings', JSON.stringify(settings));
 
     return true;
+  }
+
+  public saveCustomMapping(gamepadName: string, mapping: MappingLayout): boolean {
+    let customMappings: object = {};
+    if (localStorage.hasOwnProperty('customMapping'))
+      customMappings = JSON.parse(localStorage.getItem('customMapping'));
+    customMappings[gamepadName] = mapping;
+    localStorage.setItem('customMapping', JSON.stringify(customMappings));
+    return true;
+  }
+
+  public loadCustomMapping(): boolean {
+    console.log('loadCustomMapping');
+    if (!localStorage.hasOwnProperty('customMapping'))
+      return false;
+    const customMappings = JSON.parse(localStorage.getItem('customMapping'));
+    for (const key of Object.keys(customMappings))
+      this.scene.inputController.loadConfig(key, customMappings[key]);
+
   }
 
   public saveGamepadSetting(setting: SettingGamepad, valueIndex: integer): boolean {

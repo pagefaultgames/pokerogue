@@ -121,6 +121,7 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
                     const cancelHandler = () => {
                         scene.ui.revertMode();
                         (scene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(SettingGamepad.Default_Controller), 0, true);
+                        (scene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
                         return false;
                     };
                     const changeGamepadHandler = (gamepad: string) => {
