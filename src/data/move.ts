@@ -1317,6 +1317,10 @@ export class BypassSleepAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute used for moves that bypass the burn damage reduction of physical moves, currently only facade
+ * Called during damage calculation
+ */
 export class BypassBurnDamageReductionAttr extends MoveAttr {
 
     /**
