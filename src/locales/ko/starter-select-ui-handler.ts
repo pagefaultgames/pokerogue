@@ -6,7 +6,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  * account interactions, descriptive text, etc.
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
-    "confirmStartTeam":'Begin with these Pokémon?',
+    "confirmStartTeam":'이 포켓몬으로 시작하겠습니까?',
     "growthRate": "육성 난이도:",
     "ability": "특성:",
     "passive": "숨겨진 특성:",
