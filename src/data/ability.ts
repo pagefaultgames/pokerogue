@@ -1675,6 +1675,29 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 }
 
+export class AllyStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+  private immuneEffects: StatusEffect[];
+
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+
+    this.immuneEffects = immuneEffects;
+  }
+
+  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : 'status problems'}!`);
+  }
+}
+
 export class PreApplyBattlerTagAbAttr extends AbAttr {
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -1682,6 +1705,29 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
 }
 
 export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
+  private immuneTagType: BattlerTagType;
+
+  constructor(immuneTagType: BattlerTagType) {
+    super();
+
+    this.immuneTagType = immuneTagType;
+  }
+
+  applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (tag.tagType === this.immuneTagType) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${(args[0] as BattlerTag).getDescriptor()}!`);
+  }
+}
+
+export class AllyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagType: BattlerTagType;
 
   constructor(immuneTagType: BattlerTagType) {
@@ -3255,9 +3301,10 @@ export function initAbilities() {
       .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.ICE, 1.2),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(AllyStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
-      .ignorable()
-      .partial(),
+      .attr(AllyBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .ignorable(),
     new Ability(Abilities.STANCE_CHANGE, 6)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -3524,6 +3571,7 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(AllyStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
