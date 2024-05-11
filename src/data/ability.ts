@@ -1646,6 +1646,29 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   }
 }
 
+export class AllyProtectStatAbAttr extends PreStatChangeAbAttr {
+  private protectedStat: BattleStat;
+
+  constructor(protectedStat?: BattleStat) {
+    super();
+
+    this.protectedStat = protectedStat;
+  }
+
+  applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.protectedStat === undefined || stat === this.protectedStat) {
+      cancelled.value = true;
+      return true;
+    }
+    
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
+  }
+}
+
 export class PreSetStatusAbAttr extends AbAttr {
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -1675,6 +1698,29 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 }
 
+export class AllyStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+  private immuneEffects: StatusEffect[];
+
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+
+    this.immuneEffects = immuneEffects;
+  }
+
+  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : 'status problems'}!`);
+  }
+}
+
 export class PreApplyBattlerTagAbAttr extends AbAttr {
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -1682,6 +1728,29 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
 }
 
 export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
+  private immuneTagType: BattlerTagType;
+
+  constructor(immuneTagType: BattlerTagType) {
+    super();
+
+    this.immuneTagType = immuneTagType;
+  }
+
+  applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (tag.tagType === this.immuneTagType) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${(args[0] as BattlerTag).getDescriptor()}!`);
+  }
+}
+
+export class AllyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagType: BattlerTagType;
 
   constructor(immuneTagType: BattlerTagType) {
@@ -3232,9 +3301,16 @@ export function initAbilities() {
     new Ability(Abilities.AROMA_VEIL, 6)
       .ignorable()
       .unimplemented(),
-    new Ability(Abilities.FLOWER_VEIL, 6)
+    new Ability(Abilities.FLOWER_VEIL, 6) // TODO: Check against Spectral Thief once implemented, check against Toxic orb and flame orb once implemented.
+    // Also needs to not prevent the user from using Rest.
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), ProtectStatAbAttr)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), AllyProtectStatAbAttr)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), AllyStatusEffectImmunityAbAttr)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), AllyBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
-      .unimplemented(),
+      .partial(), 
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
