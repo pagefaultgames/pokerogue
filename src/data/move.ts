@@ -1120,13 +1120,13 @@ export class StatusEffectAttr extends MoveEffectAttr {
           return false;
       }
       if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0))
-        return pokemon.trySetStatus(this.effect, true, this.cureTurn);
+        return pokemon.trySetStatus(this.effect, true, this.cureTurn, null, user);
     }
     return false;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true) ? Math.floor(move.chance * -0.1) : 0;
+    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(move.chance * -0.1) : 0;
   }
 }
 
@@ -1145,7 +1145,7 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true) ? Math.floor(move.chance * -0.1) : 0;
+    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(move.chance * -0.1) : 0;
   }
 }
 
@@ -1161,7 +1161,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
       return false;
     }
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
-      var statusAfflictResult = target.trySetStatus(statusToApply, true);
+      var statusAfflictResult = target.trySetStatus(statusToApply, true, 0, null, user);
       if (statusAfflictResult) {
         user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
         user.resetStatus();
@@ -1174,7 +1174,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(user.status?.effect, true) ? Math.floor(move.chance * -0.1) : 0;
+    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(user.status?.effect, true, false, user) ? Math.floor(move.chance * -0.1) : 0;
   }
 }
 
@@ -5134,7 +5134,7 @@ export function initMoves() {
         || user.status?.effect === StatusEffect.TOXIC
         || user.status?.effect === StatusEffect.PARALYSIS
         || user.status?.effect === StatusEffect.SLEEP)
-        && target.canSetStatus(user.status?.effect)
+        && target.canSetStatus(user.status?.effect, false, false, user)
         ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()

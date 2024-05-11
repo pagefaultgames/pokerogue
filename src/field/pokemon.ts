@@ -27,7 +27,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr } from '../data/ability';
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, IgnoreTypeStatusEffectImmunityAbAttr } from '../data/ability';
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
 import Battle, { BattlerIndex } from '../battle';
@@ -1889,7 +1889,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false): boolean {
+  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false, source: Pokemon = null): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status)
         return false;
@@ -1897,11 +1897,32 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
     }
 
+    const types = this.getTypes(true, true);
+
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL))
-          return false;
+        let poisonImmunity = types.map(defType => {
+          const cancelImmunity = new Utils.BooleanHolder(false);
+          if (defType !== Type.POISON && defType !== Type.STEEL) {
+            return false;
+          }
+
+          if (source) {
+            applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, source, cancelImmunity, effect, defType);
+            if (cancelImmunity.value)
+              return false;
+            else
+              return true;
+          }
+          else {
+            return true;
+          }
+        })
+        if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL)){
+          if (poisonImmunity.includes(true))
+            return false;
+        }
         break;
       case StatusEffect.PARALYSIS:
         if (this.isOfType(Type.ELECTRIC))
@@ -1930,12 +1951,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null): boolean {
-    if (!this.canSetStatus(effect, asPhase))
+  trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null, source: Pokemon = null): boolean {
+    if (!this.canSetStatus(effect, asPhase, false, source))
       return false;
 
     if (asPhase) {
-      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText));
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, source));
       return true;
     }
 
