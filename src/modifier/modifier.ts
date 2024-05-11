@@ -918,17 +918,17 @@ export class PreserveBerryModifier extends PersistentModifier {
   }
 }
 
-export class WeatherChipImmunityModifier extends PersistentModifier {
+export class WeatherDamageImmunityModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
 
   match(modifier: Modifier) {
-    return modifier instanceof WeatherChipImmunityModifier;
+    return modifier instanceof WeatherDamageImmunityModifier;
   }
 
   clone() {
-    return new WeatherChipImmunityModifier(this.type, this.stackCount);
+    return new WeatherDamageImmunityModifier(this.type, this.stackCount);
   }
 
   shouldApply(args: any[]): boolean {
@@ -936,8 +936,10 @@ export class WeatherChipImmunityModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    if (!(args[1] as Utils.BooleanHolder).value)
-      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(this.getMaxStackCount(null)) < this.getStackCount();
+    const pokemon = args[0] as Pokemon;
+    if (pokemon.isPlayer()) {
+      (args[1] as Utils.BooleanHolder).value = true;
+    }
 
     return true;
   }

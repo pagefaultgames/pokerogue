@@ -923,7 +923,7 @@ export const modifierTypes = {
     (type, _args) => new Modifiers.PreserveBerryModifier(type)),
 
   SAFETY_GOGGLES: () => new ModifierType('Safety Goggles', 'Prevents damage from weather and powder',
-    (type, _args) => new Modifiers.WeatherChipImmunityModifier(type), "safety_goggles"),
+    (type, _args) => new Modifiers.WeatherDamageImmunityModifier(type), "safety_goggles"),
 
   FOCUS_BAND: () => new PokemonHeldItemModifierType('Focus Band', 'Adds a 10% chance to survive with 1 HP after being damaged enough to faint',
     (type, args) => new Modifiers.SurviveDamageModifier(type, (args[0] as Pokemon).id)),

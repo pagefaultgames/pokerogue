@@ -179,6 +179,17 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
   return null;
 }
 
+export function getWeatherImmunityMessage(weatherType: WeatherType, pokemon: Pokemon): string {
+  switch (weatherType) {
+    case WeatherType.SANDSTORM:
+      return getPokemonMessage(pokemon, ' is not affected by\nsandstorm due to its Safety Goggles!');
+    case WeatherType.HAIL:
+      return getPokemonMessage(pokemon, ' is not affected by\nhail due to its Safety Goggles!');
+  }
+
+  return null;
+}
+
 export function getWeatherClearMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
