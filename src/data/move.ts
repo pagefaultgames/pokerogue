@@ -1928,7 +1928,7 @@ export class BattleStatRatioPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
 
-    const statRatio = target.getStat(this.stat) / user.getStat(this.stat);
+    const statRatio = target.getBattleStat(this.stat) / user.getBattleStat(this.stat);
     const statThresholds = [ 0.25, 1 / 3, 0.5, 1, -1 ];
     let statThresholdPowers = [ 150, 120, 80, 60, 40 ];
 
