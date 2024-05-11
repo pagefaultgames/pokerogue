@@ -300,6 +300,27 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
   }
 }
 
+export class ReceivedMoveEffectivenessAbAttr extends PreDefendAbAttr {
+  protected condition: PokemonDefendCondition;
+  private newType: number;
+
+  constructor(condition: PokemonDefendCondition, newType: number) {
+    super();
+
+    this.condition = condition;
+    this.newType = newType;
+  }
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.condition(pokemon, attacker, move.getMove())) {
+      (args[0] as Utils.NumberHolder).value = this.newType; // Set new effectiveness value.
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   constructor(moveType: Type, powerMultiplier: number) {
     super((user, target, move) => move.type === moveType, powerMultiplier);
@@ -3705,8 +3726,8 @@ export function initAbilities() {
     new Ability(Abilities.TERA_SHELL, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      .attr(ReceivedMoveEffectivenessAbAttr,(target, user, move) => target.getHpRatio() === 1 && target.getAttackTypeEffectiveness(move.type, user) > 0, 0.5)
+      .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
