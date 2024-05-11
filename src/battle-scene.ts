@@ -759,6 +759,8 @@ export default class BattleScene extends SceneBase {
 
 		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
 
+		this.field.setVisible(true);
+
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
 		this.arenaPlayerTransition.setPosition(0, 0);
