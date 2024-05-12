@@ -15,7 +15,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "start": "Iniciar",
     "addToParty": "Adicionar à equipe",
     "toggleIVs": "Mostrar IVs",
-    "manageMoves": "Mudar Movs.",
+    "manageMoves": "Mudar Movimentos",
     "useCandies": "Usar Doces",
     "selectMoveSwapOut": "Escolha um movimento para substituir.",
     "selectMoveSwapWith": "Escolha o movimento que substituirá",

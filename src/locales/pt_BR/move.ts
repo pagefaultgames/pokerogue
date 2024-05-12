@@ -2911,7 +2911,7 @@ export const move: MoveTranslationEntries = {
   },
   clangorousSoulblaze: {
     name: "Clangorous Soulblaze",
-    effect: "Após obter o Z-Power, o usuário, Kommo-o, ataca os Pokémon adversários com força total. Este movimento aumenta as estatísticas do usuário."
+    effect: "Após obter o Z-Power, o usuário, Kommo-o, ataca os Pokémon adversários com força total. Este movimento aumenta os atributos do usuário."
   },
   zippyZap: {
     name: "Zippy Zap",
@@ -2955,7 +2955,7 @@ export const move: MoveTranslationEntries = {
   },
   freezyFrost: {
     name: "Freezy Frost",
-    effect: "O usuário ataca com um cristal feito de névoa congelada fria. Isso elimina todas as mudanças de estatísticas entre todos os Pokémon envolvidos na batalha."
+    effect: "O usuário ataca com um cristal feito de névoa congelada fria. Isso elimina todas as mudanças de atributo entre todos os Pokémon envolvidos na batalha."
   },
   sparklySwirl: {
     name: "Sparkly Swirl",
@@ -3539,7 +3539,7 @@ export const move: MoveTranslationEntries = {
   },
   "silkTrap": {
     name: "Silk Trap",
-    effect: "O usuário tece uma armadilha de seda, protegendo-se de dano enquanto reduz a estatística de Velocidade de qualquer atacante que faça contato direto."
+    effect: "O usuário tece uma armadilha de seda, protegendo-se de dano enquanto reduz o atributo de Velocidade de qualquer atacante que faça contato direto."
   },
   "axeKick": {
     name: "Axe Kick",
@@ -3555,7 +3555,7 @@ export const move: MoveTranslationEntries = {
   },
   "orderUp": {
     name: "Order Up",
-    effect: "O usuário ataca com elegância. Se o usuário tiver um Tatsugiri na boca, este movimento aumenta uma das estatísticas do usuário com base na forma do Tatsugiri."
+    effect: "O usuário ataca com elegância. Se o usuário tiver um Tatsugiri na boca, este movimento aumenta uma dos atributos do usuário com base na forma do Tatsugiri."
   },
   "jetPunch": {
     name: "Jet Punch",
@@ -3603,7 +3603,7 @@ export const move: MoveTranslationEntries = {
   },
   "filletAway": {
     name: "Fillet Away",
-    effect: "O usuário aumenta muito suas estatísticas de Ataque, Ataque Esp. e Velocidade ao usar seus próprios PS."
+    effect: "O usuário aumenta muito seus atributos de Ataque, Ataque Esp. e Velocidade ao usar seus próprios PS."
   },
   "kowtowCleave": {
     name: "Kowtow Cleave",
@@ -3615,7 +3615,7 @@ export const move: MoveTranslationEntries = {
   },
   "torchSong": {
     name: "Torch Song",
-    effect: "O usuário exala chamas furiosas como se estivesse cantando uma canção, queimando o alvo. Isso também aumenta a estatística de Ataque Esp. do usuário."
+    effect: "O usuário exala chamas furiosas como se estivesse cantando uma canção, queimando o alvo. Isso também aumenta o atributo de Ataque Esp. do usuário."
   },
   "aquaStep": {
     name: "Aqua Step",
@@ -3627,7 +3627,7 @@ export const move: MoveTranslationEntries = {
   },
   "makeItRain": {
     name: "Make It Rain",
-    effect: "O usuário ataca lançando uma massa de moedas. Isso também reduz a estatística de Ataque Esp. do usuário. Dinheiro é ganho após a batalha."
+    effect: "O usuário ataca lançando uma massa de moedas. Isso também reduz o atributo de Ataque Esp. do usuário. Dinheiro é ganho após a batalha."
   },
   "psyblade": {
     name: "Psyblade",
@@ -3659,11 +3659,11 @@ export const move: MoveTranslationEntries = {
   },
   "tidyUp": {
     name: "Tidy Up",
-    effect: "O usuário arruma e remove os efeitos de Spikes, Stealth Rock, Sticky Web, Toxic Spikes e Substitute. Isso também aumenta as estatísticas de Ataque e Velocidade do usuário."
+    effect: "O usuário arruma e remove os efeitos de Spikes, Stealth Rock, Sticky Web, Toxic Spikes e Substitute. Isso também aumenta os atributos de Ataque e Velocidade do usuário."
   },
   "snowscape": {
     name: "Snowscape",
-    effect: "O usuário invoca uma tempestade de neve que dura cinco turnos. Isso aumenta as estatísticas de Defesa dos tipos Gelo."
+    effect: "O usuário invoca uma tempestade de neve que dura cinco turnos. Isso aumenta os atributos de Defesa dos tipos Gelo."
   },
   "pounce": {
     name: "Pounce",
@@ -3675,7 +3675,7 @@ export const move: MoveTranslationEntries = {
   },
   "chillingWater": {
     name: "Chilling Water",
-    effect: "O usuário ataca o alvo derramando sobre ele água tão fria que suga seu poder. Isso também reduz a estatística de Ataque do alvo."
+    effect: "O usuário ataca o alvo derramando sobre ele água tão fria que suga seu poder. Isso também reduz o atributo de Ataque do alvo."
   },
   "hyperDrill": {
     name: "Hyper Drill",
@@ -3691,7 +3691,7 @@ export const move: MoveTranslationEntries = {
   },
   "armorCannon": {
     name: "Armor Cannon",
-    effect: "O usuário dispara sua própria armadura como projéteis ardentes. Isso também reduz as estatísticas de Defesa e Defesa Esp. do usuário."
+    effect: "O usuário dispara sua própria armadura como projéteis ardentes. Isso também reduz os atributos de Defesa e Defesa Esp. do usuário."
   },
   "bitterBlade": {
     name: "Bitter Blade",
@@ -3743,7 +3743,7 @@ export const move: MoveTranslationEntries = {
   },
   "syrupBomb": {
     name: "Syrup Bomb",
-    effect: "O usuário detona uma explosão de xarope de doces pegajoso, que reveste o alvo e faz a estatística de Velocidade do alvo cair a cada turno por três turnos."
+    effect: "O usuário detona uma explosão de xarope de doces pegajoso, que reveste o alvo e faz o atributo de Velocidade do alvo cair a cada turno por três turnos."
   },
   "ivyCudgel": {
     name: "Ivy Cudgel",
@@ -3751,7 +3751,7 @@ export const move: MoveTranslationEntries = {
   },
   "electroShot": {
     name: "Electro Shot",
-    effect: "O usuário acumula eletricidade no primeiro turno, aumentando sua estatística de Ataque Esp., e então dispara um tiro de alta voltagem no próximo turno. O tiro será disparado imediatamente na chuva."
+    effect: "O usuário acumula eletricidade no primeiro turno, aumentando suo atributo de Ataque Esp., e então dispara um tiro de alta voltagem no próximo turno. O tiro será disparado imediatamente na chuva."
   },
   "teraStarstorm": {
     name: "Tera Starstorm",
@@ -3787,7 +3787,7 @@ export const move: MoveTranslationEntries = {
   },
   "alluringVoice": {
     name: "Alluring Voice",
-    effect: "O usuário ataca o alvo usando sua voz angelical. Isso também confunde o alvo se suas estatísticas tiverem sido aumentadas durante o turno."
+    effect: "O usuário ataca o alvo usando sua voz angelical. Isso também confunde o alvo se seus atributos tiverem sido aumentadas durante o turno."
   },
   "temperFlare": {
     name: "Temper Flare",

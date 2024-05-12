@@ -11,6 +11,6 @@ export const pokemonStat: SimpleTranslationEntries = {
     "SPATKshortened": "AtEsp",
     "SPDEF": "Def. Esp.",
     "SPDEFshortened": "DefEsp",
-    "SPD": "Velocidade",
+    "SPD": "Veloc.",
     "SPDshortened": "Veloc."
 } as const;

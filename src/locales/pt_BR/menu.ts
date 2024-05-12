@@ -30,7 +30,7 @@ export const menu: SimpleTranslationEntries = {
     "registrationAgeWarning": "Se registrando, você confirma que tem pelo menos 13 anos de idade.",
     "backToLogin": "Voltar ao Login",
     "failedToLoadSaveData": "Não foi possível carregar os dados de salvamento. Por favor, recarregue a página.\nSe a falha persistir, contate o administrador.",
-    "sessionSuccess": "Sessão carregada com sucesso",
+    "sessionSuccess": "Sessão carregada com sucesso.",
     "failedToLoadSession": "Não foi possível carregar os dados da sua sessão.\nEles podem estar corrompidos.",
     "boyOrGirl": "Você é um menino ou uma menina?",
     "boy": "Menino",

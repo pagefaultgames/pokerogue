@@ -38,7 +38,7 @@ export const battle: SimpleTranslationEntries = {
   "noPokeballForce": "Uma força misteriosa\nte impede de usar Poké Bolas.",
   "noPokeballTrainer": "Não se pode capturar\nPokémon dos outros!",
   "noPokeballMulti": "Não se pode lançar Poké Bolas\nquando há mais de um Pokémon!",
-  "noPokeballStrong": "Este Pokémon é forte demais para ser capturado!\nÉ preciso enfraquece-lo primeiro!",
+  "noPokeballStrong": "Este Pokémon é forte demais para ser capturado!\nÉ preciso enfraquecê-lo primeiro!",
   "noEscapeForce": "Uma força misteriosa\nte impede de fugir.",
   "noEscapeTrainer": "Não se pode fugir de\nbatalhas contra treinadores!",
   "noEscapePokemon": "O movimento {{moveName}} de {{pokemonName}} te impede de fugir!",
