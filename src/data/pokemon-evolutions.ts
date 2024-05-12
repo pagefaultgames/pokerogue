@@ -1393,8 +1393,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CRABOMINABLE, 1, EvolutionItem.ICE_STONE, null)
   ],
   [Species.ROCKRUFF]: [
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DAY) && (p.formIndex === 0)), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  (p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK) && (p.formIndex === 1)), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() !== TimeOfDay.NIGHT) && (p.formIndex === 0)), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.formIndex === 1), null),
     new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT) && (p.formIndex === 0)), null)
   ],
   [Species.STEENEE]: [
