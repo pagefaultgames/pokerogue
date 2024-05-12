@@ -98,7 +98,7 @@ export const trainerNames: SimpleTranslationEntries = {
     "erika": "Erika",
     "janine": "Janina",
     "sabrina": "Sabrina",
-    "blaine": "Pyor",
+    "blaine": "Pyro",
     "giovanni": "Giovanni",
     "falkner": "Falk",
     "bugsy": "Kai",
