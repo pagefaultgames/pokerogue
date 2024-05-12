@@ -988,6 +988,31 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
   }
 }
 
+export class DamageBoostAbAttr extends PreAttackAbAttr {
+  private damageMultiplier: number;
+  private condition: PokemonAttackCondition
+
+
+  constructor(damageMultiplier: number, condition: PokemonAttackCondition){
+    super(true);
+    this.damageMultiplier = damageMultiplier
+    this.condition = condition
+  }
+
+    applyPreAttack(pokemon: Pokemon, passive: boolean, target: Pokemon, move: PokemonMove, args: any[]): boolean {
+      console.log('trying to apply')
+      console.log(args[0].value)
+      if (this.condition(pokemon, target, move.getMove())) {
+        (args[0] as Utils.NumberHolder).value *= this.damageMultiplier;
+        console.log('did apply')
+        console.log(args[0].value)
+        return true;
+      }
+
+      return false
+  }
+}
+
 export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
@@ -3066,7 +3091,7 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatChangesAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) <= 0.5, 2),
+      .attr(DamageBoostAbAttr, 2, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) <= 0.5),
     new Ability(Abilities.FILTER, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2, 0.75)
       .ignorable(),
