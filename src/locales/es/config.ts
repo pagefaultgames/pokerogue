@@ -30,7 +30,7 @@ export const esConfig = {
     titles: titles,
     trainerClasses: trainerClasses,
     trainerNames: trainerNames,
-    tutorial: tutorial
+    tutorial: tutorial,
     nature: nature,
     growth: growth
 }

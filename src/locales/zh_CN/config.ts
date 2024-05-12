@@ -26,7 +26,7 @@ export const zhCnConfig = {
     pokemonStat: pokemonStat,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
-    nature: nature
+    nature: nature,
     titles: titles,
     trainerClasses: trainerClasses,
     trainerNames: trainerNames,
