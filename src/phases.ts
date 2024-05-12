@@ -2,7 +2,7 @@ import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr ,FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -2225,22 +2225,22 @@ export class MovePhase extends BattlePhase {
     }
 
     // Move redirection abilities (ie. Storm Drain) only support single target moves
-const moveTarget = this.targets.length === 1
-        ? new Utils.IntegerHolder(this.targets[0])
-         : null;
- if (moveTarget) {
-        var oldTarget = moveTarget.value;
-        this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
-	//Check if this move is immune to being redirected, and restore its target to the intended target if it is.
-        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length)) {
-         //If an ability prevented this move from being redirected, display its ability pop up.
-         if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget != moveTarget.value) {
-                this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
-         }
+    const moveTarget = this.targets.length === 1
+      ? new Utils.IntegerHolder(this.targets[0])
+      : null;
+    if (moveTarget) {
+      var oldTarget = moveTarget.value;
+      this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
+      //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
+      if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length)) {
+        //If an ability prevented this move from being redirected, display its ability pop up.
+        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget != moveTarget.value) {
+          this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
+        }
         moveTarget.value = oldTarget;
-	}
- this.targets[0] = moveTarget.value;
-}
+	    }
+      this.targets[0] = moveTarget.value;
+    }
 
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
@@ -2283,15 +2283,19 @@ const moveTarget = this.targets.length === 1
       if (!this.followUp && this.canMove() && !this.cancelled) {
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
       }
+
+      const moveQueue = this.pokemon.getMoveQueue();
       if (this.cancelled || this.failed) {
         if (this.failed)
           this.move.usePp(ppUsed); // Only use PP if the move failed
 
+        // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+
+        this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        moveQueue.shift(); // Remove the second turn of charge moves
         return this.end();
       }
-
-      const moveQueue = this.pokemon.getMoveQueue();
 
       this.scene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
@@ -3498,19 +3502,13 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.gameData.saveSystem().then(success => {
-          if (success) {
-            this.scene.playSound('level_up_fanfare');
-            this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.arenaBg.setVisible(false);
-            this.scene.ui.fadeIn(250).then(() => {
-              this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
-                this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-                resolve();
-              }, null, true, 1500);
-            });
-          } else
-            this.scene.reset(true);
+        this.scene.playSound('level_up_fanfare');
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.fadeIn(250).then(() => {
+          this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
+            this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+            resolve();
+          }, null, true, 1500);
         });
       });
     })
@@ -3530,18 +3528,12 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.gameData.saveSystem().then(success => {
-          if (success) {
-            this.scene.playSound('level_up_fanfare');
-            this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.arenaBg.setVisible(false);
-            this.scene.ui.fadeIn(250).then(() => {
-              this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
-                resolve();
-              }, null, true, 1500);
-            });
-          } else
-            this.scene.reset(true);
+        this.scene.playSound('level_up_fanfare');
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.fadeIn(250).then(() => {
+          this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+            resolve();
+          }, null, true, 1500);
         });
       });
     })
@@ -3562,7 +3554,7 @@ export class GameOverPhase extends BattlePhase {
     super.start();
 
     if (this.victory || !this.scene.enableRetries)
-      this.handleClearSession();
+      this.handleGameOver();
     else {
       this.scene.ui.showText(`Would you like to retry from the start of the battle?`, null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
@@ -3587,18 +3579,16 @@ export class GameOverPhase extends BattlePhase {
               this.end();
             });
           });
-        }, () => this.handleClearSession(), false, 0, 0, 1000);
+        }, () => this.handleGameOver(), false, 0, 0, 1000);
       });
     }
   }
 
-  handleClearSession(): void {
-    this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
-      if (!success[0])
-        return this.scene.reset(true);
+  handleGameOver(): void {
+    const doGameOver = (newClear: boolean) => {
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.victory && success[1]) {
+        if (this.victory && newClear) {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
@@ -3609,29 +3599,37 @@ export class GameOverPhase extends BattlePhase {
                 this.awardRibbon(pokemon, true);
               }
             }
-          } else if (this.scene.gameMode.isDaily && success[1])
+          } else if (this.scene.gameMode.isDaily && newClear)
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
         }
-        this.scene.gameData.saveSystem();
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
+        const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
+        activeBattlers.map(p => p.hideInfo());
         this.scene.ui.fadeOut(fadeDuration).then(() => {
+          [ this.scene.field, ...activeBattlers ].map(a => a.setVisible(false));
           this.scene.setFieldScale(1, true);
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
-          this.handleUnlocks();
-          if (this.victory && success[1]) {
+          if (newClear)
+            this.handleUnlocks();
+          if (this.victory && newClear) {
             for (let species of this.firstRibbons)
               this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
             if (!firstClear)
               this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           }
-          this.scene.reset();
-          this.scene.unshiftPhase(new TitlePhase(this.scene));
+          this.scene.pushPhase(new PostGameOverPhase(this.scene));
           this.end();
         });
       });
-    });
+    };
+    if (this.victory) {
+      Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
+        .then(response => response.json())
+        .then(newClear => doGameOver(newClear));
+    } else
+      doGameOver(false);
   }
 
   handleUnlocks(): void {
@@ -3667,19 +3665,35 @@ export class UnlockPhase extends Phase {
   start(): void {
     this.scene.time.delayedCall(2000, () => {
       this.scene.gameData.unlocks[this.unlockable] = true;
-      this.scene.gameData.saveSystem().then(success => {
-        if (success) {
-          this.scene.playSound('level_up_fanfare');
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.arenaBg.setVisible(false);
-          this.scene.ui.fadeIn(250).then(() => {
-            this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
-              this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-              this.end();
-            }, null, true, 1500);
-          });
-        } else
-          this.scene.reset(true);
+      this.scene.playSound('level_up_fanfare');
+      this.scene.ui.setMode(Mode.MESSAGE);
+      this.scene.ui.fadeIn(250).then(() => {
+        this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+          this.end();
+        }, null, true, 1500);
+      });
+    });
+  }
+}
+
+export class PostGameOverPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    this.scene.gameData.saveSystem().then(success => {
+      if (!success)
+        return this.scene.reset(true);
+      this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
+        if (!success[0])
+          return this.scene.reset(true);
+        this.scene.reset();
+        this.scene.unshiftPhase(new TitlePhase(this.scene));
+        this.end();
       });
     });
   }

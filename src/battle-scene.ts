@@ -759,6 +759,8 @@ export default class BattleScene extends SceneBase {
 
 		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
 
+		this.field.setVisible(true);
+
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
 		this.arenaPlayerTransition.setPosition(0, 0);
@@ -1969,6 +1971,7 @@ export default class BattleScene extends SceneBase {
 	
 	updateGameInfo(): void {
 		const gameInfo = {
+			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
 			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
 			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
 			wave: this.currentBattle?.waveIndex || 0,
