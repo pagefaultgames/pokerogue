@@ -11,6 +11,7 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
+import { nature } from "./nature";
 
 
 export const zhCnConfig = {
@@ -25,6 +26,7 @@ export const zhCnConfig = {
     pokemonStat: pokemonStat,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
+    nature: nature
     titles: titles,
     trainerClasses: trainerClasses,
     trainerNames: trainerNames,

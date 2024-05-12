@@ -112,6 +112,8 @@ declare module 'i18next' {
       trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
+      nature: SimpleTranslationEntries;
+      growth: SimpleTranslationEntries;
     };
   }
 }
