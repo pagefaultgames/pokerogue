@@ -1294,7 +1294,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
-        this.pokemonGrowthRateText.setText(Utils.toReadableString(GrowthRate[species.growthRate]));
+        //Growth translate
+        let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
+        let growthAux = growthReadable.replace(" ", "_")
+        if(i18next.exists("growth:" + growthAux)){
+          growthReadable = i18next.t("growth:"+ growthAux as any)
+        }
+        this.pokemonGrowthRateText.setText(growthReadable);
+        
         this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
