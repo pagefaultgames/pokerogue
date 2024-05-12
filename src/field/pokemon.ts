@@ -1473,16 +1473,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             // requires passing in hitsLeft
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, source.turnData.hitsLeft);
             this.turnData.damageTaken += damage.value;
-            // eg: bullet seed 1 shots, double-slap 1 shots, this isbroken right now
-            if (this.isFainted() && (this.turnData.hitsLeft > 0 || this.turnData.hitCount > 1)) {
-              // also want to check if it was a multi hit move?
-              //const hitsTotal = this.turnData.hitCount - Math.max(this.turnData.hitsLeft, 0);
-              // multi hit move killed early, then queue how many hits were made before
-              this.scene.queueMessage(i18next.t('battle:attackHitsCount', { count: this.turnData.hitCount}));
-            }
+
             // hitsLeft: for multi-hit moves, only want to render effectiveness text at end.
-            // also want to render if opponent is fainting?, or if you are fainting?
-            if (this.turnData.hitsLeft === 1 || this.isFainted()) {
+            // also want to render if a pokemon fainted
+            console.log(`the number of hits left for this turn for ${this.name} is ${source.turnData.hitsLeft}`)
+            if (source.turnData.hitsLeft === 1 || this.isFainted()) {
               switch (result as HitResult) {
                 case HitResult.SUPER_EFFECTIVE:
                   this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
@@ -1499,8 +1494,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               }
             }
 
-            // forbidden phasequeue splice udpate, idk what happens after this
-            this.scene.setPhaseQueueSplice();
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
               if (damage.value > this.scene.gameData.gameStats.highestDamage)
@@ -1513,8 +1506,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.isPlayer() && !this.isPlayer())
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
 
+            // case when multi hit move killed early, then queue how many hits were made before
+            // eg: bullet seed 1 shots, double-slap 1 shots, 
+            // note that simply looking at this.turnData.attacksReceived doesn't work for double battles
+            if (this.isFainted() && source.turnData.hitsLeft > 0){
+              console.log(`${this.name} fainted: they received this many hits: ${this.turnData.attacksReceived.length}`);
+              // off by one from decrement, test more
+              const hitsTotal = source.turnData.hitCount - Math.max(source.turnData.hitsLeft, 0) + 1;
+              this.scene.queueMessage(i18next.t('battle:attackHitsCount', { count: hitsTotal}));
+            }
+
+            // not sure what this set function  is accomplishing, perhaps for the faint phase? it messes up with the queueMessage()
+            this.scene.setPhaseQueueSplice();
+
             if (this.isFainted()) {
-              console.log(`${this.name} is fainting! ${this.turnData.hitCount}, ${this.turnData.hitsLeft}`)
               this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
               this.resetSummonData();
             }
