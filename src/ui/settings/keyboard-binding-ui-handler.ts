@@ -113,6 +113,7 @@ export default class KeyboardBindingUiHandler extends UiHandler {
         if (!this.listening || this.buttonPressed !== null) return;
         this.buttonPressed = key;
         const buttonIcon = this.scene.inputController.getPressedKeyLabel(key);
+        if (!buttonIcon) return;
         const assignedButtonIcon = this.scene.inputController.getKeyboardCurrentlyAssignedIconToDisplay(this.target);
         this.newButtonIcon.setFrame(buttonIcon);
         this.targetButtonIcon.setFrame(assignedButtonIcon);

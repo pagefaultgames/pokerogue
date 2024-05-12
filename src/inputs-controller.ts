@@ -14,6 +14,7 @@ import {
 } from "./configs/gamepad-utils";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -725,7 +726,7 @@ export class InputsController {
     }
 
     getPressedKeyLabel(key): string {
-        return getCurrenlyAssignedIconFromKeyboardKey(this.configs[this.chosenKeyboard], key);
+        return getCurrenlyAssignedIconFromKeyboardKey(this.keyboardConfigs[this.chosenKeyboard], key);
     }
 
     /**
@@ -738,8 +739,8 @@ export class InputsController {
         return getCurrentlyAssignedIconToSettingName(this.configs[this.chosenGamepad], target);
     }
 
-    getKeyboardCurrentlyAssignedIconToDisplay(target: SettingGamepad): string {
-        return getCurrentlyAssignedIconToSettingName(this.configs[this.chosenKeyboard], target);
+    getKeyboardCurrentlyAssignedIconToDisplay(target: SettingKeyboard): string {
+        return getCurrentlyAssignedIconToSettingName(this.keyboardConfigs[this.chosenKeyboard], target);
     }
 
     /**

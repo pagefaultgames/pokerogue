@@ -332,6 +332,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
             const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
             switch (button) {
                 case Button.UP: // Move up in the menu.
+                    if (!this.optionValueLabels) return false;
                     if (cursor) { // If not at the top, move the cursor up.
                         if (this.cursor)
                             success = this.setCursor(this.cursor - 1);
@@ -347,6 +348,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                     }
                     break;
                 case Button.DOWN: // Move down in the menu.
+                    if (!this.optionValueLabels) return false;
                     if (cursor < this.optionValueLabels.length - 1) {
                         if (this.cursor < rowsToDisplay - 1)
                             success = this.setCursor(this.cursor + 1);
@@ -362,12 +364,12 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                     }
                     break;
                 case Button.LEFT: // Move selection left within the current option set.
-                    if (!this.optionCursors) return;
+                    if (!this.optionCursors || !this.optionValueLabels) return;
                     if (this.optionCursors[cursor])
                         success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
                     break;
                 case Button.RIGHT: // Move selection right within the current option set.
-                    if (!this.optionCursors) return;
+                    if (!this.optionCursors || !this.optionValueLabels) return;
                     if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
                         success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
                     break;
