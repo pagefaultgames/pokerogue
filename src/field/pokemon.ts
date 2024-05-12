@@ -798,8 +798,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Gets the non-passive ability of the pokemon. This accounts for fusions and ability changing effects.
-   * This should rarely be called, most of the time hasAbility or hasAbilityWithAttr are better used as
+   * This should rarely be called, most of the time {@link hasAbility} or {@link hasAbilityWithAttr} are better used as
    * those check both the passive and non-passive abilities and account for ability suppression.
+   * @see {@link hasAbility} {@link hasAbilityWithAttr} Intended ways to check abilities in most cases
    * @param {boolean} ignoreOverride If true, ignore ability changing effects
    * @returns {Ability} The non-passive ability of the pokemon
    */
@@ -820,8 +821,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Gets the passive ability of the pokemon. This should rarely be called, most of the time
-   * hasAbility or hasAbilityWithAttr are better used as those check both the passive and
+   * {@link hasAbility} or {@link hasAbilityWithAttr} are better used as those check both the passive and
    * non-passive abilities and account for ability suppression.
+   * @see {@link hasAbility} {@link hasAbilityWithAttr} Intended ways to check abilities in most cases
    * @returns {Ability} The passive ability of the pokemon
    */
   getPassiveAbility(): Ability {
@@ -853,7 +855,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks whether an ability of a pokemon can be currently applied. This should rarely be
-   * directly called, as hasAbility and hasAbilityWithAttr already call this.
+   * directly called, as {@link hasAbility} and {@link hasAbilityWithAttr} already call this.
+   * @see {@link hasAbility} {@link hasAbilityWithAttr} Intended ways to check abilities in most cases
    * @param {boolean} passive If true, check if passive can be applied instead of non-passive
    * @returns {Ability} The passive ability of the pokemon
    */
@@ -901,7 +904,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Checks whether a pokemon has an ability with the specified attribute and it's in effect. 
    * Accounts for all the various effects which can affect whether an ability will be present or
-   *  in effect, and both passive and non-passive. This is one of the two primary ways to check
+   * in effect, and both passive and non-passive. This is one of the two primary ways to check
    * whether a pokemon has a particular ability.
    * @param {AbAttr} attrType The ability attribute to check for
    * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
