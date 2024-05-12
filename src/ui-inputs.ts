@@ -7,6 +7,7 @@ import {Setting, settingOptions} from "./system/settings";
 import SettingsUiHandler from "./ui/settings/settings-ui-handler";
 import {Button} from "./enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
+import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 
 export interface ActionKeys {
     [key in Button]: () => void;
@@ -131,7 +132,7 @@ export class UiInputs {
     }
 
     buttonCycleOption(button: Button): void {
-        const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsGamepadUiHandler];
+        const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
         const uiHandler = this.scene.ui?.getHandler();
         if (whitelist.some(handler => uiHandler instanceof handler)) {
             this.scene.ui.processInput(button);
