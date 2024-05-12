@@ -53,7 +53,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "maid": "Zofe",
     "madame": "Madam",
     "musican": "Musiker",
-    "hex_manic": "Hexe",
+    "hex_maniac": "Hexe",
     "nurse": "Pflegerin",
     "nursery_aide": "Erzieherin",
     "officer": "Polizist",
