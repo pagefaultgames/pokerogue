@@ -105,6 +105,9 @@ declare module 'i18next' {
       starterSelectUiHandler: SimpleTranslationEntries;
       nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
+      summaryUiHandler: SimpleTranslationEntries;
+      biome: SimpleTranslationEntries;
     };
   }
 }

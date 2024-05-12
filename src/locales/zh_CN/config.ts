@@ -11,6 +11,9 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { nature } from "./nature";
+import { partyUiHandler } from "./party-ui-handler";
+import { SummaryUiHandler } from "./summary-ui-handler";
+import { biome } from "./biome";
 
 
 export const zhCnConfig = {
@@ -26,6 +29,8 @@ export const zhCnConfig = {
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
-
-    nature: nature
+    nature: nature,
+    partyUiHandler: partyUiHandler,
+    summaryUiHandler: SummaryUiHandler,
+    biome: biome
 }

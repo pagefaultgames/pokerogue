@@ -6,10 +6,11 @@ import { TrainerType } from "./enums/trainer-type";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Biome } from "./enums/biome";
 import { SpeciesFormEvolution } from "./pokemon-evolutions";
+import i18next from "#app/plugins/i18n.js";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1)
-    return 'Somewhere you can\'t remember';
+    return i18next.t('biome:unknownLocation');
   switch (biome) {
     case Biome.GRASS:
       return 'Grassy Field';

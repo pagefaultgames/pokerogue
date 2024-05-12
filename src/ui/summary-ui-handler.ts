@@ -20,6 +20,7 @@ import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
+import i18next from "i18next";
 
 enum Page {
   PROFILE,
@@ -185,7 +186,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusBg);
     
-    const statusLabel = addTextObject(this.scene, 3, 0, 'Status', TextStyle.SUMMARY);
+    const statusLabel = addTextObject(this.scene, 3, 0, i18next.t('summaryUiHandler:status'), TextStyle.SUMMARY);
     statusLabel.setOrigin(0, 0);
 
     this.statusContainer.add(statusLabel);
@@ -637,7 +638,7 @@ export default class SummaryUiHandler extends UiHandler {
         const profileContainer = this.scene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
 
-        const trainerLabel = addTextObject(this.scene, 7, 12, 'OT/', TextStyle.SUMMARY_ALT);
+        const trainerLabel = addTextObject(this.scene, 7, 12, `${i18next.t('summaryUiHandler:originalTrainer') as string}/`, TextStyle.SUMMARY_ALT);
         trainerLabel.setOrigin(0, 0);
         profileContainer.add(trainerLabel);
 
@@ -650,14 +651,14 @@ export default class SummaryUiHandler extends UiHandler {
         trainerIdText.setOrigin(0, 0);
         profileContainer.add(trainerIdText);
 
-        const typeLabel = addTextObject(this.scene, 7, 28, 'Type/', TextStyle.WINDOW_ALT);
+        const typeLabel = addTextObject(this.scene, 7, 28, `${i18next.t('summaryUiHandler:type')}/`, TextStyle.WINDOW_ALT);
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
         const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
           const xCoord = 39 + 34 * index;
           const typeIcon = !tera
-            ? this.scene.add.sprite(xCoord, 42, 'types', Type[type].toLowerCase())
+            ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ''}`, Type[type].toLowerCase())
             : this.scene.add.sprite(xCoord, 42, 'type_tera');
           if (tera) {
             typeIcon.setScale(0.5);
@@ -719,8 +720,9 @@ export default class SummaryUiHandler extends UiHandler {
             y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`
           });
         }
-
-        let memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.getNature()]), TextStyle.SUMMARY_RED)}${getBBCodeFrag(' nature,', TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW_ALT)}`;
+        let readableNature = Utils.toReadableString(Nature[this.pokemon.getNature()]);
+        let biomeName = getBiomeName(this.pokemon.metBiome);
+        let memoString = `${getBBCodeFrag(`${i18next.t('summaryUiHandler:natureBeforeText')  as string}: `, TextStyle.WINDOW_ALT)}${getBBCodeFrag(i18next.exists(`nature:${readableNature}`) ? i18next.t(`nature:${readableNature}`) : readableNature, TextStyle.SUMMARY_RED)}${getBBCodeFrag(`${i18next.t('summaryUiHandler:natureAfterText') as string},`, TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? `${i18next.t('summaryUiHandler:apparently') as string} ` : ''}${i18next.t('summaryUiHandler:metAtLv') as string}`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(i18next.exists(`biome:${biomeName}`) ? i18next.t(`biome:${biomeName}`) : biomeName, TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW_ALT)}`;
        
         const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW_ALT);
         memoText.setOrigin(0, 0);
