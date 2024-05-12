@@ -12,7 +12,7 @@ export function getKeyFromInputIndex(config: GamepadConfig, index: number): Stri
 }
 
 // Given a setting name, return the key assigned to it from the config file
-export function getKeyForSettingName(config: GamepadConfig, settingName: SettingGamepad): String | null {
+export function getKeyForSettingName(config: GamepadConfig, settingName: string): String | null {
     for (const key of Object.keys(config.setting)) {
         if (config.setting[key] === settingName) return key;
     }
@@ -28,7 +28,7 @@ export function getCurrenlyAssignedKeyToAction(config: GamepadConfig, action: Bu
 }
 
 // Given a setting name, return the custom key for the default action from the config file
-export function getCurrentlyAssignedToSettingName(config: GamepadConfig, settingName: SettingGamepad): String {
+export function getCurrentlyAssignedToSettingName(config: GamepadConfig, settingName: string): String {
     const oldKey = getKeyForSettingName(config, settingName)
     const action = config.default[oldKey];
     const key = getCurrenlyAssignedKeyToAction(config, action);
@@ -42,7 +42,7 @@ export function getCurrenlyAssignedIconFromInputIndex(config: GamepadConfig, ind
 }
 
 // Given a setting name, return the icon currently assigned to this setting name
-export function getCurrentlyAssignedIconToSettingName(config: GamepadConfig, settingName: SettingGamepad) {
+export function getCurrentlyAssignedIconToSettingName(config: GamepadConfig, settingName: string) {
     const key = getCurrentlyAssignedToSettingName(config, settingName);
     return config.icons[key];
 }
