@@ -1648,7 +1648,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             // case when multi hit move killed early, then queue how many hits were made before
             // eg: bullet seed 1 shots, double-slap 1 shots, 
             // note that simply looking at this.turnData.attacksReceived doesn't work for double battles
-            if (this.isFainted() && source.turnData.hitsLeft > 0){
+            if (this.isFainted() && source.turnData.hitsLeft > 1){
               console.log(`${this.name} fainted: they received this many hits: ${this.turnData.attacksReceived.length}`);
               // off by one from decrement, test more
               const hitsTotal = source.turnData.hitCount - Math.max(source.turnData.hitsLeft, 0) + 1;
