@@ -23,7 +23,7 @@ import { Stat } from './data/pokemon-stat';
 export const SEED_OVERRIDE: string = '';
 export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
-export const STARTING_WAVE_OVERRIDE: integer = 5 ;
+export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
@@ -35,7 +35,7 @@ export const STARTING_MONEY_OVERRIDE: integer = 0;
 // forms can be found in pokemon-species.ts
 export const STARTER_FORM_OVERRIDE: integer = 0;
 // default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 500;
+export const STARTING_LEVEL_OVERRIDE: integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const MOVESET_OVERRIDE: Array<Moves> = [];
