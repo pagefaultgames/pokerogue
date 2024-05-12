@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "Blubbsauger",
-    effect: "Der Anwender greift an, indem er Wasserblasen auf sein Ziel schießt. Er absorbiert dann Wasser und stellt seine HP um 100% des vom Ziel erlittenen Schadens wieder her."
+    effect: "Der Anwender greift mit Wasserblasen an. Seine KP werden in Höhe des vom Wasser angerichteten Schadens geheilt."
   },
   "buzzyBuzz": {
     name: "Knisterladung",
