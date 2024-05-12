@@ -754,7 +754,7 @@ export class GameData {
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem('sessionData');
+        localStorage.removeItem(`sessionData${slotId ? slotId : ''}`);
         return resolve([true, true]);
       }
 
