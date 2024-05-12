@@ -545,8 +545,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getStat(stat: Stat): integer {
-    if (!this.summonData)
-    {
+    if (!this.summonData) {
       return this.stats[stat];
     }
 
@@ -1708,8 +1707,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return healAmount;
   }
 
-  changeSummonStat(stat: Stat, value: integer) : void
-  {
+  changeSummonStat(stat: Stat, value: integer) : void {
     this.summonData.stats[stat] = value;
   }
   

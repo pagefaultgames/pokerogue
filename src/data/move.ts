@@ -1842,7 +1842,19 @@ export class HpSplitAttr extends MoveEffectAttr {
   }
 }
 
+/**
+  * Attribute used for moves which split the user and the target's offensive raw stats.
+  * This attribute is used for the move Power Split.
+*/
 export class PowerSplitAttr extends MoveEffectAttr {
+  /**
+   * Applying Power Split to the user and the target.
+   * @param {Pokemon} user The pokemon using the move.
+   * @param {Pokemon} target The targeted pokemon of the move.
+   * @param {Move} move The move used.
+   * @param {any} args N/A
+   * @returns {boolean} True if power split is applied successfully.
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) : Promise<boolean> {
     return new Promise(resolve => {
 
@@ -1868,7 +1880,19 @@ export class PowerSplitAttr extends MoveEffectAttr {
   }
 }
 
+/**
+  * Attribute used for moves which split the user and the target's defensive raw stats.
+  * This attribute is used for the move Guard Split.
+*/
 export class GuardSplitAttr extends MoveEffectAttr {
+  /**
+   * Applying Guard Split to the user and the target.
+   * @param {Pokemon} user The pokemon using the move.
+   * @param {Pokemon} target The targeted pokemon of the move.
+   * @param {Move} move The move used.
+   * @param {any} args N/A
+   * @returns {boolean} True if power split is applied successfully.
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       if (!super.apply(user, target, move, args))
@@ -1877,15 +1901,15 @@ export class GuardSplitAttr extends MoveEffectAttr {
       const infoUpdates = [];
 
       const defenseValue = Math.floor((target.getStat(Stat.DEF) + user.getStat(Stat.DEF)) / 2);
-      user.changeStat(Stat.DEF, defenseValue);
+      user.changeSummonStat(Stat.DEF, defenseValue);
       infoUpdates.push(user.updateInfo());
-      target.changeStat(Stat.DEF, defenseValue);
+      target.changeSummonStat(Stat.DEF, defenseValue);
       infoUpdates.push(target.updateInfo());
 
       const specialDefenseValue = Math.floor((target.getStat(Stat.SPDEF) + user.getStat(Stat.SPDEF)) / 2);
-      user.changeStat(Stat.SPDEF, specialDefenseValue);
+      user.changeSummonStat(Stat.SPDEF, specialDefenseValue);
       infoUpdates.push(user.updateInfo());
-      target.changeStat(Stat.SPDEF, specialDefenseValue);
+      target.changeSummonStat(Stat.SPDEF, specialDefenseValue);
       infoUpdates.push(target.updateInfo());
 
 
