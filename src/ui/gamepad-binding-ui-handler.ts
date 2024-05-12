@@ -9,39 +9,53 @@ import {SettingGamepad} from "../system/settings-gamepad";
 
 
 export default class GamepadBindingUiHandler extends UiHandler {
+    // Containers for different segments of the UI.
     protected optionSelectContainer: Phaser.GameObjects.Container;
     protected actionsContainer: Phaser.GameObjects.Container;
+
+    // Background elements for titles and action areas.
     protected titleBg: Phaser.GameObjects.NineSlice;
     protected actionBg: Phaser.GameObjects.NineSlice;
     protected optionSelectBg: Phaser.GameObjects.NineSlice;
+
+    // Text elements for displaying instructions and actions.
     private unlockText: Phaser.GameObjects.Text;
     private swapText: Phaser.GameObjects.Text;
     private actionLabel: Phaser.GameObjects.Text;
     private cancelLabel: Phaser.GameObjects.Text;
+
     private listening: boolean = false;
-    private buttonPressed = null;
+    private buttonPressed: number | null = null;
+
+    // Icons for displaying current and new button assignments.
     private newButtonIcon: Phaser.GameObjects.Sprite;
     private targetButtonIcon: Phaser.GameObjects.Sprite;
-    private cancelFn;
+
+    // Function to call on cancel or completion of binding.
+    private cancelFn: (boolean?) => boolean;
+
+    // The specific setting being modified.
     private target: SettingGamepad;
 
     constructor(scene: BattleScene, mode: Mode = Mode.GAMEPAD_BINDING) {
         super(scene, mode);
+        // Listen to gamepad button down events to initiate binding.
         scene.input.gamepad.on('down', this.gamepadButtonDown, this);
     }
 
-    // const loadSessionBg = this.scene.add.rectangle(this.scene.game.canvas.width / 24, -this.scene.game.canvas.height / 24, this.scene.game.canvas.width / 12, -this.scene.game.canvas.height / 12, 0x006860);
-    // loadSessionBg.setOrigin(0, 0);
-    // this.optionSelectContainer.add(loadSessionBg);
     setup() {
         const ui = this.getUi();
         this.optionSelectContainer = this.scene.add.container(0, 0);
         this.actionsContainer = this.scene.add.container(0, 0);
+        // Initially, containers are not visible.
         this.optionSelectContainer.setVisible(false);
         this.actionsContainer.setVisible(false);
+
+        // Add containers to the UI.
         ui.add(this.optionSelectContainer);
         ui.add(this.actionsContainer);
 
+        // Setup backgrounds and text objects for UI.
         this.titleBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + 28 + 21, this.getWindowWidth(), 24);
         this.titleBg.setOrigin(0.5);
         this.optionSelectContainer.add(this.titleBg);
@@ -50,6 +64,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.actionBg.setOrigin(0.5);
         this.actionsContainer.add(this.actionBg);
 
+        // Text prompts and instructions for the user.
         this.unlockText = addTextObject(this.scene, 0, 0, 'Press a button...', TextStyle.WINDOW);
         this.unlockText.setOrigin(0, 0);
         this.unlockText.setPositionRelative(this.titleBg, 36, 4);
@@ -59,6 +74,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.optionSelectBg.setOrigin(0.5);
         this.optionSelectContainer.add(this.optionSelectBg);
 
+        // New button icon setup.
         this.newButtonIcon = this.scene.add.sprite(0, 0, 'xbox');
         this.newButtonIcon.setScale(0.15);
         this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 16);
@@ -84,7 +100,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.actionLabel.setOrigin(0, 0.5);
         this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
 
-
+        // Add swap and cancel labels to the containers.
         this.optionSelectContainer.add(this.newButtonIcon);
         this.optionSelectContainer.add(this.swapText);
         this.optionSelectContainer.add(this.targetButtonIcon);
@@ -93,7 +109,8 @@ export default class GamepadBindingUiHandler extends UiHandler {
     }
 
     gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-        const blacklist = [12, 13, 14, 15];
+        const blacklist = [12, 13, 14, 15]; // d-pad buttons are blacklisted.
+        // Check conditions before processing the button press.
         if (!this.listening || pad.id !== this.scene.inputController?.chosenGamepad || blacklist.includes(button.index) || this.buttonPressed !== null) return;
         this.buttonPressed = button.index;
         const [type, buttonIcon] = this.scene.inputController.getPressedButtonLabel(button);
@@ -115,6 +132,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
         this.cancelFn = args[0].cancelHandler;
         this.target = args[0].target;
 
+        // Bring the option and action containers to the front of the UI.
         this.getUi().bringToTop(this.optionSelectContainer);
         this.getUi().bringToTop(this.actionsContainer);
 
@@ -138,10 +156,12 @@ export default class GamepadBindingUiHandler extends UiHandler {
         switch (button) {
             case Button.LEFT:
             case Button.RIGHT:
+                // Toggle between action and cancel options.
                 const cursor = this.cursor ? 0 : 1;
                 success = this.setCursor(cursor);
                 break
             case Button.ACTION:
+                // Process actions based on current cursor position.
                 if (this.cursor === 0) {
                     this.cancelFn();
                 } else {

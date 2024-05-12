@@ -96,7 +96,7 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
         case SettingGamepad.Button_Slow_Down:
             if (value) {
                 if (scene.ui) {
-                    const cancelHandler = (success: boolean = false) => {
+                    const cancelHandler = (success: boolean = false) : boolean => {
                         scene.ui.revertMode();
                         (scene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
                         return success;

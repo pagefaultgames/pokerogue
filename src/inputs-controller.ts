@@ -39,10 +39,6 @@ export interface GamepadConfig {
     custom: MappingLayout;
 }
 
-export interface ActionGamepadMapping {
-    [key: string]: Button;
-}
-
 const repeatInputDelayMillis = 250;
 
 /**
