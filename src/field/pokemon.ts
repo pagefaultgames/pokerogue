@@ -2492,6 +2492,13 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
     
+    if (Overrides.SHINY_OVERRIDE) {
+      this.shiny = true;
+      this.initShinySparkle();
+      if (Overrides.VARIANT_OVERRIDE)
+        this.variant = Overrides.VARIANT_OVERRIDE;
+    }
+
     if (!dataSource)
       this.generateAndPopulateMoveset();
     this.generateCompatibleTms();
