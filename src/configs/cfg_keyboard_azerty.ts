@@ -1,12 +1,9 @@
-import {SettingGamepad} from "../system/settings-gamepad";
-import {Button} from "../enums/buttons";
+import {Button} from "#app/enums/buttons";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
-/**
- * 081f-e401 - UnlicensedSNES
- */
-const pad_unlicensedSNES = {
+const cfg_keyboard_azerty = {
     padID: 'keyboard',
-    padType: 'keyboard',
+    padType: 'azerty',
     gamepadMapping: {
         KEY_A: 0,
         KEY_B: 0,
@@ -80,7 +77,8 @@ const pad_unlicensedSNES = {
         KEY_LEFT_BRACKET: 0,
         KEY_RIGHT_BRACKET: 0,
         KEY_SEMICOLON: 0,
-        KEY_ASTERISK: 0
+        KEY_ASTERISK: 0,
+        T_Backspace_Alt_Key_Dark: 0
     },
     icons: {
         KEY_A: "T_A_Key_Dark.png",
@@ -138,23 +136,23 @@ const pad_unlicensedSNES = {
         KEY_PAGE_DOWN: "T_PageDown_Key_Dark.png",
         KEY_PAGE_UP: "T_PageUp_Key_Dark.png",
 
-        KEY_CTRL: "T_CTRL_Key_Dark.png",
-        KEY_DEL: "T_DEL_Key_Dark.png",
-        KEY_END: "T_END_Key_Dark.png",
-        KEY_ENTER: "T_ENTER_Key_Dark.png",
-        KEY_ESC: "T_ESC_Key_Dark.png",
-        KEY_HOME: "T_HOME_Key_Dark.png",
-        KEY_INSERT: "T_INSERT_Key_Dark.png",
+        KEY_CTRL: "T_Crtl_Key_Dark.png",
+        KEY_DEL: "T_Del_Key_Dark.png",
+        KEY_END: "T_End_Key_Dark.png",
+        KEY_ENTER: "T_Enter_Alt_Key_Dark.png",
+        KEY_ESC: "T_Esc_Key_Dark.png",
+        KEY_HOME: "T_Home_Key_Dark.png",
+        KEY_INSERT: "T_Insert_Key_Dark.png",
 
-        KEY_PLUS: "T_PLUS_Key_Dark.png",
-        KEY_MINUS: "T_MINUS_Key_Dark.png",
-        KEY_QUOTATION: "T_QUOTATION_Key_Dark.png",
-        KEY_SHIFT: "T_SHIFT_Key_Dark.png",
+        KEY_PLUS: "T_Plus_Tall_Key_Dark.png",
+        KEY_MINUS: "T_Minus_Key_Dark.png",
+        KEY_QUOTATION: "T_Quotation_Key_Dark.png",
+        KEY_SHIFT: "T_Shift_Key_Dark.png",
         KEY_LEFT_SHIFT: "T_Shift_Super_Wide_Key_Dark.png",
 
-        KEY_SPACE: "T_SPACE_Key_Dark.png",
-        KEY_TAB: "T_TAB_Key_Dark.png",
-        KEY_TILDE: "T_TILDE_Key_Dark.png",
+        KEY_SPACE: "T_Space_Key_Dark.png",
+        KEY_TAB: "T_Tab_Key_Dark.png",
+        KEY_TILDE: "T_Tilde_Key_Dark.png",
 
         KEY_ARROW_UP: "T_Up_Key_Dark.png",
         KEY_ARROW_DOWN: "T_Down_Key_Dark.png",
@@ -165,12 +163,48 @@ const pad_unlicensedSNES = {
         KEY_RIGHT_BRACKET: "T_Brackets_R_Key_Dark.png",
 
         KEY_SEMICOLON: "T_Semicolon_Key_Dark.png",
-        KEY_ASTERISK: "T_Asterisk_Key_Dark.png"
+        KEY_ASTERISK: "T_Asterisk_Key_Dark.png",
+
+        KEY_BACKSPACE: "T_Backspace_Alt_Key_Dark.png"
     },
     setting: {
+        KEY_ARROW_UP: SettingKeyboard.Button_Up,
+        KEY_ARROW_DOWN: SettingKeyboard.Button_Down,
+        KEY_ARROW_LEFT: SettingKeyboard.Button_Left,
+        KEY_ARROW_RIGHT: SettingKeyboard.Button_Right,
+        KEY_ENTER: SettingKeyboard.Button_Submit,
+        KEY_SPACE: SettingKeyboard.Button_Action,
+        KEY_BACKSPACE: SettingKeyboard.Button_Cancel,
+        KEY_ESC: SettingKeyboard.Button_Menu,
+        KEY_C: SettingKeyboard.Button_Stats,
+        KEY_R: SettingKeyboard.Button_Cycle_Shiny,
+        KEY_F: SettingKeyboard.Button_Cycle_Form,
+        KEY_G: SettingKeyboard.Button_Cycle_Gender,
+        KEY_E: SettingKeyboard.Button_Cycle_Ability,
+        KEY_N: SettingKeyboard.Button_Cycle_Nature,
+        KEY_V: SettingKeyboard.Button_Cycle_Variant,
+        KEY_PLUS: SettingKeyboard.Button_Speed_Up,
+        KEY_MINUS: SettingKeyboard.Button_Slow_Down,
     },
     default: {
+        KEY_ARROW_UP: Button.UP,
+        KEY_ARROW_DOWN: Button.DOWN,
+        KEY_ARROW_LEFT: Button.LEFT,
+        KEY_ARROW_RIGHT: Button.RIGHT,
+        KEY_ENTER: Button.SUBMIT,
+        KEY_SPACE: Button.ACTION,
+        KEY_BACKSPACE: Button.CANCEL,
+        KEY_ESC: Button.MENU,
+        KEY_C: Button.STATS,
+        KEY_R: Button.CYCLE_SHINY,
+        KEY_F: Button.CYCLE_FORM,
+        KEY_G: Button.CYCLE_GENDER,
+        KEY_E: Button.CYCLE_ABILITY,
+        KEY_N: Button.CYCLE_NATURE,
+        KEY_V: Button.CYCLE_VARIANT,
+        KEY_PLUS: Button.SPEED_UP,
+        KEY_MINUS: Button.SLOW_DOWN,
     }
 };
 
-export default pad_unlicensedSNES;
+export default cfg_keyboard_azerty;

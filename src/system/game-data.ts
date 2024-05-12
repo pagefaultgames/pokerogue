@@ -31,6 +31,7 @@ import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
 import {MappingLayout} from "#app/inputs-controller";
+import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -500,6 +501,15 @@ export class GameData {
     return true;
   }
 
+  public saveCustomKeyboardMapping(keyboardLayout: string, mapping: MappingLayout): boolean {
+    let customKeyboardMappings: object = {};
+    if (localStorage.hasOwnProperty('customKeyboardMappings'))
+      customKeyboardMappings = JSON.parse(localStorage.getItem('customKeyboardMappings'));
+    customKeyboardMappings[keyboardLayout] = mapping;
+    localStorage.setItem('customKeyboardMappings', JSON.stringify(customKeyboardMappings));
+    return true;
+  }
+
   public loadCustomMapping(): boolean {
     console.log('loadCustomMapping');
     if (!localStorage.hasOwnProperty('customMapping'))
@@ -521,6 +531,20 @@ export class GameData {
         settingsGamepad[s] = valueIndex;
     });
     localStorage.setItem('settingsGamepad', JSON.stringify(settingsGamepad));
+    return true;
+  }
+
+  public saveKeyboardSetting(setting: SettingKeyboard, valueIndex: integer): boolean {
+    let settingsKeyboard: object = {};
+    if (localStorage.hasOwnProperty('settingsKeyboard'))
+      settingsKeyboard = JSON.parse(localStorage.getItem('settingsKeyboard'));
+
+    setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);
+    Object.keys(settingKeyboardDefaults).forEach(s => {
+      if (s === setting)
+        settingsKeyboard[s] = valueIndex;
+    });
+    localStorage.setItem('settingsKeyboard', JSON.stringify(settingsKeyboard));
     return true;
   }
 

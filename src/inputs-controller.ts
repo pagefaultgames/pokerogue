@@ -12,6 +12,8 @@ import {
     getCurrenlyAssignedIconFromInputIndex, getCurrentlyAssignedIconToSettingName,
     getKeyFromInputIndex, getCurrentlyAssignedToSettingName
 } from "./configs/gamepad-utils";
+import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -74,10 +76,12 @@ export class InputsController {
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Phaser.Time.Clock;
     private configs: Map<string, GamepadConfig> = new Map();
+    private keyboardConfigs: Map<string, GamepadConfig> = new Map();
 
     private gamepadSupport: boolean = true;
 
     public chosenGamepad: String;
+    public chosenKeyboard: string = "azerty";
     private disconnectedGamepads: Array<String> = new Array();
 
     private pauseUpdate: boolean = false;
@@ -154,8 +158,9 @@ export class InputsController {
 
             this.scene.input.gamepad.on('down', this.gamepadButtonDown, this);
             this.scene.input.gamepad.on('up', this.gamepadButtonUp, this);
+            this.scene.input.keyboard.on('keydown', this.keyboardKeyDown, this);
+            this.scene.input.keyboard.on('keyup', this.keyboardKeyUp, this);
         }
-
         // Keyboard
         this.setupKeyboardControls();
     }
@@ -197,6 +202,10 @@ export class InputsController {
     setChosenGamepad(gamepad: String): void {
         this.deactivatePressedKey();
         this.initChosenGamepad(gamepad)
+    }
+    setChosenKeyboardLayout(layoutKeyboard: String): void {
+        this.deactivatePressedKey();
+        this.initChosenLayoutKeyboard(layoutKeyboard)
     }
 
     /**
@@ -261,6 +270,17 @@ export class InputsController {
         handler && handler.updateChosenGamepadDisplay()
     }
 
+    initChosenLayoutKeyboard(layoutKeyboard?: String): void {
+        let name = layoutKeyboard;
+        if (layoutKeyboard)
+            this.chosenKeyboard = layoutKeyboard;
+        else
+            name = this.chosenKeyboard;
+        localStorage.setItem('chosenKeyboardLayout', name);
+        const handler = this.scene.ui?.handlers[Mode.SETTINGS_KEYBOARD] as SettingsKeyboardUiHandler;
+        handler && handler.updateChosenKeyboardDisplay()
+    }
+
     /**
      * Handles the disconnection of a gamepad by adding its identifier to a list of disconnected gamepads.
      * This is necessary because Phaser retains memory of previously connected gamepads, and without tracking
@@ -320,6 +340,16 @@ export class InputsController {
         if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
 
+    setupKeyboard(): void {
+        for (const layout of ['azerty']) {
+            const config = this.getConfigKeyboard(layout);
+            config.custom = this.keyboardConfigs[layout]?.custom || {...config.default};
+            this.keyboardConfigs[layout] = config;
+            this.scene.gameData?.saveCustomKeyboardMapping(this.chosenKeyboard, this.keyboardConfigs[layout]?.custom);
+        }
+        this.initChosenLayoutKeyboard(this.chosenKeyboard)
+    }
+
     /**
      * Refreshes and re-indexes the list of connected gamepads.
      *
@@ -337,6 +367,17 @@ export class InputsController {
         for (const [index, thisGamepad] of this.gamepads.entries()) {
             thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier
         }
+    }
+
+    keyboardKeyDown(event): void {
+        const keyDown = event.key;
+        const keyCode = event.keyCode
+        if (!this.keyboardConfigs[this.chosenKeyboard]?.padID)
+            this.setupKeyboard();
+    }
+
+    keyboardKeyUp(event): void {
+
     }
 
     /**
@@ -504,6 +545,13 @@ export class InputsController {
         return pad_generic;
     }
 
+    getConfigKeyboard(id: string): GamepadConfig {
+        if (id === 'azerty')
+            return cfg_keyboard_azerty;
+
+        return cfg_keyboard_azerty;
+    }
+
     /**
      * repeatInputDurationJustPassed returns true if @param button has been held down long
      * enough to fire a repeated input. A button must claim the buttonLock before
@@ -652,6 +700,17 @@ export class InputsController {
      */
     getActiveConfig(): GamepadConfig | null {
         if (this.configs[this.chosenGamepad]?.padID) return this.configs[this.chosenGamepad]
+        return null;
+    }
+
+    /**
+     * Retrieves the active configuration for the currently chosen gamepad.
+     * It checks if a specific gamepad ID is stored under the chosen gamepad's configurations and returns it.
+     *
+     * @returns GamepadConfig The configuration object for the active gamepad, or null if not set.
+     */
+    getActiveKeyboardConfig(): GamepadConfig | null {
+        if (this.keyboardConfigs[this.chosenKeyboard]?.padID) return this.keyboardConfigs[this.chosenKeyboard]
         return null;
     }
 
