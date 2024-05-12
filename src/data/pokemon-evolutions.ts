@@ -1,6 +1,5 @@
 import { Gender } from "./gender";
 import { AttackTypeBoosterModifier, FlinchChanceModifier } from "../modifier/modifier";
-import { AttackTypeBoosterModifierType } from "../modifier/modifier-type";
 import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
@@ -13,7 +12,6 @@ import { WeatherType } from "./weather";
 import { Biome } from "./enums/biome";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Nature } from "./nature";
-import { Abilities } from "./enums/abilities";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
