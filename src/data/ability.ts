@@ -2562,6 +2562,9 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
+ */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   statusEffect: StatusEffect[];
   defenderType: Type[];
