@@ -1015,7 +1015,8 @@ export class DamageBoostAbAttr extends PreAttackAbAttr {
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     if (this.condition(pokemon, defender, move.getMove())) {
-      (args[0] as Utils.NumberHolder).value *= this.damageMultiplier;
+      const power = args[0] as Utils.NumberHolder;
+      power.value = Math.floor(power.value * this.damageMultiplier);
         return true;
       }
 
