@@ -505,6 +505,7 @@ export class TormentedTag extends BattlerTag {
     canAdd(pokemon: Pokemon): boolean {
         if (pokemon.isMax())
             return false;
+        else
         return true;
     }
 
@@ -515,21 +516,25 @@ export class TormentedTag extends BattlerTag {
 
     onOverlap(pokemon: Pokemon): void {
         super.onOverlap(pokemon);
-        //TODO: This is not official game text. Grab what the game actually says if this happens.
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready tormented!'));
     }
 
-    //Extremely janky hack to just test sure that this works in the first place. Athebyne please don't ship this. At the end of every turn, disables the last move you've used, for one turn.
+    onRemove(pokemon: Pokemon): void {
+        super.onRemove(pokemon);
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, 'is no longer\ntormented!'));
+    }
+
     lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
         const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
         if (ret) {
             const lastMove = pokemon.getLastXMoves(1)[0];
-            if (!lastMove)
+            if (!lastMove || (lastMove.move === Moves.NONE))
                 return ret;
-            pokemon.summonData.disabledMove = lastMove.move;
-            pokemon.summonData.disabledTurns = 2;
-            
-            //pokemon.scene.queueMessage(disabledMove.getName(), `TORMENT TEST`);
+            if (lastMove.move === Moves.STRUGGLE) {
+                pokemon.summonData.unselectableMove = Moves.NONE;
+            }
+            else {
+                pokemon.summonData.unselectableMove = lastMove.move;
+            }
             return ret;
         }
     }

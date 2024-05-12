@@ -1664,11 +1664,11 @@ export class CommandPhase extends FieldPhase {
     if (moveQueue.length) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move)
-        this.handleCommand(Command.FIGHT, -1, false);
+        this.handleCommand(Command.FIGHT, -1, false, false);
       else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
         if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, true, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
         } else
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
       }
@@ -1680,14 +1680,20 @@ export class CommandPhase extends FieldPhase {
     const playerPokemon = this.scene.getPlayerField()[this.fieldIndex];
     const enemyField = this.scene.getEnemyField();
     let success: boolean;
-
+    
     switch (command) {
       case Command.FIGHT:
-        let useStruggle = false;
+         let useStruggleA = false;
+         let useStruggleB = false;
+         let useStruggleC = false;
+         const encoreTag = playerPokemon.getTag(EncoreTag) as EncoreTag;
         if (cursor === -1 || 
-            playerPokemon.trySelectMove(cursor, args[0] as boolean) || 
-           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {          
-          const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
+            playerPokemon.trySelectMove(cursor, args[0] as boolean, args[1] as boolean) || 
+            (useStruggleA = cursor > -1 && (!playerPokemon.getMoveset().filter(m => m.isSelectable(playerPokemon)).length) && !args[1]) ||
+            (useStruggleB = cursor > -1 && (!playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) ||
+            (useStruggleC = cursor > -1 && encoreTag && encoreTag.moveId != Moves.NONE && (encoreTag.moveId === playerPokemon.summonData.unselectableMove || encoreTag.moveId === playerPokemon.summonData.disabledMove))) {        
+          const moveId = !(useStruggleA || useStruggleB || useStruggleC) ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
+          args.splice(1, 1);
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
           const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
           if (!moveId)
@@ -1706,13 +1712,14 @@ export class CommandPhase extends FieldPhase {
           const move = playerPokemon.getMoveset()[cursor];
           this.scene.ui.setMode(Mode.MESSAGE);
 
-          // Decides between a Disabled, Not Implemented, or No PP translation message
+          // Decides between a Tormented, Disabled, Not Implemented, or No PP translation message
           const errorMessage = 
-            playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
+            playerPokemon.summonData.unselectableMove === move.moveId ? 'battle:moveTormented' : playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
             move.getName().endsWith(' (N)') ? 'battle:moveNotImplemented' : 'battle:moveNoPP';
           const moveName = move.getName().replace(' (N)', ''); // Trims off the indicator
+          const pokemonName = playerPokemon.name;
 
-          this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+            this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName, pokemonName: pokemonName }), null, () => {
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
           }, null, true);
@@ -1837,10 +1844,17 @@ export class CommandPhase extends FieldPhase {
 
     const moveIndex = pokemon.getMoveset().findIndex(m => m.moveId === encoreTag.moveId);
 
-    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex].isUsable(pokemon))
-      return false;
+    if (moveIndex === -1 || (!(pokemon.getMoveset()[moveIndex].ppUsed < pokemon.getMoveset()[moveIndex].getMovePp() ||
+        pokemon.getMoveset()[moveIndex].getMove().pp === -1) && !pokemon.getMoveset()[moveIndex].getMove().name.endsWith(' (N)'))) {
+          return false;
+          }
 
-    this.handleCommand(Command.FIGHT, moveIndex, false);
+
+      if (!pokemon.getMoveset()[moveIndex].isUsable(pokemon) || !pokemon.getMoveset()[moveIndex].isSelectable(pokemon)) {
+        this.handleCommand(Command.FIGHT, 0, true, false);
+        return true;
+    }
+    this.handleCommand(Command.FIGHT, moveIndex, false, false);
 
     return true;
   }
