@@ -774,9 +774,8 @@ export class SacrificialAttr extends MoveEffectAttr {
   }
 }
 
-
 /**
- * * Attribute used for moves which self KO the user but only if the move hits a target
+ * Attribute used for moves which self KO the user but only if the move hits a target
  */
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
