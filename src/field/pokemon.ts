@@ -423,7 +423,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getFusionIconId(ignoreOverride?: boolean): string {
-    return this.getFusionSpeciesForm(ignoreOverride).getIconId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny, this.variant);
+    return this.getFusionSpeciesForm(ignoreOverride).getIconId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny, this.fusionVariant);
   }
 
   getSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
@@ -731,7 +731,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const overrideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
     if (overrideArray.length > 0) {
       overrideArray.forEach((move: Moves, index: number) => {
-        const ppUsed = this.moveset[index]?.ppUp || 0;
+        const ppUsed = this.moveset[index]?.ppUsed || 0;
         this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp))
       });
     }
@@ -796,6 +796,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !!this.getTypes(true, forDefend).find(t => t === type);
   }
 
+  /**
+   * Gets the non-passive ability of the pokemon. This accounts for fusions and ability changing effects.
+   * This should rarely be called, most of the time {@link hasAbility} or {@link hasAbilityWithAttr} are better used as
+   * those check both the passive and non-passive abilities and account for ability suppression.
+   * @see {@link hasAbility} {@link hasAbilityWithAttr} Intended ways to check abilities in most cases
+   * @param {boolean} ignoreOverride If true, ignore ability changing effects
+   * @returns {Ability} The non-passive ability of the pokemon
+   */
   getAbility(ignoreOverride?: boolean): Ability {
     if (!ignoreOverride && this.summonData?.ability)
       return allAbilities[this.summonData.ability];
@@ -811,6 +819,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return allAbilities[abilityId];
   }
 
+  /**
+   * Gets the passive ability of the pokemon. This should rarely be called, most of the time
+   * {@link hasAbility} or {@link hasAbilityWithAttr} are better used as those check both the passive and
+   * non-passive abilities and account for ability suppression.
+   * @see {@link hasAbility} {@link hasAbilityWithAttr} Intended ways to check abilities in most cases
+   * @returns {Ability} The passive ability of the pokemon
+   */
   getPassiveAbility(): Ability {
     if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer())
       return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
@@ -838,6 +853,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.passive || this.isBoss();
   }
 
+  /**
+   * Checks whether an ability of a pokemon can be currently applied. This should rarely be
+   * directly called, as {@link hasAbility} and {@link hasAbilityWithAttr} already call this.
+   * @see {@link hasAbility} {@link hasAbilityWithAttr} Intended ways to check abilities in most cases
+   * @param {boolean} passive If true, check if passive can be applied instead of non-passive
+   * @returns {Ability} The passive ability of the pokemon
+   */
   canApplyAbility(passive: boolean = false): boolean {
     if (passive && !this.hasPassive())
       return false;
@@ -862,6 +884,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.hp || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
+  /**
+   * Checks whether a pokemon has the specified ability and it's in effect. Accounts for all the various
+   * effects which can affect whether an ability will be present or in effect, and both passive and
+   * non-passive. This is the primary way to check whether a pokemon has a particular ability.
+   * @param {Abilities} ability The ability to check for
+   * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
+   * @param {boolean} ignoreOverride If true, it ignores ability changing effects
+   * @returns {boolean} Whether the ability is present and active
+   */
   hasAbility(ability: Abilities, canApply: boolean = true, ignoreOverride?: boolean): boolean {
     if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).id === ability)
       return true;
@@ -870,6 +901,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
+  /**
+   * Checks whether a pokemon has an ability with the specified attribute and it's in effect. 
+   * Accounts for all the various effects which can affect whether an ability will be present or
+   * in effect, and both passive and non-passive. This is one of the two primary ways to check
+   * whether a pokemon has a particular ability.
+   * @param {AbAttr} attrType The ability attribute to check for
+   * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
+   * @param {boolean} ignoreOverride If true, it ignores ability changing effects
+   * @returns {boolean} Whether an ability with that attribute is present and active
+   */
   hasAbilityWithAttr(attrType: { new(...args: any[]): AbAttr }, canApply: boolean = true, ignoreOverride?: boolean): boolean {
     if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).hasAttr(attrType))
       return true;
@@ -899,7 +940,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !this.isOfType(Type.FLYING, true) && this.getAbility().id !== Abilities.LEVITATE;
+    return !this.isOfType(Type.FLYING, true) && this.hasAbility(Abilities.LEVITATE);
   }
 
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
@@ -1824,7 +1865,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const scene = sceneOverride || this.scene;
     const cry = this.getSpeciesForm().cry(scene, soundConfig);
     let duration = cry.totalDuration * 1000;
-    if (this.fusionSpecies) {
+    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm()) {
       let fusionCry = this.getFusionSpeciesForm().cry(scene, soundConfig, true);
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
@@ -1843,7 +1884,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   faintCry(callback: Function): void {
-    if (this.fusionSpecies)
+    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm())
       return this.fusionFaintCry(callback);
 
     const key = this.getSpeciesForm().getCryKey(this.formIndex);
