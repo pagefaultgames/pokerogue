@@ -1249,6 +1249,10 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+/**
+  * If the pokemon faints to an attack move, the attacker loses all pp for that move
+  * @param {integer} sourceId The ID of the source pokemon
+  */
 export class GrudgeTag extends BattlerTag {
   private sourceIndex: integer;
 
