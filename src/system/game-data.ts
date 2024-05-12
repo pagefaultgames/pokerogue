@@ -190,11 +190,14 @@ const systemShortKeys = {
   natureAttr: '$na',
   seenCount: '$s' ,
   caughtCount: '$c',
+  hatchedCount: '$hc',
   ivs: '$i',
   moveset: '$m',
   eggMoves: '$em',
   candyCount: '$x',
-  passive: '$p',
+  friendship: '$f',
+  abilityAttr: '$a',
+  passiveAttr: '$pa',
   valueReduction: '$vr',
   classicWinCount: '$wc'
 };
@@ -418,7 +421,7 @@ export class GameData {
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== '{') {
-              if (response.startsWith('failed to open save file')) {
+              if (response.startsWith('sql: no rows in result set')) {
                 this.scene.queueMessage('Save data could not be found. If this is a new account, you can safely ignore this message.', null, true);
                 return resolve(true);
               } else if (response.indexOf('Too many connections') > -1) {
@@ -454,6 +457,10 @@ export class GameData {
   }
 
   private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+    if (!shorten) {
+      // Account for past key oversight
+      dataStr = dataStr.replace(/\$pAttr/g, '$pa');
+    }
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
     for (let k in fromKeys)
@@ -569,7 +576,7 @@ export class GameData {
               resolve(true);
             });
         } else {
-          localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
+          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, btoa(JSON.stringify(sessionData)));
 
           console.debug('Session data saved');
 
@@ -747,7 +754,7 @@ export class GameData {
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem('sessionData');
+        localStorage.removeItem(`sessionData${slotId ? slotId : ''}`);
         return resolve([true, true]);
       }
 
