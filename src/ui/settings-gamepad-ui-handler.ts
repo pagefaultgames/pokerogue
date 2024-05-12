@@ -144,7 +144,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                         }
                         // For null options, add an icon for the key.
                         const key = getKeyForSettingName(config as GamepadConfig, SettingGamepad[setting]);
-                        const icon = this.scene.add.sprite(0, 0, config.padType);
+                        const icon = this.scene.add.sprite(0, 0, config.padType === 'snes' ? 'xbox' : config.padType);
                         icon.setScale(0.1);
                         icon.setOrigin(0, -0.1);
                         inputsIcons[key] = icon;
@@ -429,7 +429,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         const lastCursor = this.optionCursors[settingIndex];
 
         // Check if the setting is not part of the bindings (i.e., it's a regular setting).
-        if (!this.bindingSettings.includes(setting)) {
+        if (!this.bindingSettings.includes(setting) && !setting.includes('BUTTON_')) {
             // Get the label of the last selected option and revert its color to the default.
             const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
             lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));

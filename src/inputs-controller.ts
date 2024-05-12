@@ -501,7 +501,6 @@ export class InputsController {
             return pad_dualshock;
         }
 
-        return pad_unlicensedSNES;
         return pad_generic;
     }
 
@@ -663,7 +662,8 @@ export class InputsController {
      * @returns Array Tuple containing the pad type and the currently assigned icon for the button index.
      */
     getPressedButtonLabel(button: Phaser.Input.Gamepad.Button): [string, string] {
-        return [this.configs[this.chosenGamepad].padType, getCurrenlyAssignedIconFromInputIndex(this.configs[this.chosenGamepad], button.index)];
+        const type = this.configs[this.chosenGamepad].padType;
+        return [type === 'snes' ? 'xbox' : type, getCurrenlyAssignedIconFromInputIndex(this.configs[this.chosenGamepad], button.index)];
     }
 
     /**
