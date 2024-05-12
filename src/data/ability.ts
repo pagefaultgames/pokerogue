@@ -2275,6 +2275,9 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 }
 
+/** 
+ * Attribute used for abilities (Innards Out) that damage the opponent based on how much HP the last attack used to knock out the owner of the ability.
+ */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   constructor() {
     super ();
