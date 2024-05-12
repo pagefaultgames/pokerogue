@@ -1005,9 +1005,6 @@ export default class BattleScene extends SceneBase {
 				return Utils.randSeedInt(6);
 			case Species.ALCREMIE:
 				return Utils.randSeedInt(9);
-			case Species.ROCKRUFF:
-				console.log('rockruff species called')
-				return Utils.randSeedInt(2);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
 			case Species.BASCULEGION:
