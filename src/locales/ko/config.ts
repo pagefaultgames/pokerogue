@@ -15,18 +15,18 @@ import { tutorial } from "./tutorial";
 
 
 export const koConfig = {
-    ability: ability,
-    battle: battle,
-    commandUiHandler: commandUiHandler,
-    fightUiHandler: fightUiHandler,
-    menuUiHandler: menuUiHandler,
-    menu: menu,
-    move: move,
-    pokeball: pokeball,
-    pokemonStat: pokemonStat,
-    pokemon: pokemon,
-    starterSelectUiHandler: starterSelectUiHandler,
-    tutorial: tutorial,
-    nature: nature,
-    growth: growth
+  ability,
+  battle,
+  commandUiHandler,
+  fightUiHandler,
+  menuUiHandler,
+  menu,
+  move,
+  pokeball,
+  pokemonStat,
+  pokemon,
+  starterSelectUiHandler,
+  tutorial,
+  nature,
+  growth
 }
