@@ -39,31 +39,23 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     private optionsContainer: Phaser.GameObjects.Container;
 
     private scrollCursor: integer;
+    private optionCursors: integer[];
+    private cursorObj: Phaser.GameObjects.NineSlice;
 
     private optionsBg: Phaser.GameObjects.NineSlice;
-
-    private optionCursors: integer[];
 
     private settingLabels: Phaser.GameObjects.Text[];
     private optionValueLabels: Phaser.GameObjects.Text[][];
 
-    private cursorObj: Phaser.GameObjects.NineSlice;
-
-    private reloadRequired: boolean;
-    private reloadI18n: boolean;
-    private gamepads: Array<String>;
-
-    private inputsIcons: InputsIcons;
-
+    // layout will contain the 3 Gamepad tab for each config - dualshock, xbox, snes
     private layout: Map<string, LayoutConfig> = new Map<string, LayoutConfig>();
+    // Will contain the input icons from the selected layout
+    private inputsIcons: InputsIcons;
+    // list all the setting keys used in the selected layout (because dualshock has more buttons than xbox)
     private keys: Array<String>;
 
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);
-
-        this.reloadRequired = false;
-        this.reloadI18n = false;
-        this.gamepads = null;
     }
 
     setup() {
@@ -92,21 +84,32 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         this.settingsContainer.add(gamepadText);
         this.settingsContainer.add(this.optionsBg);
 
+        // for every config, we create a new "screen"
         for (const config of [pad_xbox360, pad_dualshock, pad_unlicensedSNES]) {
             this.layout[config.padType] = new Map();
             const optionsContainer = this.scene.add.container(0, 0);
             optionsContainer.setVisible(false);
 
+            // this is all the binding this specific config contains
             const bindingSettings = Object.keys(config.setting).map(k => config.setting[k]);
 
+            // the setting name - Default Controller, Gamepad Support, Button Action, ...
             const settingLabels = [];
+
+            // the option for the setting - Auto, Disabled, ...
             const optionValueLabels = [];
+
+            // the sprites for each button to display
             const inputsIcons = {};
 
+            // Default Controller, Gamepad Support
             const commonSettingKeys = Object.keys(SettingGamepad).slice(0, 2).map(key => SettingGamepad[key]);
+            // All the binding of this specific config
             const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.setting).map(k => config.setting[k])];
+            // we merge both keys, and we fetch their default values, to change the label color of the selected one
             const optionCursors = Object.values(Object.keys(settingGamepadDefaults).filter(s => specificBindingKeys.includes(s)).map(k => settingGamepadDefaults[k]));
 
+            // we filter the SettingGamepad setting to let only the specificBindingKeys, we need the keys from this setting to compute the name to display
             const settingGamepadFiltered = Object.keys(SettingGamepad).filter(_key => specificBindingKeys.includes(SettingGamepad[_key]));
             settingGamepadFiltered.forEach((setting, s) => {
                 let settingName = setting.replace(/\_/g, ' ');
