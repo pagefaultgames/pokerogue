@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "Schnüffler",
-    description: "Kann bei Kampfantritt Auskunft über das vom Gegner getragene Item geben.",
+    description: "Kann bei Kampfantritt Auskunft über die Fähigkeit vom Gegner geben.",
   },
   reckless: {
     name: "Achtlos",
