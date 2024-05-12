@@ -1,42 +1,42 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const tutorial: SimpleTranslationEntries = {
-    "intro": `Welcome to PokéRogue! This is a battle-focused Pokémon fangame with roguelite elements.
-    $This game is not monetized and we claim no ownership of Pokémon nor of the copyrighted assets used.
-    $The game is a work in progress, but fully playable.\nFor bug reports, please use the Discord community.
-    $If the game runs slowly, please ensure 'Hardware Acceleration' is turned on in your browser settings.`,
+  intro: `포켓로그에 오신 것을 환영합니다! 로그라이트 요소가 가미된 전투 중심의 포켓몬 팬게임입니다.
+  $이 게임은 수익을 창출하지 않으며 Pokémon 및 사용된 저작권 자산에 대한 소유권을 주장하지 않습니다.
+  $게임은 아직 작업중이지만 완전히 플레이할 수 있습니다.\n버그 신고는 디스코드 커뮤니티를 이용해 주시기 바랍니다.
+  $게임이 느릴 경우 브라우저 설정에서 '하드웨어 가속'이 켜져 있는지 확인해주세요.`,
 
-    "accessMenu": `To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.`,
+  accessMenu: `메뉴에 액세스하려면 입력을 기다리는 동안 M 또는 Esc를 누릅니다.\n메뉴에는 설정과 다양한 기능이 포함되어 있습니다.`,
 
-    "menu": `From this menu you can access the settings.
-    $From the settings you can change game speed, window style, and other options.
-    $There are also various other features here, so be sure to check them all!`,
+  menu: `이 메뉴에서 설정에 액세스할 수 있습니다.
+  $설정에서 게임 속도, 윈도우 스타일 및 기타 옵션을 변경할 수 있습니다.
+  $여기에는 다양한 다른 기능도 있으니 꼭 확인해보세요!`,
 
-    "starterSelect": `From this screen, you can select your starters.\nThese are your initial party members.
-    $Each starter has a value. Your party can have up to\n6 members as long as the total does not exceed 10.
-    $You can also select gender, ability, and form depending on\nthe variants you've caught or hatched.
-    $The IVs for a species are also the best of every one you've\ncaught or hatched, so try to get lots of the same species!`,
+  starterSelect: `이 화면에서 스타팅을 선택할 수 있습니다.\n이들은 당신의 첫 번째 파티 멤버들입니다.
+  $포켓몬에 따라 코스트가 정해져 있어 최대 6마리까지의 파티로\n시작할 수 있지만 코스트의 총합이 10을 넘겨선 안 됩니다.
+  $계속 잡거나 부화시켜서\n선택할 수 있는 성별, 특성, 폼 등의 폭을 넓힐 수 있습니다.
+  $개체값도 점점 누적되어 높아지므로,\n같은 포켓몬을 많이 잡아보세요!`,
 
-    "pokerus": `A daily random 3 selectable starters have a purple border.
-    $If you see a starter you own with one of these,\ntry adding it to your party. Be sure to check its summary!`,
+  pokerus: `매일 랜덤 스타팅 세 종류에 보라색 테두리가 쳐집니다.
+  $등록된 스타팅 중에 있다면,\n파티에 추가해서 능력치 화면을 확인해봅시다!`,
 
-    "statChange": `Stat changes persist across battles as long as your Pokémon aren't recalled.
-    $Your Pokémon are recalled before a trainer battle and before entering a new biome.
-    $You can also view the stat changes for the Pokémon on the field by holding C or Shift.`,
+  statChange: `포켓몬은 교체하지 않으면 다음 전투에서도 능력치 변화가 유지됩니다.
+  $대신 트레이너 배틀이나 새로운 바이옴 입장 직전에 자동으로 들여보내지게 됩니다.
+  $C 또는 Shift를 꾹 눌러 현재 포켓몬의 능력치 변화를 볼 수도 있습니다.`,
 
-    "selectItem": `After every battle, you are given a choice of 3 random items.\nYou may only pick one.
-    $These range from consumables, to Pokémon held items, to passive permanent items.
-    $Most non-consumable item effects will stack in various ways.
-    $Some items will only show up if they can be used, such as evolution items.
-    $You can also transfer held items between Pokémon using the transfer option.
-    $The transfer option will appear in the bottom right once you have obtained a held item.
-    $You may purchase consumable items with money, and a larger variety will be available the further you get.
-    $Be sure to buy these before you pick your random item, as it will progress to the next battle once you do.`,
+  selectItem: `전투가 끝날때마다 무작위 아이템 3개 중 하나를 선택하여 얻습니다.
+  $종류는 소모품, 포켓몬의 지닌 도구, 영구적 패시브 아이템에 이르기까지 다양합니다.
+  $대부분의 소모되지 않는 도구는 효과가 누적됩니다.
+  $진화용과 같은 일부분의 아이템은 사용할 수 있는 경우에만 등장합니다.
+  $지닌 도구 건내주기 기능을 사용해 포켓몬끼리 도구를 옮겨 지닐 수도 있습니다.
+  $지닌 도구가 있다면 아이템 선택 화면 오른쪽 하단에 건내주기 기능이 표시됩니다.
+  $돈으로 소모품을 구입할 수도 있으며, 웨이브 진행에 따라 구입 가능한 종류가 늘어납니다.
+  $아이템을 선택하면 다음 웨이브로 넘어가므로, 소모품 구입을 먼저 해 주세요.`,
 
-    "eggGacha": `From this screen, you can redeem your vouchers for\nPokémon eggs.
-    $Eggs have to be hatched and get closer to hatching after\nevery battle. Rarer eggs take longer to hatch.
-    $Hatched Pokémon also won't be added to your party, they will\nbe added to your starters.
-    $Pokémon hatched from eggs generally have better IVs than\nwild Pokémon.
-    $Some Pokémon can only even be obtained from eggs.
-    $There are 3 different machines to pull from with different\nbonuses, so pick the one that suits you best!`,
+  eggGacha: `이 화면에서 포켓몬 알 바우처를\n사용해 뽑기를 할 수 있습니다.
+  $알은 전투를 반복하다 보면 부화합니다.\n희귀할 수록 더 오래 걸립니다.
+  $부화시킨 포켓몬은 파티에 추가되지 않고\n스타팅에 등록될 것입니다.
+  $알에서 부화한 포켓몬은 일반적으로\n야생에서 잡은 포켓몬보다 더 높은 개체값을 지닙니다.
+  $일부 포켓몬은 알에서만 얻을 수 있습니다.
+  $각 뽑기 기계가 각각 다른 보너스를 가지고 있으므로,\n원하는 쪽을 사용해보세요!`,
 } as const;
