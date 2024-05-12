@@ -39,6 +39,8 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const SHINY_OVERRIDE: boolean = false;
+export const VARIANT_OVERRIDE: Variant = 0;
 
 /**
  * OPPONENT / ENEMY OVERRIDES

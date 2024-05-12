@@ -179,10 +179,6 @@ export class Arena {
             return 5;
         }
         break;
-      case Species.SCATTERBUG:
-      case Species.SPEWPA:
-      case Species.VIVILLON:
-        return 0;
       case Species.LYCANROC:
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
@@ -193,13 +189,6 @@ export class Arena {
             return 2;
           case TimeOfDay.NIGHT:
             return 1;
-        }
-      case Species.CALYREX:
-        switch (this.biomeType) {
-          case Biome.SNOWY_FOREST:
-            return 1;
-          case Biome.GRAVEYARD:
-            return 2;
         }
         break;
     }
