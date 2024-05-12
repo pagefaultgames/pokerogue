@@ -42,7 +42,7 @@ export function getCurrenlyAssignedIconFromInputIndex(config: GamepadConfig, ind
 }
 
 // Given a setting name, return the icon currently assigned to this setting name
-export function getCurrentlyAssignedIconToSettingName(config: GamepadConfig, settingName: string) {
+export function getCurrentlyAssignedIconToSettingName(config: GamepadConfig, settingName: string): string {
     const key = getCurrentlyAssignedToSettingName(config, settingName);
     return config.icons[key];
 }
