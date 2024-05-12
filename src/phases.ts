@@ -3611,9 +3611,13 @@ export class GameOverPhase extends BattlePhase {
       });
     };
     if (this.victory) {
-      Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
+      if (Utils.isLocal) {
+        doGameOver(true);
+      } else {
+        Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
         .then(response => response.json())
         .then(newClear => doGameOver(newClear));
+      }
     } else
       doGameOver(false);
   }
