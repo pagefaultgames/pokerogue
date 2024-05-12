@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   "frisk": {
     name: "Cacheo",
-    description: "Puede ver el objeto que lleva el rival al entrar en combate."
+    description: "Puede ver la habilidad del rival al entrar en combate."
   },
   "reckless": {
     name: "Audaz",

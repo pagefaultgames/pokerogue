@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "Indagine",
-    description: "Quando il Pokémon entra in campo, rivela lo strumento del nemico.",
+    description: "Quando il Pokémon entra in campo, rivela l'abilità del nemico.",
   },
   reckless: {
     name: "Temerarietà",

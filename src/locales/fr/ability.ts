@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "Fouille",
-    description: "Permet de connaitre l’objet tenu par l’adversaire quand le combat commence.",
+    description: "Permet de connaitre le talent de l’adversaire quand le combat commence.",
   },
   reckless: {
     name: "Téméraire",
