@@ -10,6 +10,12 @@ export function getKeyFromInputIndex(config: GamepadConfig, index: number): Stri
     }
     return null;
 }
+export function getKeyFromKeyboardKey(config: GamepadConfig, key): String | null {
+    for (const _key of Object.keys(config.gamepadMapping)) {
+        if (config.gamepadMapping[_key] === key) return _key;
+    }
+    return null;
+}
 
 // Given a setting name, return the key assigned to it from the config file
 export function getKeyForSettingName(config: GamepadConfig, settingName: string): String | null {
@@ -39,6 +45,11 @@ export function getCurrentlyAssignedToSettingName(config: GamepadConfig, setting
 export function getCurrenlyAssignedIconFromInputIndex(config: GamepadConfig, index: number): String {
     const key = getKeyFromInputIndex(config, index);
     return config.icons[key];
+}
+
+export function getCurrenlyAssignedIconFromKeyboardKey(config: GamepadConfig, key): String {
+    const _key = getKeyFromKeyboardKey(config, key);
+    return config.icons[_key];
 }
 
 // Given a setting name, return the icon currently assigned to this setting name

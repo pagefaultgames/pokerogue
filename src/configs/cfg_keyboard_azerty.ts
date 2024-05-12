@@ -5,6 +5,7 @@ const cfg_keyboard_azerty = {
     padID: 'keyboard',
     padType: 'azerty',
     gamepadMapping: {
+        NEED TO ADD KEYCODE FROM EVENT HERE
         KEY_A: 0,
         KEY_B: 0,
         KEY_C: 0,

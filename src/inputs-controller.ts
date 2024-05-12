@@ -10,7 +10,7 @@ import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler"
 import {SettingGamepad} from "./system/settings-gamepad";
 import {
     getCurrenlyAssignedIconFromInputIndex, getCurrentlyAssignedIconToSettingName,
-    getKeyFromInputIndex, getCurrentlyAssignedToSettingName
+    getKeyFromInputIndex, getCurrentlyAssignedToSettingName, getCurrenlyAssignedIconFromKeyboardKey
 } from "./configs/gamepad-utils";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
@@ -724,6 +724,10 @@ export class InputsController {
         return [this.configs[this.chosenGamepad].padType, getCurrenlyAssignedIconFromInputIndex(this.configs[this.chosenGamepad], button.index)];
     }
 
+    getPressedKeyLabel(key): string {
+        return getCurrenlyAssignedIconFromKeyboardKey(this.configs[this.chosenKeyboard], key);
+    }
+
     /**
      * Retrieves the currently assigned icon for a specific setting on the chosen gamepad.
      *
@@ -732,6 +736,10 @@ export class InputsController {
      */
     getCurrentlyAssignedIconToDisplay(target: SettingGamepad): string {
         return getCurrentlyAssignedIconToSettingName(this.configs[this.chosenGamepad], target);
+    }
+
+    getKeyboardCurrentlyAssignedIconToDisplay(target: SettingGamepad): string {
+        return getCurrentlyAssignedIconToSettingName(this.configs[this.chosenKeyboard], target);
     }
 
     /**
@@ -752,6 +760,10 @@ export class InputsController {
         this.configs[this.chosenGamepad].custom[keyNewBinding] = ActionForThisNewBinding;
         this.scene.gameData.saveCustomMapping(this.chosenGamepad, this.configs[this.chosenGamepad].custom);
         setTimeout(() => this.pauseUpdate = false, 500);
+    }
+
+    swapKeyboardBinding(settingName, pressedButton): void {
+
     }
 
     /**
