@@ -187,9 +187,9 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
-		this.nextCommandPhaseQueue = [];
+		this.nextCommandPhaseQueue = [];		
 	}
-
+ 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
@@ -1505,6 +1505,7 @@ export default class BattleScene extends SceneBase {
 			this.populatePhaseQueue();
 		this.currentPhase = this.phaseQueue.shift();
 		this.currentPhase.start();
+	 
 	}
 	
 	overridePhase(phase: Phase): boolean {

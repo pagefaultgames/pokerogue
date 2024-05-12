@@ -1,5 +1,4 @@
 import Phaser, {Time} from "phaser";
-import WebSocket, {WebSocketServer} from 'ws';
 import * as Utils from "./utils";
 import {initTouchControls} from './touch-controls';
 import pad_generic from "./configs/pad_generic";
@@ -7,6 +6,8 @@ import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
 import {Button} from "./enums/buttons";
+import BattleScene from "./battle-scene";
+import { AttemptCapturePhase, EncounterPhase, LearnMovePhase, MessagePhase } from "./phases";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -28,7 +29,9 @@ export class InputsController {
     private buttonKeys: Phaser.Input.Keyboard.Key[][];
     private gamepads: Array<string> = new Array();
     private scene: Phaser.Scene;
-    private wss = new WebSocketServer({ port: 9876});
+    private ws: WebSocket;
+
+
 
     // buttonLock ensures only a single movement key is firing repeated inputs
     // (i.e. by holding down a button) at a time
@@ -81,17 +84,123 @@ export class InputsController {
             this.scene.input.gamepad.on('up', this.gamepadButtonUp, this);
         }
 
+       
+
         // Keyboard
         this.setupKeyboardControls();
+        this.ws = new WebSocket("ws://127.0.0.1:5050/");
+        this.ws.onopen = this.onOpen.bind(this);
+        this.ws.onmessage = this.onMessage.bind(this);
+        this.ws.onerror = this.onError.bind(this);
+        this.ws.onclose = this.onClose.bind(this);
+        
 
-        // setup WebSocket
-        this.wss.on('connection', function connection(ws: WebSocket) {
-            ws.on('message', function incoming(message: string) {
-                console.log('received: %s', message);
+    }
+
+    private onOpen(): void {
+        console.log("WebSocket connection established");
+        var getActions = {
+            "request": "GetEvents",
+            "id": "pokerogue"
+          }
+
+        var subscribe = {
+            "request": "Subscribe",
+            "id": "pokerogue",
+            "events": {
+              "raw": [
+                "ActionCompleted"
+              ]
+            },
+
+          }
+      //  console.log(JSON.stringify(subscribe));
+        this.ws.send(JSON.stringify(subscribe));
+    }
+
+    private onMessage(event: MessageEvent): void {
+        var data = JSON.parse(event.data);
+      //  console.log("Received message: ", data.data);
+        
+        if ( data.data.name == "twitch-plays-input-decide") {
+            var chatAction = data.data.arguments.chatAction
+            
+            if (chatAction != "NoOp") {
+                this.processInputCommad(chatAction);
+            } else { 
                 
-            });
-    
-        });
+                let battleScene = this.scene as BattleScene;
+                console.log(battleScene);
+                if (battleScene != null) {
+                    let currentPhase = battleScene.getCurrentPhase();
+                    switch (currentPhase.constructor.name){ // AttemptCapturePhase
+                        case 'ExpPhase':   
+                        case 'EvolutionPhase':
+                        case 'ModifierRewardPhase':                     
+                        case 'LevelUpPhase':                        
+                            this.processInputCommad('accept')
+                            break;
+                        case 'MessagePhase':
+                            console.log(battleScene);
+                             let messagePhase = currentPhase as MessagePhase;
+                             if(messagePhase.getText().includes("fainted!") 
+                                || messagePhase.getText().includes("fled!")
+                                || messagePhase.getText().includes("You picked up")) {
+                                this.processInputCommad('accept')
+                             }
+                            break;
+                        case 'LearnMovePhase':  
+                            console.log(battleScene);             
+                            let learnMovePhase = currentPhase as LearnMovePhase;                      
+                            if(learnMovePhase.openMovesRemaining > 0) { // only auto continue if move slot is free
+                                this.processInputCommad('accept')
+                            } else {
+                                switch(learnMovePhase.learnMovesStep) {
+                                    case 'battle:learnMovePrompt':
+                                    case 'battle:learnMoveLimitReached':
+                                    case 'battle:learnMoveNotLearned':
+                                    case 'battle:learnMoveForgetQuestion':
+                                    case 'battle:learnMovePoof':
+                                    case 'battle:learnMoveAnd':
+                                    case 'battle:learnMoveForgetSuccess':
+                                        this.processInputCommad('accept')
+                                        break;
+                                }
+                                
+                            }
+                            break;
+                        case 'AttemptCapturePhase':
+                            let attemptCapturePhase = currentPhase as AttemptCapturePhase;
+                            switch(attemptCapturePhase.attemptCaptureStep) {
+                                case 'battle:pokemonCaught':
+                                    this.processInputCommad('accept')
+                                    break;
+                            }   
+                            break;
+                        
+                        case 'EncounterPhase':
+                            let encounterPhase = currentPhase as EncounterPhase;
+                            switch( encounterPhase.encounterStep) {
+                                case 'battle:encounterMessage':
+                                    this.processInputCommad('accept');
+                                    break;                                    
+                            }
+                            break;
+
+                    }       
+                }
+            }
+        }
+        
+        // Process the received message here
+    }
+
+    private onError(error: Event): void {
+        console.error("WebSocket error: ", error);
+    }
+
+    private onClose(event: CloseEvent): void {
+        console.log("WebSocket connection closed");
     }
 
     loseFocus(): void {
@@ -178,10 +287,11 @@ export class InputsController {
             this.delLastProcessedMovementTime(buttonUp);
         }
     }
-
+/*
     setupWebSocketControls(): void {
 
     }
+    */
 
     setupKeyboardControls(): void {
         const keyCodes = Phaser.Input.Keyboard.KeyCodes;
@@ -239,6 +349,7 @@ export class InputsController {
             }
         });
     }
+    
     processInputCommad(input: string): void {
         const command = input.toLowerCase();
 
@@ -247,26 +358,26 @@ export class InputsController {
             'down' : Button.DOWN,
             'left' : Button.LEFT,
             'right' : Button.RIGHT,
-            'submit' : Button.SUBMIT,
+            'accept' : Button.SUBMIT,
+            'select' : Button.ACTION,
             'cancel' : Button.CANCEL,
             'menu' : Button.MENU,
             'stats' : Button.STATS
-        };
-
-        if (commandMapping[command]) {
-            this.triggerButtonPress(commandMapping[command]);
-        }
+        };        
+        this.triggerButtonPress(commandMapping[command]);
+        
     }
+    
     triggerButtonPress(button: Button): void {
         this.events.emit('input_down', {
             controller_type: 'command',
             button: button,
         });
+        this.setLastProcessedMovementTime(button);
         this.events.emit('input_up', {
             controller_type: 'command',
             button: button,
         });
-        this.setLastProcessedMovementTime(button);
         this.delLastProcessedMovementTime(button);
     }
 

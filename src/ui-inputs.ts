@@ -27,8 +27,13 @@ export class UiInputs {
         this.listenInputs();
     }
 
+    processInput(input: string): void {
+        this.inputsController.processInputCommad(input);
+    }
+
     listenInputs(): void {
         this.events.on('input_down', (event) => {
+            console.log(event);
             const actions = this.getActionsKeyDown();
             if (!actions.hasOwnProperty(event.button)) return;
             actions[event.button]();

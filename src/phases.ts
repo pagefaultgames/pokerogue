@@ -646,7 +646,7 @@ export abstract class PartyMemberPokemonPhase extends FieldPhase {
   }
 }
 
-export abstract class PlayerPartyMemberPokemonPhase extends PartyMemberPokemonPhase {
+export abstract class PlayerPartyMemberPokemonPhase extends PartyMemberPokemonPhase {  
   constructor(scene: BattleScene, partyMemberIndex: integer) {
     super(scene, partyMemberIndex, true);
   }
@@ -668,6 +668,7 @@ export abstract class EnemyPartyMemberPokemonPhase extends PartyMemberPokemonPha
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
+  public encounterStep: string;
 
   constructor(scene: BattleScene, loaded?: boolean) {
     super(scene);
@@ -876,6 +877,7 @@ export class EncounterPhase extends BattlePhase {
         const showDialogueAndSummon = () => {
           let message: string;
           this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+          this.encounterStep = 'battle:encounterMessage';
           this.scene.ui.showDialogue(message, trainer.getName(), null, () => {
             this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
           });
@@ -2999,6 +3001,10 @@ export class MessagePhase extends Phase {
     this.scene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt, this.promptDelay);
   }
 
+  getText() {
+    return this.text;
+  }
+
   end() {
     if (this.scene.abilityBar.shown)
       this.scene.abilityBar.hide();
@@ -3799,7 +3805,8 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
-
+  public openMovesRemaining: number;
+  public learnMovesStep : string;
   constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
     super(scene, partyMemberIndex);
 
@@ -3813,6 +3820,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const move = allMoves[this.moveId];
 
     const existingMoveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === move.id);
+    
 
     if (existingMoveIndex > -1)
       return this.end();
@@ -3820,6 +3828,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const emptyMoveIndex = pokemon.getMoveset().length < 4
       ? pokemon.getMoveset().length
       : pokemon.getMoveset().findIndex(m => m === null);
+
+      this.openMovesRemaining = emptyMoveIndex+1;
 
     const messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler
       ? Mode.EVOLUTION_SCENE
@@ -3830,6 +3840,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       initMoveAnim(this.scene, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
+            this.learnMovesStep = 'battle:learnMove';
             this.scene.ui.setMode(messageMode).then(() => {
               this.scene.playSound('level_up_fanfare');
               this.scene.ui.showText(i18next.t('battle:learnMove', { pokemonName: pokemon.name, moveName: move.name }), null, () => {
@@ -3841,16 +3852,21 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         });
     } else {
       this.scene.ui.setMode(messageMode).then(() => {
+        this.learnMovesStep = 'battle:learnMovePrompt';
         this.scene.ui.showText(i18next.t('battle:learnMovePrompt', { pokemonName: pokemon.name, moveName: move.name }), null, () => {
+          this.learnMovesStep = 'battle:learnMoveLimitReached';
           this.scene.ui.showText(i18next.t('battle:learnMoveLimitReached', { pokemonName: pokemon.name }), null, () => {
+            this.learnMovesStep = 'battle:learnMoveReplaceQuestion';
             this.scene.ui.showText(i18next.t('battle:learnMoveReplaceQuestion', { moveName: move.name }), null, () => {
               const noHandler = () => {
                 this.scene.ui.setMode(messageMode).then(() => {
+                  this.learnMovesStep = 'battle:learnMoveStopTeaching';
                   this.scene.ui.showText(i18next.t('battle:learnMoveStopTeaching', { moveName: move.name }), null, () => {
                     this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
                       this.scene.ui.setMode(messageMode);
+                      this.learnMovesStep = 'battle:learnMoveNotLearned';
                       this.scene.ui.showText(i18next.t('battle:learnMoveNotLearned', { pokemonName: pokemon.name, moveName: move.name }), null, () => this.end(), null, true);
-                    }, () => {
+                    }, () => {                      
                       this.scene.ui.setMode(messageMode);
                       this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                       this.end();
@@ -3858,17 +3874,23 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                   });
                 });
               };
+              
               this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 this.scene.ui.setMode(messageMode);
+                this.learnMovesStep = 'battle:learnMoveForgetQuestion';
                 this.scene.ui.showText(i18next.t('battle:learnMoveForgetQuestion'), null, () => {
+                  this.learnMovesStep = 'battle:replaceMove';
                   this.scene.ui.setModeWithoutClear(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
                     if (moveIndex === 4) {
                       noHandler();
                       return;
                     }
-                    this.scene.ui.setMode(messageMode).then(() => {
+                    this.learnMovesStep = 'battle:learnMovePoof';
+                    this.scene.ui.setMode(messageMode).then(() => {                      
                       this.scene.ui.showText('@d{32}1, @d{15}2, and@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}Poof!', null, () => {
+                        this.learnMovesStep = 'battle:learnMoveForgetSuccess';
                         this.scene.ui.showText(i18next.t('battle:learnMoveForgetSuccess', { pokemonName: pokemon.name, moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
+                          this.learnMovesStep = 'battle:learnMoveAnd';
                           this.scene.ui.showText('And…', null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
@@ -4008,6 +4030,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
   private pokeball: Phaser.GameObjects.Sprite;
   private originalY: number;
+  public attemptCaptureStep: string;
 
   constructor(scene: BattleScene, targetIndex: integer, pokeballType: PokeballType) {
     super(scene, BattlerIndex.ENEMY + targetIndex);
@@ -4185,7 +4208,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.scene.pokemonInfoContainer.show(pokemon, true);
 
     this.scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
-      
+    this.attemptCaptureStep = 'battle:pokemonCaught';
     this.scene.ui.showText(i18next.t('battle:pokemonCaught', { pokemonName: pokemon.name }), null, () => {
       const end = () => {
         this.scene.pokemonInfoContainer.hide();
@@ -4217,6 +4240,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
+            this.attemptCaptureStep = 'battle:pokemonCaughtMakeRoom';
             this.scene.ui.showText(`Your party is full.\nRelease a Pokémon to make room for ${pokemon.name}?`, null, () => {
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {

@@ -30,12 +30,12 @@
 	"dependencies": {
 		"@material/material-color-utilities": "^0.2.7",
 		"crypto-js": "^4.2.0",
+		"http": "^0.0.1-security",
 		"i18next": "^23.11.1",
 		"i18next-browser-languagedetector": "^7.2.1",
 		"json-stable-stringify": "^1.1.0",
 		"phaser": "^3.70.0",
-		"phaser3-rex-plugins": "^1.1.84",
-		"ws": "^8.17.0"
+		"phaser3-rex-plugins": "^1.1.84"
 	},
 	"engines": {
 		"node": ">=18.0.0"
