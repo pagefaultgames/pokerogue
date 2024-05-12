@@ -38,6 +38,8 @@ import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
 import {Button} from "../enums/buttons";
 import GamepadBindingUiHandler from "./gamepad-binding-ui-handler";
+import SettingsKeyboardUiHandler from "#app/ui/settings-keyboard-ui-handler";
+import KeyboardBindingUiHandler from "#app/ui/keyboard-binding-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -60,6 +62,8 @@ export enum Mode {
   SETTINGS,
   SETTINGS_GAMEPAD,
   GAMEPAD_BINDING,
+  SETTINGS_KEYBOARD,
+  KEYBOARD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
   VOUCHERS,
@@ -145,6 +149,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new SettingsUiHandler(scene),
       new SettingsGamepadUiHandler(scene),
       new GamepadBindingUiHandler(scene),
+      new SettingsKeyboardUiHandler(scene),
+      new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),

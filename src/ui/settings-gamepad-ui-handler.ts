@@ -78,12 +78,17 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         gamepadText.setOrigin(0, 0);
         gamepadText.setPositionRelative(headerBg, 50, 4);
 
+        const keyboardText = addTextObject(this.scene, 0, 0, 'Keyboard', TextStyle.SETTINGS_LABEL);
+        keyboardText.setOrigin(0, 0);
+        keyboardText.setPositionRelative(headerBg, 97, 4);
+
         this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2);
         this.optionsBg.setOrigin(0, 0);
 
         this.settingsContainer.add(headerBg);
         this.settingsContainer.add(headerText);
         this.settingsContainer.add(gamepadText);
+        this.settingsContainer.add(keyboardText);
         this.settingsContainer.add(this.optionsBg);
 
         /// Initialize a new configuration "screen" for each type of gamepad.
@@ -367,8 +372,11 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                         success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
                     break;
                 case Button.CYCLE_FORM: // Change the UI mode to SETTINGS mode.
-                case Button.CYCLE_SHINY:
                     this.scene.ui.setMode(Mode.SETTINGS)
+                    success = true;
+                    break;
+                case Button.CYCLE_SHINY:
+                    this.scene.ui.setMode(Mode.SETTINGS_KEYBOARD)
                     success = true;
                     break;
             }

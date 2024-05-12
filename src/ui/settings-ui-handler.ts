@@ -50,6 +50,10 @@ export default class SettingsUiHandler extends UiHandler {
     gamepadText.setOrigin(0, 0);
     gamepadText.setPositionRelative(headerBg, 50, 4);
 
+    const keyboardText = addTextObject(this.scene, 0, 0, 'Keyboard', TextStyle.SETTINGS_LABEL);
+    keyboardText.setOrigin(0, 0);
+    keyboardText.setPositionRelative(headerBg, 97, 4);
+
     this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2);
     this.optionsBg.setOrigin(0, 0);
 
@@ -97,6 +101,7 @@ export default class SettingsUiHandler extends UiHandler {
     this.settingsContainer.add(headerBg);
     this.settingsContainer.add(headerText);
     this.settingsContainer.add(gamepadText);
+    this.settingsContainer.add(keyboardText);
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(this.optionsContainer);
 
@@ -187,11 +192,11 @@ export default class SettingsUiHandler extends UiHandler {
           if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
             success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
           break;
-        case Button.CYCLE_FORM:
-          this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD)
+        case Button.CYCLE_FORM: // to the left
+          this.scene.ui.setMode(Mode.SETTINGS_KEYBOARD)
             success = true;
           break;
-        case Button.CYCLE_SHINY:
+        case Button.CYCLE_SHINY: // to the right
           this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD)
           success = true;
           break;
