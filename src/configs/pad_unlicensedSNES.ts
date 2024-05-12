@@ -22,12 +22,12 @@ const pad_unlicensedSNES = {
         LC_E: 15
     },
     icons: {
-        RC_S: "T_X_B_Color_Alt.png",
-        RC_E: "T_X_A_Color_Alt.png",
-        RC_W: "T_X_Y_Color_Alt.png",
-        RC_N: "T_X_X_Color_Alt.png",
-        START: "T_X_X_Alt.png",
-        SELECT: "T_X_Share_Alt.png",
+        RC_S: "T_X_B_White_Alt.png",
+        RC_E: "T_X_A_White_Alt.png",
+        RC_W: "T_X_Y_White_Alt.png",
+        RC_N: "T_X_X_White_Alt.png",
+        START: "start.png",
+        SELECT: "select.png",
         LB: "T_X_LB_Alt.png",
         RB: "T_X_RB_Alt.png",
         LC_N: "T_X_Dpad_Up_Alt.png",

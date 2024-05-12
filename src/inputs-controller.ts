@@ -662,8 +662,7 @@ export class InputsController {
      * @returns Array Tuple containing the pad type and the currently assigned icon for the button index.
      */
     getPressedButtonLabel(button: Phaser.Input.Gamepad.Button): [string, string] {
-        const type = this.configs[this.chosenGamepad].padType;
-        return [type === 'snes' ? 'xbox' : type, getCurrenlyAssignedIconFromInputIndex(this.configs[this.chosenGamepad], button.index)];
+        return [this.configs[this.chosenGamepad].padType, getCurrenlyAssignedIconFromInputIndex(this.configs[this.chosenGamepad], button.index)];
     }
 
     /**

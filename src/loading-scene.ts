@@ -216,6 +216,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas('dualshock', 'inputs');
     this.loadAtlas('nswitch', 'inputs');
     this.loadAtlas('xbox', 'inputs');
+    this.loadAtlas('snes', 'inputs');
 
     this.loadSe('select');
     this.loadSe('menu_open');

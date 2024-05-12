@@ -144,7 +144,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
                         }
                         // For null options, add an icon for the key.
                         const key = getKeyForSettingName(config as GamepadConfig, SettingGamepad[setting]);
-                        const icon = this.scene.add.sprite(0, 0, config.padType === 'snes' ? 'xbox' : config.padType);
+                        const icon = this.scene.add.sprite(0, 0, config.padType);
                         icon.setScale(0.1);
                         icon.setOrigin(0, -0.1);
                         inputsIcons[key] = icon;
