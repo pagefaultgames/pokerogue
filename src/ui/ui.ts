@@ -12,13 +12,13 @@ import SummaryUiHandler from './summary-ui-handler';
 import StarterSelectUiHandler from './starter-select-ui-handler';
 import EvolutionSceneHandler from './evolution-scene-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
-import SettingsUiHandler from './settings-ui-handler';
-import SettingsGamepadUiHandler from "./settings-gamepad-ui-handler";
+import SettingsUiHandler from './settings/settings-ui-handler';
+import SettingsGamepadUiHandler from "./settings/settings-gamepad-ui-handler";
 import { TextStyle, addTextObject } from './text';
 import AchvBar from './achv-bar';
 import MenuUiHandler from './menu-ui-handler';
 import AchvsUiHandler from './achvs-ui-handler';
-import OptionSelectUiHandler from './option-select-ui-handler';
+import OptionSelectUiHandler from './settings/option-select-ui-handler';
 import EggHatchSceneHandler from './egg-hatch-scene-handler';
 import EggListUiHandler from './egg-list-ui-handler';
 import EggGachaUiHandler from './egg-gacha-ui-handler';
@@ -37,9 +37,9 @@ import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
 import {Button} from "../enums/buttons";
-import GamepadBindingUiHandler from "./gamepad-binding-ui-handler";
-import SettingsKeyboardUiHandler from "#app/ui/settings-keyboard-ui-handler";
-import KeyboardBindingUiHandler from "#app/ui/keyboard-binding-ui-handler";
+import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
+import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
 
 export enum Mode {
   MESSAGE,

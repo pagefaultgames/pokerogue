@@ -1,15 +1,15 @@
-import BattleScene from "../battle-scene";
-import {TextStyle, addTextObject} from "./text";
-import {Mode} from "./ui";
-import UiHandler from "./ui-handler";
-import {addWindow} from "./ui-theme";
-import {Button} from "../enums/buttons";
+import BattleScene from "../../battle-scene";
+import {TextStyle, addTextObject} from "../text";
+import {Mode} from "../ui";
+import UiHandler from "../ui-handler";
+import {addWindow} from "../ui-theme";
+import {Button} from "../../enums/buttons";
 import {
     SettingGamepad,
     settingGamepadDefaults,
     settingGamepadOptions
-} from "../system/settings-gamepad";
-import {truncateString} from "../utils";
+} from "../../system/settings-gamepad";
+import {truncateString} from "../../utils";
 import {
     getCurrentlyAssignedIconToSettingName,
     getKeyForSettingName

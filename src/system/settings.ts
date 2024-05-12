@@ -3,8 +3,8 @@ import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
-import { Mode } from "#app/ui/ui";
-import SettingsUiHandler from "#app/ui/settings-ui-handler";
+import { Mode } from "../ui/ui";
+import SettingsUiHandler from "../ui/settings/settings-ui-handler";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",

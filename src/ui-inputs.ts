@@ -4,9 +4,9 @@ import {InputsController} from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, settingOptions} from "./system/settings";
-import SettingsUiHandler from "./ui/settings-ui-handler";
+import SettingsUiHandler from "./ui/settings/settings-ui-handler";
 import {Button} from "./enums/buttons";
-import SettingsGamepadUiHandler from "#app/ui/settings-gamepad-ui-handler";
+import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 
 export interface ActionKeys {
     [key in Button]: () => void;

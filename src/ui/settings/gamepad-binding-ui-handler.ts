@@ -1,11 +1,11 @@
-import UiHandler from "./ui-handler";
+import UiHandler from "../ui-handler";
 import BattleScene from "#app/battle-scene";
-import {Mode} from "./ui";
-import {Button} from "../enums/buttons";
-import {addWindow} from "./ui-theme";
+import {Mode} from "../ui";
+import {Button} from "../../enums/buttons";
+import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import Phaser from "phaser";
-import {SettingGamepad} from "../system/settings-gamepad";
+import {SettingGamepad} from "../../system/settings-gamepad";
 
 
 export default class GamepadBindingUiHandler extends UiHandler {

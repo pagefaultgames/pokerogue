@@ -6,7 +6,7 @@ import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
 import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
-import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
+import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import {SettingGamepad} from "./system/settings-gamepad";
 import {
     getCurrenlyAssignedIconFromInputIndex, getCurrentlyAssignedIconToSettingName,

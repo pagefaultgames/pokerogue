@@ -1,10 +1,10 @@
-import UiHandler from "#app/ui/ui-handler";
-import BattleScene from "#app/battle-scene";
-import {Mode} from "#app/ui/ui";
-import {Button} from "#app/enums/buttons";
+import UiHandler from "../ui-handler";
+import BattleScene from "../../battle-scene";
+import {Mode} from "../ui";
+import {Button} from "../../enums/buttons";
 
 
-export default class KeyboardBindingUiHandler extends UiHandler {
+export default class SettingsKeyboardUiHandler extends UiHandler {
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);
     }
