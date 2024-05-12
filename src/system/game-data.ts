@@ -4,6 +4,7 @@ import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutio
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
+import * as Overrides from '../overrides';
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
@@ -651,6 +652,9 @@ export class GameData {
           Object.keys(scene.pokeballCounts).forEach((key: string) => {
             scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
           });
+          if (Overrides.POKEBALL_OVERRIDE.active) {
+            scene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
           scene.money = sessionData.money || 0;
           scene.updateMoneyText();
