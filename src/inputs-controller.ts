@@ -764,7 +764,7 @@ export class InputsController {
     }
 
     swapKeyboardBinding(settingName, pressedButton): void {
-
+        console.log('swap');
     }
 
     /**
