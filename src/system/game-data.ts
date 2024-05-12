@@ -499,7 +499,7 @@ export class GameData {
       return false;
     const customMappings = JSON.parse(localStorage.getItem('customMapping'));
     for (const key of Object.keys(customMappings))
-      this.scene.inputController.loadConfig(key, customMappings[key]);
+      this.scene.inputController.injectConfig(key, customMappings[key]);
 
   }
 

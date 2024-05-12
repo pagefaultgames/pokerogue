@@ -97,7 +97,7 @@ export default class GamepadBindingUiHandler extends UiHandler {
         if (!this.listening || pad.id !== this.scene.inputController?.chosenGamepad || blacklist.includes(button.index) || this.buttonPressed !== null) return;
         this.buttonPressed = button.index;
         const [type, buttonIcon] = this.scene.inputController.getPressedButtonLabel(button);
-        const assignedButtonIcon = this.scene.inputController.getCurrentButtonLabel(this.target);
+        const assignedButtonIcon = this.scene.inputController.getCurrentlyAssignedIconToDisplay(this.target);
         this.newButtonIcon.setTexture(type);
         this.newButtonIcon.setFrame(buttonIcon);
         this.targetButtonIcon.setTexture(type);

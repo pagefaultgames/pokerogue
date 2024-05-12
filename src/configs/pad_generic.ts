@@ -64,9 +64,9 @@ const pad_generic = {
         RC_N: Button.CYCLE_VARIANT,
         START: Button.MENU,
         SELECT: Button.STATS,
-        LB: Button.CYCLE_FORM,
-        RB: Button.CYCLE_SHINY,
-        LT: Button.CYCLE_GENDER,
+        LB: Button.CYCLE_FORM, //10
+        RB: Button.CYCLE_SHINY, //9
+        LT: Button.CYCLE_GENDER, //11
         RT: Button.CYCLE_ABILITY,
         LS: Button.SPEED_UP,
         RS: Button.SLOW_DOWN,

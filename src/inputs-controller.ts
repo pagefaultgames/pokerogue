@@ -9,10 +9,8 @@ import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings-gamepad-ui-handler";
 import {SettingGamepad} from "./system/settings-gamepad";
 import {
-    getButtonIndexForKey,
-    getIconForCustomIndex, getIconForRebindedKey, getIconForSettingName,
-    getKeyForButtonIndex, getKeyForRebindedSettingName,
-    getKeyForSettingName
+    getCurrenlyAssignedIconFromInputIndex, getCurrentlyAssignedIconToSettingName,
+    getKeyFromInputIndex, getCurrentlyAssignedToSettingName
 } from "./configs/gamepad-utils";
 
 export interface GamepadMapping {
@@ -87,6 +85,8 @@ export class InputsController {
     private disconnectedGamepads: Array<String> = new Array();
 
     private pauseUpdate: boolean = false;
+
+    public lastSource: string = 'keyboard';
 
     /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
@@ -276,11 +276,11 @@ export class InputsController {
         // const chosenIsConnected = gamepadsLeft.some(g => g.id === this.chosenGamepad);
         // if the chosen gamepad is disconnected, and we got others gamepad connected
         // if (!chosenIsConnected && gamepadsLeft?.length) {
-            // We remove the previously chosen gamepad
-            // this.clearChosenGamepad();
-            // and we set the first of the gamepad still connected as the chosen one.
-            // this.setChosenGamepad(gamepadsLeft[0].id);
-            // return;
+        // We remove the previously chosen gamepad
+        // this.clearChosenGamepad();
+        // and we set the first of the gamepad still connected as the chosen one.
+        // this.setChosenGamepad(gamepadsLeft[0].id);
+        // return;
         // }
     }
 
@@ -351,8 +351,9 @@ export class InputsController {
         if (!this.chosenGamepad) // at the very first input, if we have not yet a chosen gamepad, we set it
             this.setChosenGamepad(pad.id);
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.chosenGamepad.toLowerCase()) return;
-        const key = getKeyForButtonIndex(this.configs[pad.id], button.index);
+        const key = getKeyFromInputIndex(this.configs[pad.id], button.index);
         const buttonDown = this.configs[pad.id].custom[key];
+        this.lastSource = 'gamepad';
         if (buttonDown !== undefined) {
             this.events.emit('input_down', {
                 controller_type: 'gamepad',
@@ -378,7 +379,7 @@ export class InputsController {
     gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
         if (!pad) return;
         if (!this.gamepadSupport || pad.id !== this.chosenGamepad) return;
-        const key = getKeyForButtonIndex(this.configs[pad.id], button.index);
+        const key = getKeyFromInputIndex(this.configs[pad.id], button.index);
         const buttonUp = this.configs[pad.id]?.custom[key];
         if (buttonUp !== undefined) {
             this.events.emit('input_up', {
@@ -465,6 +466,7 @@ export class InputsController {
         this.buttonKeys.forEach((row, index) => {
             for (const key of row) {
                 key.on('down', () => {
+                    this.lastSource = 'keyboard';
                     this.events.emit('input_down', {
                         controller_type: 'keyboard',
                         button: index,
@@ -506,6 +508,7 @@ export class InputsController {
             return pad_dualshock;
         }
 
+        // return pad_dualshock;
         return pad_generic;
     }
 
@@ -649,23 +652,23 @@ export class InputsController {
         else if (this.buttonLock2 === button) this.buttonLock2 = null;
     }
 
-    getActiveConfig() :GamepadConfig {
+    getActiveConfig(): GamepadConfig {
         if (this.configs[this.chosenGamepad]?.padID) return this.configs[this.chosenGamepad]
         return null;
     }
 
     getPressedButtonLabel(button: Phaser.Input.Gamepad.Button) {
-        return [this.configs[this.chosenGamepad].padType, getIconForCustomIndex(this.configs[this.chosenGamepad], button.index)];
+        return [this.configs[this.chosenGamepad].padType, getCurrenlyAssignedIconFromInputIndex(this.configs[this.chosenGamepad], button.index)];
     }
 
-    getCurrentButtonLabel(target: SettingGamepad) {
-        return getIconForSettingName(this.configs[this.chosenGamepad], target);
+    getCurrentlyAssignedIconToDisplay(target: SettingGamepad) {
+        return getCurrentlyAssignedIconToSettingName(this.configs[this.chosenGamepad], target);
     }
 
-    swapBinding(target, newBinding) {
+    swapBinding(settingName, pressedButton) {
         this.pauseUpdate = true;
-        const keyTarget = getKeyForRebindedSettingName(this.configs[this.chosenGamepad], target)
-        const keyNewBinding = getKeyForButtonIndex(this.configs[this.chosenGamepad], newBinding);
+        const keyTarget = getCurrentlyAssignedToSettingName(this.configs[this.chosenGamepad], settingName)
+        const keyNewBinding = getKeyFromInputIndex(this.configs[this.chosenGamepad], pressedButton);
         const previousActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyNewBinding];
         const ActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyTarget];
         this.configs[this.chosenGamepad].custom[keyTarget] = previousActionForThisNewBinding;
@@ -674,7 +677,7 @@ export class InputsController {
         setTimeout(() => this.pauseUpdate = false, 500);
     }
 
-    loadConfig(gamepadName: String, customMappings: MappingLayout): void {
+    injectConfig(gamepadName: String, customMappings: MappingLayout): void {
         if (!this.configs[gamepadName]) this.configs[gamepadName] = {};
         this.configs[gamepadName].custom = customMappings;
     }

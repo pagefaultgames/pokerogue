@@ -3,63 +3,46 @@ import {SettingGamepad} from "#app/system/settings-gamepad";
 import {Button} from "#app/enums/buttons";
 
 
-export function getKeyForButtonIndex(config: GamepadConfig, index: number): String {
+// Given a button index from an input event, return its naming from the mapping config
+export function getKeyFromInputIndex(config: GamepadConfig, index: number): String | null {
     for (const key of Object.keys(config.gamepadMapping)) {
-        const id = config.gamepadMapping[key];
-        if (id === index) return key;
-    }
-    return null;
-}
-export function getButtonIndexForKey(config: GamepadConfig, _key: string): number {
-    for (const key of Object.keys(config.gamepadMapping)) {
-        if (key === _key) return config.gamepadMapping[key];
+        if (config.gamepadMapping[key] === index) return key;
     }
     return null;
 }
 
-export function getIconForCustomIndex(config: GamepadConfig, index: number): String {
-    const key = getKeyForButtonIndex(config, index);
-    return config.icons[key];
-}
-
-export function getKeyForRebindedAction(config: GamepadConfig, action: Button): String {
-    for (const key of Object.keys(config.default)) {
-        if (config.default[key] === action) return key;
+// Given a setting name, return the key assigned to it from the config file
+export function getKeyForSettingName(config: GamepadConfig, settingName: SettingGamepad): String | null {
+    for (const key of Object.keys(config.setting)) {
+        if (config.setting[key] === settingName) return key;
     }
     return null;
 }
 
-export function getKeyForAction(config: GamepadConfig, action: Button): String {
+// Given a Button, return the custom key assigned to it from the config file
+export function getCurrenlyAssignedKeyToAction(config: GamepadConfig, action: Button): String | null {
     for (const key of Object.keys(config.custom)) {
         if (config.custom[key] === action) return key;
     }
     return null;
 }
 
-export function getKeyForRebindedSettingName(config: GamepadConfig, settingName: SettingGamepad): String {
+// Given a setting name, return the custom key for the default action from the config file
+export function getCurrentlyAssignedToSettingName(config: GamepadConfig, settingName: SettingGamepad): String {
     const oldKey = getKeyForSettingName(config, settingName)
-    const action = config.custom[oldKey];
-    const key = getKeyForRebindedAction(config, action);
+    const action = config.default[oldKey];
+    const key = getCurrenlyAssignedKeyToAction(config, action);
     return key;
 }
 
-export function getIconForRebindedKey(config: GamepadConfig, _key): String {
-    const action = config.custom[_key];
-    const key = getKeyForRebindedAction(config, action);
+// Given a button index from an input event, return its icon from the config file
+export function getCurrenlyAssignedIconFromInputIndex(config: GamepadConfig, index: number): String {
+    const key = getKeyFromInputIndex(config, index);
     return config.icons[key];
 }
 
-export function getKeyForSettingName(config: GamepadConfig, settingName: SettingGamepad) {
-    for (const key of Object.keys(config.setting)) {
-        const name = config.setting[key];
-        if (name === settingName) return key;
-    }
-    return null;
-}
-
-export function getIconForSettingName(config: GamepadConfig, settingName: SettingGamepad) {
-    const key = getKeyForSettingName(config, settingName);
-    const action = config.default[key];
-    const rebindedKey = getKeyForAction(config, action);
-    return config.icons[rebindedKey];
+// Given a setting name, return the icon currently assigned to this setting name
+export function getCurrentlyAssignedIconToSettingName(config: GamepadConfig, settingName: SettingGamepad) {
+    const key = getCurrentlyAssignedToSettingName(config, settingName);
+    return config.icons[key];
 }

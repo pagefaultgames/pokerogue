@@ -12,13 +12,27 @@ import {
 } from "../system/settings-gamepad";
 import {truncateString} from "../utils";
 import {
-    getIconForSettingName,
+    getCurrentlyAssignedIconToSettingName,
     getKeyForSettingName
 } from "#app/configs/gamepad-utils";
 import pad_xbox360 from "#app/configs/pad_xbox360";
 import pad_dualshock from "#app/configs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
 import {GamepadConfig} from "#app/inputs-controller";
+
+export interface InputsIcons {
+    [key: string]: Phaser.GameObjects.Sprite;
+}
+
+export interface LayoutConfig {
+    optionsContainer: Phaser.GameObjects.Container;
+    inputsIcons: InputsIcons;
+    settingLabels: Phaser.GameObjects.Text[];
+    optionValueLabels: Phaser.GameObjects.Text[][];
+    optionCursors: integer[];
+    keys: string[];
+    bindingSettings: Array<String>;
+}
 
 export default class SettingsGamepadUiHandler extends UiHandler {
     private settingsContainer: Phaser.GameObjects.Container;
@@ -39,10 +53,10 @@ export default class SettingsGamepadUiHandler extends UiHandler {
     private reloadI18n: boolean;
     private gamepads: Array<String>;
 
-    private inputsIcons;
+    private inputsIcons: InputsIcons;
 
-    private layout = new Map();
-    private keys;
+    private layout: Map<string, LayoutConfig> = new Map<string, LayoutConfig>();
+    private keys: Array<String>;
 
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);
@@ -202,8 +216,7 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         if (!activeConfig.custom) return;
         for (const elm of bindingSettings) {
             const key = getKeyForSettingName(activeConfig, elm);
-            const icon = getIconForSettingName(activeConfig, elm);
-            if (!this.inputsIcons[key]) debugger;
+            const icon = getCurrentlyAssignedIconToSettingName(activeConfig, elm);
             this.inputsIcons[key].setFrame(icon);
         }
         this.setCursor(0);
@@ -370,17 +383,13 @@ export default class SettingsGamepadUiHandler extends UiHandler {
         }
     }
 
-    clear() {
+    clear(): void {
         super.clear();
         this.settingsContainer.setVisible(false);
         this.eraseCursor();
-        if (this.reloadRequired) {
-            this.reloadRequired = false;
-            this.scene.reset(true, false, true);
-        }
     }
 
-    eraseCursor() {
+    eraseCursor(): void {
         if (this.cursorObj)
             this.cursorObj.destroy();
         this.cursorObj = null;
