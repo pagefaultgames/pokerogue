@@ -1646,6 +1646,10 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   }
 }
 
+/**
+ * Extends from {@link ProtectStatAbAttr} to allow abilities to mark that they can protect allies from stat changes.
+ * Requires the Affected Pokemon to then check if ally has any ability with this attribute and apply the effect.
+ */
 export class AllyProtectStatAbAttr extends ProtectStatAbAttr { }
 
 export class PreSetStatusAbAttr extends AbAttr {
@@ -1677,6 +1681,10 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 }
 
+/**
+ * Extends from {@link StatusEffectImmunityAbAttr} to allow abilities to mark that they can protect allies from status effects.
+ * Requires the Affected Pokemon to then check if ally has any ability with this attribute and apply the effect.
+ */
 export class AllyStatusEffectImmunityAbAttr extends StatusEffectImmunityAbAttr { }
 
 export class PreApplyBattlerTagAbAttr extends AbAttr {
@@ -1708,6 +1716,10 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   }
 }
 
+/**
+ * Extends from {@link BattlerTagImmunityAbAttr} to allow abilities to mark that they can protect allies from battler tags.
+ * Requires the Affected Pokemon to then check if ally has any ability with this attribute and apply the effect.
+ */
 export class AllyBattlerTagImmunityAbAttr extends BattlerTagImmunityAbAttr { }
 
 export class BlockCritAbAttr extends AbAttr {

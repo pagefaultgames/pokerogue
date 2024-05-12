@@ -2021,7 +2021,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
-    if (!cancelled.value)
+    if (!cancelled.value) // If Pokemon fails to protect themselves, check if ally has an ability to protect them
       applyPreSetStatusAbAttrs(AllyStatusEffectImmunityAbAttr, this.getAlly(), effect, cancelled, quiet);
 
     if (cancelled.value)

@@ -2740,7 +2740,7 @@ export class StatChangePhase extends PokemonPhase {
 
       if (!cancelled.value && !this.selfTarget && this.levels < 0)
         applyPreStatChangeAbAttrs(ProtectStatAbAttr, this.getPokemon(), stat, cancelled);
-        if (!cancelled.value && !this.selfTarget)
+        if (!cancelled.value && !this.selfTarget) // If Pokemon fails to protect themselves, check if ally has an ability to protect them
           applyPreStatChangeAbAttrs(AllyProtectStatAbAttr, this.getPokemon().getAlly(), stat, cancelled);
       
       return !cancelled.value;
