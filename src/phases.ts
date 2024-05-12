@@ -2295,12 +2295,11 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
+      // Check if the move has no valid targets (because they are flying, etc.) - if the used move is sacrificial it does not need a target so we add the user as a target so the move does not fail
       if (targets.length === 0 && this.move.getMove().getAttrs(SacrificialAttr).length) {
         // Add the user as a target if the move is sacrificial
         targets.push(this.pokemon);
       }
-
-
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
@@ -2465,13 +2464,14 @@ export class MoveEffectPhase extends PokemonPhase {
 
       // Move animation only needs one target
       new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
-        // Check if the user is in the targets list for sacrificial moves
+        // Check if the user is in the targets list for sacrificial moves, if not add them
         if (this.move.getMove().getAttrs(SacrificialAttr).length && !targets.includes(user)) {
           targets.push(user);
           targetHitChecks[user.getBattlerIndex()] = true;
         }
         for (let target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
+            // If we have a sacrifical move, and the target isnt the user - it should not "miss". So we skip the miss check
             if (this.move.getMove().getAttrs(SacrificialAttr).length && target !== user) {
               continue;
             }

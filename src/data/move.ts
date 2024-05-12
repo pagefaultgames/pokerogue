@@ -747,16 +747,26 @@ export class SacrificialAttr extends MoveEffectAttr {
     super(true, MoveEffectTrigger.PRE_APPLY);
   }
 
+    /**
+     * Applies the sacrificial effect to the user
+     * @param user Pokemon that used the move
+     * @param target The target of the move
+     * @param move Move with this attribute
+     * @param args N/A
+     */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-
-
-
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 	user.turnData.damageTaken += user.hp;
 
     return true;
   }
 
+  /**
+   *
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -20;
@@ -766,15 +776,23 @@ export class SacrificialAttr extends MoveEffectAttr {
 
 
 /**
- * Attribute used for moves which self KO the user but only if the move hits a target
+ * * Attribute used for moves which self KO the user but only if the move hits a target
  */
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.PRE_APPLY);
   }
 
+  /**
+   * Applies the sacrificial effect to the user
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
+    // If the move hits a target, the user will self KO
     if (!super.apply(user, target, move, args))
       return false;
 
@@ -784,6 +802,12 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
     return true;
   }
 
+  /**
+   *
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -20;
