@@ -1646,28 +1646,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   }
 }
 
-export class AllyProtectStatAbAttr extends PreStatChangeAbAttr {
-  private protectedStat: BattleStat;
-
-  constructor(protectedStat?: BattleStat) {
-    super();
-
-    this.protectedStat = protectedStat;
-  }
-
-  applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.protectedStat === undefined || stat === this.protectedStat) {
-      cancelled.value = true;
-      return true;
-    }
-    
-    return false;
-  }
-
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
-  }
-}
+export class AllyProtectStatAbAttr extends ProtectStatAbAttr { }
 
 export class PreSetStatusAbAttr extends AbAttr {
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
@@ -1698,28 +1677,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 }
 
-export class AllyStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  private immuneEffects: StatusEffect[];
-
-  constructor(...immuneEffects: StatusEffect[]) {
-    super();
-
-    this.immuneEffects = immuneEffects;
-  }
-
-  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
-      cancelled.value = true;
-      return true;
-    }
-
-    return false;
-  }
-
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : 'status problems'}!`);
-  }
-}
+export class AllyStatusEffectImmunityAbAttr extends StatusEffectImmunityAbAttr { }
 
 export class PreApplyBattlerTagAbAttr extends AbAttr {
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
@@ -1750,28 +1708,7 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   }
 }
 
-export class AllyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
-  private immuneTagType: BattlerTagType;
-
-  constructor(immuneTagType: BattlerTagType) {
-    super();
-
-    this.immuneTagType = immuneTagType;
-  }
-
-  applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (tag.tagType === this.immuneTagType) {
-      cancelled.value = true;
-      return true;
-    }
-
-    return false;
-  }
-
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${(args[0] as BattlerTag).getDescriptor()}!`);
-  }
-}
+export class AllyBattlerTagImmunityAbAttr extends BattlerTagImmunityAbAttr { }
 
 export class BlockCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
