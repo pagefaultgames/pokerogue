@@ -28,5 +28,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleNature": 'N: Alterna Natura',
     "cycleVariant": 'V: Alterna Variante',
     "enablePassive": "Attiva Passiva",
-    "disablePassive": "Disattiva Passiva"
+    "disablePassive": "Disattiva Passiva",
+    "maxIV": "Max a Random IV"
 }

@@ -86,6 +86,27 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   }
 }
 
+function getMaxIVCandyCount(baseValue: integer): integer {
+  switch (baseValue) {
+    case 1:
+      return 30;
+    case 2:
+      return 25;
+    case 3:
+      return 20;
+    case 4:
+      return 15;
+    case 5:
+      return 12;
+    case 6:
+      return 10;
+    case 7:
+      return 8;
+    default:
+      return 5;
+  }
+}
+
 const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX' ];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
@@ -928,6 +949,38 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 item: 'candy',
                 itemArgs: starterColors[this.lastSpecies.speciesId]
               });
+            }
+            const dexData = this.scene.gameData.dexData[this.lastSpecies.speciesId];
+            if (dexData.ivs.findIndex(iv => iv <= 30) != -1) {
+              const maxIVCost = getMaxIVCandyCount(speciesStarters[this.lastSpecies.speciesId]);
+              options.push({
+                label: `x${maxIVCost} ${i18next.t("starterSelectUiHandler:maxIV")}`,
+                handler: () => {
+                  if (candyCount >= maxIVCost){
+                    let ivSelected = false;
+                    let randomIV = 0
+                    while (!ivSelected){
+                      randomIV = Math.floor(Math.random()*6);
+                      ivSelected = dexData.ivs[randomIV] == 31 ? false : true
+                    }
+                    dexData.ivs[randomIV] = 31
+                    starterData.candyCount -= maxIVCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success)
+                        return this.scene.reset(true);
+                    });
+                    this.toggleStatsMode(false);
+                    this.toggleStatsMode(true);
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.scene.playSound('buy');
+                    return true;
+                  }
+                  return false;
+                },
+                item: 'candy',
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              })
             }
             options.push({
               label: i18next.t("menu:cancel"),
