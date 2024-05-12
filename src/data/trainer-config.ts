@@ -480,7 +480,21 @@ export class TrainerConfig {
                 if (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER))
                     return this.nameFemale;
             } else
-                ret += !variant ? '♂' : '♀';
+
+                // Check if !variant is true, if so return the name, else return the name with _female appended
+                if (variant) {
+                    if (!getIsInitialized()) {
+                        initI18n();
+                    }
+                    // Check if the female version exists in the i18n file
+                    if (i18next.exists(`trainerClasses:${this.name.toLowerCase().replace}`)) {
+                        // If it does, return
+                        return ret + "_female";
+                    } else {
+                        // If it doesn't, we do not do anything and go to the normal return
+                        // This is to prevent the game from displaying an error if a female version of the trainer does not exist in the localization
+                    }
+                }
         }
 
         return ret;
