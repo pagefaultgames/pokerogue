@@ -59,22 +59,6 @@ export const settingGamepadDefaults: SettingDefaults = {
     [SettingGamepad.Button_Submit]: 0,
 };
 
-export const noOptionsCursors: Array<SettingGamepad> = [
-    SettingGamepad.Button_Action,
-    SettingGamepad.Button_Cancel,
-    SettingGamepad.Button_Menu,
-    SettingGamepad.Button_Stats,
-    SettingGamepad.Button_Cycle_Form,
-    SettingGamepad.Button_Cycle_Shiny,
-    SettingGamepad.Button_Cycle_Gender,
-    SettingGamepad.Button_Cycle_Ability,
-    SettingGamepad.Button_Cycle_Nature,
-    SettingGamepad.Button_Cycle_Variant,
-    SettingGamepad.Button_Speed_Up,
-    SettingGamepad.Button_Slow_Down,
-    SettingGamepad.Button_Submit,
-];
-
 export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
     switch (setting) {
         case SettingGamepad.Gamepad_Support:

@@ -5,7 +5,6 @@ import UiHandler from "./ui-handler";
 import {addWindow} from "./ui-theme";
 import {Button} from "../enums/buttons";
 import {
-    noOptionsCursors,
     SettingGamepad,
     settingGamepadDefaults,
     settingGamepadOptions
