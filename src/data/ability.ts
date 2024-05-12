@@ -990,8 +990,7 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
 
 export class DamageBoostAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
-  private condition: PokemonAttackCondition
-
+  private condition: PokemonAttackCondition;
 
   constructor(damageMultiplier: number, condition: PokemonAttackCondition){
     super(true);
