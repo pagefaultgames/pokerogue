@@ -34,6 +34,15 @@ interface BiomeDepths {
   [key: integer]: [integer, integer]
 }
 
+interface BiomeConditions {
+  [key: integer]: (p: any) => boolean;
+}
+
+export const biomeConditions: BiomeConditions = {
+  [Biome.TOWN]: (p) => !!p.scene.getParty().find(p => p.species.speciesId === Species.MEWTWO),
+  [Biome.PLAINS]: () => {return false},
+}
+
 export const biomeLinks: BiomeLinks = {
   [Biome.TOWN]: Biome.PLAINS,
   [Biome.PLAINS]: [ Biome.GRASS, Biome.METROPOLIS, Biome.LAKE ],
@@ -82,7 +91,8 @@ export enum BiomePoolTier {
   BOSS,
   BOSS_RARE,
   BOSS_SUPER_RARE,
-  BOSS_ULTRA_RARE
+  BOSS_ULTRA_RARE,
+  BOSS_CONDITIONAL_ULTRA_RARE
 };
 
 export const uncatchableSpecies: Species[] = [];
@@ -157,7 +167,8 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.BOSS]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
     [BiomePoolTier.BOSS_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
     [BiomePoolTier.BOSS_SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
-    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] }
+    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [Species.ZEKROM] },
+    [BiomePoolTier.BOSS_CONDITIONAL_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [Species.RESHIRAM]},
   },
   [Biome.PLAINS]: {
     [BiomePoolTier.COMMON]: {
@@ -5126,11 +5137,13 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.RESHIRAM, Type.DRAGON, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_ULTRA_RARE ]
+        [ Biome.VOLCANO, BiomePoolTier.BOSS_ULTRA_RARE ],
+        [ Biome.TOWN, BiomePoolTier.BOSS_CONDITIONAL_ULTRA_RARE ]
       ]
     ],
     [ Species.ZEKROM, Type.DRAGON, Type.ELECTRIC, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_ULTRA_RARE ]
+        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_ULTRA_RARE ],
+        [ Biome.TOWN, BiomePoolTier.BOSS_ULTRA_RARE ]
       ]
     ],
     [ Species.LANDORUS, Type.GROUND, Type.FLYING, [
