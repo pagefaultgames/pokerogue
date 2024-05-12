@@ -18,12 +18,12 @@ export const tutorial: SimpleTranslationEntries = {
     $Você pode também selecionar o gênero, habilidade, e formas dependendo \ndas variantes que você capturou ou chocou. 
     $Os IVs da espécie são os melhores de todos que você \njá capturou ou chocou, então tente conseguir vários Pokémon da mesma espécie!`,
 
-    "pokerus": `Todo dia 3 Pokémon iniciais aleatórios ficam com uma borda roxa. 
-    $Se você ver um inicial que você possui com uma dessa,\ntente adicionar a sua equipe. Certifique-se de olhar no sumário!`,
+    "pokerus": `Todo dia, 3 Pokémon iniciais ficam com uma borda roxa. 
+    $Caso veja um inicial que você possui com uma dessa, tente\nadicioná-lo a sua equipe. Lembre-se de olhar seu sumário!`,
 
-    "statChange": `Los cambios de estadísticas se mantienen entre combates\nmientras que el Pokémon no vuelva a la Poké Ball.
-    $Tus Pokémon vuelven a sus Poké Balls antes de combates contra entrenadores y de entrar a un nuevo bioma.
-    $También puedes ver los cambios de estadísticas del Pokémon en campo manteniendo pulsado C o Shift.`,
+    "statChange": `As mudanças de estatísticas se mantém depois do combate\ndesde que o Pokémon não seja trocado.
+    $Seus Pokémon voltam a suas Poké Bolas antes de batalhas contra treinadores e de entrar em um novo bioma.
+    $Também é possível ver as mudanças de estatísticas dos Pokémon em campo mantendo pressionado C ou Shift.`,
 
     "selectItem": `Após cada batalha você pode escolher entre 3 itens aleatórios.\nVocê pode escolher apenas um.
     $Esses variam entre consumíveis, itens de segurar, e itens passivos permanentes.
@@ -34,10 +34,10 @@ export const tutorial: SimpleTranslationEntries = {
     $Você pode comprar itens consumíveis com dinheiro, e uma maior variedade ficará disponível conforme você for mais longe.
     $Certifique-se de comprá-los antes de escolher seu item aleatório. Ao escolher, a próxima batalha começará.`,
 
-    "eggGacha": `Nesta tela você pode trocar seus vouchers por\novos de Pokémon.
-    $Ovos devem ser chocados e ficam mais próximos de chocar depois\nde cada batalha. Ovos raros demoram mais para chocar.
-    $Pokémon chocados não serão adicionados a sua equipe, eles serão\nadicionados aos seus iniciais.
-    $Pokémon chocados geralmente possuem IVs melhores que\nPokémon selvagens.
-    $Alguns Pokémon só podem ser obtidos através de ovos.
-    $Há 3 máquinas diferentes que você pode usar, cada uma com diferentes bônus,\nentão escolha a que mais lhe convém!`,
+    "eggGacha": `Nesta tela você pode trocar seus vouchers\npor ovos de Pokémon.
+    $Ovos ficam mais próximos de chocar depois de cada batalha.\nOvos raros demoram mais para chocar.
+    $Pokémon chocados não serão adicionados a sua equipe,\nmas sim aos seus iniciais.
+    $Pokémon chocados geralmente possuem IVs melhores\nque Pokémon selvagens.
+    $Alguns Pokémon só podem ser obtidos através de seus ovos.
+    $Há 3 máquinas, cada uma com um bônus diferente,\nentão escolha a que mais lhe convém!`,
 } as const;
