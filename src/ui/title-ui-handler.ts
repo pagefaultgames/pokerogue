@@ -3,6 +3,7 @@ import { DailyRunScoreboard } from "./daily-run-scoreboard";
 import OptionSelectUiHandler from "./option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
+import { isLocal } from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { battleCountSplashMessage, splashMessages } from "../data/splash-messages";
 import i18next from "i18next";
@@ -33,14 +34,16 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 44);
-		this.dailyRunScoreboard.setup();
+    if (!isLocal) {
+      this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 44);
+      this.dailyRunScoreboard.setup();
 
-    this.titleContainer.add(this.dailyRunScoreboard);
+      this.titleContainer.add(this.dailyRunScoreboard);
 
-    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: '54px' });
-    this.playerCountLabel.setOrigin(1, 0);
-    this.titleContainer.add(this.playerCountLabel);
+      this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: '54px' });
+      this.playerCountLabel.setOrigin(1, 0);
+      this.titleContainer.add(this.playerCountLabel);
+    }
 
     this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, '', TextStyle.MONEY, { fontSize: '54px' });
     this.splashMessageText.setOrigin(0.5, 0.5);
@@ -80,11 +83,13 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       const ui = this.getUi();
 
-      this.dailyRunScoreboard.update();
+      if (!isLocal) {
+        this.dailyRunScoreboard.update();
 
-      this.updateTitleStats();
+        this.updateTitleStats();
 
-      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 60000);
+        this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 60000);
+      }
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],
@@ -102,8 +107,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    clearInterval(this.titleStatsTimer);
-    this.titleStatsTimer = null;
+    if (!isLocal) {
+      clearInterval(this.titleStatsTimer);
+      this.titleStatsTimer = null;
+    }
 
     this.scene.tweens.add({
       targets: [ this.titleContainer, ui.getMessageHandler().bg ],
