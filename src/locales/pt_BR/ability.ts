@@ -227,11 +227,11 @@ export const ability: AbilityTranslationEntries = {
   },
   plus: {
     name: "Plus",
-    description: "Aumenta o Ataque Esp. do Pokémon se estiver em batalha com um aliado que tenha as habilidade Mais ou Menos.",
+    description: "Aumenta o Ataque Esp. do Pokémon se estiver em batalha com um aliado que tenha as Habilidades Plus ou Minus.",
   },
   minus: {
     name: "Minus",
-    description: "Aumenta o Ataque Esp. do Pokémon se estiver em batalha com um aliado que tenha as habilidade Mais ou Menos.",
+    description: "Aumenta o Ataque Esp. do Pokémon se estiver em batalha com um aliado que tenha as Habilidades Mais ou Menos.",
   },
   forecast: {
     name: "Forecast",
@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "Frisk",
-    description: "Quando entra em batalha, o Pokémon pode checar o item que um adversário está segurando.",
+    description: "Quando entra em batalha, o Pokémon pode checar a Habilidade do adversário.",
   },
   reckless: {
     name: "Reckless",
@@ -1067,7 +1067,7 @@ export const ability: AbilityTranslationEntries = {
   },
   lingeringAroma: {
     name: "Lingering Aroma",
-    description: "O contato com o Pokémon muda a habilidade do atacante para Lingering Aroma.",
+    description: "O contato com o Pokémon muda a Habilidade do atacante para Lingering Aroma.",
   },
   seedSower: {
     name: "Seed Sower",
