@@ -1368,6 +1368,23 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr { 
+  //Attr doesn't force pokemon name on the message
+  private messageFunc: string;
+
+  constructor(messageFunc: string) {
+    super(true);
+
+    this.messageFunc = messageFunc;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean { 
+    pokemon.scene.queueMessage(this.messageFunc);
+
+    return true;
+  }
+}
+
 export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   private tagType: BattlerTagType;
   private turnCount: integer;
@@ -2975,7 +2992,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is suppressing the weather effects!')),
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), BattleStatMultiplierAbAttr, BattleStat.EVA, 2)
       .ignorable(),
