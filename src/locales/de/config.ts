@@ -6,6 +6,7 @@ import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
 import { move } from "./move";
+import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
@@ -26,5 +27,6 @@ export const deConfig = {
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
+    nature: nature,
     growth: growth
 }
