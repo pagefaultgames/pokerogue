@@ -24,5 +24,7 @@ export const koConfig = {
     pokemonStat: pokemonStat,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
-    tutorial: tutorial
+    tutorial: tutorial,
+    nature: nature,
+    growth: growth
 }
