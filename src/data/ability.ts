@@ -994,21 +994,17 @@ export class DamageBoostAbAttr extends PreAttackAbAttr {
 
   constructor(damageMultiplier: number, condition: PokemonAttackCondition){
     super(true);
-    this.damageMultiplier = damageMultiplier
-    this.condition = condition
+    this.damageMultiplier = damageMultiplier;
+    this.condition = condition;
   }
 
     applyPreAttack(pokemon: Pokemon, passive: boolean, target: Pokemon, move: PokemonMove, args: any[]): boolean {
-      console.log('trying to apply')
-      console.log(args[0].value)
       if (this.condition(pokemon, target, move.getMove())) {
         (args[0] as Utils.NumberHolder).value *= this.damageMultiplier;
-        console.log('did apply')
-        console.log(args[0].value)
         return true;
       }
 
-      return false
+      return false;
   }
 }
 
