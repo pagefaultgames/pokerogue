@@ -1314,6 +1314,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const sourceTeraType = source.getTeraType();
         if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === type && power.value < 60 && move.priority <= 0 && !move.getAttrs(MultiHitAttr).length && !this.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id))
           power.value = 60;
+        applyMoveAttrs(VariablePowerAttr, source, this, move, power);
         applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, battlerMove, power);
         this.scene.getField(true).map(p => applyPreAttackAbAttrs(FieldVariableMovePowerAbAttr, this, source, battlerMove, power));
 
@@ -1342,7 +1343,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
           if (this.scene.arena.getTerrainType() === TerrainType.GRASSY && this.isGrounded() && type === Type.GROUND && move.moveTarget === MoveTarget.ALL_NEAR_OTHERS)
             power.value /= 2;
-          applyMoveAttrs(VariablePowerAttr, source, this, move, power);
           this.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
           if (!typeless) {
             this.scene.arena.applyTags(WeakenMoveTypeTag, type, power);
