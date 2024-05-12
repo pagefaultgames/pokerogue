@@ -53,13 +53,6 @@ export class Terrain {
   isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
-        var enemies = user.getOpponents().filter(o => targets.includes(o.getBattlerIndex()));
-        if (enemies.length > 0 && 
-          enemies.some(e => e.species.isOfType(Type.FLYING))|| 
-          enemies.some(e => e.species.getAbility(0) === Abilities.LEVITATE || e.species.getAbility(1) === Abilities.LEVITATE || e.species.getAbility(2) === Abilities.LEVITATE))
-        {
-          return false;
-        }
         if (!move.getAttrs(ProtectAttr).length) {
           const priority = new Utils.IntegerHolder(move.priority);
           applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);

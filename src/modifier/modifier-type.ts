@@ -973,7 +973,7 @@ interface ModifierPool {
 const modifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.POKEBALL, 6),
-    new WeightedModifierType(modifierTypes.RARE_CANDY, 9999),
+    new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
     new WeightedModifierType(modifierTypes.POTION, (party: Pokemon[]) => {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 10 || p.getHpRatio() <= 0.875).length, 3);
       return thresholdPartyMemberCount * 3;
