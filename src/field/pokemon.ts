@@ -27,7 +27,7 @@ import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, ReceivedMoveEffectivenessAbAttr } from "../data/ability";
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
@@ -1675,6 +1675,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (cancelled.value) {
         result = HitResult.NO_EFFECT;
       } else {
+        applyPreDefendAbAttrs(ReceivedMoveEffectivenessAbAttr, this, source, battlerMove, null, typeMultiplier);
         const typeBoost = source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === type) as TypeBoostTag;
         if (typeBoost) {
           power.value *= typeBoost.boostValue;
@@ -3738,6 +3739,7 @@ export class PokemonTurnData {
   public currDamageDealt: integer = 0;
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
+  public hpPreDefend: number;
 }
 
 export enum AiType {

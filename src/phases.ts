@@ -2710,6 +2710,11 @@ export class MoveEffectPhase extends PokemonPhase {
           this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
         }
         user.turnData.hitsLeft = user.turnData.hitCount = hitCount.value;
+
+        // Store the hp of the targets before any hits of the attack
+        targets.map((t) => {
+          t.turnData.hpPreDefend = t.hp;
+        });
       }
 
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };

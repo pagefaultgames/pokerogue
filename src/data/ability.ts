@@ -329,6 +329,46 @@ export class PreDefendMovePowerToOneAbAttr extends ReceivedMoveDamageMultiplierA
   }
 }
 
+/**
+ * Class for abilities that override the type effectiveness of received moves.
+ * Do NOT use for abilities that make the target immune, see {@link MoveImmunityAbAttr} for that
+ * @param condition The condition for this ability to be applied
+ * @param typeMultiplier The new effectiveness for the received move as a damage multiplier. For example, 0.5 would be "not very effective"
+ * @extends PreDefendAbAttr
+ * @see {@linkcode applyPreDefend}
+ */
+export class ReceivedMoveEffectivenessAbAttr extends PreDefendAbAttr {
+  protected condition: PokemonDefendCondition;
+  private typeMultiplier: number;
+
+  constructor(condition: PokemonDefendCondition, typeMultiplier: number) {
+    super();
+
+    this.condition = condition;
+    this.typeMultiplier = typeMultiplier;
+  }
+
+  /**
+   * Overrides the type effectiveness of the received move if the Pokémon isn't already immune, due to typing or abilities
+   * @param pokemon {@link Pokemon} defending
+   * @param passive N/A
+   * @param attacker {@link Pokemon} attacking
+   * @param move {@link Move} that is hitting the defending {@linkcode pokemon}
+   * @param cancelled N/A
+   * @param args [0] {@linkcode Utils.NumberHolder} that stores the type effectiveness of {@linkcode move} that will be replaced
+   * @returns true if the ability successfully changed the effectiveness
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const incomingEffectiveness = args[0] as Utils.NumberHolder;
+    if (this.condition(pokemon, attacker, move.getMove()) && incomingEffectiveness.value > 0 && incomingEffectiveness.value !== this.typeMultiplier) {
+      incomingEffectiveness.value = this.typeMultiplier;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: Type;
   private condition: AbAttrCondition;
@@ -4516,10 +4556,10 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.TERA_SHELL, 9)
+      .attr(ReceivedMoveEffectivenessAbAttr, (target, user, move) => target.turnData.hpPreDefend >= target.getMaxHp(), 0.5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
