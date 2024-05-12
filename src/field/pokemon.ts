@@ -1865,7 +1865,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const scene = sceneOverride || this.scene;
     const cry = this.getSpeciesForm().cry(scene, soundConfig);
     let duration = cry.totalDuration * 1000;
-    if (this.fusionSpecies) {
+    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm()) {
       let fusionCry = this.getFusionSpeciesForm().cry(scene, soundConfig, true);
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
@@ -1884,7 +1884,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   faintCry(callback: Function): void {
-    if (this.fusionSpecies)
+    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm())
       return this.fusionFaintCry(callback);
 
     const key = this.getSpeciesForm().getCryKey(this.formIndex);
