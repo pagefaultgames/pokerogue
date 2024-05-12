@@ -2140,25 +2140,42 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+/**
+ * Triggers just after a move is used either by the opponent or the player
+ */
 export class PostMoveUsedAbAttr extends AbAttr {
     applyPostMoveUsed(pokemon: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
         return false;
     }
 }
 
+/**
+ * Triggers after a dance move is used either by the opponent or the player
+ */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   applyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
+    // The move to replicate cannot come from the Dancer
     if (source.getBattlerIndex() !== dancer.getBattlerIndex()) {
+      // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove() instanceof AttackMove || move instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, target, move, true));
-      } else if (move.getMove() instanceof SelfStatusMove) {
+      }
+      // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
+      else if (move.getMove() instanceof SelfStatusMove) {
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move, true));
       }
     }
     return true;
   }
 
+  /**
+   * Get the correct targets of Dancer ability
+   *
+   * @param dancer Pokemon with Dancer ability
+   * @param source Source of the dancing move
+   * @param targets Targets of the dancing move
+   */
   getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]) : BattlerIndex[] {
     if (dancer.isPlayer())
       return source.isPlayer() ? targets : [source.getBattlerIndex()];
