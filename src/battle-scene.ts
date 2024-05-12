@@ -53,7 +53,7 @@ import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler'
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
-import { biomeDepths } from './data/biomes';
+import { biomeDepths, getBiomeName } from './data/biomes';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
@@ -201,6 +201,7 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
+		this.updateGameInfo();
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
@@ -759,6 +760,8 @@ export default class BattleScene extends SceneBase {
 
 		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
 
+		this.field.setVisible(true);
+
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
 		this.arenaPlayerTransition.setPosition(0, 0);
@@ -770,6 +773,8 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
 		this.trainer.setVisible(true);
+		
+		this.updateGameInfo();
 
 		if (reloadI18n) {
 			const localizable: Localizable[] = [
@@ -983,6 +988,8 @@ export default class BattleScene extends SceneBase {
 			case Species.SAWSBUCK:
 			case Species.FROAKIE:
 			case Species.FROGADIER:
+			case Species.SCATTERBUG:
+			case Species.SPEWPA:
 			case Species.VIVILLON:
 			case Species.FLABEBE:
 			case Species.FLOETTE:
@@ -1965,5 +1972,18 @@ export default class BattleScene extends SceneBase {
 		}
 
 		return false;
+	}
+	
+	updateGameInfo(): void {
+		const gameInfo = {
+			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
+			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
+			wave: this.currentBattle?.waveIndex || 0,
+			party: this.party ? this.party.map(p => {
+				return { name: p.name, level: p.level };
+			}) : []
+		};
+		(window as any).gameInfo = gameInfo;
 	}
 }
