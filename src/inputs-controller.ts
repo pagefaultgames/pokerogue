@@ -391,6 +391,8 @@ export class InputsController {
      * @param value The intensity or value of the button press, if applicable.
      */
     gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
+        if (!this.keyboardConfigs[this.chosenKeyboard]?.padID)
+            this.setupKeyboard();
         if (!pad) return;
         if (!this.chosenGamepad)
             this.setChosenGamepad(pad.id);
