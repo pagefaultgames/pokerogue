@@ -38,7 +38,7 @@ export const battle: SimpleTranslationEntries = {
   "noPokeballForce": "一股无形的力量阻止了你使用精灵球。",
   "noPokeballTrainer": "你不能捕捉其他训练家的宝可梦！",
   "noPokeballMulti": "只能在剩下一只宝可梦时才能扔出精灵球！",
-  "noPokeballStrong": "目标宝可梦太强了，无法捕捉！你需要先削弱它！",
+  "noPokeballStrong": "目标宝可梦太强了，无法捕捉！你需要先\n削弱它！",
   "noEscapeForce": "一股无形的力量阻止你逃跑。",
   "noEscapeTrainer": "你不能从训练家战斗中逃跑！",
   "noEscapePokemon": "{{pokemonName}} 的 {{moveName}} 阻止了你 {{escapeVerb}}！",
