@@ -646,7 +646,16 @@ export default class BattleScene extends SceneBase {
 		const container = this.add.container(x, y);
 		
 		const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
-    icon.setFrame(pokemon.getIconId(true));
+    	icon.setFrame(pokemon.getIconId(true));
+		// Temporary fix to show pokemon's default icon if variant icon doesn't exist
+		if (icon.frame.name != pokemon.getIconId(true)) {
+			console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`)
+			const temp = pokemon.shiny;
+			pokemon.shiny = false;
+			icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
+			icon.setFrame(pokemon.getIconId(true));
+			pokemon.shiny = temp;
+		}
 		icon.setOrigin(0.5, 0);
 
 		container.add(icon);
