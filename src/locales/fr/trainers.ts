@@ -214,6 +214,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "nemona": "Menzi",
     "kieran": "Kass",
     "leon": "Tarak",
-    "rival": "Gwenaël",
-    "rival_female": "Papina",
+    "rival": "Gwenaël", //Comes from breton, a celtic language spoken in France, as Finn meaning "white" in irish/goidelic which are also celtic languages
+    "rival_female": "Papina", //Litteral translation of ivy, also used as Female name in a North-American indigenous language
 } as const;
