@@ -1575,6 +1575,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         // Consolidate move data if it contains an incompatible move
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length)
           this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
+        
+        // Remove duplicate moves
+        this.starterMoveset = this.starterMoveset.filter(
+          (move, i) => {
+            return this.starterMoveset.indexOf(move) === i;
+          }) as StarterMoveset;        
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
         

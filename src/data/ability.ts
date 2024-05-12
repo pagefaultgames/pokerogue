@@ -249,10 +249,13 @@ export class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
 }
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (pokemon.getMaxHp() <= 1 && (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp))
-      return false;
-
-    return pokemon.addTag(BattlerTagType.STURDY, 1);
+    if (pokemon.hp === pokemon.getMaxHp() &&
+        pokemon.getMaxHp() > 1 && //Checks if pokemon has wonder_guard (which forces 1hp)
+        (args[0] as Utils.NumberHolder).value >= pokemon.hp){ //Damage >= hp
+      return pokemon.addTag(BattlerTagType.STURDY, 1);
+    }
+    
+    return false
   }
 }
 
