@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, ExtraHitMoveAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -2399,12 +2399,14 @@ export class MovePhase extends BattlePhase {
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
   protected targets: BattlerIndex[];
+  public multiHitId: integer;
   
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove, multiHitId: integer = 0) {
     super(scene, battlerIndex);
 
     this.move = move;
     this.targets = targets;
+    this.multiHitId = multiHitId;
   }
 
   start() {
@@ -2432,6 +2434,15 @@ export class MoveEffectPhase extends PokemonPhase {
         applyMoveAttrs(MultiHitAttr, user, this.getTarget(), this.move.getMove(), hitCount);
         if (this.move.getMove() instanceof AttackMove && !this.move.getMove().getAttrs(FixedDamageAttr).length)
           this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
+
+        // Check for abilities that add extra hits with damage multipliers for them
+        if (this.move.getMove() instanceof AttackMove) {
+          const multipliersHits: number[] = [];
+          applyAbAttrs(ExtraHitMoveAbAttr, user, null, multipliersHits);
+          user.turnData.multipliersExtraHits = multipliersHits;
+          hitCount.value *= (multipliersHits.length + 1);
+        }
+
         user.turnData.hitsLeft = user.turnData.hitCount = hitCount.value;
       }
 
@@ -2475,7 +2486,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
           
-          const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
+          const multiHitMultiplier = this.multiHitId ? user.turnData.multipliersExtraHits[this.multiHitId - 1] ?? 1 : 1;
+
+          const hitResult = !isProtected ? target.apply(user, this.move, multiHitMultiplier) : HitResult.NO_EFFECT;
 
           this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
@@ -2622,7 +2635,11 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   getNewHitPhase() {
-    return new MoveEffectPhase(this.scene, this.battlerIndex, this.targets, this.move);
+    const hitId = new Utils.IntegerHolder(0);
+    const user = this.getUserPokemon();
+    if (user)
+      hitId.value = (this.multiHitId + 1) % (user.turnData.multipliersExtraHits.length + 1);
+    return new MoveEffectPhase(this.scene, this.battlerIndex, this.targets, this.move, hitId.value);
   }
 }
 

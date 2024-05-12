@@ -1415,7 +1415,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
-  apply(source: Pokemon, battlerMove: PokemonMove): HitResult {
+  apply(source: Pokemon, battlerMove: PokemonMove, extraHitModifier: number = 1): HitResult {
     let result: HitResult;
     const move = battlerMove.getMove();
     let damage = new Utils.NumberHolder(0);
@@ -1541,7 +1541,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
           if (!isTypeImmune) {
-            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * extraHitModifier * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
               applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled);
@@ -3310,6 +3310,7 @@ export class PokemonTurnData {
   public damageDealt: integer = 0;
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
+  public multipliersExtraHits: number[] = [];
 }
 
 export enum AiType {

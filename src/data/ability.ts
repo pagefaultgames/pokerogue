@@ -913,6 +913,34 @@ export class PostStatChangeStatChangeAbAttr extends PostStatChangeAbAttr {
   }
 }
 
+export class PreHitAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return false; 
+  }
+}
+
+export class ExtraHitMoveAbAttr extends PreHitAbAttr {
+  private extraHits: integer;
+  private powerMultiplier: number;
+
+  constructor(extraHits: integer, powerMultiplier: number){
+    super(true);
+    this.extraHits = extraHits;
+    this.powerMultiplier = powerMultiplier;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const hits = (args[0] as number[]);
+    if (this.extraHits > 0) {
+      for (let i = 0; i < this.extraHits; i++)
+        hits.push(this.powerMultiplier);
+      return true;
+    }
+    
+    return false;
+  }
+}
+
 export class PreAttackAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -3285,7 +3313,7 @@ export function initAbilities() {
     new Ability(Abilities.AERILATE, 6)
       .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.FLYING, 1.2),
     new Ability(Abilities.PARENTAL_BOND, 6)
-      .unimplemented(),
+      .attr(ExtraHitMoveAbAttr, 1, 0.25),
     new Ability(Abilities.DARK_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a Dark Aura!'))
       .attr(FieldMoveTypePowerBoostAbAttr, Type.DARK, 4 / 3),
