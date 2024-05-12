@@ -940,7 +940,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !this.isOfType(Type.FLYING, true) && this.getAbility().id !== Abilities.LEVITATE;
+    return !this.isOfType(Type.FLYING, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
@@ -1865,7 +1865,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const scene = sceneOverride || this.scene;
     const cry = this.getSpeciesForm().cry(scene, soundConfig);
     let duration = cry.totalDuration * 1000;
-    if (this.fusionSpecies) {
+    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm()) {
       let fusionCry = this.getFusionSpeciesForm().cry(scene, soundConfig, true);
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
@@ -1884,7 +1884,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   faintCry(callback: Function): void {
-    if (this.fusionSpecies)
+    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm())
       return this.fusionFaintCry(callback);
 
     const key = this.getSpeciesForm().getCryKey(this.formIndex);
@@ -2492,6 +2492,13 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
     
+    if (Overrides.SHINY_OVERRIDE) {
+      this.shiny = true;
+      this.initShinySparkle();
+      if (Overrides.VARIANT_OVERRIDE)
+        this.variant = Overrides.VARIANT_OVERRIDE;
+    }
+
     if (!dataSource)
       this.generateAndPopulateMoveset();
     this.generateCompatibleTms();

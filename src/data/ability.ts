@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -249,10 +249,13 @@ export class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
 }
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (pokemon.getMaxHp() <= 1 && (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp))
-      return false;
-
-    return pokemon.addTag(BattlerTagType.STURDY, 1);
+    if (pokemon.hp === pokemon.getMaxHp() &&
+        pokemon.getMaxHp() > 1 && //Checks if pokemon has wonder_guard (which forces 1hp)
+        (args[0] as Utils.NumberHolder).value >= pokemon.hp){ //Damage >= hp
+      return pokemon.addTag(BattlerTagType.STURDY, 1);
+    }
+    
+    return false
   }
 }
 
@@ -2344,6 +2347,26 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 }
 
+/** 
+ * Attribute used for abilities (Innards Out) that damage the opponent based on how much HP the last attack used to knock out the owner of the ability.
+ */
+export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
+  constructor() {
+    super ();
+  }
+
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    const damage = pokemon.turnData.attacksReceived[0].damage;
+    attacker.damageAndUpdate((damage), HitResult.OTHER);
+    attacker.turnData.damageTaken += damage;
+    return true;
+  } 
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName} hurt\nits attacker!`);
+  }
+}
+
 export class RedirectMoveAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.canRedirect(args[0] as Moves)) {
@@ -3043,7 +3066,11 @@ export function initAbilities() {
     new Ability(Abilities.STALL, 4)
       .unimplemented(),
     new Ability(Abilities.TECHNICIAN, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => move.power <= 60, 1.5),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => {
+        const power = new Utils.NumberHolder(move.power);
+        applyMoveAttrs(VariablePowerAttr, user, target, move, power);
+        return power.value <= 60
+      }, 1.5),
     new Ability(Abilities.LEAF_GUARD, 4)
       .attr(StatusEffectImmunityAbAttr)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN))
@@ -3392,7 +3419,8 @@ export function initAbilities() {
       .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.INNARDS_OUT, 7)
-      .unimplemented(),
+      .attr(PostFaintHPDamageAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
       .unimplemented(),
     new Ability(Abilities.BATTERY, 7)
