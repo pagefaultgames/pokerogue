@@ -303,7 +303,7 @@ export class LoadingScene extends SceneBase {
       y: height / 2 - 24,
       text: '0%',
       style: {
-        font: "72px emerald",
+        font: "72px emerald, dppt",
         color: "#ffffff",
       },
     });
@@ -314,7 +314,7 @@ export class LoadingScene extends SceneBase {
       y: height / 2 + 48,
       text: "",
       style: {
-        font: "48px emerald",
+        font: "48px emerald, dppt",
         color: "#ffffff",
       },
     });

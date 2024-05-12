@@ -68,7 +68,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   let shadowSize = 6;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
-    fontFamily: 'emerald',
+    fontFamily: 'emerald, dppt',
     fontSize: '96px',
     color: getTextColor(style, false, uiTheme),
     padding: {
