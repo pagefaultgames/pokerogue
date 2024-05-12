@@ -1027,7 +1027,7 @@ export default class BattleScene extends SceneBase {
 			}
 			return 0;
 		}
-		
+
 		return this.arena.getSpeciesFormIndex(species);
 	}
 
