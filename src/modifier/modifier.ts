@@ -668,7 +668,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
-    if (args[1] === this.moveType) {
+    if (args[1] === this.moveType && (args[2] as Utils.NumberHolder).value >= 1) {
       (args[2] as Utils.NumberHolder).value = Math.floor((args[2] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
       return true;
     }
