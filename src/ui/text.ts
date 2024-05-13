@@ -24,7 +24,8 @@ export enum TextStyle {
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
   TOOLTIP_TITLE,
-  TOOLTIP_CONTENT
+  TOOLTIP_CONTENT,
+  MOVE_INFO_CONTENT
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
@@ -106,6 +107,10 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
       styleOptions.fontSize = '64px';
       shadowSize = 4;
       break;
+    case TextStyle.MOVE_INFO_CONTENT:
+      styleOptions.fontSize = '56px';
+      shadowSize = 3;
+      break;
   }
 
   shadowColor = getTextColor(style, true, uiTheme);
@@ -130,6 +135,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.MESSAGE:
       return !shadow ? '#f8f8f8' : '#6b5a73';
     case TextStyle.WINDOW:
+    case TextStyle.MOVE_INFO_CONTENT:
     case TextStyle.TOOLTIP_CONTENT:
       if (uiTheme)
         return !shadow ? '#484848' : '#d0d0c8';

@@ -1,6 +1,6 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -50,7 +50,8 @@ export enum MoveTarget {
   ALL,
   USER_SIDE,
   ENEMY_SIDE,
-  BOTH_SIDES
+  BOTH_SIDES,
+  PARTY
 }
 
 export enum MoveFlags {
@@ -823,12 +824,40 @@ export class HealAttr extends MoveEffectAttr {
 
   addHealPhase(target: Pokemon, healRatio: number) {
     target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
-      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' regained\nhealth!'), true, !this.showAnim));
+      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' \nhad its HP restored.'), true, !this.showAnim));
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
+  }
+}
+
+/**
+ * Cures the user's party of non-volatile status conditions, ie. Heal Bell, Aromatherapy
+ * @param {string} message Message to display after using move
+ * @param {Abilities} abilityCondition Skips mons with this ability, ie. Soundproof
+ */
+export class PartyStatusCureAttr extends MoveEffectAttr {
+  private message: string;
+  private abilityCondition: Abilities;
+
+  constructor(message: string, abilityCondition: Abilities) {
+    super();
+
+    this.message = message;
+    this.abilityCondition = abilityCondition;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    this.addPartyCurePhase(user);
+  }
+
+  addPartyCurePhase(user: Pokemon) {
+    user.scene.unshiftPhase(new PartyStatusCurePhase(user.scene, user, this.message, this.abilityCondition));
   }
 }
 
@@ -856,6 +885,33 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => user.scene.getParty().filter(p => p.isActive()).length > user.scene.currentBattle.getBattlerCount();
+  }
+}
+
+/**
+ * Attribute used for moves which ignore type-based debuffs from weather, namely Hydro Steam.
+ * Called during damage calculation after getting said debuff from getAttackTypeMultiplier in the Pokemon class.
+ */
+export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
+  public weather: WeatherType;
+  constructor(weather: WeatherType){
+    super();
+    this.weather = weather;
+  }
+  /**
+   * Changes the type-based weather modifier if this move's power would be reduced by it
+   * @param user Pokemon that used the move
+   * @param target N/A
+   * @param move Move with this attribute
+   * @param args Utils.NumberHolder for arenaAttackTypeMultiplier
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const weatherModifier=args[0] as Utils.NumberHolder;
+    //If the type-based attack power modifier due to weather (e.g. Water moves in Sun) is below 1, set it to 1
+    if (user.scene.arena.weather?.weatherType === this.weather)
+      weatherModifier.value = Math.max(weatherModifier.value, 1);
+    return true;
   }
 }
 
@@ -903,6 +959,42 @@ export class SandHealAttr extends WeatherHealAttr {
       default:
         return 0.5;
     }
+  }
+}
+
+/**
+ * Heals the target by either {@link normalHealRatio} or {@link boostedHealRatio} 
+ * depending on the evaluation of {@link condition}
+ * @see {@link apply}
+ * @param user The Pokemon using this move
+ * @param target The target Pokemon of this move
+ * @param move This move
+ * @param args N/A
+ * @returns if the move was successful
+ */
+export class BoostHealAttr extends HealAttr {
+  private normalHealRatio?: number;
+  private boostedHealRatio?: number;
+  private condition?: MoveConditionFunc;
+
+  /** 
+   * @param normalHealRatio Healing received when {@link condition} is false
+   * @param boostedHealRatio Healing received when {@link condition} is true
+   * @param showAnim Should a healing animation be showed?
+   * @param selfTarget Should the move target the user?
+   * @param condition The condition to check against when boosting the healing value
+   */
+  constructor(normalHealRatio?: number, boostedHealRatio?: number, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
+    super(normalHealRatio, showAnim, selfTarget);
+    this.normalHealRatio = normalHealRatio;
+    this.boostedHealRatio = boostedHealRatio;
+    this.condition = condition;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const healRatio = this.condition(user, target, move) ? this.boostedHealRatio : this.normalHealRatio;
+    this.addHealPhase(target, healRatio);
+    return true;
   }
 }
 
@@ -1258,6 +1350,25 @@ export class BypassSleepAttr extends MoveAttr {
     }
 
     return false;
+  }
+}
+
+/**
+ * Attribute used for moves that bypass the burn damage reduction of physical moves, currently only facade
+ * Called during damage calculation
+ * @param user N/A
+ * @param target N/A
+ * @param move Move with this attribute
+ * @param args Utils.BooleanHolder for burnDamageReductionCancelled
+ * @returns true if the function succeeds
+ */
+export class BypassBurnDamageReductionAttr extends MoveAttr {
+
+  /** Prevents the move's damage from being reduced by burn */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+
+    return true; 
   }
 }
 
@@ -1717,6 +1828,37 @@ export class ResetStatsAttr extends MoveEffectAttr {
 
     return true;
   }
+}
+
+/**
+ * Attribute used for moves which swap the user and the target's stat changes.
+ */
+export class SwapStatsAttr extends MoveEffectAttr
+{
+    /**
+   * Swaps the user and the target's stat changes.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean
+    {
+        if (!super.apply(user, target, move, args))
+            return false; //Exits if the move can't apply
+        let priorBoost : integer; //For storing a stat boost
+        for (let s = 0; s < target.summonData.battleStats.length; s++)
+          {
+            priorBoost = user.summonData.battleStats[s]; //Store user stat boost
+            user.summonData.battleStats[s] = target.summonData.battleStats[s]; //Applies target boost to self
+            target.summonData.battleStats[s] = priorBoost; //Applies stored boost to target
+          }
+        target.updateInfo();
+        user.updateInfo();
+        target.scene.queueMessage(getPokemonMessage(user, ' switched stat changes with the target!'));
+        return true;
+    }
 }
 
 export class HpSplitAttr extends MoveEffectAttr {
@@ -2597,6 +2739,11 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
 };
 
 export class TypelessAttr extends MoveAttr { }
+/**
+* Attribute used for moves which ignore redirection effects, and always target their original target, i.e. Snipe Shot
+* Bypasses Storm Drain, Follow Me, Ally Switch, and the like.
+*/ 
+export class BypassRedirectAttr extends MoveAttr { }
 
 export class DisableMoveAttr extends MoveEffectAttr {
   constructor() {
@@ -4003,6 +4150,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
 
   switch (moveTarget) {
     case MoveTarget.USER:
+    case MoveTarget.PARTY:
       set = [ user];
       break;
     case MoveTarget.NEAR_OTHER:
@@ -4628,9 +4776,9 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
+      .attr(PartyStatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
       .soundBased()
-      .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .target(MoveTarget.PARTY),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, 0, 2)
@@ -4775,7 +4923,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
-        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
+        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
+        .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .punchingMove()
       .ignoresVirtual()
@@ -4901,8 +5050,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .attr(PartyStatusCureAttr, "A soothing aroma wafted through the area!", Abilities.SAP_SIPPER)
+      .target(MoveTarget.PARTY),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
     new AttackMove(Moves.AIR_CUTTER, Type.FLYING, MoveCategory.SPECIAL, 60, 95, 25, -1, 0, 3)
@@ -5119,7 +5268,7 @@ export function initMoves() {
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
     new StatusMove(Moves.HEART_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(SwapStatsAttr),
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
@@ -5884,9 +6033,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1, true)
       .punchingMove(),
     new StatusMove(Moves.FLORAL_HEALING, Type.FAIRY, -1, 10, -1, 0, 7)
-      .attr(HealAttr, 0.5, true, false)
-      .triageMove()
-      .partial(),
+      .attr(BoostHealAttr, 0.5, 2/3, true, false, (user, target, move) => user.scene.arena.terrain?.terrainType === TerrainType.GRASSY)
+      .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
       .attr(StrengthSapHealAttr)
@@ -6115,7 +6263,8 @@ export function initMoves() {
       .attr(DiscourageFrequentUseAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SNIPE_SHOT, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
-      .partial(),
+      .attr(HighCritAttr)  
+      .attr(BypassRedirectAttr),
     new AttackMove(Moves.JAW_LOCK, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
@@ -6268,7 +6417,8 @@ export function initMoves() {
       .attr(ConfuseAttr),
     new StatusMove(Moves.LIFE_DEW, Type.WATER, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
-      .target(MoveTarget.USER_AND_ALLIES),
+      .target(MoveTarget.USER_AND_ALLIES)
+      .ignoresProtect(),
     new SelfStatusMove(Moves.OBSTRUCT, Type.DARK, 100, 10, -1, 4, 8)
       .attr(ProtectAttr, BattlerTagType.OBSTRUCT),
     new AttackMove(Moves.FALSE_SURRENDER, Type.DARK, MoveCategory.PHYSICAL, 80, -1, 10, -1, 0, 8),
@@ -6636,7 +6786,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
-      .partial(),
+      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 1.5 : 1),
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
@@ -6651,8 +6802,9 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, false)
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, 100, 0, 9)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true)
-      .attr(RemoveArenaTrapAttr),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true, null, true, true)
+      .attr(RemoveArenaTrapAttr)
+      .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.SNOWSCAPE, Type.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)
       .target(MoveTarget.BOTH_SIDES),
