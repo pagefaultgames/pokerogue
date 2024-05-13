@@ -117,9 +117,9 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
 }
 
 export function getSunday(date: Date): Date {
-  const day = date.getDay();
-  const diff = date.getDate() - day;
-  const newDate = new Date(date.setDate(diff));
+  const day = date.getUTCDay();
+  const diff = date.getUTCDate() - day;
+  const newDate = new Date(date.setUTCDate(diff));
   return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), newDate.getUTCDate()));
 }
 
@@ -220,9 +220,9 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = 'pokerogue_sessionId';
-export const isLocal = window.location.hostname === 'localhost';
+export const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '';
 export const serverUrl = isLocal ? 'http://localhost:8001' : '';
-export const apiUrl = isLocal ? serverUrl : 'api';
+export const apiUrl = isLocal ? serverUrl : 'https://api.pokerogue.net';
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();

@@ -51,6 +51,7 @@ const displayStats: DisplayStats = {
       return `${caughtCount} (${Math.floor((caughtCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     }
   },
+  ribbonsOwned: 'Ribbons Owned',
   classicSessionsPlayed: 'Classic Runs',
   sessionsWon: 'Classic Wins',
   dailyRunSessionsPlayed: 'Daily Run Attempts',

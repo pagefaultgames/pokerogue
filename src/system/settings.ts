@@ -1,10 +1,10 @@
+import SettingsUiHandler from "#app/ui/settings-ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
-import { Mode } from "#app/ui/ui";
-import SettingsUiHandler from "#app/ui/settings-ui-handler";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
@@ -21,6 +21,7 @@ export enum Setting {
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
   EXP_Gains_Speed = "EXP_GAINS_SPEED",
+  EXP_Party_Display = "EXP_PARTY_DISPLAY",
   HP_Bar_Speed = "HP_BAR_SPEED",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
@@ -39,27 +40,28 @@ export interface SettingDefaults {
 }
 
 export const settingOptions: SettingOptions = {
-  [Setting.Game_Speed]: [ '1x', '1.25x', '1.5x', '2x', '2.5x', '3x', '4x', '5x' ],
+  [Setting.Game_Speed]: ['1x', '1.25x', '1.5x', '2x', '2.5x', '3x', '4x', '5x'],
   [Setting.Master_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
-  [Setting.Language]: [ 'English', 'Change' ],
-  [Setting.Damage_Numbers]: [ 'Off', 'Simple', 'Fancy' ],
-  [Setting.UI_Theme]: [ 'Default', 'Legacy' ],
+  [Setting.Language]: ['English', 'Change'],
+  [Setting.Damage_Numbers]: ['Off', 'Simple', 'Fancy'],
+  [Setting.UI_Theme]: ['Default', 'Legacy'],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
-  [Setting.Tutorials]: [ 'Off', 'On' ],
-  [Setting.Enable_Retries]: [ 'Off', 'On' ],
-  [Setting.Sprite_Set]: [ 'Consistent', 'Mixed Animated' ],
-  [Setting.Move_Animations]: [ 'Off', 'On' ],
-  [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
-  [Setting.EXP_Gains_Speed]: [ 'Normal', 'Fast', 'Faster', 'Skip' ],
-  [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
-  [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
-  [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
-  [Setting.Gamepad_Support]: [ 'Auto', 'Disabled' ],
-  [Setting.Swap_A_and_B]: [ 'Enabled', 'Disabled' ],
-  [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
-  [Setting.Vibration]: [ 'Auto', 'Disabled' ]
+  [Setting.Tutorials]: ['Off', 'On'],
+  [Setting.Enable_Retries]: ['Off', 'On'],
+  [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
+  [Setting.Move_Animations]: ['Off', 'On'],
+  [Setting.Show_Stats_on_Level_Up]: ['Off', 'On'],
+  [Setting.EXP_Gains_Speed]: ['Normal', 'Fast', 'Faster', 'Skip'],
+  [Setting.EXP_Party_Display]: ['Normal', 'Level Up Notification', 'Skip'],
+  [Setting.HP_Bar_Speed]: ['Normal', 'Fast', 'Faster', 'Instant'],
+  [Setting.Fusion_Palette_Swaps]: ['Off', 'On'],
+  [Setting.Player_Gender]: ['Boy', 'Girl'],
+  [Setting.Gamepad_Support]: ['Auto', 'Disabled'],
+  [Setting.Swap_A_and_B]: ['Enabled', 'Disabled'],
+  [Setting.Touch_Controls]: ['Auto', 'Disabled'],
+  [Setting.Vibration]: ['Auto', 'Disabled']
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -77,6 +79,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
   [Setting.EXP_Gains_Speed]: 0,
+  [Setting.EXP_Party_Display]: 0,
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
@@ -86,7 +89,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [ Setting.UI_Theme, Setting.Language, Setting.Sprite_Set ];
+export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -134,6 +137,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     case Setting.EXP_Gains_Speed:
       scene.expGainsSpeed = value;
       break;
+    case Setting.EXP_Party_Display:
+      scene.expParty = value;
+      break;
     case Setting.HP_Bar_Speed:
       scene.hpBarSpeed = value;
       break;
@@ -149,7 +155,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
         return false;
       break;
     case Setting.Gamepad_Support:
-      scene.gamepadSupport = settingOptions[setting][value] !== 'Disabled';
+      // if we change the value of the gamepad support, we call a method in the inputController to
+      // activate or deactivate the controller listener
+      scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
       break;
     case Setting.Swap_A_and_B:
       scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
@@ -183,20 +191,28 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 handler: () => changeLocaleHandler('en')
               },
               {
-                label: 'Spanish',
+                label: 'Español',
                 handler: () => changeLocaleHandler('es')
               },
               {
-                label: 'Italian',
+                label: 'Italiano',
                 handler: () => changeLocaleHandler('it')
               },
               {
-                label: 'French',
+                label: 'Français',
                 handler: () => changeLocaleHandler('fr')
               },
               {
-                label: 'German',
+                label: 'Deutsch',
                 handler: () => changeLocaleHandler('de')
+              },
+              {
+                label: '简体中文',
+                handler: () => changeLocaleHandler('zh_CN')
+              },
+              {
+                label: 'Português (BR)',
+                handler: () => changeLocaleHandler('pt_BR')
               },
               {
                 label: 'Cancel',

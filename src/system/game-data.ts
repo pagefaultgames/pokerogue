@@ -4,6 +4,7 @@ import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutio
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
+import * as Overrides from '../overrides';
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
@@ -173,6 +174,7 @@ export interface StarterDataEntry {
   abilityAttr: integer;
   passiveAttr: integer;
   valueReduction: integer;
+  classicWinCount: integer;
 }
 
 export interface StarterData {
@@ -189,12 +191,16 @@ const systemShortKeys = {
   natureAttr: '$na',
   seenCount: '$s' ,
   caughtCount: '$c',
+  hatchedCount: '$hc',
   ivs: '$i',
   moveset: '$m',
   eggMoves: '$em',
   candyCount: '$x',
-  passive: '$p',
-  valueReduction: '$vr'
+  friendship: '$f',
+  abilityAttr: '$a',
+  passiveAttr: '$pa',
+  valueReduction: '$vr',
+  classicWinCount: '$wc'
 };
 
 export class GameData {
@@ -245,61 +251,59 @@ export class GameData {
     this.initStarterData();
   }
 
+  public getSystemSaveData(): SystemSaveData {
+    return {
+      trainerId: this.trainerId,
+      secretId: this.secretId,
+      gender: this.gender,
+      dexData: this.dexData,
+      starterData: this.starterData,
+      gameStats: this.gameStats,
+      unlocks: this.unlocks,
+      achvUnlocks: this.achvUnlocks,
+      voucherUnlocks: this.voucherUnlocks,
+      voucherCounts: this.voucherCounts,
+      eggs: this.eggs.map(e => new EggData(e)),
+      gameVersion: this.scene.game.config.gameVersion,
+      timestamp: new Date().getTime()
+    };
+  }
+
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();
-      updateUserInfo().then(response => {
-        if (!response[0]) {
-          this.scene.ui.savingIcon.hide();
-          return resolve(false);
-        }
-        const data: SystemSaveData = {
-          trainerId: this.trainerId,
-          secretId: this.secretId,
-          gender: this.gender,
-          dexData: this.dexData,
-          starterData: this.starterData,
-          gameStats: this.gameStats,
-          unlocks: this.unlocks,
-          achvUnlocks: this.achvUnlocks,
-          voucherUnlocks: this.voucherUnlocks,
-          voucherCounts: this.voucherCounts,
-          eggs: this.eggs.map(e => new EggData(e)),
-          gameVersion: this.scene.game.config.gameVersion,
-          timestamp: new Date().getTime()
-        };
+      const data = this.getSystemSaveData();
 
-        const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
+      const maxIntAttrValue = Math.pow(2, 31);
+      const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-        if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
-            .then(response => response.text())
-            .then(error => {
-              this.scene.ui.savingIcon.hide();
-              if (error) {
-                if (error.startsWith('client version out of date')) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith('session out of date')) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-                }
-                console.error(error);
-                return resolve(false);
+      if (!bypassLogin) {
+        Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
+          .then(response => response.text())
+          .then(error => {
+            this.scene.ui.savingIcon.hide();
+            if (error) {
+              if (error.startsWith('client version out of date')) {
+                this.scene.clearPhaseQueue();
+                this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+              } else if (error.startsWith('session out of date')) {
+                this.scene.clearPhaseQueue();
+                this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
-              resolve(true);
-            });
-        } else {
-          localStorage.setItem('data_bak', localStorage.getItem('data'));
+              console.error(error);
+              return resolve(false);
+            }
+            resolve(true);
+          });
+      } else {
+        localStorage.setItem('data_bak', localStorage.getItem('data'));
 
-          localStorage.setItem('data', btoa(systemData));
+        localStorage.setItem('data', btoa(systemData));
 
-          this.scene.ui.savingIcon.hide();
+        this.scene.ui.savingIcon.hide();
 
-          resolve(true);
-        }
-      });
+        resolve(true);
+      }
     });
   }
 
@@ -422,7 +426,7 @@ export class GameData {
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== '{') {
-              if (response.startsWith('failed to open save file')) {
+              if (response.startsWith('sql: no rows in result set')) {
                 this.scene.queueMessage('Save data could not be found. If this is a new account, you can safely ignore this message.', null, true);
                 return resolve(true);
               } else if (response.indexOf('Too many connections') > -1) {
@@ -458,6 +462,10 @@ export class GameData {
   }
 
   private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+    if (!shorten) {
+      // Account for past key oversight
+      dataStr = dataStr.replace(/\$pAttr/g, '$pa');
+    }
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
     for (let k in fromKeys)
@@ -573,7 +581,7 @@ export class GameData {
               resolve(true);
             });
         } else {
-          localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
+          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, btoa(JSON.stringify(sessionData)));
 
           console.debug('Session data saved');
 
@@ -648,6 +656,9 @@ export class GameData {
           Object.keys(scene.pokeballCounts).forEach((key: string) => {
             scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
           });
+          if (Overrides.POKEBALL_OVERRIDE.active) {
+            scene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
           scene.money = sessionData.money || 0;
           scene.updateMoneyText();
@@ -751,7 +762,7 @@ export class GameData {
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem('sessionData');
+        localStorage.removeItem(`sessionData${slotId ? slotId : ''}`);
         return resolve([true, true]);
       }
 
@@ -812,6 +823,59 @@ export class GameData {
 
       return v;
     }) as SessionSaveData;
+  }
+
+  saveAll(scene: BattleScene, skipVerification?: boolean): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
+        if (success !== null && !success)
+          return resolve(false);
+        this.scene.ui.savingIcon.show();
+        const data = this.getSystemSaveData();
+        const sessionData = this.getSessionSaveData(scene);
+
+        const maxIntAttrValue = Math.pow(2, 31);
+        const systemData = this.getSystemSaveData();
+
+        const request = {
+          system: systemData,
+          session: sessionData,
+          sessionSlotId: scene.sessionSlotId
+        };
+
+        if (!bypassLogin) {
+          Utils.apiPost('savedata/updateall', JSON.stringify(request, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
+            .then(response => response.text())
+            .then(error => {
+              this.scene.ui.savingIcon.hide();
+              if (error) {
+                if (error.startsWith('client version out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                } else if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                }
+                console.error(error);
+                return resolve(false);
+              }
+              resolve(true);
+            });
+        } else {
+          localStorage.setItem('data_bak', localStorage.getItem('data'));
+
+          localStorage.setItem('data', btoa(JSON.stringify(systemData, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
+
+          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, btoa(JSON.stringify(sessionData)));
+
+          console.debug('Session data saved');
+
+          this.scene.ui.savingIcon.hide();
+
+          resolve(true);
+        }
+      });
+    });
   }
 
   public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
@@ -995,7 +1059,8 @@ export class GameData {
         friendship: 0,
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
-        valueReduction: 0
+        valueReduction: 0,
+        classicWinCount: 0
       };
     }
 
@@ -1087,6 +1152,32 @@ export class GameData {
       } else
         checkPrevolution();
     });
+  }
+
+  incrementRibbonCount(species: PokemonSpecies, forStarter: boolean = false): integer {
+    const speciesIdToIncrement: Species = species.getRootSpeciesId(forStarter);
+
+    if (!this.starterData[speciesIdToIncrement].classicWinCount) {
+      this.starterData[speciesIdToIncrement].classicWinCount = 0;
+    }
+    
+    if (!this.starterData[speciesIdToIncrement].classicWinCount)
+      this.scene.gameData.gameStats.ribbonsOwned++;
+
+    const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
+
+    if (ribbonsInStats >= 100)
+      this.scene.validateAchv(achvs._100_RIBBONS);
+    if (ribbonsInStats >= 75)
+      this.scene.validateAchv(achvs._75_RIBBONS);
+    if (ribbonsInStats >= 50)
+      this.scene.validateAchv(achvs._50_RIBBONS);
+    if (ribbonsInStats >= 25)
+      this.scene.validateAchv(achvs._25_RIBBONS);
+    if (ribbonsInStats >= 10)
+      this.scene.validateAchv(achvs._10_RIBBONS);
+
+    return ++this.starterData[speciesIdToIncrement].classicWinCount;
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {

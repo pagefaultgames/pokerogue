@@ -77,6 +77,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage('shiny_star_small_1', 'ui', 'shiny_small_1.png');
     this.loadImage('shiny_star_small_2', 'ui', 'shiny_small_2.png');
     this.loadImage('ha_capsule', 'ui', 'ha_capsule.png');
+    this.loadImage('champion_ribbon', 'ui', 'champion_ribbon.png');
     this.loadImage('icon_spliced', 'ui');
     this.loadImage('icon_tera', 'ui');
     this.loadImage('type_tera', 'ui');
@@ -99,6 +100,10 @@ export class LoadingScene extends SceneBase {
     this.loadImage('summary_bg', 'ui');
     this.loadImage('summary_overlay_shiny', 'ui');
     this.loadImage('summary_profile', 'ui');
+    this.loadImage('summary_profile_prompt_z', 'ui')      // The pixel Z button prompt
+    this.loadImage('summary_profile_prompt_a', 'ui');     // The pixel A button prompt
+    this.loadImage('summary_profile_ability', 'ui');      // Pixel text 'ABILITY'
+    this.loadImage('summary_profile_passive', 'ui');      // Pixel text 'PASSIVE'
     this.loadImage('summary_status', 'ui');
     this.loadImage('summary_stats', 'ui');
     this.loadImage('summary_stats_overlay_exp', 'ui');
