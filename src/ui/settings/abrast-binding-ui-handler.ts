@@ -1,10 +1,9 @@
-import UiHandler from "#app/ui/ui-handler";
-import Phaser from "phaser";
-import BattleScene from "#app/battle-scene";
-import {Mode} from "#app/ui/ui";
-import {addWindow} from "#app/ui/ui-theme";
-import {addTextObject, TextStyle} from "#app/ui/text";
-import {Button} from "#app/enums/buttons";
+import UiHandler from "../ui-handler";
+import BattleScene from "../../battle-scene";
+import {Mode} from "../ui";
+import {addWindow} from "../ui-theme";
+import {addTextObject, TextStyle} from "../text";
+import {Button} from "../../enums/buttons";
 
 
 export default abstract class AbstractBindingUiHandler extends UiHandler {
@@ -116,7 +115,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.getUi().bringToTop(this.actionsContainer);
 
         this.optionSelectContainer.setVisible(true);
-        setTimeout(() => this.listening = true, 150);
+        setTimeout(() => this.listening = true, 300);
         return true;
     }
 
@@ -177,6 +176,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
 
     clear() {
         super.clear();
+        this.listening = false;
         this.target = null;
         this.cancelFn = null;
         this.optionSelectContainer.setVisible(false);

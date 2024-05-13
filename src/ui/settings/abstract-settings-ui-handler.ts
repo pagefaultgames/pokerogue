@@ -1,11 +1,11 @@
-import UiHandler from "#app/ui/ui-handler";
-import BattleScene from "#app/battle-scene";
-import {Mode} from "#app/ui/ui";
-import {GamepadConfig} from "#app/inputs-controller";
-import {addWindow} from "#app/ui/ui-theme";
-import {addTextObject, TextStyle} from "#app/ui/text";
-import {getCurrentlyAssignedIconToSettingName, getKeyForSettingName} from "#app/configs/gamepad-utils";
-import {Button} from "#app/enums/buttons";
+import UiHandler from "../ui-handler";
+import BattleScene from "../../battle-scene";
+import {Mode} from "../ui";
+import {InterfaceConfig} from "../../inputs-controller";
+import {addWindow} from "../ui-theme";
+import {addTextObject, TextStyle} from "../text";
+import {getCurrentlyAssignedIconToSettingName, getKeyForSettingName} from "../../configs/gamepad-utils";
+import {Button} from "../../enums/buttons";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -151,7 +151,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                             continue;
                         }
                         // For null options, add an icon for the key.
-                        const key = getKeyForSettingName(config as GamepadConfig, this.settingDevice[setting]);
+                        const key = getKeyForSettingName(config as InterfaceConfig, this.settingDevice[setting]);
                         const icon = this.scene.add.sprite(0, 0, this.textureOverride ? this.textureOverride : config.padType);
                         icon.setScale(0.1);
                         icon.setOrigin(0, -0.1);
@@ -270,7 +270,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         return true;
     }
 
-    setLayout(activeConfig: GamepadConfig): boolean {
+    setLayout(activeConfig: InterfaceConfig): boolean {
         // Check if there is no active configuration (e.g., no gamepad connected).
         if (!activeConfig) {
             // Retrieve the layout for when no gamepads are connected.

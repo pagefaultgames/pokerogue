@@ -12,9 +12,9 @@ import {
     getCurrenlyAssignedIconFromInputIndex, getCurrentlyAssignedIconToSettingName,
     getKeyFromInputIndex, getCurrentlyAssignedToSettingName, getCurrenlyAssignedIconFromKeyboardKey
 } from "./configs/gamepad-utils";
-import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
-import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
-import {SettingKeyboard} from "#app/system/settings-keyboard";
+import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
+import cfg_keyboard_azerty from "./configs/cfg_keyboard_azerty";
+import {SettingKeyboard} from "./system/settings-keyboard";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -32,7 +32,7 @@ export interface MappingLayout {
     [key: string]: Button;
 }
 
-export interface GamepadConfig {
+export interface InterfaceConfig {
     padID: string;
     padType: string;
     gamepadMapping: GamepadMapping;
@@ -76,8 +76,8 @@ export class InputsController {
     private buttonLock2: Button;
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Phaser.Time.Clock;
-    private configs: Map<string, GamepadConfig> = new Map();
-    private keyboardConfigs: Map<string, GamepadConfig> = new Map();
+    private configs: Map<string, InterfaceConfig> = new Map();
+    private keyboardConfigs: Map<string, InterfaceConfig> = new Map();
 
     private gamepadSupport: boolean = true;
 
@@ -204,6 +204,7 @@ export class InputsController {
         this.deactivatePressedKey();
         this.initChosenGamepad(gamepad)
     }
+
     setChosenKeyboardLayout(layoutKeyboard: String): void {
         this.deactivatePressedKey();
         this.initChosenLayoutKeyboard(layoutKeyboard)
@@ -532,9 +533,9 @@ export class InputsController {
      * If no specific configuration matches, it defaults to a generic gamepad configuration.
      *
      * @param id The identifier string of the gamepad.
-     * @returns GamepadConfig The configuration object corresponding to the identified gamepad type.
+     * @returns InterfaceConfig The configuration object corresponding to the identified gamepad type.
      */
-    getConfig(id: string): GamepadConfig {
+    getConfig(id: string): InterfaceConfig {
         id = id.toLowerCase();
 
         if (id.includes('081f') && id.includes('e401')) {
@@ -548,7 +549,7 @@ export class InputsController {
         return pad_generic;
     }
 
-    getConfigKeyboard(id: string): GamepadConfig {
+    getConfigKeyboard(id: string): InterfaceConfig {
         if (id === 'azerty')
             return cfg_keyboard_azerty;
 
@@ -699,9 +700,9 @@ export class InputsController {
      * Retrieves the active configuration for the currently chosen gamepad.
      * It checks if a specific gamepad ID is stored under the chosen gamepad's configurations and returns it.
      *
-     * @returns GamepadConfig The configuration object for the active gamepad, or null if not set.
+     * @returns InterfaceConfig The configuration object for the active gamepad, or null if not set.
      */
-    getActiveConfig(): GamepadConfig | null {
+    getActiveConfig(): InterfaceConfig | null {
         if (this.configs[this.chosenGamepad]?.padID) return this.configs[this.chosenGamepad]
         return null;
     }
@@ -710,9 +711,9 @@ export class InputsController {
      * Retrieves the active configuration for the currently chosen gamepad.
      * It checks if a specific gamepad ID is stored under the chosen gamepad's configurations and returns it.
      *
-     * @returns GamepadConfig The configuration object for the active gamepad, or null if not set.
+     * @returns InterfaceConfig The configuration object for the active gamepad, or null if not set.
      */
-    getActiveKeyboardConfig(): GamepadConfig | null {
+    getActiveKeyboardConfig(): InterfaceConfig | null {
         if (this.keyboardConfigs[this.chosenKeyboard]?.padID) return this.keyboardConfigs[this.chosenKeyboard]
         return null;
     }

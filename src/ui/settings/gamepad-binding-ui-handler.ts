@@ -1,7 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import Phaser from "phaser";
-import AbstractBindingUiHandler from "#app/ui/settings/abrast-binding-ui-handler";
-import {Mode} from "#app/ui/ui";
+import BattleScene from "../../battle-scene";
+import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
+import {Mode} from "../ui";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {

@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
+import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
-import AbstractBindingUiHandler from "#app/ui/settings/abrast-binding-ui-handler";
 
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {

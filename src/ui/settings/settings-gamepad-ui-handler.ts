@@ -6,7 +6,7 @@ import {truncateString} from "../../utils";
 import pad_xbox360 from "#app/configs/pad_xbox360";
 import pad_dualshock from "#app/configs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
-import {GamepadConfig} from "#app/inputs-controller";
+import {InterfaceConfig} from "#app/inputs-controller";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 
 export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandler {
@@ -48,7 +48,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
         return settings;
     }
 
-    setLayout(activeConfig: GamepadConfig): boolean {
+    setLayout(activeConfig: InterfaceConfig): boolean {
         // Check if there is no active configuration (e.g., no gamepad connected).
         if (!activeConfig) {
             // Retrieve the layout for when no gamepads are connected.
