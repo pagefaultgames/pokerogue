@@ -1353,6 +1353,25 @@ export class BypassSleepAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute used for moves that bypass the burn damage reduction of physical moves, currently only facade
+ * Called during damage calculation
+ * @param user N/A
+ * @param target N/A
+ * @param move Move with this attribute
+ * @param args Utils.BooleanHolder for burnDamageReductionCancelled
+ * @returns true if the function succeeds
+ */
+export class BypassBurnDamageReductionAttr extends MoveAttr {
+
+  /** Prevents the move's damage from being reduced by burn */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+
+    return true; 
+  }
+}
+
 export class WeatherChangeAttr extends MoveEffectAttr {
   private weatherType: WeatherType;
   
@@ -4904,7 +4923,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
-        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
+        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
+        .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .punchingMove()
       .ignoresVirtual()
