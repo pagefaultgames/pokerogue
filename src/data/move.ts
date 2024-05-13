@@ -2333,7 +2333,6 @@ export class VariableAccuracyAttr extends MoveAttr {
 
 export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log(args)
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
       const accuracy = args[0] as Utils.NumberHolder;
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
@@ -2370,12 +2369,8 @@ export class MinimizeAccuracyAttr extends VariableAccuracyAttr{
 
 export class MinimzeDamageAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log("---------")
-    console.log(args)
-    console.log(target.getTag(BattlerTagType.MINIMIZED))
     if (target.getTag(BattlerTagType.MINIMIZED)) {
       (args[0] as Utils.NumberHolder).value *= 2;
-      console.log(args)
       return true;
     }
 
@@ -4939,7 +4934,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
-        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
+        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
+      .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .punchingMove()
       .ignoresVirtual()
