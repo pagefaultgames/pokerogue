@@ -741,6 +741,9 @@ export default class BattleScene extends SceneBase {
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
+		if (Overrides.POKEBALL_OVERRIDE.active) {
+            this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
