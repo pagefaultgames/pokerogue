@@ -1410,7 +1410,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 damage.value = Math.floor(damage.value / 2);
             }
 
-            applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, battlerMove, damage)
+            applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, battlerMove, damage);
 
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
               if (this.getTag(hta.tagType))
