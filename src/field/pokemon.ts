@@ -1225,24 +1225,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      if (this.level >= 25) { // No egg moves below level 25
+      if (this.level >= 60) { // No egg moves below level 60
         for (let i = 0; i < 3; i++) {
           const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
           if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)'))
             movePool.push([moveId, Math.min(this.level * 0.5, 40)]);
         }
-        const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
-        if (this.level >= 60 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)')) // No rare egg moves before level 60
-          movePool.push([moveId, Math.min(this.level * 0.2, 20)]);
         if (this.fusionSpecies) {
           for (let i = 0; i < 3; i++) {
             const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
             if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)'))
               movePool.push([moveId, Math.min(this.level * 0.5, 30)]);
           }
-          const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
-          if (this.level >= 60 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)')) // No rare egg moves before level 60
-            movePool.push([moveId, Math.min(this.level * 0.2, 20)]);
         }
       }
     }
