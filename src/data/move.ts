@@ -1885,6 +1885,35 @@ export class VariablePowerAttr extends MoveAttr {
   }
 }
 
+
+export class LessPPMorePowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const ppMax = move.pp;
+    const ppUsed = user.moveset.find((m) => m.moveId === move.id).ppUsed;
+    const ppRemains = ppMax - ppUsed;
+    const power = args[0] as Utils.NumberHolder;
+
+    switch (ppRemains) {
+      case 3:
+        power.value = 50;
+        break;
+      case 2:
+        power.value = 60;
+        break;
+      case 1:
+        power.value = 80;
+        break;
+      case 0:
+        power.value = 200;
+        break;
+      default:
+        power.value = 40;
+        break;
+    }
+    return true;
+  }
+}
+
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -5210,7 +5239,7 @@ export function initMoves() {
         ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
-      .unimplemented(),
+      .attr(LessPPMorePowerAttr),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
