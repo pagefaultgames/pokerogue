@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "978-stretchy_2.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 41,
+				"h": 41
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 27,
+						"y": 36,
+						"w": 41,
+						"h": 24
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 41,
+						"h": 24
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:69a5f6d3d3fe60a7c20ed6d2adebabfe:286c1c2f6ad8c8c94aa4903febbb3e7c:5cf5498faaa17ab7b363d263a4e9758d$"
+	}
+}

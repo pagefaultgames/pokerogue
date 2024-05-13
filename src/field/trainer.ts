@@ -147,6 +147,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const difficultyWaveIndex = this.scene.gameMode.getWaveForDifficulty(waveIndex);
     let baseLevel = 1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2);
 
+    if (this.isDouble() && partyTemplate.size < 2)
+      partyTemplate.size = 2;
+
     for (let i = 0; i < partyTemplate.size; i++) {
       let multiplier = 1;
       
