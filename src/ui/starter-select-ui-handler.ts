@@ -1518,7 +1518,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite)
           .setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-
+        // Temporary fix to show pokemon's default icon if variant icon doesn't exist
+        if ((this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).frame.name != species.getIconId(female, formIndex, shiny, variant)) {
+          console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
+          (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).setTexture(species.getIconAtlasKey(formIndex, false, variant));
+          (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).setFrame(species.getIconId(female, formIndex, false, variant));
+        }
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
@@ -1575,6 +1580,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         // Consolidate move data if it contains an incompatible move
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length)
           this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
+        
+        // Remove duplicate moves
+        this.starterMoveset = this.starterMoveset.filter(
+          (move, i) => {
+            return this.starterMoveset.indexOf(move) === i;
+          }) as StarterMoveset;        
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
         
