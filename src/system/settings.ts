@@ -210,6 +210,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 label: '简体中文',
                 handler: () => changeLocaleHandler('zh_CN')
               },
+			  {
+                label: 'Português (BR)',
+                handler: () => changeLocaleHandler('pt_BR')
+              },
               {
                 label: 'にほんご',
                 handler: () => changeLocaleHandler('jp')
