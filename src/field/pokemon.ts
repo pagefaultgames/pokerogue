@@ -3283,6 +3283,9 @@ export class PokemonSummonData {
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
+  /*
+  * Moves that can not be selected in the UI, but don't fail when used for other reasons. Currently just used by Torment.
+  */
   public unselectableMove: Moves = Moves.NONE;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;

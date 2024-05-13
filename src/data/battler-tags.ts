@@ -523,6 +523,7 @@ export class TormentedTag extends BattlerTag {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, 'is no longer\ntormented!'));
     }
 
+    //At the end of each turn, if this pokemon executed a move this turn, set its unselectableMove to that move, unless it is struggle, in which case unset it.
     lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
         const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
         if (ret) {

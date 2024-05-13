@@ -1667,7 +1667,8 @@ export class CommandPhase extends FieldPhase {
         this.handleCommand(Command.FIGHT, -1, false, false);
       else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
-        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) {
+          if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) {
+          //if the player already has a move queued (e.g. due to outrage), have arg1 be true in handleCommand
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, true, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
         } else
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
@@ -1686,7 +1687,8 @@ export class CommandPhase extends FieldPhase {
          let useStruggleA = false;
          let useStruggleB = false;
          let useStruggleC = false;
-         const encoreTag = playerPokemon.getTag(EncoreTag) as EncoreTag;
+            const encoreTag = playerPokemon.getTag(EncoreTag) as EncoreTag;
+        //Lengthy check for whether or not the player's choice is legal, and if they should struggle.
         if (cursor === -1 || 
             playerPokemon.trySelectMove(cursor, args[0] as boolean, args[1] as boolean) || 
             (useStruggleA = cursor > -1 && (!playerPokemon.getMoveset().filter(m => m.isSelectable(playerPokemon)).length) && !args[1]) ||
