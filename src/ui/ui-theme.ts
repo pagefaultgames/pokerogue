@@ -95,6 +95,14 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
     obj.setFrame(windowTypeIndex);
 }
 
+export function updateWindowAlignment(isCentered: boolean): void {
+  const appContainer = document.getElementById('app');
+
+  if (!appContainer) return;
+  
+  appContainer.style.alignItems = isCentered ? 'center' : 'start';
+}
+
 export function addUiThemeOverrides(scene: BattleScene): void {
   const originalAddImage = scene.add.image;
   scene.add.image = function (x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number): Phaser.GameObjects.Image {
