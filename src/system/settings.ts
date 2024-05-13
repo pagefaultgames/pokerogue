@@ -206,7 +206,7 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 label: 'Deutsch',
                 handler: () => changeLocaleHandler('de')
               },
-              {
+			  {
                 label: 'Português (BR)',
                 handler: () => changeLocaleHandler('pt_BR')
               },
