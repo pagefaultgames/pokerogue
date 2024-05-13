@@ -23,7 +23,8 @@ export interface MoveTranslationEntries {
 
 export interface AbilityTranslationEntry {
   name: string,
-  description: string
+  description: string,
+  sceneMessage: string
 }
 
 export interface AbilityTranslationEntries {
