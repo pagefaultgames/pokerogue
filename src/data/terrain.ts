@@ -5,7 +5,6 @@ import * as Utils from "../utils";
 import { IncrementMovePriorityAbAttr, applyAbAttrs } from "./ability";
 import { ProtectAttr } from "./move";
 import { BattlerIndex } from "#app/battle.js";
-import { Abilities } from "./enums/abilities";
 
 export enum TerrainType {
   NONE,
