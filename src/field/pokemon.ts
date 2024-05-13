@@ -965,6 +965,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
         if (ignoreImmunity.value)
           return 1;
+
+        const exposedTags = this.getTags(ExposedTag) as ExposedTag[];
+        if (exposedTags.some(t => t.ignoreImmunity(this, moveType))) {
+          return 1;
+        }
       }
 
       return getTypeDamageMultiplier(moveType, defType);
@@ -1444,13 +1449,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value = 1;
     if (types.find(t => move.isTypeImmune(t)))
       typeMultiplier.value = 0;
-
-    if ((this.getTags(ExposedTag) as ExposedTag[]).some(t => {
-        return t.allowedTypes.includes(move.type)
-              && this.getTypes(true, true).includes(t.immuneType);
-    })) {
-      typeMultiplier.value = 1;
-    }
 
     switch (moveCategory) {
       case MoveCategory.PHYSICAL:

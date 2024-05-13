@@ -1104,8 +1104,8 @@ export class ExposedTag extends BattlerTag {
   public immuneType: Type;
   public allowedTypes: Type[];
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type, allowedTypes: Type[], length: number) {
-    super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove);
+  constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type, allowedTypes: Type[]) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
     this.immuneType = type;
     this.allowedTypes = allowedTypes;
   }
@@ -1119,8 +1119,14 @@ export class ExposedTag extends BattlerTag {
     this.immuneType = source.type as Type;
     this.allowedTypes = source.allowedTypes as Type[];
   }
+
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    return true;
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+
+  ignoreImmunity(pokemon: Pokemon, moveType: Type): boolean {
+    return pokemon.getTypes(true, true).includes(this.immuneType)
+              && this.allowedTypes.includes(moveType);
   }
 }
 
@@ -1383,9 +1389,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
     case BattlerTagType.ODOR_SLEUTH:
-      return new ExposedTag(tagType, sourceMove, Type.GHOST, [ Type.NORMAL, Type.FIGHTING ], turnCount);
+      return new ExposedTag(tagType, sourceMove, Type.GHOST, [ Type.NORMAL, Type.FIGHTING ]);
     case BattlerTagType.MIRACLE_EYE:
-      return new ExposedTag(tagType, sourceMove, Type.DARK, [ Type.PSYCHIC ], turnCount);
+      return new ExposedTag(tagType, sourceMove, Type.DARK, [ Type.PSYCHIC ]);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
