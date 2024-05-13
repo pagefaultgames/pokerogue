@@ -1353,25 +1353,6 @@ export class BypassSleepAttr extends MoveAttr {
   }
 }
 
-/**
- * Attribute used for moves that bypass the burn damage reduction of physical moves, currently only facade
- * Called during damage calculation
- * @param user N/A
- * @param target N/A
- * @param move Move with this attribute
- * @param args Utils.BooleanHolder for burnDamageReductionCancelled
- * @returns true if the function succeeds
- */
-export class BypassBurnDamageReductionAttr extends MoveAttr {
-
-  /** Prevents the move's damage from being reduced by burn */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.BooleanHolder).value = true;
-
-    return true; 
-  }
-}
-
 export class WeatherChangeAttr extends MoveEffectAttr {
   private weatherType: WeatherType;
   
@@ -2352,6 +2333,7 @@ export class VariableAccuracyAttr extends MoveAttr {
 
 export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log(args)
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
       const accuracy = args[0] as Utils.NumberHolder;
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
@@ -2366,6 +2348,35 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
           accuracy.value = -1;
           return true;
       }
+    }
+
+    return false;
+  }
+}
+
+export class MinimizeAccuracyAttr extends VariableAccuracyAttr{
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.getTag(BattlerTagType.MINIMIZED)){
+
+      const accuracy = args[0] as Utils.NumberHolder
+      accuracy.value = -1;
+
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class MinimzeDamageAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log("---------")
+    console.log(args)
+    console.log(target.getTag(BattlerTagType.MINIMIZED))
+    if (target.getTag(BattlerTagType.MINIMIZED)) {
+      (args[0] as Utils.NumberHolder).value *= 2;
+      console.log(args)
+      return true;
     }
 
     return false;
@@ -4254,6 +4265,8 @@ export function initMoves() {
     new AttackMove(Moves.SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, 0, 1),
     new AttackMove(Moves.VINE_WHIP, Type.GRASS, MoveCategory.PHYSICAL, 45, 100, 25, -1, 0, 1),
     new AttackMove(Moves.STOMP, Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 1)
+      .attr(MinimizeAccuracyAttr)
+      .attr(MinimzeDamageAttr)
       .attr(FlinchAttr),
     new AttackMove(Moves.DOUBLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 30, 100, 30, -1, 0, 1)
       .attr(MultiHitAttr, MultiHitType._2),
@@ -4277,6 +4290,8 @@ export function initMoves() {
       .attr(OneHitKOAccuracyAttr),
     new AttackMove(Moves.TACKLE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.BODY_SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 30, 0, 1)
+      .attr(MinimizeAccuracyAttr)
+      .attr(MinimzeDamageAttr)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.WRAP, Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, 100, 0, 1)
       .attr(TrapAttr, BattlerTagType.WRAP),
@@ -4474,6 +4489,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.HARDEN, Type.NORMAL, -1, 30, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.MINIMIZE, Type.NORMAL, -1, 10, -1, 0, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.MINIMIZED, true, false)
       .attr(StatChangeAttr, BattleStat.EVA, 2, true),
     new StatusMove(Moves.SMOKESCREEN, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
@@ -4923,8 +4939,7 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
-        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
-        .attr(BypassBurnDamageReductionAttr),
+        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .punchingMove()
       .ignoresVirtual()
@@ -5312,6 +5327,8 @@ export function initMoves() {
     new AttackMove(Moves.DRAGON_PULSE, Type.DRAGON, MoveCategory.SPECIAL, 85, 100, 10, -1, 0, 4)
       .pulseMove(),
     new AttackMove(Moves.DRAGON_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 100, 75, 10, 20, 0, 4)
+      .attr(MinimizeAccuracyAttr)
+      .attr(MinimzeDamageAttr)
       .attr(FlinchAttr),
     new AttackMove(Moves.POWER_GEM, Type.ROCK, MoveCategory.SPECIAL, 80, 100, 20, -1, 0, 4),
     new AttackMove(Moves.DRAIN_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 4)
@@ -5521,7 +5538,9 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .danceMove(),
     new AttackMove(Moves.HEAVY_SLAM, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
+      .attr(MinimizeAccuracyAttr)
       .attr(CompareWeightPowerAttr)
+      .attr(MinimzeDamageAttr)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
@@ -5652,7 +5671,9 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .slicingMove(),
     new AttackMove(Moves.HEAT_CRASH, Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
+      .attr(MinimizeAccuracyAttr)
       .attr(CompareWeightPowerAttr)
+      .attr(MinimzeDamageAttr)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.LEAF_TORNADO, Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
@@ -5723,7 +5744,9 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
+      .attr(MinimizeAccuracyAttr)
       .attr(FlyingTypeMultiplierAttr)
+      .attr(MinimzeDamageAttr)
       .condition(failOnGravityCondition),
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .unimplemented(),
