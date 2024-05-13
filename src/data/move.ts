@@ -16,7 +16,7 @@ import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilit
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
-import { BattlerIndex } from "../battle";
+import Battle, { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
@@ -4670,8 +4670,9 @@ export function initMoves() {
     new AttackMove(Moves.ZAP_CANNON, Type.ELECTRIC, MoveCategory.SPECIAL, 120, 50, 5, 100, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .ballBombMove(),
-    new StatusMove(Moves.FORESIGHT, Type.NORMAL, -1, 40, -1, 0, 2) // TODO
-      .unimplemented(),
+    new StatusMove(Moves.FORESIGHT, Type.NORMAL, -1, 40, -1, 0, 2)
+      .attr(ExposedAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.ODOR_SLEUTH, false, false, 20),
     new SelfStatusMove(Moves.DESTINY_BOND, Type.GHOST, -1, 5, -1, 0, 2)
       .ignoresProtect()
       .condition(failOnBossCondition)
@@ -5129,8 +5130,9 @@ export function initMoves() {
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
-    new StatusMove(Moves.MIRACLE_EYE, Type.PSYCHIC, -1, 40, -1, 0, 4) // TODO
-      .unimplemented(),
+    new StatusMove(Moves.MIRACLE_EYE, Type.PSYCHIC, -1, 40, -1, 0, 4)
+      .attr(ExposedAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.MIRACLE_EYE, false, false, 20),
     new AttackMove(Moves.WAKE_UP_SLAP, Type.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.SLEEP ? 2 : 1)
       .attr(HealStatusEffectAttr, false, StatusEffect.SLEEP),

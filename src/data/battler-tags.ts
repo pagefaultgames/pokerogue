@@ -1384,6 +1384,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new MagnetRisenTag(tagType, sourceMove);
     case BattlerTagType.ODOR_SLEUTH:
       return new ExposedTag(tagType, sourceMove, Type.GHOST, [ Type.NORMAL, Type.FIGHTING ], turnCount);
+    case BattlerTagType.MIRACLE_EYE:
+      return new ExposedTag(tagType, sourceMove, Type.DARK, [ Type.PSYCHIC ], turnCount);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
