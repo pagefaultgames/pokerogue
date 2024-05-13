@@ -2120,18 +2120,14 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
-    //cycle on each opponent 
     for(let opp of pokemon.getOpponents()) {
-      //check if anyone of them is sleeping
       if(opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
-        //if so, deal a min of 1 damage and queue a message
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
         pokemon.scene.queueMessage(getPokemonMessage(opp, ' is tormented!'));
         hadEffect = true;
       }
     
     }
-    //returns true only if one of the opponents were sleeping
     return hadEffect;
   }
 
