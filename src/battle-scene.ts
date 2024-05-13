@@ -53,7 +53,7 @@ import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler'
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
-import { biomeDepths } from './data/biomes';
+import { biomeDepths, getBiomeName } from './data/biomes';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
@@ -101,9 +101,21 @@ export default class BattleScene extends SceneBase {
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
 	public expGainsSpeed: integer = 0;
+	/**
+	 * Defines the experience gain display mode.
+	 *
+	 * @remarks
+	 * The `expParty` can have several modes:
+	 * - `0` - Default: The normal experience gain display, nothing changed.
+	 * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
+	 * - `2` - Skip: No level up frame nor message.
+	 *
+	 * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
+	 * @default 0 - Uses the default normal experience gain display.
+	 */
+	public expParty: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
-	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	public abSwapped: boolean = false;
@@ -188,6 +200,7 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
+		this.updateGameInfo();
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
@@ -633,7 +646,16 @@ export default class BattleScene extends SceneBase {
 		const container = this.add.container(x, y);
 		
 		const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
-    icon.setFrame(pokemon.getIconId(true));
+    	icon.setFrame(pokemon.getIconId(true));
+		// Temporary fix to show pokemon's default icon if variant icon doesn't exist
+		if (icon.frame.name != pokemon.getIconId(true)) {
+			console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`)
+			const temp = pokemon.shiny;
+			pokemon.shiny = false;
+			icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
+			icon.setFrame(pokemon.getIconId(true));
+			pokemon.shiny = temp;
+		}
 		icon.setOrigin(0.5, 0);
 
 		container.add(icon);
@@ -719,6 +741,9 @@ export default class BattleScene extends SceneBase {
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
+		if (Overrides.POKEBALL_OVERRIDE.active) {
+            this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
@@ -746,6 +771,8 @@ export default class BattleScene extends SceneBase {
 
 		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
 
+		this.field.setVisible(true);
+
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
 		this.arenaPlayerTransition.setPosition(0, 0);
@@ -757,6 +784,8 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
 		this.trainer.setVisible(true);
+		
+		this.updateGameInfo();
 
 		if (reloadI18n) {
 			const localizable: Localizable[] = [
@@ -970,6 +999,8 @@ export default class BattleScene extends SceneBase {
 			case Species.SAWSBUCK:
 			case Species.FROAKIE:
 			case Species.FROGADIER:
+			case Species.SCATTERBUG:
+			case Species.SPEWPA:
 			case Species.VIVILLON:
 			case Species.FLABEBE:
 			case Species.FLOETTE:
@@ -1950,5 +1981,18 @@ export default class BattleScene extends SceneBase {
 		}
 
 		return false;
+	}
+	
+	updateGameInfo(): void {
+		const gameInfo = {
+			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
+			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
+			wave: this.currentBattle?.waveIndex || 0,
+			party: this.party ? this.party.map(p => {
+				return { name: p.name, level: p.level };
+			}) : []
+		};
+		(window as any).gameInfo = gameInfo;
 	}
 }

@@ -551,7 +551,35 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
-    this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: '42px' });
+
+
+    let instructionTextSize = '42px';
+    // The font size should be set per language
+    const currentLanguage = i18next.language;
+    switch (currentLanguage) {
+      case 'en':
+        instructionTextSize = '42px';
+        break;
+      case 'es':
+        instructionTextSize = '35px';
+        break;
+      case 'fr':
+        instructionTextSize = '42px';
+        break;
+      case 'de':
+        instructionTextSize = '35px';
+        break;
+      case 'it':
+        instructionTextSize = '38px';
+        break;
+      case 'zh_CN':
+        instructionTextSize = '42px';
+        break;
+
+    }
+
+
+    this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: instructionTextSize });
     this.starterSelectContainer.add(this.instructionsText);
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -1137,6 +1165,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       cycleInstructionLines[0] += ' | ' + cycleInstructionLines.splice(1, 1);
       if (cycleInstructionLines.length > 2)
         cycleInstructionLines[1] += ' | ' + cycleInstructionLines.splice(2, 1);
+      if (cycleInstructionLines.length > 2)
+        cycleInstructionLines[2] += ' | ' + cycleInstructionLines.splice(3, 1);
     }
 
     for (let cil of cycleInstructionLines)
@@ -1294,7 +1324,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
-        this.pokemonGrowthRateText.setText(Utils.toReadableString(GrowthRate[species.growthRate]));
+        //Growth translate
+        let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
+        let growthAux = growthReadable.replace(" ", "_")
+        if(i18next.exists("growth:" + growthAux)){
+          growthReadable = i18next.t("growth:"+ growthAux as any)
+        }
+        this.pokemonGrowthRateText.setText(growthReadable);
+
         this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
@@ -1511,7 +1548,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite)
           .setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-
+        // Temporary fix to show pokemon's default icon if variant icon doesn't exist
+        if ((this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).frame.name != species.getIconId(female, formIndex, shiny, variant)) {
+          console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
+          (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).setTexture(species.getIconAtlasKey(formIndex, false, variant));
+          (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).setFrame(species.getIconId(female, formIndex, false, variant));
+        }
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
@@ -1568,9 +1610,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         // Consolidate move data if it contains an incompatible move
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length)
           this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
+        
+        // Remove duplicate moves
+        this.starterMoveset = this.starterMoveset.filter(
+          (move, i) => {
+            return this.starterMoveset.indexOf(move) === i;
+          }) as StarterMoveset;        
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
-        
+
         const formText = species?.forms[formIndex]?.formKey.split('-');
         for (let i = 0; i < formText?.length; i++)
           formText[i] = formText[i].charAt(0).toUpperCase() + formText[i].substring(1);
