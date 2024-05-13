@@ -207,18 +207,19 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 handler: () => changeLocaleHandler('de')
               },
               {
-                label: '简体中文',
-                handler: () => changeLocaleHandler('zh_CN')
-              },
-              {
                 label: 'Português (BR)',
                 handler: () => changeLocaleHandler('pt_BR')
+              },
+              {
+                label: '简体中文',
+                handler: () => changeLocaleHandler('zh_CN')
               },
               {
                 label: 'Cancel',
                 handler: () => cancelHandler()
               }
-            ]
+            ],
+            maxOptions: 7
           });
           return false;
         }
