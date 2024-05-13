@@ -558,6 +558,10 @@ export class MinimizeTag extends BattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    //If a pokemon dynamaxes they lose minimized status
+    if(pokemon.isMax()){
+      return false
+    }
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
 
