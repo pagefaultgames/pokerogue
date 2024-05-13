@@ -2106,8 +2106,18 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+/**
+ * Attribute used for abilities (Nightmare) that damages the opponents for being asleep
+ */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 
+  /**
+   * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
+   * @param {Pokemon} pokemon Pokemon that has this ability 
+   * @param {boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns {boolean} true if any opponents are sleeping
+   */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
     //cycle on each opponent 
