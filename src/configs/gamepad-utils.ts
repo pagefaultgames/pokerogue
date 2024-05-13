@@ -1,5 +1,6 @@
 import {InterfaceConfig} from "../inputs-controller";
 import {Button} from "#app/enums/buttons";
+import {deepCopy} from "#app/utils";
 
 // Given a button index from an input event, return its naming from the mapping config
 export function getKeyFromMapping(config: InterfaceConfig, index: number): String | null {
@@ -90,5 +91,14 @@ export function reloadCurrentKeys(config): void {
             icon,
         }
     }
-    config.currentKeys = currentKeys;
+    config.currentKeys = deepCopy(currentKeys);
+}
+
+export function regenerateCustom(config): void {
+    const custom = deepCopy(config.custom);
+    for (const settingName of Object.keys(config.currentKeys)) {
+        const {key, action} = config.currentKeys[settingName];
+        custom[key] = action;
+    }
+    config.custom = deepCopy(custom);
 }
