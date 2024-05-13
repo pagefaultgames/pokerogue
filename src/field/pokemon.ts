@@ -111,20 +111,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (!species.isObtainable() && this.isPlayer())
       throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
-
-    const hiddenAbilityChance = new Utils.IntegerHolder(256);
-    if (!this.hasTrainer())
-      this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
-
-    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
-    const randAbilityIndex = Utils.randSeedInt(2);
-
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
-    this.abilityIndex = abilityIndex !== undefined
-      ? abilityIndex
-      : (species.abilityHidden && hasHiddenAbility ? species.ability2 ? 2 : 1 : species.ability2 ? randAbilityIndex : 0);
+    this.abilityIndex = abilityIndex != undefined ? abilityIndex : this.calculateHiddenAbilityIndex();
     if (formIndex !== undefined)
       this.formIndex = formIndex;
     if (gender !== undefined)
@@ -348,6 +338,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.load.start();
         });
     });
+  }
+
+  calculateHiddenAbilityIndex(chanceOverride: number=256): number {
+    const hiddenAbilityChance = new Utils.IntegerHolder(chanceOverride);
+    if (!this.hasTrainer())
+      this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+
+    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
+    const randAbilityIndex = Utils.randSeedInt(2);
+
+    const abilityIndex = this.species.abilityHidden && hasHiddenAbility ? this.species.ability2 ? 2 : 1 : this.species.ability2 ? randAbilityIndex : 0;
+    return abilityIndex;
   }
 
   getFormKey(): string {

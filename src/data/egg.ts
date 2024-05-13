@@ -10,7 +10,8 @@ export const EGG_SEED = 1073741824;
 export enum GachaType {
   MOVE,
   LEGENDARY,
-  SHINY
+  SHINY,
+  ABILITY
 }
 
 export class Egg {
