@@ -1646,28 +1646,35 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.isPlayer() && !this.isPlayer())
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
 
-            // case when multi hit move killed early, then queue how many hits were made before
-            // eg: bullet seed 1 shots, double-slap 1 shots, 
-            // note that simply looking at this.turnData.attacksReceived doesn't work for double battles
-            if (this.isFainted() && source.turnData.hitsLeft > 1){
-              console.log(`${this.name} fainted: they received this many hits: ${this.turnData.attacksReceived.length}`);
-              // off by one from decrement, test more
-              const hitsTotal = source.turnData.hitCount - Math.max(source.turnData.hitsLeft, 0) + 1;
-              this.scene.queueMessage(i18next.t('battle:attackHitsCount', { count: hitsTotal}));
-            }
-
-            // not sure what this set function  is accomplishing, perhaps for the faint phase? it messes up with the queueMessage()
-            this.scene.setPhaseQueueSplice();
 
             // finally checks and adds Fainted scene
             if (this.isFainted()) {
+              /**
+               * when adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls 
+               * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
+               * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
+               * 
+               * once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
+               */
+              this.scene.setPhaseQueueSplice();
               this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
               this.resetSummonData();
             }
+
           }
 
-          if (damage)
+          /**
+           * since damage is an object, I don't see how this would ever by false?
+           * i think the motivation was to have this here to counter setPhaseQueueSplice()
+           * not sure the original motivation 
+           * 
+           * It would be bad to run both the top if block and the one below commented out without changing the later's condition 
+           */
+          /*
+          if (damage){
             this.scene.clearPhaseQueueSplice();
+          }
+          */
         }
         break;
       case MoveCategory.STATUS:
