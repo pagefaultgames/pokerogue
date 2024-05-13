@@ -3284,9 +3284,10 @@ export function initAbilities() {
       .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.ICE, 1.2),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(AllyStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
-      .ignorable()
-      .partial(),
+      .attr(AllyBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .ignorable(),
     new Ability(Abilities.STANCE_CHANGE, 6)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -3553,6 +3554,7 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(AllyStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
