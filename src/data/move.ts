@@ -2330,6 +2330,14 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
 }
 
 export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
+  /**
+   * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
+   * @param {Pokemon} user N/A
+   * @param {Pokemon} target Pokemon that is being checked whether Ice-Type or not.
+   * @param {Move} move N/A
+   * @param {any[]} args Sets to false if the target is Ice-Type, so it should do no damage/no effect.
+   * @returns {boolean} Returns true if move is successful, false if Ice-Type.
+   */
    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (target.isOfType(Type.ICE)) {
       (args[0] as Utils.BooleanHolder).value = false;
@@ -2359,6 +2367,16 @@ export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
 }
 
 export class SheerColdAccuracyAttr extends OneHitKOAccuracyAttr {
+  /**
+   * Changes the normal One Hit KO Accuracy Attr to implement the Gen VII changes, 
+   * where if the user is Ice-Type, it has more accuracy.
+   * @param {Pokemon} user Pokemon that is using the move; checks the Pokemon's level.
+   * @param {Pokemon} target Pokemon that is receiving the move; checks the Pokemon's level.
+   * @param {Move} move N/A 
+   * @param {any[]} args Uses the accuracy argument, allowing to change it from either 0 if it doesn't pass
+   * the first if/else, and either the first value if the user is Ice-Type, or the second if not.
+   * @returns Returns true if move is successful, false if misses.
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
       if (user.level < target.level) {
