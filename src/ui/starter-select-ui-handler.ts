@@ -551,7 +551,35 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
-    this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: '42px' });
+
+
+    let instructionTextSize = '42px';
+    // The font size should be set per language
+    const currentLanguage = i18next.language;
+    switch (currentLanguage) {
+      case 'en':
+        instructionTextSize = '42px';
+        break;
+      case 'es':
+        instructionTextSize = '35px';
+        break;
+      case 'fr':
+        instructionTextSize = '42px';
+        break;
+      case 'de':
+        instructionTextSize = '35px';
+        break;
+      case 'it':
+        instructionTextSize = '38px';
+        break;
+      case 'zh_CN':
+        instructionTextSize = '42px';
+        break;
+
+    }
+
+
+    this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: instructionTextSize });
     this.starterSelectContainer.add(this.instructionsText);
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -1137,6 +1165,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       cycleInstructionLines[0] += ' | ' + cycleInstructionLines.splice(1, 1);
       if (cycleInstructionLines.length > 2)
         cycleInstructionLines[1] += ' | ' + cycleInstructionLines.splice(2, 1);
+      if (cycleInstructionLines.length > 2)
+        cycleInstructionLines[2] += ' | ' + cycleInstructionLines.splice(3, 1);
     }
 
     for (let cil of cycleInstructionLines)
@@ -1301,7 +1331,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           growthReadable = i18next.t("growth:"+ growthAux as any)
         }
         this.pokemonGrowthRateText.setText(growthReadable);
-        
+
         this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
@@ -1588,7 +1618,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;        
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
-        
+
         const formText = species?.forms[formIndex]?.formKey.split('-');
         for (let i = 0; i < formText?.length; i++)
           formText[i] = formText[i].charAt(0).toUpperCase() + formText[i].substring(1);
