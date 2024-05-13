@@ -117,9 +117,9 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
 }
 
 export function getSunday(date: Date): Date {
-  const day = date.getDay();
-  const diff = date.getDate() - day;
-  const newDate = new Date(date.setDate(diff));
+  const day = date.getUTCDay();
+  const diff = date.getUTCDate() - day;
+  const newDate = new Date(date.setUTCDate(diff));
   return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), newDate.getUTCDate()));
 }
 
