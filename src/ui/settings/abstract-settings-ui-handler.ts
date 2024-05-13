@@ -241,7 +241,6 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         if (!activeConfig.custom) return;
 
         // For each element in the binding settings, update the icon according to the current assignment.
-        debugger;
         for (const elm of this.bindingSettings) {
             // const key = getKeyForSettingName(activeConfig, elm); // Get the key for the setting name.
             const {key, icon} = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, elm);

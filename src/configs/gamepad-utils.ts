@@ -80,7 +80,6 @@ export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedBut
 export function reloadCurrentKeys(config): void {
     // need to rework this to include keys that were not there at the begining
     const currentKeys = {};
-    debugger;
     for (const key of Object.keys(config.setting)) {
         const settingName = config.setting[key];
         const action = config.custom[key];
