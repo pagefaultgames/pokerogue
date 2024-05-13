@@ -1885,8 +1885,15 @@ export class VariablePowerAttr extends MoveAttr {
   }
 }
 
-
 export class LessPPMorePowerAttr extends VariablePowerAttr {
+  /**
+   * Power up moves when less PP user has
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args Utils.NumberHolder for calculating power
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const ppMax = move.pp;
     const ppUsed = user.moveset.find((m) => m.moveId === move.id).ppUsed;
@@ -1894,17 +1901,17 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
     const power = args[0] as Utils.NumberHolder;
 
     switch (ppRemains) {
-      case 3:
-        power.value = 50;
-        break;
-      case 2:
-        power.value = 60;
+      case 0:
+        power.value = 200;
         break;
       case 1:
         power.value = 80;
         break;
-      case 0:
-        power.value = 200;
+      case 2:
+        power.value = 60;
+        break;
+      case 3:
+        power.value = 50;
         break;
       default:
         power.value = 40;
