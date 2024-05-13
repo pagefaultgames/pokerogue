@@ -1,6 +1,10 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
+import {
+    getKeyAndActionFromCurrentKeysWithPressedButton,
+    getKeyAndActionFromCurrentKeysWithSettingName,
+} from "#app/configs/gamepad-utils";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
@@ -16,14 +20,18 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
         // Check conditions before processing the button press.
         if (!this.listening || pad.id !== this.scene.inputController?.chosenGamepad || blacklist.includes(button.index) || this.buttonPressed !== null) return;
         this.buttonPressed = button.index;
-        const [type, buttonIcon] = this.scene.inputController.getPressedButtonLabel(button);
+        const activeConfig = this.scene.inputController.getActiveConfig();
+        const type = activeConfig.padType
+        const buttonIcon = getKeyAndActionFromCurrentKeysWithPressedButton(activeConfig, this.buttonPressed)?.icon
         if (!buttonIcon) return;
-        const assignedButtonIcon = this.scene.inputController.getCurrentlyAssignedIconToDisplay(this.target);
+        const assignedButtonIcon = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, this.target)?.icon;
         this.onInputDown(buttonIcon, assignedButtonIcon, type);
     }
 
     swapAction() {
-        this.scene.inputController.swapBinding(this.target, this.buttonPressed);
+        const activeConfig = this.scene.inputController.getActiveConfig();
+        this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
+        this.scene.gameData.saveCustomMapping(this.scene.inputController?.chosenGamepad, activeConfig.custom);
         return true;
     }
 }

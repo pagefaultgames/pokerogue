@@ -7,18 +7,14 @@ import pad_dualshock from "./configs/pad_dualshock";
 import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
-import {SettingGamepad} from "./system/settings-gamepad";
-import {
-    getCurrenlyAssignedIconFromInputIndex,
-    getCurrentlyAssignedIconToSettingName,
-    getKeyFromInputIndex,
-    getCurrentlyAssignedToSettingName,
-    getCurrenlyAssignedIconFromKeyboardKeyCode,
-    getKeyFromKeyboardKeyCode
-} from "./configs/gamepad-utils";
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_azerty from "./configs/cfg_keyboard_azerty";
-import {SettingKeyboard} from "./system/settings-keyboard";
+import {
+    getKeyAndActionFromCurrentKeysWithPressedButton,
+    getKeyFromMapping,
+    reloadCurrentKeys, swapCurrentKeys
+} from "#app/configs/gamepad-utils";
+import {deepCopy} from "./utils";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -340,8 +336,9 @@ export class InputsController {
         const allGamepads = this.getGamepadsName();
         for (const gamepad of allGamepads) {
             const gamepadID = gamepad.toLowerCase();
-            const config = this.getConfig(gamepadID);
+            const config = deepCopy(this.getConfig(gamepadID));
             config.custom = this.configs[gamepad]?.custom || {...config.default};
+            reloadCurrentKeys(config);
             this.configs[gamepad] = config;
             this.scene.gameData?.saveCustomMapping(this.chosenGamepad, this.configs[gamepad]?.custom);
         }
@@ -350,8 +347,9 @@ export class InputsController {
 
     setupKeyboard(): void {
         for (const layout of ['default']) {
-            const config = this.getConfigKeyboard(layout);
+            const config = deepCopy(this.getConfigKeyboard(layout));
             config.custom = this.keyboardConfigs[layout]?.custom || {...config.default};
+            reloadCurrentKeys(config);
             this.keyboardConfigs[layout] = config;
             this.scene.gameData?.saveCustomKeyboardMapping(this.chosenKeyboard, this.keyboardConfigs[layout]?.custom);
         }
@@ -383,7 +381,7 @@ export class InputsController {
             this.setupKeyboard();
         if (this.keys.includes(keyDown)) return;
         this.keys.push(keyDown);
-        const key = getKeyFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], keyDown);
+        const key = getKeyFromMapping(this.keyboardConfigs[this.chosenKeyboard], keyDown);
         const buttonDown = this.keyboardConfigs[this.chosenKeyboard].custom[key];
         this.lastSource = 'keyboard';
         if (buttonDown !== undefined) {
@@ -400,7 +398,7 @@ export class InputsController {
         this.keys = this.keys.filter(k => k !== keyDown);
         if (!this.keyboardConfigs[this.chosenKeyboard]?.padID)
             this.setupKeyboard();
-        const key = getKeyFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], keyDown);
+        const key = getKeyFromMapping(this.keyboardConfigs[this.chosenKeyboard], keyDown);
         const buttonUp = this.keyboardConfigs[this.chosenKeyboard].custom[key];
         if (buttonUp !== undefined) {
             this.events.emit('input_up', {
@@ -427,7 +425,7 @@ export class InputsController {
         if (!this.chosenGamepad)
             this.setChosenGamepad(pad.id);
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.chosenGamepad.toLowerCase()) return;
-        const key = getKeyFromInputIndex(this.configs[pad.id], button.index);
+        const key = getKeyFromMapping(this.configs[pad.id], button.index);
         const buttonDown = this.configs[pad.id].custom[key];
         this.lastSource = 'gamepad';
         if (buttonDown !== undefined) {
@@ -451,7 +449,7 @@ export class InputsController {
     gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
         if (!pad) return;
         if (!this.gamepadSupport || pad.id !== this.chosenGamepad) return;
-        const key = getKeyFromInputIndex(this.configs[pad.id], button.index);
+        const key = getKeyFromMapping(this.configs[pad.id], button.index);
         const buttonUp = this.configs[pad.id]?.custom[key];
         if (buttonUp !== undefined) {
             this.events.emit('input_up', {
@@ -748,66 +746,6 @@ export class InputsController {
     }
 
     /**
-     * Determines icon for a button pressed on the currently chosen gamepad based on its configuration.
-     *
-     * @param button The button for which to retrieve the label and icon.
-     * @returns Array Tuple containing the pad type and the currently assigned icon for the button index.
-     */
-    getPressedButtonLabel(button: Phaser.Input.Gamepad.Button): [string, string] {
-        return [this.configs[this.chosenGamepad].padType, getCurrenlyAssignedIconFromInputIndex(this.configs[this.chosenGamepad], button.index)];
-    }
-
-    getPressedKeyLabel(key): string {
-        return getCurrenlyAssignedIconFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], key);
-    }
-
-    /**
-     * Retrieves the currently assigned icon for a specific setting on the chosen gamepad.
-     *
-     * @param target The gamepad setting for which to retrieve the assigned icon.
-     * @returns string The icon assigned to the specified setting.
-     */
-    getCurrentlyAssignedIconToDisplay(target: SettingGamepad): string {
-        return getCurrentlyAssignedIconToSettingName(this.configs[this.chosenGamepad], target);
-    }
-
-    getKeyboardCurrentlyAssignedIconToDisplay(target: SettingKeyboard): string {
-        return getCurrentlyAssignedIconToSettingName(this.keyboardConfigs[this.chosenKeyboard], target);
-    }
-
-    /**
-     * Swaps the binding of two controls on the chosen gamepad configuration.
-     * It temporarily pauses updates, swaps the key bindings, saves the new configuration,
-     * and then resumes updates after a short delay.
-     *
-     * @param settingName The name of the setting for which to swap the binding.
-     * @param pressedButton The button index whose binding is to be swapped.
-     */
-    swapBinding(settingName, pressedButton): void {
-        this.pauseUpdate = true;
-        const keyTarget = getCurrentlyAssignedToSettingName(this.configs[this.chosenGamepad], settingName)
-        const keyNewBinding = getKeyFromInputIndex(this.configs[this.chosenGamepad], pressedButton);
-        const previousActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyNewBinding];
-        const ActionForThisNewBinding = this.configs[this.chosenGamepad].custom[keyTarget];
-        this.configs[this.chosenGamepad].custom[keyTarget] = previousActionForThisNewBinding;
-        this.configs[this.chosenGamepad].custom[keyNewBinding] = ActionForThisNewBinding;
-        this.scene.gameData.saveCustomMapping(this.chosenGamepad, this.configs[this.chosenGamepad].custom);
-        setTimeout(() => this.pauseUpdate = false, 500);
-    }
-
-    swapKeyboardBinding(settingName, pressedButton): void {
-        this.pauseUpdate = true;
-        const keyTarget = getCurrentlyAssignedToSettingName(this.keyboardConfigs[this.chosenKeyboard], settingName)
-        const keyNewBinding = getKeyFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], pressedButton);
-        const previousActionForThisNewBinding = this.keyboardConfigs[this.chosenKeyboard].custom[keyNewBinding];
-        const ActionForThisNewBinding = this.keyboardConfigs[this.chosenKeyboard].custom[keyTarget];
-        this.keyboardConfigs[this.chosenKeyboard].custom[keyTarget] = previousActionForThisNewBinding;
-        this.keyboardConfigs[this.chosenKeyboard].custom[keyNewBinding] = ActionForThisNewBinding;
-        this.scene.gameData.saveCustomKeyboardMapping(this.chosenKeyboard, this.keyboardConfigs[this.chosenKeyboard].custom);
-        setTimeout(() => this.pauseUpdate = false, 500);
-    }
-
-    /**
      * Injects a custom mapping configuration into the gamepad configuration for a specific gamepad.
      * If the gamepad does not have an existing configuration, it initializes one first.
      *
@@ -821,5 +759,11 @@ export class InputsController {
     injectKeyboardConfig(layout: string, customMappings: MappingLayout): void {
         if (!this.keyboardConfigs[layout]) this.keyboardConfigs[layout] = {};
         this.keyboardConfigs[layout].custom = customMappings;
+    }
+
+    swapBinding(config, settingName, pressedButton): void {
+        this.pauseUpdate = true;
+        swapCurrentKeys(config, settingName, pressedButton)
+        setTimeout(() => this.pauseUpdate = false, 500);
     }
 }

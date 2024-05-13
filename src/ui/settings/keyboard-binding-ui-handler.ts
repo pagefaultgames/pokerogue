@@ -1,6 +1,10 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
+import {
+    getKeyAndActionFromCurrentKeysWithPressedButton,
+    getKeyAndActionFromCurrentKeysWithSettingName,
+} from "#app/configs/gamepad-utils";
 
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
@@ -16,14 +20,17 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         // // Check conditions before processing the button press.
         if (!this.listening || this.buttonPressed !== null) return;
         this.buttonPressed = key;
-        const buttonIcon = this.scene.inputController.getPressedKeyLabel(key);
+        const activeConfig = this.scene.inputController.getActiveKeyboardConfig();
+        const buttonIcon = getKeyAndActionFromCurrentKeysWithPressedButton(activeConfig, key)?.icon
         if (!buttonIcon) return;
-        const assignedButtonIcon = this.scene.inputController.getKeyboardCurrentlyAssignedIconToDisplay(this.target);
+        const assignedButtonIcon = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, this.target)?.icon;
         this.onInputDown(buttonIcon, assignedButtonIcon, 'keyboard');
     }
 
     swapAction() {
-        this.scene.inputController.swapKeyboardBinding(this.target, this.buttonPressed);
+        const activeConfig = this.scene.inputController.getActiveKeyboardConfig();
+        this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
+        this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, activeConfig.custom);
         return true;
     }
 

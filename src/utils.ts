@@ -349,3 +349,7 @@ export function truncateString(str: String, maxLength: number = 10) {
     }
     return str;
 }
+
+export function deepCopy(values: object): object {
+    return JSON.parse(JSON.stringify(values));
+}

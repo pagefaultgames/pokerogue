@@ -115,7 +115,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.getUi().bringToTop(this.actionsContainer);
 
         this.optionSelectContainer.setVisible(true);
-        setTimeout(() => this.listening = true, 300);
+        setTimeout(() => this.listening = true, 100);
         return true;
     }
 

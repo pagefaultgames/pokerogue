@@ -4,8 +4,11 @@ import {Mode} from "../ui";
 import {InterfaceConfig} from "../../inputs-controller";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
-import {getCurrentlyAssignedIconToSettingName, getKeyForSettingName} from "../../configs/gamepad-utils";
 import {Button} from "../../enums/buttons";
+import {
+    getKeyAndActionFromCurrentKeysWithSettingName,
+    getKeyForSettingName
+} from "#app/configs/gamepad-utils";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -238,9 +241,10 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         if (!activeConfig.custom) return;
 
         // For each element in the binding settings, update the icon according to the current assignment.
+        debugger;
         for (const elm of this.bindingSettings) {
-            const key = getKeyForSettingName(activeConfig, elm); // Get the key for the setting name.
-            const icon = getCurrentlyAssignedIconToSettingName(activeConfig, elm); // Fetch the currently assigned icon for the setting.
+            // const key = getKeyForSettingName(activeConfig, elm); // Get the key for the setting name.
+            const {key, icon} = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, elm);
             this.inputsIcons[key].setFrame(icon); // Set the icon frame to the inputs icon object.
         }
 
