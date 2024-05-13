@@ -1987,7 +1987,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false, source: Pokemon = null): boolean {
+  /**
+   * 
+   * @param effect - effect to try and set
+   * @param quiet - whether to suppress trigger messages
+   * @param overrideStatus
+   * @param sourcePokemon - source Pokemon of the status effect
+   * @returns 
+   */
+  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon = null): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status)
         return false;
@@ -2009,8 +2017,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             return false;
 
           // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
-          if (source) {
-            applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, source, cancelImmunity, effect, defType);
+          if (sourcePokemon) {
+            applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, sourcePokemon, cancelImmunity, effect, defType);
             if (cancelImmunity.value)
               return false;
             else
@@ -2053,12 +2061,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null, source: Pokemon = null): boolean {
-    if (!this.canSetStatus(effect, asPhase, false, source))
+  /**
+   * 
+   * @param effect - effect to try and set
+   * @param asPhase 
+   * @param cureTurn 
+   * @param sourceText 
+   * @param sourcePokemon - source Pokemon of the status effect
+   * @returns 
+   */
+  trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null, sourcePokemon: Pokemon = null): boolean { 
+    if (!this.canSetStatus(effect, asPhase, false, sourcePokemon))
       return false;
 
     if (asPhase) {
-      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, source));
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, sourcePokemon));
       return true;
     }
 

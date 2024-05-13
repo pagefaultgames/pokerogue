@@ -2939,7 +2939,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     this.statusEffect = statusEffect;
     this.cureTurn = cureTurn;
     this.sourceText = sourceText;
-    this.sourcePokemon = sourcePokemon;
+    this.sourcePokemon = sourcePokemon; // For tracking which Pokemon caused the status effect
   }
 
   start() {
