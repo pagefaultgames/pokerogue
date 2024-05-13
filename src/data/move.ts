@@ -751,7 +751,7 @@ export class HealAttr extends MoveEffectAttr {
 
   addHealPhase(target: Pokemon, healRatio: number) {
     target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
-      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' regained\nhealth!'), true, !this.showAnim));
+      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' \nhad its HP restored.'), true, !this.showAnim));
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -834,11 +834,28 @@ export class SandHealAttr extends WeatherHealAttr {
   }
 }
 
+/**
+ * Heals the target by either {@link normalHealRatio} or {@link boostedHealRatio} 
+ * depending on the evaluation of {@link condition}
+ * @see {@link apply}
+ * @param user The Pokemon using this move
+ * @param target The target Pokemon of this move
+ * @param move This move
+ * @param args N/A
+ * @returns if the move was successful
+ */
 export class BoostHealAttr extends HealAttr {
   private normalHealRatio?: number;
   private boostedHealRatio?: number;
   private condition?: MoveConditionFunc;
 
+  /** 
+   * @param normalHealRatio Healing received when {@link condition} is false
+   * @param boostedHealRatio Healing received when {@link condition} is true
+   * @param showAnim Should a healing animation be showed?
+   * @param selfTarget Should the move target the user?
+   * @param condition The condition to check against when boosting the healing value
+   */
   constructor(normalHealRatio?: number, boostedHealRatio?: number, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
     super(normalHealRatio, showAnim, selfTarget);
     this.normalHealRatio = normalHealRatio;
