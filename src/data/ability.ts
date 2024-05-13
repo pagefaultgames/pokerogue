@@ -991,6 +991,42 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
   }
 }
 
+/**
+ * Class for abilities that boost the damage of moves
+ * For abilities that boost the base power of moves, see VariableMovePowerAbAttr
+ * @param damageMultiplier the amount to multiply the damage by 
+ * @param condition the condition for this ability to be applied 
+ */
+export class DamageBoostAbAttr extends PreAttackAbAttr {
+  private damageMultiplier: number;
+  private condition: PokemonAttackCondition;
+
+  constructor(damageMultiplier: number, condition: PokemonAttackCondition){
+    super(true);
+    this.damageMultiplier = damageMultiplier;
+    this.condition = condition;
+  }
+
+  /**
+   * 
+   * @param pokemon the attacker pokemon
+   * @param passive N/A
+   * @param defender the target pokemon
+   * @param move the move used by the attacker pokemon
+   * @param args Utils.NumberHolder as damage
+   * @returns true if the function succeeds
+   */
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    if (this.condition(pokemon, defender, move.getMove())) {
+      const power = args[0] as Utils.NumberHolder;
+      power.value = Math.floor(power.value * this.damageMultiplier);
+        return true;
+      }
+
+      return false;
+  }
+}
+
 export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
@@ -3121,7 +3157,7 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatChangesAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) <= 0.5, 2),
+      .attr(DamageBoostAbAttr, 2, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) <= 0.5),
     new Ability(Abilities.FILTER, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2, 0.75)
       .ignorable(),
