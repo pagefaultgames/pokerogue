@@ -333,7 +333,7 @@ export class TitlePhase extends Phase {
           this.end();
         });
       };
-
+      // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
       if (!Utils.isLocal){
         fetchDailyRunSeed().then(seed => {
           generateDaily(seed);
@@ -341,7 +341,7 @@ export class TitlePhase extends Phase {
           console.error("Failed to load daily run:\n", err);
         });
       } else {
-        generateDaily(btoa(new Date().toISOString().substring(0, 10)))
+        generateDaily(btoa(new Date().toISOString().substring(0, 10)));
       }
     });
   }
