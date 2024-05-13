@@ -796,7 +796,15 @@ export class InputsController {
     }
 
     swapKeyboardBinding(settingName, pressedButton): void {
-        console.log('swap');
+        this.pauseUpdate = true;
+        const keyTarget = getCurrentlyAssignedToSettingName(this.keyboardConfigs[this.chosenKeyboard], settingName)
+        const keyNewBinding = getKeyFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], pressedButton);
+        const previousActionForThisNewBinding = this.keyboardConfigs[this.chosenKeyboard].custom[keyNewBinding];
+        const ActionForThisNewBinding = this.keyboardConfigs[this.chosenKeyboard].custom[keyTarget];
+        this.keyboardConfigs[this.chosenKeyboard].custom[keyTarget] = previousActionForThisNewBinding;
+        this.keyboardConfigs[this.chosenKeyboard].custom[keyNewBinding] = ActionForThisNewBinding;
+        this.scene.gameData.saveCustomKeyboardMapping(this.chosenKeyboard, this.keyboardConfigs[this.chosenKeyboard].custom);
+        setTimeout(() => this.pauseUpdate = false, 500);
     }
 
     /**
@@ -809,5 +817,9 @@ export class InputsController {
     injectConfig(gamepadName: String, customMappings: MappingLayout): void {
         if (!this.configs[gamepadName]) this.configs[gamepadName] = {};
         this.configs[gamepadName].custom = customMappings;
+    }
+    injectKeyboardConfig(layout: string, customMappings: MappingLayout): void {
+        if (!this.keyboardConfigs[layout]) this.keyboardConfigs[layout] = {};
+        this.keyboardConfigs[layout].custom = customMappings;
     }
 }

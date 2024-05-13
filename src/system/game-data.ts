@@ -233,6 +233,7 @@ export class GameData {
     this.loadSettings();
     this.loadGamepadSettings();
     this.loadCustomMapping();
+    this.loadCustomKeyboardMapping();
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
@@ -510,8 +511,16 @@ export class GameData {
     return true;
   }
 
+  public loadCustomKeyboardMapping(): boolean {
+    if (!localStorage.hasOwnProperty('customKeyboardMappings'))
+      return false;
+    const customKeyboardMappings = JSON.parse(localStorage.getItem('customKeyboardMappings'));
+    for (const key of Object.keys(customKeyboardMappings))
+      this.scene.inputController.injectKeyboardConfig(key, customKeyboardMappings[key]);
+
+  }
+
   public loadCustomMapping(): boolean {
-    console.log('loadCustomMapping');
     if (!localStorage.hasOwnProperty('customMapping'))
       return false;
     const customMappings = JSON.parse(localStorage.getItem('customMapping'));
