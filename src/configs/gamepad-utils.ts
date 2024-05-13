@@ -25,7 +25,8 @@ export function getKeyForSettingName(config: InterfaceConfig, settingName: strin
 }
 
 // Given a Button, return the custom key assigned to it from the config file
-export function getCurrenlyAssignedKeyToAction(config: InterfaceConfig, action: Button): String | null {
+export function getCurrenlyAssignedKeyToAction(config: InterfaceConfig, action: Button, alt: boolean = false): String | null {
+    // need to find a way to differentiate main/alt button
     for (const key of Object.keys(config.custom)) {
         if (config.custom[key] === action) return key;
     }
@@ -36,7 +37,7 @@ export function getCurrenlyAssignedKeyToAction(config: InterfaceConfig, action: 
 export function getCurrentlyAssignedToSettingName(config: InterfaceConfig, settingName: string): String {
     const oldKey = getKeyForSettingName(config, settingName)
     const action = config.default[oldKey];
-    const key = getCurrenlyAssignedKeyToAction(config, action);
+    const key = getCurrenlyAssignedKeyToAction(config, action, settingName.includes("ALT_BUTTON_"));
     return key;
 }
 

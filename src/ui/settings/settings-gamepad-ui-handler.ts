@@ -38,7 +38,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
         this.layout['noGamepads'].label = label;
     }
 
-    getActiveConfig() {
+    getActiveConfig(): InterfaceConfig {
         return this.scene.inputController.getActiveConfig();
     }
 

@@ -57,7 +57,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     abstract navigateMenuLeft(): boolean;
     abstract navigateMenuRight(): boolean;
     abstract saveSettingToLocalStorage(setting, cursor): void;
-    abstract getActiveConfig(): void;
+    abstract getActiveConfig(): InterfaceConfig;
 
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);

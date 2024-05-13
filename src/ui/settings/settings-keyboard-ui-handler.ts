@@ -4,6 +4,7 @@ import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
 import {SettingKeyboard, settingKeyboardDefaults, settingKeyboardOptions} from "#app/system/settings-keyboard";
 import {truncateString} from "#app/utils";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
+import {InterfaceConfig} from "#app/inputs-controller";
 
 
 export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandler {
@@ -19,7 +20,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         this.localStoragePropertyName = 'settingsKeyboard';
     }
 
-    getActiveConfig() {
+    getActiveConfig(): InterfaceConfig {
         return this.scene.inputController.getActiveKeyboardConfig();
     }
 
