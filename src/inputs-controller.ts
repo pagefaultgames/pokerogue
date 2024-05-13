@@ -86,7 +86,7 @@ export class InputsController {
     private gamepadSupport: boolean = true;
 
     public chosenGamepad: String;
-    public chosenKeyboard: string = "azerty";
+    public chosenKeyboard: string = "default";
     private disconnectedGamepads: Array<String> = new Array();
 
     private pauseUpdate: boolean = false;
@@ -349,7 +349,7 @@ export class InputsController {
     }
 
     setupKeyboard(): void {
-        for (const layout of ['azerty']) {
+        for (const layout of ['default']) {
             const config = this.getConfigKeyboard(layout);
             config.custom = this.keyboardConfigs[layout]?.custom || {...config.default};
             this.keyboardConfigs[layout] = config;
@@ -579,7 +579,7 @@ export class InputsController {
     }
 
     getConfigKeyboard(id: string): InterfaceConfig {
-        if (id === 'azerty')
+        if (id === 'default')
             return cfg_keyboard_azerty;
 
         return cfg_keyboard_azerty;

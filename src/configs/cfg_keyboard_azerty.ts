@@ -3,7 +3,7 @@ import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 const cfg_keyboard_azerty = {
     padID: 'keyboard',
-    padType: 'azerty',
+    padType: 'default',
     gamepadMapping: {
         KEY_A: Phaser.Input.Keyboard.KeyCodes.A,
         KEY_B: Phaser.Input.Keyboard.KeyCodes.B,

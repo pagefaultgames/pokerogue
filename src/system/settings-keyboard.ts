@@ -115,10 +115,7 @@ export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard,
                     };
                     scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
                         options: [{
-                            label: 'azerty',
-                            handler: changeKeyboardHandler,
-                        }, {
-                            label: 'qwerty',
+                            label: 'Default',
                             handler: changeKeyboardHandler,
                         }]
                     });
