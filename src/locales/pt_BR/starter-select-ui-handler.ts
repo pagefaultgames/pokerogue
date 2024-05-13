@@ -29,6 +29,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleVariant": 'V: Mudar Variante',
     "enablePassive": "Ativar Passiva",
     "disablePassive": "Desativar Passiva",
-    "locked": "Locked",
-    "disabled": "Disabled"
+    "locked": "Bloqueado",
+    "disabled": "Desativado",
 }
