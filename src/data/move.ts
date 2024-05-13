@@ -1830,29 +1830,6 @@ export class ResetStatsAttr extends MoveEffectAttr {
   } 
 }
 
-export class ExposedAttr extends MoveEffectAttr {
-  private tagType: BattlerTagType;
-
-  constructor(tagType: BattlerTagType) {
-    super();
-
-    this.tagType = tagType;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args))
-      return false;
-
-    target.summonData.battleStats[BattleStat.EVA] = 0;
-    target.updateInfo();
-    target.addTag(this.tagType, 20, move.id, user.id);
-
-    target.scene.queueMessage(`${getPokemonMessage(user, " identified\n")}${getPokemonMessage(target, "!")}`);
-
-    return true;
-  } 
-}
-
 /**
  * Attribute used for moves which swap the user and the target's stat changes.
  */
@@ -3104,6 +3081,24 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
       return false;
 
     user.scene.queueMessage(getPokemonMessage(target, `\nwill faint in ${this.turnCountMin - 1} turns.`));
+
+    return true;
+  }
+}
+
+export class ExposedAttr extends AddBattlerTagAttr {
+  constructor(tagType: BattlerTagType) {
+    super(tagType, false, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    target.summonData.battleStats[BattleStat.EVA] = 0;
+    target.updateInfo();
+
+    target.scene.queueMessage(`${getPokemonMessage(user, " identified\n")}${getPokemonMessage(target, "!")}`);
 
     return true;
   }
