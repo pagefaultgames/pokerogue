@@ -82,7 +82,7 @@ export function initI18n(): void {
       de: {
         ...deConfig
       },
-	    pt_BR: {
+	  pt_BR: {
         ...ptBrConfig
       },
       zh_CN: {
