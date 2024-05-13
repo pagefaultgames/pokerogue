@@ -1290,8 +1290,15 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Resets an ally's temporary stat boots to zero with no regard to
+ * whether this is a positive or negative change
+ * @param pokemon The {@link Pokemon} with this {@link AbAttr}
+ * @param passive N/A
+ * @param args N/A
+ * @returns if the move was successful
+ */
 export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
-
   constructor() {
     super();
   }
@@ -1299,11 +1306,10 @@ export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const target = pokemon.getAlly();
     if (target?.isActive(true)) {
-
       for (let s = 0; s < target.summonData.battleStats.length; s++)
         target.summonData.battleStats[s] = 0;
 
-      target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
+      target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere removed!`));
 
       return true;
     }
