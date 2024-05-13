@@ -1795,6 +1795,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     transitionIndex = i;
 
+    i = 0;
     rate = 0.85;
 
     let frameProgress = 0;
@@ -1810,6 +1811,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       delay: Utils.fixedInt(delay),
       repeat: -1,
       callback: () => {
+        ++i;
         frameThreshold = sprite.anims.msPerFrame / rate;
         frameProgress += delay;
         while (frameProgress > frameThreshold) {
@@ -2658,7 +2660,7 @@ export class EnemyPokemon extends Pokemon {
 
     this.trainerSlot = trainerSlot;
     if (boss)
-      this.setBoss();
+      this.setBoss(true, dataSource?.bossSegments);
 
     if (!dataSource) {
       this.generateAndPopulateMoveset();

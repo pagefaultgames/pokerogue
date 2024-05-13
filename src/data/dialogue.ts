@@ -2269,7 +2269,12 @@ export const trainerTypeDialogue = {
         $@c{smile_ehalf}…Thank you.`
       ]
     }
-  ]
+  ],
+  [TrainerType.NUZLEAF]: {
+    encounter: [
+      `You've done well to make it this far.\nI am Nuzleaf, and this is your final test.`
+    ]
+  }
 };
 
 export const battleSpecDialogue = {
@@ -2299,15 +2304,15 @@ export function initTrainerTypeDialogue(): void {
   const trainerTypes = Object.keys(trainerTypeDialogue).map(t => parseInt(t) as TrainerType);
   for (let trainerType of trainerTypes) {
     const messages = trainerTypeDialogue[trainerType];
-      const messageTypes = [ 'encounter', 'victory', 'defeat' ];
-      for (let messageType of messageTypes) {
-        if (Array.isArray(messages)) {
-          if (messages[0][messageType])
-            trainerConfigs[trainerType][`${messageType}Messages`] = messages[0][messageType];
-          if (messages.length > 1)
-            trainerConfigs[trainerType][`female${messageType.slice(0, 1).toUpperCase()}${messageType.slice(1)}Messages`] = messages[1][messageType];
-        } else
-          trainerConfigs[trainerType][`${messageType}Messages`] = messages[messageType];
-      }
+    const messageTypes = [ 'encounter', 'victory', 'defeat' ];
+    for (let messageType of messageTypes) {
+      if (Array.isArray(messages)) {
+        if (messages[0][messageType])
+          trainerConfigs[trainerType][`${messageType}Messages`] = messages[0][messageType];
+        if (messages.length > 1)
+          trainerConfigs[trainerType][`female${messageType.slice(0, 1).toUpperCase()}${messageType.slice(1)}Messages`] = messages[1][messageType];
+      } else
+        trainerConfigs[trainerType][`${messageType}Messages`] = messages[messageType];
+    }
   }
 }

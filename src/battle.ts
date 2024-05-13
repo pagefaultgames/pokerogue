@@ -92,7 +92,7 @@ export default class Battle {
         let spec = BattleSpec.DEFAULT;
         if (this.gameMode.isClassic) {
             if (this.waveIndex === 200)
-                spec = BattleSpec.FINAL_BOSS;
+                spec = !this.gameMode.isNuzlocke ? BattleSpec.FINAL_BOSS : BattleSpec.NUZLOCKE_BOSS;
         }
         this.battleSpec = spec;
     }
@@ -186,7 +186,7 @@ export default class Battle {
             if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length)
                 return `encounter_${this.trainer.getEncounterBgm()}`;
             return this.trainer.getBattleBgm();
-        } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS)
+        } else if (this.gameMode.isClassic && this.waveIndex > 195 && ![ BattleSpec.FINAL_BOSS, BattleSpec.NUZLOCKE_BOSS ].includes(this.battleSpec))
             return 'end_summit';
         for (let pokemon of battlers) {
             if (this.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -256,6 +256,7 @@ export class FixedBattleConfig {
     public getTrainer: GetTrainerFunc;
     public getEnemyParty: GetEnemyPartyFunc;
     public seedOffsetWaveIndex: integer;
+    public condition: (scene: BattleScene) => boolean;
 
     setBattleType(battleType: BattleType): FixedBattleConfig {
         this.battleType = battleType;
@@ -279,6 +280,11 @@ export class FixedBattleConfig {
 
     setSeedOffsetWave(seedOffsetWaveIndex: integer): FixedBattleConfig {
         this.seedOffsetWaveIndex = seedOffsetWaveIndex;
+        return this;
+    }
+
+    setCondition(condition: (scene: BattleScene) => boolean): FixedBattleConfig {
+        this.condition = condition;
         return this;
     }
 }
@@ -325,5 +331,8 @@ export const fixedBattles: FixedBattleConfigs = {
     [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BLUE, [ TrainerType.RED, TrainerType.LANCE_CHAMPION ], [ TrainerType.STEVEN, TrainerType.WALLACE ], TrainerType.CYNTHIA, [ TrainerType.ALDER, TrainerType.IRIS ], TrainerType.DIANTHA, TrainerType.HAU, [ TrainerType.GEETA, TrainerType.NEMONA ], TrainerType.KIERAN, TrainerType.LEON ])),
     [195]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT))
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
+    [200]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.NUZLEAF, TrainerVariant.DEFAULT))
+        .setCondition(scene => scene.gameMode.isNuzlocke)
 };

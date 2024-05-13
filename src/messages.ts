@@ -9,6 +9,7 @@ export function getPokemonPrefix(pokemon: Pokemon): string {
   let prefix: string;
   switch (pokemon.scene.currentBattle.battleSpec) {
     case BattleSpec.DEFAULT:
+    case BattleSpec.NUZLOCKE_BOSS:
       prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? 'Foe ' : 'Wild ' : '';
       break;
     case BattleSpec.FINAL_BOSS:

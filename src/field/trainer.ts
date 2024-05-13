@@ -184,9 +184,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  genPartyMember(index: integer): EnemyPokemon {
+  genPartyMember(index: integer, retryCount: integer = 0): EnemyPokemon {
     const battle = this.scene.currentBattle;
     const level = battle.enemyLevels[index];
+
+    let retry = false;
     
     let ret: EnemyPokemon;
 
@@ -196,10 +198,20 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
       if (this.config.partyMemberFuncs.hasOwnProperty(index)) {
         ret = this.config.partyMemberFuncs[index](this.scene, level, strength);
+        if (template.isBalanced(index)) {
+          const partyMemberTypes = battle.enemyParty.map(p => p.getTypes(true)).flat();
+          if (partyMemberTypes.indexOf(ret.species.type1) > -1 || (ret.species.type2 !== null && partyMemberTypes.indexOf(ret.species.type2) > -1))
+            retry = true;
+        }
         return;
       }
       if (this.config.partyMemberFuncs.hasOwnProperty(index - template.size)) {
-        ret = this.config.partyMemberFuncs[index - template.size](this.scene, level, template.getStrength(index));
+        ret = this.config.partyMemberFuncs[index - template.size](this.scene, level, strength);
+        if (template.isBalanced(index - template.size)) {
+          const partyMemberTypes = battle.enemyParty.map(p => p.getTypes(true)).flat();
+          if (partyMemberTypes.indexOf(ret.species.type1) > -1 || (ret.species.type2 !== null && partyMemberTypes.indexOf(ret.species.type2) > -1))
+            retry = true;
+        }
         return;
       }
 
@@ -218,7 +230,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
         : this.genNewPartyMemberSpecies(level, strength);
       
       ret = this.scene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
-    }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
+    }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1 + retryCount * 6) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1 + retryCount * 6) << 8));
+
+    if (retry && ++retryCount < 10)
+      return this.genPartyMember(index, retryCount);
 
     return ret;
   }
@@ -311,7 +326,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getNextSummonIndex(trainerSlot: TrainerSlot = TrainerSlot.NONE, partyMemberScores: [integer, integer][] = this.getPartyMemberMatchupScores(trainerSlot)): integer {
-    if (trainerSlot && !this.isDouble())
+    if (trainerSlot && !this.isDouble() || !this.config.hasGenders)
       trainerSlot = TrainerSlot.NONE;
 
     const sortedPartyMemberScores = this.getSortedPartyMemberMatchupScores(partyMemberScores);

@@ -6,7 +6,7 @@ import { TrainerType } from "./enums/trainer-type";
 import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import { pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
-import PokemonSpecies, { PokemonSpeciesFilter, getPokemonSpecies } from "./pokemon-species";
+import PokemonSpecies, { PokemonSpeciesFilter, SpeciesFormKey, getPokemonSpecies } from "./pokemon-species";
 import { Species } from "./enums/species";
 import { tmSpecies } from "./tms";
 import { Type } from "./type";
@@ -155,7 +155,9 @@ export const trainerPartyTemplates = {
   RIVAL_3: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
   RIVAL_4: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
   RIVAL_5: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  RIVAL_6: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER))
+  RIVAL_6: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
+
+  NUZLEAF: new TrainerPartyTemplate(1, PartyMemberStrength.STRONG, false, true)//new TrainerPartyTemplate(5, PartyMemberStrength.STRONG, false, true),
 };
 
 type PartyTemplateFunc = (scene: BattleScene) => TrainerPartyTemplate;
@@ -867,11 +869,45 @@ export const trainerConfigs: TrainerConfigs = {
       p.shiny = true;
       p.variant = 1;
       p.formIndex = 1;
+      p.generateName();
     }))
     .setGenModifiersFunc(party => {
       const starter = party[0];
       return [ modifierTypes.TERA_SHARD().generateType(null, [ starter.species.type1 ]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier ];
     }),
+  [TrainerType.NUZLEAF]: new TrainerConfig((t = TrainerType.NUZLEAF)).setName('Nuzleaf').setBoss().setEncounterBgm('final').setBattleBgm('battle_final').setPartyTemplates(trainerPartyTemplates.NUZLEAF)
+    .setPartyMemberFunc(0, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => species.baseTotal >= 540, TrainerSlot.TRAINER, false,
+      (p => {
+        p.level = 200;
+        p.setBoss(true, 1);
+      })))
+    .setPartyMemberFunc(1, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => species.baseTotal >= 540, TrainerSlot.TRAINER, false,
+      (p => {
+        p.level = 200;
+        p.setBoss(true, 1);
+      })))
+    .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && species.forms.some(f => f.formKey.includes(SpeciesFormKey.MEGA)), TrainerSlot.TRAINER, false,
+      (p => {
+        p.level = 200;
+        p.formIndex = p.species.forms.findIndex(f => f.formKey.includes(SpeciesFormKey.MEGA));
+        p.setBoss(true, 2);
+        p.generateName();
+      })
+    ))
+    .setPartyMemberFunc(3, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && species.forms.some(f => f.formKey.includes(SpeciesFormKey.GIGANTAMAX)), TrainerSlot.TRAINER, false,
+      (p => {
+        p.level = 200;
+        p.formIndex = p.species.forms.findIndex(f => f.formKey.includes(SpeciesFormKey.GIGANTAMAX));
+        p.setBoss(true, 2);
+        p.generateName();
+      })
+    ))
+    .setPartyMemberFunc(4, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => species.baseTotal >= 540, TrainerSlot.TRAINER, false,
+      (p => {
+        p.level = 200;
+        p.setBoss(true, 1);
+      })))
+    .setSpeciesFilter(species => species.baseTotal >= 540)
 };
 
 (function() {

@@ -740,11 +740,13 @@ export class EncounterPhase extends BattlePhase {
         if (this.scene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || this.scene.gameMode.isWaveFinal(battle.waveIndex))) {
           if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
             enemyPokemon.formIndex = 1;
+            enemyPokemon.calculateStats();
             enemyPokemon.updateScale();
           }
           enemyPokemon.setBoss();
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
+          enemyPokemon.calculateStats();
           enemyPokemon.updateScale();
         }
       }
@@ -3346,8 +3348,13 @@ export class VictoryPhase extends PokemonPhase {
   
     if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType ? !p?.isFainted(true) : p.isOnField())) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
-      if (this.scene.currentBattle.battleType === BattleType.TRAINER)
+      if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+        if (this.scene.currentBattle.battleSpec === BattleSpec.NUZLOCKE_BOSS) {
+          this.scene.pushPhase(new NuzlockeBossSwitchPhase(this.scene));
+          return this.end();
+        }
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
+      }
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
         if (this.scene.currentBattle.waveIndex % 10)
@@ -4594,6 +4601,65 @@ export class ScanIvsPhase extends PokemonPhase {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.clearText();
         this.end();
+      });
+    });
+  }
+}
+
+export class NuzlockeBossSwitchPhase extends BattlePhase {
+  start(): void {
+    super.start();
+
+    this.scene.currentBattle.addBattleScore(this.scene);
+
+    this.scene.gameData.gameStats.trainersDefeated++;
+
+    this.scene.clearEnemyHeldItemModifiers();
+
+    const pokemon = this.scene.addEnemyPokemon(getPokemonSpecies(Species.NUZLEAF), 300, TrainerSlot.NONE, true);
+    pokemon.setAlpha(0);
+    pokemon.x += 16;
+    pokemon.y -= 16;
+    pokemon.setBoss(true, 5);
+
+    this.scene.currentBattle.battleType = BattleType.WILD;
+    this.scene.currentBattle.enemyParty = [ pokemon ];
+
+    pokemon.loadAssets().then(() => {
+      this.scene.add.existing(pokemon);
+      this.scene.field.add(pokemon);
+
+      this.scene.gameData.setPokemonSeen(pokemon, true, false);
+
+      const playerPokemon = this.scene.getPlayerPokemon() as Pokemon;
+      if (playerPokemon?.visible)
+        this.scene.field.moveBelow(pokemon, playerPokemon);
+      this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
+
+      pokemon.initBattleInfo();
+
+      regenerateModifierPoolThresholds(this.scene.getEnemyField(), ModifierPoolType.WILD);
+      this.scene.generateEnemyModifiers();
+
+      this.scene.updateModifiers(false);
+      this.scene.updateFieldScale();
+      pokemon.showInfo();
+      pokemon.playAnim();
+      pokemon.setVisible(true);
+      pokemon.getSprite().setVisible(true);
+      this.scene.updateFieldScale();
+      this.scene.tweens.add({
+        targets: pokemon,
+        duration: 250,
+        ease: 'Sine.easeIn',
+        alpha: 1,
+        x: '-=16',
+        y: '+=16',
+        onComplete: () => {
+          pokemon.cry();
+          pokemon.resetSummonData();
+          this.scene.time.delayedCall(1000, () => this.end());
+        }
       });
     });
   }

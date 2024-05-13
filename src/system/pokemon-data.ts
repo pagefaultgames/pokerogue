@@ -49,6 +49,7 @@ export default class PokemonData {
   public fusionLuck: integer;
 
   public boss: boolean;
+  public bossSegments: integer;
 
   public summonData: PokemonSummonData;
 
@@ -90,8 +91,10 @@ export default class PokemonData {
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
 
-    if (!forHistory)
-      this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+    if (!forHistory) {
+      this.bossSegments = !this.player ? source?.bossSegments || 0 : 0;
+      this.boss = !!this.bossSegments || !!source?.boss;
+    }
 
     if (sourcePokemon) {
       this.moveset = sourcePokemon.moveset;

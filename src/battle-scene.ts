@@ -626,6 +626,7 @@ export default class BattleScene extends SceneBase {
 		}
 		if (postProcess)
 			postProcess(pokemon);
+		pokemon.calculateStats();
 		pokemon.init();
 		return pokemon;
 	}
@@ -805,7 +806,7 @@ export default class BattleScene extends SceneBase {
 
 		const playerField = this.getPlayerField();
 		
-		if (this.gameMode.hasFixedBattles && fixedBattles.hasOwnProperty(newWaveIndex) && trainerData === undefined) {
+		if (this.gameMode.hasFixedBattles && fixedBattles.hasOwnProperty(newWaveIndex) && fixedBattles[newWaveIndex].condition(this) && trainerData === undefined) {
 			battleConfig = fixedBattles[newWaveIndex];
 			newDouble = battleConfig.double;
 			newBattleType = battleConfig.battleType;
@@ -816,14 +817,14 @@ export default class BattleScene extends SceneBase {
 			if (!this.gameMode.hasTrainers)
 				newBattleType = BattleType.WILD;
 			else if (battleType === undefined)
-				newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
+				newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this) ? BattleType.TRAINER : BattleType.WILD;
 			else
 				newBattleType = battleType;
 
 			if (newBattleType === BattleType.TRAINER) {
 				const trainerType = this.arena.randomTrainerType(newWaveIndex);
 				let doubleTrainer = false;
-				if (trainerConfigs[trainerType].doubleOnly)
+				if (trainerConfigs[trainerType].doubleOnly && trainerConfigs[trainerType].hasGenders)
 					doubleTrainer = true;
 				else if (trainerConfigs[trainerType].hasDouble) {
 					const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
@@ -884,7 +885,7 @@ export default class BattleScene extends SceneBase {
 					isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
 				}, lastBattle.waveIndex << 4);
 			}
-			const resetArenaState = (isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) && !this.gameMode.hasNoReturns;
+			const resetArenaState = (isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || [ BattleSpec.FINAL_BOSS, BattleSpec.NUZLOCKE_BOSS ].includes(this.currentBattle.battleSpec)) && !this.gameMode.hasNoReturns;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
 			if (!isNewBiome && (newWaveIndex % 10) == 5)
