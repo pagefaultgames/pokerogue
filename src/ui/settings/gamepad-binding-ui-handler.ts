@@ -3,7 +3,7 @@ import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
 import {
     getKeyAndActionFromCurrentKeysWithPressedButton,
-    getKeyAndActionFromCurrentKeysWithSettingName,
+    getKeyAndActionFromCurrentKeysWithSettingName, getKeyFromMapping,
 } from "#app/configs/gamepad-utils";
 
 
@@ -22,7 +22,8 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
         this.buttonPressed = button.index;
         const activeConfig = this.scene.inputController.getActiveConfig();
         const type = activeConfig.padType
-        const buttonIcon = getKeyAndActionFromCurrentKeysWithPressedButton(activeConfig, this.buttonPressed)?.icon
+        const key = getKeyFromMapping(activeConfig, this.buttonPressed);
+        const buttonIcon = activeConfig.ogIcons[key];
         if (!buttonIcon) return;
         const assignedButtonIcon = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, this.target)?.icon;
         this.onInputDown(buttonIcon, assignedButtonIcon, type);

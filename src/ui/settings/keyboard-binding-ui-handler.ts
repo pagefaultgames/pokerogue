@@ -3,7 +3,7 @@ import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
 import {
     getKeyAndActionFromCurrentKeysWithPressedButton,
-    getKeyAndActionFromCurrentKeysWithSettingName,
+    getKeyAndActionFromCurrentKeysWithSettingName, getKeyFromMapping,
 } from "#app/configs/gamepad-utils";
 
 
@@ -21,7 +21,8 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         if (!this.listening || this.buttonPressed !== null) return;
         this.buttonPressed = key;
         const activeConfig = this.scene.inputController.getActiveKeyboardConfig();
-        const buttonIcon = getKeyAndActionFromCurrentKeysWithPressedButton(activeConfig, key)?.icon
+        const _key = getKeyFromMapping(activeConfig, key);
+        const buttonIcon = activeConfig.ogIcons[_key];
         if (!buttonIcon) return;
         const assignedButtonIcon = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, this.target)?.icon;
         this.onInputDown(buttonIcon, assignedButtonIcon, 'keyboard');

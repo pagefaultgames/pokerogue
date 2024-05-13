@@ -338,6 +338,7 @@ export class InputsController {
             const gamepadID = gamepad.toLowerCase();
             const config = deepCopy(this.getConfig(gamepadID));
             config.custom = this.configs[gamepad]?.custom || {...config.default};
+            config.ogIcons = {...config.icons};
             config.currentKeys = this.configs[gamepad]?.currentKeys;
             if (!this.configs[gamepad]?.currentKeys)
                 reloadCurrentKeys(config);
@@ -354,6 +355,7 @@ export class InputsController {
             const config = deepCopy(this.getConfigKeyboard(layout));
             config.custom = this.keyboardConfigs[layout]?.custom || {...config.default};
             config.currentKeys = this.keyboardConfigs[layout]?.currentKeys;
+            config.ogIcons = {...config.icons};
             if (!this.keyboardConfigs[layout]?.currentKeys)
                 reloadCurrentKeys(config);
             else
