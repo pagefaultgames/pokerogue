@@ -1851,7 +1851,7 @@ export class CommandPhase extends FieldPhase {
 
 
       if (!pokemon.getMoveset()[moveIndex].isUsable(pokemon) || !pokemon.getMoveset()[moveIndex].isSelectable(pokemon)) {
-        this.handleCommand(Command.FIGHT, 0, true, false);
+        this.handleCommand(Command.FIGHT, 5, true, false);
         return true;
     }
     this.handleCommand(Command.FIGHT, moveIndex, false, false);
