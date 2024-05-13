@@ -22,7 +22,7 @@ import { allMoves } from "../data/move";
 import { Type } from "../data/type";
 import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
-import { TitlePhase } from "../phases";
+import { EggLapsePhase, TitlePhase } from "../phases";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
@@ -131,6 +131,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
   private pokemonFormText: Phaser.GameObjects.Text;
+  private startLabel: Phaser.GameObjects.Text;
 
   private genMode: boolean;
   private statsMode: boolean;
@@ -328,9 +329,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.valueLimitLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(this.valueLimitLabel);
 
-    const startLabel = addTextObject(this.scene, 124, 162, i18next.t("starterSelectUiHandler:start"), TextStyle.TOOLTIP_CONTENT);
-    startLabel.setOrigin(0.5, 0);
-    this.starterSelectContainer.add(startLabel);
+    const labelText = this.starterCursors.length > 0 ? i18next.t("starterSelectUiHandler:start") : i18next.t("starterSelectUiHandler:random");
+    this.startLabel = addTextObject(this.scene, 124, 162, labelText, TextStyle.TOOLTIP_CONTENT);
+    this.startLabel.setOrigin(0.5, 0);
+    this.starterSelectContainer.add(this.startLabel);
+    
 
     this.startCursorObj = this.scene.add.nineslice(111, 160, 'select_cursor', null, 26, 15, 6, 6, 6, 6);
     this.startCursorObj.setVisible(false);
@@ -640,6 +643,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.statsContainer);
 
     this.updateInstructions();
+
+    this.updateStartLabel();
   }
 
   show(args: any[]): boolean {
@@ -713,6 +718,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.popStarter();
         success = true;
         this.updateInstructions();
+        this.updateStartLabel();
       } else {
         this.blockInput = true;
         this.scene.clearPhaseQueue();
@@ -805,10 +811,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   if (this.starterCursors.length === 6 || this.value === this.getValueLimit())
                     this.tryStart();
                   this.updateInstructions();
+                  this.updateStartLabel();
                   ui.playSelect();
                 } else
                   ui.playError();
                 return true;
+                
               },
               overrideSound: true
             },
@@ -1034,6 +1042,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               let newAbilityIndex = this.abilityCursor;
               do {
                 newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
+                console.debug("Ability Index changed to " + newAbilityIndex);
                 if (!newAbilityIndex) {
                   if (abilityAttr & AbilityAttr.ABILITY_1)
                     break;
@@ -1246,6 +1255,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][cursor]);
 
       this.updateInstructions();
+      this.updateStartLabel();
     }
 
     return changed;
@@ -1666,6 +1676,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonAdditionalMoveCountLabel.setVisible(this.speciesStarterMoves.length > 4);
 
     this.updateInstructions();
+    this.updateStartLabel();
   }
 
   setTypeIcons(type1: Type, type2: Type): void {
@@ -1743,10 +1754,47 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryStart(manualTrigger: boolean = false): boolean {
-    if (!this.starterGens.length)
-      return false;
-
     const ui = this.getUi();
+    if (!this.starterGens.length){
+      const cancel = () => {
+        ui.setMode(Mode.STARTER_SELECT);
+        while(this.starterGens.length > 0){
+          this.popStarter();
+        }
+        this.updateStartLabel();
+        this.clearText();
+      };
+      ui.showText(i18next.t("starterSelectUiHandler:confirmRandomize"), null, () => {
+        this.randomizeStarters();
+        ui.setModeWithoutClear(Mode.CONFIRM, () => {
+          const startRun = (gameMode: GameModes) => {
+            this.scene.gameMode = gameModes[gameMode];
+            this.scene.money = this.scene.gameMode.getStartingMoney();
+            ui.setMode(Mode.STARTER_SELECT);
+            const thisObj = this;
+            const originalStarterSelectCallback = this.starterSelectCallback;
+            this.starterSelectCallback = null;
+            originalStarterSelectCallback(new Array(this.starterGens.length).fill(0).map(function (_, i) {
+              const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
+              return {
+                species: starterSpecies,
+                dexAttr: thisObj.starterAttr[i],
+                abilityIndex: thisObj.starterAbilityIndexes[i],
+                passive: !(thisObj.scene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
+                nature: thisObj.starterNatures[i] as Nature,
+                moveset: thisObj.starterMovesets[i],
+                pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
+              };
+            }));
+          };
+          startRun(this.gameMode);
+        }, cancel, null, null, 19);
+
+      });
+      return true;
+    }
+
+else {
 
     const cancel = () => {
       ui.setMode(Mode.STARTER_SELECT);
@@ -1782,8 +1830,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
 
     return true;
-  }
-
+  }}
   toggleStatsMode(on?: boolean): void {
     if (on === undefined)
       on = !this.statsMode;
@@ -1824,6 +1871,109 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (this.statsMode)
       this.toggleStatsMode(false);
+  }
+
+  randomizeStarters(): void {
+  let selectedSpeciesIds = new Set<number>(); //Set to track dupes
+
+   do{
+    //Calculate remaining value limit to ensure there are Starters available to select
+    let remainingValue = this.getValueLimit() - this.value;
+    // Prepare a list of all viable (i.e. based on remaning cost value) species options from all generations.
+    let viableOptions = [];
+    this.genSpecies.forEach((gen, genIndex) => {
+      gen.forEach(species => {
+        let speciesDexAttr = this.scene.gameData.dexData[species.speciesId].caughtAttr;
+        if (speciesDexAttr && // Ensure starter is "caught"
+            this.scene.gameData.getSpeciesStarterValue(species.speciesId) <= remainingValue &&
+            !selectedSpeciesIds.has(species.speciesId)) {
+          viableOptions.push({ species, genIndex });
+        }
+      });
+    });
+    if (viableOptions.length === 0) break;
+    let selectedOption = viableOptions[Math.floor(Math.random() * viableOptions.length)]; //Select a random speccies
+    let selectedSpecies = selectedOption.species; 
+    let selectedGenIndex = selectedOption.genIndex;
+    let speciesDexAttr = this.scene.gameData.dexData[selectedSpecies.speciesId].caughtAttr; //Retrieve the caught bit mask for this species from dexData
+     //Init variables we will need for randomization of natures, abilities, and moves
+    let randAbilityIndex = -1;
+    let randNatureIndex = -1;
+    let randomMoveset: integer[] = [];
+      //Update the team value by starter cost and start prepping to add starter to team
+      if (this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(selectedSpecies.speciesId))) {
+        selectedSpeciesIds.add(selectedSpecies.speciesId);
+        const props = this.scene.gameData.getSpeciesDexAttrProps(selectedSpecies, speciesDexAttr);
+        this.starterIcons[this.starterCursors.length].setTexture(selectedSpecies.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+        this.starterIcons[this.starterCursors.length].setFrame(selectedSpecies.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+        this.starterGens.push(selectedGenIndex);
+        this.starterCursors.push(this.genSpecies[selectedGenIndex].indexOf(selectedSpecies));
+        this.starterAttr.push(speciesDexAttr);
+        //Handle random abilities
+        let availableAbilities: integer[] = [];
+        if (this.scene.gameData.starterData[selectedSpecies.speciesId].abilityAttr & AbilityAttr.ABILITY_1) {
+          availableAbilities.push(0); }
+        if (this.scene.gameData.starterData[selectedSpecies.speciesId].abilityAttr & AbilityAttr.ABILITY_2) {
+          availableAbilities.push(1); 
+      }
+        if (this.scene.gameData.starterData[selectedSpecies.speciesId].abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+          availableAbilities.push(2); 
+      }
+      if (availableAbilities.length) {
+        randAbilityIndex = Math.floor(Math.random() * availableAbilities.length);
+    } else {
+        randAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(selectedSpecies)
+    }
+        this.starterAbilityIndexes.push(randAbilityIndex);
+        //Handle random natures
+        let natures = this.scene.gameData.getNaturesForAttr(this.scene.gameData.dexData[selectedSpecies.speciesId].natureAttr);
+        if (natures && natures.length > 0) {
+          randNatureIndex = Math.floor(Math.random() * natures.length);
+        }
+        else{
+          randNatureIndex = this.scene.gameData.getSpeciesDefaultNature(selectedSpecies);
+        }
+        this.starterNatures.push(randNatureIndex as unknown as Nature);
+        //Get random moves
+        let levelMoves: LevelMoves;
+        let availableStarterMoves: integer[] = [];
+        if (pokemonFormLevelMoves.hasOwnProperty(selectedSpecies.speciesId) && pokemonFormLevelMoves[selectedSpecies.speciesId].hasOwnProperty(props.formIndex))
+          levelMoves = pokemonFormLevelMoves[selectedSpecies.speciesId][props.formIndex];
+        else
+          levelMoves = pokemonSpeciesLevelMoves[selectedSpecies.speciesId];
+        availableStarterMoves.push(...levelMoves.filter(lm => lm[0] <= 5).map(lm => lm[1]));
+        if (speciesEggMoves.hasOwnProperty(selectedSpecies.speciesId)) {
+          for (let em = 0; em < 4; em++) {
+            if (this.scene.gameData.starterData[selectedSpecies.speciesId].eggMoves & Math.pow(2, em))
+              availableStarterMoves.push(speciesEggMoves[selectedSpecies.speciesId][em]);
+          }
+        }
+// Determine the number of moves to select
+        let numMovesToSelect = Math.min(4, availableStarterMoves.length);
+
+// Shuffle the availableStarterMoves array and pick the first numMovesToSelect moves
+        for (let i = availableStarterMoves.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [availableStarterMoves[i], availableStarterMoves[j]] = [availableStarterMoves[j], availableStarterMoves[i]];
+}
+
+// Slice the first numMovesToSelect moves from the shuffled array
+        randomMoveset = availableStarterMoves.slice(0, numMovesToSelect);
+        this.starterMovesets.push(randomMoveset.slice(0) as StarterMoveset);
+      }
+      if (this.starterCursors.length === 6) break;
+    }
+    while (this.value < this.getValueLimit())
+
+  }
+
+  updateStartLabel(): void {
+    if(this.starterCursors.length > 0){
+    this.startLabel.setText(i18next.t("starterSelectUiHandler:start"));
+    }
+    else if(this.starterCursors.length === 0){
+      this.startLabel.setText(i18next.t("starterSelectUiHandler:random"));
+    }
   }
 
   checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female, formIndex, shiny, variant) {
