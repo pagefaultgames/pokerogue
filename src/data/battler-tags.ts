@@ -549,6 +549,10 @@ export class MinimizeTag extends BattlerTag {
     super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE, undefined);
   }
 
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isMax();
+  }
+
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
   }
