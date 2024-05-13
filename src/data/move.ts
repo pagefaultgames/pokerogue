@@ -2372,10 +2372,21 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+/**
+ * Attribute used for moves which never miss
+ * against pokemon that used Minimize
+ */
 export class MinimizeAccuracyAttr extends VariableAccuracyAttr{
+  /**
+   * Swaps the user and the target's stat changes.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move that never misses against Minimized targets
+   * @param args Accuracy of the move being used
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (target.getTag(BattlerTagType.MINIMIZED)){
-
       const accuracy = args[0] as Utils.NumberHolder
       accuracy.value = -1;
 
