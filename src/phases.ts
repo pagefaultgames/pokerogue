@@ -3004,8 +3004,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
 }
 
 export class MessagePhase extends Phase {
-  // todo change backlk to private
-  public text: string;
+  private text: string;
   private callbackDelay: integer;
   private prompt: boolean;
   private promptDelay: integer;

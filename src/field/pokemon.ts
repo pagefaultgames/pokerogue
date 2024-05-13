@@ -1609,13 +1609,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             const oneHitKo = result === HitResult.ONE_HIT_KO;
 
             // damageAndUpdate: will queue potential messages for critical hit, effectiveness, fainted - in that order
-            // requires passing in hitsLeft
-            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, source.turnData.hitsLeft);
+            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
             this.turnData.damageTaken += damage.value;
+
+            // queue critical message before effectiveness
+            if (isCritical)
+              this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
 
             // hitsLeft: for multi-hit moves, only want to render effectiveness text at end.
             // also want to render if a pokemon fainted
-            console.log(`the number of hits left for this turn for ${this.name} is ${source.turnData.hitsLeft}`)
+            //console.log(`the number of hits left for this turn for ${this.name} is ${source.turnData.hitsLeft}`)
             if (source.turnData.hitsLeft === 1 || this.isFainted()) {
               switch (result as HitResult) {
                 case HitResult.SUPER_EFFECTIVE:
@@ -1640,6 +1643,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
             source.turnData.damageDealt += damage.value;
             this.battleData.hitCount++;
+            // create attack result and push to turnData
             const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
             this.turnData.attacksReceived.unshift(attackResult);
             if (source.isPlayer() && !this.isPlayer())
@@ -1658,6 +1662,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             // not sure what this set function  is accomplishing, perhaps for the faint phase? it messes up with the queueMessage()
             this.scene.setPhaseQueueSplice();
 
+            // finally checks and adds Fainted scene
             if (this.isFainted()) {
               this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
               this.resetSummonData();
@@ -1701,20 +1706,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     damage = Math.min(damage, this.hp);
-
     this.hp = this.hp - damage;
-    // checks and adds Fainted scene
 
     return damage;
   }
 
-  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, hitsLeft: integer = 1): integer {
+  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false ): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
-    // queue critical message before effectiveness
-    if (critical)
-      this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
-
 
     damage = this.damage(damage, ignoreSegments, preventEndure);
     // Damage amount may have changed, but needed to be queued before calling damage function
