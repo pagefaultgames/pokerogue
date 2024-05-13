@@ -642,7 +642,16 @@ export default class BattleScene extends SceneBase {
 		const container = this.add.container(x, y);
 		
 		const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
-    icon.setFrame(pokemon.getIconId(true));
+    	icon.setFrame(pokemon.getIconId(true));
+		// Temporary fix to show pokemon's default icon if variant icon doesn't exist
+		if (icon.frame.name != pokemon.getIconId(true)) {
+			console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`)
+			const temp = pokemon.shiny;
+			pokemon.shiny = false;
+			icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
+			icon.setFrame(pokemon.getIconId(true));
+			pokemon.shiny = temp;
+		}
 		icon.setOrigin(0.5, 0);
 
 		container.add(icon);
@@ -728,6 +737,9 @@ export default class BattleScene extends SceneBase {
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
+		if (Overrides.POKEBALL_OVERRIDE.active) {
+            this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
@@ -983,6 +995,8 @@ export default class BattleScene extends SceneBase {
 			case Species.SAWSBUCK:
 			case Species.FROAKIE:
 			case Species.FROGADIER:
+			case Species.SCATTERBUG:
+			case Species.SPEWPA:
 			case Species.VIVILLON:
 			case Species.FLABEBE:
 			case Species.FLOETTE:

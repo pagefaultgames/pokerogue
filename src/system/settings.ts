@@ -38,26 +38,26 @@ export interface SettingDefaults {
 }
 
 export const settingOptions: SettingOptions = {
-  [Setting.Game_Speed]: [ '1x', '1.25x', '1.5x', '2x', '2.5x', '3x', '4x', '5x' ],
+  [Setting.Game_Speed]: ['1x', '1.25x', '1.5x', '2x', '2.5x', '3x', '4x', '5x'],
   [Setting.Master_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
-  [Setting.Language]: [ 'English', 'Change' ],
-  [Setting.Damage_Numbers]: [ 'Off', 'Simple', 'Fancy' ],
-  [Setting.UI_Theme]: [ 'Default', 'Legacy' ],
+  [Setting.Language]: ['English', 'Change'],
+  [Setting.Damage_Numbers]: ['Off', 'Simple', 'Fancy'],
+  [Setting.UI_Theme]: ['Default', 'Legacy'],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
-  [Setting.Tutorials]: [ 'Off', 'On' ],
-  [Setting.Enable_Retries]: [ 'Off', 'On' ],
-  [Setting.Sprite_Set]: [ 'Consistent', 'Mixed Animated' ],
-  [Setting.Move_Animations]: [ 'Off', 'On' ],
-  [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
-  [Setting.EXP_Gains_Speed]: [ 'Normal', 'Fast', 'Faster', 'Skip' ],
-  [Setting.EXP_Party_Display]: [ 'Normal', 'Level Up Notification', 'Skip' ],
-  [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
-  [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
-  [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
-  [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
-  [Setting.Vibration]: [ 'Auto', 'Disabled' ]
+  [Setting.Tutorials]: ['Off', 'On'],
+  [Setting.Enable_Retries]: ['Off', 'On'],
+  [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
+  [Setting.Move_Animations]: ['Off', 'On'],
+  [Setting.Show_Stats_on_Level_Up]: ['Off', 'On'],
+  [Setting.EXP_Gains_Speed]: ['Normal', 'Fast', 'Faster', 'Skip'],
+  [Setting.EXP_Party_Display]: ['Normal', 'Level Up Notification', 'Skip'],
+  [Setting.HP_Bar_Speed]: ['Normal', 'Fast', 'Faster', 'Instant'],
+  [Setting.Fusion_Palette_Swaps]: ['Off', 'On'],
+  [Setting.Player_Gender]: ['Boy', 'Girl'],
+  [Setting.Touch_Controls]: ['Auto', 'Disabled'],
+  [Setting.Vibration]: ['Auto', 'Disabled']
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -83,7 +83,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [ Setting.UI_Theme, Setting.Language, Setting.Sprite_Set ];
+export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -193,6 +193,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 handler: () => changeLocaleHandler('de')
               },
               {
+                label: 'Português (BR)',
+                handler: () => changeLocaleHandler('pt_BR')
+              },
+              {
                 label: '简体中文',
                 handler: () => changeLocaleHandler('zh_CN')
               },
@@ -200,7 +204,8 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 label: 'Cancel',
                 handler: () => cancelHandler()
               }
-            ]
+            ],
+            maxOptions: 7
           });
           return false;
         }
