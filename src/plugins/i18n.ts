@@ -6,6 +6,7 @@ import { enConfig } from '#app/locales/en/config.js';
 import { esConfig } from '#app/locales/es/config.js';
 import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
+import { ptBrConfig } from '#app/locales/pt_BR/config.js';
 import { zhCnConfig } from '#app/locales/zh_CN/config.js';
 import { jpConfig } from '#app/locales/jp/config.js';
 
@@ -80,6 +81,9 @@ export function initI18n(): void {
       },
       de: {
         ...deConfig
+      },
+	    pt_BR: {
+        ...ptBrConfig
       },
       zh_CN: {
         ...zhCnConfig
