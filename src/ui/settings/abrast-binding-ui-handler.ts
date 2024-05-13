@@ -184,6 +184,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.newButtonIcon.setVisible(false);
         this.targetButtonIcon.setVisible(false);
         this.swapText.setVisible(false);
+        this.buttonPressed = null;
     }
 
     onInputDown(buttonIcon: string, assignedButtonIcon: string, type: string): void {

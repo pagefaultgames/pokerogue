@@ -9,7 +9,7 @@ export function getKeyFromInputIndex(config: InterfaceConfig, index: number): St
     }
     return null;
 }
-export function getKeyFromKeyboardKey(config: InterfaceConfig, key): String | null {
+export function getKeyFromKeyboardKeyCode(config: InterfaceConfig, key): String | null {
     for (const _key of Object.keys(config.gamepadMapping)) {
         if (config.gamepadMapping[_key] === key) return _key;
     }
@@ -46,8 +46,8 @@ export function getCurrenlyAssignedIconFromInputIndex(config: InterfaceConfig, i
     return config.icons[key];
 }
 
-export function getCurrenlyAssignedIconFromKeyboardKey(config: InterfaceConfig, key): String {
-    const _key = getKeyFromKeyboardKey(config, key);
+export function getCurrenlyAssignedIconFromKeyboardKeyCode(config: InterfaceConfig, key): String {
+    const _key = getKeyFromKeyboardKeyCode(config, key);
     return config.icons[_key];
 }
 

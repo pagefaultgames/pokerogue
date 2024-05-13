@@ -9,8 +9,12 @@ import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import {SettingGamepad} from "./system/settings-gamepad";
 import {
-    getCurrenlyAssignedIconFromInputIndex, getCurrentlyAssignedIconToSettingName,
-    getKeyFromInputIndex, getCurrentlyAssignedToSettingName, getCurrenlyAssignedIconFromKeyboardKey
+    getCurrenlyAssignedIconFromInputIndex,
+    getCurrentlyAssignedIconToSettingName,
+    getKeyFromInputIndex,
+    getCurrentlyAssignedToSettingName,
+    getCurrenlyAssignedIconFromKeyboardKeyCode,
+    getKeyFromKeyboardKeyCode
 } from "./configs/gamepad-utils";
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_azerty from "./configs/cfg_keyboard_azerty";
@@ -88,6 +92,7 @@ export class InputsController {
     private pauseUpdate: boolean = false;
 
     public lastSource: string = 'keyboard';
+    private keys: Array<number> = [];
 
     /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
@@ -163,7 +168,7 @@ export class InputsController {
             this.scene.input.keyboard.on('keyup', this.keyboardKeyUp, this);
         }
         // Keyboard
-        this.setupKeyboardControls();
+        // this.setupKeyboardControls();
     }
 
     /**
@@ -231,7 +236,8 @@ export class InputsController {
                 // Prevents repeating button interactions when gamepad support is disabled.
                 if (
                     (!this.gamepadSupport && this.interactions[b].source === 'gamepad') ||
-                    (this.interactions[b].sourceName && this.interactions[b].sourceName !== this.chosenGamepad) ||
+                    (this.interactions[b].source === 'gamepad' && this.interactions[b].sourceName && this.interactions[b].sourceName !== this.chosenGamepad) ||
+                    (this.interactions[b].source === 'keyboard' && this.interactions[b].sourceName && this.interactions[b].sourceName !== this.chosenKeyboard) ||
                     this.pauseUpdate
                 ) {
                     // Deletes the last interaction for a button if gamepad is disabled.
@@ -372,14 +378,37 @@ export class InputsController {
     }
 
     keyboardKeyDown(event): void {
-        const keyDown = event.key;
-        const keyCode = event.keyCode
+        const keyDown = event.keyCode;
         if (!this.keyboardConfigs[this.chosenKeyboard]?.padID)
             this.setupKeyboard();
+        if (this.keys.includes(keyDown)) return;
+        this.keys.push(keyDown);
+        const key = getKeyFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], keyDown);
+        const buttonDown = this.keyboardConfigs[this.chosenKeyboard].custom[key];
+        this.lastSource = 'keyboard';
+        if (buttonDown !== undefined) {
+            this.events.emit('input_down', {
+                controller_type: 'keyboard',
+                button: buttonDown,
+            });
+            this.setLastProcessedMovementTime(buttonDown, 'keyboard', this.chosenKeyboard);
+        }
     }
 
     keyboardKeyUp(event): void {
-
+        const keyDown = event.keyCode;
+        this.keys = this.keys.filter(k => k !== keyDown);
+        if (!this.keyboardConfigs[this.chosenKeyboard]?.padID)
+            this.setupKeyboard();
+        const key = getKeyFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], keyDown);
+        const buttonUp = this.keyboardConfigs[this.chosenKeyboard].custom[key];
+        if (buttonUp !== undefined) {
+            this.events.emit('input_up', {
+                controller_type: 'keyboard',
+                button: buttonUp,
+            });
+            this.delLastProcessedMovementTime(buttonUp);
+        }
     }
 
     /**
@@ -729,7 +758,7 @@ export class InputsController {
     }
 
     getPressedKeyLabel(key): string {
-        return getCurrenlyAssignedIconFromKeyboardKey(this.keyboardConfigs[this.chosenKeyboard], key);
+        return getCurrenlyAssignedIconFromKeyboardKeyCode(this.keyboardConfigs[this.chosenKeyboard], key);
     }
 
     /**
