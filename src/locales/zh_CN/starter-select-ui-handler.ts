@@ -28,5 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleNature": 'N: 切换性格',
     "cycleVariant": 'V: 切换变种',
     "enablePassive": "启用被动",
-    "disablePassive": "禁用被动"
+    "disablePassive": "禁用被动",
+    "locked": "Locked",
+    "disabled": "Disabled",
+    "uncaught": "Uncaught"
 }
