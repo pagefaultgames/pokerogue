@@ -1,6 +1,5 @@
 import { Gender } from "./gender";
 import { AttackTypeBoosterModifier, FlinchChanceModifier } from "../modifier/modifier";
-import { AttackTypeBoosterModifierType } from "../modifier/modifier-type";
 import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
@@ -1392,9 +1391,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CRABOMINABLE, 1, EvolutionItem.ICE_STONE, null)
   ],
   [Species.ROCKRUFF]: [
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.scene.getSpeciesFormIndex(p.species) === 1), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), null)
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY) && (p.formIndex === 0)), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.formIndex === 1), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT) && (p.formIndex === 0)), null)
   ],
   [Species.STEENEE]: [
     new SpeciesEvolution(Species.TSAREENA, 28, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.STOMP).length > 0), SpeciesWildEvolutionDelay.LONG)

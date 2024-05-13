@@ -29,7 +29,7 @@ export const menu: SimpleTranslationEntries = {
     "confirmPassword": "确认密码",
     "registrationAgeWarning": "注册即表示您确认您已年满 13 岁。",
     "backToLogin": "返回登录",
-    "failedToLoadSaveData": "读取存档数据失败。请重新加载页面。如果问题仍然存在，请联系管理员。",
+    "failedToLoadSaveData": "读取存档数据失败。请重新加载页面。如果\n问题仍然存在，请联系管理员。",
     "sessionSuccess": "会话加载成功。",
     "failedToLoadSession": "无法加载您的会话数据。它可能已损坏。",
     "boyOrGirl": "你是男孩还是女孩？",
