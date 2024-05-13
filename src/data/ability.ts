@@ -1448,6 +1448,34 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Resets an ally's temporary stat boots to zero with no regard to
+ * whether this is a positive or negative change
+ * @param pokemon The {@link Pokemon} with this {@link AbAttr}
+ * @param passive N/A
+ * @param args N/A
+ * @returns if the move was successful
+ */
+export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super();
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    const target = pokemon.getAlly();
+    if (target?.isActive(true)) {
+      for (let s = 0; s < target.summonData.battleStats.length; s++)
+        target.summonData.battleStats[s] = 0;
+
+      target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere removed!`));
+
+      return true;
+    }
+    
+    return false;
+  }
+}
+
 export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: integer;
   private enemySpDef: integer;
@@ -2783,7 +2811,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, 3)
-      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.getMove().findAttr(attr => attr instanceof FlinchAttr) ? 10 : 0, BattlerTagType.FLINCHED),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => (move.getMove().category !== MoveCategory.STATUS && !move.getMove().findAttr(attr => attr instanceof FlinchAttr)) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
@@ -3178,8 +3206,8 @@ export function initAbilities() {
     new Ability(Abilities.HARVEST, 5)
       .unimplemented(),
     new Ability(Abilities.TELEPATHY, 5)
-      .ignorable()
-      .unimplemented(),
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon.getAlly() === attacker && move.getMove() instanceof AttackMove)
+      .ignorable(),
     new Ability(Abilities.MOODY, 5)
       .attr(MoodyAbAttr),
     new Ability(Abilities.OVERCOAT, 5)
@@ -3566,7 +3594,7 @@ export function initAbilities() {
     new Ability(Abilities.UNSEEN_FIST, 8)
       .unimplemented(),
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
-      .unimplemented(),
+      .attr(PostSummonClearAllyStatsAbAttr),
     new Ability(Abilities.TRANSISTOR, 8)
       .attr(MoveTypePowerBoostAbAttr, Type.ELECTRIC),
     new Ability(Abilities.DRAGONS_MAW, 8)
