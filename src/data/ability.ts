@@ -2107,7 +2107,7 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * Attribute used for abilities (Nightmare) that damages the opponents for being asleep
+ * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep
  */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 
