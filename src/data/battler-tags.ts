@@ -1100,11 +1100,14 @@ export class MagnetRisenTag extends TypeImmuneTag {
   }
 }
 
-export class IdentifyTag extends BattlerTag {
-  public type: Type;
-  constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type, length: number) {
+export class ExposedTag extends BattlerTag {
+  public immuneType: Type;
+  public allowedTypes: Type[];
+
+  constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type, allowedTypes: Type[], length: number) {
     super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove);
-    this.type = type;
+    this.immuneType = type;
+    this.allowedTypes = allowedTypes;
   }
 
   /**
@@ -1113,7 +1116,8 @@ export class IdentifyTag extends BattlerTag {
   */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.type = source.type as Type;
+    this.immuneType = source.type as Type;
+    this.allowedTypes = source.allowedTypes as Type[];
   }
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return true;
@@ -1379,7 +1383,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
     case BattlerTagType.ODOR_SLEUTH:
-      return new IdentifyTag(tagType, sourceMove, Type.GHOST, turnCount);
+      return new ExposedTag(tagType, sourceMove, Type.GHOST, [ Type.NORMAL, Type.FIGHTING ], turnCount);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

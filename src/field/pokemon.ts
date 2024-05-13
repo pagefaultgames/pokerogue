@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, IdentifyAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, ExposedAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, IdentifyTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, ExposedTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from '../data/enums/species';
 import { WeatherType } from '../data/weather';
@@ -779,17 +779,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         types.splice(flyingIndex, 1);
     }
 
-    const identifyTags = this.findTags(t => t instanceof IdentifyTag);
-    console.log(identifyTags);
-    if (forDefend && identifyTags.length) {
-      identifyTags.forEach(tag => {
-        const type = (tag as IdentifyTag).type;
-        const typeIndex = types.indexOf(type);
-        if (typeIndex > -1)
-          types.splice(typeIndex, 1);
-      });
-    }
-
     if (!types.length) // become UNKNOWN if no types are present
       types.push(Type.UNKNOWN);
 
@@ -800,7 +789,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    console.log(types);
     return types;
   }
 
@@ -1456,6 +1444,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value = 1;
     if (types.find(t => move.isTypeImmune(t)))
       typeMultiplier.value = 0;
+
+    if ((this.getTags(ExposedTag) as ExposedTag[]).some(t => {
+        return t.allowedTypes.includes(move.type)
+              && this.getTypes(true, true).includes(t.immuneType);
+    })) {
+      typeMultiplier.value = 1;
+    }
 
     switch (moveCategory) {
       case MoveCategory.PHYSICAL:

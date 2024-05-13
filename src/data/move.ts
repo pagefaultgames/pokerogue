@@ -2,7 +2,7 @@ import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag } from "./battler-tags";
+import { EncoreTag, ExposedTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
@@ -1775,7 +1775,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
   } 
 }
 
-export class IdentifyAttr extends MoveEffectAttr {
+export class ExposedAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
@@ -5021,9 +5021,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE),
     new StatusMove(Moves.ODOR_SLEUTH, Type.NORMAL, -1, 40, -1, 0, 3)
-      .attr(IdentifyAttr)
-      .attr(AddBattlerTagAttr, BattlerTagType.ODOR_SLEUTH, false, false, 20)
-      .partial(),
+      .attr(ExposedAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.ODOR_SLEUTH, false, false, 20),
     new AttackMove(Moves.ROCK_TOMB, Type.ROCK, MoveCategory.PHYSICAL, 60, 95, 15, 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
