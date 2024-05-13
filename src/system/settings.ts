@@ -3,7 +3,7 @@ import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
-import { updateWindowType } from "../ui/ui-theme";
+import { updateWindowAlignment, updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
 
 export enum Setting {
@@ -15,6 +15,7 @@ export enum Setting {
   Damage_Numbers = "DAMAGE_NUMBERS",
   UI_Theme = "UI_THEME",
   Window_Type = "WINDOW_TYPE",
+  Center_Window_Vertically = "CENTER_WINDOW_VERTICALLY",
   Tutorials = "TUTORIALS",
   Enable_Retries = "ENABLE_RETRIES",
   Sprite_Set = "SPRITE_SET",
@@ -48,6 +49,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Damage_Numbers]: ['Off', 'Simple', 'Fancy'],
   [Setting.UI_Theme]: ['Default', 'Legacy'],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
+  [Setting.Center_Window_Vertically]: ['Off', 'On'],
   [Setting.Tutorials]: ['Off', 'On'],
   [Setting.Enable_Retries]: ['Off', 'On'],
   [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
@@ -73,6 +75,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Damage_Numbers]: 0,
   [Setting.UI_Theme]: 0,
   [Setting.Window_Type]: 0,
+  [Setting.Center_Window_Vertically]: 0,
   [Setting.Tutorials]: 1,
   [Setting.Enable_Retries]: 0,
   [Setting.Sprite_Set]: 0,
@@ -116,6 +119,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Window_Type:
       updateWindowType(scene, parseInt(settingOptions[setting][value]));
+      break;
+    case Setting.Center_Window_Vertically:
+      updateWindowAlignment(settingOptions[setting][value] === 'On')
       break;
     case Setting.Tutorials:
       scene.enableTutorials = settingOptions[setting][value] === 'On';
