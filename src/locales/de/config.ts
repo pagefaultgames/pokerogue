@@ -1,4 +1,5 @@
 import { ability } from "./ability";
+import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { eggList } from "./egg-list";
@@ -17,6 +18,7 @@ import { tutorial } from "./tutorial";
 
 export const deConfig = {
     ability: ability,
+    abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
     eggList: eggList,
