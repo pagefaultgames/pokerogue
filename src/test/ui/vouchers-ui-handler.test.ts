@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/vouchers-ui-handler";
 
 
 //FROM: - src/ui/vouchers-ui-handler.ts
-describe("VouchersUiHandler", () => {
+describe.skip("VouchersUiHandler", () => {
     // Your code here
 });
 

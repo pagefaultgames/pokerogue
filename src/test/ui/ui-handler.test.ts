@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/ui-handler";
 
 
 //FROM: - src/ui/ui-handler.ts
-describe("UiHandler", () => {
+describe.skip("UiHandler", () => {
     // Your code here
 });
 

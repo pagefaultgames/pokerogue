@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/settings-ui-handler";
 
 
 //FROM: - src/ui/settings-ui-handler.ts
-describe("SettingsUiHandler", () => {
+describe.skip("SettingsUiHandler", () => {
     // Your code here
 });
 

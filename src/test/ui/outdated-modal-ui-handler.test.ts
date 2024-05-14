@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/outdated-modal-ui-handler";
 
 
 //FROM: - src/ui/outdated-modal-ui-handler.ts
-describe("OutdatedModalUiHandler", () => {
+describe.skip("OutdatedModalUiHandler", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/command-ui-handler";
 
 
 //FROM: - src/ui/command-ui-handler.ts
-describe("CommandUiHandler", () => {
+describe.skip("CommandUiHandler", () => {
     // Your code here
 });
 

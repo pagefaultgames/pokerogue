@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/pokemon-forms";
 
 
 //FROM: - src/data/pokemon-forms.ts
-describe("PokemonForms", () => {
+describe.skip("PokemonForms", () => {
     // Your code here
 });
 

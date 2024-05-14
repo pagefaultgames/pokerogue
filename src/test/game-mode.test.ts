@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/game-mode";
 
 
 //FROM: - src/game-mode.ts
-describe("GameMode", () => {
+describe.skip("GameMode", () => {
     // Your code here
 });
 

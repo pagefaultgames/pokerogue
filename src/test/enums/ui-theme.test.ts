@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/enums/ui-theme";
 
 
 //FROM: - src/enums/ui-theme.ts
-describe("UiTheme", () => {
+describe.skip("UiTheme", () => {
     // Your code here
 });
 

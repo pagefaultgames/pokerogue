@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/modal-ui-handler";
 
 
 //FROM: - src/ui/modal-ui-handler.ts
-describe("ModalUiHandler", () => {
+describe.skip("ModalUiHandler", () => {
     // Your code here
 });
 

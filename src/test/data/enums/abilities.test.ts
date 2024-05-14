@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/enums/abilities";
 
 
 //FROM: - src/data/enums/abilities.ts
-describe("Abilities", () => {
+describe.skip("Abilities", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/abstact-option-select-ui-handler";
 
 
 //FROM: - src/ui/abstact-option-select-ui-handler.ts
-describe("AbstactOptionSelectUiHandler", () => {
+describe.skip("AbstactOptionSelectUiHandler", () => {
     // Your code here
 });
 

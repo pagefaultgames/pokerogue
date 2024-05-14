@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/configs/pad_generic";
 
 
 //FROM: - src/configs/pad_generic.ts
-describe("PadGeneric", () => {
+describe.skip("PadGeneric", () => {
     // Your code here
 });
 

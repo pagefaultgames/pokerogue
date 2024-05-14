@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/variant";
 
 
 //FROM: - src/data/variant.ts
-describe("Variant", () => {
+describe.skip("Variant", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/save-slot-select-ui-handler";
 
 
 //FROM: - src/ui/save-slot-select-ui-handler.ts
-describe("SaveSlotSelectUiHandler", () => {
+describe.skip("SaveSlotSelectUiHandler", () => {
     // Your code here
 });
 

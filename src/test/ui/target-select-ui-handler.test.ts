@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/target-select-ui-handler";
 
 
 //FROM: - src/ui/target-select-ui-handler.ts
-describe("TargetSelectUiHandler", () => {
+describe.skip("TargetSelectUiHandler", () => {
     // Your code here
 });
 

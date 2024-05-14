@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/char-sprite";
 
 
 //FROM: - src/ui/char-sprite.ts
-describe("CharSprite", () => {
+describe.skip("CharSprite", () => {
     // Your code here
 });
 

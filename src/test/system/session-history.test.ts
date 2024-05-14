@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/session-history";
 
 
 //FROM: - src/system/session-history.ts
-describe("SessionHistory", () => {
+describe.skip("SessionHistory", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/pipelines/sprite";
 
 
 //FROM: - src/pipelines/sprite.ts
-describe("Sprite", () => {
+describe.skip("Sprite", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/modifier/modifier";
 
 
 //FROM: - src/modifier/modifier.ts
-describe("Modifier", () => {
+describe.skip("Modifier", () => {
     // Your code here
 });
 

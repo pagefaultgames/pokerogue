@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/trainer-config";
 
 
 //FROM: - src/data/trainer-config.ts
-describe("TrainerConfig", () => {
+describe.skip("TrainerConfig", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/modifier/modifier-type";
 
 
 //FROM: - src/modifier/modifier-type.ts
-describe("ModifierType", () => {
+describe.skip("ModifierType", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/daily-run-scoreboard";
 
 
 //FROM: - src/ui/daily-run-scoreboard.ts
-describe("DailyRunScoreboard", () => {
+describe.skip("DailyRunScoreboard", () => {
     // Your code here
 });
 

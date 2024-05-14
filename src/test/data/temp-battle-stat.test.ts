@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/temp-battle-stat";
 
 
 //FROM: - src/data/temp-battle-stat.ts
-describe("TempBattleStat", () => {
+describe.skip("TempBattleStat", () => {
     // Your code here
 });
 

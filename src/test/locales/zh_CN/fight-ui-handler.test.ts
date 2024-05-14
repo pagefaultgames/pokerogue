@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/locales/zh_CN/fight-ui-handler";
 
 
 //FROM: - src/locales/zh_CN/fight-ui-handler.ts
-describe("FightUiHandler", () => {
+describe.skip("FightUiHandler", () => {
     // Your code here
 });
 

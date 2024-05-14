@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/configs/pad_unlicensedSNES";
 
 
 //FROM: - src/configs/pad_unlicensedSNES.ts
-describe("PadUnlicensedSNES", () => {
+describe.skip("PadUnlicensedSNES", () => {
     // Your code here
 });
 

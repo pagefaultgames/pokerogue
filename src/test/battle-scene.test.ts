@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/battle-scene";
 
 
 //FROM: - src/battle-scene.ts
-describe("BattleScene", () => {
+describe.skip("BattleScene", () => {
     // Your code here
 });
 

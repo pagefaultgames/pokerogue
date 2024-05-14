@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/enums/time-of-day";
 
 
 //FROM: - src/data/enums/time-of-day.ts
-describe("TimeOfDay", () => {
+describe.skip("TimeOfDay", () => {
     // Your code here
 });
 

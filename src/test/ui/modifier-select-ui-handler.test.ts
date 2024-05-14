@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/modifier-select-ui-handler";
 
 
 //FROM: - src/ui/modifier-select-ui-handler.ts
-describe("ModifierSelectUiHandler", () => {
+describe.skip("ModifierSelectUiHandler", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/messages";
 
 
 //FROM: - src/messages.ts
-describe("Messages", () => {
+describe.skip("Messages", () => {
     // Your code here
 });
 

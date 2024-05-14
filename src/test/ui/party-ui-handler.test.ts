@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/party-ui-handler";
 
 
 //FROM: - src/ui/party-ui-handler.ts
-describe("PartyUiHandler", () => {
+describe.skip("PartyUiHandler", () => {
     // Your code here
 });
 

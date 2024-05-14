@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/evolution-scene-handler";
 
 
 //FROM: - src/ui/evolution-scene-handler.ts
-describe("EvolutionSceneHandler", () => {
+describe.skip("EvolutionSceneHandler", () => {
     // Your code here
 });
 

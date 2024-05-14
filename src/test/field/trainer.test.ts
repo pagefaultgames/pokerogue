@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/field/trainer";
 
 
 //FROM: - src/field/trainer.ts
-describe("Trainer", () => {
+describe.skip("Trainer", () => {
     // Your code here
 });
 

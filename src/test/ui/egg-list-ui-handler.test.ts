@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/egg-list-ui-handler";
 
 
 //FROM: - src/ui/egg-list-ui-handler.ts
-describe("EggListUiHandler", () => {
+describe.skip("EggListUiHandler", () => {
     // Your code here
 });
 

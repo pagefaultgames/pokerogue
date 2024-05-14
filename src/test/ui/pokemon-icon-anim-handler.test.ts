@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/pokemon-icon-anim-handler";
 
 
 //FROM: - src/ui/pokemon-icon-anim-handler.ts
-describe("PokemonIconAnimHandler", () => {
+describe.skip("PokemonIconAnimHandler", () => {
     // Your code here
 });
 

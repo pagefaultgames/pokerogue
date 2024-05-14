@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/ability-bar";
 
 
 //FROM: - src/ui/ability-bar.ts
-describe("AbilityBar", () => {
+describe.skip("AbilityBar", () => {
     // Your code here
 });
 

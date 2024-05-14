@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/scene-base";
 
 
 //FROM: - src/scene-base.ts
-describe("SceneBase", () => {
+describe.skip("SceneBase", () => {
     // Your code here
 });
 

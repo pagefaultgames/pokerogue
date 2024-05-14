@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/unavailable-modal-ui-handler";
 
 
 //FROM: - src/ui/unavailable-modal-ui-handler.ts
-describe("UnavailableModalUiHandler", () => {
+describe.skip("UnavailableModalUiHandler", () => {
     // Your code here
 });
 

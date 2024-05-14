@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/enums/buttons";
 
 
 //FROM: - src/enums/buttons.ts
-describe("Buttons", () => {
+describe.skip("Buttons", () => {
     // Your code here
 });
 

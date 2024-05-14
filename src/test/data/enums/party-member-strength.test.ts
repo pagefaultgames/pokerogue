@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/enums/party-member-strength";
 
 
 //FROM: - src/data/enums/party-member-strength.ts
-describe("PartyMemberStrength", () => {
+describe.skip("PartyMemberStrength", () => {
     // Your code here
 });
 

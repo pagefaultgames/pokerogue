@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/game-stats-ui-handler";
 
 
 //FROM: - src/ui/game-stats-ui-handler.ts
-describe("GameStatsUiHandler", () => {
+describe.skip("GameStatsUiHandler", () => {
     // Your code here
 });
 

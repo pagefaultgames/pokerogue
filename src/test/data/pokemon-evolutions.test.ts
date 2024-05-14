@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/pokemon-evolutions";
 
 
 //FROM: - src/data/pokemon-evolutions.ts
-describe("PokemonEvolutions", () => {
+describe.skip("PokemonEvolutions", () => {
     // Your code here
 });
 

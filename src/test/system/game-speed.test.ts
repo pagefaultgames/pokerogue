@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/game-speed";
 
 
 //FROM: - src/system/game-speed.ts
-describe("GameSpeed", () => {
+describe.skip("GameSpeed", () => {
     // Your code here
 });
 

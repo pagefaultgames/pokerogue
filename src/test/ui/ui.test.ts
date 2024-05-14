@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/ui";
 
 
 //FROM: - src/ui/ui.ts
-describe("Ui", () => {
+describe.skip("Ui", () => {
     // Your code here
 });
 

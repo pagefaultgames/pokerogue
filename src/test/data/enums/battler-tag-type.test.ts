@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/enums/battler-tag-type";
 
 
 //FROM: - src/data/enums/battler-tag-type.ts
-describe("BattlerTagType", () => {
+describe.skip("BattlerTagType", () => {
     // Your code here
 });
 

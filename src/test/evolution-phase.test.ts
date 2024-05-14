@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/evolution-phase";
 
 
 //FROM: - src/evolution-phase.ts
-describe("EvolutionPhase", () => {
+describe.skip("EvolutionPhase", () => {
     // Your code here
 });
 

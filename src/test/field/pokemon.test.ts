@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/field/pokemon";
 
 
 //FROM: - src/field/pokemon.ts
-describe("Pokemon", () => {
+describe.skip("Pokemon", () => {
     // Your code here
 });
 

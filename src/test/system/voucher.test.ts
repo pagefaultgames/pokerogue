@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/voucher";
 
 
 //FROM: - src/system/voucher.ts
-describe("Voucher", () => {
+describe.skip("Voucher", () => {
     // Your code here
 });
 

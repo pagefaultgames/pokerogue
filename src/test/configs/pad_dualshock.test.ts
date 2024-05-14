@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/configs/pad_dualshock";
 
 
 //FROM: - src/configs/pad_dualshock.ts
-describe("PadDualshock", () => {
+describe.skip("PadDualshock", () => {
     // Your code here
 });
 

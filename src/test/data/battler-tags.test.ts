@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/battler-tags";
 
 
 //FROM: - src/data/battler-tags.ts
-describe("BattlerTags", () => {
+describe.skip("BattlerTags", () => {
     // Your code here
 });
 

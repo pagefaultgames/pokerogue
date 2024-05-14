@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/achv";
 
 
 //FROM: - src/system/achv.ts
-describe("Achv", () => {
+describe.skip("Achv", () => {
     // Your code here
 });
 

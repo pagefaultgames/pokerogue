@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/confirm-ui-handler";
 
 
 //FROM: - src/ui/confirm-ui-handler.ts
-describe("ConfirmUiHandler", () => {
+describe.skip("ConfirmUiHandler", () => {
     // Your code here
 });
 

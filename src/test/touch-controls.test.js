@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/touch-controls";
 
 
 //FROM: - src/touch-controls.js
-describe("TouchControls", () => {
+describe.skip("TouchControls", () => {
     // Your code here
 });
 

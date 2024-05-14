@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/account";
 
 
 //FROM: - src/account.ts
-describe("Account", () => {
+describe.skip("Account", () => {
     // Your code here
 });
 

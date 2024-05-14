@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/splash-messages";
 
 
 //FROM: - src/data/splash-messages.ts
-describe("SplashMessages", () => {
+describe.skip("SplashMessages", () => {
     // Your code here
 });
 

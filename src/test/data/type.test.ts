@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/type";
 
 
 //FROM: - src/data/type.ts
-describe("Type", () => {
+describe.skip("Type", () => {
     // Your code here
 });
 

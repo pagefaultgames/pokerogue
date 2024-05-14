@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/dialogue";
 
 
 //FROM: - src/data/dialogue.ts
-describe("Dialogue", () => {
+describe.skip("Dialogue", () => {
     // Your code here
 });
 

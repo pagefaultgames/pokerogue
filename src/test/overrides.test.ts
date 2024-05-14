@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/overrides";
 
 
 //FROM: - src/overrides.ts
-describe("Overrides", () => {
+describe.skip("Overrides", () => {
     // Your code here
 });
 

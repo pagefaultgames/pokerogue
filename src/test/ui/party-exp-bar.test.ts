@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/party-exp-bar";
 
 
 //FROM: - src/ui/party-exp-bar.ts
-describe("PartyExpBar", () => {
+describe.skip("PartyExpBar", () => {
     // Your code here
 });
 

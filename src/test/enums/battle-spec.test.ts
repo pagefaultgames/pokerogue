@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/enums/battle-spec";
 
 
 //FROM: - src/enums/battle-spec.ts
-describe("BattleSpec", () => {
+describe.skip("BattleSpec", () => {
     // Your code here
 });
 

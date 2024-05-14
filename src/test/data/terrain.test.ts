@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/terrain";
 
 
 //FROM: - src/data/terrain.ts
-describe("Terrain", () => {
+describe.skip("Terrain", () => {
     // Your code here
 });
 

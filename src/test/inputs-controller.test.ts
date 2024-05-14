@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/inputs-controller";
 
 
 //FROM: - src/inputs-controller.ts
-describe("InputsController", () => {
+describe.skip("InputsController", () => {
     // Your code here
 });
 

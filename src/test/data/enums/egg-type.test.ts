@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/enums/egg-type";
 
 
 //FROM: - src/data/enums/egg-type.ts
-describe("EggType", () => {
+describe.skip("EggType", () => {
     // Your code here
 });
 

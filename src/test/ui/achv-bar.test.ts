@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/achv-bar";
 
 
 //FROM: - src/ui/achv-bar.ts
-describe("AchvBar", () => {
+describe.skip("AchvBar", () => {
     // Your code here
 });
 

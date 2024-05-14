@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/ball-ui-handler";
 
 
 //FROM: - src/ui/ball-ui-handler.ts
-describe("BallUiHandler", () => {
+describe.skip("BallUiHandler", () => {
     // Your code here
 });
 

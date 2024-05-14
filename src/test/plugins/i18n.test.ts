@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/plugins/i18n";
 
 
 //FROM: - src/plugins/i18n.ts
-describe("I18n", () => {
+describe.skip("I18n", () => {
     // Your code here
 });
 

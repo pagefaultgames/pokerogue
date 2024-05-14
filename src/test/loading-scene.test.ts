@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/loading-scene";
 
 
 //FROM: - src/loading-scene.ts
-describe("LoadingScene", () => {
+describe.skip("LoadingScene", () => {
     // Your code here
 });
 

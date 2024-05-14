@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/game-data";
 
 
 //FROM: - src/system/game-data.ts
-describe("GameData", () => {
+describe.skip("GameData", () => {
     // Your code here
 });
 

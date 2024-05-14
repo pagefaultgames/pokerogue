@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/arena-tag";
 
 
 //FROM: - src/data/arena-tag.ts
-describe("ArenaTag", () => {
+describe.skip("ArenaTag", () => {
     // Your code here
 });
 

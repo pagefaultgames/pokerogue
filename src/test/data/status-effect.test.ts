@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/status-effect";
 
 
 //FROM: - src/data/status-effect.ts
-describe("StatusEffect", () => {
+describe.skip("StatusEffect", () => {
     // Your code here
 });
 

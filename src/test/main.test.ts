@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/main";
 
 
 //FROM: - src/main.ts
-describe("Main", () => {
+describe.skip("Main", () => {
     // Your code here
 });
 

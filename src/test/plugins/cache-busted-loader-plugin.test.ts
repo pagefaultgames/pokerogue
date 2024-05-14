@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/plugins/cache-busted-loader-plugin";
 
 
 //FROM: - src/plugins/cache-busted-loader-plugin.ts
-describe("CacheBustedLoaderPlugin", () => {
+describe.skip("CacheBustedLoaderPlugin", () => {
     // Your code here
 });
 

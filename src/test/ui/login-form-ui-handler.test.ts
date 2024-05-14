@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/login-form-ui-handler";
 
 
 //FROM: - src/ui/login-form-ui-handler.ts
-describe("LoginFormUiHandler", () => {
+describe.skip("LoginFormUiHandler", () => {
     // Your code here
 });
 

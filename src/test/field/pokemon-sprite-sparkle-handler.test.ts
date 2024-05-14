@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/field/pokemon-sprite-sparkle-handler";
 
 
 //FROM: - src/field/pokemon-sprite-sparkle-handler.ts
-describe("PokemonSpriteSparkleHandler", () => {
+describe.skip("PokemonSpriteSparkleHandler", () => {
     // Your code here
 });
 

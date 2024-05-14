@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/utils";
 
 
 //FROM: - src/utils.ts
-describe("Utils", () => {
+describe.skip("Utils", () => {
     // Your code here
 });
 

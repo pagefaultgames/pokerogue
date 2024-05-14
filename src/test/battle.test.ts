@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/battle";
 
 
 //FROM: - src/battle.ts
-describe("Battle", () => {
+describe.skip("Battle", () => {
     // Your code here
 });
 

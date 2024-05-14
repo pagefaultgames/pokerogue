@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/pokeball-tray";
 
 
 //FROM: - src/ui/pokeball-tray.ts
-describe("PokeballTray", () => {
+describe.skip("PokeballTray", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/battle-message-ui-handler";
 
 
 //FROM: - src/ui/battle-message-ui-handler.ts
-describe("BattleMessageUiHandler", () => {
+describe.skip("BattleMessageUiHandler", () => {
     // Your code here
 });
 

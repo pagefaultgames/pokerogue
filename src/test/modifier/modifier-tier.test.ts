@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/modifier/modifier-tier";
 
 
 //FROM: - src/modifier/modifier-tier.ts
-describe("ModifierTier", () => {
+describe.skip("ModifierTier", () => {
     // Your code here
 });
 

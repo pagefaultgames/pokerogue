@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/pokemon-info-container";
 
 
 //FROM: - src/ui/pokemon-info-container.ts
-describe("PokemonInfoContainer", () => {
+describe.skip("PokemonInfoContainer", () => {
     // Your code here
 });
 

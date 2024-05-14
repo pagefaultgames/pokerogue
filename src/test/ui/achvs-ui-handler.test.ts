@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/achvs-ui-handler";
 
 
 //FROM: - src/ui/achvs-ui-handler.ts
-describe("AchvsUiHandler", () => {
+describe.skip("AchvsUiHandler", () => {
     // Your code here
 });
 

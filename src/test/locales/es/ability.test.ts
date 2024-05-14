@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/locales/es/ability";
 
 
 //FROM: - src/locales/es/ability.ts
-describe("Ability", () => {
+describe.skip("Ability", () => {
     // Your code here
 });
 

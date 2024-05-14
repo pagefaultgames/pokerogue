@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/locales/es/pokeball";
 
 
 //FROM: - src/locales/es/pokeball.ts
-describe("Pokeball", () => {
+describe.skip("Pokeball", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/field/arena";
 
 
 //FROM: - src/field/arena.ts
-describe("Arena", () => {
+describe.skip("Arena", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/awaitable-ui-handler";
 
 
 //FROM: - src/ui/awaitable-ui-handler.ts
-describe("AwaitableUiHandler", () => {
+describe.skip("AwaitableUiHandler", () => {
     // Your code here
 });
 

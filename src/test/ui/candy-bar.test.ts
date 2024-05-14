@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/candy-bar";
 
 
 //FROM: - src/ui/candy-bar.ts
-describe("CandyBar", () => {
+describe.skip("CandyBar", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/text";
 
 
 //FROM: - src/ui/text.ts
-describe("Text", () => {
+describe.skip("Text", () => {
     // Your code here
 });
 

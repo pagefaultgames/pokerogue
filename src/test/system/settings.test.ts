@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/settings";
 
 
 //FROM: - src/system/settings.ts
-describe("Settings", () => {
+describe.skip("Settings", () => {
     // Your code here
 });
 

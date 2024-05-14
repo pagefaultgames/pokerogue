@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/locales/zh_CN/starter-select-ui-handle
 
 
 //FROM: - src/locales/zh_CN/starter-select-ui-handler.ts
-describe("StarterSelectUiHandler", () => {
+describe.skip("StarterSelectUiHandler", () => {
     // Your code here
 });
 

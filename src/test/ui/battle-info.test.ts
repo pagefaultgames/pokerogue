@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/battle-info";
 
 
 //FROM: - src/ui/battle-info.ts
-describe("BattleInfo", () => {
+describe.skip("BattleInfo", () => {
     // Your code here
 });
 

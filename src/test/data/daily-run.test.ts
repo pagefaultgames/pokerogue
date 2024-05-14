@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/daily-run";
 
 
 //FROM: - src/data/daily-run.ts
-describe("DailyRun", () => {
+describe.skip("DailyRun", () => {
     // Your code here
 });
 

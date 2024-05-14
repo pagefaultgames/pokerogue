@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/pokemon-data";
 
 
 //FROM: - src/system/pokemon-data.ts
-describe("PokemonData", () => {
+describe.skip("PokemonData", () => {
     // Your code here
 });
 

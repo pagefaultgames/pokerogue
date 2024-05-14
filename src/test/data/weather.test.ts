@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/data/weather";
 
 
 //FROM: - src/data/weather.ts
-describe("Weather", () => {
+describe.skip("Weather", () => {
     // Your code here
 });
 

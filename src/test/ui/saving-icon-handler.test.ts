@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/saving-icon-handler";
 
 
 //FROM: - src/ui/saving-icon-handler.ts
-describe("SavingIconHandler", () => {
+describe.skip("SavingIconHandler", () => {
     // Your code here
 });
 

@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/ui/option-select-ui-handler";
 
 
 //FROM: - src/ui/option-select-ui-handler.ts
-describe("OptionSelectUiHandler", () => {
+describe.skip("OptionSelectUiHandler", () => {
     // Your code here
 });
 

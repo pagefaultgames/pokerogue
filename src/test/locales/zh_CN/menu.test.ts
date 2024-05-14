@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/locales/zh_CN/menu";
 
 
 //FROM: - src/locales/zh_CN/menu.ts
-describe("Menu", () => {
+describe.skip("Menu", () => {
     // Your code here
 });
 

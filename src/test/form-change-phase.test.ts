@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/form-change-phase";
 
 
 //FROM: - src/form-change-phase.ts
-describe("FormChangePhase", () => {
+describe.skip("FormChangePhase", () => {
     // Your code here
 });
 

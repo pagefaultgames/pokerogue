@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/locales/fr/menu-ui-handler";
 
 
 //FROM: - src/locales/fr/menu-ui-handler.ts
-describe("MenuUiHandler", () => {
+describe.skip("MenuUiHandler", () => {
     // Your code here
 });
 

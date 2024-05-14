@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/system/modifier-data";
 
 
 //FROM: - src/system/modifier-data.ts
-describe("ModifierData", () => {
+describe.skip("ModifierData", () => {
     // Your code here
 });
 

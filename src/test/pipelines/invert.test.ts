@@ -4,7 +4,7 @@ import { /*modules to test*/ } from "#app/pipelines/invert";
 
 
 //FROM: - src/pipelines/invert.ts
-describe("Invert", () => {
+describe.skip("Invert", () => {
     // Your code here
 });
 
