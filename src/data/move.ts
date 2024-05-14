@@ -2676,6 +2676,24 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
   }
 }
 
+export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
+  /**
+   * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
+   * @param {Pokemon} user N/A
+   * @param {Pokemon} target Pokemon that is being checked whether Ice-Type or not.
+   * @param {Move} move N/A
+   * @param {any[]} args Sets to false if the target is Ice-Type, so it should do no damage/no effect.
+   * @returns {boolean} Returns true if move is successful, false if Ice-Type.
+   */
+   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.isOfType(Type.ICE)) {
+      (args[0] as Utils.BooleanHolder).value = false;
+      return false;
+    }
+    return true;
+  }
+}
+
 export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
@@ -2691,6 +2709,29 @@ export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
       accuracy.value = 0;
     else
       accuracy.value = Math.min(Math.max(30 + 100 * (1 - target.level / user.level), 0), 100);
+    return true;
+  }
+}
+
+export class SheerColdAccuracyAttr extends OneHitKOAccuracyAttr {
+  /**
+   * Changes the normal One Hit KO Accuracy Attr to implement the Gen VII changes, 
+   * where if the user is Ice-Type, it has more accuracy.
+   * @param {Pokemon} user Pokemon that is using the move; checks the Pokemon's level.
+   * @param {Pokemon} target Pokemon that is receiving the move; checks the Pokemon's level.
+   * @param {Move} move N/A 
+   * @param {any[]} args Uses the accuracy argument, allowing to change it from either 0 if it doesn't pass
+   * the first if/else, or 30/20 depending on the type of the user Pokemon.
+   * @returns Returns true if move is successful, false if misses.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const accuracy = args[0] as Utils.NumberHolder;
+      if (user.level < target.level) {
+          accuracy.value = 0;
+      } else { 
+         const baseAccuracy = user.isOfType(Type.ICE) ? 30 : 20;
+         accuracy.value = Math.min(Math.max(baseAccuracy + 100 * (1 - target.level / user.level), 0), 100);
+      }
     return true;
   }
 }
@@ -5095,9 +5136,10 @@ export function initMoves() {
     new AttackMove(Moves.SAND_TOMB, Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, 100, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
-    new AttackMove(Moves.SHEER_COLD, Type.ICE, MoveCategory.SPECIAL, 200, 30, 5, -1, 0, 3)
+    new AttackMove(Moves.SHEER_COLD, Type.ICE, MoveCategory.SPECIAL, 200, 20, 5, -1, 0, 3)
+      .attr(IceNoEffectTypeAttr)
       .attr(OneHitKOAttr)
-      .attr(OneHitKOAccuracyAttr),
+      .attr(SheerColdAccuracyAttr),
     new AttackMove(Moves.MUDDY_WATER, Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, 30, 0, 3)
       .attr(StatChangeAttr, BattleStat.ACC, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
