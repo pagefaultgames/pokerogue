@@ -160,7 +160,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
       break;
     case Setting.Swap_A_and_B:
+      console.log("Swapping A and B")
       scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
+      scene.updateKeyboard();
       break;
     case Setting.Touch_Controls:
       scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();

@@ -336,8 +336,8 @@ export class InputsController {
             [Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
             [Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
             [Button.SUBMIT]: [keyCodes.ENTER],
-            [Button.ACTION]: [keyCodes.SPACE, keyCodes.Z],
-            [Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
+            [Button.ACTION]: this.scene.abSwapped ? [keyCodes.SPACE, keyCodes.Z] : [keyCodes.BACKSPACE, keyCodes.X],
+            [Button.CANCEL]: this.scene.abSwapped ? [keyCodes.BACKSPACE, keyCodes.X] : [keyCodes.SPACE, keyCodes.Z],
             [Button.MENU]: [keyCodes.ESC, keyCodes.M],
             [Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
             [Button.CYCLE_SHINY]: [keyCodes.R],
@@ -385,6 +385,7 @@ export class InputsController {
     listenInputKeyboard(): void {
         this.buttonKeys.forEach((row, index) => {
             for (const key of row) {
+                key.removeAllListeners()
                 key.on('down', () => {
                     this.events.emit('input_down', {
                         controller_type: 'keyboard',

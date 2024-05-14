@@ -259,6 +259,11 @@ export default class BattleScene extends SceneBase {
 		this.ui?.update();
 	}
 
+    updateKeyboard () {
+        this.inputController.setupKeyboardControls();
+        this.uiInputs.updateKeyboard();
+    }
+
 	launchBattle() {
 		this.arenaBg = this.add.sprite(0, 0, 'plains_bg');
 		this.arenaBgTransition = this.add.sprite(0, 0, 'plains_bg');

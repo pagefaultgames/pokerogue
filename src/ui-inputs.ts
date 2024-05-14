@@ -14,17 +14,21 @@ export interface ActionKeys {
 export class UiInputs {
     private scene: Phaser.Scene;
     private events: Phaser.Events;
-    private inputsController: InputsController;
+    private inputController: InputsController;
 
-    constructor(scene: Phaser.Scene, inputsController: InputsController) {
+    constructor(scene: Phaser.Scene, inputController: InputsController) {
         this.scene = scene;
-        this.inputsController = inputsController;
+        this.inputController = inputController;
         this.init();
     }
 
     init(): void {
-        this.events = this.inputsController.events;
+        this.events = this.inputController.events;
         this.listenInputs();
+    }
+
+    updateKeyboard () {
+        this.inputController.setupKeyboardControls();
     }
 
     listenInputs(): void {
