@@ -31,6 +31,8 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveNotLearned": "{{pokemonName}} hat\n{{moveName}} nicht erlernt.",
   "learnMoveForgetQuestion": "Welche Attacke soll vergessen werden?",
   "learnMoveForgetSuccess": "{{pokemonName}} hat\n{{moveName}} vergessen.",
+  "countdownPoof": "@d{32}1, @d{15}2, @d{15}und@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}Puff!",
+  "learnMoveAnd": "Und…",
   "levelCapUp": "Das Levellimit\nhat sich zu {{levelCap}} erhöht!",
   "moveNotImplemented": "{{moveName}} ist noch nicht implementiert und kann nicht ausgewählt werden.",
   "moveNoPP": "Es sind keine AP für\ndiese Attacke mehr übrig!",
