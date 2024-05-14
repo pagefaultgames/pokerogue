@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   "zippyZap": {
     name: "Pika-Sprint",
-    effect: "Une attaque électrique rapide comme l’éclair qui inflige un coup critique à coup sûr. Frappe en priorité."
+    effect: "Une attaque électrique rapide comme l’éclair qui auguemente l’esquive. Frappe en priorité."
   },
   "splishySplash": {
     name: "Pika-Splash",

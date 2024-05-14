@@ -30,5 +30,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "enablePassive": "Passiv-Skill aktivieren",
     "disablePassive": "Passiv-Skill deaktivieren",
     "locked": "Gesperrt",
-    "disabled": "Deaktiviert"
+    "disabled": "Deaktiviert",
+    "uncaught": "Uncaught"
 }

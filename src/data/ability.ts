@@ -3,7 +3,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage } from "../messages";
+import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -144,7 +144,7 @@ export class BlockRecoilDamageAttr extends AbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprotected it from recoil!`);
+    return i18next.t('abilityTriggers:blockRecoilDamage', {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
   }
 }
 
@@ -1402,6 +1402,23 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.scene.queueMessage(this.messageFunc(pokemon));
+
+    return true;
+  }
+}
+
+export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr { 
+  //Attr doesn't force pokemon name on the message
+  private message: string;
+
+  constructor(message: string) {
+    super(true);
+
+    this.message = message;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean { 
+    pokemon.scene.queueMessage(this.message);
 
     return true;
   }
@@ -3061,7 +3078,8 @@ export function initAbilities() {
       .attr(BlockCritAbAttr)
       .ignorable(),
     new Ability(Abilities.AIR_LOCK, 3)
-      .attr(SuppressWeatherEffectAbAttr, true),
+      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), BattleStatMultiplierAbAttr, BattleStat.EVA, 2)
       .ignorable(),
