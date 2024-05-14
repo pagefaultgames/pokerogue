@@ -296,6 +296,13 @@ export class PreDefendMovePowerToOneAbAttr extends ReceivedMoveDamageMultiplierA
   }
 }
 
+/**
+ * Makes the user immune to moves of a specific type. Works regardless
+ * of move category. Does not affect moves that target the field (ex. spikes)
+ * @param immuneType The {@link Type} that the user is immune to
+ * @param condition N/A
+ * @returns if the ability successfully activates
+ */
 export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: Type;
   private condition: AbAttrCondition;
