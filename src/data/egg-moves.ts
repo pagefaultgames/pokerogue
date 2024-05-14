@@ -197,7 +197,7 @@ export const speciesEggMoves = {
   [Species.LATIOS]: [ Moves.CORE_ENFORCER, Moves.SEARING_SHOT, Moves.DRAGON_ENERGY, Moves.QUIVER_DANCE ],
   [Species.KYOGRE]: [ Moves.BOUNCY_BUBBLE, Moves.HURRICANE, Moves.THUNDER, Moves.TAIL_GLOW ],
   [Species.GROUDON]: [ Moves.STONE_AXE, Moves.SOLAR_BLADE, Moves.MORNING_SUN, Moves.SACRED_FIRE ],
-  [Species.RAYQUAZA]: [ Moves.OBLIVION_WING, Moves.DRAGON_DARTS, Moves.DRAGON_ENERGY, Moves.V_CREATE ],
+  [Species.RAYQUAZA]: [ Moves.V_CREATE, Moves.DRAGON_DARTS, Moves.DRAGON_ENERGY, Moves.OBLIVION_WING ],
   [Species.JIRACHI]: [ Moves.IRON_HEAD, Moves.FLOATY_FALL, Moves.ROCK_SLIDE, Moves.SHIFT_GEAR ],
   [Species.DEOXYS]: [ Moves.COLLISION_COURSE, Moves.EARTH_POWER, Moves.PARTING_SHOT, Moves.LUMINA_CRASH ],
   [Species.TURTWIG]: [ Moves.SHELL_SMASH, Moves.MIGHTY_CLEAVE, Moves.ICE_SPINNER, Moves.SAPPY_SEED ],

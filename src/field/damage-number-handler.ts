@@ -13,7 +13,7 @@ export default class DamageNumberHandler {
   add(target: Pokemon, amount: integer, result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE, critical: boolean = false): void {
     const scene = target.scene;
 
-    if (!scene.damageNumbersMode)
+    if (!scene?.damageNumbersMode)
       return;
 
     const battlerIndex = target.getBattlerIndex();

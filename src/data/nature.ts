@@ -2,6 +2,7 @@ import { Stat, getStatName } from "./pokemon-stat";
 import * as Utils from "../utils";
 import { TextStyle, getBBCodeFrag } from "../ui/text";
 import { UiTheme } from "#app/enums/ui-theme";
+import i18next from 'i18next';
 
 export enum Nature {
   HARDY,
@@ -33,6 +34,10 @@ export enum Nature {
 
 export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   let ret = Utils.toReadableString(Nature[nature]);
+  //Translating nature
+  if(i18next.exists('nature:' + ret)){
+    ret = i18next.t('nature:' + ret as any)
+  }
   if (includeStatEffects) {
     const stats = Utils.getEnumValues(Stat).slice(1);
     let increasedStat: Stat = null;

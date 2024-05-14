@@ -4,6 +4,7 @@ import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutio
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
+import * as Overrides from '../overrides';
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
@@ -250,29 +251,33 @@ export class GameData {
     this.initStarterData();
   }
 
+  public getSystemSaveData(): SystemSaveData {
+    return {
+      trainerId: this.trainerId,
+      secretId: this.secretId,
+      gender: this.gender,
+      dexData: this.dexData,
+      starterData: this.starterData,
+      gameStats: this.gameStats,
+      unlocks: this.unlocks,
+      achvUnlocks: this.achvUnlocks,
+      voucherUnlocks: this.voucherUnlocks,
+      voucherCounts: this.voucherCounts,
+      eggs: this.eggs.map(e => new EggData(e)),
+      gameVersion: this.scene.game.config.gameVersion,
+      timestamp: new Date().getTime()
+    };
+  }
+
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();
-      const data: SystemSaveData = {
-        trainerId: this.trainerId,
-        secretId: this.secretId,
-        gender: this.gender,
-        dexData: this.dexData,
-        starterData: this.starterData,
-        gameStats: this.gameStats,
-        unlocks: this.unlocks,
-        achvUnlocks: this.achvUnlocks,
-        voucherUnlocks: this.voucherUnlocks,
-        voucherCounts: this.voucherCounts,
-        eggs: this.eggs.map(e => new EggData(e)),
-        gameVersion: this.scene.game.config.gameVersion,
-        timestamp: new Date().getTime()
-      };
+      const data = this.getSystemSaveData();
 
       const maxIntAttrValue = Math.pow(2, 31);
       const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-      if (!bypassLogin) {
+      if (!bypassLogin && !localStorage.getItem('data')) {
         Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
@@ -288,12 +293,15 @@ export class GameData {
               console.error(error);
               return resolve(false);
             }
+            localStorage.removeItem('data');
             resolve(true);
           });
       } else {
-        localStorage.setItem('data_bak', localStorage.getItem('data'));
+        const encFunc = bypassLogin
+          ? (data: string) => btoa(data)
+          : (data: string) => AES.encrypt(data, saveKey);
 
-        localStorage.setItem('data', btoa(systemData));
+        localStorage.setItem('data', encFunc(systemData));
 
         this.scene.ui.savingIcon.hide();
 
@@ -304,7 +312,7 @@ export class GameData {
 
   public loadSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (bypassLogin && !localStorage.hasOwnProperty('data'))
+      if (bypassLogin && !localStorage.getItem('data'))
         return resolve(false);
 
       const handleSystemData = (systemDataStr: string) => {
@@ -416,7 +424,7 @@ export class GameData {
         }
       }
 
-      if (!bypassLogin) {
+      if (!bypassLogin && !localStorage.getItem('data')) {
         Utils.apiFetch(`savedata/get?datatype=${GameDataType.SYSTEM}`, true)
           .then(response => response.text())
           .then(response => {
@@ -434,8 +442,12 @@ export class GameData {
 
             handleSystemData(response);
           });
-      } else
-        handleSystemData(atob(localStorage.getItem('data')));
+      } else {
+        const decFunc = bypassLogin
+          ? (data: string) => atob(data)
+          : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8);
+        handleSystemData(decFunc(localStorage.getItem('data')));
+      }
     });
   }
 
@@ -552,40 +564,6 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  saveSession(scene: BattleScene, skipVerification?: boolean): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success !== null && !success)
-          return resolve(false);
-
-        const sessionData = this.getSessionSaveData(scene);
-
-        if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}&trainerId=${this.trainerId}&secretId=${this.secretId}`, JSON.stringify(sessionData), undefined, true)
-            .then(response => response.text())
-            .then(error => {
-              if (error) {
-                if (error.startsWith('session out of date')) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-                }
-                console.error(error);
-                return resolve(false);
-              }
-              console.debug('Session data saved');
-              resolve(true);
-            });
-        } else {
-          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, btoa(JSON.stringify(sessionData)));
-
-          console.debug('Session data saved');
-
-          resolve(true);
-        }
-      });
-    });
-  }
-
   getSession(slotId: integer): Promise<SessionSaveData> {
     return new Promise(async (resolve, reject) => {
       if (slotId < 0)
@@ -600,7 +578,7 @@ export class GameData {
         }
       };
 
-      if (!bypassLogin) {
+      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ''}`)) {
         Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}&slot=${slotId}`, true)
           .then(response => response.text())
           .then(async response => {
@@ -613,9 +591,12 @@ export class GameData {
           });
       } else {
         const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ''}`);
-        if (sessionData)
-          await handleSessionData(atob(sessionData));
-        else
+        if (sessionData) {
+          const decFunc = bypassLogin
+            ? (data: string) => atob(data)
+            : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8);
+          await handleSessionData(decFunc(sessionData));
+        } else
           return resolve(null);
       }
     });
@@ -651,6 +632,9 @@ export class GameData {
           Object.keys(scene.pokeballCounts).forEach((key: string) => {
             scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
           });
+          if (Overrides.POKEBALL_OVERRIDE.active) {
+            scene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
           scene.money = sessionData.money || 0;
           scene.updateMoneyText();
@@ -723,7 +707,7 @@ export class GameData {
   deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem('sessionData');
+        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ''}`);
         return resolve(true);
       }
 
@@ -733,6 +717,7 @@ export class GameData {
         Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
+            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ''}`);
             resolve(true);
           }
           return response.text();
@@ -754,7 +739,7 @@ export class GameData {
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem('sessionData');
+        localStorage.removeItem(`sessionData${slotId ? slotId : ''}`);
         return resolve([true, true]);
       }
 
@@ -763,8 +748,10 @@ export class GameData {
           return resolve([false, false]);
         const sessionData = this.getSessionSaveData(scene);
         Utils.apiPost(`savedata/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}`, JSON.stringify(sessionData), undefined, true).then(response => {
-          if (response.ok)
+          if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
+            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ''}`);
+          }
           return response.json();
         }).then(jsonResponse => {
           if (!jsonResponse.error)
@@ -817,6 +804,64 @@ export class GameData {
     }) as SessionSaveData;
   }
 
+  saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
+        if (success !== null && !success)
+          return resolve(false);
+        if (sync)
+          this.scene.ui.savingIcon.show();
+        const sessionData = this.getSessionSaveData(scene);
+
+        const maxIntAttrValue = Math.pow(2, 31);
+        const systemData = this.getSystemSaveData();
+
+        const request = {
+          system: systemData,
+          session: sessionData,
+          sessionSlotId: scene.sessionSlotId
+        };
+
+        if (!bypassLogin && sync) {
+          Utils.apiPost('savedata/updateall', JSON.stringify(request, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
+            .then(response => response.text())
+            .then(error => {
+              if (sync)
+                this.scene.ui.savingIcon.hide();
+              if (error) {
+                if (error.startsWith('client version out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                } else if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                }
+                console.error(error);
+                return resolve(false);
+              }
+              localStorage.removeItem('data');
+              localStorage.removeItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`);
+              resolve(true);
+            });
+        } else {
+          const encFunc = bypassLogin
+            ? (data: string) => btoa(data)
+            : (data: string) => AES.encrypt(data, saveKey);
+
+          localStorage.setItem('data', encFunc(JSON.stringify(systemData, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
+
+          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, encFunc(JSON.stringify(sessionData)));
+
+          console.debug('Session data saved');
+
+          this.scene.ui.savingIcon.hide();
+
+          resolve(true);
+        }
+      });
+    });
+  }
+
   public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const dataKey: string = getDataTypeKey(dataType, slotId);
@@ -849,8 +894,12 @@ export class GameData {
           });
       } else {
         const data = localStorage.getItem(dataKey);
-        if (data)
-          handleData(atob(data));
+        if (data) {
+          const decFunc = bypassLogin
+            ? (data: string) => atob(data)
+            : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8);
+          handleData(decFunc(data));
+        }
         resolve(!!data);
       }
     });
@@ -918,7 +967,7 @@ export class GameData {
                 return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
               this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
                 this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                  if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+                  if (!bypassLogin && dataType < GameDataType.SETTINGS && localStorage.getItem(dataKey)) {
                     updateUserInfo().then(success => {
                       if (!success)
                         return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
@@ -929,11 +978,15 @@ export class GameData {
                             console.error(error);
                             return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
                           }
+                          localStorage.removeItem(dataKey);
                           window.location = window.location;
                         });
                     });
                   } else {
-                    localStorage.setItem(dataKey, btoa(dataStr));
+                    const encFunc = bypassLogin || dataType === GameDataType.SETTINGS
+                      ? (data: string) => btoa(data)
+                      : (data: string) => AES.encrypt(data, saveKey);
+                    localStorage.setItem(dataKey, encFunc(dataStr));
                     window.location = window.location;
                   }
                 }, () => {
