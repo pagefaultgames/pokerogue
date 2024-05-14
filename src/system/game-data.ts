@@ -809,8 +809,7 @@ export class GameData {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success)
           return resolve(false);
-        if (sync)
-          this.scene.ui.savingIcon.show();
+        this.scene.ui.savingIcon.show();
         const sessionData = this.getSessionSaveData(scene);
 
         const maxIntAttrValue = Math.pow(2, 31);
@@ -826,8 +825,7 @@ export class GameData {
           Utils.apiPost('savedata/updateall', JSON.stringify(request, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
             .then(response => response.text())
             .then(error => {
-              if (sync)
-                this.scene.ui.savingIcon.hide();
+              this.scene.ui.savingIcon.hide();
               if (error) {
                 if (error.startsWith('client version out of date')) {
                   this.scene.clearPhaseQueue();
