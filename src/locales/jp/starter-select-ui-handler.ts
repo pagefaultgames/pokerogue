@@ -13,7 +13,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "nature": "せいかく:",
     "eggMoves": 'タマゴわざ',
     "start": "はじめる",
-    "addToParty": "Add to Party", 
+    "addToParty": "えらぶ", 
     "toggleIVs": "こたいち　ひょうじ",
     "manageMoves": "わざを　ならびかえ",
     "useCandies": "Use Candies",
