@@ -515,19 +515,19 @@ export default class PartyUiHandler extends MessageUiHandler {
     
     this.optionsMode = true;
 
-    let optionsMessage = i18next.t('partyUiHandler:what2doWithPoke') as string;
+    let optionsMessage = i18next.t('partyUiHandler:what2doWithPoke');
 
     switch (this.partyUiMode) {
       case PartyUiMode.MOVE_MODIFIER:
-        optionsMessage = 'Select a move.';
+        optionsMessage = i18next.t('partyUiHandler:selectMove');
         break;
       case PartyUiMode.MODIFIER_TRANSFER:
         if (!this.transferMode)
-          optionsMessage = 'Select a held item to transfer.';
+          optionsMessage = i18next.t('partyUiHandler:selectHeldItemTransfer');
         break;
       case PartyUiMode.SPLICE:
         if (!this.transferMode)
-          optionsMessage = 'Select another Pokémon to splice.';
+          optionsMessage = i18next.t('partyUiHandler:selectSplice');
         break;
     }
 
@@ -678,7 +678,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           default:
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
               const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-              optionName = `${modifier.active ? 'Deactivate' : 'Activate'} ${modifier.type.name}`;
+              optionName = `${modifier.active ? i18next.t('partyUiHandler:deactivate') : i18next.t('partyUiHandler:activate')} ${modifier.type.name}`;
             } else
               optionName = Utils.toReadableString(PartyOption[option]);
             break;

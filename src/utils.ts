@@ -1,3 +1,5 @@
+import i18next from "i18next";
+
 export const MissingTextureKey = '__MISSING';
 
 export function toReadableString(str: string): string {
@@ -349,7 +351,11 @@ This function is used in:
 - summary-ui-handler.ts: If the lang is not available, it'll use types.json (english)
 English itself counts as not available
 */
-export function verifyLang(lang: string): boolean {
+export function verifyLang(lang?: string): boolean {
+  if(!lang){
+    lang = i18next.language;
+  }
+
   switch(lang){
     case 'es':
     case 'fr':

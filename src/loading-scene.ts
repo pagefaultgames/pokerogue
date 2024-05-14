@@ -8,7 +8,7 @@ import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
-import { initI18n } from "./plugins/i18n";
+import i18next, { initI18n } from "./plugins/i18n";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -108,8 +108,23 @@ export class LoadingScene extends SceneBase {
     this.loadImage('summary_moves_overlay_row', 'ui');
     this.loadImage('summary_moves_overlay_pp', 'ui');
     this.loadAtlas('summary_moves_cursor', 'ui');
-    for (let t = 1; t <= 3; t++)
+    for (let t = 1; t <= 3; t++){
       this.loadImage(`summary_tabs_${t}`, 'ui');
+    }
+    i18next.languages.forEach(lang => {
+      if(Utils.verifyLang(lang)){
+        this.loadImage(`starter_select_bg_${lang}`, 'ui');
+        this.loadImage(`summary_bg_${lang}`, 'ui');
+        this.loadImage(`summary_moves_${lang}`, 'ui');
+        this.loadImage(`summary_moves_effect_${lang}`, 'ui');
+        this.loadImage(`summary_profile_${lang}`, 'ui');
+        this.loadImage(`summary_stats_${lang}`, 'ui');
+        for (let t = 1; t <= 3; t++){
+          this.loadImage(`summary_tabs_${t}_${lang}`, 'ui');
+        }
+      }
+    });
+    
 
     this.loadImage('starter_select_bg', 'ui');
     this.loadImage('select_cursor', 'ui');
@@ -185,10 +200,11 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas('pb', '');
     this.loadAtlas('items', '');
     this.loadAtlas('types', '');
-    this.loadAtlas('types_es', '');
-    this.loadAtlas('types_de', '');
-    this.loadAtlas('types_it', '');
-    this.loadAtlas('types_fr', '');
+    i18next.languages.forEach(lang => {
+      if(Utils.verifyLang(lang)){
+        this.loadAtlas(`types_${lang}`, '');
+      }
+    });
     this.loadAtlas('types_zh_CN', '');
     this.loadAtlas('statuses', '');
     this.loadAtlas('categories', '');

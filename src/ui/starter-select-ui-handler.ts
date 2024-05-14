@@ -198,7 +198,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     bgColor.setOrigin(0, 0);
     this.starterSelectContainer.add(bgColor);
 
-    const starterSelectBg = this.scene.add.image(0, 0, 'starter_select_bg');
+    const starterSelectBg = this.scene.add.image(0, 0, Utils.verifyLang() ? `starter_select_bg_${i18next.language}`: 'starter_select_bg');
     starterSelectBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterSelectBg);
 
@@ -241,7 +241,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
 
-    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, 'Uncaught', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t('starterSelectUiHandler:uncaught'), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
@@ -436,7 +436,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
-    this.pokemonLuckLabelText = addTextObject(this.scene, 8, 89, 'Luck:', TextStyle.WINDOW_ALT, { fontSize: '56px' });
+    this.pokemonLuckLabelText = addTextObject(this.scene, 8, 89, `${i18next.t('starterSelectUiHandler:luck')}:`, TextStyle.WINDOW_ALT, { fontSize: '56px' });
     this.pokemonLuckLabelText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckLabelText);
 
@@ -449,7 +449,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCandyIcon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonCandyIcon);
 
-    this.pokemonFormText = addTextObject(this.scene, 6, 42, 'Form', TextStyle.WINDOW_ALT, { fontSize: '42px' });
+    this.pokemonFormText = addTextObject(this.scene, 6, 42, i18next.t('starterSelectUiHandler:form'), TextStyle.WINDOW_ALT, { fontSize: '42px' });
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
 
