@@ -741,19 +741,20 @@ export class RecoilAttr extends MoveEffectAttr {
 
 /**
  * Attribute used for moves which self KO the user regardless if the move hits a target
- * */
+ **/
 export class SacrificialAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.PRE_APPLY);
   }
 
-    /**
-     * Applies the sacrificial effect to the user
-     * @param user Pokemon that used the move
-     * @param target The target of the move
-     * @param move Move with this attribute
-     * @param args N/A
-     */
+  /**
+   * Deals damage to the user equal to their current hp
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 	user.turnData.damageTaken += user.hp;
@@ -762,10 +763,11 @@ export class SacrificialAttr extends MoveEffectAttr {
   }
 
   /**
-   *
+   * The AI is calculating how beneficial it is to use this move. Bosses will always return -20. Otherwise, the score is calculated based on the user's current hp ratio and the move's type effectiveness against the user
    * @param user Pokemon that used the move
    * @param target The target of the move
    * @param move Move with this attribute
+   * @returns The benefit score of using this move (how likely the AI is to use this move)
    */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
@@ -783,15 +785,16 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
   }
 
   /**
-   * Applies the sacrificial effect to the user
+   * Deals damage to the user equal to their current hp
    * @param user Pokemon that used the move
    * @param target The target of the move
    * @param move Move with this attribute
    * @param args N/A
+   * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
-    // If the move hits a target, the user will self KO
+    // If the move fails to hit a target, then the user does not faint and the function returns false
     if (!super.apply(user, target, move, args))
       return false;
 
@@ -802,10 +805,11 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
   }
 
   /**
-   *
+   * The AI is calculating how beneficial it is to use this move. Bosses will always return -20. Otherwise, the score is calculated based on the user's current hp ratio and the move's type effectiveness against the user
    * @param user Pokemon that used the move
    * @param target The target of the move
    * @param move Move with this attribute
+   * @returns The benefit score of using this move (how likely the AI is to use this move)
    */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
