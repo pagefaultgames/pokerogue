@@ -768,7 +768,7 @@ export class SacrificialAttr extends MoveEffectAttr {
    * @param target The target of the move
    * @param move Move with this attribute
    * @returns The benefit score of using this move (how likely the AI is to use this move)
-   */
+   **/
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -20;
@@ -778,7 +778,7 @@ export class SacrificialAttr extends MoveEffectAttr {
 
 /**
  * Attribute used for moves which self KO the user but only if the move hits a target
- */
+ **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.PRE_APPLY);
@@ -791,7 +791,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
    * @param move Move with this attribute
    * @param args N/A
    * @returns true if the function succeeds
-   */
+   **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
     // If the move fails to hit a target, then the user does not faint and the function returns false
@@ -810,7 +810,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
    * @param target The target of the move
    * @param move Move with this attribute
    * @returns The benefit score of using this move (how likely the AI is to use this move)
-   */
+   **/
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -20;
