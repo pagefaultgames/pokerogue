@@ -1,22 +1,24 @@
 import { ability } from "./ability";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
+import { eggList } from "./egg-list";
 import { fightUiHandler } from "./fight-ui-handler";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
 import { move } from "./move";
+import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
-import { nature } from "./nature";
 
 
 export const zhCnConfig = {
     ability: ability,
     battle: battle,
     commandUiHandler: commandUiHandler,
+    eggList: eggList,
     fightUiHandler: fightUiHandler,
     menuUiHandler: menuUiHandler,
     menu: menu,

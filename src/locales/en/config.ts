@@ -1,6 +1,7 @@
 import { ability } from "./ability";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
+import { eggList } from "./egg-list";
 import { fightUiHandler } from "./fight-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
@@ -18,6 +19,7 @@ export const enConfig = {
     ability: ability,
     battle: battle,
     commandUiHandler: commandUiHandler,
+    eggList: eggList,
     fightUiHandler: fightUiHandler,
     menuUiHandler: menuUiHandler,
     menu: menu,

@@ -1,12 +1,12 @@
 import BattleScene from "../battle-scene";
-import { Mode } from "./ui";
+import { Egg, getEggDescriptor, getEggGachaTypeDescriptor, getEggHatchWavesMessage } from "../data/egg";
+import { Button } from "../enums/buttons";
+import i18next from '../plugins/i18n';
+import MessageUiHandler from "./message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "./text";
-import MessageUiHandler from "./message-ui-handler";
-import { EGG_SEED, Egg, GachaType, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
-import * as Utils from "../utils";
+import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
 
 export default class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;
@@ -165,7 +165,7 @@ export default class EggListUiHandler extends MessageUiHandler {
 
   setEggDetails(egg: Egg): void {
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
-    this.eggNameText.setText(`Egg (${getEggDescriptor(egg)})`);
+    this.eggNameText.setText(`${i18next.t('eggList:egg')} (${getEggDescriptor(egg)})`);
     this.eggDateText.setText(
       new Date(egg.timestamp).toLocaleString(undefined, {
         weekday: 'short',

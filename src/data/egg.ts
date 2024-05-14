@@ -1,9 +1,9 @@
-import { Type } from "./type";
-import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
+import i18next from '../plugins/i18n';
+import * as Utils from "../utils";
+import { EggTier } from "./enums/egg-type";
 import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
-import { EggTier } from "./enums/egg-type";
 
 export const EGG_SEED = 1073741824;
 
@@ -54,36 +54,53 @@ export function getEggTierDefaultHatchWaves(tier: EggTier): integer {
 export function getEggDescriptor(egg: Egg): string {
   if (egg.isManaphyEgg())
     return 'Manaphy';
+  let ret: string;
   switch (egg.tier) {
     case EggTier.GREAT:
-      return 'Rare';
+      ret = i18next.t('eggList:rare');
+      return ret;
     case EggTier.ULTRA:
-      return 'Epic';
+      ret = i18next.t('eggList:epic');
+      return ret;
     case EggTier.MASTER:
-      return 'Legendary';
+      ret = i18next.t('eggList:legendary');
+      return ret;
     default:
-      return 'Common';
+      ret = i18next.t('eggList:common');
+      return ret;
   }
 }
 
 export function getEggHatchWavesMessage(hatchWaves: integer): string {
-  if (hatchWaves <= 5)
-    return 'Sounds can be heard coming from inside! It will hatch soon!';
-  if (hatchWaves <= 15)
-    return 'It appears to move occasionally. It may be close to hatching.';
-  if (hatchWaves <= 50)
-    return 'What will hatch from this? It doesn\'t seem close to hatching.';
-  return 'It looks like this Egg will take a long time to hatch.';
+  let ret: string;
+  switch (true) {
+    case hatchWaves <= 5:
+      ret = i18next.t('eggList:5waves');
+      return ret;
+    case hatchWaves <= 15:
+      ret = i18next.t('eggList:15waves');
+      return ret;
+    case hatchWaves <= 50:
+      ret = i18next.t('eggList:50waves');
+      return ret;
+    default:
+      ret = i18next.t('eggList:>50waves');
+      return ret;
+  }
 }
 
 export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string {
+  let ret: string;
   switch (egg.gachaType) {
     case GachaType.LEGENDARY:
-      return `Legendary Rate Up (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
+      ret = `${i18next.t('eggList:legendaryRateUp')} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`
+      return ret;
     case GachaType.MOVE:
-      return 'Rare Egg Move Rate Up';
+      ret = i18next.t('eggList:rareEggMoveRateUp');
+      return ret;
     case GachaType.SHINY:
-      return 'Shiny Rate Up';
+      ret = i18next.t('eggList:shinyRateUp');
+      return ret;
   }
 }
 
