@@ -15,7 +15,7 @@ export const battle: SimpleTranslationEntries = {
   "pokemon": "Pokémon",
   "sendOutPokemon": "¡Adelante, {{pokemonName}}!",
   "hitResultCriticalHit": "!Un golpe crítico!",
-  "hitResultSuperEffective": "!Es muy eficaz!",
+  "hitResultSuperEffective": "!Es supereficaz!",
   "hitResultNotVeryEffective": "No es muy eficaz…",
   "hitResultNoEffect": "No afecta a {{pokemonName}}!",
   "hitResultOneHitKO": "!KO en 1 golpe!",
