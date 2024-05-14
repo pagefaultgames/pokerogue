@@ -273,8 +273,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       if ((dexEntry.caughtAttr & dexAttr) < dexAttr || !(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & Math.pow(2, pokemon.abilityIndex)))
         this.ownedIcon.setTint(0x808080);
 
-      const starterDataEntry: StarterDataEntry = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()];
-      if(starterDataEntry.classicWinCount > 0) {
+      if(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 && pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
         this.championRibbon.setVisible(true);
       }
 
