@@ -7,7 +7,7 @@ import {
     getKeyAndActionFromCurrentKeysWithSettingName,
     getKeyForSettingName,
     getKeyFromMapping,
-    getKeyWithAction,
+    getKeyWithAction, regenerateCustom,
     reloadCurrentKeys,
     swapCurrentKeys,
 } from "#app/configs/gamepad-utils";
@@ -441,6 +441,153 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_T_Key_Dark.png");
+    })
+
+
+    it('reload scenario with 1 bind already reassigned', () => {
+        config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up] = {
+          "key": "KEY_Z",
+          "isAlt": true,
+          "action": 3,
+          "icon": "T_D_Key_Dark.png",
+          "from": {
+            "key": "KEY_Z",
+            "isAlt": true,
+            "action": 0,
+            "icon": "T_Z_Key_Dark.png"
+          }
+        };
+        config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right] = {
+          "key": "KEY_D",
+          "isAlt": true,
+          "action": 0,
+          "icon": "T_Z_Key_Dark.png",
+          "from": {
+            "key": "KEY_D",
+            "isAlt": true,
+            "action": 3,
+            "icon": "T_D_Key_Dark.png"
+          }
+        }
+        config.icons["KEY_D"] = "T_Z_Key_Dark.png";
+        config.icons["KEY_Z"] = "T_D_Key_Dark.png";
+        regenerateCustom(config);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_D_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].key).toEqual("KEY_D");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_D"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].key).toEqual("KEY_ARROW_UP");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].icon).toEqual("T_Up_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_UP"]).toEqual(Button.UP);
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Button_Up, Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_D_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].key).toEqual("KEY_D");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_D"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].key).toEqual("KEY_ARROW_UP");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].icon).toEqual("T_Right_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_UP"]).toEqual(Button.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].key).toEqual("KEY_ARROW_RIGHT");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].icon).toEqual("T_Up_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_RIGHT"]).toEqual(Button.UP);
+    });
+
+
+    it('Swap multiple touch alt and main', () => {
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].key).toEqual("KEY_ARROW_UP");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].icon).toEqual("T_Up_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_UP"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].key).toEqual("KEY_ARROW_RIGHT");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].icon).toEqual("T_Right_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_RIGHT"]).toEqual(Button.RIGHT);
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Button_Up, Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].key).toEqual("KEY_ARROW_UP");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].icon).toEqual("T_Right_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_UP"]).toEqual(Button.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].key).toEqual("KEY_ARROW_RIGHT");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].icon).toEqual("T_Up_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_RIGHT"]).toEqual(Button.UP);
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.D);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].key).toEqual("KEY_ARROW_UP");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].icon).toEqual("T_Right_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_UP"]).toEqual(Button.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_D_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].key).toEqual("KEY_ARROW_RIGHT");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].icon).toEqual("T_Up_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_RIGHT"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].key).toEqual("KEY_D");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_D"]).toEqual(Button.UP);
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.Z);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].key).toEqual("KEY_ARROW_UP");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].icon).toEqual("T_Right_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_UP"]).toEqual(Button.RIGHT);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].key).toEqual("KEY_ARROW_RIGHT");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Button_Right].icon).toEqual("T_Up_Key_Dark.png");
+        expect(config.custom["KEY_ARROW_RIGHT"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].key).toEqual("KEY_D");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].action).toEqual(Button.RIGHT);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right].icon).toEqual("T_D_Key_Dark.png");
+        expect(config.custom["KEY_D"]).toEqual(Button.RIGHT);
     })
 
 });

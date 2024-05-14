@@ -340,13 +340,14 @@ export class InputsController {
             const config = deepCopy(this.getConfig(gamepadID));
             config.custom = this.configs[gamepad]?.custom || {...config.default};
             config.ogIcons = {...config.icons};
+            config.icons = this.configs[gamepad]?.icons || {...config.icons};
             config.currentKeys = this.configs[gamepad]?.currentKeys;
             if (!this.configs[gamepad]?.currentKeys)
                 reloadCurrentKeys(config);
             else
                 regenerateCustom(config);
             this.configs[gamepad] = config;
-            this.scene.gameData?.saveCustomMapping(this.chosenGamepad, this.configs[gamepad]?.currentKeys);
+            this.scene.gameData?.saveCustomMapping(this.chosenGamepad, this.configs[gamepad]?.currentKeys, this.configs[gamepad]?.icons);
         }
         if (this.chosenGamepad === thisGamepad.id) this.initChosenGamepad(this.chosenGamepad)
     }
@@ -355,14 +356,15 @@ export class InputsController {
         for (const layout of ['default']) {
             const config = deepCopy(this.getConfigKeyboard(layout));
             config.custom = this.keyboardConfigs[layout]?.custom || {...config.default};
-            config.currentKeys = this.keyboardConfigs[layout]?.currentKeys;
             config.ogIcons = {...config.icons};
+            config.icons = this.keyboardConfigs[layout]?.icons || {...config.icons};
+            config.currentKeys = this.keyboardConfigs[layout]?.currentKeys;
             if (!this.keyboardConfigs[layout]?.currentKeys)
                 reloadCurrentKeys(config);
             else
                 regenerateCustom(config);
             this.keyboardConfigs[layout] = config;
-            this.scene.gameData?.saveCustomKeyboardMapping(this.chosenKeyboard, this.keyboardConfigs[layout]?.currentKeys);
+            this.scene.gameData?.saveCustomKeyboardMapping(this.chosenKeyboard, this.keyboardConfigs[layout]?.currentKeys, this.keyboardConfigs[layout]?.icons);
         }
         this.initChosenLayoutKeyboard(this.chosenKeyboard)
     }
@@ -765,11 +767,13 @@ export class InputsController {
      */
     injectConfig(gamepadName: String, customMappings): void {
         if (!this.configs[gamepadName]) this.configs[gamepadName] = {};
-        this.configs[gamepadName].currentKeys = customMappings;
+        this.configs[gamepadName].currentKeys = customMappings.currentKeys;
+        this.configs[gamepadName].icons = customMappings.icons;
     }
     injectKeyboardConfig(layout: string, customMappings): void {
         if (!this.keyboardConfigs[layout]) this.keyboardConfigs[layout] = {};
-        this.keyboardConfigs[layout].currentKeys = customMappings;
+        this.keyboardConfigs[layout].currentKeys = customMappings.currentKeys;
+        this.keyboardConfigs[layout].icons = customMappings.icons;
     }
 
     swapBinding(config, settingName, pressedButton): void {

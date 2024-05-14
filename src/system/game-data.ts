@@ -498,20 +498,26 @@ export class GameData {
     return true;
   }
 
-  public saveCustomMapping(gamepadName: string, currentKeys): boolean {
+  public saveCustomMapping(gamepadName: string, currentKeys, icons): boolean {
     let customMappings: object = {};
     if (localStorage.hasOwnProperty('customMapping'))
       customMappings = JSON.parse(localStorage.getItem('customMapping'));
-    customMappings[gamepadName] = currentKeys;
+    customMappings[gamepadName] = {
+      currentKeys,
+      icons
+    };
     localStorage.setItem('customMapping', JSON.stringify(customMappings));
     return true;
   }
 
-  public saveCustomKeyboardMapping(keyboardLayout: string, currentKeys): boolean {
+  public saveCustomKeyboardMapping(keyboardLayout: string, currentKeys, icons): boolean {
     let customKeyboardMappings: object = {};
     if (localStorage.hasOwnProperty('customKeyboardMappings'))
       customKeyboardMappings = JSON.parse(localStorage.getItem('customKeyboardMappings'));
-    customKeyboardMappings[keyboardLayout] = currentKeys;
+    customKeyboardMappings[keyboardLayout] = {
+      currentKeys,
+      icons
+    };
     localStorage.setItem('customKeyboardMappings', JSON.stringify(customKeyboardMappings));
     return true;
   }

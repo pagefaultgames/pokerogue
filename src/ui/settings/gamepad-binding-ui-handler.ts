@@ -31,7 +31,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     swapAction() {
         const activeConfig = this.scene.inputController.getActiveConfig();
         this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
-        this.scene.gameData.saveCustomMapping(this.scene.inputController?.chosenGamepad, activeConfig.currentKeys);
+        this.scene.gameData.saveCustomMapping(this.scene.inputController?.chosenGamepad, activeConfig.currentKeys, activeConfig.icons);
         regenerateCustom(activeConfig);
         return true;
     }

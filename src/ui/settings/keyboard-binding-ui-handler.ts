@@ -30,7 +30,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     swapAction() {
         const activeConfig = this.scene.inputController.getActiveKeyboardConfig();
         this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
-        this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, activeConfig.currentKeys);
+        this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, activeConfig.currentKeys, activeConfig.icons);
         regenerateCustom(activeConfig);
         return true;
     }

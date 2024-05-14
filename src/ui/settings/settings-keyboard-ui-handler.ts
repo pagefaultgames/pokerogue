@@ -77,7 +77,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     }
 
     saveCustomKeyboardMappingToLocalStorage(config): void {
-        this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, config.currentKeys);
+        this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, config.currentKeys, config.icons);
     }
 
     saveSettingToLocalStorage(settingName, cursor): void {
