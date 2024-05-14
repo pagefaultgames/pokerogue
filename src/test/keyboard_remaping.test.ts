@@ -265,4 +265,20 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].action).toEqual(Button.RIGHT);
         expect(config.currentKeys[SettingInterfaceKeyboard.Button_Up].icon).toEqual("T_D_Key_Dark.png");
     })
+
+
+    it('Swap alt with a key not binded yet', () => {
+        const settingNameA = SettingInterfaceKeyboard.Alt_Button_Up;
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.B);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_B_Key_Dark.png");
+
+    })
 });
