@@ -1755,7 +1755,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const allyCheck = args[2];
+    const allyCheck = args[1];
     if ((!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) && !allyCheck) {
       cancelled.value = true;
       return true;
