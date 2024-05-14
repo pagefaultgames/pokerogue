@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   "zippyZap": {
     name: "Pika-Sprint",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
+    effect: "Une attaque électrique rapide comme l’éclair qui auguemente l’esquive. Frappe en priorité."
   },
   "splishySplash": {
     name: "Pika-Splash",
