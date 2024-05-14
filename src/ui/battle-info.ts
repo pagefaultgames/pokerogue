@@ -8,6 +8,7 @@ import BattleScene from '../battle-scene';
 import { Type, getTypeRgb } from '../data/type';
 import { getVariantTint } from '#app/data/variant';
 import { BattleStat } from '#app/data/battle-stat';
+import { StarterDataEntry } from '#app/system/game-data';
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -33,6 +34,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
   private ownedIcon: Phaser.GameObjects.Sprite;
+  private championRibbon: Phaser.GameObjects.Sprite;
   private teraIcon: Phaser.GameObjects.Sprite;
   private shinyIcon: Phaser.GameObjects.Sprite;
   private fusionShinyIcon: Phaser.GameObjects.Sprite;
@@ -93,6 +95,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.ownedIcon.setOrigin(0, 0);
       this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
       this.add(this.ownedIcon);
+
+      this.championRibbon = this.scene.add.sprite(0, 0, 'champion_ribbon');
+      this.championRibbon.setVisible(false);
+      this.championRibbon.setOrigin(0, 0);
+      this.championRibbon.setPositionRelative(this.nameText, 11.75, 11.75);
+      this.add(this.championRibbon);
     }
 
     this.teraIcon = this.scene.add.sprite(0, 0, 'icon_tera');
@@ -260,9 +268,15 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (!this.player) {
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
+
       const dexAttr = pokemon.getDexAttr();
       if ((dexEntry.caughtAttr & dexAttr) < dexAttr || !(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & Math.pow(2, pokemon.abilityIndex)))
         this.ownedIcon.setTint(0x808080);
+
+      const starterDataEntry: StarterDataEntry = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()];
+      if(starterDataEntry.classicWinCount > 0) {
+        this.championRibbon.setVisible(true);
+      }
 
       if (this.boss)
         this.updateBossSegmentDividers(pokemon as EnemyPokemon);
