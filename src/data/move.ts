@@ -2374,7 +2374,7 @@ export class SheerColdAccuracyAttr extends OneHitKOAccuracyAttr {
    * @param {Pokemon} target Pokemon that is receiving the move; checks the Pokemon's level.
    * @param {Move} move N/A 
    * @param {any[]} args Uses the accuracy argument, allowing to change it from either 0 if it doesn't pass
-   * the first if/else, and either the first value if the user is Ice-Type, or the second if not.
+   * the first if/else, or 30/20 depending on the type of the user Pokemon.
    * @returns Returns true if move is successful, false if misses.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2382,12 +2382,8 @@ export class SheerColdAccuracyAttr extends OneHitKOAccuracyAttr {
       if (user.level < target.level) {
           accuracy.value = 0;
       } else { 
-          if (user.isOfType(Type.ICE)) {
-              accuracy.value = Math.min(Math.max(30 + 100 * (1 - target.level / user.level), 0), 100);
-          }
-          else {
-              accuracy.value = Math.min(Math.max(20 + 100 * (1 - target.level / user.level), 0), 100);
-          }
+         const baseAccuracy = user.isOfType(Type.ICE) ? 30 : 20;
+         accuracy.value = Math.min(Math.max(baseAccuracy + 100 * (1 - target.level / user.level), 0), 100);
       }
     return true;
   }
