@@ -28,5 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleNature": "N: Wesen Ändern",
     "cycleVariant": "V: Seltenheit ändern",
     "enablePassive": "Passiv-Skill aktivieren",
-    "disablePassive": "Passiv-Skill deaktivieren"
+    "disablePassive": "Passiv-Skill deaktivieren",
+    "locked": "Gesperrt",
+    "disabled": "Deaktiviert",
+    "uncaught": "Uncaught"
 }
