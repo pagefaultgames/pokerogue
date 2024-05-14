@@ -389,10 +389,14 @@ export class InputsController {
         }
     }
 
-    keyboardKeyDown(event): void {
-        const keyDown = event.keyCode;
+    checkIfKeyboardIsInit(): void {
         if (!this.keyboardConfigs[this.chosenKeyboard]?.padID)
             this.setupKeyboard();
+    }
+
+    keyboardKeyDown(event): void {
+        const keyDown = event.keyCode;
+        this.checkIfKeyboardIsInit();
         if (this.keys.includes(keyDown)) return;
         this.keys.push(keyDown);
         const key = getKeyFromMapping(this.keyboardConfigs[this.chosenKeyboard], keyDown);
@@ -410,8 +414,7 @@ export class InputsController {
     keyboardKeyUp(event): void {
         const keyDown = event.keyCode;
         this.keys = this.keys.filter(k => k !== keyDown);
-        if (!this.keyboardConfigs[this.chosenKeyboard]?.padID)
-            this.setupKeyboard();
+        this.checkIfKeyboardIsInit()
         const key = getKeyFromMapping(this.keyboardConfigs[this.chosenKeyboard], keyDown);
         const buttonUp = this.keyboardConfigs[this.chosenKeyboard].custom[key];
         if (buttonUp !== undefined) {

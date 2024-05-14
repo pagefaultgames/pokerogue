@@ -6,6 +6,7 @@ import {reverseValueToKeySetting, truncateString} from "#app/utils";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {InterfaceConfig} from "#app/inputs-controller";
 import {deleteBind} from "#app/configs/gamepad-utils";
+import {addTextObject, TextStyle} from "#app/ui/text";
 
 
 export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandler {
@@ -22,6 +23,22 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
 
         const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
         deleteEvent.on('up', this.onDeleteDown, this);
+    }
+
+    setup() {
+        super.setup();
+        // If no gamepads are detected, set up a default UI prompt in the settings container.
+        this.layout['noKeyboard'] = new Map();
+        const optionsContainer = this.scene.add.container(0, 0);
+        optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
+        const label = addTextObject(this.scene, 8, 28, 'Please press a key on your keyboard', TextStyle.SETTINGS_LABEL);
+        label.setOrigin(0, 0);
+        optionsContainer.add(label);
+        this.settingsContainer.add(optionsContainer);
+
+        // Map the 'noKeyboard' layout options for easy access.
+        this.layout['noKeyboard'].optionsContainer = optionsContainer;
+        this.layout['noKeyboard'].label = label;
     }
 
     onDeleteDown(): void {
@@ -43,6 +60,20 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         // Retrieve the gamepad settings from local storage or use an empty object if none exist.
         const settings: object = localStorage.hasOwnProperty('settingsKeyboard') ? JSON.parse(localStorage.getItem('settingsKeyboard')) : {};
         return settings;
+    }
+
+    setLayout(activeConfig: InterfaceConfig): boolean {
+        // Check if there is no active configuration (e.g., no gamepad connected).
+        if (!activeConfig) {
+            // Retrieve the layout for when no gamepads are connected.
+            const layout = this.layout['noKeyboard'];
+            // Make the options container visible to show message.
+            layout.optionsContainer.setVisible(true);
+            // Return false indicating the layout application was not successful due to lack of gamepad.
+            return false;
+        }
+
+        return super.setLayout(activeConfig);
     }
 
     navigateMenuLeft(): boolean {
