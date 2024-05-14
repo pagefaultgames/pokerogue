@@ -95,9 +95,14 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 
   let ret: Species;
 
+  // 604800000 is the number of miliseconds in one week
+  const weekOffset = Utils.getSunday(new Date(timestamp)).getTime(); // Timestamp of current week
+  const offset = Math.floor(Math.floor(weekOffset / 604800000)/legendarySpecies.length); // Cycle number
+  const index = Math.floor(weekOffset / 604800000)%legendarySpecies.length // Index within cycle
+
   scene.executeWithSeedOffset(() => {
-    ret = Utils.randSeedItem(legendarySpecies);
-  }, Utils.getSunday(new Date(timestamp)).getTime(), EGG_SEED.toString());
+    ret = Phaser.Math.RND.shuffle(legendarySpecies)[index];
+  }, offset, EGG_SEED.toString());
 
   return ret;
 }
