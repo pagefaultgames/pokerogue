@@ -6687,6 +6687,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 98, Moves.DOOM_DESIRE ],
   ],
   [Species.DEOXYS]: [
+    [ 1, Moves.CONFUSION ], //Custom
     [ 1, Moves.LEER ],
     [ 1, Moves.WRAP ],    
     [ 7, Moves.NIGHT_SHADE ],
@@ -8478,6 +8479,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 93, Moves.DARK_PULSE ],
   ],
   [Species.SHAYMIN]: [
+    [ 1, Moves.LEAFAGE ], //Custom
     [ 1, Moves.GROWTH ],
     [ 10, Moves.MAGICAL_LEAF ],
     [ 19, Moves.LEECH_SEED ],
@@ -18501,6 +18503,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
 export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   [Species.DEOXYS]: {
     1: [
+      [ 1, Moves.CONFUSION ], //Custom
       [ 1, Moves.WRAP ],
       [ 1, Moves.LEER ],
       [ 7, Moves.NIGHT_SHADE ],
@@ -18517,6 +18520,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 73, Moves.HYPER_BEAM ],
     ],
     2: [
+      [ 1, Moves.CONFUSION ], //Custom
       [ 1, Moves.WRAP ],
       [ 1, Moves.LEER ],
       [ 7, Moves.NIGHT_SHADE ],
@@ -18535,6 +18539,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 73, Moves.MIRROR_COAT ],
     ],
     3: [
+      [ 1, Moves.CONFUSION ], //Custom
       [ 1, Moves.WRAP ],
       [ 1, Moves.LEER ],
       [ 7, Moves.NIGHT_SHADE ],
@@ -18678,6 +18683,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   },
   [Species.SHAYMIN]: {
     1: [
+      [ 1, Moves.LEAFAGE ], //Custom
       [ 1, Moves.GROWTH ],
       [ 10, Moves.MAGICAL_LEAF ],
       [ 19, Moves.LEECH_SEED ],
