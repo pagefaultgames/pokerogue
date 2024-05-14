@@ -66,7 +66,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "psychic_female": "Psychic",
     "ranger": "Ranger",
     "rich": "Gentleman", // Gentleman is the english name but the trainerType is rich
-    "rich_kid": "Rich Kid",
+    "rich_kid": "Rich Boy",
     "roughneck": "Roughneck",
     "scientist": "Scientist",
     "scientist_female": "Scientist",
