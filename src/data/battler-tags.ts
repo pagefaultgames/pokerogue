@@ -523,18 +523,27 @@ export class TormentedTag extends BattlerTag {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, 'is no longer\ntormented!'));
     }
 
-    //At the end of each turn, if this pokemon executed a move this turn, set its unselectableMove to that move, unless it is struggle, in which case unset it.
+    //At the end of each turn, set this pokemon's unselectableMove to the last move it executed. If this move is struggle, instead unset unselectableMove. If no valid move is found, do nothing.
     lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
         const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
         if (ret) {
-            const lastMove = pokemon.getLastXMoves(1)[0];
-            if (!lastMove || (lastMove.move === Moves.NONE))
-                return ret;
-            if (lastMove.move === Moves.STRUGGLE) {
-                pokemon.summonData.unselectableMove = Moves.NONE;
-            }
-            else {
-                pokemon.summonData.unselectableMove = lastMove.move;
+            const moveQueue = pokemon.getLastXMoves();
+            let turnMove: TurnMove;
+            while (moveQueue.length) {
+                turnMove = moveQueue.shift();
+                if (turnMove.virtual && turnMove.move !== Moves.STRUGGLE)
+                    continue;
+                if (turnMove.move === Moves.STRUGGLE) {
+                    pokemon.summonData.unselectableMove = Moves.NONE;
+                    return ret;
+                }
+                const moveIndex = pokemon.getMoveset().findIndex(m => m.moveId === turnMove.move);
+                if (moveIndex === -1)
+                    return ret;
+                else {
+                    pokemon.summonData.unselectableMove = turnMove.move;
+                    return ret;
+                }
             }
             return ret;
         }
