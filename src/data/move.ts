@@ -2375,6 +2375,7 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
 /**
  * Attribute used for moves which never miss
  * against Pokemon with the {@link BattlerTagType.MINIMIZED}
+ * @see {@link apply}
  * @param user N/A
  * @param target Target of the move
  * @param move N/A
