@@ -4914,8 +4914,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
       new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.TORMENTED, false, true)
-      .condition((user, target, move) => !target.getTag(BattlerTagType.TORMENTED) && !target.isMax())
-      .partial(),
+      .condition((user, target, move) => !target.getTag(BattlerTagType.TORMENTED) && !target.isMax()),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)
       .attr(ConfuseAttr),
