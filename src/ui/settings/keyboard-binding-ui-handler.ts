@@ -2,8 +2,7 @@ import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
 import {
-    getKeyAndActionFromCurrentKeysWithPressedButton,
-    getKeyAndActionFromCurrentKeysWithSettingName, getKeyFromMapping,
+    getKeyAndActionFromCurrentKeysWithSettingName, getKeyFromMapping, regenerateCustom,
 } from "#app/configs/gamepad-utils";
 
 
@@ -32,6 +31,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         const activeConfig = this.scene.inputController.getActiveKeyboardConfig();
         this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
         this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, activeConfig.currentKeys);
+        regenerateCustom(activeConfig);
         return true;
     }
 

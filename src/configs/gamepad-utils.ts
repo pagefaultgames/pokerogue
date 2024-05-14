@@ -69,14 +69,32 @@ export function assignNewKey(config: InterfaceConfig, settingName, pressedButton
     const icon = config.ogIcons[key];
     config.icons[previousBind.key] = icon;
     config.currentKeys[settingName].icon = icon;
-    config.custom[key] = previousBind.action;
+
+    config.custom[key] = previousBind.action !== -1 ? previousBind.action : previousBind.from.action;
+    config.custom[previousBind.key] = -1;
+    config.currentKeys[settingName].replacedBy = key;
+
+    delete config.currentKeys[settingName].from
 }
 
 export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedButton): void {
     const previousBind = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
     const prevKey = deepCopy(previousBind);
     const newBind = getKeyAndActionFromCurrentKeysWithPressedButton(config, pressedButton);
-    if (!newBind) {
+    if (newBind && previousBind.action === -1) {
+        //special case when rebinding deleted key with already assigned key
+        const toRestore = deepCopy(newBind);
+        config.custom[newBind.key] = prevKey.from.action;
+        config.icons[prevKey.key] = newBind.icon;
+        config.icons[newBind.key] = prevKey.from.icon;
+
+        delete prevKey.from;
+
+        const nextSettingName = getKeyAndSettingNameFromCurrentKeysWithAction(config, newBind.action, newBind.isAlt).settingName;
+        config.currentKeys[nextSettingName].from = toRestore;
+        config.currentKeys[nextSettingName].isDeleted = true;
+        config.currentKeys[settingName].replacedBy = toRestore.key;
+    } else if (!newBind) {
         assignNewKey(config, settingName, pressedButton, previousBind);
     } else {
         const nextKey = deepCopy(newBind);
@@ -96,7 +114,7 @@ export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedBut
             config.custom[newBind.key] = previousBind.action;
             config.icons[previousBind.key] = newBind.icon;
             config.icons[newBind.key] = previousBind.icon;
-            const nextSettingName = getKeyAndSettingNameFromCurrentKeysWithAction(config, newBind.action).settingName;
+            const nextSettingName = getKeyAndSettingNameFromCurrentKeysWithAction(config, newBind.action, newBind.isAlt).settingName;
             config.currentKeys[settingName].from = prevKey;
             config.currentKeys[nextSettingName].from = nextKey;
         }
@@ -112,10 +130,27 @@ export function reloadCurrentKeys(config): void {
         const settingName = config.setting[key];
         const action = config.custom[key];
         const icon = config.icons[key];
+        if (currentKeys[settingName]?.latestReplacedBy) {
+            console.log('');
+        }
         if (!currentKeys[settingName]) currentKeys[settingName] = {};
         currentKeys[settingName].key = key;
-        currentKeys[settingName].action = action === undefined ? currentKeys[settingName].action : action;
-        currentKeys[settingName].icon = icon;
+        currentKeys[settingName].isAlt = settingName.includes("ALT_");
+        const previousAction = config.custom[currentKeys[settingName].replacedBy]
+        if (action === -1 && previousAction !== undefined) {
+            currentKeys[settingName].action = previousAction;
+            currentKeys[settingName].icon = icon;
+            currentKeys[settingName].latestReplacedBy = config.currentKeys[settingName].replacedBy
+            delete currentKeys[settingName].replacedBy;
+        } else if (currentKeys[settingName].isDeleted) {
+            currentKeys[settingName].action = -1;
+            currentKeys[settingName].icon = undefined;
+            currentKeys[settingName].latestIsDeleted = config.currentKeys[settingName].isDeleted
+            delete currentKeys[settingName].isDeleted;
+        } else {
+            currentKeys[settingName].action = action;
+            currentKeys[settingName].icon = action === -1 ? undefined : icon;
+        }
     }
     config.currentKeys = deepCopy(currentKeys);
 }
@@ -123,14 +158,22 @@ export function reloadCurrentKeys(config): void {
 export function regenerateCustom(config): void {
     const custom = deepCopy(config.custom);
     for (const settingName of Object.keys(config.currentKeys)) {
-        const {key, action} = config.currentKeys[settingName];
-        custom[key] = action;
+        const {key, action, latestReplacedBy, latestIsDeleted} = config.currentKeys[settingName];
+        if (latestReplacedBy) {
+            custom[key] = -1;
+            custom[latestReplacedBy] = action;
+        } else if (!latestIsDeleted) {
+            custom[key] = action;
+        }
     }
     config.custom = deepCopy(custom);
 }
 
 export function deleteBind(config, settingName): void {
     const { key } = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
+    const prev = deepCopy(config.currentKeys[settingName]);
     delete config.currentKeys[settingName].icon
-    config.custom[key] = undefined
+    config.currentKeys[settingName].from = prev;
+    config.custom[key] = -1;
+    reloadCurrentKeys(config);
 }

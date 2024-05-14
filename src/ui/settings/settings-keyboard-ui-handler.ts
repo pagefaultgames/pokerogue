@@ -26,13 +26,13 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
 
     onDeleteDown(): void {
         const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
-        console.log('delete pressed', cursor, this.settingLabels[cursor].text);
         const selection = this.settingLabels[cursor].text;
         const key = reverseValueToKeySetting(selection);
         const setting = SettingKeyboard[key];
+        const activeConfig = this.getActiveConfig();
         deleteBind(this.getActiveConfig(), setting);
-        need to handle the "no icon"
-        console.log('setting:', setting);
+        this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
+        this.updateBindings();
     }
 
     getActiveConfig(): InterfaceConfig {
@@ -76,8 +76,12 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
 
     }
 
-    saveSettingToLocalStorage(setting, cursor): void {
-        if (this.settingDevice[setting] !== this.settingDevice.Default_Layout)
-            this.scene.gameData.saveKeyboardSetting(setting, cursor)
+    saveCustomKeyboardMappingToLocalStorage(config): void {
+        this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, config.currentKeys);
+    }
+
+    saveSettingToLocalStorage(settingName, cursor): void {
+        if (this.settingDevice[settingName] !== this.settingDevice.Default_Layout)
+            this.scene.gameData.saveKeyboardSetting(settingName, cursor)
     }
 }
