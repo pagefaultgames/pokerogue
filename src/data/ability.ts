@@ -715,7 +715,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.status && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance)) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
-      return attacker.trySetStatus(effect, true);
+      return attacker.trySetStatus(effect, true, pokemon);
     }
 
     return false;
@@ -1756,6 +1756,24 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : 'status problems'}!`);
+  }
+}
+
+export class PostSetStatusAbAttr extends AbAttr {
+  applyPostSetStatus(pokemon: Pokemon, source: Pokemon = null, passive: boolean, effect: StatusEffect, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+/**
+ * If another Pokemon burns, paralyzes, poisons, or badly poisons this Pokemon, that Pokemon receives the same non-volatile status condition.
+ */
+export class StatusSyncAbAttr extends PostSetStatusAbAttr {
+  applyPostSetStatus(pokemon: Pokemon, source: Pokemon = null, passive: boolean, effect: StatusEffect, args: any[]): boolean | Promise<boolean> {
+    if (source && [StatusEffect.BURN, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC].includes(effect)) {
+      return source.trySetStatus(effect, true);
+    }
+    return false;
   }
 }
 
@@ -2804,6 +2822,11 @@ export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSet
   return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, false, !simulated);
 }
 
+export function applyPostSetStatusAbAttrs(attrType: { new(...args: any[]): PostSetStatusAbAttr },
+  pokemon: Pokemon, effect: StatusEffect, source?: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSetStatus(pokemon, source, passive, effect, args), args);
+}
+
 export function applyPreApplyBattlerTagAbAttrs(attrType: { new(...args: any[]): PreApplyBattlerTagAbAttr },
   pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PreApplyBattlerTagAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreApplyBattlerTag(pokemon, passive, tag, cancelled, args), args);
@@ -2945,8 +2968,8 @@ export function initAbilities() {
     new Ability(Abilities.EFFECT_SPORE, 3)
       .attr(EffectSporeAbAttr),
     new Ability(Abilities.SYNCHRONIZE, 3)
-      .attr(SyncEncounterNatureAbAttr)
-      .unimplemented(),
+      .attr(StatusSyncAbAttr)
+      .attr(SyncEncounterNatureAbAttr),
     new Ability(Abilities.CLEAR_BODY, 3)
       .attr(ProtectStatAbAttr)
       .ignorable(),

@@ -1156,7 +1156,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
           return false;
       }
       if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0))
-        return pokemon.trySetStatus(this.effect, true, this.cureTurn);
+        return pokemon.trySetStatus(this.effect, true, user, this.cureTurn);
     }
     return false;
   }
@@ -1197,7 +1197,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
       return false;
     }
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
-      var statusAfflictResult = target.trySetStatus(statusToApply, true);
+      var statusAfflictResult = target.trySetStatus(statusToApply, true, user);
       if (statusAfflictResult) {
         user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
         user.resetStatus();
