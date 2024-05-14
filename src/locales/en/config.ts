@@ -1,4 +1,5 @@
 import { ability } from "./ability";
+import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { fightUiHandler } from "./fight-ui-handler";
@@ -15,8 +16,9 @@ import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
 
 
-export const enConfig = {
+export const enConfig = {    
     ability: ability,
+    abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
     fightUiHandler: fightUiHandler,
