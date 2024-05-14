@@ -2631,8 +2631,8 @@ export class NoFusionAbilityAbAttr extends AbAttr {
 }
 
 export class IgnoreTypeImmunityAbAttr extends AbAttr {
-  defenderType: Type;
-  allowedMoveTypes: Type[];
+  private defenderType: Type;
+  private allowedMoveTypes: Type[];
 
   constructor(defenderType: Type, allowedMoveTypes: Type[]) {
     super(true);
@@ -2653,8 +2653,8 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
  * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
  */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
-  statusEffect: StatusEffect[];
-  defenderType: Type[];
+  private statusEffect: StatusEffect[];
+  private defenderType: Type[];
 
   constructor(statusEffect: StatusEffect[], defenderType: Type[]) {
     super(true);
