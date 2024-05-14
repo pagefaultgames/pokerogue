@@ -1373,16 +1373,16 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
 
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr { 
   //Attr doesn't force pokemon name on the message
-  private messageFunc: string;
+  private message: string;
 
-  constructor(messageFunc: string) {
+  constructor(message: string) {
     super(true);
 
-    this.messageFunc = messageFunc;
+    this.message = message;
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean { 
-    pokemon.scene.queueMessage(this.messageFunc);
+    pokemon.scene.queueMessage(this.message);
 
     return true;
   }
