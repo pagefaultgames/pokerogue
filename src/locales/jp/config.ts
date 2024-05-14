@@ -1,4 +1,5 @@
 import { ability } from "./ability";
+import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { fightUiHandler } from "./fight-ui-handler";
