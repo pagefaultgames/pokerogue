@@ -59,7 +59,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "officer": "Officer",
     "parasol_lady": "Parasol Lady",
     "pilot": "Pilot",
-    "pokefan": "Pokefan",
+    "pokefan": "Poké Fan",
     "preschooler": "Preschooler",
     "preschooler_female": "Preschooler",
     "psychic": "Psychic",
