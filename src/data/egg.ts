@@ -99,8 +99,8 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
   const timeDate = new Date(timestamp);
   const dayDate = new Date(Date.UTC(timeDate.getUTCFullYear(), timeDate.getUTCMonth(), timeDate.getUTCDate()));
   const dayTimestamp = timeDate.getTime(); // Timestamp of current week
-  const offset = Math.floor(Math.floor(dayTimestamp / 86400000)/legendarySpecies.length); // Cycle number
-  const index = Math.floor(dayTimestamp / 86400000)%legendarySpecies.length // Index within cycle
+  const offset = Math.floor(Math.floor(dayTimestamp / 86400000) / legendarySpecies.length); // Cycle number
+  const index = Math.floor(dayTimestamp / 86400000) % legendarySpecies.length // Index within cycle
 
   scene.executeWithSeedOffset(() => {
     ret = Phaser.Math.RND.shuffle(legendarySpecies)[index];
