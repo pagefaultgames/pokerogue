@@ -1915,8 +1915,15 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const ppMax = move.pp;
-    const ppUsed = user.moveset.find((m) => m.moveId === move.id).ppUsed;
-    const ppRemains = ppMax - ppUsed;
+    let ppUsed = user.moveset.find((m) => m.moveId === move.id).ppUsed;
+    
+    if(target.hasAbility(Abilities.PRESSURE)) {
+      ppUsed += 1;
+    }
+    
+    let ppRemains = ppMax - ppUsed;
+    if(ppRemains < 0) ppRemains = 0;
+    
     const power = args[0] as Utils.NumberHolder;
 
     switch (ppRemains) {
