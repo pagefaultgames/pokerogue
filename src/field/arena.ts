@@ -617,7 +617,7 @@ export class Arena {
       case Biome.CONSTRUCTION_SITE:
         return 1.222;
       case Biome.JUNGLE:
-        return 2.477;
+        return 0.000;
       case Biome.FAIRY_CAVE:
         return 4.542;
       case Biome.TEMPLE:
