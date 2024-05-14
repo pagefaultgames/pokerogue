@@ -100,7 +100,7 @@ export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedBut
         const nextKey = deepCopy(newBind);
         if (prevKey.key === nextKey.key) {
             // special case when back to back and not enough info to get back to previous button
-            const toRestore = getKeyAndSettingNameFromCurrentKeysWithAction(config, prevKey.from.action);
+            const toRestore = getKeyAndSettingNameFromCurrentKeysWithAction(config, prevKey.from.action, settingName.includes("ALT_"));
             config.custom[prevKey.key] = prevKey.from.action;
             config.icons[prevKey.key] = prevKey.from.icon;
 
