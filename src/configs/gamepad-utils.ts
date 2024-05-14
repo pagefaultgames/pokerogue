@@ -84,15 +84,17 @@ export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedBut
     if (newBind && previousBind.action === -1) {
         //special case when rebinding deleted key with already assigned key
         const toRestore = deepCopy(newBind);
+        const iconFromThePressedButton = config.ogIcons[prevKey.key];
         config.custom[newBind.key] = prevKey.from.action;
-        config.icons[prevKey.key] = newBind.icon;
+        config.icons[prevKey.key] = newBind.icon || iconFromThePressedButton;
         config.icons[newBind.key] = prevKey.from.icon;
 
         delete prevKey.from;
 
         const nextSettingName = getKeyAndSettingNameFromCurrentKeysWithAction(config, newBind.action, newBind.isAlt).settingName;
-        config.currentKeys[nextSettingName].from = toRestore;
+        config.currentKeys[nextSettingName].from = toRestore.action === -1 ? config.currentKeys[nextSettingName].from : toRestore;
         config.currentKeys[nextSettingName].isDeleted = true;
+        config.currentKeys[settingName].isDeleted = false;
         config.currentKeys[settingName].replacedBy = toRestore.key;
     } else if (!newBind) {
         assignNewKey(config, settingName, pressedButton, previousBind);
@@ -160,6 +162,8 @@ export function regenerateCustom(config): void {
             custom[latestReplacedBy] = action;
         } else if (!latestIsDeleted) {
             custom[key] = action;
+        } else if (latestIsDeleted) {
+            custom[key] = -1;
         }
     }
     config.custom = deepCopy(custom);

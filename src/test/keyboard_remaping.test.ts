@@ -590,4 +590,42 @@ describe('Test Keyboard', () => {
         expect(config.custom["KEY_D"]).toEqual(Button.RIGHT);
     })
 
+    it('by method: Delete 2 binds, than rebind one of them', () => {
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+        deleteBind(config, SettingInterfaceKeyboard.Alt_Button_Up);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(-1);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual(undefined);
+        expect(config.custom["KEY_Z"]).toEqual(-1);
+
+
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].key).toEqual("KEY_S");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].action).toEqual(Button.DOWN);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].icon).toEqual("T_S_Key_Dark.png");
+        expect(config.custom["KEY_S"]).toEqual(Button.DOWN);
+        deleteBind(config, SettingInterfaceKeyboard.Alt_Button_Down);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].key).toEqual("KEY_S");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].action).toEqual(-1);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].icon).toEqual(undefined);
+        expect(config.custom["KEY_S"]).toEqual(-1);
+
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.Z);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].key).toEqual("KEY_S");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].action).toEqual(-1);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].icon).toEqual(undefined);
+        expect(config.custom["KEY_S"]).toEqual(-1);
+
+    });
+
 });
