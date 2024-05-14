@@ -630,7 +630,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
       if (isHp) {
         value = value + this.level + 10;
-        if (this.hasAbility(Abilities.WONDER_GUARD, false, true))
+        if (this.hasAbility(Abilities.WONDER_GUARD, false, true) || this.species.speciesId == Species.SHEDINJA)
           value = 1;
         if (this.hp > value || this.hp === undefined)
           this.hp = value;
