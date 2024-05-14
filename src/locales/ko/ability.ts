@@ -479,7 +479,8 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "통찰",
-    description: "등장했을 때 상대의 지닌 물건을 통찰할 수 있다."
+    /* 효과 변경 */
+    description: "등장했을 때 상대의 특성을 통찰할 수 있다."
   },
   reckless: {
     name: "이판사판",

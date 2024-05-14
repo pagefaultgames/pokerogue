@@ -2920,7 +2920,8 @@ export const move: MoveTranslationEntries = {
   },
   zippyZap: {
     name: "파찌파찌액셀",
-    effect: "맹렬한 속도의 전격 공격. 반드시 선제공격할 수 있고 급소에 맞는다."
+    /* 임의번역 (렛츠고 신규 기술) */
+    effect: "맹렬한 속도의 전격 공격. 반드시 선제공격할 수 있고 자신의 회피율을 높인다."
   },
   splishySplash: {
     name: "참방참방서핑",
