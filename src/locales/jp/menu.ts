@@ -28,7 +28,7 @@ export const menu: SimpleTranslationEntries = {
     "passwordNotMatchingConfirmPassword": "Password must match confirm password",
     "confirmPassword": "Confirm Password",
     "registrationAgeWarning": "By registering, you confirm you are of 13 years of age or older.",
-    "backToLogin": "ログインへ もどる",
+    "backToLogin": "ログインへ",
     "failedToLoadSaveData": "Failed to load save data. Please reload the page.\nIf this continues, please contact the administrator.",
     "sessionSuccess": "Session loaded successfully.",
     "failedToLoadSession": "Your session data could not be loaded.\nIt may be corrupted.",
