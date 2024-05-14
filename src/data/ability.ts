@@ -1177,7 +1177,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
-      return attacker.trySetStatus(effect, true);
+      return attacker.trySetStatus(effect, true, pokemon);
     }
 
     return false;
@@ -2666,8 +2666,8 @@ export class NoFusionAbilityAbAttr extends AbAttr {
 }
 
 export class IgnoreTypeImmunityAbAttr extends AbAttr {
-  defenderType: Type;
-  allowedMoveTypes: Type[];
+  private defenderType: Type;
+  private allowedMoveTypes: Type[];
 
   constructor(defenderType: Type, allowedMoveTypes: Type[]) {
     super(true);
@@ -2680,6 +2680,30 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
       cancelled.value = true;
       return true;
     }
+    return false;
+  }
+}
+
+/**
+ * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
+ */
+export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
+  private statusEffect: StatusEffect[];
+  private defenderType: Type[];
+
+  constructor(statusEffect: StatusEffect[], defenderType: Type[]) {
+    super(true);
+
+    this.statusEffect = statusEffect;
+    this.defenderType = defenderType;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.statusEffect.includes(args[0] as StatusEffect) && this.defenderType.includes(args[1] as Type)) {
+      cancelled.value = true;
+      return true;
+    }
+
     return false;
   }
 }
@@ -3512,8 +3536,9 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .partial(),
-    new Ability(Abilities.CORROSION, 7)
-      .unimplemented(),
+    new Ability(Abilities.CORROSION, 7) // TODO: Test Corrosion against Magic Bounce once it is implemented
+      .attr(IgnoreTypeStatusEffectImmunityAbAttr, [StatusEffect.POISON, StatusEffect.TOXIC], [Type.STEEL, Type.POISON])
+      .partial(),
     new Ability(Abilities.COMATOSE, 7)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
