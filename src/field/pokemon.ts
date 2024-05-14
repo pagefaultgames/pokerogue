@@ -545,9 +545,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Returns the value of the specified stat. Depending on whether the pokemon has been summoned or not, it may use the base stats or the current stats.
-   * @param {Stat} stat Stat to get the value of. 
-   * @returns {integer} Returns the value of the stat. If the pokemon is already summoned, it uses those values, otherwise uses the base stats.
+   * Returns the value of the specified stat.
+   * @param {Stat} stat Stat to get the value of. {@link Stat}
+   * @returns The value of the stat. If the pokemon is already summoned, it uses those values, otherwise uses the base stats. {@link integer}
    */
   getStat(stat: Stat): integer {
     if (!this.summonData) {
