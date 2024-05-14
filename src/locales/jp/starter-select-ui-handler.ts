@@ -14,7 +14,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "eggMoves": 'タマゴわざ',
     "start": "はじめる",
     "addToParty": "Add to Party", 
-    "toggleIVs": "Toggle IVs",
+    "toggleIVs": "こたいち　ひょうじ",
     "manageMoves": "わざを　ならびかえ",
     "useCandies": "Use Candies",
     "selectMoveSwapOut": "Select a move to swap out.",
