@@ -7,9 +7,9 @@ export const pokemonStat: SimpleTranslationEntries = {
     "ATKshortened": "Atq",
     "DEF": "Défense",
     "DEFshortened": "Déf",
-    "SPATK": "Atq. Spé",
+    "SPATK": "Atq. Spé.",
     "SPATKshortened": "AtqSp",
-    "SPDEF": "Déf. Spé",
+    "SPDEF": "Déf. Spé.",
     "SPDEFshortened": "DéfSp",
     "SPD": "Vitesse",
     "SPDshortened": "Vit"
