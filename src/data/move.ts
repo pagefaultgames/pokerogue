@@ -3091,6 +3091,15 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
     super(tagType, false, true);
   }
 
+  /**
+   * Moves that reset the target's evasiveness and makes it vulnerable
+   * to types it is immune to.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args None
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
