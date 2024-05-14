@@ -635,6 +635,9 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 }
 
+  /**
+ * Applies Specific Type item boosts (e.g., Magnet)
+ */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   private moveType: Type;
   private boostMultiplier: number;
@@ -667,8 +670,15 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     return super.shouldApply(args) && args.length === 3 && typeof args[1] === 'number' && args[2] instanceof Utils.NumberHolder;
   }
 
+  /**
+ * @param {Array<any>} args Array 
+ *                          - Index 0: {Pokemon} Pokemon
+ *                          - Index 1: {number} Move type
+ *                          - Index 2: {Utils.NumberHolder} Move power
+ * @returns {boolean} Returns true if boosts have been applied to the move.
+ */
   apply(args: any[]): boolean {
-    if (args[1] === this.moveType) {
+    if (args[1] === this.moveType && (args[2] as Utils.NumberHolder).value >= 1) {
       (args[2] as Utils.NumberHolder).value = Math.floor((args[2] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
       return true;
     }
