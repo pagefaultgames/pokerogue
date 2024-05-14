@@ -16,7 +16,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "addToParty": "えらぶ", 
     "toggleIVs": "こたいちを　ひょうじ",
     "manageMoves": "わざを　ならびかえ",
-    "useCandies": "Use Candies",
+    "useCandies": "アメを　つかう",
     "selectMoveSwapOut": "Select a move to swap out.",
     "selectMoveSwapWith": "Select a move to swap with",
     "unlockPassive": "Unlock Passive",
