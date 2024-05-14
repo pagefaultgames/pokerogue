@@ -1917,10 +1917,6 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
     const ppMax = move.pp;
     let ppUsed = user.moveset.find((m) => m.moveId === move.id).ppUsed;
     
-    if(target.hasAbility(Abilities.PRESSURE)) {
-      ppUsed += 1;
-    }
-    
     let ppRemains = ppMax - ppUsed;
     if(ppRemains < 0) ppRemains = 0;
     
