@@ -116,13 +116,6 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
   return items[Math.floor(easedValue * items.length)];
 }
 
-export function getSunday(date: Date): Date {
-  const day = date.getDay();
-  const diff = date.getDate() - day;
-  const newDate = new Date(date.setDate(diff));
-  return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), newDate.getUTCDate()));
-}
-
 export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }

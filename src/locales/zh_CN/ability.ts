@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "察觉",
-    description: "出场时，可以察觉对手的持\n有物。",
+    description: "进入战斗时，神奇宝贝可以检查对方神奇宝贝的能力。",
   },
   reckless: {
     name: "舍身",

@@ -20,6 +20,7 @@ import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
+import { Ability } from "../data/ability.js";
 
 enum Page {
   PROFILE,
@@ -30,6 +31,18 @@ enum Page {
 export enum SummaryUiMode {
   DEFAULT,
   LEARN_MOVE
+}
+
+/** Holds all objects related to an ability for each iteration */
+interface abilityContainer {
+  /** An image displaying the summary label */
+  labelImage: Phaser.GameObjects.Image,
+  /** The ability object */
+  ability: Ability, 
+  /** The text object displaying the name of the ability */
+  nameText: Phaser.GameObjects.Text,
+  /** The text object displaying the description of the ability */ 
+  descriptionText: Phaser.GameObjects.Text,  
 }
 
 export default class SummaryUiHandler extends UiHandler {
@@ -54,6 +67,12 @@ export default class SummaryUiHandler extends UiHandler {
   private championRibbon: Phaser.GameObjects.Image;
   private statusContainer: Phaser.GameObjects.Container;
   private status: Phaser.GameObjects.Image;
+  /** The pixel button prompt indicating a passive is unlocked */
+  private abilityPrompt: Phaser.GameObjects.Image;
+  /** Object holding everything needed to display an ability */
+  private abilityContainer: abilityContainer;
+  /** Object holding everything needed to display a passive */
+  private passiveContainer: abilityContainer;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
   private moveDescriptionText: Phaser.GameObjects.Text;
@@ -441,6 +460,17 @@ export default class SummaryUiHandler extends UiHandler {
           this.showMoveSelect();
           success = true;
         }
+        // if we're on the PROFILE page and this pokemon has a passive unlocked..
+        else if (this.cursor === Page.PROFILE && this.pokemon.hasPassive()) {
+          // Since abilities are displayed by default, all we need to do is toggle visibility on all elements to show passives 
+          this.abilityContainer.nameText.setVisible(!this.abilityContainer.descriptionText.visible);
+          this.abilityContainer.descriptionText.setVisible(!this.abilityContainer.descriptionText.visible);
+          this.abilityContainer.labelImage.setVisible(!this.abilityContainer.labelImage.visible);
+
+          this.passiveContainer.nameText.setVisible(!this.passiveContainer.descriptionText.visible);
+          this.passiveContainer.descriptionText.setVisible(!this.passiveContainer.descriptionText.visible);
+          this.passiveContainer.labelImage.setVisible(!this.passiveContainer.labelImage.visible);
+        }
       } else if (button === Button.CANCEL) {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
           this.hideMoveSelect();
@@ -686,39 +716,74 @@ export default class SummaryUiHandler extends UiHandler {
           profileContainer.add(luckText);
         }
 
-        const ability = this.pokemon.getAbility(true);
+        this.abilityContainer = {
+          labelImage: this.scene.add.image(0, 0, 'summary_profile_ability'),
+          ability: this.pokemon.getAbility(true), 
+          nameText: null, 
+          descriptionText: null};
+        
+        const allAbilityInfo = [this.abilityContainer]; // Creates an array to iterate through
+        // Only add to the array and set up displaying a passive if it's unlocked
+        if (this.pokemon.hasPassive()) {
+          this.passiveContainer = {
+            labelImage: this.scene.add.image(0, 0, 'summary_profile_passive'),
+            ability: this.pokemon.getPassiveAbility(), 
+            nameText: null, 
+            descriptionText: null};          
+          allAbilityInfo.push(this.passiveContainer);
 
-        const abilityNameText = addTextObject(this.scene, 7, 66, ability.name, TextStyle.SUMMARY_ALT);
-        abilityNameText.setOrigin(0, 1);
-        profileContainer.add(abilityNameText);
-
-        const abilityDescriptionText = addTextObject(this.scene, 7, 69, ability.description, TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 } });
-        abilityDescriptionText.setOrigin(0, 0);
-        profileContainer.add(abilityDescriptionText);
-
-        const abilityDescriptionTextMaskRect = this.scene.make.graphics({});
-        abilityDescriptionTextMaskRect.setScale(6);
-        abilityDescriptionTextMaskRect.fillStyle(0xFFFFFF);
-        abilityDescriptionTextMaskRect.beginPath();
-        abilityDescriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
-
-        const abilityDescriptionTextMask = abilityDescriptionTextMaskRect.createGeometryMask();
-
-        abilityDescriptionText.setMask(abilityDescriptionTextMask);
-
-        const abilityDescriptionLineCount = Math.floor(abilityDescriptionText.displayHeight / 14.83);
-
-        if (abilityDescriptionLineCount > 2) {
-          abilityDescriptionText.setY(69);
-          this.descriptionScrollTween = this.scene.tweens.add({
-            targets: abilityDescriptionText,
-            delay: Utils.fixedInt(2000),
-            loop: -1,
-            hold: Utils.fixedInt(2000),
-            duration: Utils.fixedInt((abilityDescriptionLineCount - 2) * 2000),
-            y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`
-          });
+          // Sets up the pixel button prompt image
+          this.abilityPrompt = this.scene.add.image(0, 0, !this.scene.gamepadSupport ? 'summary_profile_prompt_z' : 'summary_profile_prompt_a');
+          this.abilityPrompt.setPosition(8, 43);
+          this.abilityPrompt.setVisible(true);
+          this.abilityPrompt.setOrigin(0, 0);
+          profileContainer.add(this.abilityPrompt);
         }
+
+        allAbilityInfo.forEach(abilityInfo => {          
+          abilityInfo.labelImage.setPosition(17, 43);
+          abilityInfo.labelImage.setVisible(true);
+          abilityInfo.labelImage.setOrigin(0, 0);
+          profileContainer.add(abilityInfo.labelImage);
+
+          abilityInfo.nameText = addTextObject(this.scene, 7, 66, abilityInfo.ability.name, TextStyle.SUMMARY_ALT);
+          abilityInfo.nameText.setOrigin(0, 1);
+          profileContainer.add(abilityInfo.nameText);
+
+          abilityInfo.descriptionText = addTextObject(this.scene, 7, 69, abilityInfo.ability.description, TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 } });
+          abilityInfo.descriptionText.setOrigin(0, 0);
+          profileContainer.add(abilityInfo.descriptionText);
+
+          // Sets up the mask that hides the description text to give an illusion of scrolling
+          const descriptionTextMaskRect = this.scene.make.graphics({});
+          descriptionTextMaskRect.setScale(6);
+          descriptionTextMaskRect.fillStyle(0xFFFFFF);
+          descriptionTextMaskRect.beginPath();
+          descriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
+
+          const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
+
+          abilityInfo.descriptionText.setMask(abilityDescriptionTextMask);
+
+          const abilityDescriptionLineCount = Math.floor(abilityInfo.descriptionText.displayHeight / 14.83);
+
+          // Animates the description text moving upwards
+          if (abilityDescriptionLineCount > 2) {
+            abilityInfo.descriptionText.setY(69);
+            this.descriptionScrollTween = this.scene.tweens.add({
+              targets: abilityInfo.descriptionText,
+              delay: Utils.fixedInt(2000),
+              loop: -1,
+              hold: Utils.fixedInt(2000),
+              duration: Utils.fixedInt((abilityDescriptionLineCount - 2) * 2000),
+              y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`
+            });
+          }
+        });
+        // Turn off visibility of passive info by default
+        this.passiveContainer?.labelImage.setVisible(false);
+        this.passiveContainer?.nameText.setVisible(false);
+        this.passiveContainer?.descriptionText.setVisible(false);
 
         let memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.getNature()]), TextStyle.SUMMARY_RED)}${getBBCodeFrag(' nature,', TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW_ALT)}`;
        

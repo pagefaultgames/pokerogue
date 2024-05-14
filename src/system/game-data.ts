@@ -4,6 +4,7 @@ import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutio
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
+import * as Overrides from '../overrides';
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
@@ -250,24 +251,28 @@ export class GameData {
     this.initStarterData();
   }
 
+  public getSystemSaveData(): SystemSaveData {
+    return {
+      trainerId: this.trainerId,
+      secretId: this.secretId,
+      gender: this.gender,
+      dexData: this.dexData,
+      starterData: this.starterData,
+      gameStats: this.gameStats,
+      unlocks: this.unlocks,
+      achvUnlocks: this.achvUnlocks,
+      voucherUnlocks: this.voucherUnlocks,
+      voucherCounts: this.voucherCounts,
+      eggs: this.eggs.map(e => new EggData(e)),
+      gameVersion: this.scene.game.config.gameVersion,
+      timestamp: new Date().getTime()
+    };
+  }
+
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();
-      const data: SystemSaveData = {
-        trainerId: this.trainerId,
-        secretId: this.secretId,
-        gender: this.gender,
-        dexData: this.dexData,
-        starterData: this.starterData,
-        gameStats: this.gameStats,
-        unlocks: this.unlocks,
-        achvUnlocks: this.achvUnlocks,
-        voucherUnlocks: this.voucherUnlocks,
-        voucherCounts: this.voucherCounts,
-        eggs: this.eggs.map(e => new EggData(e)),
-        gameVersion: this.scene.game.config.gameVersion,
-        timestamp: new Date().getTime()
-      };
+      const data = this.getSystemSaveData();
 
       const maxIntAttrValue = Math.pow(2, 31);
       const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
@@ -651,6 +656,9 @@ export class GameData {
           Object.keys(scene.pokeballCounts).forEach((key: string) => {
             scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
           });
+          if (Overrides.POKEBALL_OVERRIDE.active) {
+            scene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
           scene.money = sessionData.money || 0;
           scene.updateMoneyText();
@@ -751,6 +759,36 @@ export class GameData {
     });
   }
 
+  /* Defines a localStorage item 'daily' to check on clears, offline implementation of savedata/newclear API
+  If a GameModes clear other than Daily is checked, newClear = true as usual
+  If a Daily mode is cleared, checks if it was already cleared before, based on seed, and returns true only to new daily clear runs */
+  offlineNewClear(scene: BattleScene): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const sessionData = this.getSessionSaveData(scene);
+      const seed = sessionData.seed;
+      let daily: string[] = [];
+
+      if (sessionData.gameMode == GameModes.DAILY) {
+        if (localStorage.hasOwnProperty('daily')) {
+          daily = JSON.parse(atob(localStorage.getItem('daily')));
+          if (daily.includes(seed)) {
+            return resolve(false);
+          } else {
+            daily.push(seed);
+            localStorage.setItem('daily', btoa(JSON.stringify(daily)));
+            return resolve(true);
+          }
+        } else {
+          daily.push(seed);
+          localStorage.setItem('daily', btoa(JSON.stringify(daily)));
+          return resolve(true);
+        }
+      } else {
+        return resolve(true);
+      }
+    });
+  }
+
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
@@ -815,6 +853,59 @@ export class GameData {
 
       return v;
     }) as SessionSaveData;
+  }
+
+  saveAll(scene: BattleScene, skipVerification?: boolean): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
+        if (success !== null && !success)
+          return resolve(false);
+        this.scene.ui.savingIcon.show();
+        const data = this.getSystemSaveData();
+        const sessionData = this.getSessionSaveData(scene);
+
+        const maxIntAttrValue = Math.pow(2, 31);
+        const systemData = this.getSystemSaveData();
+
+        const request = {
+          system: systemData,
+          session: sessionData,
+          sessionSlotId: scene.sessionSlotId
+        };
+
+        if (!bypassLogin) {
+          Utils.apiPost('savedata/updateall', JSON.stringify(request, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
+            .then(response => response.text())
+            .then(error => {
+              this.scene.ui.savingIcon.hide();
+              if (error) {
+                if (error.startsWith('client version out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                } else if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                }
+                console.error(error);
+                return resolve(false);
+              }
+              resolve(true);
+            });
+        } else {
+          localStorage.setItem('data_bak', localStorage.getItem('data'));
+
+          localStorage.setItem('data', btoa(JSON.stringify(systemData, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
+
+          localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}`, btoa(JSON.stringify(sessionData)));
+
+          console.debug('Session data saved');
+
+          this.scene.ui.savingIcon.hide();
+
+          resolve(true);
+        }
+      });
+    });
   }
 
   public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
