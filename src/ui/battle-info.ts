@@ -274,6 +274,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.ownedIcon.setTint(0x808080);
 
       if(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 && pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
+        if (!dexEntry.caughtAttr) {
+          this.championRibbon.setPositionRelative(this.nameText, 0, 11.75);
+        }
         this.championRibbon.setVisible(true);
       }
 
