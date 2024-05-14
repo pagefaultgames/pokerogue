@@ -819,7 +819,7 @@ export class ContactPoisonProtectedTag extends ProtectedTag {
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
-        attacker.trySetStatus(StatusEffect.POISON, true);
+        attacker.trySetStatus(StatusEffect.POISON, true, pokemon);
       }
     }
 
