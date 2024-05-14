@@ -17,7 +17,7 @@ import { tutorial } from "./tutorial";
 
 export const jpConfig = {
     ability: ability,
-    abilityTriggers: SimpleTranslationEntries,
+    abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
     fightUiHandler: fightUiHandler,
