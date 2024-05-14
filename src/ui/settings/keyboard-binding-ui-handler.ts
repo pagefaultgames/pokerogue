@@ -18,11 +18,11 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         const key = event.keyCode;
         // // Check conditions before processing the button press.
         if (!this.listening || this.buttonPressed !== null) return;
-        this.buttonPressed = key;
         const activeConfig = this.scene.inputController.getActiveKeyboardConfig();
         const _key = getKeyFromMapping(activeConfig, key);
         const buttonIcon = activeConfig.ogIcons[_key];
         if (!buttonIcon) return;
+        this.buttonPressed = key;
         const assignedButtonIcon = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, this.target)?.icon;
         this.onInputDown(buttonIcon, assignedButtonIcon, 'keyboard');
     }

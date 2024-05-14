@@ -18,12 +18,12 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
         const blacklist = [12, 13, 14, 15]; // d-pad buttons are blacklisted.
         // Check conditions before processing the button press.
         if (!this.listening || pad.id !== this.scene.inputController?.chosenGamepad || blacklist.includes(button.index) || this.buttonPressed !== null) return;
-        this.buttonPressed = button.index;
         const activeConfig = this.scene.inputController.getActiveConfig();
         const type = activeConfig.padType
-        const key = getKeyFromMapping(activeConfig, this.buttonPressed);
+        const key = getKeyFromMapping(activeConfig, button.index);
         const buttonIcon = activeConfig.ogIcons[key];
         if (!buttonIcon) return;
+        this.buttonPressed = button.index;
         const assignedButtonIcon = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, this.target)?.icon;
         this.onInputDown(buttonIcon, assignedButtonIcon, type);
     }
