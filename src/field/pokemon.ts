@@ -2039,26 +2039,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case StatusEffect.TOXIC:
         // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
         let poisonImmunity = types.map(defType => {
-          const cancelImmunity = new Utils.BooleanHolder(false);
-
           // Check if the Pokemon is not immune to Poison/Toxic
           if (defType !== Type.POISON && defType !== Type.STEEL)
             return false;
 
           // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
+          const cancelImmunity = new Utils.BooleanHolder(false);
           if (sourcePokemon) {
             applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, sourcePokemon, cancelImmunity, effect, defType);
             if (cancelImmunity.value)
               return false;
-            else
-              return true;
           }
-          else {
-            return true;
-          }
+
+          return true;
         })
 
-        if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL)){
+        if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL)) {
           if (poisonImmunity.includes(true))
             return false;
         }
@@ -2090,7 +2086,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null, sourcePokemon: Pokemon = null): boolean { 
+  trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon = null, cureTurn: integer = 0, sourceText: string = null): boolean { 
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon))
       return false;
 
