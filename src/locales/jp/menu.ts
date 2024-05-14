@@ -38,7 +38,7 @@ export const menu: SimpleTranslationEntries = {
     "dailyRankings": "ほんじつのランキング",
     "weeklyRankings": "しゅうのランキング",
     "noRankings": "ランキングなし",
-    "loading": "よみこみ　ちゅう…",
+    "loading": "よみこみちゅう…",
     "playersOnline": "オンラインのプレイヤー",
     "empty":"なし",
     "yes":"はい",
