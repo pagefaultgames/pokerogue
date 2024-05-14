@@ -1,11 +1,13 @@
+import {Button} from "./enums/buttons";
+
 export const keys = new Map();
 export const keysDown = new Map();
 let lastTouchedId;
 
-export function initTouchControls(buttonMap) {
+export function initTouchControls(events) {
   for (const button of document.querySelectorAll('[data-key]')) {
     // @ts-ignore
-    bindKey(button, button.dataset.key, buttonMap);
+    bindKey(button, button.dataset.key, events);
   }
 }
 
@@ -27,32 +29,25 @@ export function isMobile() {
  *
  * @param {string} eventType Type of the keyboard event
  * @param {string} button Button to simulate
- * @param {object} buttonMap Map of buttons to key objects
  */
-function simulateKeyboardEvent(eventType, button, buttonMap) {
-  const key = buttonMap[button];
+function simulateKeyboardEvent(eventType, key, events) {
+  if (!Button.hasOwnProperty(key)) return;
+  const button = Button[key];
   
   switch (eventType) {
     case 'keydown':
-      key.onDown({});
+        events.emit('input_down', {
+            controller_type: 'touch',
+            button: button,
+        });
       break;
     case 'keyup':
-      key.onUp({});
+        events.emit('input_up', {
+            controller_type: 'touch',
+            button: button,
+        });
       break;
   }
-}
-
-/**
- * Simulate a keyboard input from 'keydown' to 'keyup'
- *
- * @param {string} key Key to simulate
- * @param {object} buttonMap Map of buttons to key objects
- */
-function simulateKeyboardInput(key, buttonMap) {
-  simulateKeyboardEvent('keydown', key, buttonMap);
-  window.setTimeout(() => {
-    simulateKeyboardEvent('keyup', key, buttonMap);
-  }, 100);
 }
 
 /**
@@ -62,12 +57,12 @@ function simulateKeyboardInput(key, buttonMap) {
  * @param {string} key Key to simulate
  * @param {object} buttonMap Map of buttons to key objects
  */
-function bindKey(node, key, buttonMap) {
+function bindKey(node, key, events) {
   keys.set(node.id, key);
 
   node.addEventListener('touchstart', event => {
     event.preventDefault();
-    simulateKeyboardEvent('keydown', key, buttonMap);
+    simulateKeyboardEvent('keydown', key, events);
     keysDown.set(event.target.id, node.id);
     node.classList.add('active');
   });
@@ -78,7 +73,7 @@ function bindKey(node, key, buttonMap) {
     const pressedKey = keysDown.get(event.target.id);
     if (pressedKey && keys.has(pressedKey)) {
       const key = keys.get(pressedKey);
-      simulateKeyboardEvent('keyup', key, buttonMap);
+      simulateKeyboardEvent('keyup', key, events);
     }
 
     keysDown.delete(event.target.id);
@@ -86,30 +81,6 @@ function bindKey(node, key, buttonMap) {
 
     if (lastTouchedId) {
       document.getElementById(lastTouchedId).classList.remove('active');
-    }
-  });
-
-  // Inspired by https://github.com/pulsejet/mkxp-web/blob/262a2254b684567311c9f0e135ee29f6e8c3613e/extra/js/dpad.js
-  node.addEventListener('touchmove', event => {
-    const { target, clientX, clientY } = event.changedTouches[0];
-    const origTargetId = keysDown.get(target.id);
-    const nextTargetId = document.elementFromPoint(clientX, clientY).id;
-    if (origTargetId === nextTargetId)
-      return;
-
-    if (origTargetId) {
-      const key = keys.get(origTargetId);
-      simulateKeyboardEvent('keyup', key, buttonMap);
-      keysDown.delete(target.id);
-      document.getElementById(origTargetId).classList.remove('active');
-    }
-
-    if (keys.has(nextTargetId)) {
-      const key = keys.get(nextTargetId);
-      simulateKeyboardEvent('keydown', key, buttonMap);
-      keysDown.set(target.id, nextTargetId);
-      lastTouchedId = nextTargetId;
-      document.getElementById(nextTargetId).classList.add('active');
     }
   });
 }

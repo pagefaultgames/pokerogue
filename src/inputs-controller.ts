@@ -164,6 +164,7 @@ export class InputsController {
             this.scene.input.keyboard.on('keydown', this.keyboardKeyDown, this);
             this.scene.input.keyboard.on('keyup', this.keyboardKeyUp, this);
         }
+        initTouchControls(this.events);
         // Keyboard
         // this.setupKeyboardControls();
     }
