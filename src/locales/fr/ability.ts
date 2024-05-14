@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "Fouille",
-    description: "Permet de connaitre l’objet tenu par l’adversaire quand le combat commence.",
+    description: "Lorsqu'il entre en combat, le Pokémon peut vérifier la capacité d'un Pokémon adverse.",
   },
   reckless: {
     name: "Téméraire",

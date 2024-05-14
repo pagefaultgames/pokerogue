@@ -1,34 +1,34 @@
-import BattleScene, { starterColors } from "../battle-scene";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters, starterPassiveAbilities, getStarterValueFriendshipCap } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
-import { Mode } from "./ui";
-import MessageUiHandler from "./message-ui-handler";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { allAbilities } from "../data/ability";
-import { GameModes, gameModes } from "../game-mode";
-import { GrowthRate, getGrowthRateColor } from "../data/exp";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
-import * as Utils from "../utils";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { StatsContainer } from "./stats-container";
-import { addWindow } from "./ui-theme";
-import { Nature, getNatureName } from "../data/nature";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { pokemonFormChanges } from "../data/pokemon-forms";
-import { Tutorial, handleTutorial } from "../tutorial";
-import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import { allMoves } from "../data/move";
-import { Type } from "../data/type";
-import { Moves } from "../data/enums/moves";
-import { speciesEggMoves } from "../data/egg-moves";
-import { TitlePhase } from "../phases";
-import { argbFromRgba } from "@material/material-color-utilities";
-import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
+import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import {Button} from "../enums/buttons";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import BattleScene, { starterColors } from "../battle-scene";
+import { allAbilities } from "../data/ability";
+import { speciesEggMoves } from "../data/egg-moves";
+import { Moves } from "../data/enums/moves";
+import { Species } from "../data/enums/species";
+import { GrowthRate, getGrowthRateColor } from "../data/exp";
+import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { allMoves } from "../data/move";
+import { Nature, getNatureName } from "../data/nature";
+import { pokemonFormChanges } from "../data/pokemon-forms";
+import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import { Type } from "../data/type";
+import { Button } from "../enums/buttons";
+import { GameModes, gameModes } from "../game-mode";
+import { TitlePhase } from "../phases";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { Tutorial, handleTutorial } from "../tutorial";
+import * as Utils from "../utils";
+import { OptionSelectItem } from "./abstact-option-select-ui-handler";
+import MessageUiHandler from "./message-ui-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import { StatsContainer } from "./stats-container";
+import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -241,7 +241,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
 
-    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, 'Uncaught', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:uncaught"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
@@ -357,6 +357,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         icon.setScale(0.5);
         icon.setOrigin(0, 0);
         icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+        this.checkIconId(icon, species, defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
         icon.setTint(0);
         this.starterSelectGenIconContainers[g].add(icon);
         this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
@@ -551,7 +552,35 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
-    this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: '42px' });
+
+
+    let instructionTextSize = '42px';
+    // The font size should be set per language
+    const currentLanguage = i18next.language;
+    switch (currentLanguage) {
+      case 'en':
+        instructionTextSize = '42px';
+        break;
+      case 'es':
+        instructionTextSize = '35px';
+        break;
+      case 'fr':
+        instructionTextSize = '42px';
+        break;
+      case 'de':
+        instructionTextSize = '35px';
+        break;
+      case 'it':
+        instructionTextSize = '38px';
+        break;
+      case 'zh_CN':
+        instructionTextSize = '42px';
+        break;
+
+    }
+
+
+    this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: instructionTextSize });
     this.starterSelectContainer.add(this.instructionsText);
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -764,6 +793,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
                   this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
                   this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+                  this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
                   this.starterGens.push(this.getGenCursorWithScroll());
                   this.starterCursors.push(this.cursor);
                   this.starterAttr.push(this.dexAttrCursor);
@@ -1137,6 +1167,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       cycleInstructionLines[0] += ' | ' + cycleInstructionLines.splice(1, 1);
       if (cycleInstructionLines.length > 2)
         cycleInstructionLines[1] += ' | ' + cycleInstructionLines.splice(2, 1);
+      if (cycleInstructionLines.length > 2)
+        cycleInstructionLines[2] += ' | ' + cycleInstructionLines.splice(3, 1);
     }
 
     for (let cil of cycleInstructionLines)
@@ -1276,6 +1308,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
       const lastSpeciesIcon = (this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(this.genSpecies[this.lastSpecies.generation - 1].indexOf(this.lastSpecies)) as Phaser.GameObjects.Sprite);
       lastSpeciesIcon.setTexture(this.lastSpecies.getIconAtlasKey(props.formIndex, props.shiny, props.variant), this.lastSpecies.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+      this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
     }
 
@@ -1301,7 +1334,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           growthReadable = i18next.t("growth:"+ growthAux as any)
         }
         this.pokemonGrowthRateText.setText(growthReadable);
-        
+
         this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
@@ -1518,12 +1551,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite)
           .setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-        // Temporary fix to show pokemon's default icon if variant icon doesn't exist
-        if ((this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).frame.name != species.getIconId(female, formIndex, shiny, variant)) {
-          console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
-          (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).setTexture(species.getIconAtlasKey(formIndex, false, variant));
-          (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).setFrame(species.getIconId(female, formIndex, false, variant));
-        }
+        this.checkIconId((this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite), species, female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
@@ -1550,7 +1578,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonAbilityText.setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
 
         const passiveAttr = this.scene.gameData.starterData[species.speciesId].passiveAttr;
-        this.pokemonPassiveText.setText(passiveAttr & PassiveAttr.UNLOCKED ? passiveAttr & PassiveAttr.ENABLED ? allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name : 'Disabled' : 'Locked');
+        this.pokemonPassiveText.setText(passiveAttr & PassiveAttr.UNLOCKED ? passiveAttr & PassiveAttr.ENABLED ? allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name : i18next.t("starterSelectUiHandler:disabled") : i18next.t("starterSelectUiHandler:locked"));
         this.pokemonPassiveText.setColor(this.getTextColor(passiveAttr === (PassiveAttr.UNLOCKED | PassiveAttr.ENABLED) ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY));
         this.pokemonPassiveText.setShadowColor(this.getTextColor(passiveAttr === (PassiveAttr.UNLOCKED | PassiveAttr.ENABLED) ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY, true));
 
@@ -1588,7 +1616,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;        
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
-        
+
         const formText = species?.forms[formIndex]?.formKey.split('-');
         for (let i = 0; i < formText?.length; i++)
           formText[i] = formText[i].charAt(0).toUpperCase() + formText[i].substring(1);
@@ -1796,5 +1824,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (this.statsMode)
       this.toggleStatsMode(false);
+  }
+
+  checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female, formIndex, shiny, variant) {
+    if (icon.frame.name != species.getIconId(female, formIndex, shiny, variant)) {
+      console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
+      icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
+      icon.setFrame(species.getIconId(female, formIndex, false, variant));
+    }
   }
 }
