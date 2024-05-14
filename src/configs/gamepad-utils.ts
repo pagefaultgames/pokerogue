@@ -130,18 +130,14 @@ export function reloadCurrentKeys(config): void {
         const settingName = config.setting[key];
         const action = config.custom[key];
         const icon = config.icons[key];
-        if (currentKeys[settingName]?.latestReplacedBy) {
-            console.log('');
-        }
         if (!currentKeys[settingName]) currentKeys[settingName] = {};
         currentKeys[settingName].key = key;
         currentKeys[settingName].isAlt = settingName.includes("ALT_");
         const previousAction = config.custom[currentKeys[settingName].replacedBy]
-        if (action === -1 && previousAction !== undefined) {
+        if (action === -1 && previousAction !== undefined && !currentKeys[settingName].isDeleted) {
             currentKeys[settingName].action = previousAction;
             currentKeys[settingName].icon = icon;
             currentKeys[settingName].latestReplacedBy = config.currentKeys[settingName].replacedBy
-            delete currentKeys[settingName].replacedBy;
         } else if (currentKeys[settingName].isDeleted) {
             currentKeys[settingName].action = -1;
             currentKeys[settingName].icon = undefined;
@@ -173,7 +169,9 @@ export function deleteBind(config, settingName): void {
     const { key } = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
     const prev = deepCopy(config.currentKeys[settingName]);
     delete config.currentKeys[settingName].icon
+    const actualKey = prev.replacedBy || key;
     config.currentKeys[settingName].from = prev;
-    config.custom[key] = -1;
+    config.custom[actualKey] = -1;
+    config.currentKeys[settingName].isDeleted = true;
     reloadCurrentKeys(config);
 }

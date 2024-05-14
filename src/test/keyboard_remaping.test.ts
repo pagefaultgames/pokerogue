@@ -302,6 +302,7 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
         deleteBind(config, settingNameA)
 
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
@@ -326,6 +327,7 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
         expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+        expect(config.custom["KEY_B"]).toEqual(-1);
 
         swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.B);
 
@@ -341,6 +343,7 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(-1);
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual(undefined);
         expect(config.custom["KEY_Z"]).toEqual(-1);
+        expect(config.custom["KEY_B"]).toEqual(-1);
 
         swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.B);
 
@@ -348,6 +351,7 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_B_Key_Dark.png");
         expect(config.custom["KEY_B"]).toEqual(Button.UP);
+        expect(config.custom["KEY_Z"]).toEqual(-1);
     })
 
 
@@ -390,6 +394,7 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
         expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+        expect(config.custom["KEY_T"]).toEqual(-1);
 
         swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.T);
 
