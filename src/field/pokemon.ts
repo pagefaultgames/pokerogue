@@ -1366,7 +1366,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           
           if (!result) {
             if (!typeMultiplier.value)
-              result = move.id == Moves.SHEER_COLD ? HitResult.FAIL : HitResult.NO_EFFECT;
+              result = move.id == Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
             else {
               const oneHitKo = new Utils.BooleanHolder(false);
               applyMoveAttrs(OneHitKOAttr, source, this, move, oneHitKo);
@@ -1434,7 +1434,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               case HitResult.NO_EFFECT:
                 this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
                 break;
-              case HitResult.FAIL:
+              case HitResult.IMMUNE:
                 this.scene.queueMessage(`${this.name} is unaffected!`);
                 break;
               case HitResult.ONE_HIT_KO:  
@@ -3027,7 +3027,8 @@ export enum HitResult {
   HEAL,
   FAIL,
   MISS,
-  OTHER
+  OTHER,
+  IMMUNE
 }
 
 export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;
