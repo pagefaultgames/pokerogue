@@ -64,30 +64,42 @@ export function getKeyAndActionFromCurrentKeysWithPressedButton(config, pressedB
     return getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
 }
 
+export function assignNewKey(config: InterfaceConfig, settingName, pressedButton, previousBind): void {
+    const key = getKeyFromMapping(config, pressedButton);
+    const icon = config.ogIcons[key];
+    config.icons[previousBind.key] = icon;
+    config.currentKeys[settingName].icon = icon;
+    config.custom[key] = previousBind.action;
+}
+
 export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedButton): void {
     const previousBind = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
     const prevKey = deepCopy(previousBind);
     const newBind = getKeyAndActionFromCurrentKeysWithPressedButton(config, pressedButton);
-    const nextKey = deepCopy(newBind);
-    if (prevKey.key === nextKey.key) {
-        // special case when back to back and not enough info to get back to previous button
-        const toRestore = getKeyAndSettingNameFromCurrentKeysWithAction(config, prevKey.from.action);
-        config.custom[prevKey.key] = prevKey.from.action;
-        config.icons[prevKey.key] = prevKey.from.icon;
-
-        config.custom[toRestore.key] = prevKey.action;
-        config.icons[toRestore.key] = prevKey.icon;
-
-        delete config.currentKeys[settingName].from;
-        delete config.currentKeys[toRestore.settingName].from;
+    if (!newBind) {
+        assignNewKey(config, settingName, pressedButton, previousBind);
     } else {
-        config.custom[previousBind.key] = newBind.action;
-        config.custom[newBind.key] = previousBind.action;
-        config.icons[previousBind.key] = newBind.icon;
-        config.icons[newBind.key] = previousBind.icon;
-        const nextSettingName = getKeyAndSettingNameFromCurrentKeysWithAction(config, newBind.action).settingName;
-        config.currentKeys[settingName].from = prevKey;
-        config.currentKeys[nextSettingName].from = nextKey;
+        const nextKey = deepCopy(newBind);
+        if (prevKey.key === nextKey.key) {
+            // special case when back to back and not enough info to get back to previous button
+            const toRestore = getKeyAndSettingNameFromCurrentKeysWithAction(config, prevKey.from.action);
+            config.custom[prevKey.key] = prevKey.from.action;
+            config.icons[prevKey.key] = prevKey.from.icon;
+
+            config.custom[toRestore.key] = prevKey.action;
+            config.icons[toRestore.key] = prevKey.icon;
+
+            delete config.currentKeys[settingName].from;
+            delete config.currentKeys[toRestore.settingName].from;
+        } else {
+            config.custom[previousBind.key] = newBind.action;
+            config.custom[newBind.key] = previousBind.action;
+            config.icons[previousBind.key] = newBind.icon;
+            config.icons[newBind.key] = previousBind.icon;
+            const nextSettingName = getKeyAndSettingNameFromCurrentKeysWithAction(config, newBind.action).settingName;
+            config.currentKeys[settingName].from = prevKey;
+            config.currentKeys[nextSettingName].from = nextKey;
+        }
     }
     reloadCurrentKeys(config);
 }
@@ -102,7 +114,7 @@ export function reloadCurrentKeys(config): void {
         const icon = config.icons[key];
         if (!currentKeys[settingName]) currentKeys[settingName] = {};
         currentKeys[settingName].key = key;
-        currentKeys[settingName].action = action;
+        currentKeys[settingName].action = action === undefined ? currentKeys[settingName].action : action;
         currentKeys[settingName].icon = icon;
     }
     config.currentKeys = deepCopy(currentKeys);
@@ -115,4 +127,10 @@ export function regenerateCustom(config): void {
         custom[key] = action;
     }
     config.custom = deepCopy(custom);
+}
+
+export function deleteBind(config, settingName): void {
+    const { key } = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
+    delete config.currentKeys[settingName].icon
+    config.custom[key] = undefined
 }

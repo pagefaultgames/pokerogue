@@ -36,6 +36,7 @@ export interface InterfaceConfig {
     padID: string;
     padType: string;
     gamepadMapping: GamepadMapping;
+    ogIcons: IconsMapping;
     icons: IconsMapping;
     setting: SettingMapping;
     default: MappingLayout;

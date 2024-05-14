@@ -2,9 +2,10 @@ import BattleScene from "../../battle-scene";
 import {Mode} from "../ui";
 import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
 import {SettingKeyboard, settingKeyboardDefaults, settingKeyboardOptions} from "#app/system/settings-keyboard";
-import {truncateString} from "#app/utils";
+import {reverseValueToKeySetting, truncateString} from "#app/utils";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {InterfaceConfig} from "#app/inputs-controller";
+import {deleteBind} from "#app/configs/gamepad-utils";
 
 
 export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandler {
@@ -18,6 +19,20 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         this.commonSettingsCount = 1;
         this.textureOverride = 'keyboard';
         this.localStoragePropertyName = 'settingsKeyboard';
+
+        const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
+        deleteEvent.on('up', this.onDeleteDown, this);
+    }
+
+    onDeleteDown(): void {
+        const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
+        console.log('delete pressed', cursor, this.settingLabels[cursor].text);
+        const selection = this.settingLabels[cursor].text;
+        const key = reverseValueToKeySetting(selection);
+        const setting = SettingKeyboard[key];
+        deleteBind(this.getActiveConfig(), setting);
+        need to handle the "no icon"
+        console.log('setting:', setting);
     }
 
     getActiveConfig(): InterfaceConfig {

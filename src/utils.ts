@@ -353,3 +353,9 @@ export function truncateString(str: String, maxLength: number = 10) {
 export function deepCopy(values: object): object {
     return JSON.parse(JSON.stringify(values));
 }
+
+export function reverseValueToKeySetting(input) {
+    const words = input.split(' ');
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    return capitalizedWords.join('_');
+}
