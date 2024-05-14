@@ -50,12 +50,12 @@ describe('Test Keyboard', () => {
     });
     it('Check key for currenly Assigned to setting name', () => {
         const settingName = SettingInterfaceKeyboard.Button_Left;
-        const { key } = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
+        const {key} = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
         expect(key).toEqual('KEY_ARROW_LEFT');
     });
     it('Check key for currenly Assigned to setting name alt', () => {
         const settingName = SettingInterfaceKeyboard.Alt_Button_Left;
-        const { key } = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
+        const {key} = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
         expect(key).toEqual('KEY_Q');
     });
     it('Check icon for currenly Assigned to key code', () => {
@@ -446,28 +446,28 @@ describe('Test Keyboard', () => {
 
     it('reload scenario with 1 bind already reassigned', () => {
         config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up] = {
-          "key": "KEY_Z",
-          "isAlt": true,
-          "action": 3,
-          "icon": "T_D_Key_Dark.png",
-          "from": {
             "key": "KEY_Z",
             "isAlt": true,
-            "action": 0,
-            "icon": "T_Z_Key_Dark.png"
-          }
+            "action": 3,
+            "icon": "T_D_Key_Dark.png",
+            "from": {
+                "key": "KEY_Z",
+                "isAlt": true,
+                "action": 0,
+                "icon": "T_Z_Key_Dark.png"
+            }
         };
         config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Right] = {
-          "key": "KEY_D",
-          "isAlt": true,
-          "action": 0,
-          "icon": "T_Z_Key_Dark.png",
-          "from": {
             "key": "KEY_D",
             "isAlt": true,
-            "action": 3,
-            "icon": "T_D_Key_Dark.png"
-          }
+            "action": 0,
+            "icon": "T_Z_Key_Dark.png",
+            "from": {
+                "key": "KEY_D",
+                "isAlt": true,
+                "action": 3,
+                "icon": "T_D_Key_Dark.png"
+            }
         }
         config.icons["KEY_D"] = "T_Z_Key_Dark.png";
         config.icons["KEY_Z"] = "T_D_Key_Dark.png";
@@ -603,7 +603,6 @@ describe('Test Keyboard', () => {
         expect(config.custom["KEY_Z"]).toEqual(-1);
 
 
-
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].key).toEqual("KEY_S");
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].action).toEqual(Button.DOWN);
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].icon).toEqual("T_S_Key_Dark.png");
@@ -626,6 +625,146 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].icon).toEqual(undefined);
         expect(config.custom["KEY_S"]).toEqual(-1);
 
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Down, Phaser.Input.Keyboard.KeyCodes.S);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].key).toEqual("KEY_S");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].action).toEqual(Button.DOWN);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].icon).toEqual("T_S_Key_Dark.png");
+        expect(config.custom["KEY_S"]).toEqual(Button.DOWN);
+
+        let keyDown = Phaser.Input.Keyboard.KeyCodes.S;
+        let key = getKeyFromMapping(config, keyDown);
+        let buttonDown = config.custom[key];
+        expect(buttonDown).toEqual(Button.DOWN);
+
+        keyDown = Phaser.Input.Keyboard.KeyCodes.Z;
+        key = getKeyFromMapping(config, keyDown);
+        buttonDown = config.custom[key];
+        expect(buttonDown).toEqual(Button.UP);
+
     });
 
+    it("test keyboard listener", () => {
+        const keyDown = Phaser.Input.Keyboard.KeyCodes.S;
+        const key = getKeyFromMapping(config, keyDown);
+        const buttonDown = config.custom[key];
+        expect(buttonDown).toEqual(Button.DOWN);
+    });
+
+    it("another test with 2 delete", () => {
+        config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up] = {
+            "key": "KEY_Z",
+            "isAlt": true,
+            "action": -1,
+            "from": {
+                "key": "KEY_Z",
+                "isAlt": true,
+                "action": 0,
+                "icon": "T_Z_Key_Dark.png"
+            },
+            "latestIsDeleted": true
+        };
+        regenerateCustom(config);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(-1);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual(undefined);
+        expect(config.custom["KEY_Z"]).toEqual(-1);
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Down, Phaser.Input.Keyboard.KeyCodes.S);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].key).toEqual("KEY_S");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].action).toEqual(Button.DOWN);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Down].icon).toEqual("T_S_Key_Dark.png");
+        expect(config.custom["KEY_S"]).toEqual(Button.DOWN);
+    });
+
+    it("another test with 2 delete", () => {
+        config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up] = {
+            "key": "KEY_Z",
+            "isAlt": true,
+            "action": -1,
+            "from": {
+                "key": "KEY_Z",
+                "isAlt": true,
+                "action": 0,
+                "icon": "T_Z_Key_Dark.png"
+            },
+            "latestIsDeleted": true
+        };
+        regenerateCustom(config);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(-1);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual(undefined);
+        expect(config.custom["KEY_Z"]).toEqual(-1);
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.Z);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+
+        let keyDown = Phaser.Input.Keyboard.KeyCodes.S;
+        let key = getKeyFromMapping(config, keyDown);
+        let buttonDown = config.custom[key];
+        expect(buttonDown).toEqual(Button.DOWN);
+
+        keyDown = Phaser.Input.Keyboard.KeyCodes.Z;
+        key = getKeyFromMapping(config, keyDown);
+        buttonDown = config.custom[key];
+        expect(buttonDown).toEqual(Button.UP);
+    });
+
+    it("another test with 2 delete part 2", () => {
+        config.currentKeys = {
+            "ALT_BUTTON_UP": {
+                "key": "KEY_Z",
+                "isAlt": true,
+                "action": -1,
+                "from": {
+                    "key": "KEY_Z",
+                    "isAlt": true,
+                    "action": 0,
+                    "icon": "T_Z_Key_Dark.png"
+                },
+                "latestIsDeleted": true
+            },
+            "ALT_BUTTON_DOWN": {
+                "key": "KEY_S",
+                "isAlt": true,
+                "action": -1,
+                "from": {
+                    "key": "KEY_S",
+                    "isAlt": true,
+                    "action": 1,
+                    "icon": "T_S_Key_Dark.png"
+                },
+                "latestIsDeleted": true
+            },
+        }
+        regenerateCustom(config);
+
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(-1);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual(undefined);
+        expect(config.custom["KEY_Z"]).toEqual(-1);
+
+        swapCurrentKeys(config, SettingInterfaceKeyboard.Alt_Button_Up, Phaser.Input.Keyboard.KeyCodes.Z);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].key).toEqual("KEY_Z");
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].action).toEqual(Button.UP);
+        expect(config.currentKeys[SettingInterfaceKeyboard.Alt_Button_Up].icon).toEqual("T_Z_Key_Dark.png");
+        expect(config.custom["KEY_Z"]).toEqual(Button.UP);
+
+        const keyDown = Phaser.Input.Keyboard.KeyCodes.Z;
+        const key = getKeyFromMapping(config, keyDown);
+        const buttonDown = config.custom[key];
+        expect(buttonDown).toEqual(Button.UP);
 });
+
+})
+;

@@ -70,9 +70,10 @@ export function assignNewKey(config: InterfaceConfig, settingName, pressedButton
     config.icons[previousBind.key] = icon;
     config.currentKeys[settingName].icon = icon;
 
-    config.custom[key] = previousBind.action !== -1 ? previousBind.action : previousBind.from.action;
     config.custom[previousBind.key] = -1;
+    config.custom[key] = previousBind.action !== -1 ? previousBind.action : previousBind.from.action;
     config.currentKeys[settingName].replacedBy = key;
+    config.currentKeys[settingName].latestIsDeleted = false;
 
     delete config.currentKeys[settingName].from
 }
@@ -81,7 +82,9 @@ export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedBut
     const previousBind = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
     const prevKey = deepCopy(previousBind);
     const newBind = getKeyAndActionFromCurrentKeysWithPressedButton(config, pressedButton);
-    if (newBind && previousBind.action === -1) {
+    if (newBind?.action === -1 && previousBind.action === -1) {
+        assignNewKey(config, settingName, pressedButton, previousBind);
+    } else if (newBind && previousBind.action === -1) {
         //special case when rebinding deleted key with already assigned key
         const toRestore = deepCopy(newBind);
         const iconFromThePressedButton = config.ogIcons[prevKey.key];
@@ -100,7 +103,7 @@ export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedBut
         assignNewKey(config, settingName, pressedButton, previousBind);
     } else {
         const nextKey = deepCopy(newBind);
-        if (prevKey.key === nextKey.key) {
+        if (prevKey.key === nextKey.key && prevKey.from) {
             // special case when back to back and not enough info to get back to previous button
             const toRestore = getKeyAndSettingNameFromCurrentKeysWithAction(config, prevKey.from.action, settingName.includes("ALT_"));
             config.custom[prevKey.key] = prevKey.from.action;
