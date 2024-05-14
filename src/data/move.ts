@@ -2374,17 +2374,15 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
 
 /**
  * Attribute used for moves which never miss
- * against pokemon that used Minimize
+ * against Pokemon with the {@link BattlerTagType.MINIMIZED}
+ * @param user N/A
+ * @param target Target of the move
+ * @param move N/A
+ * @param args [0] Accuracy of the move to be modified
+ * @returns true if the function succeeds
  */
 export class MinimizeAccuracyAttr extends VariableAccuracyAttr{
-  /**
-   * Swaps the user and the target's stat changes.
-   * @param user Pokemon that used the move
-   * @param target The target of the move
-   * @param move Move that never misses against Minimized targets
-   * @param args Accuracy of the move being used
-   * @returns true if the function succeeds
-   */
+  
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (target.getTag(BattlerTagType.MINIMIZED)){
       const accuracy = args[0] as Utils.NumberHolder
@@ -3111,8 +3109,11 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
   }
 }
 
+/** Attribute used when a move hits a {@link BattlerTagType} for double damage */
 export class HitsTagAttr extends MoveAttr {
+  /** The {@link BattlerTagType} this move hits */
   public tagType: BattlerTagType;
+  /** Should this move deal double damage against {@link HitsTagAttr.tagType}? */
   public doubleDamage: boolean;
 
   constructor(tagType: BattlerTagType, doubleDamage?: boolean) {
