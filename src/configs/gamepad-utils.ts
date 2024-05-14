@@ -72,19 +72,14 @@ export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedBut
     if (prevKey.key === nextKey.key) {
         // special case when back to back and not enough info to get back to previous button
         const toRestore = getKeyAndSettingNameFromCurrentKeysWithAction(config, prevKey.from.action);
-        const iconToRestore = config.icons[toRestore.key];
         config.custom[prevKey.key] = prevKey.from.action;
-        config.icons[prevKey.key] = iconToRestore;
+        config.icons[prevKey.key] = prevKey.from.icon;
 
         config.custom[toRestore.key] = prevKey.action;
         config.icons[toRestore.key] = prevKey.icon;
 
-        config.currentKeys[settingName].from = prevKey;
-        config.currentKeys[toRestore.settingName].from = {
-            key: toRestore.key,
-            action: prevKey.from.action,
-            icon: iconToRestore,
-        };
+        delete config.currentKeys[settingName].from;
+        delete config.currentKeys[toRestore.settingName].from;
     } else {
         config.custom[previousBind.key] = newBind.action;
         config.custom[newBind.key] = previousBind.action;

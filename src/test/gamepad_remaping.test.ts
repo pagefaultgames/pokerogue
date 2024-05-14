@@ -6,7 +6,7 @@ import {
     getKeyAndActionFromCurrentKeysWithSettingName,
     getKeyForSettingName,
     getKeyFromMapping,
-    getKeyWithAction,
+    getKeyWithAction, regenerateCustom,
     reloadCurrentKeys,
     swapCurrentKeys,
 } from "#app/configs/gamepad-utils";
@@ -183,4 +183,75 @@ describe('Test Keyboard', () => {
         expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.ACTION);
         expect(iconB).toEqual('T_X_A_Color_Alt.png');
     });
+
+    it('Check 4 swap back to back', () => {
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.ACTION);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].icon).toEqual('T_X_A_Color_Alt.png');
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].key).toEqual("RC_E");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].action).toEqual(Button.CANCEL);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].icon).toEqual('T_X_B_Color_Alt.png');
+        swapCurrentKeys(config, SettingInterfaceGamepad.Button_Action, 1); // cancel
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.CANCEL);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].icon).toEqual('T_X_B_Color_Alt.png');
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].key).toEqual("RC_E");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].action).toEqual(Button.ACTION);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].icon).toEqual('T_X_A_Color_Alt.png');
+
+        swapCurrentKeys(config, SettingInterfaceGamepad.Button_Action, 0); // cancel
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.ACTION);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].icon).toEqual('T_X_A_Color_Alt.png');
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].key).toEqual("RC_E");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].action).toEqual(Button.CANCEL);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].icon).toEqual('T_X_B_Color_Alt.png');
+
+        swapCurrentKeys(config, SettingInterfaceGamepad.Button_Action, 1); // cancel
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.CANCEL);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].icon).toEqual('T_X_B_Color_Alt.png');
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].key).toEqual("RC_E");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].action).toEqual(Button.ACTION);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].icon).toEqual('T_X_A_Color_Alt.png');
+
+        swapCurrentKeys(config, SettingInterfaceGamepad.Button_Action, 0); // cancel
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.ACTION);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].icon).toEqual('T_X_A_Color_Alt.png');
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].key).toEqual("RC_E");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].action).toEqual(Button.CANCEL);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].icon).toEqual('T_X_B_Color_Alt.png');
+    });
+
+    it('Custom scenario: B icon duplicate', () => {
+        config.currentKeys[SettingInterfaceGamepad.Button_Action] = {
+          "key": "RC_S",
+          "action": 6,
+          "icon": "T_X_B_Color_Alt.png",
+          "from": {
+            "key": "RC_S",
+            "action": 5,
+            "icon": "T_X_A_Color_Alt.png"
+          }
+        };
+        config.currentKeys[SettingInterfaceGamepad.Button_Cancel] = {
+          "key": "RC_E",
+          "action": 5,
+          "icon": "T_X_A_Color_Alt.png",
+          "from": {
+            "key": "RC_E",
+            "action": 6,
+            "icon": "T_X_B_Color_Alt.png"
+          }
+        };
+        regenerateCustom(config);
+        swapCurrentKeys(config, SettingInterfaceGamepad.Button_Action, 0); // cancel
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.ACTION);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].icon).toEqual('T_X_A_Color_Alt.png');
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].key).toEqual("RC_E");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].action).toEqual(Button.CANCEL);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Cancel].icon).toEqual('T_X_B_Color_Alt.png');
+    })
 });
