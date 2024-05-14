@@ -759,6 +759,36 @@ export class GameData {
     });
   }
 
+  /* Defines a localStorage item 'daily' to check on clears, offline implementation of savedata/newclear API
+  If a GameModes clear other than Daily is checked, newClear = true as usual
+  If a Daily mode is cleared, checks if it was already cleared before, based on seed, and returns true only to new daily clear runs */
+  offlineNewClear(scene: BattleScene): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const sessionData = this.getSessionSaveData(scene);
+      const seed = sessionData.seed;
+      let daily: string[] = [];
+
+      if (sessionData.gameMode == GameModes.DAILY) {
+        if (localStorage.hasOwnProperty('daily')) {
+          daily = JSON.parse(atob(localStorage.getItem('daily')));
+          if (daily.includes(seed)) {
+            return resolve(false);
+          } else {
+            daily.push(seed);
+            localStorage.setItem('daily', btoa(JSON.stringify(daily)));
+            return resolve(true);
+          }
+        } else {
+          daily.push(seed);
+          localStorage.setItem('daily', btoa(JSON.stringify(daily)));
+          return resolve(true);
+        }
+      } else {
+        return resolve(true);
+      }
+    });
+  }
+
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {

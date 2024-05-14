@@ -27,7 +27,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr } from '../data/ability';
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr } from '../data/ability';
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
 import Battle, { BattlerIndex } from '../battle';
@@ -1563,7 +1563,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           
           if (!result) {
             if (!typeMultiplier.value)
-              result = HitResult.NO_EFFECT;
+              result = move.id == Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
             else {
               const oneHitKo = new Utils.BooleanHolder(false);
               applyMoveAttrs(OneHitKOAttr, source, this, move, oneHitKo);
@@ -1630,6 +1630,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 break;
               case HitResult.NO_EFFECT:
                 this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
+                break;
+              case HitResult.IMMUNE:
+                this.scene.queueMessage(`${this.name} is unaffected!`);
                 break;
               case HitResult.ONE_HIT_KO:  
                 this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
@@ -2024,7 +2027,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false): boolean {
+  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon = null): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status)
         return false;
@@ -2032,11 +2035,32 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
     }
 
+    const types = this.getTypes(true, true);
+
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL))
-          return false;
+        // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
+        let poisonImmunity = types.map(defType => {
+          // Check if the Pokemon is not immune to Poison/Toxic
+          if (defType !== Type.POISON && defType !== Type.STEEL)
+            return false;
+
+          // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
+          const cancelImmunity = new Utils.BooleanHolder(false);
+          if (sourcePokemon) {
+            applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, sourcePokemon, cancelImmunity, effect, defType);
+            if (cancelImmunity.value)
+              return false;
+          }
+
+          return true;
+        })
+
+        if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL)) {
+          if (poisonImmunity.includes(true))
+            return false;
+        }
         break;
       case StatusEffect.PARALYSIS:
         if (this.isOfType(Type.ELECTRIC))
@@ -2065,12 +2089,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null): boolean {
-    if (!this.canSetStatus(effect, asPhase))
+  trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon = null, cureTurn: integer = 0, sourceText: string = null): boolean { 
+    if (!this.canSetStatus(effect, asPhase, false, sourcePokemon))
       return false;
 
     if (asPhase) {
-      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText));
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, sourcePokemon));
       return true;
     }
 
@@ -3339,7 +3363,8 @@ export enum HitResult {
   HEAL,
   FAIL,
   MISS,
-  OTHER
+  OTHER,
+  IMMUNE
 }
 
 export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;

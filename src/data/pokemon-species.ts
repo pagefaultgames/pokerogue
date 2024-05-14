@@ -2759,7 +2759,7 @@ export const speciesStarters = {
   [Species.GROUDON]: 8,
   [Species.RAYQUAZA]: 8,
   [Species.JIRACHI]: 7,
-  [Species.DEOXYS]: 8,
+  [Species.DEOXYS]: 7,
 
   [Species.TURTWIG]: 3,
   [Species.CHIMCHAR]: 3,
@@ -2813,7 +2813,7 @@ export const speciesStarters = {
   [Species.DARKRAI]: 7,
   [Species.SHAYMIN]: 7,
   [Species.ARCEUS]: 9,
-  [Species.VICTINI]: 8,
+  [Species.VICTINI]: 7,
 
   [Species.SNIVY]: 3,
   [Species.TEPIG]: 3,
@@ -2895,7 +2895,7 @@ export const speciesStarters = {
   [Species.KYUREM]: 8,
   [Species.KELDEO]: 7,
   [Species.MELOETTA]: 7,
-  [Species.GENESECT]: 8,
+  [Species.GENESECT]: 7,
 
   [Species.CHESPIN]: 3,
   [Species.FENNEKIN]: 3,
