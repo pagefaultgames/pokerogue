@@ -824,7 +824,7 @@ export class HealAttr extends MoveEffectAttr {
 
   addHealPhase(target: Pokemon, healRatio: number) {
     target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
-      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' regained\nhealth!'), true, !this.showAnim));
+      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' \nhad its HP restored.'), true, !this.showAnim));
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -959,6 +959,42 @@ export class SandHealAttr extends WeatherHealAttr {
       default:
         return 0.5;
     }
+  }
+}
+
+/**
+ * Heals the target by either {@link normalHealRatio} or {@link boostedHealRatio} 
+ * depending on the evaluation of {@link condition}
+ * @see {@link apply}
+ * @param user The Pokemon using this move
+ * @param target The target Pokemon of this move
+ * @param move This move
+ * @param args N/A
+ * @returns if the move was successful
+ */
+export class BoostHealAttr extends HealAttr {
+  private normalHealRatio?: number;
+  private boostedHealRatio?: number;
+  private condition?: MoveConditionFunc;
+
+  /** 
+   * @param normalHealRatio Healing received when {@link condition} is false
+   * @param boostedHealRatio Healing received when {@link condition} is true
+   * @param showAnim Should a healing animation be showed?
+   * @param selfTarget Should the move target the user?
+   * @param condition The condition to check against when boosting the healing value
+   */
+  constructor(normalHealRatio?: number, boostedHealRatio?: number, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
+    super(normalHealRatio, showAnim, selfTarget);
+    this.normalHealRatio = normalHealRatio;
+    this.boostedHealRatio = boostedHealRatio;
+    this.condition = condition;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const healRatio = this.condition(user, target, move) ? this.boostedHealRatio : this.normalHealRatio;
+    this.addHealPhase(target, healRatio);
+    return true;
   }
 }
 
@@ -1314,6 +1350,25 @@ export class BypassSleepAttr extends MoveAttr {
     }
 
     return false;
+  }
+}
+
+/**
+ * Attribute used for moves that bypass the burn damage reduction of physical moves, currently only facade
+ * Called during damage calculation
+ * @param user N/A
+ * @param target N/A
+ * @param move Move with this attribute
+ * @param args Utils.BooleanHolder for burnDamageReductionCancelled
+ * @returns true if the function succeeds
+ */
+export class BypassBurnDamageReductionAttr extends MoveAttr {
+
+  /** Prevents the move's damage from being reduced by burn */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+
+    return true; 
   }
 }
 
@@ -4868,7 +4923,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
-        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
+        && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
+        .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .punchingMove()
       .ignoresVirtual()
@@ -5977,9 +6033,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1, true)
       .punchingMove(),
     new StatusMove(Moves.FLORAL_HEALING, Type.FAIRY, -1, 10, -1, 0, 7)
-      .attr(HealAttr, 0.5, true, false)
-      .triageMove()
-      .partial(),
+      .attr(BoostHealAttr, 0.5, 2/3, true, false, (user, target, move) => user.scene.arena.terrain?.terrainType === TerrainType.GRASSY)
+      .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
       .attr(StrengthSapHealAttr)
@@ -6166,7 +6221,7 @@ export function initMoves() {
       .ignoresVirtual(),
     /* End Unused */
     new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, 100, 2, 7)
-      .attr(CritOnlyAttr),
+      .attr(StatChangeAttr, BattleStat.EVA, 1, true),
     new AttackMove(Moves.SPLISHY_SPLASH, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 30, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -6191,7 +6246,7 @@ export function initMoves() {
     new AttackMove(Moves.FREEZY_FROST, Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, 0, 7)
       .attr(ResetStatsAttr),
     new AttackMove(Moves.SPARKLY_SWIRL, Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, 0, 7)
-      .partial(),
+      .attr(PartyStatusCureAttr, null, Abilities.NONE),
     new AttackMove(Moves.VEEVEE_VOLLEY, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, 0, 7)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.DOUBLE_IRON_BASH, Type.STEEL, MoveCategory.PHYSICAL, 60, 100, 5, 30, 0, 7)
@@ -6786,7 +6841,7 @@ export function initMoves() {
         const turnMove = user.getLastXMoves(1);
         return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
       }), // TODO Add Instruct/Encore interaction
-    new AttackMove(Moves.COMEUPPANCE, Type.DARK, MoveCategory.PHYSICAL, 1, 100, 10, -1, 0, 9)
+    new AttackMove(Moves.COMEUPPANCE, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.AQUA_CUTTER, Type.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
