@@ -9,7 +9,7 @@ import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { AllyProtectStatAbAttr, BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 
 export enum ArenaTagSide {
@@ -435,9 +435,10 @@ class StickyWebTag extends ArenaTrapTag {
   activateTrap(pokemon: Pokemon): boolean {
     if (pokemon.isGrounded()) {
       const cancelled = new Utils.BooleanHolder(false);
-      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      const allyCheck = true;
+      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled, !allyCheck);
       if (!cancelled.value) // If Pokemon fails to protect themselves, check if ally has an ability to protect them
-        applyAbAttrs(AllyProtectStatAbAttr, pokemon.getAlly(), cancelled);
+        applyAbAttrs(ProtectStatAbAttr, pokemon.getAlly(), cancelled, allyCheck);
 
       if (!cancelled.value) {
         pokemon.scene.queueMessage(`The opposing ${pokemon.name} was caught in a sticky web!`);
