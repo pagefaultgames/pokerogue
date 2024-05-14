@@ -6,7 +6,7 @@ import {
     getKeyAndActionFromCurrentKeysWithSettingName,
     getKeyForSettingName,
     getKeyFromMapping,
-    getKeyWithAction, initCurrentKeys,
+    getKeyWithAction,
     reloadCurrentKeys,
     swapCurrentKeys,
 } from "#app/configs/gamepad-utils";
@@ -23,6 +23,7 @@ describe('Test Keyboard', () => {
         const temp = {...cfg_gamepad_example}
         config = deepCopy(temp);
         config.custom = {...config.default}
+        config.ogIcons = {...config.icons}
         reloadCurrentKeys(config);
     });
 
@@ -162,5 +163,24 @@ describe('Test Keyboard', () => {
         expect(iconA).toEqual('T_X_B_Color_Alt.png');
         expect(iconB).toEqual('T_X_A_Color_Alt.png');
         expect(iconC).toEqual('T_X_X_Color_Alt.png');
+
+        expect(config.ogIcons["RC_S"]).toEqual("T_X_A_Color_Alt.png")
+        expect(config.ogIcons["RC_E"]).toEqual("T_X_B_Color_Alt.png")
+        expect(config.ogIcons["RC_N"]).toEqual("T_X_Y_Color_Alt.png")
+        expect(config.ogIcons["RC_W"]).toEqual("T_X_X_Color_Alt.png")
+    });
+
+    it('Check 2 swap back to back', () => {
+        swapCurrentKeys(config, SettingInterfaceGamepad.Button_Action, 1); // cancel
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.CANCEL);
+        let iconA = getIconWithSettingName(config, SettingInterfaceGamepad.Button_Action);
+        expect(iconA).toEqual('T_X_B_Color_Alt.png');
+
+        swapCurrentKeys(config, SettingInterfaceGamepad.Button_Action, 0); // cancel
+        let iconB = getIconWithSettingName(config, SettingInterfaceGamepad.Button_Action);
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].key).toEqual("RC_S");
+        expect(config.currentKeys[SettingInterfaceGamepad.Button_Action].action).toEqual(Button.ACTION);
+        expect(iconB).toEqual('T_X_A_Color_Alt.png');
     });
 });

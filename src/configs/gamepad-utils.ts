@@ -55,10 +55,7 @@ function getKeyAndSettingNameFromCurrentKeysWithAction(config, _action, alt: boo
 }
 
 export function getKeyAndActionFromCurrentKeysWithSettingName(config, settingName) {
-    for (const _settingName of Object.keys(config.currentKeys)) {
-        if (_settingName === settingName) return config.currentKeys[_settingName];
-    }
-    return null;
+    return config.currentKeys[settingName];
 }
 
 export function getKeyAndActionFromCurrentKeysWithPressedButton(config, pressedButton) {
@@ -69,27 +66,49 @@ export function getKeyAndActionFromCurrentKeysWithPressedButton(config, pressedB
 
 export function swapCurrentKeys(config: InterfaceConfig, settingName, pressedButton): void {
     const previousBind = getKeyAndActionFromCurrentKeysWithSettingName(config, settingName);
+    const prevKey = deepCopy(previousBind);
     const newBind = getKeyAndActionFromCurrentKeysWithPressedButton(config, pressedButton);
-    config.custom[previousBind.key] = newBind.action;
-    config.custom[newBind.key] = previousBind.action;
-    config.icons[previousBind.key] = newBind.icon;
-    config.icons[newBind.key] = previousBind.icon;
+    const nextKey = deepCopy(newBind);
+    if (prevKey.key === nextKey.key) {
+        // special case when back to back and not enough info to get back to previous button
+        const toRestore = getKeyAndSettingNameFromCurrentKeysWithAction(config, prevKey.from.action);
+        const iconToRestore = config.icons[toRestore.key];
+        config.custom[prevKey.key] = prevKey.from.action;
+        config.icons[prevKey.key] = iconToRestore;
+
+        config.custom[toRestore.key] = prevKey.action;
+        config.icons[toRestore.key] = prevKey.icon;
+
+        config.currentKeys[settingName].from = prevKey;
+        config.currentKeys[toRestore.settingName].from = {
+            key: toRestore.key,
+            action: prevKey.from.action,
+            icon: iconToRestore,
+        };
+    } else {
+        config.custom[previousBind.key] = newBind.action;
+        config.custom[newBind.key] = previousBind.action;
+        config.icons[previousBind.key] = newBind.icon;
+        config.icons[newBind.key] = previousBind.icon;
+        const nextSettingName = getKeyAndSettingNameFromCurrentKeysWithAction(config, newBind.action).settingName;
+        config.currentKeys[settingName].from = prevKey;
+        config.currentKeys[nextSettingName].from = nextKey;
+    }
     reloadCurrentKeys(config);
 }
 
 
 export function reloadCurrentKeys(config): void {
     // need to rework this to include keys that were not there at the begining
-    const currentKeys = {};
+    const currentKeys = config.currentKeys ? deepCopy(config.currentKeys) : {};
     for (const key of Object.keys(config.setting)) {
         const settingName = config.setting[key];
         const action = config.custom[key];
         const icon = config.icons[key];
-        currentKeys[settingName] = {
-            key,
-            action,
-            icon,
-        }
+        if (!currentKeys[settingName]) currentKeys[settingName] = {};
+        currentKeys[settingName].key = key;
+        currentKeys[settingName].action = action;
+        currentKeys[settingName].icon = icon;
     }
     config.currentKeys = deepCopy(currentKeys);
 }
