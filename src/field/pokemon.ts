@@ -1987,14 +1987,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  /**
-   * 
-   * @param effect - effect to try and set
-   * @param quiet - whether to suppress trigger messages
-   * @param overrideStatus
-   * @param sourcePokemon - source Pokemon of the status effect
-   * @returns 
-   */
   canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon = null): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status)
@@ -2061,15 +2053,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  /**
-   * 
-   * @param effect - effect to try and set
-   * @param asPhase 
-   * @param cureTurn 
-   * @param sourceText 
-   * @param sourcePokemon - source Pokemon of the status effect
-   * @returns 
-   */
   trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null, sourcePokemon: Pokemon = null): boolean { 
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon))
       return false;
