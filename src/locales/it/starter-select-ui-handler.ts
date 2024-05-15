@@ -29,7 +29,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleVariant": 'V: Alterna Variante',
     "enablePassive": "Attiva Passiva",
     "disablePassive": "Disattiva Passiva",
-    "locked": "Locked",
-    "disabled": "Disabled",
-    "uncaught": "Uncaught"
+    "locked": "Bloccato",
+    "disabled": "Disabilitato",
+    "uncaught": "Non Catturato"
 }
