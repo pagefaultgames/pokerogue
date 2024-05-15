@@ -330,6 +330,7 @@ export class TitlePhase extends Phase {
           this.scene.newBattle();
           this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
           this.end();
         });
       };
@@ -537,6 +538,7 @@ export class SelectStarterPhase extends Phase {
           this.scene.newBattle();
           this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
           this.end();
         });
       });
@@ -790,7 +792,7 @@ export class EncounterPhase extends BattlePhase {
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
-          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 5 === 1).then(success => {
+          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || this.scene.lastSavePlayTime >= 10).then(success => {
             this.scene.disableMenu = false;
             if (!success)
               return this.scene.reset(true);

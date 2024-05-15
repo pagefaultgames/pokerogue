@@ -656,6 +656,7 @@ export class GameData {
           console.log('Seed:', scene.seed);
 
           scene.sessionPlayTime = sessionData.playTime || 0;
+          scene.lastSavePlayTime = 0;
 
           const loadPokemonAssets: Promise<void>[] = [];
 
@@ -903,8 +904,10 @@ export class GameData {
           Utils.apiPost('savedata/updateall', JSON.stringify(request, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
             .then(response => response.text())
             .then(error => {
-              if (sync)
+              if (sync) {
+                this.scene.lastSavePlayTime = 0;
                 this.scene.ui.savingIcon.hide();
+              }
               if (error) {
                 if (error.startsWith('client version out of date')) {
                   this.scene.clearPhaseQueue();
