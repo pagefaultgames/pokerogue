@@ -347,6 +347,7 @@ This function is used in:
 English itself counts as not available
 */
 export function verifyLang(lang?: string): boolean {
+  //IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
   if(!lang){
     lang = i18next.language;
   }
@@ -357,6 +358,7 @@ export function verifyLang(lang?: string): boolean {
     case 'de':
     case 'it':
     case 'zh_CN':
+    case 'pt_BR':
       return true;
     default:
       return false;

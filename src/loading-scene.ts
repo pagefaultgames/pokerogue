@@ -209,7 +209,6 @@ export class LoadingScene extends SceneBase {
         this.loadAtlas(`types_${lang}`, '');
       }
     });
-    this.loadAtlas('types_zh_CN', '');
     this.loadAtlas('statuses', '');
     this.loadAtlas('categories', '');
     
