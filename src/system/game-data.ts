@@ -517,6 +517,8 @@ export class GameData {
   }
 
   public clearLocalData(): void {
+    if (bypassLogin)
+      return;
     localStorage.removeItem(`data_${loggedInUser.username}`);
     for (let s = 0; s < 5; s++)
       localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
