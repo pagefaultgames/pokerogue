@@ -292,7 +292,7 @@ export class GameData {
       localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
 
       if (!bypassLogin) {
-        Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
+        Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}&clientSessionId=${clientSessionId}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
             this.scene.ui.savingIcon.hide();
