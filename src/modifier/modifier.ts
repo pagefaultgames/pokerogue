@@ -731,6 +731,40 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof BypassSpeedChanceModifier;
+  }
+
+  clone() {
+    return new BypassSpeedChanceModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.BooleanHolder;
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    const bypassSpeed = args[1] as Utils.BooleanHolder;
+
+    if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+      bypassSpeed.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 3;
+  }
+}
+
 export class FlinchChanceModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);

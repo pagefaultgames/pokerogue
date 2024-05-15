@@ -1544,6 +1544,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
             applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, battlerMove, damage);
 
+            /** 
+             * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
+             *  The target has a {@link BattlerTagType} that this move interacts with
+             * AND
+             *  The move doubles damage when used against that tag 
+             * */
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
               if (this.getTag(hta.tagType))
                 damage.value *= 2;
