@@ -12,6 +12,7 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { nature } from "./nature";
+import { weather } from "./weather";
 import { modifierType } from "./modifier-type";
 import { growth } from "./growth";
 
@@ -32,5 +33,6 @@ export const zhCnConfig = {
     tutorial: tutorial,
     nature: nature,
     growth: growth,
+    weather: weather,
     modifierType: modifierType,
 }
