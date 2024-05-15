@@ -788,17 +788,65 @@ export class RecoilAttr extends MoveEffectAttr {
   }
 }
 
+
+/**
+ * Attribute used for moves which self KO the user regardless if the move hits a target
+ * @extends MoveEffectAttr
+ * @see {@link apply}
+ **/
 export class SacrificialAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, MoveEffectTrigger.POST_TARGET);
   }
 
+  /**
+   * Deals damage to the user equal to their current hp
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
+	  user.turnData.damageTaken += user.hp;
+
+    return true;
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    if (user.isBoss())
+      return -20;
+    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
+  }
+}
+
+/**
+ * Attribute used for moves which self KO the user but only if the move hits a target
+ * @extends MoveEffectAttr
+ * @see {@link apply}
+ **/
+export class SacrificialAttrOnHit extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.POST_TARGET);
+  }
+
+  /**
+   * Deals damage to the user equal to their current hp if the move lands
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   **/
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    // If the move fails to hit a target, then the user does not faint and the function returns false
     if (!super.apply(user, target, move, args))
       return false;
 
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
-	user.turnData.damageTaken += user.hp;
+    user.turnData.damageTaken += user.hp;
 
     return true;
   }
@@ -5020,7 +5068,7 @@ export function initMoves() {
     new StatusMove(Moves.WILL_O_WISP, Type.FIRE, 85, 15, -1, 0, 3)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.MEMENTO, Type.DARK, 100, 10, -1, 0, 3)
-      .attr(SacrificialAttr)
+      .attr(SacrificialAttrOnHit)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
@@ -5556,7 +5604,7 @@ export function initMoves() {
     new AttackMove(Moves.SPACIAL_REND, Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, 0, 4)
       .attr(HighCritAttr),
     new SelfStatusMove(Moves.LUNAR_DANCE, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .attr(SacrificialAttr)
+      .attr(SacrificialAttrOnHit)
       .danceMove()
       .triageMove()
       .unimplemented(),
@@ -5705,7 +5753,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.FINAL_GAMBIT, Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
       .attr(UserHpDamageAttr)
-      .attr(SacrificialAttr),
+      .attr(SacrificialAttrOnHit),
     new StatusMove(Moves.BESTOW, Type.NORMAL, -1, 15, -1, 0, 5)
       .ignoresProtect()
       .unimplemented(),

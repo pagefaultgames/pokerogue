@@ -2,7 +2,7 @@ import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, SacrificialAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -2304,8 +2304,8 @@ export class MovePhase extends BattlePhase {
 
       if (this.move.moveId)
         this.showMoveText();
-      
-      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
+
+      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || (!targets.length && !this.move.getMove().getAttrs(SacrificialAttr).length)) {
         moveQueue.shift();
         this.cancel();
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
@@ -2537,8 +2537,14 @@ export class MoveEffectPhase extends PokemonPhase {
           }));
         }
         // Trigger effect which should only apply one time after all targeted effects have already applied
-        applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
-              user, null, this.move.getMove())
+        const postTarget = applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
+          user, null, this.move.getMove());
+        
+        if (applyAttrs.length)  // If there is a pending asynchronous move effect, do this after
+          applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
+        else // Otherwise, push a new asynchronous move effect
+          applyAttrs.push(postTarget);
+
         Promise.allSettled(applyAttrs).then(() => this.end());
       });
     });
