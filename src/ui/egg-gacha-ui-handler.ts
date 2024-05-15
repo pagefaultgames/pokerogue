@@ -372,7 +372,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         this.scene.gameData.gameStats.eggsPulled++;
       }
 
-      this.scene.gameData.saveSystem().then(success => {
+      (this.scene.currentBattle ? this.scene.gameData.saveAll(this.scene, true, true, true) : this.scene.gameData.saveSystem()).then(success => {
         if (!success)
           return this.scene.reset(true);
         doPull();

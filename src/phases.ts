@@ -2,7 +2,7 @@ import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, SacrificialAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -289,7 +289,7 @@ export class TitlePhase extends Phase {
       }
       this.scene.sessionSlotId = slotId;
 
-      fetchDailyRunSeed().then(seed => {
+      const generateDaily = (seed: string) => {
         this.scene.gameMode = gameModes[GameModes.DAILY];
 
         this.scene.setSeed(seed);
@@ -330,11 +330,21 @@ export class TitlePhase extends Phase {
           this.scene.newBattle();
           this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
           this.end();
         });
-      }).catch(err => {
-        console.error("Failed to load daily run:\n", err);
-      });
+      };
+      
+      // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
+      if (!Utils.isLocal) {
+        fetchDailyRunSeed().then(seed => {
+          generateDaily(seed);
+        }).catch(err => {
+          console.error("Failed to load daily run:\n", err);
+        });
+      } else {
+        generateDaily(btoa(new Date().toISOString().substring(0, 10)));
+      }
     });
   }
 
@@ -384,8 +394,12 @@ export class UnavailablePhase extends Phase {
 }
 
 export class ReloadSessionPhase extends Phase {
-  constructor(scene: BattleScene) {
+  private systemDataStr: string;
+
+  constructor(scene: BattleScene, systemDataStr?: string) {
     super(scene);
+
+    this.systemDataStr = systemDataStr;
   }
 
   start(): void {
@@ -401,7 +415,9 @@ export class ReloadSessionPhase extends Phase {
         delayElapsed = true;
     });
 
-    this.scene.gameData.loadSystem().then(() => {
+    this.scene.gameData.clearLocalData();
+
+    (this.systemDataStr ? this.scene.gameData.initSystem(this.systemDataStr) : this.scene.gameData.loadSystem()).then(() => {
       if (delayElapsed)
         this.end();
       else
@@ -522,6 +538,7 @@ export class SelectStarterPhase extends Phase {
           this.scene.newBattle();
           this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
           this.end();
         });
       });
@@ -775,7 +792,7 @@ export class EncounterPhase extends BattlePhase {
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
-          this.scene.gameData.saveAll(this.scene, true).then(success => {
+          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || this.scene.lastSavePlayTime >= 300).then(success => {
             this.scene.disableMenu = false;
             if (!success)
               return this.scene.reset(true);
@@ -2287,8 +2304,8 @@ export class MovePhase extends BattlePhase {
 
       if (this.move.moveId)
         this.showMoveText();
-      
-      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
+
+      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || (!targets.length && !this.move.getMove().getAttrs(SacrificialAttr).length)) {
         moveQueue.shift();
         this.cancel();
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
@@ -2520,8 +2537,14 @@ export class MoveEffectPhase extends PokemonPhase {
           }));
         }
         // Trigger effect which should only apply one time after all targeted effects have already applied
-        applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
-              user, null, this.move.getMove())
+        const postTarget = applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
+          user, null, this.move.getMove());
+        
+        if (applyAttrs.length)  // If there is a pending asynchronous move effect, do this after
+          applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
+        else // Otherwise, push a new asynchronous move effect
+          applyAttrs.push(postTarget);
+
         Promise.allSettled(applyAttrs).then(() => this.end());
       });
     });
@@ -3615,10 +3638,20 @@ export class GameOverPhase extends BattlePhase {
         });
       });
     };
+
+    /* Added a local check to see if the game is running offline on victory
+    If Online, execute apiFetch as intended
+    If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
-      Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
+      if (!Utils.isLocal) {
+        Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
         .then(response => response.json())
         .then(newClear => doGameOver(newClear));
+      } else {
+        this.scene.gameData.offlineNewClear(this.scene).then(result => {
+          doGameOver(result);
+        });
+      }
     } else
       doGameOver(false);
   }
@@ -3676,7 +3709,7 @@ export class PostGameOverPhase extends Phase {
   start() {
     super.start();
 
-    this.scene.gameData.saveSystem().then(success => {
+    this.scene.gameData.saveAll(this.scene, true, true, true).then(success => {
       if (!success)
         return this.scene.reset(true);
       this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
