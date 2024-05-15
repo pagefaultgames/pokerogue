@@ -48,7 +48,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 4 ] ],
   [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
-  [Biome.CAVE]: [ Biome.BADLANDS, Biome.BEACH ],
+  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE ],
   [Biome.DESERT]: Biome.RUINS,
   [Biome.ICE_CAVE]: Biome.SNOWY_FOREST,
   [Biome.MEADOW]: [ Biome.PLAINS, [ Biome.FAIRY_CAVE, 2 ] ],

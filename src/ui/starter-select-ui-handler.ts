@@ -1,34 +1,34 @@
-import BattleScene, { starterColors } from "../battle-scene";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters, starterPassiveAbilities, getStarterValueFriendshipCap } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
-import { Mode } from "./ui";
-import MessageUiHandler from "./message-ui-handler";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { allAbilities } from "../data/ability";
-import { GameModes, gameModes } from "../game-mode";
-import { GrowthRate, getGrowthRateColor } from "../data/exp";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
-import * as Utils from "../utils";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { StatsContainer } from "./stats-container";
-import { addWindow } from "./ui-theme";
-import { Nature, getNatureName } from "../data/nature";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { pokemonFormChanges } from "../data/pokemon-forms";
-import { Tutorial, handleTutorial } from "../tutorial";
-import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import { allMoves } from "../data/move";
-import { Type } from "../data/type";
-import { Moves } from "../data/enums/moves";
-import { speciesEggMoves } from "../data/egg-moves";
-import { TitlePhase } from "../phases";
-import { argbFromRgba } from "@material/material-color-utilities";
-import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
+import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import {Button} from "../enums/buttons";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import BattleScene, { starterColors } from "../battle-scene";
+import { allAbilities } from "../data/ability";
+import { speciesEggMoves } from "../data/egg-moves";
+import { Moves } from "../data/enums/moves";
+import { Species } from "../data/enums/species";
+import { GrowthRate, getGrowthRateColor } from "../data/exp";
+import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { allMoves } from "../data/move";
+import { Nature, getNatureName } from "../data/nature";
+import { pokemonFormChanges } from "../data/pokemon-forms";
+import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import { Type } from "../data/type";
+import { Button } from "../enums/buttons";
+import { GameModes, gameModes } from "../game-mode";
+import { TitlePhase } from "../phases";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { Tutorial, handleTutorial } from "../tutorial";
+import * as Utils from "../utils";
+import { OptionSelectItem } from "./abstact-option-select-ui-handler";
+import MessageUiHandler from "./message-ui-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import { StatsContainer } from "./stats-container";
+import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -241,34 +241,58 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
 
-    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, 'Uncaught', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:uncaught"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    let starterInfoXPosition = 31; // Only text
+    // The position should be set per language
+    const currentLanguage = i18next.language;
+    switch (currentLanguage) {
+      case 'pt_BR':
+        starterInfoXPosition = 32;
+        break;
+      default:
+        starterInfoXPosition = 31;
+        break
+    }
+
+    let starterInfoTextSize = '56px'; // Labels and text
+    // The font size should be set per language
+    // currentLanguage is already defined
+    switch (currentLanguage) {
+      case 'pt_BR':
+        starterInfoTextSize = '47px';
+        break;
+      default:
+        starterInfoTextSize = '56px';
+        break
+    }
+
+    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
-    this.pokemonAbilityText = addTextObject(this.scene, 31, 127, '', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPosition, 127, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
-    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveLabelText.setOrigin(0, 0);
     this.pokemonPassiveLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonPassiveLabelText);
 
-    this.pokemonPassiveText = addTextObject(this.scene, 31, 136, '', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPosition, 136, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureLabelText.setOrigin(0, 0);
     this.pokemonNatureLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, 31, 145, '', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, starterInfoXPosition, 145, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNatureText);
 
@@ -556,8 +580,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     let instructionTextSize = '42px';
     // The font size should be set per language
-    const currentLanguage = i18next.language;
+    // currentLanguage is already defined in the previous code block
     switch (currentLanguage) {
+      case 'de':
+        instructionTextSize = '35px';
+        break;
       case 'en':
         instructionTextSize = '42px';
         break;
@@ -567,10 +594,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case 'fr':
         instructionTextSize = '42px';
         break;
-      case 'de':
-        instructionTextSize = '35px';
-        break;
       case 'it':
+        instructionTextSize = '38px';
+        break;
+      case 'pt_BR':
         instructionTextSize = '38px';
         break;
       case 'zh_CN':
