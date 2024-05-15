@@ -2,7 +2,7 @@ import SettingsUiHandler from "#app/ui/settings-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import BattleScene from "../battle-scene";
-import { hasTouchscreen, isMobile } from "../touch-controls";
+import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
 
@@ -167,14 +167,6 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       const touchControls = document.getElementById('touchControls');
       if (touchControls)
         touchControls.classList.toggle('visible', scene.enableTouchControls);
-      
-      const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-      const appContainer = document.getElementById('app');
-
-      if (!isMobile() && isLandscape && !scene.enableTouchControls) 
-        appContainer.style.alignItems = 'center';
-      else 
-        appContainer.style.alignItems = 'start';
       break;
     case Setting.Vibration:
       scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
