@@ -497,52 +497,108 @@ export class GameData {
     return true;
   }
 
-  public saveMappingConfigs(gamepadName: string, config): boolean {
-    const key = gamepadName.toLowerCase();
-    let mappingConfigs: object = {};
-    if (localStorage.hasOwnProperty('mappingConfigs'))
-      mappingConfigs = JSON.parse(localStorage.getItem('mappingConfigs'));
-    if (!mappingConfigs[key]) mappingConfigs[key] = {};
-    mappingConfigs[key].custom = config.custom;
-    localStorage.setItem('mappingConfigs', JSON.stringify(mappingConfigs));
-    return true;
+  /**
+   * Saves the mapping configurations for a specified device.
+   *
+   * @param deviceName - The name of the device for which the configurations are being saved.
+   * @param config - The configuration object containing custom mapping details.
+   * @returns `true` if the configurations are successfully saved.
+   */
+  public saveMappingConfigs(deviceName: string, config): boolean {
+      const key = deviceName.toLowerCase();  // Convert the gamepad name to lowercase to use as a key
+      let mappingConfigs: object = {};  // Initialize an empty object to hold the mapping configurations
+      if (localStorage.hasOwnProperty('mappingConfigs'))  // Check if 'mappingConfigs' exists in localStorage
+          mappingConfigs = JSON.parse(localStorage.getItem('mappingConfigs'));  // Parse the existing 'mappingConfigs' from localStorage
+      if (!mappingConfigs[key]) mappingConfigs[key] = {};  // If there is no configuration for the given key, create an empty object for it
+      mappingConfigs[key].custom = config.custom;  // Assign the custom configuration to the mapping configuration for the given key
+      localStorage.setItem('mappingConfigs', JSON.stringify(mappingConfigs));  // Save the updated mapping configurations back to localStorage
+      return true;  // Return true to indicate the operation was successful
   }
 
+  /**
+   * Loads the mapping configurations from localStorage and injects them into the input controller.
+   *
+   * @returns `true` if the configurations are successfully loaded and injected; `false` if no configurations are found in localStorage.
+   *
+   * @remarks
+   * This method checks if the 'mappingConfigs' entry exists in localStorage. If it does not exist, the method returns `false`.
+   * If 'mappingConfigs' exists, it parses the configurations and injects each configuration into the input controller
+   * for the corresponding gamepad or device key. The method then returns `true` to indicate success.
+   */
   public loadMappingConfigs(): boolean {
-    if (!localStorage.hasOwnProperty('mappingConfigs'))
-      return false;
-    const mappingConfigs = JSON.parse(localStorage.getItem('mappingConfigs'));
-    for (const key of Object.keys(mappingConfigs))
-      this.scene.inputController.injectConfig(key, mappingConfigs[key]);
+      if (!localStorage.hasOwnProperty('mappingConfigs'))  // Check if 'mappingConfigs' exists in localStorage
+          return false;  // If 'mappingConfigs' does not exist, return false
 
+      const mappingConfigs = JSON.parse(localStorage.getItem('mappingConfigs'));  // Parse the existing 'mappingConfigs' from localStorage
+
+      for (const key of Object.keys(mappingConfigs))  // Iterate over the keys of the mapping configurations
+          this.scene.inputController.injectConfig(key, mappingConfigs[key]);  // Inject each configuration into the input controller for the corresponding key
+
+      return true;  // Return true to indicate the operation was successful
   }
 
+  /**
+   * Saves a gamepad setting to localStorage.
+   *
+   * @param setting - The gamepad setting to save.
+   * @param valueIndex - The index of the value to set for the gamepad setting.
+   * @returns `true` if the setting is successfully saved.
+   *
+   * @remarks
+   * This method initializes an empty object for gamepad settings if none exist in localStorage.
+   * It then updates the setting in the current scene and iterates over the default gamepad settings
+   * to update the specified setting with the new value. Finally, it saves the updated settings back
+   * to localStorage and returns `true` to indicate success.
+   */
   public saveGamepadSetting(setting: SettingGamepad, valueIndex: integer): boolean {
-    let settingsGamepad: object = {};
-    if (localStorage.hasOwnProperty('settingsGamepad'))
-      settingsGamepad = JSON.parse(localStorage.getItem('settingsGamepad'));
+      let settingsGamepad: object = {};  // Initialize an empty object to hold the gamepad settings
 
-    setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);
-    Object.keys(settingGamepadDefaults).forEach(s => {
-      if (s === setting)
-        settingsGamepad[s] = valueIndex;
-    });
-    localStorage.setItem('settingsGamepad', JSON.stringify(settingsGamepad));
-    return true;
+      if (localStorage.hasOwnProperty('settingsGamepad')) {  // Check if 'settingsGamepad' exists in localStorage
+          settingsGamepad = JSON.parse(localStorage.getItem('settingsGamepad'));  // Parse the existing 'settingsGamepad' from localStorage
+      }
+
+      setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
+
+      Object.keys(settingGamepadDefaults).forEach(s => {  // Iterate over the default gamepad settings
+          if (s === setting)  // If the current setting matches, update its value
+              settingsGamepad[s] = valueIndex;
+      });
+
+      localStorage.setItem('settingsGamepad', JSON.stringify(settingsGamepad));  // Save the updated gamepad settings back to localStorage
+
+      return true;  // Return true to indicate the operation was successful
   }
 
+  /**
+   * Saves a keyboard setting to localStorage.
+   *
+   * @param setting - The keyboard setting to save.
+   * @param valueIndex - The index of the value to set for the keyboard setting.
+   * @returns `true` if the setting is successfully saved.
+   *
+   * @remarks
+   * This method initializes an empty object for keyboard settings if none exist in localStorage.
+   * It then updates the setting in the current scene and iterates over the default keyboard settings
+   * to update the specified setting with the new value. Finally, it saves the updated settings back
+   * to localStorage and returns `true` to indicate success.
+   */
   public saveKeyboardSetting(setting: SettingKeyboard, valueIndex: integer): boolean {
-    let settingsKeyboard: object = {};
-    if (localStorage.hasOwnProperty('settingsKeyboard'))
-      settingsKeyboard = JSON.parse(localStorage.getItem('settingsKeyboard'));
+      let settingsKeyboard: object = {};  // Initialize an empty object to hold the keyboard settings
 
-    setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);
-    Object.keys(settingKeyboardDefaults).forEach(s => {
-      if (s === setting)
-        settingsKeyboard[s] = valueIndex;
-    });
-    localStorage.setItem('settingsKeyboard', JSON.stringify(settingsKeyboard));
-    return true;
+      if (localStorage.hasOwnProperty('settingsKeyboard')) {  // Check if 'settingsKeyboard' exists in localStorage
+          settingsKeyboard = JSON.parse(localStorage.getItem('settingsKeyboard'));  // Parse the existing 'settingsKeyboard' from localStorage
+      }
+
+      setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
+
+      Object.keys(settingKeyboardDefaults).forEach(s => {  // Iterate over the default keyboard settings
+          if (s === setting)  // If the current setting matches, update its value
+              settingsKeyboard[s] = valueIndex;
+      });
+
+      localStorage.setItem('settingsKeyboard', JSON.stringify(settingsKeyboard));  // Save the updated keyboard settings back to localStorage
+
+      return true;  // Return true to indicate the operation was successful
   }
 
   private loadSettings(): boolean {
