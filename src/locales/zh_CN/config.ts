@@ -1,4 +1,5 @@
 import { ability } from "./ability";
+import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { fightUiHandler } from "./fight-ui-handler";
@@ -18,6 +19,7 @@ import { biome } from "./biome";
 
 export const zhCnConfig = {
     ability: ability,
+    abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
     fightUiHandler: fightUiHandler,

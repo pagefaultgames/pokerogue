@@ -179,10 +179,6 @@ export class Arena {
             return 5;
         }
         break;
-      case Species.SCATTERBUG:
-      case Species.SPEWPA:
-      case Species.VIVILLON:
-        return 0;
       case Species.LYCANROC:
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
@@ -193,13 +189,6 @@ export class Arena {
             return 2;
           case TimeOfDay.NIGHT:
             return 1;
-        }
-      case Species.CALYREX:
-        switch (this.biomeType) {
-          case Biome.SNOWY_FOREST:
-            return 1;
-          case Biome.GRAVEYARD:
-            return 2;
         }
         break;
     }
@@ -217,6 +206,7 @@ export class Arena {
       case Biome.TALL_GRASS:
         return Type.GRASS;
       case Biome.FOREST:
+      case Biome.JUNGLE:
         return Type.BUG;
       case Biome.SLUM:
       case Biome.SWAMP:
@@ -248,8 +238,10 @@ export class Arena {
       case Biome.TEMPLE:
         return Type.GHOST;
       case Biome.DOJO:
+      case Biome.CONSTRUCTION_SITE:
         return Type.FIGHTING;
       case Biome.FACTORY:
+      case Biome.LABORATORY:
         return Type.STEEL;
       case Biome.RUINS:
       case Biome.SPACE:
@@ -259,6 +251,8 @@ export class Arena {
         return Type.DRAGON;
       case Biome.ABYSS:
         return Type.DARK;
+      default:
+        return Type.UNKNOWN;
     }
   }
 
@@ -628,7 +622,7 @@ export class Arena {
       case Biome.CONSTRUCTION_SITE:
         return 1.222;
       case Biome.JUNGLE:
-        return 2.477;
+        return 0.000;
       case Biome.FAIRY_CAVE:
         return 4.542;
       case Biome.TEMPLE:

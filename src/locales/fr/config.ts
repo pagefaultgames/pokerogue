@@ -1,4 +1,5 @@
 import { ability } from "./ability";
+import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { biome } from "./biome";
 import { commandUiHandler } from "./command-ui-handler";
@@ -19,6 +20,7 @@ import { tutorial } from "./tutorial";
 
 export const frConfig = {
     ability: ability,
+    abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
     fightUiHandler: fightUiHandler,

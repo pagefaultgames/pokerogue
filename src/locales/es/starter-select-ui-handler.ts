@@ -7,6 +7,15 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
     "confirmStartTeam":'¿Comenzar con estos Pokémon?',
+    "gen1": "I",
+    "gen2": "II",
+    "gen3": "III",
+    "gen4": "IV",
+    "gen5": "V",
+    "gen6": "VI",
+    "gen7": "VII",
+    "gen8": "VIII",
+    "gen9": "IX",
     "growthRate": "Crecimiento:",
     "ability": "Habilid:",
     "passive": "Pasiva:",
@@ -29,7 +38,10 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleVariant": 'V: Cambiar Variante',
     "enablePassive": "Activar Pasiva",
     "disablePassive": "Desactivar Pasiva",
-    "uncaught": "Sin capturar",
+    "locked": "Locked",
+    "disabled": "Disabled",
+    "uncaught": "Uncaught",
     "luck":" Suerte",
-    "form": "Forma"
+    "form": "Forma"    
 }
+
