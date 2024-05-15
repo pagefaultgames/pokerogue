@@ -35,6 +35,6 @@ export const ptBrConfig = {
     growth: growth,
     partyUiHandler: partyUiHandler,
     summaryUiHandler: SummaryUiHandler,
-    biome: biome
+    biome: biome,
     weather: weather
 }

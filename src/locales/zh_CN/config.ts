@@ -35,7 +35,6 @@ export const zhCnConfig = {
     nature: nature,
     partyUiHandler: partyUiHandler,
     summaryUiHandler: SummaryUiHandler,
-    biome: biome
-    nature: nature,
+    biome: biome,
     weather: weather
 }
