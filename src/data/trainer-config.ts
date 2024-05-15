@@ -253,6 +253,9 @@ export class TrainerConfig {
             initI18n();
         }
 
+        // Make the title lowercase and replace spaces with underscores
+        title = title.toLowerCase().replace(/\s/g, '_');
+
         this.title = i18next.t(`titles:${title}`);
 
 
