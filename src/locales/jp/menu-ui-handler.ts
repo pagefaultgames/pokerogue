@@ -9,7 +9,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
     "EGG_GACHA": "タマゴガチャ",
     "MANAGE_DATA": "データかんり",
     "COMMUNITY": "コミュニティ",
-    "RETURN_TO_TITLE": "タイトルへ",
+    "SAVE_AND_QUIT": "Save and Quit",
     "LOG_OUT": "ログアウト",
     "slot": "スロット　{{slotNumber}}",
     "importSession": "セッションのインポート",
