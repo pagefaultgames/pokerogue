@@ -67,6 +67,18 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   }
 }
 
+function encrypt(data: string, bypassLogin: boolean): string {
+  return (bypassLogin
+    ? (data: string) => btoa(data)
+    : (data: string) => AES.encrypt(data, saveKey))(data);
+}
+
+function decrypt(data: string, bypassLogin: boolean): string {
+  return (bypassLogin
+    ? (data: string) => atob(data)
+    : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
+}
+
 interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
@@ -277,13 +289,9 @@ export class GameData {
       const maxIntAttrValue = Math.pow(2, 31);
       const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-      const encFunc = bypassLogin
-        ? (data: string) => btoa(data)
-        : (data: string) => AES.encrypt(data, saveKey);
+      localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
 
-      localStorage.setItem(`data_${loggedInUser.username}`, encFunc(systemData));
-
-      if (!bypassLogin && !localStorage.getItem(`data_${loggedInUser.username}`)) {
+      if (!bypassLogin) {
         Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
@@ -335,12 +343,8 @@ export class GameData {
             const cachedSystem = localStorage.getItem(`data_${loggedInUser.username}`);
             this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : null).then(resolve);
           });
-      } else {
-        const decFunc = bypassLogin
-          ? (data: string) => atob(data)
-          : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8);
-        this.initSystem(decFunc(localStorage.getItem(`data_${loggedInUser.username}`))).then(resolve);
-      }
+      } else
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)).then(resolve);
     });
   }
 
@@ -498,24 +502,23 @@ export class GameData {
     return dataStr;
   }
 
-  public verify(): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      if (bypassLogin)
-        return resolve(true);
-      Utils.apiFetch(`savedata/system/verify?clientSessionId=${clientSessionId}`, true)
-        .then(response => response.json())
-        .then(response => {
-          if (!response.valid) {
-            this.scene.clearPhaseQueue();
-            this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(response.systemData)));
-            localStorage.removeItem(`data_${loggedInUser.username}`);
-            for (let s = 0; s < 5; s++)
-              localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
-            return resolve(false);
-          }
-          resolve(true);
-        });
-    });
+  public async verify(): Promise<boolean> {
+    if (bypassLogin)
+        return true;
+
+    const response = await Utils.apiPost(`savedata/system/verify`, JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
+      .then(response => response.json());
+
+    if (!response.valid) {
+      this.scene.clearPhaseQueue();
+      this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(response.systemData)));
+      localStorage.removeItem(`data_${loggedInUser.username}`);
+      for (let s = 0; s < 5; s++)
+        localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
+      return false;
+    }
+
+    return true;
   }
 
   public saveSetting(setting: Setting, valueIndex: integer): boolean {
@@ -624,16 +627,15 @@ export class GameData {
               return resolve(null);
             }
 
+            localStorage.setItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`, encrypt(response, bypassLogin));
+
             await handleSessionData(response);
           });
       } else {
         const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`);
-        if (sessionData) {
-          const decFunc = bypassLogin
-            ? (data: string) => atob(data)
-            : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8);
-          await handleSessionData(decFunc(sessionData));
-        } else
+        if (sessionData)
+          await handleSessionData(decrypt(sessionData, bypassLogin));
+        else
           return resolve(null);
       }
     });
@@ -871,14 +873,14 @@ export class GameData {
     }) as SessionSaveData;
   }
 
-  saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false): Promise<boolean> {
+  saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success)
           return resolve(false);
         if (sync)
           this.scene.ui.savingIcon.show();
-        const sessionData = this.getSessionSaveData(scene);
+        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
 
         const maxIntAttrValue = Math.pow(2, 31);
         const systemData = this.getSystemSaveData();
@@ -890,13 +892,9 @@ export class GameData {
           clientSessionId: clientSessionId
         };
 
-        const encFunc = bypassLogin
-          ? (data: string) => btoa(data)
-          : (data: string) => AES.encrypt(data, saveKey);
+        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encFunc(JSON.stringify(systemData, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
-
-        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}_${loggedInUser.username}`, encFunc(JSON.stringify(sessionData)));
+        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
         console.debug('Session data saved');
 
@@ -961,12 +959,8 @@ export class GameData {
           });
       } else {
         const data = localStorage.getItem(dataKey);
-        if (data) {
-          const decFunc = bypassLogin
-            ? (data: string) => atob(data)
-            : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8);
-          handleData(decFunc(data));
-        }
+        if (data)
+          handleData(decrypt(data, bypassLogin));
         resolve(!!data);
       }
     });
@@ -1034,12 +1028,7 @@ export class GameData {
                 return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
               this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
                 this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                  const hasLocalData = !!localStorage.getItem(dataKey);
-
-                  const encFunc = bypassLogin || dataType === GameDataType.SETTINGS
-                    ? (data: string) => btoa(data)
-                    : (data: string) => AES.encrypt(data, saveKey);
-                  localStorage.setItem(dataKey, encFunc(dataStr));
+                  localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                   if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                     updateUserInfo().then(success => {

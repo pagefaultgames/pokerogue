@@ -3696,7 +3696,7 @@ export class PostGameOverPhase extends Phase {
   start() {
     super.start();
 
-    this.scene.gameData.saveSystem().then(success => {
+    this.scene.gameData.saveAll(this.scene, true, true, true).then(success => {
       if (!success)
         return this.scene.reset(true);
       this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
