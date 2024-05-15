@@ -744,7 +744,7 @@ export class RecoilAttr extends MoveEffectAttr {
  **/
 export class SacrificialAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, MoveEffectTrigger.POST_TARGET);
   }
 
   /**
@@ -757,18 +757,11 @@ export class SacrificialAttr extends MoveEffectAttr {
    **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
-	user.turnData.damageTaken += user.hp;
+	  user.turnData.damageTaken += user.hp;
 
     return true;
   }
 
-  /**
-   * The AI is calculating how beneficial it is to use this move. Bosses will always return -20. Otherwise, the score is calculated based on the user's current hp ratio and the move's type effectiveness against the user
-   * @param user Pokemon that used the move
-   * @param target The target of the move
-   * @param move Move with this attribute
-   * @returns The benefit score of using this move (how likely the AI is to use this move)
-   **/
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -20;
@@ -781,11 +774,11 @@ export class SacrificialAttr extends MoveEffectAttr {
  **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, MoveEffectTrigger.POST_TARGET);
   }
 
   /**
-   * Deals damage to the user equal to their current hp
+   * Deals damage to the user equal to their current hp if the move lands
    * @param user Pokemon that used the move
    * @param target The target of the move
    * @param move Move with this attribute
@@ -804,13 +797,6 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
     return true;
   }
 
-  /**
-   * The AI is calculating how beneficial it is to use this move. Bosses will always return -20. Otherwise, the score is calculated based on the user's current hp ratio and the move's type effectiveness against the user
-   * @param user Pokemon that used the move
-   * @param target The target of the move
-   * @param move Move with this attribute
-   * @returns The benefit score of using this move (how likely the AI is to use this move)
-   **/
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -20;

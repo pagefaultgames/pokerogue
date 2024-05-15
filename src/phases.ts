@@ -2304,12 +2304,6 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
-      // Check if the move has no valid targets (because they are flying, etc.) - if the used move is sacrificial it does not need a target so we add the user as a target so the move does not fail
-      if (targets.length === 0 && this.move.getMove().getAttrs(SacrificialAttr).length) {
-        // Add the user as a target if the move is sacrificial
-        targets.push(this.pokemon);
-      }
-
       if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
 
@@ -2473,17 +2467,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
       // Move animation only needs one target
       new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
-        // Check if the user is in the targets list for sacrificial moves, if not add them
-        if (this.move.getMove().getAttrs(SacrificialAttr).length && !targets.includes(user)) {
-          targets.push(user);
-          targetHitChecks[user.getBattlerIndex()] = true;
-        }
         for (let target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
-            // If we have a sacrifical move, and the target isnt the user - it should not "miss". So we skip the miss check
-            if (this.move.getMove().getAttrs(SacrificialAttr).length && target !== user) {
-              continue;
-            }
             user.turnData.hitCount = 1;
             user.turnData.hitsLeft = 1;
             this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
@@ -2544,8 +2529,14 @@ export class MoveEffectPhase extends PokemonPhase {
           }));
         }
         // Trigger effect which should only apply one time after all targeted effects have already applied
-        applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
-              user, null, this.move.getMove())
+        const postTarget = applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
+          user, null, this.move.getMove());
+        
+        if (applyAttrs.length)  // If there is a pending asynchronous move effect, do this after
+          applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
+        else // Otherwise, push a new asynchronous move effect
+          applyAttrs.push(postTarget);
+
         Promise.allSettled(applyAttrs).then(() => this.end());
       });
     });
