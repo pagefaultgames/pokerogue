@@ -1844,16 +1844,18 @@ export class HpSplitAttr extends MoveEffectAttr {
 
 /**
   * Attribute used for moves which split the user and the target's offensive raw stats.
-  * This attribute is used for the move Power Split.
+  * @extends MoveEffectAttr
+  * @see {@link apply}
 */
 export class PowerSplitAttr extends MoveEffectAttr {
+
   /**
    * Applying Power Split to the user and the target.
-   * @param {Pokemon} user The pokemon using the move.
-   * @param {Pokemon} target The targeted pokemon of the move.
-   * @param {Move} move The move used.
-   * @param {any} args N/A
-   * @returns {boolean} True if power split is applied successfully.
+   * @param user The pokemon using the move. {@link Pokemon} 
+   * @param target The targeted pokemon of the move. {@link Pokemon} 
+   * @param move The move used. {@link Move} 
+   * @param args N/A
+   * @returns True if power split is applied successfully.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) : Promise<boolean> {
     return new Promise(resolve => {
@@ -1882,16 +1884,17 @@ export class PowerSplitAttr extends MoveEffectAttr {
 
 /**
   * Attribute used for moves which split the user and the target's defensive raw stats.
-  * This attribute is used for the move Guard Split.
+  * @extends MoveEffectAttr
+  * @see {@link apply}
 */
 export class GuardSplitAttr extends MoveEffectAttr {
   /**
    * Applying Guard Split to the user and the target.
-   * @param {Pokemon} user The pokemon using the move.
-   * @param {Pokemon} target The targeted pokemon of the move.
-   * @param {Move} move The move used.
-   * @param {any} args N/A
-   * @returns {boolean} True if power split is applied successfully.
+   * @param user The pokemon using the move. {@link Pokemon}
+   * @param target The targeted pokemon of the move. {@link Pokemon}
+   * @param move The move used. {@link Move}
+   * @param args N/A
+   * @returns True if power split is applied successfully.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {

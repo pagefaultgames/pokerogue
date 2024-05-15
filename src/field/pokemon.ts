@@ -547,7 +547,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Returns the value of the specified stat.
    * @param stat Stat to get the value of. {@link Stat}
-   * @returns The value of the stat. If the pokemon is already summoned, it uses those values, otherwise uses the base stats. {@link integer}
+   * @returns The value of the stat. If the pokemon is already summoned, it uses those values, otherwise uses the base stats.
    */
   getStat(stat: Stat): integer {
     if (!this.summonData) {
@@ -1713,9 +1713,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Sets a specific stat to a specific value. Used for summon data, while the pokemon is out until the next time it is retrieved.
+   * Sets a specific stat to a specific value.
+   * Used for summon data, while the pokemon is out until the next time it is retrieved.
    * @param stat Stat to change. {@link Stat}
-   * @param value Amount to set the stat to. {@link integer}
+   * @param value Amount to set the stat to.
    */
   changeSummonStat(stat: Stat, value: integer) : void {
     this.summonData.stats[stat] = value;
