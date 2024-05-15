@@ -202,6 +202,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "FOCUS_BAND": { name: "Focus Band", description: "Adds a 10% chance to survive with 1 HP after being damaged enough to faint" },
 
+    "QUICK_CLAW": { name: "Quick Claw", description: "Adds a 10% chance to move first regardless of speed (after priority)" },
+
     "KINGS_ROCK": { name: "King's Rock", description: "Adds a 10% chance an attack move will cause the opponent to flinch" },
 
     "LEFTOVERS": { name: "Leftovers", description: "Heals 1/16 of a Pokémon's maximum HP every turn" },
