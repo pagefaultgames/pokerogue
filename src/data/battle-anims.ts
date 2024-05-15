@@ -1,13 +1,10 @@
-//import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
 import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
 import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
-import stringify, { Element } from "json-stable-stringify";
+import { Element } from "json-stable-stringify";
 import { Moves } from "./enums/moves";
-import { getTypeRgb } from "./type";
-//import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
     USER,
@@ -711,14 +708,12 @@ export abstract class BattleAnim {
         return ret;
     }
 
-    play(scene: BattleScene, callback?: Function) {
+    async play(scene: BattleScene, skipAnimation: boolean = false) {
         const isOppAnim = this.isOppAnim();
         const user = !isOppAnim ? this.user : this.target;
         const target = !isOppAnim ? this.target : this.user;
 
-        if (!target.isOnField()) {
-            if (callback)
-                callback();
+        if (!scene.moveAnimations || skipAnimation) {
             return;
         }
 
@@ -732,33 +727,30 @@ export abstract class BattleAnim {
         };
         const spritePriorities: integer[] = [];
 
-        const cleanUpAndComplete = () => {
-            userSprite.setPosition(0, 0);
-            userSprite.setScale(1);
-            userSprite.setAlpha(1);
-            userSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
-            userSprite.setAngle(0);
-            targetSprite.setPosition(0, 0);
-            targetSprite.setScale(1);
-            targetSprite.setAlpha(1);
-            targetSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
-            targetSprite.setAngle(0);
-            if (!this.isHideUser())
-                userSprite.setVisible(true);
-            if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser()))
-                targetSprite.setVisible(true);
-            for (let ms of Object.values(spriteCache).flat()) {
-                if (ms)
-                    ms.destroy();
-            }
-            if (this.bgSprite)
-                this.bgSprite.destroy();
-            if (callback)
-                callback();
+        const cleanUpAndComplete = (): Promise<any> => {
+            return new Promise(() => {
+                userSprite.setPosition(0, 0);
+                userSprite.setScale(1);
+                userSprite.setAlpha(1);
+                userSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
+                userSprite.setAngle(0);
+                targetSprite.setPosition(0, 0);
+                targetSprite.setScale(1);
+                targetSprite.setAlpha(1);
+                targetSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
+                targetSprite.setAngle(0);
+                if (!this.isHideUser())
+                    userSprite.setVisible(true);
+                if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser()))
+                    targetSprite.setVisible(true);
+                for (let ms of Object.values(spriteCache).flat()) {
+                    if (ms)
+                        ms.destroy();
+                }
+                if (this.bgSprite)
+                    this.bgSprite.destroy();
+            });
         };
-
-        if (!scene.moveAnimations)
-            return cleanUpAndComplete();
 
         const anim = this.getAnim();
 
@@ -913,7 +905,7 @@ export abstract class BattleAnim {
                 f++;
                 r--;
             },
-            onComplete: () => {
+            onComplete: async () => {
                 for (let ms of Object.values(spriteCache).flat()) {
                     if (ms && !ms.getData('locked'))
                         ms.destroy();
@@ -924,7 +916,7 @@ export abstract class BattleAnim {
                         onComplete: () => cleanUpAndComplete()
                     });
                 } else
-                    cleanUpAndComplete();
+                    await cleanUpAndComplete();
             }
         });
     }

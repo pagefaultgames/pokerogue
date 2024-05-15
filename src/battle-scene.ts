@@ -1,10 +1,13 @@
 import Phaser from 'phaser';
-import UI, { Mode } from './ui/ui';
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
+import UI from './ui/ui';
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase,
+	ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier,
+	HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier,
+	FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { Phase } from './phase';
@@ -12,15 +15,14 @@ import { initGameSpeed } from './system/game-speed';
 import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from './field/arena';
 import { GameData, PlayerGender } from './system/game-data';
-import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint,
+	getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
-import { Abilities } from "./data/enums/abilities";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
 import { GameMode, GameModes, gameModes } from './game-mode';
@@ -33,9 +35,6 @@ import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { pokemonPrevolutions } from './data/pokemon-evolutions';
 import PokeballTray from './ui/pokeball-tray';
-import { Setting, settingOptions } from './system/settings';
-import SettingsUiHandler from './ui/settings-ui-handler';
-import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/enums/species';
 import InvertPostFX from './pipelines/invert';
 import { Achv, ModifierAchv, MoneyAchv, achvs } from './system/achv';
@@ -1708,10 +1707,11 @@ export default class BattleScene extends SceneBase {
 	}
 
 	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
-		return new Promise(resolve => {
+		return new Promise(async resolve => {
 			const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
 			const cancelled = new Utils.BooleanHolder(false);
-			Utils.executeIf(source && source.isPlayer() !== target.isPlayer(), () => applyAbAttrs(BlockItemTheftAbAttr, source, cancelled)).then(() => {
+			if (source && source.isPlayer() !== target.isPlayer()) {
+				await applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
 				if (cancelled.value)
 					return resolve(false);
 				const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
@@ -1732,12 +1732,14 @@ export default class BattleScene extends SceneBase {
 					removeOld = !(--itemModifier.stackCount);
 				}
 				if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
-					const addModifier = () => {
+					const addModifier = async () => {
 						if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
-							if (target.isPlayer())
-								this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => resolve(true));
-							else
-								this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => resolve(true));
+							if (target.isPlayer()) {
+								await this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
+							} else {
+								await this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
+							}
+							resolve(true);
 						} else
 							resolve(false);
 					};
@@ -1748,7 +1750,7 @@ export default class BattleScene extends SceneBase {
 					return;
 				}
 				resolve(false);
-			});
+			}
 		});
 	}
 

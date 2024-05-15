@@ -12,7 +12,9 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr,
+  IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs,
+  PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -129,8 +131,8 @@ export default class Move implements Localizable {
   localize(): void {
     const i18nKey = Moves[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
 
-    this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`).toString()}${this.nameAppend}` : '';
-    this.effect = this.id ? `${i18next.t(`move:${i18nKey}.effect`).toString()}${this.nameAppend}` : '';
+    this.name = this.id ? `${(i18next.t(`move:${i18nKey}.name`) as any).toString()}${this.nameAppend}` : '';
+    this.effect = this.id ? `${(i18next.t(`move:${i18nKey}.effect`) as any).toString()}${this.nameAppend}` : '';
   }
 
   getAttrs(attrType: { new(...args: any[]): MoveAttr }): MoveAttr[] {
@@ -514,6 +516,11 @@ export class MoveEffectAttr extends MoveAttr {
   public trigger: MoveEffectTrigger;
   public firstHitOnly: boolean;
 
+  /**
+   * @param selfTarget move targets self
+   * @param trigger when does the move effect happen
+   * @param firstHitOnly only happens upon first hit
+   */
   constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false) {
     super(selfTarget);
     this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
@@ -1599,19 +1606,18 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
       const lastMove = user.getLastXMoves().find(() => true);
       if (!lastMove || lastMove.move !== move.id || (lastMove.result !== MoveResult.OTHER && (this.sameTurn || lastMove.turn !== user.scene.currentBattle.turn))) {
         (args[0] as Utils.BooleanHolder).value = true;
-        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
-          user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace('{TARGET}', target.name)}`));
-          if (this.tagType)
-            user.addTag(this.tagType, 1, move.id, user.id);
-          if (this.chargeEffect)
-            applyMoveAttrs(MoveEffectAttr, user, target, move);
-          user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
-          if (this.sameTurn)
-            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], user.moveset.find(m => m.moveId === move.id), true), this.followUpPriority);
-          user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
-          resolve(true);
-        });
+        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene);
+        user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace('{TARGET}', target.name)}`));
+        if (this.tagType)
+          user.addTag(this.tagType, 1, move.id, user.id);
+        if (this.chargeEffect)
+          applyMoveAttrs(MoveEffectAttr, user, target, move);
+        user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
+        user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
+        if (this.sameTurn)
+          user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], user.moveset.find(m => m.moveId === move.id), true), this.followUpPriority);
+        user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
+        resolve(true);
       } else {
         user.lapseTag(BattlerTagType.CHARGING);
         resolve(false);
@@ -1697,14 +1703,13 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       if (args.length < 2 || !args[1]) {
-        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
-          (args[0] as Utils.BooleanHolder).value = true;
-          user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace('{TARGET}', target.name)}`));
-          user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, target.getBattlerIndex());
+        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene);
+        (args[0] as Utils.BooleanHolder).value = true;
+        user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace('{TARGET}', target.name)}`));
+        user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
+        user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, target.getBattlerIndex());
 
-          resolve(true);
-        });
+        resolve(true);
       } else
         user.scene.ui.showText(getPokemonMessage(user.scene.getPokemonById(target.id), ` took\nthe ${move.name} attack!`), null, () => resolve(true));
     });
@@ -1795,11 +1800,13 @@ export class PostVictoryStatChangeAttr extends MoveAttr {
     this.condition = condition || null;
     this.showMessage = showMessage;
   }
-  applyPostVictory(user: Pokemon, target: Pokemon, move: Move): void {
+
+  applyPostVictory(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
     if(this.condition && !this.condition(user, target, move))
       return false;
     const statChangeAttr = new StatChangeAttr(this.stats, this.levels, this.showMessage);
-    statChangeAttr.apply(user, target, move);
+    statChangeAttr.apply(user, target, move, args);
+    return true;
   }
 }
 
@@ -4250,15 +4257,12 @@ const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
-  return new Promise(resolve => {
-    const attrPromises: Promise<boolean>[] = [];
+  return new Promise(async resolve => {
     const moveAttrs = move.attrs.filter(a => attrFilter(a));
     for (let attr of moveAttrs) {
-      const result = attr.apply(user, target, move, args);
-      if (result instanceof Promise)
-        attrPromises.push(result);
+      await attr.apply(user, target, move, args);
     }
-    Promise.allSettled(attrPromises).then(() => resolve());
+    resolve();
   });
 }
 
