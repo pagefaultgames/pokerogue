@@ -14,6 +14,7 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
+import { weather } from "./weather";
 
 
 export const enConfig = {    
@@ -34,5 +35,6 @@ export const enConfig = {
     trainerNames: trainerNames,
     tutorial: tutorial,
     nature: nature,
-    growth: growth
+    growth: growth,
+    weather: weather
 }

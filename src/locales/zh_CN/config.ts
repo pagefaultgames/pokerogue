@@ -13,6 +13,7 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
 import { nature } from "./nature";
+import { weather } from "./weather";
 
 
 export const zhCnConfig = {
@@ -32,5 +33,7 @@ export const zhCnConfig = {
     titles: titles,
     trainerClasses: trainerClasses,
     trainerNames: trainerNames,
-    tutorial: tutorial
+    tutorial: tutorial,
+    nature: nature,
+    weather: weather
 }
