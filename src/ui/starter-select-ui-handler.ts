@@ -599,7 +599,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case 'pt_BR':
         instructionTextSize = '38px';
-        break
+        break;
       case 'zh_CN':
         instructionTextSize = '42px';
         break;
