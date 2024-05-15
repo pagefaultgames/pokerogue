@@ -1667,6 +1667,11 @@ export class SkyDropChargeAttr extends ChargeAttr {
       });
     });
   };
+
+  getCondition(): MoveConditionFunc{
+    return (user, target, move) => target.getWeight() < 200;
+  } 
+  
 }
 
 
