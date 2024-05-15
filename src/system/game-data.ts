@@ -355,7 +355,6 @@ export class GameData {
 
         if (cachedSystemDataStr) {
           let cachedSystemData = this.parseSystemData(cachedSystemDataStr);
-          console.log(cachedSystemData.timestamp, systemData.timestamp)
           if (cachedSystemData.timestamp > systemData.timestamp) {
             console.debug('Use cached system');
             systemData = cachedSystemData;
