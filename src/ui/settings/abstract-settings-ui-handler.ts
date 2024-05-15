@@ -242,9 +242,13 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
         // For each element in the binding settings, update the icon according to the current assignment.
         for (const elm of this.bindingSettings) {
-            // const key = getKeyForSettingName(activeConfig, elm); // Get the key for the setting name.
             const {key, icon} = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, elm);
-            this.inputsIcons[key].setFrame(icon); // Set the icon frame to the inputs icon object.
+            if (icon) {
+                this.inputsIcons[key].setFrame(icon);
+                this.inputsIcons[key].alpha = 1;
+            } else {
+                this.inputsIcons[key].alpha = 0;
+            }
         }
 
         // Set the cursor and scroll cursor to their initial positions.
