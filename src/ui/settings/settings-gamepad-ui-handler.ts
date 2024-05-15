@@ -2,12 +2,12 @@ import BattleScene from "../../battle-scene";
 import {addTextObject, TextStyle} from "../text";
 import {Mode} from "../ui";
 import {SettingGamepad, settingGamepadDefaults, settingGamepadOptions} from "../../system/settings-gamepad";
-import {truncateString} from "../../utils";
 import pad_xbox360 from "#app/configs/pad_xbox360";
 import pad_dualshock from "#app/configs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
 import {InterfaceConfig} from "#app/inputs-controller";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
+import {Device} from "#app/enums/devices";
 
 export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandler {
 
@@ -39,7 +39,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
     }
 
     getActiveConfig(): InterfaceConfig {
-        return this.scene.inputController.getActiveConfig();
+        return this.scene.inputController.getActiveConfig(Device.GAMEPAD);
     }
 
     getLocalStorageSetting(): object {
@@ -89,7 +89,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
 
                     // Update the text of the first option label under the current setting to the name of the chosen gamepad,
                     // truncating the name to 30 characters if necessary.
-                    this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.chosenGamepad, 30));
+                    this.layout[_key].optionValueLabels[index][0].setText(this.scene.inputController.selectedDevice[Device.GAMEPAD], 30);
                 }
             }
         }

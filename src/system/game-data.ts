@@ -233,8 +233,7 @@ export class GameData {
     this.scene = scene;
     this.loadSettings();
     this.loadGamepadSettings();
-    this.loadCustomMapping();
-    this.loadCustomKeyboardMapping();
+    this.loadMappingConfigs();
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
@@ -498,45 +497,23 @@ export class GameData {
     return true;
   }
 
-  public saveCustomMapping(gamepadName: string, currentKeys, icons): boolean {
-    let customMappings: object = {};
-    if (localStorage.hasOwnProperty('customMapping'))
-      customMappings = JSON.parse(localStorage.getItem('customMapping'));
-    customMappings[gamepadName] = {
-      currentKeys,
-      icons
-    };
-    localStorage.setItem('customMapping', JSON.stringify(customMappings));
+  public saveMappingConfigs(gamepadName: string, config): boolean {
+    const key = gamepadName.toLowerCase();
+    let mappingConfigs: object = {};
+    if (localStorage.hasOwnProperty('mappingConfigs'))
+      mappingConfigs = JSON.parse(localStorage.getItem('mappingConfigs'));
+    if (!mappingConfigs[key]) mappingConfigs[key] = {};
+    mappingConfigs[key].custom = config.custom;
+    localStorage.setItem('mappingConfigs', JSON.stringify(mappingConfigs));
     return true;
   }
 
-  public saveCustomKeyboardMapping(keyboardLayout: string, currentKeys, icons): boolean {
-    let customKeyboardMappings: object = {};
-    if (localStorage.hasOwnProperty('customKeyboardMappings'))
-      customKeyboardMappings = JSON.parse(localStorage.getItem('customKeyboardMappings'));
-    customKeyboardMappings[keyboardLayout] = {
-      currentKeys,
-      icons
-    };
-    localStorage.setItem('customKeyboardMappings', JSON.stringify(customKeyboardMappings));
-    return true;
-  }
-
-  public loadCustomKeyboardMapping(): boolean {
-    if (!localStorage.hasOwnProperty('customKeyboardMappings'))
+  public loadMappingConfigs(): boolean {
+    if (!localStorage.hasOwnProperty('mappingConfigs'))
       return false;
-    const customKeyboardMappings = JSON.parse(localStorage.getItem('customKeyboardMappings'));
-    for (const key of Object.keys(customKeyboardMappings))
-      this.scene.inputController.injectKeyboardConfig(key, customKeyboardMappings[key]);
-
-  }
-
-  public loadCustomMapping(): boolean {
-    if (!localStorage.hasOwnProperty('customMapping'))
-      return false;
-    const customMappings = JSON.parse(localStorage.getItem('customMapping'));
-    for (const key of Object.keys(customMappings))
-      this.scene.inputController.injectConfig(key, customMappings[key]);
+    const mappingConfigs = JSON.parse(localStorage.getItem('mappingConfigs'));
+    for (const key of Object.keys(mappingConfigs))
+      this.scene.inputController.injectConfig(key, mappingConfigs[key]);
 
   }
 

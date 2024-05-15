@@ -43,7 +43,29 @@ const pad_xbox360 = {
         LC_W: "T_X_Dpad_Left_Alt.png",
         LC_E: "T_X_Dpad_Right_Alt.png",
     },
-    setting: {
+    settings: {
+        [SettingGamepad.Button_Up]: Button.UP,
+        [SettingGamepad.Button_Down]: Button.DOWN,
+        [SettingGamepad.Button_Left]: Button.LEFT,
+        [SettingGamepad.Button_Right]: Button.RIGHT,
+        [SettingGamepad.Button_Action]: Button.ACTION,
+        [SettingGamepad.Button_Cancel]: Button.CANCEL,
+        [SettingGamepad.Button_Cycle_Nature]: Button.CYCLE_NATURE,
+        [SettingGamepad.Button_Cycle_Variant]: Button.CYCLE_VARIANT,
+        [SettingGamepad.Button_Menu]: Button.MENU,
+        [SettingGamepad.Button_Stats]: Button.STATS,
+        [SettingGamepad.Button_Cycle_Form]:  Button.CYCLE_FORM,
+        [SettingGamepad.Button_Cycle_Shiny]: Button.CYCLE_SHINY,
+        [SettingGamepad.Button_Cycle_Gender]: Button.CYCLE_GENDER,
+        [SettingGamepad.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
+        [SettingGamepad.Button_Speed_Up]: Button.SPEED_UP,
+        [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN
+    },
+    default: {
+        LC_N: SettingGamepad.Button_Up,
+        LC_S: SettingGamepad.Button_Down,
+        LC_W: SettingGamepad.Button_Left,
+        LC_E: SettingGamepad.Button_Right,
         RC_S: SettingGamepad.Button_Action,
         RC_E: SettingGamepad.Button_Cancel,
         RC_W: SettingGamepad.Button_Cycle_Nature,
@@ -55,26 +77,10 @@ const pad_xbox360 = {
         LT: SettingGamepad.Button_Cycle_Gender,
         RT: SettingGamepad.Button_Cycle_Ability,
         LS: SettingGamepad.Button_Speed_Up,
-        RS: SettingGamepad.Button_Slow_Down,
+        RS: SettingGamepad.Button_Slow_Down
     },
-    default: {
-        RC_S: Button.ACTION, //5
-        RC_E: Button.CANCEL, // 6
-        RC_W: Button.CYCLE_NATURE,
-        RC_N: Button.CYCLE_VARIANT, //14
-        START: Button.MENU, //7
-        SELECT: Button.STATS, //8
-        LB: Button.CYCLE_FORM,
-        RB: Button.CYCLE_SHINY,
-        LT: Button.CYCLE_GENDER,
-        RT: Button.CYCLE_ABILITY,
-        LS: Button.SPEED_UP,
-        RS: Button.SLOW_DOWN,
-        LC_N: Button.UP,
-        LC_S: Button.DOWN,
-        LC_W: Button.LEFT,
-        LC_E: Button.RIGHT,
-    }
+    main: [],
+    alt: [],
 };
 
 export default pad_xbox360;

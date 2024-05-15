@@ -8,6 +8,10 @@ import {Button} from "../enums/buttons";
 export enum SettingGamepad {
     Default_Controller = "DEFAULT_CONTROLLER",
     Gamepad_Support = "GAMEPAD_SUPPORT",
+    Button_Up = "BUTTON_UP",
+    Button_Down = "BUTTON_DOWN",
+    Button_Left = "BUTTON_LEFT",
+    Button_Right = "BUTTON_RIGHT",
     Button_Action = "BUTTON_ACTION",
     Button_Cancel = "BUTTON_CANCEL",
     Button_Menu = "BUTTON_MENU",
@@ -26,6 +30,10 @@ export enum SettingGamepad {
 export const settingGamepadOptions: SettingOptions = {
     [SettingGamepad.Default_Controller]: ['Default', 'Change'],
     [SettingGamepad.Gamepad_Support]: ['Auto', 'Disabled'],
+    [SettingGamepad.Button_Up]: [`KEY ${Button.UP.toString()}`, 'Change'],
+    [SettingGamepad.Button_Down]: [`KEY ${Button.DOWN.toString()}`, 'Change'],
+    [SettingGamepad.Button_Left]: [`KEY ${Button.LEFT.toString()}`, 'Change'],
+    [SettingGamepad.Button_Right]: [`KEY ${Button.RIGHT.toString()}`, 'Change'],
     [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
     [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
     [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Change'],
@@ -44,6 +52,10 @@ export const settingGamepadOptions: SettingOptions = {
 export const settingGamepadDefaults: SettingDefaults = {
     [SettingGamepad.Default_Controller]: 0,
     [SettingGamepad.Gamepad_Support]: 0,
+    [SettingGamepad.Button_Up]: 0,
+    [SettingGamepad.Button_Down]: 0,
+    [SettingGamepad.Button_Left]: 0,
+    [SettingGamepad.Button_Right]: 0,
     [SettingGamepad.Button_Action]: 0,
     [SettingGamepad.Button_Cancel]: 0,
     [SettingGamepad.Button_Menu]: 0,

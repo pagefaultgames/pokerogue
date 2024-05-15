@@ -5,8 +5,9 @@ import {SettingKeyboard, settingKeyboardDefaults, settingKeyboardOptions} from "
 import {reverseValueToKeySetting, truncateString} from "#app/utils";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {InterfaceConfig} from "#app/inputs-controller";
-import {deleteBind} from "#app/configs/gamepad-utils";
 import {addTextObject, TextStyle} from "#app/ui/text";
+import {deleteBind} from "#app/configs/configHandler";
+import {Device} from "#app/enums/devices";
 
 
 export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandler {
@@ -53,7 +54,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     }
 
     getActiveConfig(): InterfaceConfig {
-        return this.scene.inputController.getActiveKeyboardConfig();
+        return this.scene.inputController.getActiveConfig(Device.KEYBOARD);
     }
 
     getLocalStorageSetting(): object {
@@ -101,7 +102,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
                     if (_key === 'noKeyboard') continue; // Skip updating the no gamepad layout.
                     // Update the text of the first option label under the current setting to the name of the chosen gamepad,
                     // truncating the name to 30 characters if necessary.
-                    this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.chosenKeyboard, 30));
+                    this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.selectedDevice[Device.KEYBOARD], 30));
                 }
             }
         }
@@ -109,7 +110,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     }
 
     saveCustomKeyboardMappingToLocalStorage(config): void {
-        this.scene.gameData.saveCustomKeyboardMapping(this.scene.inputController?.chosenKeyboard, config.currentKeys, config.icons);
+        this.scene.gameData.saveMappingConfigs(this.scene.inputController?.selectedDevice[Device.KEYBOARD], config);
     }
 
     saveSettingToLocalStorage(settingName, cursor): void {

@@ -5,10 +5,7 @@ import {InterfaceConfig} from "../../inputs-controller";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
-import {
-    getKeyAndActionFromCurrentKeysWithSettingName,
-    getKeyForSettingName
-} from "#app/configs/gamepad-utils";
+import {getIconWithSettingName, getKeyWithSettingName} from "#app/configs/configHandler";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -107,7 +104,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
             optionsContainer.setVisible(false);
 
             // Gather all gamepad binding settings from the configuration.
-            const bindingSettings = Object.keys(config.setting).map(k => config.setting[k]);
+            const bindingSettings = Object.keys(config.settings);
 
             // Array to hold labels for different settings such as 'Default Controller', 'Gamepad Support', etc.
             const settingLabels: Phaser.GameObjects.Text[] = [];
@@ -121,7 +118,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
             // Fetch common setting keys such as 'Default Controller' and 'Gamepad Support' from gamepad settings.
             const commonSettingKeys = Object.keys(this.settingDevice).slice(0, this.commonSettingsCount).map(key => this.settingDevice[key]);
             // Combine common and specific bindings into a single array.
-            const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.setting).map(k => config.setting[k])];
+            const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.settings)];
             // Fetch default values for these settings and prepare to highlight selected options.
             const optionCursors = Object.values(Object.keys(this.settingDeviceDefaults).filter(s => specificBindingKeys.includes(s)).map(k => this.settingDeviceDefaults[k]));
 
@@ -142,6 +139,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                 const valueLabels: Phaser.GameObjects.Text[] = []
 
                 // Process each option for the current setting.
+                const aaa = this.settingDeviceOptions;
+                const bbb = this.settingDevice;
+                const ccc = this.settingDevice[setting];
                 for (const [o, option] of this.settingDeviceOptions[this.settingDevice[setting]].entries()) {
                     // Check if the current setting is for binding keys.
                     if (bindingSettings.includes(this.settingDevice[setting])) {
@@ -154,11 +154,10 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                             continue;
                         }
                         // For null options, add an icon for the key.
-                        const key = getKeyForSettingName(config as InterfaceConfig, this.settingDevice[setting]);
                         const icon = this.scene.add.sprite(0, 0, this.textureOverride ? this.textureOverride : config.padType);
                         icon.setScale(0.1);
                         icon.setOrigin(0, -0.1);
-                        inputsIcons[key] = icon;
+                        inputsIcons[this.settingDevice[setting]] = icon;
                         optionsContainer.add(icon);
                         valueLabels.push(icon);
                         continue;
@@ -242,12 +241,13 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
         // For each element in the binding settings, update the icon according to the current assignment.
         for (const elm of this.bindingSettings) {
-            const {key, icon} = getKeyAndActionFromCurrentKeysWithSettingName(activeConfig, elm);
+            const icon = getIconWithSettingName(activeConfig, elm);
             if (icon) {
-                this.inputsIcons[key].setFrame(icon);
-                this.inputsIcons[key].alpha = 1;
+                this.inputsIcons[elm].setFrame(icon);
+                this.inputsIcons[elm].alpha = 1;
             } else {
-                this.inputsIcons[key].alpha = 0;
+                if (!this.inputsIcons[elm]) debugger;
+                this.inputsIcons[elm].alpha = 0;
             }
         }
 
