@@ -6,6 +6,7 @@ import { fightUiHandler } from "./fight-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
+import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
@@ -30,5 +31,6 @@ export const itConfig = {
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
     nature: nature,
-    growth: growth
+    growth: growth,
+    modifierType: modifierType,
 }
