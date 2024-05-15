@@ -43,7 +43,7 @@ export enum SettingKeyboard {
 }
 
 export const settingKeyboardOptions: SettingOptions = {
-    [SettingKeyboard.Default_Layout]: ['Default', 'Change'],
+    [SettingKeyboard.Default_Layout]: ['Default'],
     [SettingKeyboard.Button_Up]: [`KEY ${Button.UP.toString()}`, 'Change'],
     [SettingKeyboard.Alt_Button_Up]: [`KEY ${Button.UP.toString()}`, 'Change'],
     [SettingKeyboard.Button_Down]: [`KEY ${Button.DOWN.toString()}`, 'Change'],
