@@ -166,8 +166,6 @@ export class InputsController {
             this.scene.input.keyboard.on('keyup', this.keyboardKeyUp, this);
         }
         initTouchControls(this.events);
-        // Keyboard
-        // this.setupKeyboardControls();
     }
 
     /**
@@ -193,7 +191,6 @@ export class InputsController {
             this.gamepadSupport = true;
         } else {
             this.gamepadSupport = false;
-            // if we disable the gamepad, we want to release every key pressed
             this.deactivatePressedKey();
         }
     }
@@ -209,6 +206,11 @@ export class InputsController {
         this.initChosenGamepad(gamepad)
     }
 
+    /**
+     * Sets the currently chosen keyboard layout and initializes related settings.
+     *
+     * @param layoutKeyboard - The identifier of the keyboard layout to set as chosen.
+     */
     setChosenKeyboardLayout(layoutKeyboard: String): void {
         this.deactivatePressedKey();
         this.initChosenLayoutKeyboard(layoutKeyboard)
@@ -274,6 +276,11 @@ export class InputsController {
         handler && handler.updateChosenGamepadDisplay()
     }
 
+    /**
+     * Initializes the chosen keyboard layout by setting its identifier in the local storage and updating the UI to reflect the chosen layout.
+     * If a layout name is provided, it uses that as the chosen layout; otherwise, it defaults to the currently chosen layout.
+     * @param layoutKeyboard Optional parameter to specify the name of the keyboard layout to initialize as chosen.
+     */
     initChosenLayoutKeyboard(layoutKeyboard?: String): void {
         if (layoutKeyboard)
             this.selectedDevice[Device.KEYBOARD] = layoutKeyboard.toLowerCase();
@@ -327,6 +334,9 @@ export class InputsController {
         this.initChosenGamepad(this.selectedDevice[Device.GAMEPAD])
     }
 
+    /**
+     * Initializes or updates configurations for connected keyboards.
+     */
     setupKeyboard(): void {
         for (const layout of ['default']) {
             const config = deepCopy(this.getConfigKeyboard(layout));
@@ -356,14 +366,23 @@ export class InputsController {
         }
     }
 
-    checkIfKeyboardIsInit(): void {
+    /**
+     * Ensures the keyboard is initialized by checking if there is an active configuration for the keyboard.
+     * If not, it sets up the keyboard with default configurations.
+     */
+    ensureKeyboardIsInit(): void {
         if (!this.getActiveConfig(Device.KEYBOARD)?.padID)
             this.setupKeyboard();
     }
 
+    /**
+     * Handles the keydown event for the keyboard.
+     *
+     * @param event The keyboard event.
+     */
     keyboardKeyDown(event): void {
         const keyDown = event.keyCode;
-        this.checkIfKeyboardIsInit();
+        this.ensureKeyboardIsInit();
         if (this.keys.includes(keyDown)) return;
         this.keys.push(keyDown);
         const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), keyDown);
@@ -377,10 +396,15 @@ export class InputsController {
         }
     }
 
+    /**
+     * Handles the keyup event for the keyboard.
+     *
+     * @param event The keyboard event.
+     */
     keyboardKeyUp(event): void {
         const keyDown = event.keyCode;
         this.keys = this.keys.filter(k => k !== keyDown);
-        this.checkIfKeyboardIsInit()
+        this.ensureKeyboardIsInit()
         const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), keyDown);
         if (buttonUp !== undefined) {
             this.events.emit('input_up', {
@@ -462,6 +486,12 @@ export class InputsController {
         return pad_generic;
     }
 
+    /**
+     * Retrieves the configuration object for a keyboard layout based on its identifier.
+     *
+     * @param id The identifier string of the keyboard layout.
+     * @returns InterfaceConfig The configuration object corresponding to the identified keyboard layout.
+     */
     getConfigKeyboard(id: string): InterfaceConfig {
         if (id === 'default')
             return cfg_keyboard_azerty;
@@ -621,11 +651,11 @@ export class InputsController {
     }
 
     /**
-     * Injects a custom mapping configuration into the gamepad configuration for a specific gamepad.
-     * If the gamepad does not have an existing configuration, it initializes one first.
+     * Injects a custom mapping configuration into the configuration for a specific gamepad.
+     * If the device does not have an existing configuration, it initializes one first.
      *
-     * @param gamepadName The identifier of the gamepad to configure.
-     * @param customMappings The custom mapping configuration to apply to the gamepad.
+     * @param selectedDevice The identifier of the device to configure.
+     * @param mappingConfigs The mapping configuration to apply to the device.
      */
     injectConfig(selectedDevice: string, mappingConfigs): void {
         if (!this.configs[selectedDevice]) this.configs[selectedDevice] = {};
@@ -635,6 +665,13 @@ export class InputsController {
         regenerateIdentifiers(this.configs[selectedDevice]);
     }
 
+    /**
+     * Swaps a binding in the configuration.
+     *
+     * @param config The configuration object.
+     * @param settingName The name of the setting to swap.
+     * @param pressedButton The button that was pressed.
+     */
     swapBinding(config, settingName, pressedButton): void {
         this.pauseUpdate = true;
         swap(config, settingName, pressedButton);
