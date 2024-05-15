@@ -144,7 +144,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
-    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: '96px emerald, dppt' });
+    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: '96px emerald' });
     lastLineTest.setScale(this.message.scale);
     const lastLineWidth = lastLineTest.displayWidth;
     lastLineTest.destroy();

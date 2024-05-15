@@ -36,11 +36,35 @@ export interface Localizable {
   localize(): void;
 }
 
+const alternativeFonts = {
+  'ko': [
+    new FontFace("emerald", "url(./fonts/pokemon-dppt.ttf)")
+  ],
+}
+
+function loadFont(language: string) {
+  Object.keys(alternativeFonts).forEach(l => {
+    if (language == l) {
+      alternativeFonts[l].forEach(f=> { document.fonts.add(f); });
+    }
+    else {
+      alternativeFonts[l].forEach(f=> {
+        if (f && f.status == "loaded") { document.fonts.delete(f); }
+      });
+    }
+  });
+}
+
 export function initI18n(): void {
   let lang = '';
 
   if (localStorage.getItem('prLang'))
     lang = localStorage.getItem('prLang');
+
+  loadFont(lang);
+  i18next.on("languageChanged", lng=> {
+    loadFont(lng);
+  });
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
