@@ -93,6 +93,7 @@ export default class BattleScene extends SceneBase {
 	public seVolume: number = 1;
 	public gameSpeed: integer = 1;
 	public damageNumbersMode: integer = 0;
+	public hideUnimplementedMoves: boolean = true;
 	public showLevelUpStats: boolean = true;
 	public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
 	public enableRetries: boolean = false;

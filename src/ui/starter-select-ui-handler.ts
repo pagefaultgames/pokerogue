@@ -1597,6 +1597,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
         }
 
+        if (this.scene.hideUnimplementedMoves) {
+          this.speciesStarterMoves = this.speciesStarterMoves.filter(move => allMoves[move].isImplemented())
+        }
+
         const speciesMoveData = this.scene.gameData.starterData[species.speciesId].moveset;
         let moveData: StarterMoveset = speciesMoveData
           ? Array.isArray(speciesMoveData)

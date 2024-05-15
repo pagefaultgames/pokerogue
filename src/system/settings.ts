@@ -20,6 +20,7 @@ export enum Setting {
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
+  Hide_Unimplemented_Moves = "IGNORE_UNIMPLEMENTED_MOVES",
   EXP_Gains_Speed = "EXP_GAINS_SPEED",
   EXP_Party_Display = "EXP_PARTY_DISPLAY",
   HP_Bar_Speed = "HP_BAR_SPEED",
@@ -53,6 +54,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
   [Setting.Move_Animations]: ['Off', 'On'],
   [Setting.Show_Stats_on_Level_Up]: ['Off', 'On'],
+  [Setting.Hide_Unimplemented_Moves]: ['Off', 'On'],
   [Setting.EXP_Gains_Speed]: ['Normal', 'Fast', 'Faster', 'Skip'],
   [Setting.EXP_Party_Display]: ['Normal', 'Level Up Notification', 'Skip'],
   [Setting.HP_Bar_Speed]: ['Normal', 'Fast', 'Faster', 'Instant'],
@@ -78,6 +80,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
+  [Setting.Hide_Unimplemented_Moves]: 0,
   [Setting.EXP_Gains_Speed]: 0,
   [Setting.EXP_Party_Display]: 0,
   [Setting.HP_Bar_Speed]: 0,
@@ -89,7 +92,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set];
+export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Hide_Unimplemented_Moves, Setting.Language, Setting.Sprite_Set];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -133,6 +136,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Show_Stats_on_Level_Up:
       scene.showLevelUpStats = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Hide_Unimplemented_Moves:
+      scene.hideUnimplementedMoves = settingOptions[setting][value] === 'On'
       break;
     case Setting.EXP_Gains_Speed:
       scene.expGainsSpeed = value;
