@@ -13,7 +13,7 @@ import cfg_keyboard_azerty from "./configs/cfg_keyboard_azerty";
 import {Device} from "#app/enums/devices";
 import {getButtonWithKeycode, regenerateIdentifiers, swap} from "#app/configs/configHandler";
 
-export interface GamepadMapping {
+export interface DeviceMapping {
     [key: string]: number;
 }
 
@@ -32,12 +32,13 @@ export interface MappingLayout {
 export interface InterfaceConfig {
     padID: string;
     padType: string;
-    gamepadMapping: GamepadMapping;
-    ogIcons: IconsMapping;
+    deviceMapping: DeviceMapping;
     icons: IconsMapping;
     setting: SettingMapping;
     default: MappingLayout;
     custom: MappingLayout;
+    main: Array<string>;
+    alt: Array<string>;
 }
 
 const repeatInputDelayMillis = 250;

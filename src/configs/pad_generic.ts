@@ -7,7 +7,7 @@ import {Button} from "../enums/buttons";
 const pad_generic = {
     padID: 'Generic',
     padType: 'xbox',
-    gamepadMapping: {
+    deviceMapping: {
         RC_S: 0,
         RC_E: 1,
         RC_W: 2,

@@ -7,7 +7,7 @@ import {Button} from "#app/enums/buttons";
 const pad_xbox360 = {
     padID: 'Xbox 360 controller (XInput STANDARD GAMEPAD)',
     padType: 'xbox',
-    gamepadMapping: {
+    deviceMapping: {
         RC_S: 0,
         RC_E: 1,
         RC_W: 2,

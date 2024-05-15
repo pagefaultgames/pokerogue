@@ -6,7 +6,7 @@ import {
     getIconWithKey,
     getIconWithKeycode,
     getIconWithSettingName,
-    getKeyWithKeycode, getKeyWithSettingName, isAlreadyBinded, swap
+    getKeyWithKeycode, getKeyWithSettingName, getKeySolvingConflict, swap
 } from "#app/configs/configHandler";
 
 export class MenuManip {
@@ -76,7 +76,7 @@ export class MenuManip {
 
     OopsSpecialCaseIcon(icon) {
         this.specialCaseIcon = this.config.icons[icon];
-        const potentialExistingKey = isAlreadyBinded(this.config, this.keycode, this.settingName);
+        const potentialExistingKey = getKeySolvingConflict(this.config, this.keycode, this.settingName);
         const prev_key = potentialExistingKey || getKeyWithSettingName(this.config, this.settingName);
         expect(getIconWithKey(this.config, prev_key)).toEqual(this.specialCaseIcon);
         return this;

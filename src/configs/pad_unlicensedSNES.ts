@@ -7,7 +7,7 @@ import {Button} from "../enums/buttons";
 const pad_unlicensedSNES = {
     padID: '081f-e401',
     padType: 'snes',
-    gamepadMapping : {
+    deviceMapping : {
         RC_S: 2,
         RC_E: 1,
         RC_W: 3,
