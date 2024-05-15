@@ -1702,7 +1702,7 @@ export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
 }
 
 export class PreStatChangeAbAttr extends AbAttr {
-  applyPreStatChange(pokemon: Pokemon, user: Pokemon, passive: boolean, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyPreStatChange(pokemon: Pokemon, sourcePokemon: Pokemon, passive: boolean, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1716,7 +1716,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
     this.protectedStat = protectedStat;
   }
 
-  applyPreStatChange(pokemon: Pokemon, user: Pokemon, passive: boolean, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreStatChange(pokemon: Pokemon, sourcePokemon: Pokemon, passive: boolean, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.protectedStat === undefined || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
