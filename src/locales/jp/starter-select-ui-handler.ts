@@ -7,6 +7,15 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
     "confirmStartTeam":'Begin with these Pokémon?',
+	"gen1": "I",
+    "gen2": "II",
+    "gen3": "III",
+    "gen4": "IV",
+    "gen5": "V",
+    "gen6": "VI",
+    "gen7": "VII",
+    "gen8": "VIII",
+    "gen9": "IX",
     "growthRate": "けいけんちタイプ:",
     "ability": "とくせい:",
     "passive": "パッシブ:",
@@ -19,8 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "useCandies": "アメを　つかう",
     "selectMoveSwapOut": "Select a move to swap out.",
     "selectMoveSwapWith": "Select a move to swap with",
-    "unlockPassive": "Unlock Passive",
-    "reduceCost": "Reduce Cost",
+    "unlockPassive": "パッシブを　かいほうする",
+    "reduceCost": "ポケモンの　コストを　さくげんする",
     "cycleShiny": "R: Cycle Shiny",
     "cycleForm": 'F: Cycle Form',
     "cycleGender": 'G: Cycle Gender',
@@ -30,5 +39,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "enablePassive": "Enable Passive",
     "disablePassive": "Disable Passive",
     "locked": "Locked",
-    "disabled": "Disabled"
+    "disabled": "Disabled",
+    "uncaught": "Uncaught"
 }
