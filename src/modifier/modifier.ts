@@ -635,6 +635,9 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 }
 
+  /**
+ * Applies Specific Type item boosts (e.g., Magnet)
+ */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   private moveType: Type;
   private boostMultiplier: number;
@@ -667,8 +670,15 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     return super.shouldApply(args) && args.length === 3 && typeof args[1] === 'number' && args[2] instanceof Utils.NumberHolder;
   }
 
+  /**
+ * @param {Array<any>} args Array 
+ *                          - Index 0: {Pokemon} Pokemon
+ *                          - Index 1: {number} Move type
+ *                          - Index 2: {Utils.NumberHolder} Move power
+ * @returns {boolean} Returns true if boosts have been applied to the move.
+ */
   apply(args: any[]): boolean {
-    if (args[1] === this.moveType) {
+    if (args[1] === this.moveType && (args[2] as Utils.NumberHolder).value >= 1) {
       (args[2] as Utils.NumberHolder).value = Math.floor((args[2] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
       return true;
     }
@@ -718,6 +728,40 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 5;
+  }
+}
+
+export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof BypassSpeedChanceModifier;
+  }
+
+  clone() {
+    return new BypassSpeedChanceModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.BooleanHolder;
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    const bypassSpeed = args[1] as Utils.BooleanHolder;
+
+    if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+      bypassSpeed.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 3;
   }
 }
 

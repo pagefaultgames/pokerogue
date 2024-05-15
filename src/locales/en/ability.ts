@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "Frisk",
-    description: "When it enters a battle, the Pokémon can check an opposing Pokémon's held item.",
+    description: "When it enters a battle, the Pokémon can check an opposing Pokémon's Ability.",
   },
   reckless: {
     name: "Reckless",

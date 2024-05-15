@@ -1,4 +1,5 @@
 import { ability } from "./ability";
+import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { fightUiHandler } from "./fight-ui-handler";
@@ -12,10 +13,12 @@ import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
+import { weather } from "./weather";
 
 
 export const esConfig = {
     ability: ability,
+    abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
     fightUiHandler: fightUiHandler,
@@ -28,5 +31,6 @@ export const esConfig = {
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
     nature: nature,
-    growth: growth
+    growth: growth,
+    weather: weather
 }

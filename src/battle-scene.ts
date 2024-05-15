@@ -88,6 +88,7 @@ export default class BattleScene extends SceneBase {
 	public uiInputs: UiInputs;
 
 	public sessionPlayTime: integer = null;
+	public lastSavePlayTime: integer = null;
 	public masterVolume: number = 0.5;
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
@@ -452,6 +453,8 @@ export default class BattleScene extends SceneBase {
 	initSession(): void {
 		if (this.sessionPlayTime === null)
 			this.sessionPlayTime = 0;
+		if (this.lastSavePlayTime === null)
+			this.lastSavePlayTime = 0;
 
 		if (this.playTimeTimer)
 			this.playTimeTimer.destroy();
@@ -464,6 +467,8 @@ export default class BattleScene extends SceneBase {
 					this.gameData.gameStats.playTime++;
 				if (this.sessionPlayTime !== null)
 					this.sessionPlayTime++;
+				if (this.lastSavePlayTime !== null)
+					this.lastSavePlayTime++;
 			}
 		});
 
@@ -741,6 +746,9 @@ export default class BattleScene extends SceneBase {
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
+		if (Overrides.POKEBALL_OVERRIDE.active) {
+            this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
@@ -1004,6 +1012,7 @@ export default class BattleScene extends SceneBase {
 			case Species.FLORGES:
 			case Species.FURFROU:
 			case Species.ORICORIO:
+			case Species.MAGEARNA:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
