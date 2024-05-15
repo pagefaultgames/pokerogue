@@ -268,8 +268,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       // If the opposing Pokemon only has 1 ability and is using the hidden ability, it should have the same
       // behavior if it had 2 abilities so it is set to 2 so it lines up with the math checking the proper
       // hidden ability abilityAttr which is 4
-      const opponentPokemonOneAbility = (pokemon.species.getAbilityCount() == 2);
-      const opponentPokemonAbilityIndex = (pokemon.abilityIndex === 1 && opponentPokemonOneAbility) ? 2 : pokemon.abilityIndex;
+      const opponentPokemonOneNormalAbility = (pokemon.species.getAbilityCount() == 2);
+      const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
       const opponentPokemonAbilityAttr = Math.pow(2, opponentPokemonAbilityIndex);
 
       const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
