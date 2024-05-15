@@ -88,6 +88,7 @@ export default class BattleScene extends SceneBase {
 	public uiInputs: UiInputs;
 
 	public sessionPlayTime: integer = null;
+	public lastSavePlayTime: integer = null;
 	public masterVolume: number = 0.5;
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
@@ -452,6 +453,8 @@ export default class BattleScene extends SceneBase {
 	initSession(): void {
 		if (this.sessionPlayTime === null)
 			this.sessionPlayTime = 0;
+		if (this.lastSavePlayTime === null)
+			this.lastSavePlayTime = 0;
 
 		if (this.playTimeTimer)
 			this.playTimeTimer.destroy();
@@ -464,6 +467,8 @@ export default class BattleScene extends SceneBase {
 					this.gameData.gameStats.playTime++;
 				if (this.sessionPlayTime !== null)
 					this.sessionPlayTime++;
+				if (this.lastSavePlayTime !== null)
+					this.lastSavePlayTime++;
 			}
 		});
 

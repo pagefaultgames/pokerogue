@@ -330,6 +330,7 @@ export class TitlePhase extends Phase {
           this.scene.newBattle();
           this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
           this.end();
         });
       };
@@ -393,8 +394,12 @@ export class UnavailablePhase extends Phase {
 }
 
 export class ReloadSessionPhase extends Phase {
-  constructor(scene: BattleScene) {
+  private systemDataStr: string;
+
+  constructor(scene: BattleScene, systemDataStr?: string) {
     super(scene);
+
+    this.systemDataStr = systemDataStr;
   }
 
   start(): void {
@@ -410,7 +415,9 @@ export class ReloadSessionPhase extends Phase {
         delayElapsed = true;
     });
 
-    this.scene.gameData.loadSystem().then(() => {
+    this.scene.gameData.clearLocalData();
+
+    (this.systemDataStr ? this.scene.gameData.initSystem(this.systemDataStr) : this.scene.gameData.loadSystem()).then(() => {
       if (delayElapsed)
         this.end();
       else
@@ -531,6 +538,7 @@ export class SelectStarterPhase extends Phase {
           this.scene.newBattle();
           this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
           this.end();
         });
       });
@@ -784,7 +792,7 @@ export class EncounterPhase extends BattlePhase {
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
-          this.scene.gameData.saveAll(this.scene, true).then(success => {
+          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || this.scene.lastSavePlayTime >= 10).then(success => {
             this.scene.disableMenu = false;
             if (!success)
               return this.scene.reset(true);
@@ -3692,7 +3700,7 @@ export class PostGameOverPhase extends Phase {
   start() {
     super.start();
 
-    this.scene.gameData.saveSystem().then(success => {
+    this.scene.gameData.saveAll(this.scene, true, true, true).then(success => {
       if (!success)
         return this.scene.reset(true);
       this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
