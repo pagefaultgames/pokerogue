@@ -13,5 +13,10 @@ export const partyUiHandler: SimpleTranslationEntries = {
     "SEND_OUT": "Cambiar",
     "SUMMARY": "Datos",
     "RELEASE": "Liberar",
-    "CANCEL": "Cancelar"
+    "CANCEL": "Cancelar",
+    "unpauseEvolution": "Evolutions have been unpaused for {{pokemonName}}",
+    "unsplicePokemon": "`Do you really want to unsplice {{fusionSpeciesName}}\nfrom {{pokemonName}? {{fusionSpeciesName}} will be lost.",
+    "spliceRevertText": "{{fusionName}} was reverted to {{pokemonName}}.",
+    "releasePokemon": "Do you really want to release {{pokemonName}}?",
+
 } as const;
