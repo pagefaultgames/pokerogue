@@ -303,18 +303,18 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = false;
-          this.showText(`Evolutions have been unpaused for ${pokemon.name}.`, null, () => this.showText(null, 0), null, true);
+          this.showText(i18next.t("partyUiHandler:unpauseEvolution",{pokemonName: pokemon.name}), null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
-          this.showText(`Do you really want to unsplice ${pokemon.fusionSpecies.name}\nfrom ${pokemon.name}? ${pokemon.fusionSpecies.name} will be lost.`, null, () => {
+          this.showText(i18next.t("partyUiHandler:unsplicePokemon",{fusionSpeciesName: pokemon.fusionSpecies.name, pokemonName: pokemon.name}), null, () => {
             ui.setModeWithoutClear(Mode.CONFIRM, () => {
               const fusionName = pokemon.name;
               pokemon.unfuse().then(() => {
                 this.clearPartySlots();
                 this.populatePartySlots();
                 ui.setMode(Mode.PARTY);
-                this.showText(`${fusionName} was reverted to ${pokemon.name}.`, null, () => {
+                this.showText(i18next.t("partyUiHandler:spliceRevertText",{fusionName: fusionName,pokemonName: pokemon.name}), null, () => {
                   ui.setMode(Mode.PARTY);
                   this.showText(null, 0);
                 }, null, true);
@@ -328,7 +328,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
-            this.showText(`Do you really want to release ${pokemon.name}?`, null, () => {
+            this.showText(i18next.t("partyUiHandler:releasePokemon",{pokemonName: pokemon.name}), null, () => {
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
                 this.doRelease(this.cursor);

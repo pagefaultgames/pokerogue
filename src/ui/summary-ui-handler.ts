@@ -108,6 +108,8 @@ export default class SummaryUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
+    const language = i18next.language;
+
     this.summaryContainer = this.scene.add.container(0, 0);
     this.summaryContainer.setVisible(false);
     ui.add(this.summaryContainer);
@@ -225,7 +227,17 @@ export default class SummaryUiHandler extends UiHandler {
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
 
-    const moveEffectLabels = addTextObject(this.scene, 8, 12, i18next.t('summaryUiHandler:moveStats'), TextStyle.SUMMARY);
+    let moveStatsXValue = 8;
+    switch (language) {
+        case 'de':
+            moveStatsXValue = 3;
+            break;
+        default:
+            moveStatsXValue = 8;
+            break;
+    }
+
+    const moveEffectLabels = addTextObject(this.scene, moveStatsXValue, 12, i18next.t('summaryUiHandler:moveStats'), TextStyle.SUMMARY);
     moveEffectLabels.setLineSpacing(9);
     moveEffectLabels.setOrigin(0, 0);
 
