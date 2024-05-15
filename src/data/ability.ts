@@ -2824,7 +2824,7 @@ export function applyPostStatChangeAbAttrs(attrType: { new(...args: any[]): Post
 
 export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSetStatusAbAttr },
   pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  const simulated = args[0];
+  const simulated = args[0]; // Used to mark the call as simulated or not
   return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, false, simulated);
 }
 
