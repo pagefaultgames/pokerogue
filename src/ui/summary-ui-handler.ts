@@ -720,7 +720,7 @@ export default class SummaryUiHandler extends UiHandler {
         }
 
         this.abilityContainer = {
-          labelImage: this.scene.add.image(0, 0, 'summary_profile_ability'),
+          labelImage: this.scene.add.image(0, 0, Utils.verifyLang() ? `summary_profile_ability_${i18next.language}`: 'summary_profile_ability'),
           ability: this.pokemon.getAbility(true), 
           nameText: null, 
           descriptionText: null};
@@ -729,7 +729,7 @@ export default class SummaryUiHandler extends UiHandler {
         // Only add to the array and set up displaying a passive if it's unlocked
         if (this.pokemon.hasPassive()) {
           this.passiveContainer = {
-            labelImage: this.scene.add.image(0, 0, 'summary_profile_passive'),
+            labelImage: this.scene.add.image(0, 0, Utils.verifyLang() ? `summary_profile_passive_${i18next.language}`: 'summary_profile_passive'),
             ability: this.pokemon.getPassiveAbility(), 
             nameText: null, 
             descriptionText: null};          
@@ -859,7 +859,7 @@ export default class SummaryUiHandler extends UiHandler {
         nextLvExpText.setOrigin(1, 0);
         statsContainer.add(nextLvExpText);
 
-        const expOverlay = this.scene.add.image(140, 145, Utils.verifyLang() ? `summary_stats_overlay_exp_${i18next.language}`: 'summary_stats_overlay_exp');
+        const expOverlay = this.scene.add.image(140, 145, 'summary_stats_overlay_exp');
         expOverlay.setOrigin(0, 0);
         statsContainer.add(expOverlay);
 

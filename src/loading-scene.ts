@@ -123,6 +123,8 @@ export class LoadingScene extends SceneBase {
         this.loadImage(`summary_moves_effect_${lang}`, 'ui');
         this.loadImage(`summary_profile_${lang}`, 'ui');
         this.loadImage(`summary_stats_${lang}`, 'ui');
+        this.loadImage(`summary_profile_ability_${lang}`, 'ui');
+        this.loadImage(`summary_profile_passive_${lang}`, 'ui');     
         for (let t = 1; t <= 3; t++){
           this.loadImage(`summary_tabs_${t}_${lang}`, 'ui');
         }
