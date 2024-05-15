@@ -741,6 +741,8 @@ export class RecoilAttr extends MoveEffectAttr {
 
 /**
  * Attribute used for moves which self KO the user regardless if the move hits a target
+ * @extends MoveEffectAttr
+ * @see {@link apply}
  **/
 export class SacrificialAttr extends MoveEffectAttr {
   constructor() {
@@ -771,6 +773,8 @@ export class SacrificialAttr extends MoveEffectAttr {
 
 /**
  * Attribute used for moves which self KO the user but only if the move hits a target
+ * @extends MoveEffectAttr
+ * @see {@link apply}
  **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
