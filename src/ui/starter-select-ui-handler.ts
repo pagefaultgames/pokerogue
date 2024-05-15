@@ -86,7 +86,17 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   }
 }
 
-const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX' ];
+const gens = [
+    i18next.t("starterSelectUiHandler:gen1"),
+    i18next.t("starterSelectUiHandler:gen2"),
+    i18next.t("starterSelectUiHandler:gen3"),
+    i18next.t("starterSelectUiHandler:gen4"),
+    i18next.t("starterSelectUiHandler:gen5"),
+    i18next.t("starterSelectUiHandler:gen6"),
+    i18next.t("starterSelectUiHandler:gen7"),
+    i18next.t("starterSelectUiHandler:gen8"),
+    i18next.t("starterSelectUiHandler:gen9")
+];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
@@ -1260,15 +1270,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateGenOptions(): void {
     let text = '';
     for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
-      let optionText = gens[g];
-      if (g === this.genScrollCursor && this.genScrollCursor)
-        optionText = '↑';
-      else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
-        optionText = '↓'
-      text += `${text ? '\n' : ''}${optionText}`;
+        let optionText = '';
+        if (g === this.genScrollCursor && this.genScrollCursor)
+            optionText = '↑';
+        else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
+            optionText = '↓'
+        else
+            optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
+        text += `${text ? '\n' : ''}${optionText}`;
     }
     this.genOptionsText.setText(text);
-  }
+}
 
   setGenMode(genMode: boolean): boolean {
     this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);
