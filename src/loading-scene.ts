@@ -115,7 +115,7 @@ export class LoadingScene extends SceneBase {
     for (let t = 1; t <= 3; t++){
       this.loadImage(`summary_tabs_${t}`, 'ui');
     }
-    i18next.languages.forEach(lang => {
+    (i18next.options.supportedLngs as Array<any>).forEach(lang => {
       if(Utils.verifyLang(lang)){
         this.loadImage(`starter_select_bg_${lang}`, 'ui');
         this.loadImage(`summary_bg_${lang}`, 'ui');
@@ -206,7 +206,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas('pb', '');
     this.loadAtlas('items', '');
     this.loadAtlas('types', '');
-    i18next.languages.forEach(lang => {
+    (i18next.options.supportedLngs as Array<any>).forEach(lang => {
       if(Utils.verifyLang(lang)){
         this.loadAtlas(`types_${lang}`, '');
       }

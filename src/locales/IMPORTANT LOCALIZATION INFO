@@ -1,0 +1,12 @@
+In case a new lang is added, it should be added to the function verifyLang of Utils as well, but only after
+adding all the necessary lang images:
+    - starter_select_bg_LANGNAME
+    - summary_bg_LANGNAME
+    - summary_moves_LANGNAME
+    - summary_moves_effect_LANGNAME
+    - summary_profile_LANGNAME
+    - summary_stats_LANGNAME
+    - summary_tabs_1_LANGNAME
+    - summary_tabs_2_LANGNAME
+    - summary_tabs_3_LANGNAME
+These images should be added to the legacy folder as well
