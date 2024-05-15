@@ -48,7 +48,7 @@ import { Nature } from './data/nature';
 import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
 import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 import { BattleSpec } from './enums/battle-spec';
-import { getTypeRgb } from './data/type';
+import { getTypeRgb, getTypeHex } from './data/type';
 import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler';
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
@@ -62,6 +62,7 @@ import { Localizable } from './plugins/i18n';
 import * as Overrides from './overrides';
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { Type } from 'pokenode-ts';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -158,6 +159,7 @@ export default class BattleScene extends SceneBase {
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
+	private biomeText: Phaser.GameObjects.Text;
 	private scoreText: Phaser.GameObjects.Text;
 	private luckLabelText: Phaser.GameObjects.Text;
 	private luckText: Phaser.GameObjects.Text;
@@ -356,6 +358,10 @@ export default class BattleScene extends SceneBase {
 		this.moneyText.setOrigin(1, 0);
 		this.fieldUI.add(this.moneyText);
 
+		this.biomeText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.BATTLE_INFO);
+		this.biomeText.setOrigin(1, 0);
+		this.fieldUI.add(this.biomeText);
+
 		this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.PARTY, { fontSize: '54px' });
 		this.scoreText.setOrigin(1, 0);
 		this.fieldUI.add(this.scoreText);
@@ -469,6 +475,7 @@ export default class BattleScene extends SceneBase {
 
 		this.updateWaveCountText();
 		this.updateMoneyText();
+		this.updateBiomeText();
 		this.updateScoreText();
 	}
 
@@ -764,6 +771,9 @@ export default class BattleScene extends SceneBase {
 		this.updateMoneyText();
 		this.moneyText.setVisible(false);
 
+		this.updateBiomeText();
+		this.biomeText.setVisible(false);
+
 		this.updateScoreText();
 		this.scoreText.setVisible(false);
 
@@ -949,6 +959,8 @@ export default class BattleScene extends SceneBase {
 		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
 
 		this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
+
+		this.updateBiomeText();
 
 		return this.arena;
 	}
@@ -1196,6 +1208,26 @@ export default class BattleScene extends SceneBase {
 		this.moneyText.setVisible(true);
 	}
 
+	updateBiomeText(): void {
+		try {
+			const biomeString: string = getBiomeName(this.arena.biomeType)
+			this.biomeText.setText(biomeString);
+			/*
+			*
+			* Set text colour based on biomeType
+			* Looks gross
+			* 
+			* const biomeValue: Biome = Biome[biomeString.toUpperCase() as keyof typeof Biome];
+			* const biomeType = this.arena.getTypeForBiome(biomeValue);
+			* this.biomeText.setColor(getTypeHex(biomeType));
+			* 
+			*/
+		} catch {
+			this.biomeText.setText('');
+		}
+		this.biomeText.setVisible(true);
+	}
+
 	updateScoreText(): void {
 		this.scoreText.setText(`Score: ${this.score.toString()}`);
 		this.scoreText.setVisible(this.gameMode.isDaily);
@@ -1237,8 +1269,9 @@ export default class BattleScene extends SceneBase {
 		const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
 		this.moneyText.setY(this.waveCountText.y + 10);
-		this.scoreText.setY(this.moneyText.y + 10);
-		[ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
+		this.biomeText.setY(this.moneyText.y + 10);
+		this.scoreText.setY(this.biomeText.y + 10);
+		[ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.biomeText).y + 10));
 		const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
 		this.partyExpBar.setY(offsetY);
 		this.candyBar.setY(offsetY + 15);
