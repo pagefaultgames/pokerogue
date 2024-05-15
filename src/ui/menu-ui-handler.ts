@@ -20,7 +20,7 @@ export enum MenuOptions {
   EGG_GACHA,
   MANAGE_DATA,
   COMMUNITY,
-  RETURN_TO_TITLE,
+  SAVE_AND_QUIT,
   LOG_OUT
 }
 
@@ -297,15 +297,18 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
           success = true;
           break;
-        case MenuOptions.RETURN_TO_TITLE:
+        case MenuOptions.SAVE_AND_QUIT:
           if (this.scene.currentBattle) {
             success = true;
-            ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-              ui.setOverlayMode(Mode.CONFIRM, () => this.scene.reset(true), () => {
-                ui.revertMode();
-                ui.showText(null, 0);
-              }, false, -98);
-            });
+            if (this.scene.currentBattle.turn > 1) {
+              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
+                  ui.revertMode();
+                  ui.showText(null, 0);
+                }, false, -98);
+              });
+            } else
+              this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
           } else
             error = true;
           break;

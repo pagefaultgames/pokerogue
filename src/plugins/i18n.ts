@@ -98,7 +98,8 @@ declare module 'i18next' {
       menu: SimpleTranslationEntries;
       menuUiHandler: SimpleTranslationEntries;
       move: MoveTranslationEntries;
-      battle: SimpleTranslationEntries,
+      battle: SimpleTranslationEntries;
+      abilityTriggers: SimpleTranslationEntries;
       ability: AbilityTranslationEntries;
       pokeball: SimpleTranslationEntries;
       pokemon: SimpleTranslationEntries;
