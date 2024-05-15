@@ -7,6 +7,15 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
     "confirmStartTeam":'使用这些宝可梦开始游戏吗？',
+    "gen1": "I",
+    "gen2": "II",
+    "gen3": "III",
+    "gen4": "IV",
+    "gen5": "V",
+    "gen6": "VI",
+    "gen7": "VII",
+    "gen8": "VII",
+    "gen9": "IX",
     "growthRate": "成长速度：",
     "ability": "特性：",
     "passive": "被动：",
