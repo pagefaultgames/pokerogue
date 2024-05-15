@@ -7,6 +7,15 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
     "confirmStartTeam": 'Começar com esses Pokémon?',
+    "gen1": "I",
+    "gen2": "II",
+    "gen3": "III",
+    "gen4": "IV",
+    "gen5": "V",
+    "gen6": "VI",
+    "gen7": "VII",
+    "gen8": "VII",
+    "gen9": "IX",
     "growthRate": "Crescimento:",
     "ability": "Hab.:",
     "passive": "Passiva:",
