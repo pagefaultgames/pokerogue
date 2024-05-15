@@ -2480,6 +2480,30 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+/**
+ * Attribute used for moves which never miss
+ * against Pokemon with the {@link BattlerTagType.MINIMIZED}
+ * @see {@link apply}
+ * @param user N/A
+ * @param target Target of the move
+ * @param move N/A
+ * @param args [0] Accuracy of the move to be modified
+ * @returns true if the function succeeds
+ */
+export class MinimizeAccuracyAttr extends VariableAccuracyAttr{
+  
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.getTag(BattlerTagType.MINIMIZED)){
+      const accuracy = args[0] as Utils.NumberHolder
+      accuracy.value = -1;
+
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class ToxicAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
       if (user.isOfType(Type.POISON)) {
@@ -3235,8 +3259,11 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
   }
 }
 
+/** Attribute used when a move hits a {@link BattlerTagType} for double damage */
 export class HitsTagAttr extends MoveAttr {
+  /** The {@link BattlerTagType} this move hits */
   public tagType: BattlerTagType;
+  /** Should this move deal double damage against {@link HitsTagAttr.tagType}? */
   public doubleDamage: boolean;
 
   constructor(tagType: BattlerTagType, doubleDamage?: boolean) {
@@ -4403,6 +4430,8 @@ export function initMoves() {
     new AttackMove(Moves.SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, 0, 1),
     new AttackMove(Moves.VINE_WHIP, Type.GRASS, MoveCategory.PHYSICAL, 45, 100, 25, -1, 0, 1),
     new AttackMove(Moves.STOMP, Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 1)
+      .attr(MinimizeAccuracyAttr)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new AttackMove(Moves.DOUBLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 30, 100, 30, -1, 0, 1)
       .attr(MultiHitAttr, MultiHitType._2),
@@ -4426,6 +4455,8 @@ export function initMoves() {
       .attr(OneHitKOAccuracyAttr),
     new AttackMove(Moves.TACKLE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.BODY_SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 30, 0, 1)
+      .attr(MinimizeAccuracyAttr)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.WRAP, Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, 100, 0, 1)
       .attr(TrapAttr, BattlerTagType.WRAP),
@@ -4623,6 +4654,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.HARDEN, Type.NORMAL, -1, 30, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.MINIMIZE, Type.NORMAL, -1, 10, -1, 0, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.MINIMIZED, true, false)
       .attr(StatChangeAttr, BattleStat.EVA, 2, true),
     new StatusMove(Moves.SMOKESCREEN, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
@@ -5073,7 +5105,7 @@ export function initMoves() {
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
-        .attr(BypassBurnDamageReductionAttr),
+      .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .punchingMove()
       .ignoresVirtual()
@@ -5462,6 +5494,8 @@ export function initMoves() {
     new AttackMove(Moves.DRAGON_PULSE, Type.DRAGON, MoveCategory.SPECIAL, 85, 100, 10, -1, 0, 4)
       .pulseMove(),
     new AttackMove(Moves.DRAGON_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 100, 75, 10, 20, 0, 4)
+      .attr(MinimizeAccuracyAttr)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new AttackMove(Moves.POWER_GEM, Type.ROCK, MoveCategory.SPECIAL, 80, 100, 20, -1, 0, 4),
     new AttackMove(Moves.DRAIN_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 4)
@@ -5671,7 +5705,9 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .danceMove(),
     new AttackMove(Moves.HEAVY_SLAM, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
+      .attr(MinimizeAccuracyAttr)
       .attr(CompareWeightPowerAttr)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
@@ -5802,7 +5838,9 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .slicingMove(),
     new AttackMove(Moves.HEAT_CRASH, Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
+      .attr(MinimizeAccuracyAttr)
       .attr(CompareWeightPowerAttr)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.LEAF_TORNADO, Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
@@ -5873,7 +5911,9 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
+      .attr(MinimizeAccuracyAttr)
       .attr(FlyingTypeMultiplierAttr)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .condition(failOnGravityCondition),
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .unimplemented(),
