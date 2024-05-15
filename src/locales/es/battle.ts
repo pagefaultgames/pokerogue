@@ -31,6 +31,8 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveNotLearned": "{{pokemonName}} no ha aprendido {{moveName}}.",
   "learnMoveForgetQuestion": "¿Qué movimiento quieres que olvide?",
   "learnMoveForgetSuccess": "{{pokemonName}} ha olvidado cómo utilizar {{moveName}}.",
+  "countdownPoof": "@d{32}1, @d{15}2, @d{15}y@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}¡Puf!",
+  "learnMoveAnd": "Y…",
   "levelCapUp": "¡Se ha incrementado el\nnivel máximo a {{levelCap}}!",
   "moveNotImplemented": "{{moveName}} aún no está implementado y no se puede seleccionar.",
   "moveNoPP": "There's no PP left for\nthis move!",
@@ -46,7 +48,7 @@ export const battle: SimpleTranslationEntries = {
   "runAwayCannotEscape": "¡No has podido escapar!",
   "escapeVerbSwitch": "cambiar",
   "escapeVerbFlee": "huir",
-  "notDisabled": "¡El movimiento {{moveName}}\nya no está anulado!",
+  "notDisabled": "¡El movimiento {{moveName}} de {{pokemonName}}\nya no está anulado!",
   "skipItemQuestion": "¿Estás seguro de que no quieres coger un objeto?",
   "eggHatching": "¿Y esto?",
   "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?"

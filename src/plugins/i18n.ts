@@ -6,6 +6,8 @@ import { enConfig } from '#app/locales/en/config.js';
 import { esConfig } from '#app/locales/es/config.js';
 import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
+import { ptBrConfig } from '#app/locales/pt_BR/config.js';
+import { zhCnConfig } from '#app/locales/zh_CN/config.js';
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -58,7 +60,7 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de'],
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh_CN','pt_BR'],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -78,6 +80,12 @@ export function initI18n(): void {
       },
       de: {
         ...deConfig
+      },
+      pt_BR: {
+        ...ptBrConfig
+      },
+      zh_CN: {
+        ...zhCnConfig
       }
     },
   });
@@ -90,7 +98,8 @@ declare module 'i18next' {
       menu: SimpleTranslationEntries;
       menuUiHandler: SimpleTranslationEntries;
       move: MoveTranslationEntries;
-      battle: SimpleTranslationEntries,
+      battle: SimpleTranslationEntries;
+      abilityTriggers: SimpleTranslationEntries;
       ability: AbilityTranslationEntries;
       pokeball: SimpleTranslationEntries;
       pokemon: SimpleTranslationEntries;
@@ -99,6 +108,7 @@ declare module 'i18next' {
       fightUiHandler: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
+      nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
     };
   }
