@@ -8,6 +8,7 @@ import BattleScene from '../battle-scene';
 import { Type, getTypeRgb } from '../data/type';
 import { getVariantTint } from '#app/data/variant';
 import { BattleStat } from '#app/data/battle-stat';
+import { DexAttr } from '#app/system/game-data.js';
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -260,8 +261,21 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (!this.player) {
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
-      const dexAttr = pokemon.getDexAttr();
-      if ((dexEntry.caughtAttr & dexAttr) < dexAttr || !(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & Math.pow(2, pokemon.abilityIndex)))
+      const opponentPokemonDexAttr = pokemon.getDexAttr();
+
+      // Check if Player owns all genders and forms of the Pokemon
+      const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr); 
+
+      // If the opposing Pokemon only has 1 ability and is using the hidden ability, it should have the same
+      // behavior if it had 2 abilities so it is set to 2 so it lines up with the math checking the proper
+      // hidden ability abilityAttr which is 4
+      const opponentPokemonOneAbility = (pokemon.species.getAbilityCount() == 2);
+      const opponentPokemonAbilityIndex = (pokemon.abilityIndex === 1 && opponentPokemonOneAbility) ? 2 : pokemon.abilityIndex;
+      const opponentPokemonAbilityAttr = Math.pow(2, opponentPokemonAbilityIndex);
+
+      const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
+
+      if (missingDexAttrs || !rootFormHasHiddenAbility)
         this.ownedIcon.setTint(0x808080);
 
       if (this.boss)
