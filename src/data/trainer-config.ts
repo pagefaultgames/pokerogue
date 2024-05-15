@@ -516,19 +516,9 @@ export class TrainerConfig {
                 // Ignore warnings for missing frames, because there will be a lot
                 console.warn = () => {
                 };
-                const frameNames = scene.anims.generateFrameNames(trainerKey, {
-                    zeroPad: 4,
-                    suffix: ".png",
-                    start: 1,
-                    end: 128
-                });
+                const frameNames = scene.anims.generateFrameNames(trainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128});
                 const partnerFrameNames = isDouble
-                    ? scene.anims.generateFrameNames(partnerTrainerKey, {
-                        zeroPad: 4,
-                        suffix: ".png",
-                        start: 1,
-                        end: 128
-                    })
+                    ? scene.anims.generateFrameNames(partnerTrainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128})
                     : null;
                 console.warn = originalWarn;
                 scene.anims.create({
