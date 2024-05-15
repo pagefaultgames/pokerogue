@@ -32,7 +32,7 @@ export const menu: SimpleTranslationEntries = {
   "girl": "Fille",
   "evolving": "Quoi ?\n{{pokemonName}} évolue !",
   "stoppedEvolving": "Hein ?\n{{pokemonName}} n’évolue plus !",
-  "pauseEvolutionsQuestion": "Mettre en pause les évolutions pour {{pokemonName}} ?\nElles peuvent être réactivées depuis l’écran d'équipe.",
+  "pauseEvolutionsQuestion": "Mettre en pause les évolutions pour {{pokemonName}} ?\nElles peuvent être réactivées depuis l’écran d’équipe.",
   "evolutionsPaused": "Les évolutions ont été mises en pause pour {{pokemonName}}.",
   "evolutionDone": "Félicitations !\n{{pokemonName}} a évolué en {{evolvedPokemonName}} !",
   "dailyRankings": "Classement du Jour",
