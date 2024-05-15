@@ -13,6 +13,7 @@ import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
+import { weather } from "./weather";
 
 
 export const itConfig = {
@@ -30,5 +31,6 @@ export const itConfig = {
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
     nature: nature,
-    growth: growth
+    growth: growth,
+    weather: weather
 }
