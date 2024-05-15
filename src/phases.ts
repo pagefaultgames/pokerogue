@@ -414,6 +414,8 @@ export class ReloadSessionPhase extends Phase {
         delayElapsed = true;
     });
 
+    this.scene.gameData.clearLocalData();
+
     (this.systemDataStr ? this.scene.gameData.initSystem(this.systemDataStr) : this.scene.gameData.loadSystem()).then(() => {
       if (delayElapsed)
         this.end();

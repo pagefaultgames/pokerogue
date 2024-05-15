@@ -359,11 +359,8 @@ export class GameData {
           if (cachedSystemData.timestamp > systemData.timestamp) {
             console.debug('Use cached system');
             systemData = cachedSystemData;
-          } else {
-            localStorage.removeItem(`data_${loggedInUser.username}`);
-            for (let s = 0; s < 5; s++)
-              localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
-          }
+          } else
+            this.clearLocalData();
         }
 
         console.debug(systemData);
@@ -512,13 +509,17 @@ export class GameData {
     if (!response.valid) {
       this.scene.clearPhaseQueue();
       this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(response.systemData)));
-      localStorage.removeItem(`data_${loggedInUser.username}`);
-      for (let s = 0; s < 5; s++)
-        localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
+      this.clearLocalData();
       return false;
     }
 
     return true;
+  }
+
+  public clearLocalData(): void {
+    localStorage.removeItem(`data_${loggedInUser.username}`);
+    for (let s = 0; s < 5; s++)
+      localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
   }
 
   public saveSetting(setting: Setting, valueIndex: integer): boolean {
