@@ -31,6 +31,8 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveNotLearned": "{{pokemonName}} 没有学会 {{moveName}}。",
   "learnMoveForgetQuestion": "要忘记哪个技能？",
   "learnMoveForgetSuccess": "{{pokemonName}} 忘记了\n如何使用 {{moveName}}。",
+  "countdownPoof": "@d{32}1, @d{15}2, @d{15}和@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}噗!",
+  "learnMoveAnd": "和…",
   "levelCapUp": "等级上限提升到 {{levelCap}}！",
   "moveNotImplemented": "{{moveName}} 尚未实装，无法选择。",
   "moveNoPP": "这个技能的 PP 用完了",

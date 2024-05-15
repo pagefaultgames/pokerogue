@@ -110,6 +110,7 @@ declare module 'i18next' {
       starterSelectUiHandler: SimpleTranslationEntries;
       nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
     };
   }
 }

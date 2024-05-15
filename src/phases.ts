@@ -3967,9 +3967,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                       return;
                     }
                     this.scene.ui.setMode(messageMode).then(() => {
-                      this.scene.ui.showText('@d{32}1, @d{15}2, and@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}Poof!', null, () => {
+                      this.scene.ui.showText(i18next.t('battle:countdownPoof'), null, () => {
                         this.scene.ui.showText(i18next.t('battle:learnMoveForgetSuccess', { pokemonName: pokemon.name, moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
-                          this.scene.ui.showText('And…', null, () => {
+                          this.scene.ui.showText(i18next.t('battle:learnMoveAnd'), null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                             this.end();
