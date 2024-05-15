@@ -1,3 +1,5 @@
+import i18next from "i18next";
+
 export const MissingTextureKey = '__MISSING';
 
 export function toReadableString(str: string): string {
@@ -336,4 +338,29 @@ export function rgbHexToRgba(hex: string) {
 
 export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
+}
+
+/*This function returns true if the current lang is available for some functions
+If the lang is not in the function, it usually means that lang is going to use the default english version
+This function is used in:
+- summary-ui-handler.ts: If the lang is not available, it'll use types.json (english)
+English itself counts as not available
+*/
+export function verifyLang(lang?: string): boolean {
+  //IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
+  if(!lang){
+    lang = i18next.language;
+  }
+
+  switch(lang){
+    case 'es':
+    case 'fr':
+    case 'de':
+    case 'it':
+    case 'zh_CN':
+    case 'pt_BR':
+      return true;
+    default:
+      return false;
+  }
 }

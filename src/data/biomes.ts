@@ -6,10 +6,13 @@ import { TrainerType } from "./enums/trainer-type";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Biome } from "./enums/biome";
 import { SpeciesFormEvolution } from "./pokemon-evolutions";
+import i18next from "#app/plugins/i18n.js";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1)
-    return 'Somewhere you can\'t remember';
+    return i18next.t('biome:unknownLocation');
+  return i18next.exists(`biome:${Biome[biome]}`) ? i18next.t(`biome:${Biome[biome]}`) : Utils.toReadableString(Biome[biome]);
+  /*
   switch (biome) {
     case Biome.GRASS:
       return 'Grassy Field';
@@ -23,7 +26,7 @@ export function getBiomeName(biome: Biome | -1) {
       return 'Final Destination';
     default:
       return Utils.toReadableString(Biome[biome]);
-  }
+  }*/
 }
 
 interface BiomeLinks {

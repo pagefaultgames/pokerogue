@@ -17,8 +17,7 @@ import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
-
-const defaultMessage = 'Choose a Pokémon.';
+import i18next from "i18next";
 
 export enum PartyUiMode {
   SWITCH,
@@ -62,6 +61,7 @@ export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, modif
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string;
 
 export default class PartyUiHandler extends MessageUiHandler {
+  private defaultMessage = i18next.t('partyUiHandler:choosePokemon');
   private partyUiMode: PartyUiMode;
   private fieldIndex: integer;
 
@@ -146,7 +146,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.partyMessageBox = partyMessageBox;
 
-    const partyMessageText = addTextObject(this.scene, 8, 10, defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
+    const partyMessageText = addTextObject(this.scene, 8, 10, this.defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
     
     partyMessageText.setOrigin(0, 0);
     partyMessageBoxContainer.add(partyMessageText);
@@ -338,7 +338,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               });
             });
           } else
-            this.showText('You can\'t release a Pokémon that\'s in battle!', null, () => this.showText(null, 0), null, true);
+            this.showText(i18next.t('partyUiHandler:cantReleaseInBattle'), null, () => this.showText(null, 0), null, true);
           return true;
         } else if (option === PartyOption.CANCEL)
           return this.processInput(Button.CANCEL);
@@ -496,7 +496,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     if (text === null)
-      text = defaultMessage;
+      text = this.defaultMessage;
 
     if (text?.indexOf('\n') === -1) {
       this.partyMessageBox.setSize(262, 30);
@@ -515,19 +515,19 @@ export default class PartyUiHandler extends MessageUiHandler {
     
     this.optionsMode = true;
 
-    let optionsMessage = 'Do what with this Pokémon?';
+    let optionsMessage = i18next.t('partyUiHandler:what2doWithPoke');
 
     switch (this.partyUiMode) {
       case PartyUiMode.MOVE_MODIFIER:
-        optionsMessage = 'Select a move.';
+        optionsMessage = i18next.t('partyUiHandler:selectMove');
         break;
       case PartyUiMode.MODIFIER_TRANSFER:
         if (!this.transferMode)
-          optionsMessage = 'Select a held item to transfer.';
+          optionsMessage = i18next.t('partyUiHandler:selectHeldItemTransfer');
         break;
       case PartyUiMode.SPLICE:
         if (!this.transferMode)
-          optionsMessage = 'Select another Pokémon to splice.';
+          optionsMessage = i18next.t('partyUiHandler:selectSplice');
         break;
     }
 
@@ -678,7 +678,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           default:
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
               const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-              optionName = `${modifier.active ? 'Deactivate' : 'Activate'} ${modifier.type.name}`;
+              optionName = `${modifier.active ? i18next.t('partyUiHandler:deactivate') : i18next.t('partyUiHandler:activate')} ${modifier.type.name}`;
             } else
               optionName = Utils.toReadableString(PartyOption[option]);
             break;
@@ -695,7 +695,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       const yCoord = -6 - 16 * o;
-      const optionText = addTextObject(this.scene, 0, yCoord - 16, optionName, TextStyle.WINDOW);
+      const optionText = addTextObject(this.scene, 0, yCoord - 16, i18next.exists(`partyUiHandler:${PartyOption[option]}`) ? i18next.t(`partyUiHandler:${PartyOption[option]}`) : optionName, TextStyle.WINDOW);
       if (altText) {
         optionText.setColor('#40c8f8');
         optionText.setShadowColor('#006090')
@@ -1035,7 +1035,7 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.partyCancelPb = partyCancelPb;
 
-    const partyCancelText = addTextObject(this.scene, -7, -6, 'Cancel', TextStyle.PARTY);
+    const partyCancelText = addTextObject(this.scene, -7, -6, i18next.t('partyUiHandler:cancelShort'), TextStyle.PARTY);
     this.add(partyCancelText);
   }
 

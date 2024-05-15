@@ -40,5 +40,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "disablePassive": "Desactivar Pasiva",
     "locked": "Locked",
     "disabled": "Disabled",
-    "uncaught": "Uncaught"
+    "uncaught": "Uncaught",
+    "luck":" Suerte",
+    "form": "Forma"    
 }
+
