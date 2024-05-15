@@ -113,6 +113,7 @@ declare module 'i18next' {
       partyUiHandler: SimpleTranslationEntries;
       summaryUiHandler: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
     };
   }
 }

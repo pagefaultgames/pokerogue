@@ -15,6 +15,7 @@ import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { SummaryUiHandler } from "./summary-ui-handler";
 import { biome } from "./biome";
+import { weather } from "./weather";
 
 
 export const zhCnConfig = {
@@ -35,4 +36,6 @@ export const zhCnConfig = {
     partyUiHandler: partyUiHandler,
     summaryUiHandler: SummaryUiHandler,
     biome: biome
+    nature: nature,
+    weather: weather
 }
