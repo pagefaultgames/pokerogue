@@ -289,7 +289,7 @@ export class TitlePhase extends Phase {
       }
       this.scene.sessionSlotId = slotId;
 
-      fetchDailyRunSeed().then(seed => {
+      const generateDaily = (seed: string) => {
         this.scene.gameMode = gameModes[GameModes.DAILY];
 
         this.scene.setSeed(seed);
@@ -332,9 +332,18 @@ export class TitlePhase extends Phase {
           this.scene.sessionPlayTime = 0;
           this.end();
         });
-      }).catch(err => {
-        console.error("Failed to load daily run:\n", err);
-      });
+      };
+      
+      // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
+      if (!Utils.isLocal) {
+        fetchDailyRunSeed().then(seed => {
+          generateDaily(seed);
+        }).catch(err => {
+          console.error("Failed to load daily run:\n", err);
+        });
+      } else {
+        generateDaily(btoa(new Date().toISOString().substring(0, 10)));
+      }
     });
   }
 
@@ -2931,19 +2940,21 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect: StatusEffect;
   private cureTurn: integer;
   private sourceText: string;
+  private sourcePokemon: Pokemon;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect: StatusEffect, cureTurn?: integer, sourceText?: string) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect: StatusEffect, cureTurn?: integer, sourceText?: string, sourcePokemon?: Pokemon) {
     super(scene, battlerIndex);
 
     this.statusEffect = statusEffect;
     this.cureTurn = cureTurn;
     this.sourceText = sourceText;
+    this.sourcePokemon = sourcePokemon; // For tracking which Pokemon caused the status effect
   }
 
   start() {
     const pokemon = this.getPokemon();
     if (!pokemon.status) {
-      if (pokemon.trySetStatus(this.statusEffect)) {
+      if (pokemon.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
         if (this.cureTurn)
           pokemon.status.cureTurn = this.cureTurn;
         pokemon.updateInfo(true);
@@ -3610,10 +3621,20 @@ export class GameOverPhase extends BattlePhase {
         });
       });
     };
+
+    /* Added a local check to see if the game is running offline on victory
+    If Online, execute apiFetch as intended
+    If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
-      Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
+      if (!Utils.isLocal) {
+        Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
         .then(response => response.json())
         .then(newClear => doGameOver(newClear));
+      } else {
+        this.scene.gameData.offlineNewClear(this.scene).then(result => {
+          doGameOver(result);
+        });
+      }
     } else
       doGameOver(false);
   }
