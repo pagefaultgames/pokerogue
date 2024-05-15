@@ -8,7 +8,6 @@ import BattleScene from '../battle-scene';
 import { Type, getTypeRgb } from '../data/type';
 import { getVariantTint } from '#app/data/variant';
 import { BattleStat } from '#app/data/battle-stat';
-import { DexAttr } from '#app/system/game-data.js';
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
