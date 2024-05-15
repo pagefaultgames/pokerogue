@@ -8,7 +8,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 export const menu: SimpleTranslationEntries = {
     "cancel": "Cancelar",
     "continue": "Continuar",
-    "dailyRun": "Desafio diário (Beta)",
+    "dailyRun": "Desafio Diário (Beta)",
     "loadGame": "Carregar Jogo",
     "newGame": "Novo Jogo",
     "selectGameMode": "Escolha um modo de jogo.",
