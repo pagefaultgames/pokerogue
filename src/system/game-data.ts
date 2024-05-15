@@ -951,7 +951,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? 'system' : 'session'}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}&clientSessionId=${clientSessionId}`, true)
+        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? 'system' : 'session'}?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, true)
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== '{') {
