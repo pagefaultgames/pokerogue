@@ -43,7 +43,7 @@ export const battle: SimpleTranslationEntries = {
   "noEscapeTrainer": "Du kannst nicht\naus einem Trainerkampf fliehen!",
   "noEscapePokemon": "{{pokemonName}}'s {{moveName}}\nverhindert {{escapeVerb}}!",
   "runAwaySuccess": "Du bist entkommen!",
-  "runAwayCannotEscape": 'Flucht unmöglich!',
+  "runAwayCannotEscape": 'Flucht gescheitert!',
   "escapeVerbSwitch": "auswechseln",
   "escapeVerbFlee": "flucht",
   "skipItemQuestion": "Bist du sicher, dass du kein Item nehmen willst?",
