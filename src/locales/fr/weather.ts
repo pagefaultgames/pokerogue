@@ -5,40 +5,40 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  */
 export const weather: SimpleTranslationEntries = {
     "sunnyStartMessage": "Les rayons du soleil brillent !",
-    "sunnyLapseMessage": "Les rayons du soleil brillent fort.",
-    "sunnyClearMessage": "Les rayons du soleil se dissipent.",
+    "sunnyLapseMessage": "Les rayons du soleil brillent fort !",
+    "sunnyClearMessage": "Les rayons du soleil s’affaiblissent !",
 
     "rainStartMessage": "Il commence à pleuvoir !",
-    "rainLapseMessage": "La pluie continue.",
-    "rainClearMessage": "La pluie s'est arrêtée.",
+    "rainLapseMessage": "La pluie continue de tomber !",
+    "rainClearMessage": "La pluie s’est arrêtée !",
 
     "sandstormStartMessage": "Une tempête de sable se prépare !",
-    "sandstormLapseMessage": "La tempête de sable fait rage.",
-    "sandstormClearMessage": "La tempête de sable se calme.",
-    "sandstormDamageMessage": "{{pokemonPrefix}}{{pokemonName}} subit les dégâts\nde la tempête de sable !",
+    "sandstormLapseMessage": "La tempête de sable fait rage !",
+    "sandstormClearMessage": "La tempête de sable se calme !",
+    "sandstormDamageMessage": "La tempête de sable inflige des dégâts\nà {{pokemonPrefix}}{{pokemonName}} !",
 
     "hailStartMessage": "Il commence à grêler !",
-    "hailLapseMessage": "La grêle continue.",
-    "hailClearMessage": "La grêle s'est arrêtée.",
-    "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} subit les dégâts\nde la grêle !",
+    "hailLapseMessage": "La grêle continue de tomber !",
+    "hailClearMessage": "La grêle s’est arrêtée !",
+    "hailDamageMessage": "La grêle inflige des dégâts\nà {{pokemonPrefix}}{{pokemonName}} !",
 
     "snowStartMessage": "Il commence à neiger !",
-    "snowLapseMessage": "La neige continue de tomber.",
-    "snowClearMessage": "La neige s'est arrêtée.",
+    "snowLapseMessage": "Il y a une tempête de neige !",
+    "snowClearMessage": "La neige s’est arrêtée !",
 
-    "fogStartMessage": "Un brouillard épais émerge !",
-    "fogLapseMessage": "Le brouillard continue.",
-    "fogClearMessage": "Le brouillard a disparu.",
+    "fogStartMessage": "Le brouillard devient épais…",
+    "fogLapseMessage": "Le brouillard continue !",
+    "fogClearMessage": "Le brouillard s’est dissipé !",
 
-    "heavyRainStartMessage": "Une pluie battante s'abat soudainement !",
+    "heavyRainStartMessage": "Une pluie battante s’abat soudainement !",
     "heavyRainLapseMessage": "La pluie battante continue.",
-    "heavyRainClearMessage": "La pluie battante s'est arrêtée.",
+    "heavyRainClearMessage": "La pluie battante s’est arrêtée…",
     
-    "harshSunStartMessage": "Les rayons du soleil s'intensifient !",
-    "harshSunLapseMessage": "Le soleil est brûlant.",
-    "harshSunClearMessage": "Le soleil brûlant se dissipe.",
+    "harshSunStartMessage": "Les rayons du soleil s’intensifient !",
+    "harshSunLapseMessage": "Les rayons du soleil sont brulants !",
+    "harshSunClearMessage": "Les rayons du soleil s’affaiblissent !",
 
-    "strongWindsStartMessage": "Un vent violent se lève !",
-    "strongWindsLapseMessage": "Le vent souffle violemment.",
-    "strongWindsClearMessage": "Le vent violent s'est arrêté."
+    "strongWindsStartMessage": "Un vent mystérieux se lève !",
+    "strongWindsLapseMessage": "Le vent mystérieux violemment !",
+    "strongWindsClearMessage": "Le vent mystérieux s’est dissipé…"
 }
