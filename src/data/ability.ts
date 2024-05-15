@@ -1702,7 +1702,7 @@ export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
 }
 
 export class PreStatChangeAbAttr extends AbAttr {
-  applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyPreStatChange(pokemon: Pokemon, user: Pokemon, passive: boolean, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1716,7 +1716,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
     this.protectedStat = protectedStat;
   }
 
-  applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreStatChange(pokemon: Pokemon, user: Pokemon, passive: boolean, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.protectedStat === undefined || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
@@ -1727,6 +1727,28 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
+  }
+}
+
+export class ReflectStatAbAttr extends PreStatChangeAbAttr {
+  private reflectedStat: BattleStat;
+
+  constructor(reflectedStat?: BattleStat) {
+    super();
+
+    this.reflectedStat = reflectedStat;
+  }
+
+  applyPreStatChange(pokemon: Pokemon, sourcePokemon: Pokemon, passive: boolean, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if ((this.reflectedStat === undefined || stat === this.reflectedStat) && pokemon !== sourcePokemon) {
+      cancelled.value = true;
+
+      const statChangePhase = new StatChangePhase(pokemon.scene, sourcePokemon.getBattlerIndex(), false, [stat], levels);
+      pokemon.scene.unshiftPhase(statChangePhase);
+      return true;
+    }
+    
+    return false;
   }
 }
 
@@ -2813,8 +2835,8 @@ export function applyPreSwitchOutAbAttrs(attrType: { new(...args: any[]): PreSwi
 }
 
 export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreStatChangeAbAttr },
-  pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreStatChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreStatChange(pokemon, passive, stat, cancelled, args), args);
+  pokemon: Pokemon, sourcePokemon: Pokemon, stat: BattleStat, levels: integer, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreStatChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreStatChange(pokemon, sourcePokemon, passive, stat, levels, cancelled, args), args);
 }
 
 export function applyPostStatChangeAbAttrs(attrType: { new(...args: any[]): PostStatChangeAbAttr },
@@ -3604,8 +3626,8 @@ export function initAbilities() {
     new Ability(Abilities.PROPELLER_TAIL, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.MIRROR_ARMOR, 8)
-      .ignorable()
-      .unimplemented(),
+      .attr(ReflectStatAbAttr)
+      .ignorable(),
     new Ability(Abilities.GULP_MISSILE, 8)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)

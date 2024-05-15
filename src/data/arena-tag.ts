@@ -439,7 +439,7 @@ class StickyWebTag extends ArenaTrapTag {
       if (!cancelled.value) {
         pokemon.scene.queueMessage(`The opposing ${pokemon.name} was caught in a sticky web!`);
         const statLevels = new Utils.NumberHolder(-1);
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.SPD], statLevels.value));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.SPD], statLevels.value, true, false, true, pokemon.scene.getPokemonById(this.sourceId)));
       }
     }
 

@@ -1733,7 +1733,7 @@ export class StatChangeAttr extends MoveEffectAttr {
 
     if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
       const levels = this.getLevels(user);
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage, false, true, user));
       return true;
     }
 
@@ -1813,7 +1813,7 @@ export class AcupressureStatChangeAttr extends MoveEffectAttr {
     randStats = randStats.filter(s => target.summonData.battleStats[s] < 6);
     if (randStats.length > 0) {
       let boostStat = [randStats[Utils.randInt(randStats.length)]];
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2, true, false, true, user));
       return true;
     }
     return false;
