@@ -544,17 +544,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  /**
-   * Returns the value of the specified stat.
-   * @param stat Stat to get the value of. {@link Stat}
-   * @returns The value of the stat. If the pokemon is already summoned, it uses those values, otherwise uses the base stats.
-   */
   getStat(stat: Stat): integer {
-    if (!this.summonData) {
-      return this.stats[stat];
-    }
-
-    return this.summonData.stats[stat];
+    return this.stats[stat];
   }
 
   getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
@@ -1717,16 +1708,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return healAmount;
   }
 
-  /**
-   * Sets a specific stat to a specific value.
-   * Used for summon data, while the pokemon is out until the next time it is retrieved.
-   * @param stat Stat to change. {@link Stat}
-   * @param value Amount to set the stat to.
-   */
-  changeSummonStat(stat: Stat, value: integer) : void {
-    this.summonData.stats[stat] = value;
-  }
-  
   isBossImmune(): boolean {
     return this.isBoss();
   }
@@ -2185,7 +2166,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.battleData)
       this.resetBattleData();
     this.resetBattleSummonData();
-    this.summonData.stats = this.stats;
     if (this.summonDataPrimer) {
       for (let k of Object.keys(this.summonData)) {
         if (this.summonDataPrimer[k])
