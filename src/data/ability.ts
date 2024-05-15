@@ -1736,6 +1736,30 @@ export class PreSetStatusAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
+ */
+export class IgnoreTypeStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+  private statusEffect: StatusEffect[];
+  private defenderType: Type[];
+
+  constructor(statusEffect: StatusEffect[], defenderType: Type[]) {
+    super(true);
+
+    this.statusEffect = statusEffect;
+    this.defenderType = defenderType;
+  }
+
+  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect,cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.statusEffect.includes(effect) && this.defenderType.includes(args[1] as Type)) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
 
@@ -2666,30 +2690,6 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
   }
 }
 
-/**
- * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
- */
-export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
-  private statusEffect: StatusEffect[];
-  private defenderType: Type[];
-
-  constructor(statusEffect: StatusEffect[], defenderType: Type[]) {
-    super(true);
-
-    this.statusEffect = statusEffect;
-    this.defenderType = defenderType;
-  }
-
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.statusEffect.includes(args[0] as StatusEffect) && this.defenderType.includes(args[1] as Type)) {
-      cancelled.value = true;
-      return true;
-    }
-
-    return false;
-  }
-}
-
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -2824,8 +2824,8 @@ export function applyPostStatChangeAbAttrs(attrType: { new(...args: any[]): Post
 
 export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSetStatusAbAttr },
   pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  const simulated = args.length > 1 && args[1];
-  return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, false, !simulated);
+  const simulated = args[0];
+  return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, false, simulated);
 }
 
 export function applyPreApplyBattlerTagAbAttrs(attrType: { new(...args: any[]): PreApplyBattlerTagAbAttr },
