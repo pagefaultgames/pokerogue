@@ -15,6 +15,7 @@ import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
+import { splashMessages } from "./splash-messages"
 
 
 export const deConfig = {
@@ -32,6 +33,7 @@ export const deConfig = {
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
+    splashMessages: splashMessages,
     nature: nature,
     growth: growth,
     modifierType: modifierType,

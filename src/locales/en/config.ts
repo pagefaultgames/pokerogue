@@ -15,6 +15,7 @@ import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
+import { splashMessages } from "./splash-messages"
 import { weather } from "./weather";
 
 
@@ -33,6 +34,7 @@ export const enConfig = {
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
+    splashMessages: splashMessages,
     nature: nature,
     growth: growth,
     weather: weather,
