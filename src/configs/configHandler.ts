@@ -211,6 +211,23 @@ export function swap(config, settingNameTarget, keycode) {
     regenerateIdentifiers(config);
 }
 
+export function assign(config, settingNameTarget, keycode) {
+    // first, we need to check if this keycode is already used on another settingName
+    const previousSettingName = getSettingNameWithKeycode(config, keycode);
+    // if it was already bound, we delete the bind
+    if (previousSettingName) {
+        const previousKey = getKeyWithSettingName(config, previousSettingName);
+        config.custom[previousKey] = -1;
+    }
+    // then, we need to delete the current key for this settingName
+    const currentKey = getKeyWithSettingName(config, settingNameTarget);
+    config.custom[currentKey] = -1;
+
+    // then, the new key is assigned to the new settingName
+    const newKey = getKeyWithKeycode(config, keycode);
+    config.custom[newKey] = settingNameTarget;
+}
+
 /**
  * Deletes the binding of the specified setting name.
  *
@@ -221,6 +238,29 @@ export function deleteBind(config, settingName) {
     const key = getKeyWithSettingName(config, settingName);
     config.custom[key] = -1;
     regenerateIdentifiers(config);
+}
+
+/**
+ * Deletes the binding of the specified setting name. but prevent the deletion of keys in the blacklist
+ *
+ * @param config - The configuration object containing custom settings.
+ * @param settingName - The setting name to delete.
+ */
+export function safeDeleteBind(config, settingName) {
+    const key = getKeyWithSettingName(config, settingName);
+    if (config.blacklist.includes(key) || isTheLatestBind(config, settingName)) return;
+    config.custom[key] = -1;
+}
+
+export function isTheLatestBind(config, settingName) {
+    const isAlt = settingName.includes("ALT_");
+    let altSettingName;
+    if (isAlt)
+        altSettingName = settingName.split("ALT_").splice(1)[0];
+    else
+        altSettingName = `ALT_${settingName}`;
+    const secondButton = getKeyWithSettingName(config, altSettingName);
+    return secondButton === undefined;
 }
 
 /**

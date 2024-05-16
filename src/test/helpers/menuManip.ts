@@ -6,7 +6,7 @@ import {
     getIconWithKey,
     getIconWithKeycode,
     getIconWithSettingName,
-    getKeyWithKeycode, getKeyWithSettingName, getKeySolvingConflict, swap
+    getKeyWithKeycode, getKeyWithSettingName, getKeySolvingConflict, swap, assign, safeDeleteBind
 } from "#app/configs/configHandler";
 
 export class MenuManip {
@@ -44,7 +44,8 @@ export class MenuManip {
     whenCursorIsOnSetting(settingName) {
         if (!settingName.includes("Button_")) settingName = "Button_" + settingName;
         this.settingName = SettingInterface[settingName];
-        const buttonName = this.convertNameToButtonString(settingName);
+        const isAlt = settingName.includes("ALT_");
+        const buttonName = isAlt ? settingName.toUpperCase().split("ALT_BUTTON_").splice(1)[0] : settingName.toUpperCase().split("BUTTON_").splice(1)[0];
         expect(this.config.settings[this.settingName]).toEqual(Button[buttonName]);
         return this;
     }
@@ -89,6 +90,16 @@ export class MenuManip {
         deleteBind(this.config, this.settingName);
         expect(this.config.custom[key]).toEqual(-1);
         return this;
+    }
+
+    whenWeTryToDelete(settingName?: string) {
+        this.settingName = SettingInterface[settingName] || this.settingName;
+        safeDeleteBind(this.config, this.settingName);
+        return this;
+    }
+
+    confirmAssignment() {
+        assign(this.config, this.settingName, this.keycode);
     }
 
     confirm() {

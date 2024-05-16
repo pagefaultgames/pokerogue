@@ -315,6 +315,16 @@ const cfg_keyboard_azerty = {
     },
     main: [],
     alt: [],
+    blacklist: [
+        "KEY_ENTER",
+        "KEY_ESC",
+        "KEY_ARROW_UP",
+        "KEY_ARROW_DOWN",
+        "KEY_ARROW_LEFT",
+        "KEY_ARROW_RIGHT",
+        "KEY_DELETE",
+        "KEY_HOME",
+    ]
 };
 
 export default cfg_keyboard_azerty;

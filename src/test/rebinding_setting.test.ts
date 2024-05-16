@@ -323,4 +323,39 @@ describe('Test Rebinding', () => {
         inGame.forTheSource("keyboard").forTheWantedBind("Cycle_Shiny").weShouldSeeTheIcon("R")
         inGame.forTheSource("keyboard").forTheWantedBind("Cycle_Form").weShouldSeeTheIcon("F")
     });
+
+    it("test new assign feature to delete the bind from the previous action instead of swaping it", () => {
+        inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("RIGHT").confirmAssignment();
+        inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Left");
+        inGame.whenWePressOnKeyboard("LEFT").nothingShouldHappen();
+
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_RIGHT").weWantThisBindInstead("RIGHT").confirmAssignment();
+        inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Left");
+        inGame.whenWePressOnKeyboard("LEFT").nothingShouldHappen();
+    });
+
+    it("check the key displayed on confirm", () => {
+        inGame.whenWePressOnKeyboard("ENTER").weShouldTriggerTheButton("Button_Submit");
+        inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
+        inGame.whenWePressOnKeyboard("DOWN").weShouldTriggerTheButton("Button_Down");
+        inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
+        inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
+        inGame.whenWePressOnKeyboard("ESC").weShouldTriggerTheButton("Button_Menu");
+        inGame.whenWePressOnKeyboard("HOME").nothingShouldHappen();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Submit").iconDisplayedIs("KEY_ENTER").whenWeTryToDelete().iconDisplayedIs("KEY_ENTER")
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").whenWeTryToDelete().iconDisplayedIs("KEY_ARROW_UP")
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Down").iconDisplayedIs("KEY_ARROW_DOWN").whenWeTryToDelete().iconDisplayedIs("KEY_ARROW_DOWN")
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").whenWeTryToDelete().iconDisplayedIs("KEY_ARROW_LEFT")
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Right").iconDisplayedIs("KEY_ARROW_RIGHT").whenWeTryToDelete().iconDisplayedIs("KEY_ARROW_RIGHT")
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Menu").iconDisplayedIs("KEY_ESC").whenWeTryToDelete().iconDisplayedIs("KEY_ESC")
+        inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_Z").whenWeTryToDelete().thereShouldBeNoIconAnymore();
+    });
+
+    it("check to delete all the binds of an action", () => {
+        inGame.whenWePressOnKeyboard("V").weShouldTriggerTheButton("Button_Cycle_Variant");
+        inGame.whenWePressOnKeyboard("K").weShouldTriggerTheButton("Alt_Button_Cycle_Variant");
+        inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Variant").iconDisplayedIs("KEY_K").whenWeTryToDelete().thereShouldBeNoIconAnymore();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Variant").iconDisplayedIs("KEY_V").whenWeTryToDelete().iconDisplayedIs("KEY_V")
+    });
 });
