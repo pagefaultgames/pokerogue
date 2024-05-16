@@ -8,6 +8,7 @@ import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
 import {InterfaceConfig} from "#app/inputs-controller";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {Device} from "#app/enums/devices";
+import {truncateString} from "#app/utils";
 
 /**
  * Class representing the settings UI handler for gamepads.
@@ -133,7 +134,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
 
                     // Update the text of the first option label under the current setting to the name of the chosen gamepad,
                     // truncating the name to 30 characters if necessary.
-                    this.layout[_key].optionValueLabels[index][0].setText(this.scene.inputController.selectedDevice[Device.GAMEPAD], 30);
+                    this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.selectedDevice[Device.GAMEPAD], 30));
                 }
             }
         }
