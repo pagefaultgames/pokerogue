@@ -18,6 +18,7 @@ import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
 import { splashMessages } from "./splash-messages"
 import { weather } from "./weather";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
 
 
 export const enConfig = {    
@@ -43,4 +44,5 @@ export const enConfig = {
     growth: growth,
     weather: weather,
     modifierType: modifierType,
+    battleMessageUiHandler: battleMessageUiHandler,
 }
