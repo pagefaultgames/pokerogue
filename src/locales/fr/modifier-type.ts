@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
     "CANDY_JAR": { name: "Jarre de Bonbons", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
-    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consomée" },
+    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consommée" },
 
     "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
 
