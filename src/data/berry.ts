@@ -7,7 +7,7 @@ import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
-
+import i18next from '../plugins/i18n';
 export enum BerryType {
   SITRUS,
   LUM,
@@ -23,30 +23,30 @@ export enum BerryType {
 }
 
 export function getBerryName(berryType: BerryType) {
-  return `${Utils.toReadableString(BerryType[berryType])} Berry`;
+  return `${Utils.toReadableString(BerryType[berryType])} `+i18next.t('berry:Berry');
 }
 
 export function getBerryEffectDescription(berryType: BerryType) {
   switch (berryType) {
     case BerryType.SITRUS:
-      return 'Restores 25% HP if HP is below 50%';
+      return i18next.t('berry:Restores_25%_HP_if_HP_is_below_50%');
     case BerryType.LUM:
-      return 'Cures any non-volatile status condition and confusion';
+      return i18next.t('berry:Cures_any_non-volatile_status_condition_and_confusion');
     case BerryType.ENIGMA:
-      return 'Restores 25% HP if hit by a super effective move';
+      return i18next.t('berry:Restores_25%_HP_if_hit_by_a_super_effective_move');
     case BerryType.LIECHI:
     case BerryType.GANLON:
     case BerryType.PETAYA:
     case BerryType.APICOT:
     case BerryType.SALAC:
       const stat = (berryType - BerryType.LIECHI) as BattleStat;
-      return `Raises ${getBattleStatName(stat)} if HP is below 25%`;
+      return `${i18next.t('berry:Raises')} ${getBattleStatName(stat)} `+i18next.t('berry:if_HP_is_below_25%');
     case BerryType.LANSAT:
-      return 'Raises critical hit ratio if HP is below 25%';
+      return +i18next.t('berry:Raises_critical_hit_ratio_if_HP_is_below_25%');
     case BerryType.STARF:
-      return 'Sharply raises a random stat if HP is below 25%';
+      return +i18next.t('berry:Sharply_raises_a_random_stat_if_HP_is_below_25%');
     case BerryType.LEPPA:
-      return 'Restores 10 PP to a move if its PP reaches 0';
+      return +i18next.t('berry:Restores_10_PP_to_a_move_if_its_PP_reaches_0');
   }
 }
 
@@ -104,7 +104,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-          hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
+          hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\n`+i18next.t('berry:restored_its_HP')), true));
       };
     case BerryType.LUM:
       return (pokemon: Pokemon) => {
@@ -151,7 +151,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           pokemon.battleData.berriesEaten.push(berryType);
         const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio());
         ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}!`));
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, `${i18next.t('berry:restored_PP_to_its_move')} ${ppRestoreMove.getName()}\n${i18next.t('berry:using_its')} ${getBerryName(berryType)}!`));
       };
   }
 }

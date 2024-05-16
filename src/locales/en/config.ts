@@ -18,7 +18,7 @@ import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
 import { splashMessages } from "./splash-messages"
 import { weather } from "./weather";
-
+import { berry } from "./berry";
 
 export const enConfig = {    
     ability: ability,
@@ -43,4 +43,5 @@ export const enConfig = {
     growth: growth,
     weather: weather,
     modifierType: modifierType,
+    berry:berry,
 }

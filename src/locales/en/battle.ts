@@ -52,5 +52,20 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "{{pokemonName}}'s {{moveName}} is disabled\nno more!",
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "Oh?",
-  "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?"
+  "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?",
+  "Attack": "Attack",
+  "Defense": "Defense",
+  "Sp_Atk": "Sp. Atk",
+  "Sp_Def": "Sp. Def",
+  "Speed": "Speed",
+  "Accuracy": "Accuracy",
+  "Evasiveness": "Evasiveness",
+  "rose": "rose",
+  "sharply_rose": "sharply_rose",
+  "rose_drastically": "rose drastically",
+  "fell": "fell",
+  "harshly_fell": "harshly fell",
+  "severly_fell": "severly fell",
+  "won_t_go_any_higher": "won\'t go any higher",
+  "won_t_go_any_lower": "won\'t go any lower"
 } as const;

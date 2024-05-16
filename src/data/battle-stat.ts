@@ -8,23 +8,23 @@ export enum BattleStat {
   EVA,
   RAND
 }
-
+import i18next from "#app/plugins/i18n";
 export function getBattleStatName(stat: BattleStat) {
   switch (stat) {
     case BattleStat.ATK:
-      return 'Attack';
+      return i18next.t('battle:Attack');
     case BattleStat.DEF:
-      return 'Defense';
+      return i18next.t('battle:Defense');
     case BattleStat.SPATK:
-      return 'Sp. Atk';
+      return i18next.t('battle:Sp_Atk');
     case BattleStat.SPDEF:
-      return 'Sp. Def';
+      return i18next.t('battle:Sp_Def');
     case BattleStat.SPD:
-      return 'Speed';
+      return i18next.t('battle:Speed');
     case BattleStat.ACC:
-      return 'Accuracy';
+      return i18next.t('battle:Accuracy');
     case BattleStat.EVA:
-      return 'Evasiveness';
+      return i18next.t('battle:Evasiveness');
     default:
       return '???';
   }
@@ -34,30 +34,30 @@ export function getBattleStatLevelChangeDescription(levels: integer, up: boolean
   if (up) {
     switch (levels) {
       case 1:
-        return 'rose';
+        return i18next.t('battle:rose');
       case 2:
-        return 'sharply rose';
+        return i18next.t('battle:sharply_rose');
       case 3:
       case 4:
       case 5:
       case 6:
-        return 'rose drastically'; 
+        return i18next.t('battle:rose_drastically');
       default:
-        return 'won\'t go any higher';
+        return i18next.t('battle:won_t_go_any_higher');
     }
   } else {
     switch (levels) {
       case 1:
-        return 'fell';
+        return i18next.t('battle:fell');
       case 2:
-        return 'harshly fell';
+        return i18next.t('battle:harshly_fell');
       case 3:
       case 4:
       case 5:
       case 6:
-        return 'severely fell';
+        return i18next.t('battle:severely_fell');
       default:
-        return 'won\'t go any lower';
+        return i18next.t('battle:won_t_go_any_lower');
     }
   }
 }

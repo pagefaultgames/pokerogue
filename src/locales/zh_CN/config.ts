@@ -11,12 +11,12 @@ import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
-import { titles,trainerClasses,trainerNames } from "./trainers";
+import { titles, trainerClasses, trainerNames } from "./trainers";
 import { nature } from "./nature";
 import { weather } from "./weather";
 import { modifierType } from "./modifier-type";
 import { growth } from "./growth";
-
+import { berry } from "./berry";
 
 export const zhCnConfig = {
     ability: ability,
@@ -36,8 +36,8 @@ export const zhCnConfig = {
     trainerClasses: trainerClasses,
     trainerNames: trainerNames,
     tutorial: tutorial,
-    nature: nature,
     growth: growth,
     weather: weather,
     modifierType: modifierType,
+    berry: berry
 }

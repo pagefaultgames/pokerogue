@@ -18,7 +18,7 @@ import { Moves } from "./enums/moves";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
-import i18next, { Localizable } from "#app/plugins/i18n.js";
+import i18next, { Localizable } from "#app/plugins/i18n";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
