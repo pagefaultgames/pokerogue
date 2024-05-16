@@ -687,6 +687,55 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools(
       [ Species.CATERPIE, Species.WEEDLE, Species.RATTATA, Species.SENTRET, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.BIDOOF, Species.PATRAT, Species.LILLIPUP ]
     ),
+   // TODO: sprite, encounter bgm, party template, team pools
+  [TrainerType.ROCKET_GRUNT]: new TrainerConfig(++t).setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.YOUNGSTER).setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [ Species.WEEDLE, Species.RATTATA, Species.EKANS, Species.SANDSHREW, Species.ZUBAT, Species.GEODUDE, Species.KOFFING],
+      [TrainerPoolTier.UNCOMMON]: [Species.GRIMER, Species.CUBONE, Species.ODDISH, Species.GROWLITHE, Species.MURKROW, Species.GASTLY, Species.EXEGGCUTE, Species.VOLTORB],
+      [TrainerPoolTier.RARE]: [Species.GYARADOS, Species.TAUROS, Species.SCYTHER],
+      [TrainerPoolTier.SUPER_RARE]: [Species.PORYGON, Species.ALOLA_RATTATA, Species.ALOLA_SANDSHREW, Species.ALOLA_MEOWTH, Species.ALOLA_GRIMER, Species.ALOLA_GEODUDE],
+      [TrainerPoolTier.ULTRA_RARE]: [Species.DRATINI, Species.LARVITAR]
+  }),
+  [TrainerType.MAGMA_GRUNT]: new TrainerConfig(++t).setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.YOUNGSTER).setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [Species.SLUGMA, Species.ZIGZAGOON, Species.NUMEL, Species.ZIGZAGOON, Species.DIGLETT, Species.MAGBY],
+      [TrainerPoolTier.UNCOMMON]: [Species.PHANPY, Species.SWINUB, Species.GLIGAR, Species.TORKOAL, Species.BALTOY, Species.BARBOACH],
+      [TrainerPoolTier.RARE]: [Species.SOLROCK, Species.HIPPOPOTAS, Species.SANDACONDA],
+      [TrainerPoolTier.SUPER_RARE]: [Species.TRAPINCH, Species.HEATMOR],
+      [TrainerPoolTier.ULTRA_RARE]: [Species.TURTONATOR, Species.CHARCADET]
+  }),
+  [TrainerType.AQUA_GRUNT]: new TrainerConfig(++t).setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.YOUNGSTER).setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [ Species.CARVANHA, Species.WAILMER, Species.POOCHYENA, Species.LOTAD, Species.CORPHISH],
+      [TrainerPoolTier.UNCOMMON]: [Species.SPHEAL, Species.CHINCHOU, Species.WOOPER, Species.WINGULL, Species.TENTACOOL ],
+      [TrainerPoolTier.RARE]: [Species.CLAMPERL, Species.REMORAID, Species.ARROKUDA],
+      [TrainerPoolTier.SUPER_RARE]: [Species.MANTINE, Species.BASCULEGION],
+      [TrainerPoolTier.ULTRA_RARE]: [Species.DONDOZO]
+  }),
+  [TrainerType.GALACTIC_GRUNT]: new TrainerConfig(++t).setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.YOUNGSTER).setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [ Species.GLAMEOW, Species.STUNKY, Species.CROAGUNK, Species.SHINX, Species.WURMPLE],
+      [TrainerPoolTier.UNCOMMON]: [Species.BRONZOR, Species.DRIFLOON, Species.BURMY],
+      [TrainerPoolTier.RARE]: [Species.CARNIVINE],
+      [TrainerPoolTier.SUPER_RARE]: [Species.HISUI_GROWLITHE, Species.HISUI_QWILFISH, Species.HISUI_SNEASEL],
+      [TrainerPoolTier.ULTRA_RARE]: [Species.HISUI_ZORUA, Species.HISUI_SLIGGOO]
+  }),
+  [TrainerType.PLASMA_GRUNT]: new TrainerConfig(++t).setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.YOUNGSTER).setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [ Species.PATRAT, Species.LILLIPUP, Species.PURRLOIN, Species.SCRAFTY, Species.WOOBAT, Species.VANILLITE],
+      [TrainerPoolTier.UNCOMMON]: [ Species.FRILLISH, Species.VENIPEDE, Species.SANDILE, Species.TRUBBISH, Species.GOLETT],
+      [TrainerPoolTier.RARE]: [Species.TIMBURR, Species.DARUMAKA, Species.AMOONGUSS, Species.DRILBUR, Species.KLINK, Species.VULLABY],
+      [TrainerPoolTier.SUPER_RARE]: [Species.PAWNIARD, Species.VULLABY, Species.DRUDDIGON, Species.BOUFFALANT, Species.ZORUA],
+      [TrainerPoolTier.ULTRA_RARE]: [Species.AXEW, Species.DEINO, Species.DURANT]
+  }),
+  [TrainerType.FLARE_GRUNT]: new TrainerConfig(++t).setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.YOUNGSTER).setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.PONYTA, Species.INKAY, Species.HOUNDOUR, Species.SKORUPI],
+      [TrainerPoolTier.UNCOMMON]: [Species.HELIOPTILE, Species.ELECTRIKE, Species.SKRELP, Species.GULPIN],
+      [TrainerPoolTier.RARE]: [Species.LITWICK, Species.SNEASEL],
+      [TrainerPoolTier.SUPER_RARE]: [Species.NOIVERN],
+      [TrainerPoolTier.ULTRA_RARE]: []
+  }),
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader([ Species.GEODUDE, Species.ONIX ], Type.ROCK).setBattleBgm('battle_kanto_gym'),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader([ Species.STARYU, Species.PSYDUCK ], Type.WATER).setBattleBgm('battle_kanto_gym'),
   [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader([ Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ ], Type.ELECTRIC).setBattleBgm('battle_kanto_gym'),
