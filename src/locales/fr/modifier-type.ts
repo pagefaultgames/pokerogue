@@ -188,7 +188,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent" },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts" },
     
-    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verouiller des objets rares si vous relancez les objets proposés" },
+    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés" },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
