@@ -133,8 +133,10 @@ declare module 'i18next' {
       trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
       nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
+      egg: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
       modifierType: ModifierTypeTranslationEntries;
     };
