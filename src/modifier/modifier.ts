@@ -143,6 +143,9 @@ export abstract class PersistentModifier extends Modifier {
   }
 
   incrementStack(scene: BattleScene, amount: integer, virtual: boolean): boolean {
+    var amt = new Utils.IntegerHolder(amount);
+    scene.applyModifiers(LevelIncrementBoosterBoosterModifier, true, amt);
+    amount = amt.value;
     if (this.getStackCount() + amount <= this.getMaxStackCount(scene)) {
       if (!virtual)
         this.stackCount += amount;
@@ -880,6 +883,33 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
   apply(args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value += this.getStackCount();
 
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
+    return 99;
+  }
+}
+
+export class LevelIncrementBoosterBoosterModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof LevelIncrementBoosterBoosterModifier;
+  }
+
+  clone() {
+    return new LevelIncrementBoosterBoosterModifier(this.type, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args[0] instanceof Utils.IntegerHolder;
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value += this.stackCount;
     return true;
   }
 

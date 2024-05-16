@@ -5596,6 +5596,27 @@
 					}
 				},
 				{
+					"filename": "candy_jar_jar",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 19,
+						"h": 20
+					},
+					"frame": {
+						"x": 378,
+						"y": 273,
+						"w": 19,
+						"h": 20
+					}
+				},
+				{
 					"filename": "hard_stone",
 					"rotated": false,
 					"trimmed": true,

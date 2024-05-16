@@ -918,7 +918,7 @@ export const modifierTypes = {
   HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives)',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.1), 'healing_charm'),
   CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
-
+  CANDY_JAR_JAR: () => new ModifierType('Candy Jar Jar', 'Increases the number of Candy Jars added by Candy Jars by 1', (type, _args) => new Modifiers.LevelIncrementBoosterBoosterModifier(type)),
   BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed',
     (type, _args) => new Modifiers.PreserveBerryModifier(type)),
 
@@ -1079,6 +1079,7 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, 24),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, 2),
+    new WeightedModifierType(modifierTypes.CANDY_JAR_JAR, 5),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
