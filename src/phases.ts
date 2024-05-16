@@ -59,6 +59,7 @@ import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarte
 import i18next from './plugins/i18n';
 import { Abilities } from "./data/enums/abilities";
 import * as Overrides from './overrides';
+import { Type } from "./data/type";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -1816,7 +1817,14 @@ export class CommandPhase extends FieldPhase {
             if (!isSwitch && this.fieldIndex)
               this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
           } else if (trapTag) {
-            if (!isSwitch) {
+            if(trapTag.sourceMove === Moves.INGRAIN && this.scene.getPokemonById(trapTag.sourceId).isOfType(Type.GHOST)) {
+              success = true;
+              this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch 
+              ? { command: Command.POKEMON, cursor: cursor, args: args }
+              : { command: Command.RUN };
+              break;
+            }
+            if (!isSwitch) { 
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
             }

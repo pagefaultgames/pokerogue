@@ -15,6 +15,7 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability"
+import { Species } from "./enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -117,7 +118,11 @@ export class TrappedTag extends BattlerTag {
   }
   
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.getTag(BattlerTagType.TRAPPED);
+    const isGhost = pokemon.isOfType(Type.GHOST);
+    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+    const isAllowedGhostType = pokemon.species.speciesId === Species.PHANTUMP || pokemon.species.speciesId === Species.TREVENANT;
+
+    return !isTrapped && (!isGhost || isAllowedGhostType);
   }
 
   onAdd(pokemon: Pokemon): void {
