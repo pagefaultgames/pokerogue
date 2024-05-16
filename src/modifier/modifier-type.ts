@@ -925,6 +925,9 @@ export const modifierTypes = {
   FOCUS_BAND: () => new PokemonHeldItemModifierType('Focus Band', 'Adds a 10% chance to survive with 1 HP after being damaged enough to faint',
     (type, args) => new Modifiers.SurviveDamageModifier(type, (args[0] as Pokemon).id)),
 
+  QUICK_CLAW: () => new PokemonHeldItemModifierType('Quick Claw', 'Adds a 10% chance to move first regardless of speed (after priority)',
+    (type, args) => new Modifiers.BypassSpeedChanceModifier(type, (args[0] as Pokemon).id)),
+
   KINGS_ROCK: () => new PokemonHeldItemModifierType('King\'s Rock', 'Adds a 10% chance an attack move will cause the opponent to flinch',
     (type, args) => new Modifiers.FlinchChanceModifier(type, (args[0] as Pokemon).id)),
 
@@ -975,11 +978,11 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.POKEBALL, 6),
     new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
     new WeightedModifierType(modifierTypes.POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 10 || p.getHpRatio() <= 0.875).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 10 || p.getHpRatio() <= 0.875) && !p.isFainted()).length, 3);
       return thresholdPartyMemberCount * 3;
     }, 9),
     new WeightedModifierType(modifierTypes.SUPER_POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 25 || p.getHpRatio() <= 0.75).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 25 || p.getHpRatio() <= 0.75) && !p.isFainted()).length, 3);
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.ETHER, (party: Pokemon[]) => {
@@ -1013,16 +1016,16 @@ const modifierPool: ModifierPool = {
       return party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
     }, 1),
     new WeightedModifierType(modifierTypes.HYPER_POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 100 || p.getHpRatio() <= 0.625).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 100 || p.getHpRatio() <= 0.625) && !p.isFainted()).length, 3);
       return thresholdPartyMemberCount * 3;
     }, 9),
     new WeightedModifierType(modifierTypes.MAX_POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3);
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.FULL_RESTORE, (party: Pokemon[]) => {
       const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
-      const thresholdPartyMemberCount = Math.floor((Math.min(party.filter(p => p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5).length, 3) + statusEffectPartyMemberCount) / 2);
+      const thresholdPartyMemberCount = Math.floor((Math.min(party.filter(p => (p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3) + statusEffectPartyMemberCount) / 2);
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.ELIXIR, (party: Pokemon[]) => {
@@ -1087,6 +1090,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 6),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
+    new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
     new WeightedModifierType(modifierTypes.LOCK_CAPSULE, 3),
     new WeightedModifierType(modifierTypes.SUPER_EXP_CHARM, 10),
@@ -1138,6 +1142,7 @@ const trainerModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 2),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
+    new WeightedModifierType(modifierTypes.QUICK_CLAW, 1),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 1),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 1),
   ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
@@ -1198,6 +1203,7 @@ const dailyStarterModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
+    new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
   ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
   [ModifierTier.MASTER]: [
