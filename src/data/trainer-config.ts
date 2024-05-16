@@ -399,6 +399,9 @@ export class TrainerConfig {
     }
 
     initForGymLeader(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
+        if (!getIsInitialized()) {
+            initI18n();
+        }
 
         this.setPartyTemplateFunc(getGymLeaderPartyTemplate);
         signatureSpecies.forEach((speciesPool, s) => {
@@ -431,7 +434,9 @@ export class TrainerConfig {
     }
 
     initForEliteFour(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
-
+        if (!getIsInitialized()) {
+            initI18n();
+        }
 
         this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
         signatureSpecies.forEach((speciesPool, s) => {
@@ -459,7 +464,9 @@ export class TrainerConfig {
     }
 
     initForChampion(signatureSpecies: (Species | Species[])[]): TrainerConfig {
-
+        if (!getIsInitialized()) {
+            initI18n();
+        }
         this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
         signatureSpecies.forEach((speciesPool, s) => {
             if (!Array.isArray(speciesPool))
