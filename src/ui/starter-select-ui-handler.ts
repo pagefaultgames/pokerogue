@@ -238,12 +238,22 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
+    let growthRateXPosition = 34;
+    switch (i18next.language) {
+      case 'de':
+        growthRateXPosition = 38;
+        break;
+      default:
+        growthRateXPosition = 34;
+        break
+    }
+
     this.pokemonGrowthRateLabelText = addTextObject(this.scene, 8, 106, i18next.t("starterSelectUiHandler:growthRate"), TextStyle.SUMMARY_ALT, { fontSize: '36px' });
     this.pokemonGrowthRateLabelText.setOrigin(0, 0);
     this.pokemonGrowthRateLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
 
-    this.pokemonGrowthRateText = addTextObject(this.scene, 34, 106, '', TextStyle.SUMMARY_PINK, { fontSize: '36px' });
+    this.pokemonGrowthRateText = addTextObject(this.scene, growthRateXPosition, 106, '', TextStyle.SUMMARY_PINK, { fontSize: '36px' });
     this.pokemonGrowthRateText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGrowthRateText);
 
@@ -262,6 +272,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case 'pt_BR':
         starterInfoXPosition = 32;
         break;
+      case 'de':
+        starterInfoXPosition = 36;
+        break;
       default:
         starterInfoXPosition = 31;
         break
@@ -273,6 +286,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     switch (currentLanguage) {
       case 'pt_BR':
         starterInfoTextSize = '47px';
+        break;
+      case 'de':
+        starterInfoTextSize = '52px';
         break;
       default:
         starterInfoTextSize = '56px';
@@ -461,12 +477,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, 'types');
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ''}`);
     this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, 'types');
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ''}`);
     this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);

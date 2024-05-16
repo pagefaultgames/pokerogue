@@ -3,15 +3,15 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 export const SummaryUiHandler: SimpleTranslationEntries = {
     "pokemonInfo": "Pokémon Info", //Currently unused
     "originalTrainer": "OT",
-    "type": "Type",
-    "natureBeforeText": "",
-    "natureAfterText": " nature",
-    "apparently": "apparently",
-    "metAtLv":"met at Lv",
+    "type": "Typ",
+    "natureBeforeText": "Wesen: ",
+    "natureAfterText": "",
+    "apparently": "Wahrscheinlich",
+    "metAtLv":"getroffen auf Lvl. ",
     "status": "Status",
     "lvl": "Lvl",
-    "unknown": 'Unknown',
-    "expPoints": "EXP. Points",
-    "nextLv": "Next Lv.",
-    "moveStats": "Power\nAccuracy\nCategory"
+    "unknown": 'Unbekannt',
+    "expPoints": "EP",
+    "nextLv": "Nächstes Lv",
+    "moveStats": "Stärke\nGenauigkeit\nKategorie",
 } as const;
