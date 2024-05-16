@@ -2047,12 +2047,20 @@ export class TurnStartPhase extends FieldPhase {
           this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
           break;
         case Command.POKEMON:
+          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
+          break;
         case Command.RUN:
-          const isSwitch = turnCommand.command === Command.POKEMON;
-          if (isSwitch)
-            this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
-          else
-            this.scene.unshiftPhase(new AttemptRunPhase(this.scene, pokemon.getFieldIndex()));
+          let runningPokemon = pokemon;
+          // check if either active player pokemon has run away
+          if (this.scene.currentBattle.double) {
+            const playerPokemon = field.filter(pokemon => pokemon.isPlayer());
+            // use the faster stats if not
+            const fasterPokemon = playerPokemon[0].stats[Stat.SPD] > playerPokemon[1].stats[Stat.SPD] ? playerPokemon[0] : playerPokemon[1];
+            const hasRunAway = playerPokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
+            runningPokemon = hasRunAway != undefined ? hasRunAway : fasterPokemon;
+          }
+          console.log(runningPokemon.name)
+          this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
           break;
       }
     }
