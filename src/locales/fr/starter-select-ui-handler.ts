@@ -41,6 +41,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "locked": "Verrouillé",
     "disabled": "Désactivé",
     "uncaught": "Non-capturé",
-    "luck":" Luck",
-    "form": "Form"
+    "luck":" Chance",
+    "form": "Forme"
 }

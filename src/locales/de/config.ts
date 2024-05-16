@@ -16,6 +16,7 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { SummaryUiHandler } from "./summary-ui-handler";
 import { tutorial } from "./tutorial";
+import { weather } from "./weather";
 
 
 export const deConfig = {
@@ -36,5 +37,6 @@ export const deConfig = {
     growth: growth,
     partyUiHandler: partyUiHandler,
     summaryUiHandler: SummaryUiHandler,
-    biome: biome
+    biome: biome,
+    weather: weather
 }
