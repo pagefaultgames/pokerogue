@@ -1955,7 +1955,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
 
     return true;
-  } 
+  }
 }
 
 /**

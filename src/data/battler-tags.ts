@@ -1126,7 +1126,7 @@ export class MagnetRisenTag extends TypeImmuneTag {
   }
 }
 
-export class TypeImmunityIgnoreTag extends BattlerTag {
+export class IgnoreTypeImmunityTag extends BattlerTag {
   public immuneType: Type;
 
   constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type) {
@@ -1411,12 +1411,12 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
-    case BattlerTagType.IGNORE_GHOST:
-      return new TypeImmunityIgnoreTag(tagType, sourceMove, Type.GHOST);
-    case BattlerTagType.IGNORE_DARK:
-      return new TypeImmunityIgnoreTag(tagType, sourceMove, Type.DARK);
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
+    case BattlerTagType.IGNORE_GHOST:
+      return new IgnoreTypeImmunityTag(tagType, sourceMove, Type.GHOST);
+    case BattlerTagType.IGNORE_DARK:
+      return new IgnoreTypeImmunityTag(tagType, sourceMove, Type.DARK);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
