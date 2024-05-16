@@ -8,7 +8,6 @@ import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
 import { ptBrConfig } from '#app/locales/pt_BR/config.js';
 import { zhCnConfig } from '#app/locales/zh_CN/config.js';
-
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -31,15 +30,38 @@ export interface AbilityTranslationEntries {
   [key: string]: AbilityTranslationEntry
 }
 
+export interface ModifierTypeTranslationEntry {
+  name?: string,
+  description?: string,
+  extra?: SimpleTranslationEntries
+}
+
+export interface ModifierTypeTranslationEntries {
+  ModifierType: { [key: string]: ModifierTypeTranslationEntry },
+  AttackTypeBoosterItem: SimpleTranslationEntries,
+  TempBattleStatBoosterItem: SimpleTranslationEntries,
+  BaseStatBoosterItem: SimpleTranslationEntries,
+  EvolutionItem: SimpleTranslationEntries,
+  FormChangeItem: SimpleTranslationEntries,
+  TeraType: SimpleTranslationEntries,
+}
+
 export interface Localizable {
   localize(): void;
 }
 
 export function initI18n(): void {
+  // Prevent reinitialization
+  if (isInitialized) {
+    return;
+  }
+  isInitialized = true;
   let lang = '';
 
   if (localStorage.getItem('prLang'))
     lang = localStorage.getItem('prLang');
+
+
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -106,12 +128,25 @@ declare module 'i18next' {
       pokemonStat: SimpleTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
       nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
+      egg: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
     };
   }
 }
 
 export default i18next;
+
+export function getIsInitialized(): boolean {
+  return isInitialized;
+}
+
+let isInitialized = false;

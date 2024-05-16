@@ -705,7 +705,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.OGERPON, 'cornerstone-mask-tera', 'cornerstone-mask', new SpeciesFormChangeManualTrigger(), true) //When no longer holding a Rock Tera Shard
   ],
   [Species.TERAPAGOS]: [
-    new SpeciesFormChange(Species.TERAPAGOS, '', 'terastal', new SpeciesFormChangeManualTrigger(), true)
+    new SpeciesFormChange(Species.TERAPAGOS, '', 'terastal', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.TERAPAGOS, 'terastal', 'stellar', new SpeciesFormChangeManualTrigger(), true), //When holding a Stellar Tera Shard
+    new SpeciesFormChange(Species.TERAPAGOS, 'stellar', 'terastal', new SpeciesFormChangeManualTrigger(), true) //When no longer holding a Stellar Tera Shard
   ],
   [Species.GALAR_DARMANITAN]: [
     new SpeciesFormChange(Species.GALAR_DARMANITAN, '', 'zen', new SpeciesFormChangeManualTrigger(), true),

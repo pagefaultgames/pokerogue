@@ -7,6 +7,7 @@ import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
+import i18next from "i18next";
 
 export enum WeatherType {
   NONE,
@@ -121,23 +122,23 @@ export class Weather {
 export function getWeatherStartMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
-      return 'The sunlight got bright!';
+      return i18next.t('weather:sunnyStartMessage');
     case WeatherType.RAIN:
-      return 'A downpour started!';
+      return i18next.t('weather:rainStartMessage');
     case WeatherType.SANDSTORM:
-      return 'A sandstorm brewed!';
+      return i18next.t('weather:sandstormStartMessage');
     case WeatherType.HAIL:
-      return 'It started to hail!';
+      return i18next.t('weather:hailStartMessage');
     case WeatherType.SNOW:
-      return 'It started to snow!';
+      return i18next.t('weather:snowStartMessage');
     case WeatherType.FOG:
-      return 'A thick fog emerged!'
+      return i18next.t('weather:fogStartMessage');
     case WeatherType.HEAVY_RAIN:
-      return 'A heavy downpour started!'
+      return i18next.t('weather:heavyRainStartMessage');
     case WeatherType.HARSH_SUN:
-      return 'The sunlight got hot!'
+      return i18next.t('weather:harshSunStartMessage');
     case WeatherType.STRONG_WINDS:
-      return 'A heavy wind began!';
+      return i18next.t('weather:strongWindsStartMessage');
   }
 
   return null;
@@ -146,23 +147,23 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
 export function getWeatherLapseMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
-      return 'The sunlight is strong.';
+      return i18next.t('weather:sunnyLapseMessage');
     case WeatherType.RAIN:
-      return 'The downpour continues.';
+      return i18next.t('weather:rainLapseMessage');
     case WeatherType.SANDSTORM:
-      return 'The sandstorm rages.';
+      return i18next.t('weather:sandstormLapseMessage');
     case WeatherType.HAIL:
-      return 'Hail continues to fall.';
+      return i18next.t('weather:hailLapseMessage');
     case WeatherType.SNOW:
-      return 'The snow is falling down.';
+      return i18next.t('weather:snowLapseMessage');
     case WeatherType.FOG:
-      return 'The fog continues.';
+      return i18next.t('weather:fogLapseMessage');
     case WeatherType.HEAVY_RAIN:
-      return 'The heavy downpour continues.'
+      return i18next.t('weather:heavyRainLapseMessage');
     case WeatherType.HARSH_SUN:
-      return 'The sun is scorching hot.'
+      return i18next.t('weather:harshSunLapseMessage');
     case WeatherType.STRONG_WINDS:
-      return 'The wind blows intensely.';
+      return i18next.t('weather:strongWindsLapseMessage');
   }
 
   return null;
@@ -182,23 +183,23 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
 export function getWeatherClearMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
-      return 'The sunlight faded.';
+      return i18next.t('weather:sunnyClearMessage');
     case WeatherType.RAIN:
-      return 'The rain stopped.';
+      return i18next.t('weather:rainClearMessage');
     case WeatherType.SANDSTORM:
-      return 'The sandstorm subsided.';
+      return i18next.t('weather:sandstormClearMessage');
     case WeatherType.HAIL:
-      return 'The hail stopped.';
+      return i18next.t('weather:hailClearMessage');
     case WeatherType.SNOW:
-      return 'The snow stopped.';
+      return i18next.t('weather:snowClearMessage');
     case WeatherType.FOG:
-      return 'The fog disappeared.'
+      return i18next.t('weather:fogClearMessage');
     case WeatherType.HEAVY_RAIN:
-      return 'The heavy rain stopped.'
+      return i18next.t('weather:heavyRainClearMessage');
     case WeatherType.HARSH_SUN:
-      return 'The harsh sunlight faded.'
+      return i18next.t('weather:harshSunClearMessage');
     case WeatherType.STRONG_WINDS:
-      return 'The heavy wind stopped.';
+      return i18next.t('weather:strongWindsClearMessage');
   }
 
   return null;
