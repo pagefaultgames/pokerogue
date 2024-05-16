@@ -200,7 +200,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consomée" },
 
-    "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de suvivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
+    "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
 
     "QUICK_CLAW": { name: "Vive Griffe", description: "Ajoute 10% de chances d’agir en premier, indépendamment de la vitesse (après la priorité)" },
 
