@@ -87,7 +87,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Auguemente de {{boostPercent}}% le gain de Points d’Exp du porteur",
     },
     "PokemonFriendshipBoosterModifierType": {
-      description: "Auguemente de 50% le gain d’aminité par victoire",
+      description: "Auguemente le gain d’amitié de 50% par victoire",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "Auguemente de {{accuracyAmount}} la précision des capacités (maximum 100)",
