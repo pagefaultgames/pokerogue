@@ -1969,6 +1969,30 @@ export class SwapStatsAttr extends MoveEffectAttr
     }
 }
 
+/**
+ * Attribute used for moves which steal the target's positive stat changes.
+ */
+export class StealPositiveStatsAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.PRE_APPLY)
+    }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+    let StatRaised = false;
+    for (let i = 0; i < 7; i++) {
+      if (target.summonData.battleStats[i] > 0) {
+        user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [i], target.summonData.battleStats[i]));
+        target.summonData.battleStats[i] = 0;
+        StatRaised = true;
+      }
+    }
+    if (StatRaised)
+      user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s boosted stats!`));
+    target.updateInfo();
+  }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -5147,7 +5171,8 @@ export function initMoves() {
     new AttackMove(Moves.REVENGE, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, -4, 3)
       .attr(TurnDamagedDoublePowerAttr),
     new AttackMove(Moves.BRICK_BREAK, Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3)
-        .attr(RemoveScreensAttr),
+        .attr(RemoveScreensAttr)
+        .partial(),
     new StatusMove(Moves.YAWN, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status),
@@ -6342,7 +6367,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new AttackMove(Moves.PSYCHIC_FANGS, Type.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .bitingMove()
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr)
+      .partial(),
     new AttackMove(Moves.STOMPING_TANTRUM, Type.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result == MoveResult.MISS || user.getLastXMoves(2)[1]?.result == MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SHADOW_BONE, Type.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, 20, 0, 7)
@@ -6354,6 +6380,7 @@ export function initMoves() {
     new AttackMove(Moves.PRISMATIC_LASER, Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, 0, 7)
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
+      .attr(StealPositiveStatsAttr)
       .partial(),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
