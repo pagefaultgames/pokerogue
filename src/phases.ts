@@ -2335,7 +2335,6 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
-      // Display move text as long as it wasn't cancelled
       if (this.move.moveId && !this.cancelled)
         this.showMoveText();
         if (this.failed)
