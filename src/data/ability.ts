@@ -2126,10 +2126,21 @@ export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr 
   }
 }
 
+/**
+ * When the terrain changes or the pokemon is summoned, change its type according to
+ * a Record passed into the constructor.
+ * @
+ * @extends PostTerrainChangeAbAttr
+ * @see {@link applyPostTerrainChange}
+ */
 export class PostTerrainChangeTypeAttr extends PostTerrainChangeAbAttr {
-  private oldType: Type[];
   private terrainToTypeMap: Record<TerrainType, Type>;
 
+  /**
+   * @param {Record<TerrainType, Type>} terrainToTypeMap a map from terrain types to pokemon 
+   *                types containing information about what type to change to. 
+   *                Type.UNKOWN reverts to original typing.
+   */
   constructor(terrainToTypeMap: Record<TerrainType, Type>) {
     super();
     this.terrainToTypeMap = terrainToTypeMap;
