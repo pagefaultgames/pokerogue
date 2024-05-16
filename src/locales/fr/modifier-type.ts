@@ -64,7 +64,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Fait monter toute l’équipe d’1 niveau",
     },
     "PokemonBaseStatBoosterModifierType": {
-	  description: "Auguemente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
+	  description: "{{statName}} de base de base de son porteur augumentée de 10%. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restaure tous les PV de toute l'équipe",
@@ -165,7 +165,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MEMORY_MUSHROOM": { name: "Champignon Mémoriel", description: "Remémore une capacité à un Pokémon" },
 
     "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants recoivent 20% des Points d’Exp d’un participant" },
-    "EXP_BALANCE": { name: "Équilibr’Exp.", description: "Équilibre les Points d’Exp à l’avantage des membres de l’équipe aux plus bas niveaux" },
+    "EXP_BALANCE": { name: "Équilibr’Exp", description: "Équilibre les Points d’Exp à l’avantage des membres de l’équipe aux plus bas niveaux" },
 
     "OVAL_CHARM": { name: "Charme Ovale", description: "Quand plusieurs Pokémon sont en combat, chacun gagne 10% supplémentaires du total d’Exp" },
 
@@ -196,7 +196,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MULTI_LENS": { name: "Multi Loupe" },
 
     "HEALING_CHARM": { name: "Charme Soin", description: "Auguemente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
-    "CANDY_JAR": { name: "Jarre de Bonbons", description: "Auguemente de 1 le nombre de niveaux gagnés à l’utilisation d’Super Bonbon" },
+    "CANDY_JAR": { name: "Jarre de Bonbons", description: "Auguemente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
     "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consomée" },
 
