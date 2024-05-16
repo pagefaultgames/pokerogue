@@ -6,7 +6,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -841,8 +841,15 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
       return i18next.t('battle:bossAppeared', {bossName: enemyField[0].name});
 
-    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
-      return i18next.t('battle:trainerAppeared', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+    if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      if (this.scene.currentBattle.double) {
+        return i18next.t('battle:trainerAppearedDouble', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+
+      }
+      else {
+        return i18next.t('battle:trainerAppeared', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+      }
+    }
 
     return enemyField.length === 1
       ? i18next.t('battle:singleWildAppeared', {pokemonName: enemyField[0].name})
@@ -1970,6 +1977,14 @@ export class TurnStartPhase extends FieldPhase {
     const field = this.scene.getField();
     const order = this.getOrder();
 
+    const battlerBypassSpeed = {};
+
+    this.scene.getField(true).filter(p => p.summonData).map(p => {
+      const bypassSpeed = new Utils.BooleanHolder(false);
+      this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+      battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
+    });
+
     const moveOrder = order.slice(0);
 
     moveOrder.sort((a, b) => {
@@ -1994,6 +2009,9 @@ export class TurnStartPhase extends FieldPhase {
         if (aPriority.value !== bPriority.value)
           return aPriority.value < bPriority.value ? 1 : -1;
       }
+
+      if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value)
+        return battlerBypassSpeed[a].value ? -1 : 1;
       
       const aIndex = order.indexOf(a);
       const bIndex = order.indexOf(b);
@@ -2259,12 +2277,8 @@ export class MovePhase extends BattlePhase {
     }
 
     const targets = this.scene.getField(true).filter(p => {
-      if (this.targets.indexOf(p.getBattlerIndex()) > -1) {
-        const hiddenTag = p.getTag(HiddenTag);
-        if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length && !p.hasAbilityWithAttr(AlwaysHitAbAttr) && !this.pokemon.hasAbilityWithAttr(AlwaysHitAbAttr))
-          return false;
+      if (this.targets.indexOf(p.getBattlerIndex()) > -1)
         return true;
-      }
       return false;
     });
 
@@ -2305,10 +2319,17 @@ export class MovePhase extends BattlePhase {
       if (this.move.moveId)
         this.showMoveText();
 
-      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || (!targets.length && !this.move.getMove().getAttrs(SacrificialAttr).length)) {
-        moveQueue.shift();
+      // This should only happen when there are no valid targets left on the field
+      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {        
+        this.showFailedText();
         this.cancel();
+        
+        // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+
+        this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+
+        moveQueue.shift();
         return this.end();
       }
 
@@ -2579,12 +2600,13 @@ export class MoveEffectPhase extends PokemonPhase {
     if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr))
       return true;
 
+    // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1)
+      return true;
+    
     const hiddenTag = target.getTag(HiddenTag);
     if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
       return false;
-
-    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) > -1)
-      return true;
 
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
 
@@ -3959,9 +3981,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                       return;
                     }
                     this.scene.ui.setMode(messageMode).then(() => {
-                      this.scene.ui.showText('@d{32}1, @d{15}2, and@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}Poof!', null, () => {
+                      this.scene.ui.showText(i18next.t('battle:countdownPoof'), null, () => {
                         this.scene.ui.showText(i18next.t('battle:learnMoveForgetSuccess', { pokemonName: pokemon.name, moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
-                          this.scene.ui.showText('And…', null, () => {
+                          this.scene.ui.showText(i18next.t('battle:learnMoveAnd'), null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                             this.end();

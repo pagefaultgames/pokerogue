@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "student_f.png",
+			"image": "school_kid_f.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 192,

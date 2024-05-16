@@ -1770,7 +1770,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(this.immuneEffects[0]) : 'status problems'}!`);
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : 'status problems'}!`);
   }
 }
 
@@ -3481,7 +3481,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
-      .attr(MoveTypePowerBoostAbAttr, Type.WATER, 1)
+      .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
       .attr(StatusEffectImmunityAbAttr, [StatusEffect.BURN])
       .ignorable(),
     new Ability(Abilities.STEELWORKER, 7)

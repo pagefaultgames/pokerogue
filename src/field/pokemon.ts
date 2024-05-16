@@ -1229,14 +1229,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         for (let i = 0; i < 3; i++) {
           const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
           if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)'))
-            movePool.push([moveId, Math.min(this.level * 0.5, 40)]);
+            movePool.push([moveId, 40]);
         }
+        const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
+        if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)') && !this.isBoss()) // No rare egg moves before e4
+          movePool.push([moveId, 30]);
         if (this.fusionSpecies) {
           for (let i = 0; i < 3; i++) {
             const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
             if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)'))
-              movePool.push([moveId, Math.min(this.level * 0.5, 30)]);
+              movePool.push([moveId, 40]);
           }
+          const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
+          if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)') && !this.isBoss()) // No rare egg moves before e4
+            movePool.push([moveId, 30]);
         }
       }
     }
@@ -1544,6 +1550,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
             applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, battlerMove, damage);
 
+            /** 
+             * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
+             *  The target has a {@link BattlerTagType} that this move interacts with
+             * AND
+             *  The move doubles damage when used against that tag 
+             * */
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
               if (this.getTag(hta.tagType))
                 damage.value *= 2;

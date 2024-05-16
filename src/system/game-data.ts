@@ -355,15 +355,17 @@ export class GameData {
 
         if (cachedSystemDataStr) {
           let cachedSystemData = this.parseSystemData(cachedSystemDataStr);
-          console.log(cachedSystemData.timestamp, systemData.timestamp)
           if (cachedSystemData.timestamp > systemData.timestamp) {
             console.debug('Use cached system');
             systemData = cachedSystemData;
+            systemDataStr = cachedSystemDataStr;
           } else
             this.clearLocalData();
         }
 
         console.debug(systemData);
+
+        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
 
         /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
         
@@ -877,7 +879,7 @@ export class GameData {
     }) as SessionSaveData;
   }
 
-  saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false): Promise<boolean> {
+  saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success)
@@ -887,7 +889,7 @@ export class GameData {
         const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
 
         const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = this.getSystemSaveData();
+        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData();
 
         const request = {
           system: systemData,

@@ -3,6 +3,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} è apparso.",
   "trainerAppeared": "{{trainerName}}\nvuole combattere!",
+  "trainerAppearedDouble": "{{trainerName}}\nwould like to battle!",
   "singleWildAppeared": "Appare {{pokemonName}} selvatico!",
   "multiWildAppeared": "Appaiono {{pokemonName1}}\ne {{pokemonName2}} salvatici!",
   "playerComeBack": "Rientra, {{pokemonName}}!",
@@ -31,6 +32,8 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveNotLearned": "{{pokemonName}} non ha imparato\n{{moveName}}.",
   "learnMoveForgetQuestion": "Quale mossa deve dimenticare?",
   "learnMoveForgetSuccess": "{{pokemonName}} ha dimenticato la mossa\n{{moveName}}.",
+  "countdownPoof": "@d{32}1, @d{15}2, @d{15}e@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}Puff!",
+  "learnMoveAnd": "E…",
   "levelCapUp": "Il livello massimo\nè aumentato a {{levelCap}}!",
   "moveNotImplemented": "{{moveName}} non è ancora implementata e non può essere selezionata.",
   "moveNoPP": "Non ci sono PP rimanenti\nper questa mossa!",
