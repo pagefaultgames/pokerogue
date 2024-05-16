@@ -258,7 +258,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "miracle_seed": "Miracle Seed",
     "magnet": "Magnet",
     "twisted_spoon": "Twisted Spoon",
-    "never_nelt_ice": "Never-Melt Ice",
+    "never_melt_ice": "Never-Melt Ice",
     "dragon_fang": "Dragon Fang",
     "black_glasses": "Black Glasses",
     "fairy_feather": "Fairy Feather",
