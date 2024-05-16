@@ -596,7 +596,7 @@ function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: T
 
 export const trainerConfigs: TrainerConfigs = {
   [TrainerType.UNKNOWN]: new TrainerConfig(0).setHasGenders(),
-  [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders().setHasDouble('Ace Duo').setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
+  [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders('Ace Trainer Female').setHasDouble('Ace Duo').setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.THREE_WEAK_BALANCED, trainerPartyTemplates.FOUR_WEAK_BALANCED, trainerPartyTemplates.FIVE_WEAK_BALANCED, trainerPartyTemplates.SIX_WEAK_BALANCED)),
   [TrainerType.ARTIST]: new TrainerConfig(++t).setEncounterBgm(TrainerType.RICH).setPartyTemplates(trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.THREE_AVG)
     .setSpeciesPools([ Species.SMEARGLE ]),
