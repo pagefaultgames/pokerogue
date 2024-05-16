@@ -1249,6 +1249,24 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class FriendGuardTag extends BattlerTag {
+  public powerMultiplier: number;
+
+  constructor(powerMultiplier: number) {
+    super(BattlerTagType.FRIEND_GUARD, BattlerTagLapseType.PRE_MOVE, 1, undefined);
+    this.powerMultiplier = 1 - powerMultiplier;
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.powerMultiplier = source.powerMultiplier;
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
     case BattlerTagType.RECHARGING:
@@ -1358,6 +1376,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
+    case BattlerTagType.FRIEND_GUARD:
+      return new FriendGuardTag(0.25);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
