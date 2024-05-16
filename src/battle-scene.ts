@@ -1533,7 +1533,12 @@ export default class BattleScene extends SceneBase {
 			this.standbyPhase = null;
 			return;
 		}
-
+		if(this.getCurrentPhase()?.constructor.name === 'SwitchSummonPhase'){
+			this.updateGameInfo();
+		}
+		if(this.getCurrentPhase()?.constructor.name === 'SummonPhase'){
+			this.updateGameInfo();
+		}
 		if (this.phaseQueuePrependSpliceIndex > -1)
 			this.clearPhaseQueueSplice();
 		if (this.phaseQueuePrepend.length) {
@@ -1993,11 +1998,15 @@ export default class BattleScene extends SceneBase {
 		const gameInfo = {
 			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
 			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
+			currentPhase: (this.getCurrentPhase())?.constructor.name || "Unknown",
 			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
 			wave: this.currentBattle?.waveIndex || 0,
-			party: this.party ? this.party.map(p => {
-				return { name: p.name, level: p.level };
-			}) : []
+			 party: this.party ? this.party.map(p => {
+				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, nature:p.nature, ivs: p.ivs, active: p.active, gender: p.gender, pokerus: p.pokerus,fieldPosition: p.fieldPosition};
+			}) : [],
+			enemyParty: this.getEnemyParty() ? this.getEnemyParty().map(p => {
+				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, nature:p.nature, ivs: p.ivs, active: p.active, gender: p.gender, pokerus: p.pokerus, fieldPosition: p.fieldPosition};
+			}) : [],
 		};
 		(window as any).gameInfo = gameInfo;
 	}
