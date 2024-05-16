@@ -13,7 +13,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonHeldItemModifierType": {
       extra: {
         "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
-        "tooMany": "{{pokemonName}} a trop d’exemplaires\nde cet objet !",
+        "tooMany": "{{pokemonName}} possède trop\nd’exemplaires de cet objet !",
       }
     },
     "PokemonHpRestoreModifierType": {
@@ -52,7 +52,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Auguemente {{tempBattleStatName}} de toute l’équipe d’1 cran pendant 5 combats",
+	  description: "{{tempBattleStatName}} auguementée d’1 cran pour tout l’équipe pendant 5 combats",
     },
     "AttackTypeBoosterModifierType": {
       description: "Auguemente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
