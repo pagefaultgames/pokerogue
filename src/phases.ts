@@ -364,10 +364,13 @@ export class TitlePhase extends Phase {
       this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1)
         this.scene.pushPhase(new SummonPhase(this.scene, 1, true, true));
-      if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-        if (this.scene.currentBattle.double && availablePartyMembers > 1)
-          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        const minPartySize = this.scene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers > minPartySize) {
+          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+          if (this.scene.currentBattle.double)
+            this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+        }
       }
     }
 
@@ -953,10 +956,13 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
       }
      
-      if (this.scene.currentBattle.waveIndex > startingWave && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-        if (this.scene.currentBattle.double && availablePartyMembers.length > 1)
-          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        const minPartySize = this.scene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers.length > minPartySize) {
+          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+          if (this.scene.currentBattle.double)
+            this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+        }
       }
     }
 
@@ -2316,12 +2322,8 @@ export class MovePhase extends BattlePhase {
 
       this.scene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
-      if (this.move.moveId)
-        this.showMoveText();
-
       // This should only happen when there are no valid targets left on the field
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {        
-        this.showFailedText();
         this.cancel();
         
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
@@ -2332,6 +2334,12 @@ export class MovePhase extends BattlePhase {
         moveQueue.shift();
         return this.end();
       }
+
+      // Display move text as long as it wasn't cancelled
+      if (this.move.moveId && !this.cancelled)
+        this.showMoveText();
+        if (this.failed)
+          this.showFailedText();
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
