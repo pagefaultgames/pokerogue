@@ -235,20 +235,20 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       const textStyle: TextStyle = isBetter ? TextStyle.SUMMARY_GREEN : TextStyle.SUMMARY;
       const color = getTextColor(textStyle, false, uiTheme);
       return `[color=${color}][shadow=${getTextColor(textStyle, true, uiTheme)}]${text}[/shadow][/color]`;
-    };
+};
 
-    if (value > 30)
-      return coloredText('Best', value > starterIvs[typeIv]);
-    if (value === 30)
-      return coloredText('Fantastic', value > starterIvs[typeIv]);
-    if (value > 20)
-      return coloredText('Very Good', value > starterIvs[typeIv]);
-    if (value > 10)
-      return coloredText('Pretty Good', value > starterIvs[typeIv]);
-    if (value > 0)
-      return coloredText('Decent', value > starterIvs[typeIv]);
+      if (value > 30)
+        return coloredText(i18next.t('battleMessageUiHandler:ivBest'), value > starterIvs[typeIv]);
+      if (value === 30)
+        return coloredText(i18next.t('battleMessageUiHandler:ivFantastic'), value > starterIvs[typeIv]);
+      if (value > 20)
+        return coloredText(i18next.t('battleMessageUiHandler:ivVeryGood'), value > starterIvs[typeIv]);
+      if (value > 10)
+        return coloredText(i18next.t('battleMessageUiHandler:ivPrettyGood'), value > starterIvs[typeIv]);
+      if (value > 0)
+        return coloredText(i18next.t('battleMessageUiHandler:ivDecent'), value > starterIvs[typeIv]);
 
-    return coloredText('No Good', value > starterIvs[typeIv]);
+        return coloredText(i18next.t('battleMessageUiHandler:ivNoGood'), value > starterIvs[typeIv]);
   }
 
   showNameText(name: string): void {
