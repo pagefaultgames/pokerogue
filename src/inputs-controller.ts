@@ -11,7 +11,7 @@ import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler"
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_azerty from "./configs/cfg_keyboard_azerty";
 import {Device} from "#app/enums/devices";
-import {getButtonWithKeycode, regenerateIdentifiers, swap} from "#app/configs/configHandler";
+import {getButtonWithKeycode, getIconForLatestInput, regenerateIdentifiers, swap} from "#app/configs/configHandler";
 
 export interface DeviceMapping {
     [key: string]: number;
@@ -321,6 +321,7 @@ export class InputsController {
      * @param thisGamepad The gamepad that is being set up.
      */
     setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
+        this.lastSource = 'gamepad';
         const allGamepads = this.getGamepadsName();
         for (const gamepad of allGamepads) {
             const gamepadID = gamepad.toLowerCase();
@@ -381,12 +382,12 @@ export class InputsController {
      * @param event The keyboard event.
      */
     keyboardKeyDown(event): void {
+        this.lastSource = 'keyboard';
         const keyDown = event.keyCode;
         this.ensureKeyboardIsInit();
         if (this.keys.includes(keyDown)) return;
         this.keys.push(keyDown);
         const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), keyDown);
-        this.lastSource = 'keyboard';
         if (buttonDown !== undefined) {
             this.events.emit('input_down', {
                 controller_type: 'keyboard',
@@ -402,6 +403,7 @@ export class InputsController {
      * @param event The keyboard event.
      */
     keyboardKeyUp(event): void {
+        this.lastSource = 'keyboard';
         const keyDown = event.keyCode;
         this.keys = this.keys.filter(k => k !== keyDown);
         this.ensureKeyboardIsInit()
@@ -428,11 +430,11 @@ export class InputsController {
         if (!this.configs[this.selectedDevice[Device.KEYBOARD]]?.padID)
             this.setupKeyboard();
         if (!pad) return;
+        this.lastSource = 'gamepad';
         if (!this.selectedDevice[Device.GAMEPAD])
             this.setChosenGamepad(pad.id);
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD].toLowerCase()) return;
         const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.GAMEPAD), button.index);
-        this.lastSource = 'gamepad';
         if (buttonDown !== undefined) {
             this.events.emit('input_down', {
                 controller_type: 'gamepad',
@@ -453,6 +455,7 @@ export class InputsController {
      */
     gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
         if (!pad) return;
+        this.lastSource = 'gamepad';
         if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD]) return;
         const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.GAMEPAD), button.index);
         if (buttonUp !== undefined) {
@@ -648,6 +651,28 @@ export class InputsController {
     getActiveConfig(device: Device) {
         if (this.configs[this.selectedDevice[device]]?.padID) return this.configs[this.selectedDevice[device]]
         return null;
+    }
+
+    getIconForLatestInputRecorded(settingName) {
+        if (this.lastSource === 'keyboard') this.ensureKeyboardIsInit();
+        return getIconForLatestInput(this.configs, this.lastSource, this.selectedDevice, settingName);
+    }
+
+    getLastSourceDevice(): Device {
+        if (this.lastSource === 'gamepad') return Device.GAMEPAD;
+        else return Device.KEYBOARD;
+    }
+
+    getLastSourceConfig() {
+        const sourceDevice = this.getLastSourceDevice();
+        if (sourceDevice === Device.KEYBOARD)
+            this.ensureKeyboardIsInit();
+        return this.getActiveConfig(sourceDevice);
+    }
+
+    getLastSourceType() {
+        const config = this.getLastSourceConfig();
+        return config?.padType;
     }
 
     /**

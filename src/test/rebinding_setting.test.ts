@@ -14,17 +14,26 @@ import {
 } from "#app/configs/configHandler";
 import {MenuManip} from "#app/test/helpers/menuManip";
 import {InGameManip} from "#app/test/helpers/inGameManip";
+import {Device} from "#app/enums/devices";
+import {InterfaceConfig} from "#app/inputs-controller";
 
 
 describe('Test Rebinding', () => {
     let config;
     let inGame;
     let inTheSettingMenu;
+    const configs: Map<string, InterfaceConfig> = new Map();
+    const selectedDevice = {
+        [Device.GAMEPAD]: null,
+        [Device.KEYBOARD]: 'default',
+    }
+
     beforeEach(() => {
         config = deepCopy(cfg_keyboard_azerty);
         config.custom = {...config.default}
         regenerateIdentifiers(config);
-        inGame = new InGameManip(config);
+        configs.default = config;
+        inGame = new InGameManip(configs, config, selectedDevice);
         inTheSettingMenu = new MenuManip(config);
     });
 
@@ -307,5 +316,11 @@ describe('Test Rebinding', () => {
         const settingName = config.custom[key];
         const buttonDown = config.settings[settingName];
         expect(buttonDown).toEqual(Button.DOWN);
+    });
+    it("retrieve the correct icon for a given source", () => {
+        inTheSettingMenu.whenCursorIsOnSetting("Cycle_Shiny").iconDisplayedIs("KEY_R");
+        inTheSettingMenu.whenCursorIsOnSetting("Cycle_Form").iconDisplayedIs("KEY_F");
+        inGame.forTheSource("keyboard").forTheWantedBind("Cycle_Shiny").weShouldSeeTheIcon("R")
+        inGame.forTheSource("keyboard").forTheWantedBind("Cycle_Form").weShouldSeeTheIcon("F")
     });
 });

@@ -2,8 +2,8 @@ import {Button} from "#app/enums/buttons";
 import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 const cfg_keyboard_azerty = {
-    padID: 'keyboard',
-    padType: 'default',
+    padID: 'default',
+    padType: 'keyboard',
     deviceMapping: {
         KEY_A: Phaser.Input.Keyboard.KeyCodes.A,
         KEY_B: Phaser.Input.Keyboard.KeyCodes.B,

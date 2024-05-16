@@ -1,3 +1,5 @@
+import {Device} from "#app/enums/devices";
+
 /**
  * Retrieves the key associated with the specified keycode from the mapping.
  *
@@ -116,6 +118,13 @@ export function getButtonWithSettingName(config, settingName) {
 export function getIconWithSettingName(config, settingName) {
     const key = getKeyWithSettingName(config, settingName);
     return getIconWithKey(config, key);
+}
+
+export function getIconForLatestInput(configs, source, devices, settingName) {
+    let config;
+    if (source === 'gamepad') config = configs[devices[Device.GAMEPAD]];
+    else config = configs[devices[Device.KEYBOARD]];
+    return getIconWithSettingName(config, settingName);
 }
 
 /**

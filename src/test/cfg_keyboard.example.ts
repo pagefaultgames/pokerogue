@@ -39,8 +39,8 @@ export enum SettingInterface {
 }
 
 const cfg_keyboard_azerty = {
-    padID: 'keyboard',
-    padType: 'default',
+    padID: 'default',
+    padType: 'keyboard',
     deviceMapping: {
         KEY_A: Phaser.Input.Keyboard.KeyCodes.A,
         KEY_B: Phaser.Input.Keyboard.KeyCodes.B,

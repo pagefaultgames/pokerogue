@@ -42,6 +42,7 @@ export class MenuManip {
     }
 
     whenCursorIsOnSetting(settingName) {
+        if (!settingName.includes("Button_")) settingName = "Button_" + settingName;
         this.settingName = SettingInterface[settingName];
         const buttonName = this.convertNameToButtonString(settingName);
         expect(this.config.settings[this.settingName]).toEqual(Button[buttonName]);

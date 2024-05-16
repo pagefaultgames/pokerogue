@@ -62,13 +62,13 @@ function simulateKeyboardEvent(eventType, key, events) {
   switch (eventType) {
     case 'keydown':
         events.emit('input_down', {
-            controller_type: 'touch',
+            controller_type: 'keyboard',
             button: button,
         });
       break;
     case 'keyup':
         events.emit('input_up', {
-            controller_type: 'touch',
+            controller_type: 'keyboard',
             button: button,
         });
       break;

@@ -41,6 +41,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     protected layout: Map<string, LayoutConfig> = new Map<string, LayoutConfig>();
     // Will contain the input icons from the selected layout
     protected inputsIcons: InputsIcons;
+    protected navigationIcons: InputsIcons;
     // list all the setting keys used in the selected layout (because dualshock has more buttons than xbox)
     protected keys: Array<String>;
 
@@ -85,17 +86,31 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
         headerBg.setOrigin(0, 0);
 
+        this.navigationIcons = {};
+
+        const iconPreviousTab = this.scene.add.sprite(0, 0, 'keyboard');
+        iconPreviousTab.setScale(.1);
+        iconPreviousTab.setOrigin(0, -0.1);
+        iconPreviousTab.setPositionRelative(headerBg, 8, 4);
+        this.navigationIcons['BUTTON_CYCLE_FORM'] = iconPreviousTab;
+
+        const iconNextTab = this.scene.add.sprite(0, 0, 'keyboard');
+        iconNextTab.setScale(.1);
+        iconNextTab.setOrigin(0, -0.1);
+        iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
+        this.navigationIcons['BUTTON_CYCLE_SHINY'] = iconNextTab;
+
         const headerText = addTextObject(this.scene, 0, 0, 'General', TextStyle.SETTINGS_LABEL);
         headerText.setOrigin(0, 0);
-        headerText.setPositionRelative(headerBg, 8, 4);
+        headerText.setPositionRelative(headerBg, 8 + iconPreviousTab.width/6 - 4, 4);
 
         const gamepadText = addTextObject(this.scene, 0, 0, 'Gamepad', this.titleSelected === 'Gamepad' ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
         gamepadText.setOrigin(0, 0);
-        gamepadText.setPositionRelative(headerBg, 50, 4);
+        gamepadText.setPositionRelative(headerBg, 50 + iconPreviousTab.width/6 - 4, 4);
 
         const keyboardText = addTextObject(this.scene, 0, 0, 'Keyboard', this.titleSelected === 'Keyboard' ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
         keyboardText.setOrigin(0, 0);
-        keyboardText.setPositionRelative(headerBg, 97, 4);
+        keyboardText.setPositionRelative(headerBg, 97 + iconPreviousTab.width/6 - 4, 4);
 
         this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2);
         this.optionsBg.setOrigin(0, 0);
@@ -105,6 +120,8 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         this.settingsContainer.add(gamepadText);
         this.settingsContainer.add(keyboardText);
         this.settingsContainer.add(this.optionsBg);
+        this.settingsContainer.add(iconNextTab)
+        this.settingsContainer.add(iconPreviousTab)
 
         /// Initialize a new configuration "screen" for each type of gamepad.
         for (const config of this.configs) {
@@ -235,6 +252,19 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         Object.keys(this.layout).forEach((key) => this.layout[key].optionsContainer.setVisible(false));
         // Fetch the active gamepad configuration from the input controller.
         const activeConfig = this.getActiveConfig();
+
+        for (const settingName of Object.keys(this.navigationIcons)) {
+            const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
+            if (icon) {
+                const type = this.scene.inputController?.getLastSourceType();
+                this.navigationIcons[settingName].setTexture(type);
+                this.navigationIcons[settingName].setFrame(icon);
+                this.navigationIcons[settingName].alpha = 1;
+            } else {
+                this.navigationIcons[settingName].alpha = 0;
+            }
+        }
+
         // Set the UI layout for the active configuration. If unsuccessful, exit the function early.
         if (!this.setLayout(activeConfig)) return;
 
@@ -258,7 +288,6 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                 this.inputsIcons[elm].setFrame(icon);
                 this.inputsIcons[elm].alpha = 1;
             } else {
-                if (!this.inputsIcons[elm]) debugger;
                 this.inputsIcons[elm].alpha = 0;
             }
         }

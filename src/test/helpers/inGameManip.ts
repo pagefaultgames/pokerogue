@@ -1,4 +1,7 @@
-import {getSettingNameWithKeycode} from "#app/configs/configHandler";
+import {
+    getIconForLatestInput,
+    getSettingNameWithKeycode
+} from "#app/configs/configHandler";
 import {expect} from "vitest";
 import {SettingInterface} from "#app/test/cfg_keyboard.example";
 
@@ -7,11 +10,18 @@ export class InGameManip {
     private keycode;
     private settingName;
     private icon;
-    constructor(config) {
+    private configs;
+    private latestSource;
+    private selectedDevice;
+
+    constructor(configs, config, selectedDevice) {
         this.config = config;
+        this.configs = configs;
+        this.selectedDevice = selectedDevice;
         this.keycode = null;
         this.settingName = null;
         this.icon = null;
+        this.latestSource = null;
     }
 
     whenWePressOnKeyboard(keycode) {
@@ -22,6 +32,24 @@ export class InGameManip {
     nothingShouldHappen() {
         const settingName = getSettingNameWithKeycode(this.config, this.keycode);
         expect(settingName).toEqual(-1);
+        return this;
+    }
+
+    forTheWantedBind(settingName) {
+        if (!settingName.includes("Button_")) settingName = "Button_" + settingName;
+        this.settingName = SettingInterface[settingName];
+        return this;
+    }
+
+    weShouldSeeTheIcon(icon) {
+        if (!icon.includes("KEY_")) icon = "KEY_" + icon;
+        this.icon = this.config.icons[icon];
+        expect(getIconForLatestInput(this.configs, this.latestSource, this.selectedDevice, this.settingName)).toEqual(this.icon);
+        return this;
+    }
+
+    forTheSource(source) {
+        this.latestSource = source;
         return this;
     }
 
