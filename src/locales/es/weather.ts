@@ -4,41 +4,41 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  * The weather namespace holds text displayed when weather is active during a battle
  */
 export const weather: SimpleTranslationEntries = {
-    "sunnyStartMessage": "The sunlight got bright!",
-    "sunnyLapseMessage": "The sunlight is strong.",
-    "sunnyClearMessage": "The sunlight faded.",
+    "sunnyStartMessage": "¡El sol pega fuerte!",
+    "sunnyLapseMessage": "El sol brilla con fuerza.",
+    "sunnyClearMessage": "¡El sol vuelve a brillar como\nsiempre!",
 
-    "rainStartMessage": "A downpour started!",
-    "rainLapseMessage": "The downpour continues.",
-    "rainClearMessage": "The rain stopped.",
+    "rainStartMessage": "¡Ha empezado a llover!",
+    "rainLapseMessage": "La lluvia sigue cayendo.",
+    "rainClearMessage": "La lluvia se ha detenido.",
 
-    "sandstormStartMessage": "A sandstorm brewed!",
-    "sandstormLapseMessage": "The sandstorm rages.",
-    "sandstormClearMessage": "The sandstorm subsided.",
-    "sandstormDamageMessage": "{{pokemonPrefix}}{{pokemonName}} is buffeted\nby the sandstorm!",
+    "sandstormStartMessage": "¡Se acerca una tormenta de arena!",
+    "sandstormLapseMessage": "La tormenta de arena arrecia.",
+    "sandstormClearMessage": "La tormenta de arena ha amainado.",
+    "sandstormDamageMessage": "¡La tormenta de arena zarandea a\n{{pokemonPrefix}}{{pokemonName}}!",
 
-    "hailStartMessage": "It started to hail!",
-    "hailLapseMessage": "Hail continues to fall.",
-    "hailClearMessage": "The hail stopped.",
-    "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} is pelted\nby the hail!",
+    "hailStartMessage": "¡Ha empezado a granizar!",
+    "hailLapseMessage": "Sigue granizando...",
+    "hailClearMessage": "El granizo se ha detenido.",
+    "hailDamageMessage": "¡El granizo zarandea a {{pokemonPrefix}}{{pokemonName}}!",
 
-    "snowStartMessage": "It started to snow!",
-    "snowLapseMessage": "The snow is falling down.",
-    "snowClearMessage": "The snow stopped.",
+    "snowStartMessage": "¡Ha comenzado a nevar!",
+    "snowLapseMessage": "La nieve sigue cayendo.",
+    "snowClearMessage": "La nevada se ha detenido.",
 
-    "fogStartMessage": "A thick fog emerged!",
-    "fogLapseMessage": "The fog continues.",
-    "fogClearMessage": "The fog disappeared.",
+    "fogStartMessage": "¡Ha surgido una espesa niebla!",
+    "fogLapseMessage": "La niebla es densa...",
+    "fogClearMessage": "La niebla se ha disipado.",
 
-    "heavyRainStartMessage": "A heavy downpour started!",
-    "heavyRainLapseMessage": "The heavy downpour continues.",
-    "heavyRainClearMessage": "The heavy rain stopped.",
+    "heavyRainStartMessage": "¡Comienza a diluviar!",
+    "heavyRainLapseMessage": "El diluvio continúa...",
+    "heavyRainClearMessage": "El diluvio se ha detenido.",
     
-    "harshSunStartMessage": "The sunlight got hot!",
-    "harshSunLapseMessage": "The sun is scorching hot.",
-    "harshSunClearMessage": "The harsh sunlight faded.",
+    "harshSunStartMessage": "¡El sol se vuelve abrasador!",
+    "harshSunLapseMessage": "El sol sigue brillando intensamente.",
+    "harshSunClearMessage": "El sol abrasador ha vuelto a\nla normalidad.",
 
-    "strongWindsStartMessage": "A heavy wind began!",
-    "strongWindsLapseMessage": "The wind blows intensely.",
-    "strongWindsClearMessage": "The heavy wind stopped."
+    "strongWindsStartMessage": "¡Se avecina un fuerte viento!",
+    "strongWindsLapseMessage": "El viento sopla con intensidad.",
+    "strongWindsClearMessage": "Los fuertes vientos se han detenido."
 }

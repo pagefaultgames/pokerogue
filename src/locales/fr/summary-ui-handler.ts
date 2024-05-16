@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const SummaryUiHandler: SimpleTranslationEntries = {
     "pokemonInfo": "Info Pokémon", //Currently unused
-    "originalTrainer": "D.O.",
+    "originalTrainer": "DO",
     "type": "Type",
     "natureBeforeText": "",
     "natureAfterText": " de nature",

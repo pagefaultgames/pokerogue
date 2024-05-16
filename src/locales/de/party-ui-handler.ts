@@ -4,7 +4,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
     "choosePokemon": "Wähle ein Pokémon.",
     "cantReleaseInBattle": "Kämpfende Pokémon können\n nicht freigelassen werden.",
     "what2doWithPoke": "Was möchtest du mit diesem Pokémon tun?",
-    "cancelShort": "Abbrechen",
+    "cancelShort": "Abbrec",
     "selectMove": "Wähle eine Attacke.",
     "selectHeldItemTransfer": "Wähle welches Item du übertragen möchtest.",
     "selectSplice": "Wähle ein Pokémon zum verbinden.",

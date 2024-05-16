@@ -14,9 +14,8 @@ export const partyUiHandler: SimpleTranslationEntries = {
     "SUMMARY": "Datos",
     "RELEASE": "Liberar",
     "CANCEL": "Cancelar",
-    "unpauseEvolution": "Evolutions have been unpaused for {{pokemonName}}",
-    "unsplicePokemon": "`Do you really want to unsplice {{fusionSpeciesName}}\nfrom {{pokemonName}? {{fusionSpeciesName}} will be lost.",
-    "spliceRevertText": "{{fusionName}} was reverted to {{pokemonName}}.",
-    "releasePokemon": "Do you really want to release {{pokemonName}}?",
-
+    "unpauseEvolution": "Se ha reactivado la evolución de\n{{pokemonName}}",
+    "unsplicePokemon": "`¿Quieres anular la fusión entre {{fusionSpeciesName}}\ny {{pokemonName}? Perderás a {{fusionSpeciesName}}.",
+    "spliceRevertText": "{{fusionName}} se ha revertido a {{pokemonName}}.",
+    "releasePokemon": "¿Quieres liberar a {{pokemonName}}?",
 } as const;

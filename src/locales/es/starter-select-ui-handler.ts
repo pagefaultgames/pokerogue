@@ -38,9 +38,9 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleVariant": 'V: Cambiar Variante',
     "enablePassive": "Activar Pasiva",
     "disablePassive": "Desactivar Pasiva",
-    "locked": "Locked",
-    "disabled": "Disabled",
-    "uncaught": "Uncaught",
+    "locked": "Bloqueada",
+    "disabled": "Desactivada",
+    "uncaught": "Sin atrapar",
     "luck":" Suerte",
     "form": "Forma"    
 }
