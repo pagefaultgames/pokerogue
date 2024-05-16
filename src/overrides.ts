@@ -11,6 +11,7 @@ import { Type } from './data/type';
 import { Stat } from './data/pokemon-stat';
 import { PokeballCounts } from './battle-scene';
 import { PokeballType } from './data/pokeball';
+import { StatusEffect } from './data/status-effect';
 
 /**
  * Overrides for testing different in game situations
@@ -58,6 +59,7 @@ export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -69,6 +71,7 @@ export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 
