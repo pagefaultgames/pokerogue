@@ -164,7 +164,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MEMORY_MUSHROOM": { name: "Champignon Mémoriel", description: "Remémore une capacité à un Pokémon" },
 
-    "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants recoivent 20% des Points d’Exp d’un participant" },
+    "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants reçoivent 20% des Points d’Exp d’un participant" },
     "EXP_BALANCE": { name: "Équilibr’Exp", description: "Équilibre les Points d’Exp à l’avantage des membres de l’équipe aux plus bas niveaux" },
 
     "OVAL_CHARM": { name: "Charme Ovale", description: "Quand plusieurs Pokémon sont en combat, chacun gagne 10% supplémentaires du total d’Exp" },
