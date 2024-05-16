@@ -259,7 +259,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "miracle_seed": "Wundersaat",
     "magnet": "Magnet",
     "twisted_spoon": "Krümmlöffel",
-    "never-nelt_ice": "Ewiges Eis",
+    "never-melt_ice": "Ewiges Eis",
     "dragon_fang": "Drachenzahn",
     "black_glasses": "Schattenbrille",
     "fairy_feather": "Feendaune",
