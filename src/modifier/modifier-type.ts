@@ -1011,7 +1011,7 @@ export const modifierTypes = {
   SUPER_POTION: () => new PokemonHpRestoreModifierType(`modifierType:ModifierType.SUPER_POTION`, 'super_potion', 50, 25),
   HYPER_POTION: () => new PokemonHpRestoreModifierType(`modifierType:ModifierType.HYPER_POTION`, 'hyper_potion', 200, 50),
   MAX_POTION: () => new PokemonHpRestoreModifierType(`modifierType:ModifierType.MAX_POTION`, 'max_potion', 0, 100),
-  FULL_RESTORE: () => new PokemonHpRestoreModifierType(`modifierType:ModifierType.FULL_RESTORE`, 'full_restore', 0, 100),
+  FULL_RESTORE: () => new PokemonHpRestoreModifierType(`modifierType:ModifierType.FULL_RESTORE`, 'full_restore', 0, 100, true),
   
   REVIVE: () => new PokemonReviveModifierType(`modifierType:ModifierType.REVIVE`, 'revive', 50),
   MAX_REVIVE: () => new PokemonReviveModifierType(`modifierType:ModifierType.MAX_REVIVE`, 'max_revive', 100),
