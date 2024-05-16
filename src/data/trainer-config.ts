@@ -399,6 +399,9 @@ export class TrainerConfig {
     }
 
     initForGymLeader(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
+        if (!getIsInitialized()) {
+            initI18n();
+        }
 
         this.setPartyTemplateFunc(getGymLeaderPartyTemplate);
         signatureSpecies.forEach((speciesPool, s) => {
@@ -413,7 +416,9 @@ export class TrainerConfig {
 
         // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
+        console.log(nameForCall)
         this.name = i18next.t(`trainerNames:${nameForCall}`);
+        console.log(this.name)
 
 
 
@@ -431,7 +436,9 @@ export class TrainerConfig {
     }
 
     initForEliteFour(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
-
+        if (!getIsInitialized()) {
+            initI18n();
+        }
 
         this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
         signatureSpecies.forEach((speciesPool, s) => {
@@ -459,7 +466,9 @@ export class TrainerConfig {
     }
 
     initForChampion(signatureSpecies: (Species | Species[])[]): TrainerConfig {
-
+        if (!getIsInitialized()) {
+            initI18n();
+        }
         this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
         signatureSpecies.forEach((speciesPool, s) => {
             if (!Array.isArray(speciesPool))
