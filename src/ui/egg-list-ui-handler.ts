@@ -7,6 +7,7 @@ import { EGG_SEED, Egg, GachaType, getEggGachaTypeDescriptor, getEggHatchWavesMe
 import * as Utils from "../utils";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
+import i18next from '../plugins/i18n';
 
 export default class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;
@@ -165,7 +166,7 @@ export default class EggListUiHandler extends MessageUiHandler {
 
   setEggDetails(egg: Egg): void {
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
-    this.eggNameText.setText(`Egg (${getEggDescriptor(egg)})`);
+    this.eggNameText.setText(`${i18next.t('egg:egg')} (${getEggDescriptor(egg)})`);
     this.eggDateText.setText(
       new Date(egg.timestamp).toLocaleString(undefined, {
         weekday: 'short',
