@@ -15,6 +15,7 @@ import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
+import { titles,trainerClasses,trainerNames } from "./trainers";
 import { splashMessages } from "./splash-messages"
 import { weather } from "./weather";
 
@@ -33,6 +34,9 @@ export const esConfig = {
     pokemonStat: pokemonStat,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
+    titles: titles,
+    trainerClasses: trainerClasses,
+    trainerNames: trainerNames,
     tutorial: tutorial,
     splashMessages: splashMessages,
     nature: nature,
