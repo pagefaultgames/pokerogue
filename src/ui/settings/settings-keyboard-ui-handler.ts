@@ -147,7 +147,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
                     if (_key === 'noKeyboard') continue; // Skip updating the no gamepad layout.
                     // Update the text of the first option label under the current setting to the name of the chosen gamepad,
                     // truncating the name to 30 characters if necessary.
-                    this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.selectedDevice[Device.KEYBOARD], 30));
+                    this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.selectedDevice[Device.KEYBOARD], 22));
                 }
             }
         }
