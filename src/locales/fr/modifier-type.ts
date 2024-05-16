@@ -298,7 +298,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PEAT_BLOCK": "Bloc de Tourbe",
     "AUSPICIOUS_ARMOR": "Armure de la Fortune",
     "MALICIOUS_ARMOR": "Armure de la Rancune",
-    "MASTERPIECE_TEACUP": "Masterpiece Teacup",
+    "MASTERPIECE_TEACUP": "Bol Exceptionnel",
     "METAL_ALLOY": "Métal Composite",
     "SCROLL_OF_DARKNESS": "Rouleau des Ténèbres",
     "SCROLL_OF_WATERS": "Rouleau de l’Eau",
