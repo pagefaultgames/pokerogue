@@ -1539,6 +1539,9 @@ export default class BattleScene extends SceneBase {
 		if(this.getCurrentPhase()?.constructor.name === 'SummonPhase'){
 			this.updateGameInfo();
 		}
+		if(this.getCurrentPhase()?.constructor.name === 'TurnInitPhase'){
+			this.updateGameInfo();
+		}
 		if (this.phaseQueuePrependSpliceIndex > -1)
 			this.clearPhaseQueueSplice();
 		if (this.phaseQueuePrepend.length) {
@@ -2000,13 +2003,13 @@ export default class BattleScene extends SceneBase {
 			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
 			currentPhase: (this.getCurrentPhase())?.constructor.name || "Unknown",
 			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
-			weather: this.arena.weather,
+			weather: this.arena?.weather || {},
 			wave: this.currentBattle?.waveIndex || 0,
 			 party: this.party ? this.party.map(p => {
-				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, active: p.active, gender: p.gender, pokerus: p.pokerus,fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant};
+				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, active: p.active, gender: p.gender, fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant, hp: Math.ceil((p.hp/p.stats[0])*100)};
 			}) : [],
 			enemyParty: this.getEnemyParty() ? this.getEnemyParty().map(p => {
-				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, active: p.active, gender: p.gender, pokerus: p.pokerus, fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant};
+				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, active: p.active, gender: p.gender, fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant, hp: Math.ceil((p.hp/p.stats[0])*100)};
 			}) : [],
 
 		};
