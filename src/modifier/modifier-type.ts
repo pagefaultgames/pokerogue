@@ -898,11 +898,11 @@ export class TerastallizeModifierType extends PokemonHeldItemModifierType implem
   }
 
   get name(): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`modifierType:FormChangeItem.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`modifierType:FormChangeItem.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
   }
 
   getPregenArgs(): any[] {
