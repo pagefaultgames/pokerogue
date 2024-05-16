@@ -139,6 +139,7 @@ declare module 'i18next' {
       egg: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
       modifierType: ModifierTypeTranslationEntries;
+      battleMessageUiHandler: SimpleTranslationEntries;
     };
   }
 }
