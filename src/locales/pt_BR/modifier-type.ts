@@ -84,7 +84,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta o ganho de pontos de experiência em {{boostPercent}}%",
     },
     "PokemonExpBoosterModifierType": {
-      description: "Aumenta o ganho de pontos de experiência de quem segurar em {{boostPercent}}%",
+      description: "Aumenta o ganho de pontos de experiência de quem segura em {{boostPercent}}%",
     },
     "PokemonFriendshipBoosterModifierType": {
       description: "Aumenta o ganho de amizade por vitória em 50%",
@@ -165,16 +165,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MEMORY_MUSHROOM": { name: "Memory Mushroom", description: "Relembra um movimento esquecido" },
 
     "EXP_SHARE": { name: "EXP. All", description: "Distribui pontos de experiência para todos os membros da equipe" },
-    "EXP_BALANCE": { name: "EXP. Balance", description: "Distribui pontos de experiência principalmente para os Pokémon mais fracos" },
+    "EXP_BALANCE": { name: "Balanceador de Exp.", description: "Distribui pontos de experiência principalmente para os Pokémon mais fracos" },
 
     "OVAL_CHARM": { name: "Amuleto Oval", description: "Quando vários Pokémon participam de uma batalha, cada um recebe 10% extra de pontos de experiência" },
 
-    "EXP_CHARM": { name: "Amuleto de Experiência" },
-    "SUPER_EXP_CHARM": { name: "Super Amuleto de Experiência" },
-    "GOLDEN_EXP_CHARM": { name: "Amuleto de Experiência Dourado" },
+    "EXP_CHARM": { name: "Amuleto de Exp." },
+    "SUPER_EXP_CHARM": { name: "Super Amuleto de Exp." },
+    "GOLDEN_EXP_CHARM": { name: "Amuleto de Exp. Dourado" },
 
-    "LUCKY_EGG": { name: "Lucky Egg" },
-    "GOLDEN_EGG": { name: "Golden Egg" },
+    "LUCKY_EGG": { name: "Ovo da Sorte" },
+    "GOLDEN_EGG": { name: "Ovo Dourado" },
 
     "SOOTHE_BELL": { name: "Soothe Bell" },
 
@@ -196,9 +196,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MULTI_LENS": { name: "Multi Lens" },
 
     "HEALING_CHARM": { name: "Amuleto de Cura", description: "Aumenta a eficácia dos movimentos e itens que restauram PS em 10% (exceto Reviver)" },
-    "CANDY_JAR": { name: "Candy Jar", description: "Aumenta o número de níveis adicionados pelo Doce Raro em 1" },
+    "CANDY_JAR": { name: "Pote de Doces", description: "Aumenta o número de níveis adicionados pelo Doce Raro em 1" },
 
-    "BERRY_POUCH": { name: "Berry Pouch", description: "Adiciona uma chance de 25% de que uma berry usada não seja consumida" },
+    "BERRY_POUCH": { name: "Bolsa de Berries", description: "Adiciona uma chance de 25% de que uma berry usada não seja consumida" },
 
     "FOCUS_BAND": { name: "Focus Band", description: "Adiciona uma chance de 10% de sobreviver com 1 PS após ser danificado o suficiente para desmaiar" },
 
