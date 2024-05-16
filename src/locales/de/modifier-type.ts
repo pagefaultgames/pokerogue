@@ -42,11 +42,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-      description: "Erhöht die maximale Anzahl der AP der ausgewählten Attacke eines Pokémon um {{upPoints}} für jede 5 maximale AP (maximal 3)",
+      description: "Erhöht die maximale Anzahl der AP der ausgewählten Attacke um {{upPoints}} für jede 5 maximale AP (maximal 3)",
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}} Minze",
-      description: "Ändert das Wesen eines Pokémon zu {{natureName}} und schaltet dieses Wesen permanent für diesen Starter frei.",
+      description: "Ändert das Wesen zu {{natureName}}. Schaltet dieses Wesen permanent für diesen Starter frei.",
     },
     "DoubleBattleChanceBoosterModifierType": {
       description: "Verdoppelt die Wahrscheinlichkeit, dass die nächsten {{battleCount}} Begegnungen mit wilden Pokémon ein Doppelkampf sind.",
@@ -106,7 +106,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Erlaubt es bestimmten Pokémon ihre Form zu ändern",
     },
     "FusePokemonModifierType": {
-      description: "Fusioniert zwei Pokémon (überträgt die Fähigkeit, teilt Basiswerte und Typ auf, gemeinsamer Attackenpool),
+      description: "Fusioniert zwei Pokémon (überträgt die Fähigkeit, teilt Basiswerte und Typ auf, gemeinsamer Attackenpool)",
     },
     "TerastallizeModifierType": {
       name: "{{teraType}} Terra-Stück",
@@ -195,7 +195,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MULTI_LENS": { name: "Mehrfachlinse" },
 
-    "HEALING_CHARM": { name: "Heilungspin", description: "Erhöht die Effektivität von KP-Wiederherstellungsattacken sowie Items um 10% (Beleber ausgenommen)" },
+    "HEALING_CHARM": { name: "Heilungspin", description: "Erhöht die Effektivität von Heilungsattacken sowie Heilitems um 10% (Beleber ausgenommen)" },
     "CANDY_JAR": { name: "Bonbonglas", description: "Erhöht die Anzahl der Level die ein Sonderbonbon erhöht um 1" },
 
     "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 25% Chance hinzu, dass Beeren nicht verbraucht werden" },
@@ -214,7 +214,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Schillerpin", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon ein schillernd ist" },
     "ABILITY_CHARM": { name: "Ability Charm", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon eine versteckte Fähigkeit hat" },
 
-    "IV_SCANNER": { name: "IS-Scanner", description: "Erlaubt es die IS-Werte von wilden Pokémon zu scannen. 2 IS-Werte werden pro Staplung angezeigt. Die besten IS-Werte werden zuerst gezeigt" },
+    "IV_SCANNER": { name: "IS-Scanner", description: "Erlaubt es die IS-Werte von wilden Pokémon zu scannen.\n(2 IS-Werte pro Staplung. Die besten IS-Werte zuerst)" },
 
     "DNA_SPLICERS": { name: "DNS-Keil" },
 
