@@ -1463,6 +1463,8 @@ export default class BattleScene extends SceneBase {
 				return 18.314;
 			case 'battle_legendary_res_zek': //BW Reshiram & Zekrom Battle
 				return 18.329;
+			case 'battle_plasma_grunt': //BW Team Plasma Battle
+				return 12.974;
 			case 'battle_rival':
 				return 13.689;
 			case 'battle_rival_2':
