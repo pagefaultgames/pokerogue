@@ -246,8 +246,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
           } else {
             const transferPokemon = this.scene.getParty()[this.transferCursor];
-            const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === transferPokemon.id) as PokemonHeldItemModifier[];
+            const itemModifiers = transferPokemon.getTransferrableHeldItems();
             filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, itemModifiers[this.transferOptionCursor]);
           }
           if (filterResult === null) {
@@ -548,8 +547,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         : null;
 
     const itemModifiers = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
-      ? this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[]
+      ? pokemon.getTransferrableHeldItems()
       : null;
 
     if (this.options.length) {
@@ -732,15 +730,24 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
       const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
+      const releasedItems = releasedPokemon.getTransferrableHeldItems();
+
       releasedPokemon.destroy();
       this.populatePartySlots();
+      
       if (this.cursor >= this.scene.getParty().length)
         this.setCursor(this.cursor - 1);
       if (this.partyUiMode === PartyUiMode.RELEASE) {
         const selectCallback = this.selectCallback;
         this.selectCallback = null;
         selectCallback(this.cursor, PartyOption.RELEASE);
+        if (releasedItems && releasedItems.length > 0) {
+          const newPokemon = this.scene.getParty()[this.scene.getParty().length - 1];
+          releasedItems.forEach(i => this.scene.tryTransferHeldItemModifier(i, newPokemon, true, false));
+          this.showText("Items were transferred beep boop");
+        }
       }
+
       this.showText(null, 0);
     }, null, true);
   }
