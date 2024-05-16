@@ -2059,7 +2059,6 @@ export class TurnStartPhase extends FieldPhase {
             const hasRunAway = playerPokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
             runningPokemon = hasRunAway != undefined ? hasRunAway : fasterPokemon;
           }
-          console.log(runningPokemon.name)
           this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
           break;
       }
