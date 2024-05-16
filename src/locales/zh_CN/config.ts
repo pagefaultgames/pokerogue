@@ -16,6 +16,7 @@ import { nature } from "./nature";
 import { weather } from "./weather";
 import { modifierType } from "./modifier-type";
 import { growth } from "./growth";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
 
 
 export const zhCnConfig = {
@@ -40,4 +41,5 @@ export const zhCnConfig = {
     growth: growth,
     weather: weather,
     modifierType: modifierType,
+    battleMessageUiHandler: battleMessageUiHandler,
 }
