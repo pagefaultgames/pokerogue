@@ -5,7 +5,9 @@ import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
 
-
+/**
+ * Abstract class for handling UI elements related to button bindings.
+ */
 export default abstract class AbstractBindingUiHandler extends UiHandler {
     // Containers for different segments of the UI.
     protected optionSelectContainer: Phaser.GameObjects.Container;
@@ -22,6 +24,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     protected actionLabel: Phaser.GameObjects.Text;
     protected cancelLabel: Phaser.GameObjects.Text;
 
+    // State for listening and button pressed tracking.
     protected listening: boolean = false;
     protected buttonPressed: number | null = null;
 
@@ -31,14 +34,24 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
 
     // Function to call on cancel or completion of binding.
     protected cancelFn: (boolean?) => boolean;
+    protected swapAction: () => boolean;
 
     // The specific setting being modified.
     protected target;
 
+    /**
+     * Constructor for the AbstractBindingUiHandler.
+     *
+     * @param scene - The BattleScene instance.
+     * @param mode - The UI mode.
+     */
     constructor(scene: BattleScene, mode: Mode) {
         super(scene, mode);
     }
 
+    /**
+     * Setup UI elements.
+     */
     setup() {
         const ui = this.getUi();
         this.optionSelectContainer = this.scene.add.container(0, 0);
@@ -104,6 +117,12 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.actionsContainer.add(this.cancelLabel);
     }
 
+    /**
+     * Show the UI with the provided arguments.
+     *
+     * @param args - Arguments to be passed to the show method.
+     * @returns `true` if successful.
+     */
     show(args: any[]): boolean {
         super.show(args);
         this.buttonPressed = null;
@@ -119,14 +138,30 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         return true;
     }
 
+    /**
+     * Get the width of the window.
+     *
+     * @returns The window width.
+     */
     getWindowWidth(): number {
         return 160;
     }
 
+    /**
+     * Get the height of the window.
+     *
+     * @returns The window height.
+     */
     getWindowHeight(): number {
         return 64;
     }
 
+    /**
+     * Process the input for the given button.
+     *
+     * @param button - The button to process.
+     * @returns `true` if the input was processed successfully.
+     */
     processInput(button: Button): boolean {
         if (this.buttonPressed === null) return;
         const ui = this.getUi();
@@ -158,6 +193,12 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         return success;
     }
 
+    /**
+     * Set the cursor to the specified position.
+     *
+     * @param cursor - The cursor position to set.
+     * @returns `true` if the cursor was set successfully.
+     */
     setCursor(cursor: integer): boolean {
         this.cursor = cursor;
         if (cursor === 1) {
@@ -174,6 +215,9 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         return true;
     }
 
+    /**
+     * Clear the UI elements and state.
+     */
     clear() {
         super.clear();
         this.listening = false;
@@ -187,6 +231,13 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.buttonPressed = null;
     }
 
+    /**
+     * Handle input down events.
+     *
+     * @param buttonIcon - The icon of the button that was pressed.
+     * @param assignedButtonIcon - The icon of the button that is assigned.
+     * @param type - The type of button press.
+     */
     onInputDown(buttonIcon: string, assignedButtonIcon: string, type: string): void {
         this.newButtonIcon.setTexture(type);
         this.newButtonIcon.setFrame(buttonIcon);

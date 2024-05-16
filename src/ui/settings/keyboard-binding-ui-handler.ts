@@ -31,7 +31,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         this.onInputDown(buttonIcon, specialCaseIcon || assignedButtonIcon, 'keyboard');
     }
 
-    swapAction() {
+    swapAction(): boolean {
         const activeConfig = this.scene.inputController.getActiveConfig(Device.KEYBOARD);
         this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
         this.scene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);

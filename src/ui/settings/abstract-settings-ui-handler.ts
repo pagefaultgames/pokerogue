@@ -21,6 +21,9 @@ export interface LayoutConfig {
     bindingSettings: Array<String>;
 }
 
+/**
+ * Abstract class for handling UI elements related to settings.
+ */
 export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     protected settingsContainer: Phaser.GameObjects.Container;
     protected optionsContainer: Phaser.GameObjects.Container;
@@ -59,10 +62,19 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     abstract saveSettingToLocalStorage(setting, cursor): void;
     abstract getActiveConfig(): InterfaceConfig;
 
+    /**
+     * Constructor for the AbstractSettingsUiUiHandler.
+     *
+     * @param scene - The BattleScene instance.
+     * @param mode - The UI mode.
+     */
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);
     }
 
+    /**
+     * Setup UI elements.
+     */
     setup() {
         const ui = this.getUi();
 
@@ -103,7 +115,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
             const optionsContainer = this.scene.add.container(0, 0);
             optionsContainer.setVisible(false);
 
-            // Gather all gamepad binding settings from the configuration.
+            // Gather all binding settings from the configuration.
             const bindingSettings = Object.keys(config.settings);
 
             // Array to hold labels for different settings such as 'Default Controller', 'Gamepad Support', etc.
@@ -139,9 +151,6 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                 const valueLabels: Phaser.GameObjects.Text[] = []
 
                 // Process each option for the current setting.
-                const aaa = this.settingDeviceOptions;
-                const bbb = this.settingDevice;
-                const ccc = this.settingDevice[setting];
                 for (const [o, option] of this.settingDeviceOptions[this.settingDevice[setting]].entries()) {
                     // Check if the current setting is for binding keys.
                     if (bindingSettings.includes(this.settingDevice[setting])) {
@@ -218,6 +227,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         this.settingsContainer.setVisible(false);
     }
 
+    /**
+     * Update the bindings for the current active device configuration.
+     */
     updateBindings(): void {
         // Hide the options container for all layouts to reset the UI visibility.
         Object.keys(this.layout).forEach((key) => this.layout[key].optionsContainer.setVisible(false));
@@ -256,6 +268,12 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         this.setScrollCursor(0);
     }
 
+    /**
+     * Show the UI with the provided arguments.
+     *
+     * @param args - Arguments to be passed to the show method.
+     * @returns `true` if successful.
+     */
     show(args: any[]): boolean {
         super.show(args);
 
@@ -277,6 +295,12 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         return true;
     }
 
+    /**
+     * Set the UI layout for the active device configuration.
+     *
+     * @param activeConfig - The active device configuration.
+     * @returns `true` if the layout was successfully applied, otherwise `false`.
+     */
     setLayout(activeConfig: InterfaceConfig): boolean {
         // Check if there is no active configuration (e.g., no gamepad connected).
         if (!activeConfig) {
@@ -312,6 +336,12 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         return true;
     }
 
+    /**
+     * Process the input for the given button.
+     *
+     * @param button - The button to process.
+     * @returns `true` if the input was processed successfully.
+     */
     processInput(button: Button): boolean {
         const ui = this.getUi();
         // Defines the maximum number of rows that can be displayed on the screen.
@@ -385,6 +415,12 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         return success; // Return whether the input resulted in a successful action.
     }
 
+    /**
+     * Set the cursor to the specified position.
+     *
+     * @param cursor - The cursor position to set.
+     * @returns `true` if the cursor was set successfully.
+     */
     setCursor(cursor: integer): boolean {
         const ret = super.setCursor(cursor);
         // If the optionsContainer is not initialized, return the result from the parent class directly.
@@ -403,6 +439,12 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         return ret; // Return the result from the parent class's setCursor method.
     }
 
+    /**
+     * Set the scroll cursor to the specified position.
+     *
+     * @param scrollCursor - The scroll cursor position to set.
+     * @returns `true` if the scroll cursor was set successfully.
+     */
     setScrollCursor(scrollCursor: integer): boolean {
         // Check if the new scroll position is the same as the current one; if so, do not update.
         if (scrollCursor === this.scrollCursor)
@@ -420,6 +462,14 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         return true; // Return true to indicate the scroll cursor was successfully updated.
     }
 
+    /**
+     * Set the option cursor to the specified position.
+     *
+     * @param settingIndex - The index of the setting.
+     * @param cursor - The cursor position to set.
+     * @param save - Whether to save the setting to local storage.
+     * @returns `true` if the option cursor was set successfully.
+     */
     setOptionCursor(settingIndex: integer, cursor: integer, save?: boolean): boolean {
         // Retrieve the specific setting using the settingIndex from the settingDevice enumeration.
         const setting = this.settingDevice[Object.keys(this.settingDevice)[settingIndex]];
@@ -451,6 +501,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         return true; // Return true to indicate the cursor was successfully updated.
     }
 
+    /**
+     * Update the scroll position of the settings UI.
+     */
     updateSettingsScroll(): void {
         // Return immediately if the options container is not initialized.
         if (!this.optionsContainer) return;
@@ -470,6 +523,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         }
     }
 
+    /**
+     * Clear the UI elements and state.
+     */
     clear(): void {
         super.clear();
 
@@ -480,6 +536,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         this.eraseCursor();
     }
 
+    /**
+     * Erase the cursor from the UI.
+     */
     eraseCursor(): void {
         // Check if a cursor object exists.
         if (this.cursorObj)
