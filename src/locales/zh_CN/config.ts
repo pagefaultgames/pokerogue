@@ -14,6 +14,8 @@ import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
 import { nature } from "./nature";
 import { weather } from "./weather";
+import { modifierType } from "./modifier-type";
+import { growth } from "./growth";
 
 
 export const zhCnConfig = {
@@ -35,5 +37,7 @@ export const zhCnConfig = {
     trainerNames: trainerNames,
     tutorial: tutorial,
     nature: nature,
-    weather: weather
+    growth: growth,
+    weather: weather,
+    modifierType: modifierType,
 }

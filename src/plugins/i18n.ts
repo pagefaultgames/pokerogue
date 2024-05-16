@@ -30,6 +30,22 @@ export interface AbilityTranslationEntries {
   [key: string]: AbilityTranslationEntry
 }
 
+export interface ModifierTypeTranslationEntry {
+  name?: string,
+  description?: string,
+  extra?: SimpleTranslationEntries
+}
+
+export interface ModifierTypeTranslationEntries {
+  ModifierType: { [key: string]: ModifierTypeTranslationEntry },
+  AttackTypeBoosterItem: SimpleTranslationEntries,
+  TempBattleStatBoosterItem: SimpleTranslationEntries,
+  BaseStatBoosterItem: SimpleTranslationEntries,
+  EvolutionItem: SimpleTranslationEntries,
+  FormChangeItem: SimpleTranslationEntries,
+  TeraType: SimpleTranslationEntries,
+}
+
 export interface Localizable {
   localize(): void;
 }
@@ -120,6 +136,7 @@ declare module 'i18next' {
       nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
     };
   }
 }
