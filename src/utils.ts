@@ -116,13 +116,6 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
   return items[Math.floor(easedValue * items.length)];
 }
 
-export function getSunday(date: Date): Date {
-  const day = date.getUTCDay();
-  const diff = date.getUTCDate() - day;
-  const newDate = new Date(date.setUTCDate(diff));
-  return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), newDate.getUTCDate()));
-}
-
 export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
@@ -199,7 +192,9 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
       return '?';
   }
   const digits = ((ret.length + 2) % 3) + 1;
-  const decimalNumber = parseInt(ret.slice(digits, digits + (3 - digits)));
+  let decimalNumber = ret.slice(digits, digits + 2);
+  while (decimalNumber.endsWith('0'))
+      decimalNumber = decimalNumber.slice(0, -1);
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
 }
 

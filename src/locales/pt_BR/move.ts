@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   zippyZap: {
     name: "Zippy Zap",
-    effect: "O usuário ataca o alvo com rajadas de eletricidade em alta velocidade. Este movimento sempre ataca primeiro e resulta em um golpe crítico."
+    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
   },
   splishySplash: {
     name: "Splishy Splash",
