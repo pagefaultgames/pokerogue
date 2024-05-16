@@ -107,8 +107,6 @@ export const trainerClasses: SimpleTranslationEntries = {
     "worker_female": "Arbeiterin",
     "workers": "Arbeiter",
     "youngster": "Knirps"
-
-
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion

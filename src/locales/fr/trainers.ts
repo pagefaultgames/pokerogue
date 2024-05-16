@@ -26,6 +26,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "baker": "Boulangère",
     "battle_girl": "Combattante",
     "beauty": "Canon",
+    "beginners": "Beginners",
     "biker": "Motard",
     "black_belt": "Karatéka",
     "breeder": "Éleveur",
@@ -34,6 +35,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "clerk": "Employé",
     "clerk_female": "Employée",
     "colleagues": "Collègues de Bureau",
+    "crush_kin": "Crush Kin",
     "cyclist": "Cycliste",
     "cyclist_female": "Cycliste",
     "cyclists": "Cyclistes",
@@ -103,6 +105,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "waitress": "Serveuse",
     "worker": "Ouvrier",
     "worker_female": "Ouvrière",
+    "workers": "Workers",
     "youngster": "Gamin"
 } as const;
 
