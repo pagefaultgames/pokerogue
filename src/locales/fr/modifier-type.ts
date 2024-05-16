@@ -42,7 +42,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-	  description: "Auguemente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3)",
+	  description: "Augmente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3)",
     },
     "PokemonNatureChangeModifierType": {
       name: "Aromate {{natureName}}",
@@ -52,10 +52,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "{{tempBattleStatName}} auguementée d’1 cran pour tout l’équipe pendant 5 combats",
+	  description: "{{tempBattleStatName}} augmentée d’1 cran pour tout l’équipe pendant 5 combats",
     },
     "AttackTypeBoosterModifierType": {
-      description: "Auguemente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
+      description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
     },
     "PokemonLevelIncrementModifierType": {
       description: "Fait monter un Pokémon d’1 niveau",
@@ -64,7 +64,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Fait monter toute l’équipe d’1 niveau",
     },
     "PokemonBaseStatBoosterModifierType": {
-	  description: "{{statName}} de base de base de son porteur augumentée de 10%. Plus les IV sont hauts, plus il peut en porter.",
+	  description: "{{statName}} de base de base de son porteur augmentée de 10%. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restaure tous les PV de toute l'équipe",
@@ -81,16 +81,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
       },
     },
     "ExpBoosterModifierType": {
-      description: "Auguemente de {{boostPercent}}% le gain de Points d’Exp",
+      description: "Augmente de {{boostPercent}}% le gain de Points d’Exp",
     },
     "PokemonExpBoosterModifierType": {
-      description: "Auguemente de {{boostPercent}}% le gain de Points d’Exp du porteur",
+      description: "Augmente de {{boostPercent}}% le gain de Points d’Exp du porteur",
     },
     "PokemonFriendshipBoosterModifierType": {
-      description: "Auguemente le gain d’amitié de 50% par victoire",
+      description: "Augmente le gain d’amitié de 50% par victoire",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
-      description: "Auguemente de {{accuracyAmount}} la précision des capacités (maximum 100)",
+      description: "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100)",
     },
     "PokemonMultiHitModifierType": {
 	  description: "Frappe une fois de plus en échange d’une baisse de puissance de respectivement 60/75/82,5% par cumul",
@@ -164,7 +164,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MEMORY_MUSHROOM": { name: "Champignon Mémoriel", description: "Remémore une capacité à un Pokémon" },
 
-    "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants recoivent 20% des Points d’Exp d’un participant" },
+    "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants reçoivent 20% des Points d’Exp d’un participant" },
     "EXP_BALANCE": { name: "Équilibr’Exp", description: "Équilibre les Points d’Exp à l’avantage des membres de l’équipe aux plus bas niveaux" },
 
     "OVAL_CHARM": { name: "Charme Ovale", description: "Quand plusieurs Pokémon sont en combat, chacun gagne 10% supplémentaires du total d’Exp" },
@@ -178,29 +178,29 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
 
-    "SOUL_DEW": { name: "Rosée Âme", description: "Auguemente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)" },
+    "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)" },
 
     "NUGGET": { name: "Pépite" },
     "BIG_NUGGET": { name: "Maxi Pépite" },
     "RELIC_GOLD": { name: "Vieux Ducat" },
 
-    "AMULET_COIN": { name: "Pièce Rune", description: "Auguemente de 20% les gains d’argent" },
+    "AMULET_COIN": { name: "Pièce Rune", description: "Augmente de 20% les gains d’argent" },
     "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent" },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts" },
     
-    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verouiller des objets rares si vous relancez les objets proposés" },
+    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés" },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
     
     "MULTI_LENS": { name: "Multi Loupe" },
 
-    "HEALING_CHARM": { name: "Charme Soin", description: "Auguemente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
-    "CANDY_JAR": { name: "Jarre de Bonbons", description: "Auguemente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
+    "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
+    "CANDY_JAR": { name: "Jarre de Bonbons", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
-    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consomée" },
+    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consommée" },
 
-    "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de suvivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
+    "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
 
     "QUICK_CLAW": { name: "Vive Griffe", description: "Ajoute 10% de chances d’agir en premier, indépendamment de la vitesse (après la priorité)" },
 
@@ -211,8 +211,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
-    "SHINY_CHARM": { name: "Charme Chroma", description: "Auguemente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
-    "ABILITY_CHARM": { name: "Charme Talent", description: "Auguemente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
+    "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
+    "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
 
 	"IV_SCANNER": { name: "Scanner d’IV", description: "Scanne les IV d’un Pokémon sauvage. 2 IV sont révélées par Scanner. Les meilleurs sont montrés en 1er." },
 
@@ -222,7 +222,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute 1 choix d’objet à la fin de chaque combat" },
 
-    "ENEMY_DAMAGE_BOOSTER": { name: "Jeton Dégâts", description: "Auguemente les dégâts de 5%" },
+    "ENEMY_DAMAGE_BOOSTER": { name: "Jeton Dégâts", description: "Augmente les dégâts de 5%" },
     "ENEMY_DAMAGE_REDUCTION": { name: "Jeton Protection", description: "Diminue les dégâts reçus de 2,5%" },
     "ENEMY_HEAL": { name: "Jeton Soin", description: "Soigne 2% des PV max à chaque tour" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Jeton Poison" },
