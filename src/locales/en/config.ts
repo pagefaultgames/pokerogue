@@ -19,7 +19,7 @@ import { titles,trainerClasses,trainerNames } from "./trainers";
 import { splashMessages } from "./splash-messages"
 import { weather } from "./weather";
 import { berry } from "./berry";
-
+import{modifierSelectUiHandler} from "./modifier-select-ui-handler"
 export const enConfig = {    
     ability: ability,
     abilityTriggers: abilityTriggers,
@@ -44,4 +44,5 @@ export const enConfig = {
     weather: weather,
     modifierType: modifierType,
     berry:berry,
+    modifierSelectUiHandler:modifierSelectUiHandler
 }

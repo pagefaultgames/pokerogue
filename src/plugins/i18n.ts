@@ -140,6 +140,7 @@ declare module 'i18next' {
       weather: SimpleTranslationEntries;
       modifierType: ModifierTypeTranslationEntries;
       berry: SimpleTranslationEntries;
+      modifierSelectUiHandler: SimpleTranslationEntries;
     };
   }
 }

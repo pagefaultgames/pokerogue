@@ -17,7 +17,7 @@ import { weather } from "./weather";
 import { modifierType } from "./modifier-type";
 import { growth } from "./growth";
 import { berry } from "./berry";
-
+import{modifierSelectUiHandler} from "./modifier-select-ui-handler"
 export const zhCnConfig = {
     ability: ability,
     abilityTriggers: abilityTriggers,
@@ -39,5 +39,6 @@ export const zhCnConfig = {
     growth: growth,
     weather: weather,
     modifierType: modifierType,
-    berry: berry
+    berry: berry,
+    modifierSelectUiHandler:modifierSelectUiHandler,
 }

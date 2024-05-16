@@ -6,8 +6,8 @@ import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "../enums/buttons";
-
+import { Button } from "../enums/buttons";
+import i18next from "#app/plugins/i18n";
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
@@ -36,7 +36,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.modifierContainer = this.scene.add.container(0, 0);
     ui.add(this.modifierContainer);
 
@@ -44,7 +44,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(this.scene, -4, -2, 'Transfer', TextStyle.PARTY);
+    const transferButtonText = addTextObject(this.scene, -4, -2, i18next.t('modifierSelectUiHandler:Transfer'), TextStyle.PARTY);
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
@@ -52,7 +52,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(this.scene, -4, -2, 'Reroll', TextStyle.PARTY);
+    const rerollButtonText = addTextObject(this.scene, -4, -2, i18next.t('modifierSelectUiHandler:Reroll'), TextStyle.PARTY);
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
 
@@ -65,7 +65,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
-    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, 'Lock Rarities', TextStyle.PARTY);
+    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, i18next.t('modifierSelectUiHandler:Lock Rarities'), TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
   }
@@ -111,7 +111,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1))
       : [];
     const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
-    
+
     for (let m = 0; m < typeOptions.length; m++) {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (typeOptions.length + 2);
       const option = new ModifierOption(this.scene, sliceWidth * (m + 1) + (sliceWidth * 0.5), -this.scene.game.canvas.height / 12 + optionsYOffset, typeOptions[m]);
@@ -142,7 +142,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.scene.updateAndShowLuckText(750);
 
     let i = 0;
-    
+
     this.scene.tweens.addCounter({
       ease: 'Sine.easeIn',
       duration: 1250,
@@ -179,7 +179,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.lockRarityButtonContainer.setVisible(canLockRarities);
 
       this.scene.tweens.add({
-        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer ],
+        targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
         alpha: 1,
         duration: 250
       });
@@ -287,13 +287,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (!cursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
-      ui.showText('Spend money to reroll your item options.');
+      ui.showText(i18next.t('modifierSelectUiHandler:Spend_money_to_reroll'));
     } else if (cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
-      ui.showText('Transfer a held item from one Pokémon to another.');
+      ui.showText(i18next.t('modifierSelectUiHandler:Transfer_a_held_item'));
     } else {
       this.cursorObj.setPosition(6, -60);
-      ui.showText('Lock item rarities on reroll (affects reroll cost).');
+      ui.showText(i18next.t('modifierSelectUiHandler:Lock_item_rarities_on_reroll'));
     }
 
     return ret;
@@ -370,7 +370,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
     this.shopOptionsRows.splice(0, this.shopOptionsRows.length);
-  
+
     this.scene.tweens.add({
       targets: options,
       scale: 0.01,
@@ -378,8 +378,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ease: 'Cubic.easeIn',
       onComplete: () => options.forEach(o => o.destroy())
     });
-    
-    [ this.rerollButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer ].forEach(container => {
+
+    [this.rerollButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer].forEach(container => {
       if (container.visible) {
         this.scene.tweens.add({
           targets: container,
@@ -465,7 +465,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
     if (this.modifierTypeOption.cost) {
       this.itemCostText = addTextObject(this.scene, 0, 45, '', TextStyle.MONEY, { align: 'center' });
-    
+
       this.itemCostText.setOrigin(0.5, 0);
       this.itemCostText.setAlpha(0);
       this.add(this.itemCostText);
@@ -542,7 +542,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       if (!this.modifierTypeOption.cost) {
         this.pb.setTexture('pb', `${this.getPbAtlasKey(0)}_open`);
         (this.scene as BattleScene).playSound('pb_rel');
-        
+
         this.scene.tweens.add({
           targets: this.pb,
           duration: 500,
