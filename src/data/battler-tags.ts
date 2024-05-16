@@ -1,20 +1,19 @@
-import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import Pokemon, { HitResult, MoveResult } from "../field/pokemon";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
-import { Stat, getStatName } from "./pokemon-stat";
-import { StatusEffect } from "./status-effect";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import * as Utils from "../utils";
-import { Moves } from "./enums/moves";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
-import { getTypeDamageMultiplier, Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, allAbilities, applyAbAttrs } from "./ability";
+import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { BattleStat } from "./battle-stat";
 import { Abilities } from "./enums/abilities";
 import { BattlerTagType } from "./enums/battler-tag-type";
+import { Moves } from "./enums/moves";
+import { ChargeAttr, MoveFlags, allMoves } from "./move";
+import { Stat, getStatName } from "./pokemon-stat";
+import { StatusEffect } from "./status-effect";
 import { TerrainType } from "./terrain";
+import { Type, getTypeDamageMultiplier } from "./type";
 import { WeatherType } from "./weather";
-import { BattleStat } from "./battle-stat";
-import { allAbilities } from "./ability"
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -544,6 +543,33 @@ export class AquaRingTag extends BattlerTag {
   }
 }
 
+/** Tag used to allow moves that interact with {@link Moves.MINIMIZE} to function */
+export class MinimizeTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE, undefined);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isMax();
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    //If a pokemon dynamaxes they lose minimized status
+    if(pokemon.isMax()){
+      return false
+    }
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+  }
+}
+
 export class DrowsyTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, Moves.YAWN);
@@ -819,7 +845,7 @@ export class ContactPoisonProtectedTag extends ProtectedTag {
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
-        attacker.trySetStatus(StatusEffect.POISON, true);
+        attacker.trySetStatus(StatusEffect.POISON, true, pokemon);
       }
     }
 
@@ -1389,6 +1415,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeImmunityIgnoreTag(tagType, sourceMove, Type.GHOST);
     case BattlerTagType.IGNORE_DARK:
       return new TypeImmunityIgnoreTag(tagType, sourceMove, Type.DARK);
+    case BattlerTagType.MINIMIZED:
+      return new MinimizeTag();
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
