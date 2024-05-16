@@ -3,6 +3,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "Un {{bossName}} apparaît.",
   "trainerAppeared": "Un combat est lancé\npar {{trainerName}} !",
+  "trainerAppearedDouble": "{{trainerName}}\nwould like to battle!",
   "singleWildAppeared": "Un {{pokemonName}} sauvage apparaît !",
   "multiWildAppeared": "Un {{pokemonName1}} et un {{pokemonName2}}\nsauvages apparaissent !",
   "playerComeBack": "{{pokemonName}}, on change !\nReviens !",

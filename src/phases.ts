@@ -841,8 +841,15 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
       return i18next.t('battle:bossAppeared', {bossName: enemyField[0].name});
 
-    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
-      return i18next.t('battle:trainerAppeared', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+    if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      if (this.scene.currentBattle.double) {
+        return i18next.t('battle:trainerAppearedDouble', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+
+      }
+      else {
+        return i18next.t('battle:trainerAppeared', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+      }
+    }
 
     return enemyField.length === 1
       ? i18next.t('battle:singleWildAppeared', {pokemonName: enemyField[0].name})
