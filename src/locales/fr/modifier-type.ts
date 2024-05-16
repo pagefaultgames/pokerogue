@@ -46,7 +46,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonNatureChangeModifierType": {
       name: "Aromate {{natureName}}",
-	  description: "Modifie la nature d’un Pokémon pour {{natureName}} et la débloque pour le starter lui étant lié.",
+	  description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
     },
     "DoubleBattleChanceBoosterModifierType": {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
