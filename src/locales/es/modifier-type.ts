@@ -384,7 +384,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CHILL_DRIVE": "Chill Drive",
     "DOUSE_DRIVE": "Douse Drive",
   },
-  TeraType: {
+  Type: {
     "UNKNOWN": "Unknown",
     "NORMAL": "Normal",
     "FIGHTING": "Fighting",

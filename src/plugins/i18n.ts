@@ -43,7 +43,7 @@ export interface ModifierTypeTranslationEntries {
   BaseStatBoosterItem: SimpleTranslationEntries,
   EvolutionItem: SimpleTranslationEntries,
   FormChangeItem: SimpleTranslationEntries,
-  TeraType: SimpleTranslationEntries,
+  Type: SimpleTranslationEntries,
 }
 
 export interface Localizable {

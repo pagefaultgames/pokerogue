@@ -384,7 +384,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CHILL_DRIVE": "冰冻卡带",
     "DOUSE_DRIVE": "水流卡带",
   },
-  TeraType: {
+  Type: {
     "UNKNOWN": "Unknown",
     "NORMAL": "一般",
     "FIGHTING": "格斗",

@@ -1,26 +1,26 @@
-import * as Modifiers from './modifier';
-import { AttackMove, allMoves } from '../data/move';
-import { Moves } from "../data/enums/moves";
-import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from '../data/pokeball';
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../field/pokemon';
-import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
-import { Stat, getStatName } from '../data/pokemon-stat';
-import { tmPoolTiers, tmSpecies } from '../data/tms';
-import { Type } from '../data/type';
-import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
-import * as Utils from '../utils';
-import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
-import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
-import { Unlockables } from '../system/unlockables';
-import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
-import { SpeciesFormKey } from '../data/pokemon-species';
-import BattleScene from '../battle-scene';
-import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
-import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
-import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
 import i18next from '#app/plugins/i18n';
 import { getModifierTierTextTint } from '#app/ui/text';
+import BattleScene from '../battle-scene';
+import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
+import { Moves } from "../data/enums/moves";
+import { AttackMove, allMoves } from '../data/move';
+import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from '../data/pokeball';
+import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
+import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
+import { SpeciesFormKey } from '../data/pokemon-species';
+import { Stat, getStatName } from '../data/pokemon-stat';
+import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
+import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
+import { tmPoolTiers, tmSpecies } from '../data/tms';
+import { Type } from '../data/type';
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../field/pokemon';
+import { Unlockables } from '../system/unlockables';
+import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
+import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
+import * as Utils from '../utils';
+import * as Modifiers from './modifier';
+import { ModifierTier } from './modifier-tier';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -511,7 +511,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
 
   getDescription(scene: BattleScene): string {
     // TODO: Need getTypeName?
-    return i18next.t(`modifierType:ModifierType.AttackTypeBoosterModifierType.description`, { moveType: Utils.toReadableString(Type[this.moveType]) });
+    return i18next.t(`modifierType:ModifierType.AttackTypeBoosterModifierType.description`, { moveType: i18next.t(`modifierType:Type.${Type[this.moveType]}`) });
   }
 
   getPregenArgs(): any[] {
@@ -898,11 +898,11 @@ export class TerastallizeModifierType extends PokemonHeldItemModifierType implem
   }
 
   get name(): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`modifierType:Type.${Type[this.teraType]}`) });
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`modifierType:Type.${Type[this.teraType]}`) });
   }
 
   getPregenArgs(): any[] {

@@ -385,7 +385,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CHILL_DRIVE": "Gefriermodul",
     "DOUSE_DRIVE": "Aquamodul",
   },
-  TeraType: {
+  Type: {
     "UNKNOWN": "Unbekannt",
     "NORMAL": "Normal",
     "FIGHTING": "Kampf",
