@@ -1101,7 +1101,7 @@ export const modifierTypes = {
 
   MEMORY_MUSHROOM: () => new RememberMoveModifierType(`modifierType:ModifierType.MEMORY_MUSHROOM`, 'big_mushroom'),
 
-  EXP_SHARE: () => new ModifierType(`modifierType:ModifierType.EXP_SHARE`, 'exp_share', (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
+  EXP_SHARE: () => new ModifierType(`modifierType:ModifierType.EXP_SHARE`, 'exp_share', (type, _args) => new Modifiers.ExpShareModifier(type)),
   EXP_BALANCE: () => new ModifierType(`modifierType:ModifierType.EXP_BALANCE`, 'exp_balance', (type, _args) => new Modifiers.ExpBalanceModifier(type)),
 
   OVAL_CHARM: () => new ModifierType(`modifierType:ModifierType.OVAL_CHARM`, 'oval_charm', (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type)),
