@@ -1,19 +1,20 @@
-import Pokemon, { HitResult, MoveResult } from "../field/pokemon";
-import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import * as Utils from "../utils";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, allAbilities, applyAbAttrs } from "./ability";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { BattleStat } from "./battle-stat";
-import { Abilities } from "./enums/abilities";
-import { BattlerTagType } from "./enums/battler-tag-type";
-import { Moves } from "./enums/moves";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { getPokemonMessage, getPokemonPrefix } from "../messages";
+import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
+import * as Utils from "../utils";
+import { Moves } from "./enums/moves";
+import { ChargeAttr, MoveFlags, allMoves } from "./move";
+import { getTypeDamageMultiplier, Type } from "./type";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
+import { Abilities } from "./enums/abilities";
+import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
-import { Type, getTypeDamageMultiplier } from "./type";
 import { WeatherType } from "./weather";
+import { BattleStat } from "./battle-stat";
+import { allAbilities } from "./ability"
 
 export enum BattlerTagLapseType {
   FAINT,
