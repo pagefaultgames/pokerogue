@@ -1,161 +1,163 @@
-import BattleScene, { startingWave } from "../battle-scene";
-import { ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
-import { EnemyPokemon } from "../field/pokemon";
+import BattleScene, {startingWave} from "../battle-scene";
+import {ModifierTypeFunc, modifierTypes} from "../modifier/modifier-type";
+import {EnemyPokemon} from "../field/pokemon";
 import * as Utils from "../utils";
-import { TrainerType } from "./enums/trainer-type";
-import { Moves } from "./enums/moves";
-import { PokeballType } from "./pokeball";
-import { pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
-import PokemonSpecies, { PokemonSpeciesFilter, getPokemonSpecies } from "./pokemon-species";
-import { Species } from "./enums/species";
-import { tmSpecies } from "./tms";
-import { Type } from "./type";
-import { initTrainerTypeDialogue } from "./dialogue";
-import { PersistentModifier } from "../modifier/modifier";
-import { TrainerVariant } from "../field/trainer";
-import { PartyMemberStrength } from "./enums/party-member-strength";
+import {TrainerType} from "./enums/trainer-type";
+import {Moves} from "./enums/moves";
+import {PokeballType} from "./pokeball";
+import {pokemonEvolutions, pokemonPrevolutions} from "./pokemon-evolutions";
+import PokemonSpecies, {PokemonSpeciesFilter, getPokemonSpecies} from "./pokemon-species";
+import {Species} from "./enums/species";
+import {tmSpecies} from "./tms";
+import {Type} from "./type";
+import {initTrainerTypeDialogue} from "./dialogue";
+import {PersistentModifier} from "../modifier/modifier";
+import {TrainerVariant} from "../field/trainer";
+import {PartyMemberStrength} from "./enums/party-member-strength";
+import i18next from "i18next";
+import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 
 export enum TrainerPoolTier {
-  COMMON,
-  UNCOMMON,
-  RARE,
-  SUPER_RARE,
-  ULTRA_RARE
+    COMMON,
+    UNCOMMON,
+    RARE,
+    SUPER_RARE,
+    ULTRA_RARE
 }
 
 export interface TrainerTierPools {
-  [key: integer]: Species[]
+    [key: integer]: Species[]
 }
 
 export enum TrainerSlot {
-  NONE,
-  TRAINER,
-  TRAINER_PARTNER
+    NONE,
+    TRAINER,
+    TRAINER_PARTNER
 }
 
 export class TrainerPartyTemplate {
-  public size: integer;
-  public strength: PartyMemberStrength;
-  public sameSpecies: boolean;
-  public balanced: boolean;
+    public size: integer;
+    public strength: PartyMemberStrength;
+    public sameSpecies: boolean;
+    public balanced: boolean;
 
-  constructor(size: integer, strength: PartyMemberStrength, sameSpecies?: boolean, balanced?: boolean) {
-    this.size = size;
-    this.strength = strength;
-    this.sameSpecies = !!sameSpecies;
-    this.balanced = !!balanced;
-  }
+    constructor(size: integer, strength: PartyMemberStrength, sameSpecies?: boolean, balanced?: boolean) {
+        this.size = size;
+        this.strength = strength;
+        this.sameSpecies = !!sameSpecies;
+        this.balanced = !!balanced;
+    }
 
-  getStrength(index: integer): PartyMemberStrength {
-    return this.strength;
-  }
+    getStrength(index: integer): PartyMemberStrength {
+        return this.strength;
+    }
 
-  isSameSpecies(index: integer): boolean {
-    return this.sameSpecies;
-  }
+    isSameSpecies(index: integer): boolean {
+        return this.sameSpecies;
+    }
 
-  isBalanced(index: integer): boolean {
-    return this.balanced;
-  }
+    isBalanced(index: integer): boolean {
+        return this.balanced;
+    }
 }
 
 export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
-  public templates: TrainerPartyTemplate[];
+    public templates: TrainerPartyTemplate[];
 
-  constructor(...templates: TrainerPartyTemplate[]) {
-    super(templates.reduce((total: integer, template: TrainerPartyTemplate) => {
-      total += template.size;
-      return total;
-    }, 0), PartyMemberStrength.AVERAGE);
-    this.templates = templates;
-  }
-
-  getStrength(index: integer): PartyMemberStrength {
-    let t = 0;
-    for (let template of this.templates) {
-      if (t + template.size > index)
-        return template.getStrength(index - t);
-      t += template.size;
+    constructor(...templates: TrainerPartyTemplate[]) {
+        super(templates.reduce((total: integer, template: TrainerPartyTemplate) => {
+            total += template.size;
+            return total;
+        }, 0), PartyMemberStrength.AVERAGE);
+        this.templates = templates;
     }
 
-    return super.getStrength(index);
-  }
+    getStrength(index: integer): PartyMemberStrength {
+        let t = 0;
+        for (let template of this.templates) {
+            if (t + template.size > index)
+                return template.getStrength(index - t);
+            t += template.size;
+        }
 
-  isSameSpecies(index: integer): boolean {
-    let t = 0;
-    for (let template of this.templates) {
-      if (t + template.size > index)
-        return template.isSameSpecies(index - t);
-      t += template.size;
+        return super.getStrength(index);
     }
 
-    return super.isSameSpecies(index);
-  }
+    isSameSpecies(index: integer): boolean {
+        let t = 0;
+        for (let template of this.templates) {
+            if (t + template.size > index)
+                return template.isSameSpecies(index - t);
+            t += template.size;
+        }
 
-  isBalanced(index: integer): boolean {
-    let t = 0;
-    for (let template of this.templates) {
-      if (t + template.size > index)
-        return template.isBalanced(index - t);
-      t += template.size;
+        return super.isSameSpecies(index);
     }
 
-    return super.isBalanced(index);
-  }
+    isBalanced(index: integer): boolean {
+        let t = 0;
+        for (let template of this.templates) {
+            if (t + template.size > index)
+                return template.isBalanced(index - t);
+            t += template.size;
+        }
+
+        return super.isBalanced(index);
+    }
 }
 
 export const trainerPartyTemplates = {
-  ONE_WEAK_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.WEAK), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  ONE_AVG: new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-  ONE_AVG_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  ONE_STRONG: new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ONE_STRONGER: new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  TWO_WEAKER: new TrainerPartyTemplate(2, PartyMemberStrength.WEAKER),
-  TWO_WEAK: new TrainerPartyTemplate(2, PartyMemberStrength.WEAK),
-  TWO_WEAK_ONE_AVG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
-  TWO_WEAK_SAME_ONE_AVG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
-  TWO_WEAK_SAME_TWO_WEAK_SAME: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true), new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true)),
-  TWO_WEAK_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  TWO_AVG: new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-  TWO_AVG_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  TWO_AVG_SAME_ONE_AVG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
-  TWO_AVG_SAME_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  TWO_AVG_SAME_TWO_AVG_SAME: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true), new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true)),
-  TWO_STRONG: new TrainerPartyTemplate(2, PartyMemberStrength.STRONG),
-  THREE_WEAK: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK),
-  THREE_WEAK_SAME: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK, true),
-  THREE_AVG: new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
-  THREE_AVG_SAME: new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, true),
-  THREE_WEAK_BALANCED: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK, false, true),
-  FOUR_WEAKER: new TrainerPartyTemplate(4, PartyMemberStrength.WEAKER),
-  FOUR_WEAKER_SAME: new TrainerPartyTemplate(4, PartyMemberStrength.WEAKER, true),
-  FOUR_WEAK: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK),
-  FOUR_WEAK_SAME: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK, true),
-  FOUR_WEAK_BALANCED: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK, false, true),
-  FIVE_WEAKER: new TrainerPartyTemplate(5, PartyMemberStrength.WEAKER),
-  FIVE_WEAK: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK),
-  FIVE_WEAK_BALANCED: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK, false, true),
-  SIX_WEAKER: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER),
-  SIX_WEAKER_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
-  SIX_WEAK_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
-  SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, false, true),
+    ONE_WEAK_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.WEAK), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
+    ONE_AVG: new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
+    ONE_AVG_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
+    ONE_STRONG: new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
+    ONE_STRONGER: new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    TWO_WEAKER: new TrainerPartyTemplate(2, PartyMemberStrength.WEAKER),
+    TWO_WEAK: new TrainerPartyTemplate(2, PartyMemberStrength.WEAK),
+    TWO_WEAK_ONE_AVG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
+    TWO_WEAK_SAME_ONE_AVG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
+    TWO_WEAK_SAME_TWO_WEAK_SAME: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true), new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true)),
+    TWO_WEAK_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.WEAK), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
+    TWO_AVG: new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
+    TWO_AVG_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
+    TWO_AVG_SAME_ONE_AVG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
+    TWO_AVG_SAME_ONE_STRONG: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
+    TWO_AVG_SAME_TWO_AVG_SAME: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true), new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true)),
+    TWO_STRONG: new TrainerPartyTemplate(2, PartyMemberStrength.STRONG),
+    THREE_WEAK: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK),
+    THREE_WEAK_SAME: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK, true),
+    THREE_AVG: new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
+    THREE_AVG_SAME: new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, true),
+    THREE_WEAK_BALANCED: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK, false, true),
+    FOUR_WEAKER: new TrainerPartyTemplate(4, PartyMemberStrength.WEAKER),
+    FOUR_WEAKER_SAME: new TrainerPartyTemplate(4, PartyMemberStrength.WEAKER, true),
+    FOUR_WEAK: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK),
+    FOUR_WEAK_SAME: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK, true),
+    FOUR_WEAK_BALANCED: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK, false, true),
+    FIVE_WEAKER: new TrainerPartyTemplate(5, PartyMemberStrength.WEAKER),
+    FIVE_WEAK: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK),
+    FIVE_WEAK_BALANCED: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK, false, true),
+    SIX_WEAKER: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER),
+    SIX_WEAKER_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
+    SIX_WEAK_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
+    SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, false, true),
 
-  GYM_LEADER_1: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  GYM_LEADER_2: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
-  GYM_LEADER_3: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
-  GYM_LEADER_4: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
-  GYM_LEADER_5: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
+    GYM_LEADER_1: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
+    GYM_LEADER_2: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
+    GYM_LEADER_3: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
+    GYM_LEADER_4: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
+    GYM_LEADER_5: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
 
-  ELITE_FOUR: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
+    ELITE_FOUR: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER)),
 
-  CHAMPION: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER), new TrainerPartyTemplate(5, PartyMemberStrength.STRONG, false, true)),
+    CHAMPION: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER), new TrainerPartyTemplate(5, PartyMemberStrength.STRONG, false, true)),
 
-  RIVAL: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
-  RIVAL_2: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
-  RIVAL_3: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
-  RIVAL_4: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
-  RIVAL_5: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
-  RIVAL_6: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER))
+    RIVAL: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE)),
+    RIVAL_2: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
+    RIVAL_3: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
+    RIVAL_4: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true)),
+    RIVAL_5: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
+    RIVAL_6: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.STRONG), new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true), new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER))
 };
 
 type PartyTemplateFunc = (scene: BattleScene) => TrainerPartyTemplate;
@@ -163,368 +165,440 @@ type PartyMemberFunc = (scene: BattleScene, level: integer, strength: PartyMembe
 type GenModifiersFunc = (party: EnemyPokemon[]) => PersistentModifier[];
 
 export interface PartyMemberFuncs {
-  [key: integer]: PartyMemberFunc
+    [key: integer]: PartyMemberFunc
 }
 
 export class TrainerConfig {
-  public trainerType: TrainerType;
-  public name: string;
-  public nameFemale: string;
-  public nameDouble: string;
-  public title: string;
-  public hasGenders: boolean = false;
-  public hasDouble: boolean = false;
-  public hasCharSprite: boolean = false;
-  public doubleOnly: boolean = false;
-  public moneyMultiplier: number = 1;
-  public isBoss: boolean = false;
-  public hasStaticParty: boolean = false;
-  public useSameSeedForAllMembers: boolean = false;
-  public battleBgm: string;
-  public encounterBgm: string;
-  public femaleEncounterBgm: string;
-  public doubleEncounterBgm: string;
-  public victoryBgm: string;
-  public genModifiersFunc: GenModifiersFunc;
-  public modifierRewardFuncs: ModifierTypeFunc[] = [];
-  public partyTemplates: TrainerPartyTemplate[];
-  public partyTemplateFunc: PartyTemplateFunc;
-  public partyMemberFuncs: PartyMemberFuncs = {};
-  public speciesPools: TrainerTierPools;
-  public speciesFilter: PokemonSpeciesFilter;
-  public specialtyTypes: Type[] = [];
+    public trainerType: TrainerType;
+    public name: string;
+    public nameFemale: string;
+    public nameDouble: string;
+    public title: string;
+    public hasGenders: boolean = false;
+    public hasDouble: boolean = false;
+    public hasCharSprite: boolean = false;
+    public doubleOnly: boolean = false;
+    public moneyMultiplier: number = 1;
+    public isBoss: boolean = false;
+    public hasStaticParty: boolean = false;
+    public useSameSeedForAllMembers: boolean = false;
+    public battleBgm: string;
+    public encounterBgm: string;
+    public femaleEncounterBgm: string;
+    public doubleEncounterBgm: string;
+    public victoryBgm: string;
+    public genModifiersFunc: GenModifiersFunc;
+    public modifierRewardFuncs: ModifierTypeFunc[] = [];
+    public partyTemplates: TrainerPartyTemplate[];
+    public partyTemplateFunc: PartyTemplateFunc;
+    public partyMemberFuncs: PartyMemberFuncs = {};
+    public speciesPools: TrainerTierPools;
+    public speciesFilter: PokemonSpeciesFilter;
+    public specialtyTypes: Type[] = [];
 
-  public encounterMessages: string[] = [];
-  public victoryMessages: string[] = [];
-  public defeatMessages: string[] = [];
+    public encounterMessages: string[] = [];
+    public victoryMessages: string[] = [];
+    public defeatMessages: string[] = [];
 
-  public femaleEncounterMessages: string[];
-  public femaleVictoryMessages: string[];
-  public femaleDefeatMessages: string[];
+    public femaleEncounterMessages: string[];
+    public femaleVictoryMessages: string[];
+    public femaleDefeatMessages: string[];
 
-  public doubleEncounterMessages: string[];
-  public doubleVictoryMessages: string[];
-  public doubleDefeatMessages: string[];
+    public doubleEncounterMessages: string[];
+    public doubleVictoryMessages: string[];
+    public doubleDefeatMessages: string[];
 
-  constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
-    this.trainerType = trainerType;
-    this.name = Utils.toReadableString(TrainerType[this.getDerivedType()]);
-    this.battleBgm = 'battle_trainer';
-    this.victoryBgm = 'victory_trainer';
-    this.partyTemplates = [ trainerPartyTemplates.TWO_AVG ];
-    this.speciesFilter = species => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden();
-  }
-
-  getKey(): string {
-    return TrainerType[this.getDerivedType()].toString().toLowerCase();
-  }
-
-  getSpriteKey(female?: boolean): string {
-    let ret = this.getKey();
-    if (this.hasGenders)
-      ret += `_${female ? 'f' : 'm'}`;
-    return ret;
-  }
-
-  setName(name: string): TrainerConfig {
-    this.name = name;
-    return this;
-  }
-
-  setTitle(title: string): TrainerConfig {
-    this.title = title;
-    return this;
-  }
-
-  getDerivedType(): TrainerType {
-    let trainerType = this.trainerType;
-    switch (trainerType) {
-      case TrainerType.RIVAL_2:
-      case TrainerType.RIVAL_3:
-      case TrainerType.RIVAL_4:
-      case TrainerType.RIVAL_5:
-      case TrainerType.RIVAL_6:
-        trainerType = TrainerType.RIVAL;
-        break;
-      case TrainerType.LANCE_CHAMPION:
-        trainerType = TrainerType.LANCE;
-        break;
-      case TrainerType.LARRY_ELITE:
-        trainerType = TrainerType.LARRY;
-        break;
+    constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
+        this.trainerType = trainerType;
+        this.name = Utils.toReadableString(TrainerType[this.getDerivedType()]);
+        this.battleBgm = 'battle_trainer';
+        this.victoryBgm = 'victory_trainer';
+        this.partyTemplates = [trainerPartyTemplates.TWO_AVG];
+        this.speciesFilter = species => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden();
     }
 
-    return trainerType;
-  }
-
-  setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
-    this.hasGenders = true;
-    this.nameFemale = nameFemale;
-    if (femaleEncounterBgm)
-      this.femaleEncounterBgm = typeof femaleEncounterBgm === 'number' ? TrainerType[femaleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : femaleEncounterBgm;
-    return this;
-  }
-
-  setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
-    this.hasDouble = true;
-    this.nameDouble = nameDouble;
-    if (doubleEncounterBgm)
-      this.doubleEncounterBgm = typeof doubleEncounterBgm === 'number' ? TrainerType[doubleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : doubleEncounterBgm;
-    return this;
-  }
-
-  setHasCharSprite(): TrainerConfig {
-    this.hasCharSprite = true;
-    return this;
-  }
-
-  setDoubleOnly(): TrainerConfig {
-    this.doubleOnly = true;
-    return this;
-  }
-
-  setMoneyMultiplier(moneyMultiplier: number): TrainerConfig {
-    this.moneyMultiplier = moneyMultiplier;
-    return this;
-  }
-
-  setBoss(): TrainerConfig {
-    this.isBoss = true;
-    return this;
-  }
-
-  setStaticParty(): TrainerConfig {
-    this.hasStaticParty = true;
-    return this;
-  }
-
-  setUseSameSeedForAllMembers(): TrainerConfig {
-    this.useSameSeedForAllMembers = true;
-    return this;
-  }
-
-  setBattleBgm(battleBgm: string): TrainerConfig {
-    this.battleBgm = battleBgm;
-    return this;
-  }
-
-  setEncounterBgm(encounterBgm: TrainerType | string): TrainerConfig {
-    this.encounterBgm = typeof encounterBgm === 'number' ? TrainerType[encounterBgm].toString().toLowerCase() : encounterBgm;
-    return this;
-  }
-
-  setVictoryBgm(victoryBgm: string): TrainerConfig {
-    this.victoryBgm = victoryBgm;
-    return this;
-  }
-
-  setPartyTemplates(...partyTemplates: TrainerPartyTemplate[]): TrainerConfig {
-    this.partyTemplates = partyTemplates;
-    return this;
-  }
-
-  setPartyTemplateFunc(partyTemplateFunc: PartyTemplateFunc): TrainerConfig {
-    this.partyTemplateFunc = partyTemplateFunc;
-    return this;
-  }
-
-  setPartyMemberFunc(slotIndex: integer, partyMemberFunc: PartyMemberFunc): TrainerConfig {
-    this.partyMemberFuncs[slotIndex] = partyMemberFunc;
-    return this;
-  }
-
-  setSpeciesPools(speciesPools: TrainerTierPools | Species[]): TrainerConfig {
-    this.speciesPools = (Array.isArray(speciesPools) ? { [TrainerPoolTier.COMMON]: speciesPools } : speciesPools) as unknown as TrainerTierPools;
-    return this;
-  }
-
-  setSpeciesFilter(speciesFilter: PokemonSpeciesFilter, allowLegendaries?: boolean): TrainerConfig {
-    const baseFilter = this.speciesFilter;
-    this.speciesFilter = allowLegendaries ? speciesFilter : species => speciesFilter(species) && baseFilter(species);
-    return this;
-  }
-
-  setSpecialtyTypes(...specialtyTypes: Type[]): TrainerConfig {
-    this.specialtyTypes = specialtyTypes;
-    return this;
-  }
-
-  setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig {
-    this.genModifiersFunc = genModifiersFunc;
-    return this;
-  }
-
-  setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
-    this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
-    });
-    return this;
-  }
-
-  initForGymLeader(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
-    this.setPartyTemplateFunc(getGymLeaderPartyTemplate);
-    signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool))
-        speciesPool = [ speciesPool ];
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
-    });
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
-      this.setSpecialtyTypes(...specialtyTypes);
-    }
-    this.setTitle('Gym Leader');
-    this.setMoneyMultiplier(2.5);
-    this.setBoss();
-    this.setStaticParty();
-    this.setBattleBgm('battle_unova_gym');
-    this.setVictoryBgm('victory_gym');
-    this.setGenModifiersFunc(party => {
-      const waveIndex = party[0].scene.currentBattle.waveIndex;
-      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null);
-    });
-    return this;
-  }
-
-  initForEliteFour(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
-    this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
-    signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool))
-        speciesPool = [ speciesPool ];
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
-    });
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) && p.baseTotal >= 450);
-      this.setSpecialtyTypes(...specialtyTypes);
-    } else
-      this.setSpeciesFilter(p => p.baseTotal >= 450);
-    this.setTitle('Elite Four');
-    this.setMoneyMultiplier(3.25);
-    this.setBoss();
-    this.setStaticParty();
-    this.setBattleBgm('battle_elite');
-    this.setVictoryBgm('victory_gym');
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null));
-    return this;
-  }
-
-  initForChampion(signatureSpecies: (Species | Species[])[]): TrainerConfig {
-    this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
-    signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool))
-        speciesPool = [ speciesPool ];
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
-    });
-    this.setSpeciesFilter(p => p.baseTotal >= 470);
-    this.setTitle('Champion');
-    this.setMoneyMultiplier(10);
-    this.setBoss();
-    this.setStaticParty();
-    this.setBattleBgm('battle_champion_alder');
-    this.setVictoryBgm('victory_champion');
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 3));
-    return this;
-  }
-
-  getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
-    let ret = this.name;
-
-    if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble)
-      return this.nameDouble;
-    
-    if (this.hasGenders) {
-      if (this.nameFemale) {
-        if (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER))
-          return this.nameFemale;
-      } else
-        ret += !variant ? '♂' : '♀';
+    getKey(): string {
+        return TrainerType[this.getDerivedType()].toString().toLowerCase();
     }
 
-    return ret;
-  }
+    getSpriteKey(female?: boolean): string {
+        let ret = this.getKey();
+        if (this.hasGenders)
+            ret += `_${female ? 'f' : 'm'}`;
+        return ret;
+    }
 
-  loadAssets(scene: BattleScene, variant: TrainerVariant): Promise<void> {
-    return new Promise(resolve => {
-      const isDouble = variant === TrainerVariant.DOUBLE;
-      const trainerKey = this.getSpriteKey(variant === TrainerVariant.FEMALE);
-      const partnerTrainerKey = this.getSpriteKey(true);
-      scene.loadAtlas(trainerKey, 'trainer');
-      if (isDouble)
-        scene.loadAtlas(partnerTrainerKey, 'trainer');
-      scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        const originalWarn = console.warn;
-        // Ignore warnings for missing frames, because there will be a lot
-        console.warn = () => {};
-        const frameNames = scene.anims.generateFrameNames(trainerKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
-        const partnerFrameNames = isDouble
-          ? scene.anims.generateFrameNames(partnerTrainerKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 })
-          : null;
-        console.warn = originalWarn;
-        scene.anims.create({
-          key: trainerKey,
-          frames: frameNames,
-          frameRate: 24,
-          repeat: -1
-        });
-        if (isDouble) {
-          scene.anims.create({
-            key: partnerTrainerKey,
-            frames: partnerFrameNames,
-            frameRate: 24,
-            repeat: -1
-          });
+    setName(name: string): TrainerConfig {
+        if (name === 'Finn') {
+            // Give the rival a localized name
+            // First check if i18n is initialized
+            if (!getIsInitialized()) {
+                initI18n();
+            }
+            if (name === 'Finn') {
+                name = i18next.t('trainerNames:rival');
+            }
+
+
         }
-        resolve();
-      });
-      if (!scene.load.isLoading())
-        scene.load.start();
-    });
-  }
+        this.name = name;
+        return this;
+    }
+
+    setTitle(title: string): TrainerConfig {
+        // First check if i18n is initialized
+        if (!getIsInitialized()) {
+            initI18n();
+        }
+
+        // Make the title lowercase and replace spaces with underscores
+        title = title.toLowerCase().replace(/\s/g, '_');
+
+        this.title = i18next.t(`titles:${title}`);
+
+
+        return this;
+    }
+
+    getDerivedType(): TrainerType {
+        let trainerType = this.trainerType;
+        switch (trainerType) {
+            case TrainerType.RIVAL_2:
+            case TrainerType.RIVAL_3:
+            case TrainerType.RIVAL_4:
+            case TrainerType.RIVAL_5:
+            case TrainerType.RIVAL_6:
+                trainerType = TrainerType.RIVAL;
+                break;
+            case TrainerType.LANCE_CHAMPION:
+                trainerType = TrainerType.LANCE;
+                break;
+            case TrainerType.LARRY_ELITE:
+                trainerType = TrainerType.LARRY;
+                break;
+        }
+
+        return trainerType;
+    }
+
+    setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
+        if (nameFemale === 'Ivy') {
+            // Give the rival a localized name
+            // First check if i18n is initialized
+            if (!getIsInitialized()) {
+                initI18n();
+            }
+                this.nameFemale = i18next.t('trainerNames:rival_female');
+            } else {
+            this.nameFemale = nameFemale;
+        }
+
+        this.hasGenders = true;
+        if (femaleEncounterBgm)
+            this.femaleEncounterBgm = typeof femaleEncounterBgm === 'number' ? TrainerType[femaleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : femaleEncounterBgm;
+        return this;
+    }
+
+    setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
+        this.hasDouble = true;
+        this.nameDouble = nameDouble;
+        if (doubleEncounterBgm)
+            this.doubleEncounterBgm = typeof doubleEncounterBgm === 'number' ? TrainerType[doubleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : doubleEncounterBgm;
+        return this;
+    }
+
+    setHasCharSprite(): TrainerConfig {
+        this.hasCharSprite = true;
+        return this;
+    }
+
+    setDoubleOnly(): TrainerConfig {
+        this.doubleOnly = true;
+        return this;
+    }
+
+    setMoneyMultiplier(moneyMultiplier: number): TrainerConfig {
+        this.moneyMultiplier = moneyMultiplier;
+        return this;
+    }
+
+    setBoss(): TrainerConfig {
+        this.isBoss = true;
+        return this;
+    }
+
+    setStaticParty(): TrainerConfig {
+        this.hasStaticParty = true;
+        return this;
+    }
+
+    setUseSameSeedForAllMembers(): TrainerConfig {
+        this.useSameSeedForAllMembers = true;
+        return this;
+    }
+
+    setBattleBgm(battleBgm: string): TrainerConfig {
+        this.battleBgm = battleBgm;
+        return this;
+    }
+
+    setEncounterBgm(encounterBgm: TrainerType | string): TrainerConfig {
+        this.encounterBgm = typeof encounterBgm === 'number' ? TrainerType[encounterBgm].toString().toLowerCase() : encounterBgm;
+        return this;
+    }
+
+    setVictoryBgm(victoryBgm: string): TrainerConfig {
+        this.victoryBgm = victoryBgm;
+        return this;
+    }
+
+    setPartyTemplates(...partyTemplates: TrainerPartyTemplate[]): TrainerConfig {
+        this.partyTemplates = partyTemplates;
+        return this;
+    }
+
+    setPartyTemplateFunc(partyTemplateFunc: PartyTemplateFunc): TrainerConfig {
+        this.partyTemplateFunc = partyTemplateFunc;
+        return this;
+    }
+
+    setPartyMemberFunc(slotIndex: integer, partyMemberFunc: PartyMemberFunc): TrainerConfig {
+        this.partyMemberFuncs[slotIndex] = partyMemberFunc;
+        return this;
+    }
+
+    setSpeciesPools(speciesPools: TrainerTierPools | Species[]): TrainerConfig {
+        this.speciesPools = (Array.isArray(speciesPools) ? {[TrainerPoolTier.COMMON]: speciesPools} : speciesPools) as unknown as TrainerTierPools;
+        return this;
+    }
+
+    setSpeciesFilter(speciesFilter: PokemonSpeciesFilter, allowLegendaries?: boolean): TrainerConfig {
+        const baseFilter = this.speciesFilter;
+        this.speciesFilter = allowLegendaries ? speciesFilter : species => speciesFilter(species) && baseFilter(species);
+        return this;
+    }
+
+    setSpecialtyTypes(...specialtyTypes: Type[]): TrainerConfig {
+        this.specialtyTypes = specialtyTypes;
+        return this;
+    }
+
+    setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig {
+        this.genModifiersFunc = genModifiersFunc;
+        return this;
+    }
+
+    setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
+        this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
+            const modifierTypeFunc = func();
+            const modifierType = modifierTypeFunc();
+            modifierType.withIdFromFunc(modifierTypeFunc);
+            return modifierType;
+        });
+        return this;
+    }
+
+    initForGymLeader(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
+        if (!getIsInitialized()) {
+            initI18n();
+        }
+
+        this.setPartyTemplateFunc(getGymLeaderPartyTemplate);
+        signatureSpecies.forEach((speciesPool, s) => {
+            if (!Array.isArray(speciesPool))
+                speciesPool = [speciesPool];
+            this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+        });
+        if (specialtyTypes.length) {
+            this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
+            this.setSpecialtyTypes(...specialtyTypes);
+        }
+
+        // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
+        const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
+        this.name = i18next.t(`trainerNames:${nameForCall}`);
+
+
+
+        this.setTitle("gym_leader");
+        this.setMoneyMultiplier(2.5);
+        this.setBoss();
+        this.setStaticParty();
+        this.setBattleBgm('battle_unova_gym');
+        this.setVictoryBgm('victory_gym');
+        this.setGenModifiersFunc(party => {
+            const waveIndex = party[0].scene.currentBattle.waveIndex;
+            return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null);
+        });
+        return this;
+    }
+
+    initForEliteFour(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
+        if (!getIsInitialized()) {
+            initI18n();
+        }
+
+        this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
+        signatureSpecies.forEach((speciesPool, s) => {
+            if (!Array.isArray(speciesPool))
+                speciesPool = [speciesPool];
+            this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+        });
+        if (specialtyTypes.length) {
+            this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) && p.baseTotal >= 450);
+            this.setSpecialtyTypes(...specialtyTypes);
+        } else
+            this.setSpeciesFilter(p => p.baseTotal >= 450);
+        // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
+        const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
+        this.name = i18next.t(`trainerNames:${nameForCall}`);
+
+        this.setTitle("elite_four");
+        this.setMoneyMultiplier(3.25);
+        this.setBoss();
+        this.setStaticParty();
+        this.setBattleBgm('battle_elite');
+        this.setVictoryBgm('victory_gym');
+        this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null));
+        return this;
+    }
+
+    initForChampion(signatureSpecies: (Species | Species[])[]): TrainerConfig {
+        if (!getIsInitialized()) {
+            initI18n();
+        }
+        this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
+        signatureSpecies.forEach((speciesPool, s) => {
+            if (!Array.isArray(speciesPool))
+                speciesPool = [speciesPool];
+            this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+        });
+        this.setSpeciesFilter(p => p.baseTotal >= 470);
+        // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
+        const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
+        this.name = i18next.t(`trainerNames:${nameForCall}`);
+        this.setTitle("champion");
+        this.setMoneyMultiplier(10);
+        this.setBoss();
+        this.setStaticParty();
+        this.setBattleBgm('battle_champion_alder');
+        this.setVictoryBgm('victory_champion');
+        this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 3));
+        return this;
+    }
+
+    getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
+        let ret = this.name;
+
+        if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble)
+            return this.nameDouble;
+
+        if (this.hasGenders) {
+            if (this.nameFemale) {
+                if (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER))
+                    return this.nameFemale;
+            } else
+
+                // Check if !variant is true, if so return the name, else return the name with _female appended
+                if (variant) {
+                    if (!getIsInitialized()) {
+                        initI18n();
+                    }
+                    // Check if the female version exists in the i18n file
+                    if (i18next.exists(`trainerClasses:${this.name.toLowerCase().replace}`)) {
+                        // If it does, return
+                        return ret + "_female";
+                    } else {
+                        // If it doesn't, we do not do anything and go to the normal return
+                        // This is to prevent the game from displaying an error if a female version of the trainer does not exist in the localization
+                    }
+                }
+        }
+
+        return ret;
+    }
+
+    loadAssets(scene: BattleScene, variant: TrainerVariant): Promise<void> {
+        return new Promise(resolve => {
+            const isDouble = variant === TrainerVariant.DOUBLE;
+            const trainerKey = this.getSpriteKey(variant === TrainerVariant.FEMALE);
+            const partnerTrainerKey = this.getSpriteKey(true);
+            scene.loadAtlas(trainerKey, 'trainer');
+            if (isDouble)
+                scene.loadAtlas(partnerTrainerKey, 'trainer');
+            scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+                const originalWarn = console.warn;
+                // Ignore warnings for missing frames, because there will be a lot
+                console.warn = () => {
+                };
+                const frameNames = scene.anims.generateFrameNames(trainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128});
+                const partnerFrameNames = isDouble
+                    ? scene.anims.generateFrameNames(partnerTrainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128})
+                    : null;
+                console.warn = originalWarn;
+                scene.anims.create({
+                    key: trainerKey,
+                    frames: frameNames,
+                    frameRate: 24,
+                    repeat: -1
+                });
+                if (isDouble) {
+                    scene.anims.create({
+                        key: partnerTrainerKey,
+                        frames: partnerFrameNames,
+                        frameRate: 24,
+                        repeat: -1
+                    });
+                }
+                resolve();
+            });
+            if (!scene.load.isLoading())
+                scene.load.start();
+        });
+    }
 }
 
 let t = 0;
 
 interface TrainerConfigs {
-  [key: integer]: TrainerConfig
+    [key: integer]: TrainerConfig
 }
 
 function getWavePartyTemplate(scene: BattleScene, ...templates: TrainerPartyTemplate[]) {
-  return templates[Math.min(Math.max(Math.ceil((scene.gameMode.getWaveForDifficulty(scene.currentBattle?.waveIndex || startingWave, true) - 20) / 30), 0), templates.length - 1)];
+    return templates[Math.min(Math.max(Math.ceil((scene.gameMode.getWaveForDifficulty(scene.currentBattle?.waveIndex || startingWave, true) - 20) / 30), 0), templates.length - 1)];
 }
 
 function getGymLeaderPartyTemplate(scene: BattleScene) {
-  return getWavePartyTemplate(scene, trainerPartyTemplates.GYM_LEADER_1, trainerPartyTemplates.GYM_LEADER_2, trainerPartyTemplates.GYM_LEADER_3, trainerPartyTemplates.GYM_LEADER_4, trainerPartyTemplates.GYM_LEADER_5);
+    return getWavePartyTemplate(scene, trainerPartyTemplates.GYM_LEADER_1, trainerPartyTemplates.GYM_LEADER_2, trainerPartyTemplates.GYM_LEADER_3, trainerPartyTemplates.GYM_LEADER_4, trainerPartyTemplates.GYM_LEADER_5);
 }
 
 function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
-  return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
-    let species = Utils.randSeedItem(speciesPool);
-    if (!ignoreEvolution)
-      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
-    return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
-  };
+    return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
+        let species = Utils.randSeedItem(speciesPool);
+        if (!ignoreEvolution)
+            species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
+        return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
+    };
 }
 
 function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilter, trainerSlot: TrainerSlot = TrainerSlot.TRAINER, allowLegendaries?: boolean, postProcess?: (EnemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
-  const originalSpeciesFilter = speciesFilter;
-  speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
-  return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
-    const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength)), level, trainerSlot, undefined, undefined, postProcess);
-    return ret;
-  };
+    const originalSpeciesFilter = speciesFilter;
+    speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
+    return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
+        const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength)), level, trainerSlot, undefined, undefined, postProcess);
+        return ret;
+    };
 }
 
 function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[]): PersistentModifier[] {
-  const ret: PersistentModifier[] = [];
-  const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
-  for (let t = 0; t < Math.min(count, party.length); t++) {
-    const randomIndex = Utils.randSeedItem(partyMemberIndexes);
-    partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-    ret.push(modifierTypes.TERA_SHARD().generateType(null, [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier);
-  }
-  return ret;
+    const ret: PersistentModifier[] = [];
+    const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
+    for (let t = 0; t < Math.min(count, party.length); t++) {
+        const randomIndex = Utils.randSeedItem(partyMemberIndexes);
+        partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
+        ret.push(modifierTypes.TERA_SHARD().generateType(null, [Utils.randSeedItem(types ? types : party[randomIndex].getTypes())]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier);
+    }
+    return ret;
 }
 
 export const trainerConfigs: TrainerConfigs = {
@@ -662,7 +736,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.SMASHER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.SNOW_WORKER]: new TrainerConfig(++t).setName('Worker').setHasGenders().setHasDouble('Workers').setMoneyMultiplier(1.7).setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => s.isOfType(Type.ICE) || s.isOfType(Type.STEEL)),
   [TrainerType.STRIKER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
-  [TrainerType.STUDENT]: new TrainerConfig(++t).setMoneyMultiplier(0.75).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders(undefined, 'lass').setHasDouble('Students')
+  [TrainerType.SCHOOL_KID]: new TrainerConfig(++t).setMoneyMultiplier(0.75).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders(undefined, 'lass').setHasDouble('School Kids')
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.ODDISH, Species.EXEGGCUTE, Species.TEDDIURSA, Species.WURMPLE, Species.RALTS, Species.SHROOMISH, Species.FLETCHLING ],
       [TrainerPoolTier.UNCOMMON]: [ Species.VOLTORB, Species.WHISMUR, Species.MEDITITE, Species.MIME_JR, Species.NYMBLE ],
@@ -855,14 +929,20 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.RIVAL_6]: new TrainerConfig(++t).setName('Finn').setHasGenders('Ivy').setHasCharSprite().setTitle('Rival').setBoss().setStaticParty().setMoneyMultiplier(3).setEncounterBgm('final').setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_6)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON, Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ], TrainerSlot.TRAINER, true,
-      p => p.setBoss(true, 3))
-    )
+      p => {
+        p.setBoss(true, 3);
+        p.generateAndPopulateMoveset();
+      }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT, Species.KILOWATTREL ], TrainerSlot.TRAINER, true,
-      p => p.setBoss(true, 2)))
+      p => {
+        p.setBoss(true, 2);
+        p.generateAndPopulateMoveset();
+      }))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540)
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss();
+      p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
       p.shiny = true;
       p.variant = 1;
@@ -874,6 +954,6 @@ export const trainerConfigs: TrainerConfigs = {
     }),
 };
 
-(function() {
-  initTrainerTypeDialogue();
+(function () {
+      initTrainerTypeDialogue();
 })();
