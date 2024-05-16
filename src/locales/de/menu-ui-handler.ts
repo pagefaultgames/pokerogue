@@ -2,15 +2,15 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const menuUiHandler: SimpleTranslationEntries = {
     "GAME_SETTINGS": 'Spieleinstellungen',
-    "ACHIEVEMENTS": "Achievements",
+    "ACHIEVEMENTS": "Erfolge",
     "STATS": "Statistiken",
     "VOUCHERS": "Gutscheine",
     "EGG_LIST": "Eierliste",
     "EGG_GACHA": "Eier-Gacha",
     "MANAGE_DATA": "Daten verwalten",
     "COMMUNITY": "Community",
-    "RETURN_TO_TITLE": "Zurück zum Titelbildschirm",
-    "LOG_OUT": "Ausloggen",
+    "SAVE_AND_QUIT": "Speichern und Beenden",
+    "LOG_OUT": "Abmelden",
     "slot": "Slot {{slotNumber}}",
     "importSession": "Sitzung importieren",
     "importSlotSelect": "Wähle einen Slot zum Importieren.",
