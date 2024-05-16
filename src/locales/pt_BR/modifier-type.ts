@@ -4,150 +4,150 @@ export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{modifierCount}}x {{pokeballName}}",
-      description: "Receive {{pokeballName}} x{{modifierCount}} (Inventory: {{pokeballAmount}}) \nCatch Rate: {{catchRate}}",
+      description: "Ganhe x{{modifierCount}} {{pokeballName}} (Mochila: {{pokeballAmount}}) \nChance de captura: {{catchRate}}",
     },
     "AddVoucherModifierType": {
       name: "{{modifierCount}}x {{voucherTypeName}}",
-      description: "Receive {{voucherTypeName}} x{{modifierCount}}",
+      description: "Ganhe x{{modifierCount}} {{voucherTypeName}}",
     },
     "PokemonHeldItemModifierType": {
       extra: {
-        "inoperable": "{{pokemonName}} can't take\nthis item!",
-        "tooMany": "{{pokemonName}} has too many\nof this item!",
+        "inoperable": "{{pokemonName}} não pode\nsegurar esse item!",
+        "tooMany": "{{pokemonName}} tem muitos\nmuitos deste item!",
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "Restores {{restorePoints}} HP or {{restorePercent}}% HP for one Pokémon, whichever is higher",
+      description: "Restaura {{restorePoints}} PS ou {{restorePercent}}% PS de um Pokémon, o que for maior",
       extra: {
-        "fully": "Fully restores HP for one Pokémon",
-        "fullyWithStatus": "Fully restores HP for one Pokémon and heals any status ailment",
+        "fully": "Restaura totalmente os PS de um Pokémon",
+        "fullyWithStatus": "Restaura totalmente os PS de um Pokémon e cura qualquer mudança de estado",
       }
     },
     "PokemonReviveModifierType": {
-      description: "Revives one Pokémon and restores {{restorePercent}}% HP",
+      description: "Revive um Pokémon e restaura {{restorePercent}}% PS",
     },
     "PokemonStatusHealModifierType": {
-      description: "Heals any status ailment for one Pokémon",
+      description: "Cura uma mudança de estado de um Pokémon",
     },
     "PokemonPpRestoreModifierType": {
-      description: "Restores {{restorePoints}} PP for one Pokémon move",
+      description: "Restaura {{restorePoints}} PP para um movimento de um Pokémon",
       extra: {
-        "fully": "Restores all PP for one Pokémon move",
+        "fully": "Restaura todos os PP para um movimento de um Pokémon",
       }
     },
     "PokemonAllMovePpRestoreModifierType": {
-      description: "Restores {{restorePoints}} PP for all of one Pokémon's moves",
+      description: "Restaura {{restorePoints}} PP para todos os movimentos de um Pokémon",
       extra: {
-        "fully": "Restores all PP for all of one Pokémon's moves",
+        "fully": "Restaura todos os PP para todos os movimentos de um Pokémon",
       }
     },
     "PokemonPpUpModifierType": {
-      description: "Permanently increases PP for one Pokémon move by {{upPoints}} for every 5 maximum PP (maximum 3)",
+      description: "Aumenta permanentemente os PP para o movimento de um Pokémon em {{upPoints}} para cada 5 PP máximos (máximo 3)",
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}} Mint",
-      description: "Changes a Pokémon's nature to {{natureName}} and permanently unlocks the nature for the starter.",
+      description: "Muda a natureza de um Pokémon para {{natureName}} e a desbloqueia permanentemente para seu inicial",
     },
     "DoubleBattleChanceBoosterModifierType": {
-      description: "Doubles the chance of an encounter being a double battle for {{battleCount}} battles",
+      description: "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas",
     },
     "TempBattleStatBoosterModifierType": {
-      description: "Increases the {{tempBattleStatName}} of all party members by 1 stage for 5 battles",
+      description: "Aumenta o atributo de {{tempBattleStatName}} para todos os membros da equipe por 5 batalhas",
     },
     "AttackTypeBoosterModifierType": {
-      description: "Increases the power of a Pokémon's {{moveType}}-type moves by 20%",
+      description: "Aumenta o poder dos ataques do tipo {{moveType}} de um Pokémon em 20%",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Increases a Pokémon's level by 1",
+      description: "Aumenta em 1 o nível de um Pokémon",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Increases all party members' level by 1",
+      description: "Aumenta em 1 os níveis de todos os Pokémon",
     },
     "PokemonBaseStatBoosterModifierType": {
-      description: "Increases the holder's base {{statName}} by 10%. The higher your IVs, the higher the stack limit.",
+      description: "Aumenta o atributo base de {{statName}} em 10%. Quanto maior os IVs, maior o limite de aumento",
     },
     "AllPokemonFullHpRestoreModifierType": {
-      description: "Restores 100% HP for all Pokémon",
+      description: "Restaura totalmente os PS de todos os Pokémon",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "Revives all fainted Pokémon, fully restoring HP",
+      description: "Revive todos os Pokémon, restaurando totalmente seus PS",
     },
     "MoneyRewardModifierType": {
-      description: "Grants a {{moneyMultiplier}} amount of money (₽{{moneyAmount}})",
+      description: "Garante uma quantidade {{moneyMultiplier}} de dinheiro (₽{{moneyAmount}})",
       extra: {
-        "small": "small",
-        "moderate": "moderate",
-        "large": "large",
+        "small": "pequena",
+        "moderate": "moderada",
+        "large": "grande",
       },
     },
     "ExpBoosterModifierType": {
-      description: "Increases gain of EXP. Points by {{boostPercent}}%",
+      description: "Aumenta o ganho de pontos de experiência em {{boostPercent}}%",
     },
     "PokemonExpBoosterModifierType": {
-      description: "Increases the holder's gain of EXP. Points by {{boostPercent}}%",
+      description: "Aumenta o ganho de pontos de experiência de quem segurar em {{boostPercent}}%",
     },
     "PokemonFriendshipBoosterModifierType": {
-      description: "Increases friendship gain per victory by 50%",
+      description: "Aumenta o ganho de amizade por vitória em 50%",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
-      description: "Increases move accuracy by {{accuracyAmount}} (maximum 100)",
+      description: "Aumenta a precisão dos movimentos em {{accuracyAmount}} (máximo 100)",
     },
     "PokemonMultiHitModifierType": {
-      description: "Attacks hit one additional time at the cost of a 60/75/82.5% power reduction per stack respectively",
+      description: "Ataques acertam uma vez adicional ao custo de uma redução de poder de 60/75/82.5% por item, respectivamente",
     },
     "TmModifierType": {
       name: "TM{{moveId}} - {{moveName}}",
-      description: "Teach {{moveName}} to a Pokémon",
+      description: "Ensina {{moveName}} a um Pokémon",
     },
     "EvolutionItemModifierType": {
-      description: "Causes certain Pokémon to evolve",
+      description: "Faz certos Pokémon evoluírem",
     },
     "FormChangeItemModifierType": {
-      description: "Causes certain Pokémon to change form",
+      description: "Faz certos Pokémon mudarem de forma",
     },
     "FusePokemonModifierType": {
-      description: "Combines two Pokémon (transfers Ability, splits base stats and types, shares move pool)",
+      description: "Combina dois Pokémon (transfere Habilidade, divide os atributos base e tipos, compartilha os movimentos)",
     },
     "TerastallizeModifierType": {
-      name: "{{teraType}} Tera Shard",
-      description: "{{teraType}} Terastallizes the holder for up to 10 battles",
+      name: "{{teraType}} Fragmento Tera",
+      description: "{{teraType}} Terastaliza um Pokémon por até 10 batalhas",
     },
     "ContactHeldItemTransferChanceModifierType": {
-      description: "Upon attacking, there is a {{chancePercent}}% chance the foe's held item will be stolen",
+      description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente",
     },
     "TurnHeldItemTransferModifierType": {
-      description: "Every turn, the holder acquires one held item from the foe",
+      description: "Todo turno, o Pokémon ganha um item aleatório do oponente",
     },
     "EnemyAttackStatusEffectChanceModifierType": {
-      description: "Adds a {{chancePercent}}% chance to inflict {{statusEffect}} with attack moves",
+      description: "Ganha {{chancePercent}}% de chance de infligir {{statusEffect}} com ataques",
     },
     "EnemyEndureChanceModifierType": {
-      description: "Adds a {{chancePercent}}% chance of enduring a hit",
+      description: "Ganha {{chancePercent}}% de chance de sobreviver a um ataque que o faria desmaiar",
     },
 
-    "RARE_CANDY": { name: "Rare Candy" },
-    "RARER_CANDY": { name: "Rarer Candy" },
+    "RARE_CANDY": { name: "Doce Raro" },
+    "RARER_CANDY": { name: "Doce Raríssimo" },
 
     "MEGA_BRACELET": { name: "Mega Bracelet", description: "Mega Stones become available" },
     "DYNAMAX_BAND": { name: "Dynamax Band", description: "Max Mushrooms become available" },
-    "TERA_ORB": { name: "Tera Orb", description: "Tera Shards become available" },
+    "TERA_ORB": { name: "Orbe Tera", description: "Fragmentos Tera ficam disponíveis" },
 
-    "MAP": { name: "Map", description: "Allows you to choose your destination at a crossroads" },
+    "MAP": { name: "Mapa", description: "Permite escolher a próxima rota" },
 
-    "POTION": { name: "Potion" },
-    "SUPER_POTION": { name: "Super Potion" },
-    "HYPER_POTION": { name: "Hyper Potion" },
-    "MAX_POTION": { name: "Max Potion" },
-    "FULL_RESTORE": { name: "Full Restore" },
+    "POTION": { name: "Poção" },
+    "SUPER_POTION": { name: "Super Poção" },
+    "HYPER_POTION": { name: "Hiper Poção" },
+    "MAX_POTION": { name: "Poção Máxima" },
+    "FULL_RESTORE": { name: "Restauração Total" },
     
-    "REVIVE": { name: "Revive" },
-    "MAX_REVIVE": { name: "Max Revive" },
+    "REVIVE": { name: "Reviver" },
+    "MAX_REVIVE": { name: "Reviver Máximo" },
     
-    "FULL_HEAL": { name: "Full Heal" },
+    "FULL_HEAL": { name: "Cura Total" },
 
-    "SACRED_ASH": { name: "Sacred Ash" },
+    "SACRED_ASH": { name: "Cinzas Sagradas" },
 
-    "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting" },
+    "REVIVER_SEED": { name: "Semente de Reviver", description: "Após desmaiar, revive com 50% de PS" },
 
     "ETHER": { name: "Ether" },
     "MAX_ETHER": { name: "Max Ether" },
@@ -162,77 +162,77 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SUPER_LURE": { name: "Super Lure" },
     "MAX_LURE": { name: "Max Lure" },
 
-    "MEMORY_MUSHROOM": { name: "Memory Mushroom", description: "Recall one Pokémon's forgotten move" },
+    "MEMORY_MUSHROOM": { name: "Memory Mushroom", description: "Relembra um movimento esquecido" },
 
-    "EXP_SHARE": { name: "EXP. All", description: "Non-participants receive 20% of a single participant's EXP. Points" },
-    "EXP_BALANCE": { name: "EXP. Balance", description: "Weighs EXP. Points received from battles towards lower-leveled party members" },
+    "EXP_SHARE": { name: "EXP. All", description: "Distribui pontos de experiência para todos os membros da equipe" },
+    "EXP_BALANCE": { name: "EXP. Balance", description: "Distribui pontos de experiência principalmente para os Pokémon mais fracos" },
 
-    "OVAL_CHARM": { name: "Oval Charm", description: "When multiple Pokémon participate in a battle, each gets an extra 10% of the total EXP" },
+    "OVAL_CHARM": { name: "Amuleto Oval", description: "Quando vários Pokémon participam de uma batalha, cada um recebe 10% extra de pontos de experiência" },
 
-    "EXP_CHARM": { name: "EXP. Charm" },
-    "SUPER_EXP_CHARM": { name: "Super EXP. Charm" },
-    "GOLDEN_EXP_CHARM": { name: "Golden EXP. Charm" },
+    "EXP_CHARM": { name: "Amuleto de Experiência" },
+    "SUPER_EXP_CHARM": { name: "Super Amuleto de Experiência" },
+    "GOLDEN_EXP_CHARM": { name: "Amuleto de Experiência Dourado" },
 
     "LUCKY_EGG": { name: "Lucky Egg" },
     "GOLDEN_EGG": { name: "Golden Egg" },
 
     "SOOTHE_BELL": { name: "Soothe Bell" },
 
-    "SOUL_DEW": { name: "Soul Dew", description: "Increases the influence of a Pokémon's nature on its stats by 10% (additive)" },
+    "SOUL_DEW": { name: "Soul Dew", description: "Aumenta a influência da natureza de um Pokémon em seus atributos em 10% (cumulativo)" },
 
-    "NUGGET": { name: "Nugget" },
-    "BIG_NUGGET": { name: "Big Nugget" },
-    "RELIC_GOLD": { name: "Relic Gold" },
+    "NUGGET": { name: "Pepita" },
+    "BIG_NUGGET": { name: "Pepita Grande" },
+    "RELIC_GOLD": { name: "Relíquia de Ouro" },
 
-    "AMULET_COIN": { name: "Amulet Coin", description: "Increases money rewards by 20%" },
-    "GOLDEN_PUNCH": { name: "Golden Punch", description: "Grants 50% of damage inflicted as money" },
-    "COIN_CASE": { name: "Coin Case", description: "After every 10th battle, receive 10% of your money in interest" },
+    "AMULET_COIN": { name: "Amulet Coin", description: "Aumenta a recompensa de dinheiro em 50%" },
+    "GOLDEN_PUNCH": { name: "Golden Punch", description: "Concede 50% do dano causado em dinheiro" },
+    "COIN_CASE": { name: "Coin Case", description: "Após cada 10ª batalha, recebe 10% de seu dinheiro em juros" },
     
-    "LOCK_CAPSULE": { name: "Lock Capsule", description: "Allows you to lock item rarities when rerolling items" },
+    "LOCK_CAPSULE": { name: "Cápsula de Travamento", description: "Permite que você trave raridades de itens ao rolar novamente" },
 
     "GRIP_CLAW": { name: "Grip Claw" },
     "WIDE_LENS": { name: "Wide Lens" },
     
     "MULTI_LENS": { name: "Multi Lens" },
 
-    "HEALING_CHARM": { name: "Healing Charm", description: "Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives)" },
-    "CANDY_JAR": { name: "Candy Jar", description: "Increases the number of levels added by Rare Candy items by 1" },
+    "HEALING_CHARM": { name: "Amuleto de Cura", description: "Aumenta a eficácia dos movimentos e itens que restauram PS em 10% (exceto Reviver)" },
+    "CANDY_JAR": { name: "Candy Jar", description: "Aumenta o número de níveis adicionados pelo Doce Raro em 1" },
 
-    "BERRY_POUCH": { name: "Berry Pouch", description: "Adds a 25% chance that a used berry will not be consumed" },
+    "BERRY_POUCH": { name: "Berry Pouch", description: "Adiciona uma chance de 25% de que uma berry usada não seja consumida" },
 
-    "FOCUS_BAND": { name: "Focus Band", description: "Adds a 10% chance to survive with 1 HP after being damaged enough to faint" },
+    "FOCUS_BAND": { name: "Focus Band", description: "Adiciona uma chance de 10% de sobreviver com 1 PS após ser danificado o suficiente para desmaiar" },
 
-    "QUICK_CLAW": { name: "Quick Claw", description: "Adds a 10% chance to move first regardless of speed (after priority)" },
+    "QUICK_CLAW": { name: "Quick Claw", description: "Adiciona uma chance de 10% de atacar primeiro, ignorando sua velocidade (após prioridades)" },
 
-    "KINGS_ROCK": { name: "King's Rock", description: "Adds a 10% chance an attack move will cause the opponent to flinch" },
+    "KINGS_ROCK": { name: "King's Rock", description: "Adiciona uma chance de 10% de movimentos fazerem o oponente hesitar" },
 
-    "LEFTOVERS": { name: "Leftovers", description: "Heals 1/16 of a Pokémon's maximum HP every turn" },
-    "SHELL_BELL": { name: "Shell Bell", description: "Heals 1/8 of a Pokémon's dealt damage" },
+    "LEFTOVERS": { name: "Leftovers", description: "Cura 1/16 dos PS máximos de um Pokémon a cada turno" },
+    "SHELL_BELL": { name: "Shell Bell", description: "Cura 1/8 do dano causado por um Pokémon" },
 
-    "BATON": { name: "Baton", description: "Allows passing along effects when switching Pokémon, which also bypasses traps" },
+    "BATON": { name: "Baton", description: "Permite passar mudanças de atributo ao trocar Pokémon, ignorando armadilhas" },
 
-    "SHINY_CHARM": { name: "Shiny Charm", description: "Dramatically increases the chance of a wild Pokémon being Shiny" },
-    "ABILITY_CHARM": { name: "Ability Charm", description: "Dramatically increases the chance of a wild Pokémon having a Hidden Ability" },
+    "SHINY_CHARM": { name: "Amuleto Shiny", description: "Aumenta drasticamente a chance de um Pokémon selvagem ser Shiny" },
+    "ABILITY_CHARM": { name: "Amuleto de Habilidade", description: "Aumenta drasticamente a chance de um Pokémon selvagem ter uma Habilidade Oculta" },
 
-    "IV_SCANNER": { name: "IV Scanner", description: "Allows scanning the IVs of wild Pokémon. 2 IVs are revealed per stack. The best IVs are shown first" },
+    "IV_SCANNER": { name: "Scanner de IVs", description: "Permite escanear os IVs de Pokémon selvagens. 2 IVs são revelados por item. Os melhores IVs são mostrados primeiro" },
 
-    "DNA_SPLICERS": { name: "DNA Splicers" },
+    "DNA_SPLICERS": { name: "Splicer de DNA" },
 
-    "MINI_BLACK_HOLE": { name: "Mini Black Hole" },
+    "MINI_BLACK_HOLE": { name: "Mini Buraco Negro" },
 
-    "GOLDEN_POKEBALL": { name: "Golden Poké Ball", description: "Adds 1 extra item option at the end of every battle" },
+    "GOLDEN_POKEBALL": { name: "Poké Bola Dourada", description: "Adiciona 1 opção de item extra ao final de cada batalha" },
 
-    "ENEMY_DAMAGE_BOOSTER": { name: "Damage Token", description: "Increases damage by 5%" },
-    "ENEMY_DAMAGE_REDUCTION": { name: "Protection Token", description: "Reduces incoming damage by 2.5%" },
-    "ENEMY_HEAL": { name: "Recovery Token", description: "Heals 2% of max HP every turn" },
-    "ENEMY_ATTACK_POISON_CHANCE": { name: "Poison Token" },
-    "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Paralyze Token" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Sleep Token" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Freeze Token" },
-    "ENEMY_ATTACK_BURN_CHANCE": { name: "Burn Token" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Adds a 10% chance every turn to heal a status condition" },
-    "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
-    "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Adds a 1% chance that a wild Pokémon will be a fusion" },
+    "ENEMY_DAMAGE_BOOSTER": { name: "Token de Dano", description: "Aumenta o dano em 5%" },
+    "ENEMY_DAMAGE_REDUCTION": { name: "Token de Proteção", description: "Reduz o dano recebido em 2,5%" },
+    "ENEMY_HEAL": { name: "Token de Recuperação", description: "Cura 2% dos PS máximos a cada turno" },
+    "ENEMY_ATTACK_POISON_CHANCE": { name: "Token de Veneno" },
+    "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Token de Paralisia" },
+    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Token de Sono" },
+    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Token de Congelamento" },
+    "ENEMY_ATTACK_BURN_CHANCE": { name: "Token de Queimadura" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Token de Cura Total", description: "Adiciona uma chance de 10% a cada turno de curar uma condição de status" },
+    "ENEMY_ENDURE_CHANCE": { name: "Token de Persistência" },
+    "ENEMY_FUSED_CHANCE": { name: "Token de Fusão", description: "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão" },
   },
   TempBattleStatBoosterItem: {
     "x_attack": "X Attack",
@@ -264,7 +264,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "fairy_feather": "Fairy Feather",
   },
   BaseStatBoosterItem: {
-    "hp_up": "HP Up",
+    "hp_up": "PS Up",
     "protein": "Protein",
     "iron": "Iron",
     "calcium": "Calcium",
@@ -387,23 +387,23 @@ export const modifierType: ModifierTypeTranslationEntries = {
   TeraType: {
     "UNKNOWN": "Unknown",
     "NORMAL": "Normal",
-    "FIGHTING": "Fighting",
-    "FLYING": "Flying",
-    "POISON": "Poison",
-    "GROUND": "Ground",
-    "ROCK": "Rock",
-    "BUG": "Bug",
-    "GHOST": "Ghost",
-    "STEEL": "Steel",
-    "FIRE": "Fire",
-    "WATER": "Water",
-    "GRASS": "Grass",
-    "ELECTRIC": "Electric",
-    "PSYCHIC": "Psychic",
-    "ICE": "Ice",
-    "DRAGON": "Dragon",
-    "DARK": "Dark",
-    "FAIRY": "Fairy",
-    "STELLAR": "Stellar",
+    "FIGHTING": "Lutador",
+    "FLYING": "Voador",
+    "POISON": "Veneno",
+    "GROUND": "Terra",
+    "ROCK": "Pedra",
+    "BUG": "Inseto",
+    "GHOST": "Fantasma",
+    "STEEL": "Aço",
+    "FIRE": "Fogo",
+    "WATER": "Água",
+    "GRASS": "Grama",
+    "ELECTRIC": "Elétrico",
+    "PSYCHIC": "Psíquico",
+    "ICE": "Gelo",
+    "DRAGON": "Dragão",
+    "DARK": "Sombrio",
+    "FAIRY": "Fada",
+    "STELLAR": "Estelar",
   },
 } as const;
