@@ -17,7 +17,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "gen8": "VIII",
     "gen9": "IX",
     "growthRate": "Wachstum:",
-    "ability": "Fhgkeit:",
+    "ability": "Fähgkeit:",
     "passive": "Passiv:",
     "nature": "Wesen:",
     "eggMoves": "Ei-Attacken",
@@ -40,5 +40,5 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "disablePassive": "Passiv-Skill deaktivieren",
     "locked": "Gesperrt",
     "disabled": "Deaktiviert",
-    "uncaught": "Uncaught"
+    "uncaught": "Ungefangen"
 }
