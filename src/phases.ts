@@ -841,8 +841,15 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
       return i18next.t('battle:bossAppeared', {bossName: enemyField[0].name});
 
-    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
-      return i18next.t('battle:trainerAppeared', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+    if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      if (this.scene.currentBattle.double) {
+        return i18next.t('battle:trainerAppearedDouble', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+
+      }
+      else {
+        return i18next.t('battle:trainerAppeared', {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
+      }
+    }
 
     return enemyField.length === 1
       ? i18next.t('battle:singleWildAppeared', {pokemonName: enemyField[0].name})
@@ -2270,12 +2277,8 @@ export class MovePhase extends BattlePhase {
     }
 
     const targets = this.scene.getField(true).filter(p => {
-      if (this.targets.indexOf(p.getBattlerIndex()) > -1) {
-        const hiddenTag = p.getTag(HiddenTag);
-        if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length && !p.hasAbilityWithAttr(AlwaysHitAbAttr) && !this.pokemon.hasAbilityWithAttr(AlwaysHitAbAttr))
-          return false;
+      if (this.targets.indexOf(p.getBattlerIndex()) > -1)
         return true;
-      }
       return false;
     });
 
@@ -2316,10 +2319,17 @@ export class MovePhase extends BattlePhase {
       if (this.move.moveId)
         this.showMoveText();
 
-      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || (!targets.length && !this.move.getMove().getAttrs(SacrificialAttr).length)) {
-        moveQueue.shift();
+      // This should only happen when there are no valid targets left on the field
+      if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {        
+        this.showFailedText();
         this.cancel();
+        
+        // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+
+        this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+
+        moveQueue.shift();
         return this.end();
       }
 
@@ -2590,12 +2600,13 @@ export class MoveEffectPhase extends PokemonPhase {
     if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr))
       return true;
 
+    // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1)
+      return true;
+    
     const hiddenTag = target.getTag(HiddenTag);
     if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
       return false;
-
-    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) > -1)
-      return true;
 
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
 

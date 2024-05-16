@@ -1,5 +1,5 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const abilityTriggers: SimpleTranslationEntries = {
-    'blockRecoilDamage' : `{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!`,
+    'blockRecoilDamage' : `{{pokemonName}} 的 {{abilityName}}\n抵消了反作用力！`,
 } as const;
