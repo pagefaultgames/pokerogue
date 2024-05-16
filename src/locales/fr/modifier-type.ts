@@ -20,25 +20,25 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Restaure {{restorePoints}} PV ou {{restorePercent}}% des PV totaux d’un Pokémon, en fonction duquel des deux est le plus élevé",
       extra: {
         "fully": "Resautre tous les PV d’un Pokémon",
-        "fullyWithStatus": "Restaure tous les PV d’un Pokémon et soigne tout ses problèmes de statut",
+        "fullyWithStatus": "Restaure tous les PV d’un Pokémon et soigne tous ses problèmes de statut",
       }
     },
     "PokemonReviveModifierType": {
       description: "Réanime un Pokémon et restaure {{restorePercent}}% de ses PV",
     },
     "PokemonStatusHealModifierType": {
-      description: "Soigne tout les problèmes de statut d’un Pokémon",
+      description: "Soigne tous les problèmes de statut d’un Pokémon",
     },
     "PokemonPpRestoreModifierType": {
       description: "Restaure {{restorePoints}} PP à une capacité d’un Pokémon",
       extra: {
-        "fully": "Restaure tout les PP à une capacité d’un Pokémon",
+        "fully": "Restaure tous les PP à une capacité d’un Pokémon",
       }
     },
     "PokemonAllMovePpRestoreModifierType": {
       description: "Restaure {{restorePoints}} PP à toutes les capacités d’un Pokémon",
       extra: {
-        "fully": "Restaure tout les PP à toutes les capacités d’un Pokémon",
+        "fully": "Restaure tous les PP à toutes les capacités d’un Pokémon",
       }
     },
     "PokemonPpUpModifierType": {
@@ -67,10 +67,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Auguemente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
-      description: "Restaure tout les PV de toute l'équipe",
+      description: "Restaure tous les PV de toute l'équipe",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "Réanime et restaure tout les PV de tous les Pokémon K.O.",
+      description: "Réanime et restaure tous les PV de tous les Pokémon K.O.",
     },
     "MoneyRewardModifierType": {
       description: "Octroie une {{moneyMultiplier}} somme d’argent ({{moneyAmount}}₽)",
