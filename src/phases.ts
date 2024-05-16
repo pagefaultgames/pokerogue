@@ -2054,8 +2054,7 @@ export class TurnStartPhase extends FieldPhase {
       this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
 
     for (let o of order) {
-      if (field[o].status && field[o].status.isPostTurn())
-        this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, o));
+      this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, o));
     }
 
     this.scene.pushPhase(new TurnEndPhase(this.scene));
@@ -2985,8 +2984,6 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(this.scene, () => {
           this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectObtainText(this.statusEffect, this.sourceText)));
-          if (pokemon.status.isPostTurn())
-            this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));
           this.end();
         });
         return;
