@@ -416,9 +416,7 @@ export class TrainerConfig {
 
         // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
-        console.log(nameForCall)
         this.name = i18next.t(`trainerNames:${nameForCall}`);
-        console.log(this.name)
 
 
 
