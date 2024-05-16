@@ -2055,7 +2055,7 @@ export class TurnStartPhase extends FieldPhase {
           if (this.scene.currentBattle.double) {
             const playerPokemon = field.filter(pokemon => pokemon.isPlayer());
             // use the faster stats if not
-            const fasterPokemon = playerPokemon[0].stats[Stat.SPD] > playerPokemon[1].stats[Stat.SPD] ? playerPokemon[0] : playerPokemon[1];
+            const fasterPokemon = playerPokemon[0].getStat(Stat.SPD) > playerPokemon[1].getStat(Stat.SPD) ? playerPokemon[0] : playerPokemon[1];
             const hasRunAway = playerPokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
             runningPokemon = hasRunAway != undefined ? hasRunAway : fasterPokemon;
           }
