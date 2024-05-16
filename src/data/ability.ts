@@ -2330,6 +2330,38 @@ export class PreventBerryUseAbAttr extends AbAttr {
   }
 }
 
+/**
+   * A Pokemon with this ability heals by a percentage of their maximum hp after eating a berry
+   * @param healPercent - Percent of Max HP to heal
+   * @see {@linkcode apply()} for implementation
+   */
+export class HealFromBerryUseAbAttr extends AbAttr {
+  /** Percent of Max HP to heal */
+  private healPercent: number;
+
+  constructor(healPercent: number) {
+    super()
+
+    // Clamp healPercent so its between [0,1].
+    this.healPercent = Math.max(Math.min(healPercent, 1), 0);
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, ...args: [Utils.BooleanHolder, any[]]): boolean {
+    const { name: abilityName } = passive ? pokemon.getPassiveAbility() : pokemon.getAbility()
+    pokemon.scene.unshiftPhase(
+      new PokemonHealPhase(
+        pokemon.scene,
+        pokemon.getBattlerIndex(),
+        Math.max(Math.floor(pokemon.getMaxHp() * this.healPercent), 1),
+        getPokemonMessage(pokemon, `'s ${abilityName}\nrestored its HP!`),
+        true
+      )
+    );
+
+    return true
+  }
+}
+
 export class RunSuccessAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value = 256;
@@ -3369,7 +3401,8 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.CHEEK_POUCH, 6)
-      .unimplemented(),
+      .attr(HealFromBerryUseAbAttr, 1/3)
+      .partial(),
     new Ability(Abilities.PROTEAN, 6)
       .unimplemented(),
     new Ability(Abilities.FUR_COAT, 6)
