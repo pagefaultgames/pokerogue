@@ -97,7 +97,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierType": {
       name: "CT{{moveId}} - {{moveName}}",
-      description: "Apprend {{moveName}} à un Pokémon",
+      description: "Apprend la capacité {{moveName}} à un Pokémon",
     },
     "EvolutionItemModifierType": {
       description: "Permet à certains Pokémon d’évoluer",
@@ -113,16 +113,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "{{teraType}} Téracristallise son porteur pendant 10 combats",
     },
     "ContactHeldItemTransferChanceModifierType": {
-      description: "{{chancePercent}}% de chance de voler un objet de l'adversaire en l’attaquant",
+      description: "{{chancePercent}}% de chances de voler un objet de l’adversaire en l’attaquant",
     },
     "TurnHeldItemTransferModifierType": {
       description: "À chaque tour, son porteur obtient un objet de son adversaire",
     },
     "EnemyAttackStatusEffectChanceModifierType": {
-      description: "Ajoute {{chancePercent}}% de chance d’infliger le statut {{statusEffect}} avec des capacités offensives",
+      description: "Ajoute {{chancePercent}}% de chances d’infliger le statut {{statusEffect}} avec des capacités offensives",
     },
     "EnemyEndureChanceModifierType": {
-      description: "Ajoute {{chancePercent}}% de chance d’encaisser un coup",
+      description: "Ajoute {{chancePercent}}% de chances d’encaisser un coup",
     },
 
     "RARE_CANDY": { name: "Super Bonbon" },
@@ -188,7 +188,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent" },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts" },
     
-    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de vérouiller des objets rares si vous relancez les objets proposés" },
+    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verouiller des objets rares si vous relancez les objets proposés" },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
