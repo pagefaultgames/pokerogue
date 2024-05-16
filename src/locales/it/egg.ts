@@ -1,21 +1,21 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const egg: SimpleTranslationEntries = {
-  "egg": "Egg",
-  "greatTier": "Rare",
-  "ultraTier": "Epic",
-  "masterTier": "Legendary",
-  "defaultTier": "Common",
-  "hatchWavesMessageSoon": "Sounds can be heard coming from inside! It will hatch soon!",
-  "hatchWavesMessageClose": "It appears to move occasionally. It may be close to hatching.",
-  "hatchWavesMessageNotClose": "What will hatch from this? It doesn't seem close to hatching.",
-  "hatchWavesMessageLongTime": "It looks like this Egg will take a long time to hatch.",
-  "gachaTypeLegendary": "Legendary Rate Up",
-  "gachaTypeMove": "Rare Egg Move Rate Up",
-  "gachaTypeShiny": "Shiny Rate Up",
-  "selectMachine": "Select a machine.",
-  "notEnoughVouchers": "You don't have enough vouchers!",
-  "tooManyEggs": "You have too many eggs!",
-  "pull": "Pull",
-  "pulls": "Pulls"
+  "egg": "Uovo",
+  "defaultTier": "Comune",
+  "greatTier": "Raro",
+  "ultraTier": "Epico",
+  "masterTier": "Leggendario",
+  "hatchWavesMessageSoon": "Si sentono dei suoni provenienti dall'interno! Si schiuderà presto!",
+  "hatchWavesMessageClose": "Sembra muoversi di tanto in tanto. Potrebbe essere prossimo alla schiusa.",
+  "hatchWavesMessageNotClose": "Cosa uscirà da qui? Non sembra si schiuderà presto.",
+  "hatchWavesMessageLongTime": "Sembra che questo uovo impiegherà molto tempo per schiudersi.",
+  "gachaTypeLegendary": "Tasso dei Leggendari Aumentato",
+  "gachaTypeMove": "Tasso delle Mosse Rare delle Uova Aumentato",
+  "gachaTypeShiny": "Tasso degli Shiny Aumentato",
+  "selectMachine": "Seleziona un distributore.",
+  "notEnoughVouchers": "Non hai abbastanza Biglietti!",
+  "tooManyEggs": "Hai troppe Uova!",
+  "pull": "Tiro",
+  "pulls": "Tiri"
 } as const;
