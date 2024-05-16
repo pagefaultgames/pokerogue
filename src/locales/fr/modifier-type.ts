@@ -19,7 +19,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonHpRestoreModifierType": {
       description: "Restaure {{restorePoints}} PV ou {{restorePercent}}% des PV totaux d’un Pokémon, en fonction duquel des deux est le plus élevé",
       extra: {
-        "fully": "Resautre tous les PV d’un Pokémon",
+        "fully": "Restaure tous les PV d’un Pokémon",
         "fullyWithStatus": "Restaure tous les PV d’un Pokémon et soigne tous ses problèmes de statut",
       }
     },
