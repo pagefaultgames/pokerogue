@@ -38,9 +38,9 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
     "cycleVariant": 'V: 切换变种',
     "enablePassive": "启用被动",
     "disablePassive": "禁用被动",
-    "locked": "Locked",
-    "disabled": "Disabled",
-    "uncaught": "Uncaught",
+    "locked": "未解锁",
+    "disabled": "已禁用",
+    "uncaught": "未捕获",
     "luck":" Luck",
     "form": "Form"
 }
