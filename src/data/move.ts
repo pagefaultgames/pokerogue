@@ -387,6 +387,14 @@ export default class Move implements Localizable {
 export class AttackMove extends Move {
   constructor(id: Moves, type: Type, category: MoveCategory, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
     super(id, type, category, MoveTarget.NEAR_OTHER, power, accuracy, pp, chance, priority, generation);
+
+    /**
+     * {@link https://bulbapedia.bulbagarden.net/wiki/Freeze_(status_condition)}
+     * > All damaging Fire-type moves can now thaw a frozen target, regardless of whether or not they have a chance to burn;
+     */
+    if (this.type === Type.FIRE) {
+      this.attrs.push(new HealStatusEffectAttr(false, StatusEffect.FREEZE));
+    }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -1569,6 +1577,17 @@ export class StealEatBerryAttr extends EatBerryAttr {
   }
 }
 
+/**
+ * @param selfTarget - Whether this move targets the user
+ * @param ...effects - Status Effects to heal
+ * @example
+ * ```
+ * // A move that unthaws target
+ * const thawSelf = new HealStatusEffectAttr(false, StatusEffect.FREEZE)
+ * // Pokemon uses 'Refresh' on itself
+ * const cureAll = new HealStatusEffectAttr(true, StatusEffect.BURN, StatusEffect.PARALYSIS, StatusEffect.POISON)
+ * ```
+ */
 export class HealStatusEffectAttr extends MoveEffectAttr {
   private effects: StatusEffect[];
 
@@ -1583,7 +1602,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
       return false;
 
     const pokemon = this.selfTarget ? user : target;
-    if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
+    if (pokemon.hp > 0 && pokemon.status && this.effects.includes(pokemon.status.effect)) {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
       pokemon.resetStatus();
       pokemon.updateInfo();
