@@ -1,4 +1,5 @@
 import { ability } from "./ability";
+import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { fightUiHandler } from "./fight-ui-handler";
@@ -11,10 +12,14 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { nature } from "./nature";
+import { weather } from "./weather";
+import { modifierType } from "./modifier-type";
+import { growth } from "./growth";
 
 
 export const zhCnConfig = {
     ability: ability,
+    abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
     fightUiHandler: fightUiHandler,
@@ -26,6 +31,8 @@ export const zhCnConfig = {
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
-
-    nature: nature
+    nature: nature,
+    growth: growth,
+    weather: weather,
+    modifierType: modifierType,
 }

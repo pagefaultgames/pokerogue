@@ -855,14 +855,20 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.RIVAL_6]: new TrainerConfig(++t).setName('Finn').setHasGenders('Ivy').setHasCharSprite().setTitle('Rival').setBoss().setStaticParty().setMoneyMultiplier(3).setEncounterBgm('final').setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_6)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON, Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ], TrainerSlot.TRAINER, true,
-      p => p.setBoss(true, 3))
-    )
+      p => {
+        p.setBoss(true, 3);
+        p.generateAndPopulateMoveset();
+      }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT, Species.KILOWATTREL ], TrainerSlot.TRAINER, true,
-      p => p.setBoss(true, 2)))
+      p => {
+        p.setBoss(true, 2);
+        p.generateAndPopulateMoveset();
+      }))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540)
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss();
+      p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
       p.shiny = true;
       p.variant = 1;
