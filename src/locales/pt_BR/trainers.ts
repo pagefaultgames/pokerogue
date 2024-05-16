@@ -103,6 +103,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "waitress": "Garçonete",
     "worker": "Operário",
     "worker_female": "Operária",
+    "workers": "Workers",
     "youngster": "Jovem",
 } as const;
 
