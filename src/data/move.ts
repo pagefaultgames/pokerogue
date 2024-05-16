@@ -241,6 +241,18 @@ export default class Move implements Localizable {
     return this;
   }
 
+  ignoresHiddenTag(user: Pokemon) {
+    switch (this.id) {
+      case Moves.TOXIC:
+        if(user.isOfType(Type.POISON)){
+          return true;
+        }
+    
+      default:
+        return false;
+    }
+  }
+
   soundBased(soundBased?: boolean): this {
     this.setFlag(MoveFlags.SOUND_BASED, soundBased);
     return this;
@@ -4207,8 +4219,6 @@ export class VariableTargetAttr extends MoveAttr {
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
-const poisonTypeCondition: MoveConditionFunc = (user, target, move) => user.isOfType(Type.POISON);
-
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
 
 const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.isMax();
@@ -4592,12 +4602,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.TOXIC, Type.POISON, 90, 10, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
-      .attr(ToxicAccuracyAttr)
-      .condition(poisonTypeCondition)
-      .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, true)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, true)
-      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true)
-      .attr(HitsTagAttr, BattlerTagType.HIDDEN, true),
+      .attr(ToxicAccuracyAttr),
     new AttackMove(Moves.CONFUSION, Type.PSYCHIC, MoveCategory.SPECIAL, 50, 100, 25, 10, 0, 1)
       .attr(ConfuseAttr),
     new AttackMove(Moves.PSYCHIC, Type.PSYCHIC, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 1)
