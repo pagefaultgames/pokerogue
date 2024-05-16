@@ -2000,13 +2000,15 @@ export default class BattleScene extends SceneBase {
 			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
 			currentPhase: (this.getCurrentPhase())?.constructor.name || "Unknown",
 			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
+			weather: this.arena.weather,
 			wave: this.currentBattle?.waveIndex || 0,
 			 party: this.party ? this.party.map(p => {
-				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, nature:p.nature, ivs: p.ivs, active: p.active, gender: p.gender, pokerus: p.pokerus,fieldPosition: p.fieldPosition};
+				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, active: p.active, gender: p.gender, pokerus: p.pokerus,fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant};
 			}) : [],
 			enemyParty: this.getEnemyParty() ? this.getEnemyParty().map(p => {
-				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, nature:p.nature, ivs: p.ivs, active: p.active, gender: p.gender, pokerus: p.pokerus, fieldPosition: p.fieldPosition};
+				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, ability: p.abilityIndex, active: p.active, gender: p.gender, pokerus: p.pokerus, fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant};
 			}) : [],
+
 		};
 		(window as any).gameInfo = gameInfo;
 	}
