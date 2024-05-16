@@ -288,7 +288,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.STUDENT]: [
+  [TrainerType.SCHOOL_KID]: [
     {
       encounter: [
         `…Heehee. I'm confident in my calculations and analysis.`,

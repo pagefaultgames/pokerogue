@@ -544,6 +544,33 @@ export class AquaRingTag extends BattlerTag {
   }
 }
 
+/** Tag used to allow moves that interact with {@link Moves.MINIMIZE} to function */
+export class MinimizeTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE, undefined);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isMax();
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    //If a pokemon dynamaxes they lose minimized status
+    if(pokemon.isMax()){
+      return false
+    }
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+  }
+}
+
 export class DrowsyTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, Moves.YAWN);
@@ -1358,6 +1385,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
+    case BattlerTagType.MINIMIZED:
+      return new MinimizeTag();
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
