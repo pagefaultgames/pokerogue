@@ -270,7 +270,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
        * if it had 2 normal abilities. This code checks if that is the case and uses the correct opponent Pokemon abilityIndex (2)
        * for calculations so it aligns with where the hidden ability is stored in the starter data's abilityAttr (4)
        */
-      const opponentPokemonOneNormalAbility = (pokemon.species.getAbilityCount() == 2);
+      const opponentPokemonOneNormalAbility = (pokemon.species.getAbilityCount() === 2);
       const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
       const opponentPokemonAbilityAttr = Math.pow(2, opponentPokemonAbilityIndex);
 
