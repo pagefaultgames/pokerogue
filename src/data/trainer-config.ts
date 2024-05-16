@@ -229,18 +229,16 @@ export class TrainerConfig {
     }
 
     setName(name: string): TrainerConfig {
-        if (name === 'Finn' || name === 'Ivy') {
+        if (name === 'Finn') {
             // Give the rival a localized name
             // First check if i18n is initialized
             if (!getIsInitialized()) {
                 initI18n();
             }
             if (name === 'Finn') {
-                this.name = i18next.t('trainerNames:rival');
+                name = i18next.t('trainerNames:rival');
             }
-            if (name === 'Ivy') {
-                this.name = i18next.t('trainerNames:rival_female');
-            }
+
 
         }
         this.name = name;
@@ -284,8 +282,18 @@ export class TrainerConfig {
     }
 
     setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
+        if (nameFemale === 'Ivy') {
+            // Give the rival a localized name
+            // First check if i18n is initialized
+            if (!getIsInitialized()) {
+                initI18n();
+            }
+                this.nameFemale = i18next.t('trainerNames:rival_female');
+            } else {
+            this.nameFemale = nameFemale;
+        }
+
         this.hasGenders = true;
-        this.nameFemale = nameFemale;
         if (femaleEncounterBgm)
             this.femaleEncounterBgm = typeof femaleEncounterBgm === 'number' ? TrainerType[femaleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : femaleEncounterBgm;
         return this;
@@ -721,7 +729,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.SMASHER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.SNOW_WORKER]: new TrainerConfig(++t).setName('Worker').setHasGenders().setHasDouble('Workers').setMoneyMultiplier(1.7).setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => s.isOfType(Type.ICE) || s.isOfType(Type.STEEL)),
   [TrainerType.STRIKER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
-  [TrainerType.SCHOOL_KID]: new TrainerConfig(++t).setMoneyMultiplier(0.75).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders(undefined, 'lass').setHasDouble('Students')
+  [TrainerType.SCHOOL_KID]: new TrainerConfig(++t).setMoneyMultiplier(0.75).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders(undefined, 'lass').setHasDouble('School Kids')
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.ODDISH, Species.EXEGGCUTE, Species.TEDDIURSA, Species.WURMPLE, Species.RALTS, Species.SHROOMISH, Species.FLETCHLING ],
       [TrainerPoolTier.UNCOMMON]: [ Species.VOLTORB, Species.WHISMUR, Species.MEDITITE, Species.MIME_JR, Species.NYMBLE ],
