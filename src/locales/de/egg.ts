@@ -17,5 +17,5 @@ export const egg: SimpleTranslationEntries = {
   "notEnoughVouchers": "Du hast nicht genug Ei-Gutscheine!",
   "tooManyEggs": "Du hast schon zu viele Eier!",
   "pull": "Pull",
-  "pulls": "Pulls",
+  "pulls": "Pulls"
 } as const;
