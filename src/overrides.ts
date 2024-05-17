@@ -11,6 +11,7 @@ import { Type } from './data/type';
 import { Stat } from './data/pokemon-stat';
 import { PokeballCounts } from './battle-scene';
 import { PokeballType } from './data/pokeball';
+import { modifierTypes } from './modifier/modifier-type';
 
 /**
  * Overrides for testing different in game situations
@@ -88,7 +89,7 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  * - BerryType is for BERRY
  */
 interface ModifierOverride {
-    name: string,
+    name: keyof typeof modifierTypes & string,
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType
 }
