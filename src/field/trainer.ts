@@ -10,6 +10,8 @@ import { PersistentModifier } from "../modifier/modifier";
 import { trainerNamePools } from "../data/trainer-names";
 import { ArenaTagType } from "#app/data/enums/arena-tag-type";
 import { ArenaTag, ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import {getIsInitialized, initI18n} from "#app/plugins/i18n";
+import i18next from "i18next";
 
 export enum TrainerVariant {
   DEFAULT,
@@ -97,9 +99,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle: boolean = false): string {
     let name = this.config.getTitle(trainerSlot, this.variant);
     let title = includeTitle && this.config.title ? this.config.title : null;
+
+
     if (this.name) {
       if (includeTitle)
-        title = name;
+
+      // Check if i18n is initialized
+        if (!getIsInitialized()) {
+          initI18n()
+        }
+        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, '_')}`);
       if (!trainerSlot) {
         name = this.name;
         if (this.partnerName)
@@ -107,6 +116,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       } else
         name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
     }
+
     return title ? `${title} ${name}` : name;
   }
 
@@ -368,16 +378,29 @@ export default class Trainer extends Phaser.GameObjects.Container {
     };
     const sprites = this.getSprites();
     const tintSprites = this.getTintSprites();
-    sprites[0].play(trainerAnimConfig);
-    tintSprites[0].play(trainerAnimConfig);
+
+    // Don't try to play an animation when there isn't one
+    if (sprites.length > 1) {
+      sprites[0].play(trainerAnimConfig);
+      tintSprites[0].play(trainerAnimConfig);
+    }
+    else
+      console.warn(`No animation found for '${this.getKey()}'. Is this intentional?`);
+
     if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       const partnerTrainerAnimConfig = {
         key: this.getKey(true),
         repeat: 0,
         startFrame: 0
       };
-      sprites[1].play(partnerTrainerAnimConfig);
-      tintSprites[1].play(partnerTrainerAnimConfig);
+
+      // Don't try to play an animation when there isn't one
+      if (sprites.length > 1) {
+        sprites[1].play(partnerTrainerAnimConfig);
+        tintSprites[1].play(partnerTrainerAnimConfig);
+      }
+      else
+        console.warn(`No animation found for '${this.getKey()}'. Is this intentional?`);
     }
   }
 
