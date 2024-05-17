@@ -27,7 +27,7 @@ import { GameMode, GameModes, gameModes } from './game-mode';
 import FieldSpritePipeline from './pipelines/field-sprite';
 import SpritePipeline from './pipelines/sprite';
 import PartyExpBar from './ui/party-exp-bar';
-import { TrainerSlot, trainerConfigs } from './data/trainer-config';
+import { TrainerConfig, TrainerSlot, trainerConfigs } from './data/trainer-config';
 import Trainer, { TrainerVariant } from './field/trainer';
 import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
@@ -62,6 +62,7 @@ import { Localizable } from './plugins/i18n';
 import * as Overrides from './overrides';
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { TrainerType } from './data/enums/trainer-type';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -78,6 +79,15 @@ interface StarterColors {
 
 export interface PokeballCounts {
 	[pb: string]: integer;
+}
+
+export enum EvilTeam {
+	TEAM_ROCKET,
+	TEAM_MAGMA,
+	TEAM_AQUA,
+	TEAM_GALACTIC,
+	TEAM_PLASMA,
+	TEAM_FLARE
 }
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
@@ -148,6 +158,7 @@ export default class BattleScene extends SceneBase {
 	public arenaNextEnemy: ArenaBase;
 	public arena: Arena;
 	public gameMode: GameMode;
+	public evilTeamThisRun: EvilTeam;
 	public score: integer;
 	public lockModifierTiers: boolean;
 	public trainer: Phaser.GameObjects.Sprite;
@@ -747,8 +758,16 @@ export default class BattleScene extends SceneBase {
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
 		if (Overrides.POKEBALL_OVERRIDE.active) {
-            this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
-          }
+			this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+		}
+		let possibleEvilTeams = [
+			EvilTeam.TEAM_ROCKET, 
+			EvilTeam.TEAM_AQUA, 
+			EvilTeam.TEAM_MAGMA, 
+			EvilTeam.TEAM_GALACTIC, 
+			EvilTeam.TEAM_PLASMA, 
+			EvilTeam.TEAM_FLARE];
+		this.evilTeamThisRun = possibleEvilTeams[Utils.randInt(6)];
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
@@ -824,6 +843,55 @@ export default class BattleScene extends SceneBase {
 		}
 	}
 
+	/**
+	 * Helper function to decide whether or not to replace a trainer with an evil team grunt battle
+	 * This probability should scale up until the evil team boss is defeated
+	 * @param waveIndex the current floor the player is on
+	 * @returns a boolean that determines whether the current trainer is replaced with a grunt
+	 */
+	evilTeamOverride(waveIndex: integer): boolean {
+		// return true // debug
+
+		// Evil team should never override a boss
+		if (waveIndex % 10 === 0) {
+			return false;
+		}
+		// Evil team no longer shows up after beating the boss
+		if (waveIndex > 105) {
+			return false;
+		}
+		// Evil team always spawns leading up to the boss
+		if (waveIndex > 99 && waveIndex < 105) {
+			return true;
+		}
+		// Evil team spawns scale up
+		if (waveIndex < 100) {
+			return Utils.randInt(10) < Math.floor(waveIndex / 10);
+		}
+	}
+
+	/**
+	 * Helper function to get the evil team grunt TrainerType
+	 * @param evilTeam the enum generated representing the evil team at the start of a classic run
+	 * @returns The corresponding TrainerType
+	 */
+	getEvilTeamGrunt(evilTeam: EvilTeam): TrainerType {
+		switch(evilTeam) {
+			case EvilTeam.TEAM_ROCKET:
+				return TrainerType.ROCKET_GRUNT;
+			case EvilTeam.TEAM_AQUA:
+				return TrainerType.AQUA_GRUNT;
+			case EvilTeam.TEAM_MAGMA:
+				return TrainerType.MAGMA_GRUNT;
+			case EvilTeam.TEAM_GALACTIC:
+				return TrainerType.GALACTIC_GRUNT;
+			case EvilTeam.TEAM_PLASMA:
+				return TrainerType.PLASMA_GRUNT;
+			default:
+				return TrainerType.FLARE_GRUNT;
+		}
+	}
+
 	newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
 		let newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
 		let newDouble: boolean;
@@ -852,7 +920,10 @@ export default class BattleScene extends SceneBase {
 				newBattleType = battleType;
 
 			if (newBattleType === BattleType.TRAINER) {
-				const trainerType = this.arena.randomTrainerType(newWaveIndex);
+				let trainerType = this.arena.randomTrainerType(newWaveIndex);
+				if (this.evilTeamOverride(waveIndex)) {
+					trainerType = this.getEvilTeamGrunt(this.evilTeamThisRun);
+				}
 				let doubleTrainer = false;
 				if (trainerConfigs[trainerType].doubleOnly)
 					doubleTrainer = true;

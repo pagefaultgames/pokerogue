@@ -418,6 +418,66 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.ROCKET_GRUNT]: [
+    {
+      encounter: [
+        `We will never let you into Lab(N)!`
+      ],
+      victory: [
+        `Maybe it's Lab(P)?`
+      ]
+    }
+  ],
+  [TrainerType.MAGMA_GRUNT]: [
+    {
+      encounter: [
+        `There's too much water!`
+      ],
+      victory: [
+        `7.8/10`
+      ]
+    }
+  ],
+  [TrainerType.AQUA_GRUNT]: [
+    {
+      encounter: [
+        `There's not enough water!`
+      ],
+      victory: [
+        `7.8/10`
+      ]
+    }
+  ],
+  [TrainerType.GALACTIC_GRUNT]: [
+    {
+      encounter: [
+        `Don't mess with Team Galactic!`
+      ],
+      victory: [
+        `Shut down...`
+      ]
+    }
+  ],
+  [TrainerType.PLASMA_GRUNT]: [
+    {
+      encounter: [
+        `Here I come!`
+      ],
+      victory: [
+        `Plasmaaaaaaaaa!`
+      ]
+    }
+  ],
+  [TrainerType.FLARE_GRUNT]: [
+    {
+      encounter: [
+        `Fashion is most important to us!`
+      ],
+      victory: [
+        `The future doesn't look bright for me!`
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       `My expertise on Rock-type Pokémon will take you down! Come on!`,

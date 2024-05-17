@@ -398,6 +398,37 @@ export class TrainerConfig {
         return this;
     }
 
+    initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
+      if (!getIsInitialized()) {
+        initI18n();
+      }
+      
+      signatureSpecies.forEach((speciesPool, s) => {
+        if (!Array.isArray(speciesPool)) {
+          speciesPool = [speciesPool];
+        }
+        this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      });
+      if (specialtyTypes.length) {
+        this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
+        this.setSpecialtyTypes(...specialtyTypes);
+      }
+      const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
+      this.name = i18next.t(`trainerNames:${nameForCall}`);
+      this.setTitle(title);
+      this.setMoneyMultiplier(2.5);
+      this.setBoss();
+      this.setStaticParty();
+      this.setBattleBgm('battle_unova_gym');
+      this.setVictoryBgm('victory_gym');
+      // this.setGenModifiersFunc(party => {
+      //     const waveIndex = party[0].scene.currentBattle.waveIndex;
+          // return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null);
+      // });
+
+      return this;
+    }
+
     initForGymLeader(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
         if (!getIsInitialized()) {
             initI18n();
