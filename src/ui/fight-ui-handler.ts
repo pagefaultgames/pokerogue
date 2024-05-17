@@ -234,7 +234,9 @@ export default class FightUiHandler extends UiHandler {
     if (stab) moveText.setFontStyle('bold');
 
     const moveColors = moveEffectivenessList.sort((a, b) => b - a).map((effectiveness) => this.getMoveColor(effectiveness));
-    moveText.setColor(moveColors[0]);
+    const color = moveColors[0];
+
+    if (color !== undefined) moveText.setColor(color);
   }
 
   private getMoveEffectivenessText(moveEffectiveness?: TypeDamageMultiplier): string {
@@ -242,7 +244,7 @@ export default class FightUiHandler extends UiHandler {
     return ` ${moveEffectiveness}x`;
   }
 
-  private getMoveColor(moveEffectiveness?: TypeDamageMultiplier): string {
+  private getMoveColor(moveEffectiveness?: TypeDamageMultiplier): string | undefined {
     switch (moveEffectiveness) {
       case 0:
         return 'black';
@@ -260,7 +262,7 @@ export default class FightUiHandler extends UiHandler {
         return 'darkgreen';
     }
 
-    return 'white';
+    return undefined;
   }
 
   clear() {

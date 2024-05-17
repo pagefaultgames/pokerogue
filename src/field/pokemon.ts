@@ -1440,7 +1440,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 'lightblue';
     }
 
-    return 'white';
+    return undefined;
   }
 
   toggleStats(visible: boolean): void {
