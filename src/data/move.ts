@@ -2129,7 +2129,21 @@ export class WeightPowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute used for Electro Ball move.
+ * @extends VariablePowerAttr
+ * @see {@linkcode apply}
+ **/
 export class ElectroBallPowerAttr extends VariablePowerAttr {
+  /**
+   * Move that deals more damage the faster {@linkcode BattleStat.SPD}
+   * the user is compared to the target.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
 
@@ -2148,7 +2162,22 @@ export class ElectroBallPowerAttr extends VariablePowerAttr {
   }
 }
 
+
+/**
+ * Attribute used for Gyro Ball move.
+ * @extends VariablePowerAttr
+ * @see {@linkcode apply}
+ **/
 export class GyroBallPowerAttr extends VariablePowerAttr {
+  /**
+   * Move that deals more damage the slower {@linkcode BattleStat.SPD}
+   * the user is compared to the target.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
     const userSpeed = user.getBattleStat(Stat.SPD);
