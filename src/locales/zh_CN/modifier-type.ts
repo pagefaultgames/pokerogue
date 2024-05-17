@@ -52,7 +52,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "接下来的{{battleCount}}场战斗是双打的概率翻倍",
     },
     "TempBattleStatBoosterModifierType": {
-      description: "为所有成员宝可梦提升一级{{tempBattleStatName}}，持续5场战斗",
+      description: "为所有成员宝可梦提升一级{{tempBattleStatName}}，\n持续5场战斗",
     },
     "AttackTypeBoosterModifierType": {
       description: "一只宝可梦的{{moveType}}系招式威力提升20%",

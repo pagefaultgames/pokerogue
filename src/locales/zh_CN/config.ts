@@ -20,7 +20,7 @@ import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
-
+import { battleStat } from "./battle-stat";
 export const zhCnConfig = {
     ability: ability,
     abilityTriggers: abilityTriggers,
@@ -46,4 +46,5 @@ export const zhCnConfig = {
     weather: weather,
     battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
+    battleStat: battleStat,
 }

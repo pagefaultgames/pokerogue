@@ -422,7 +422,7 @@ export class TempBattleStatBoosterModifierType extends ModifierType implements G
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t(`modifierType:ModifierType.TempBattleStatBoosterModifierType.description`, { tempBattleStatName: getTempBattleStatName(this.tempBattleStat) });
+    return i18next.t(`modifierType:ModifierType.TempBattleStatBoosterModifierType.description`, { tempBattleStatName: i18next.t(`battleStat:${getTempBattleStatName(this.tempBattleStat).replace(/\./g, '').replace(/[ ]/g, '_')}`) });
   }
 
   getPregenArgs(): any[] {
