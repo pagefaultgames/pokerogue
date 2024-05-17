@@ -206,6 +206,7 @@ export class Arena {
       case Biome.TALL_GRASS:
         return Type.GRASS;
       case Biome.FOREST:
+      case Biome.JUNGLE:
         return Type.BUG;
       case Biome.SLUM:
       case Biome.SWAMP:
@@ -237,8 +238,10 @@ export class Arena {
       case Biome.TEMPLE:
         return Type.GHOST;
       case Biome.DOJO:
+      case Biome.CONSTRUCTION_SITE:
         return Type.FIGHTING;
       case Biome.FACTORY:
+      case Biome.LABORATORY:
         return Type.STEEL;
       case Biome.RUINS:
       case Biome.SPACE:
@@ -248,6 +251,8 @@ export class Arena {
         return Type.DRAGON;
       case Biome.ABYSS:
         return Type.DARK;
+      default:
+        return Type.UNKNOWN;
     }
   }
 

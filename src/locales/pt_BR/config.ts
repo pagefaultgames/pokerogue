@@ -5,13 +5,16 @@ import { fightUiHandler } from "./fight-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
+import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
-import { pokemonStat } from "./pokemon-stat";
+import { pokemonInfo } from "./pokemon-info";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
+import { weather } from "./weather";
+import { berry } from "./berry";
 
 
 export const ptBrConfig = {
@@ -23,10 +26,13 @@ export const ptBrConfig = {
     menu: menu,
     move: move,
     pokeball: pokeball,
-    pokemonStat: pokemonStat,
+    pokemonInfo: pokemonInfo,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
     tutorial: tutorial,
     nature: nature,
-    growth: growth
+    growth: growth,
+    weather: weather,
+    modifierType: modifierType,
+    berry: berry,
 }
