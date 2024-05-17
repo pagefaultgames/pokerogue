@@ -351,8 +351,8 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         }
 
         // Set the cursor and scroll cursor to their initial positions.
-        this.setCursor(0);
-        this.setScrollCursor(0);
+        this.setCursor(this.cursor);
+        this.setScrollCursor(this.scrollCursor);
     }
 
     /**
