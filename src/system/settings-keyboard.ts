@@ -170,7 +170,6 @@ export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard,
                     const cancelHandler = (success: boolean = false) : boolean => {
                         scene.ui.revertMode();
                         (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
-                        (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
                         return success;
                     }
                     scene.ui.setOverlayMode(Mode.KEYBOARD_BINDING, {
