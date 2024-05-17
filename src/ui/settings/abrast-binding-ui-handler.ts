@@ -241,11 +241,13 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     onInputDown(buttonIcon: string, assignedButtonIcon: string, type: string): void {
         this.newButtonIcon.setTexture(type);
         this.newButtonIcon.setFrame(buttonIcon);
-        this.targetButtonIcon.setTexture(type);
-        this.targetButtonIcon.setFrame(assignedButtonIcon);
+        if (assignedButtonIcon) {
+            this.targetButtonIcon.setTexture(type);
+            this.targetButtonIcon.setFrame(assignedButtonIcon);
+            this.targetButtonIcon.setVisible(true);
+            this.swapText.setVisible(true);
+        }
         this.newButtonIcon.setVisible(true);
-        this.targetButtonIcon.setVisible(true);
-        this.swapText.setVisible(true);
         this.setCursor(0);
         this.actionsContainer.setVisible(true);
     }

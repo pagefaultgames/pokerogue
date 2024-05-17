@@ -103,30 +103,37 @@ describe('Test Rebinding', () => {
     it('Check prevent rebind indirectly the d-pad buttons', () => {
         inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("Q")
         inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Right").iconDisplayedIs("D")
-        inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("Q").weWantThisBindInstead("LEFT").weCantConfirm().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("Q").weWantThisBindInstead("LEFT").weCantAssignThisKey().butLetsForceIt();
         inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Left");
         inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
         inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
     });
 
+    it('Swap alt with a d-pad main', () => {
+        inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
+        inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").weWantThisBindInstead("Z").weCantOverrideThisBind().butLetsForceIt();
+        inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
+        inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    });
+
     it('Check if double assign d-pad is blocked', () => {
-        inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
 
-        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("RIGHT").weCantConfirm().butLetsForceIt();
-
-        inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
-        inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
-        inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
-
-        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("UP").weCantConfirm().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("RIGHT").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
 
         inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
 
-        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("RIGHT").weCantConfirm().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("UP").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
+
+        inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
+        inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
+        inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
+
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("RIGHT").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
 
         inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
@@ -158,18 +165,18 @@ describe('Test Rebinding', () => {
     });
 
     it('Check if triple swap d-pad is prevented', () => {
-        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("RIGHT").weCantConfirm().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("RIGHT").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
 
         inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
 
-        inTheSettingMenu.whenCursorIsOnSetting("Button_Right").iconDisplayedIs("KEY_ARROW_RIGHT").weWantThisBindInstead("UP").weCantConfirm().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Right").iconDisplayedIs("KEY_ARROW_RIGHT").weWantThisBindInstead("UP").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
         inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
 
-        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("LEFT").weCantConfirm().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").weWantThisBindInstead("LEFT").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
         inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
@@ -327,7 +334,7 @@ describe('Test Rebinding', () => {
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
         inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
-        inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").weWantThisBindInstead("RIGHT").weCantConfirm().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").weWantThisBindInstead("RIGHT").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
         inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");

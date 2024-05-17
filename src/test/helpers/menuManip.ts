@@ -8,7 +8,7 @@ import {
     getKeyWithKeycode,
     getKeyWithSettingName,
     assign,
-    getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey
+    getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey, canIOverrideThisSetting
 } from "#app/configs/configHandler";
 
 export class MenuManip {
@@ -112,9 +112,14 @@ export class MenuManip {
         assign(this.config, this.settingName, this.keycode);
     }
 
-    weCantConfirm() {
+    weCantAssignThisKey() {
         const key = getKeyWithKeycode(this.config, this.keycode);
         expect(canIAssignThisKey(this.config, key)).toEqual(false);
+        return this;
+    }
+
+    weCantOverrideThisBind() {
+        expect(canIOverrideThisSetting(this.config, this.settingName)).toEqual(false);
         return this;
     }
 

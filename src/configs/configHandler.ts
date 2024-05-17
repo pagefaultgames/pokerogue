@@ -120,7 +120,7 @@ export function assign(config, settingNameTarget, keycode): boolean {
     // first, we need to check if this keycode is already used on another settingName
     const previousSettingName = getSettingNameWithKeycode(config, keycode);
     const key = getKeyWithSettingName(config, previousSettingName);
-    if (!canIAssignThisKey(config, key)) return false;
+    if (!canIAssignThisKey(config, key) || ! canIOverrideThisSetting(config, settingNameTarget)) return false;
     // if it was already bound, we delete the bind
     if (previousSettingName) {
         const previousKey = getKeyWithSettingName(config, previousSettingName);
@@ -165,6 +165,12 @@ export function deleteBind(config, settingName) {
 export function canIAssignThisKey(config, key) {
     const settingName = getSettingNameWithKey(config, key);
     if (settingName === -1) return true;
+    if (config.blacklist?.includes(key) || isTheLatestBind(config, settingName)) return false;
+    return true;
+}
+
+export function canIOverrideThisSetting(config, settingName) {
+    const key = getKeyWithSettingName(config, settingName);
     if (config.blacklist?.includes(key) || isTheLatestBind(config, settingName)) return false;
     return true;
 }

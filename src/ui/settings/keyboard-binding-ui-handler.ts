@@ -27,7 +27,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         if (!buttonIcon) return;
         this.buttonPressed = key;
         const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
-        this.onInputDown(buttonIcon, assignedButtonIcon, 'keyboard');
+        this.onInputDown(buttonIcon, null, 'keyboard');
     }
 
     swapAction(): boolean {
