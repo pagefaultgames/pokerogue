@@ -972,11 +972,19 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     this.message = message;
     this.abilityCondition = abilityCondition;
   }
+  
+  //The same as MoveEffectAttr.canApply, except it doesn't check for the target's HP. 
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    const isTargetValid = 
+      (this.selfTarget && user.hp && !user.getTag(BattlerTagType.FRENZY)) ||
+      (!this.selfTarget && (!target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT)))
+    return !!isTargetValid;
+  }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args))
+    if (!this.canApply(user, target, move, args)) {
       return false;
-
+    }
     this.addPartyCurePhase(user);
   }
 
