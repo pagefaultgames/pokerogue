@@ -19,7 +19,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
-
+import { berry } from "./berry";
 
 export const itConfig = {
     ability: ability,
@@ -45,4 +45,5 @@ export const itConfig = {
     tutorial: tutorial,
     weather: weather,
     battleMessageUiHandler: battleMessageUiHandler,
+    berry: berry,
 }

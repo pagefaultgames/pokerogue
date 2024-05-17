@@ -46,6 +46,15 @@ export interface ModifierTypeTranslationEntries {
   TeraType: SimpleTranslationEntries,
 }
 
+export interface BerryTranslationEntry {
+  name: string,
+  effect: string
+}
+
+export interface BerryTranslationEntries {
+  [key: string]: BerryTranslationEntry
+}
+
 export interface Localizable {
   localize(): void;
 }
@@ -140,6 +149,7 @@ declare module 'i18next' {
       weather: SimpleTranslationEntries;
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
+      berry: BerryTranslationEntries;
     };
   }
 }
