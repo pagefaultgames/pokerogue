@@ -2,47 +2,47 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
-    name: "Sitrus Berry",
-    effect: "Restores 25% HP if HP is below 50%",
+    name: "Baie Sitrus",
+    effect: "Restaure 25% des PV s’ils sont inférieurs à 50%",
   },
   "LUM": {
-    name: "Lum Berry",
-    effect: "Cures any non-volatile status condition and confusion",
+    name: "Baie Prine",
+    effect: "Soigne tout problème de statut permanant et la confusion",
   },
   "ENIGMA": {
-    name: "Enigma Berry",
-    effect: "Restores 25% HP if hit by a super effective move",
+    name: "Baie Enigma",
+    effect: "Restaure 25% des PV si touché par une capacité super efficace",
   },
   "LIECHI": {
-    name: "Liechi Berry",
-    effect: "Raises Attack if HP is below 25%",
+    name: "Baie Lichii",
+    effect: "Augmente l’Attaque si les PV sont inférieurs à 25%",
   },
   "GANLON": {
-    name: "Ganlon Berry",
-    effect: "Raises Defense if HP is below 25%",
+    name: "Baie Lingan",
+    effect: "Augmente la Défense si les PV sont inférieurs à 25%",
   },
   "PETAYA": {
-    name: "Petaya Berry",
-    effect: "Raises Sp. Atk if HP is below 25%",
+    name: "Baie Pitaye",
+    effect: "Augmente l’Atq. Spé. si les PV sont inférieurs à 25%",
   },
   "APICOT": {
-    name: "Apicot Berry",
-    effect: "Raises Sp. Def if HP is below 25%",
+    name: "Baie Abriko",
+    effect: "Augmente la Déf. Spé. si les PV sont inférieurs à 25%",
   },
   "SALAC": {
-    name: "Salac Berry",
-    effect: "Raises Speed if HP is below 25%",
+    name: "Baie Sailak",
+    effect: "Augmente la Vitesse si les PV sont inférieurs à 25%",
   },
   "LANSAT": {
-    name: "Lansat Berry",
-    effect: "Raises critical hit ratio if HP is below 25%",
+    name: "Baie Lansat",
+    effect: "Augmente le taux de coups critiques si les PV sont inférieurs à 25%",
   },
   "STARF": {
-    name: "Starf Berry",
-    effect: "Sharply raises a random stat if HP is below 25%",
+    name: "Baie Frista",
+    effect: "Augmente énormément une statistique au hasard si les PV sont inférieurs à 25%",
   },
   "LEPPA": {
-    name: "Leppa Berry",
-    effect: "Restores 10 PP to a move if its PP reaches 0",
+    name: "Baie Mepo",
+    effect: "Restaure 10 PP à une capacité dès que ses PP tombent à 0",
   },
 } as const;

@@ -15,7 +15,6 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
-import { Species } from "./enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -120,9 +119,8 @@ export class TrappedTag extends BattlerTag {
   canAdd(pokemon: Pokemon): boolean {
     const isGhost = pokemon.isOfType(Type.GHOST);
     const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
-    const isAllowedGhostType = pokemon.species.speciesId === Species.PHANTUMP || pokemon.species.speciesId === Species.TREVENANT;
 
-    return !isTrapped && (!isGhost || isAllowedGhostType);
+    return !isTrapped && !isGhost;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -503,9 +501,24 @@ export class HelpingHandTag extends BattlerTag {
   }
 }
 
+/**
+ * Applies the Ingrain tag to a pokemon
+ * @extends TrappedTag
+ */
 export class IngrainTag extends TrappedTag {
   constructor(sourceId: integer) {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
+  }
+
+  /**
+   * Check if the Ingrain tag can be added to the pokemon
+   * @param pokemon {@linkcode Pokemon} The pokemon to check if the tag can be added to
+   * @returns boolean True if the tag can be added, false otherwise
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+
+    return !isTrapped;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {

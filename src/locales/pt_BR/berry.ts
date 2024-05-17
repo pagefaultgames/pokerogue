@@ -2,47 +2,47 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
-    name: "Sitrus Berry",
-    effect: "Restores 25% HP if HP is below 50%",
+    name: "Fruta Sitrus",
+    effect: "Restaura 25% dos PS se os PS estiverem abaixo de 50%",
   },
   "LUM": {
-    name: "Lum Berry",
-    effect: "Cures any non-volatile status condition and confusion",
+    name: "Fruta Lum",
+    effect: "Cura qualquer mudança de estado ou confusão",
   },
   "ENIGMA": {
-    name: "Enigma Berry",
-    effect: "Restores 25% HP if hit by a super effective move",
+    name: "Fruta Enigma",
+    effect: "Restaura 25% dos PS se atingido por um golpe supereficaz",
   },
   "LIECHI": {
-    name: "Liechi Berry",
-    effect: "Raises Attack if HP is below 25%",
+    name: "Fruta Liechi",
+    effect: "Aumenta o Ataque se os PS estiverem abaixo de 25%",
   },
   "GANLON": {
-    name: "Ganlon Berry",
-    effect: "Raises Defense if HP is below 25%",
+    name: "Fruta Ganlon",
+    effect: "Aumenta a Defesa se os PS estiverem abaixo de 25%",
   },
   "PETAYA": {
-    name: "Petaya Berry",
-    effect: "Raises Sp. Atk if HP is below 25%",
+    name: "Fruta Petaya",
+    effect: "Aumenta o Ataque Especial se os PS estiverem abaixo de 25%",
   },
   "APICOT": {
-    name: "Apicot Berry",
-    effect: "Raises Sp. Def if HP is below 25%",
+    name: "Fruta Apicot",
+    effect: "Aumenta a Defesa Especial se os PS estiverem abaixo de 25%",
   },
   "SALAC": {
-    name: "Salac Berry",
-    effect: "Raises Speed if HP is below 25%",
+    name: "Fruta Salac",
+    effect: "Aumenta a Velocidade se os PS estiverem abaixo de 25%",
   },
   "LANSAT": {
-    name: "Lansat Berry",
-    effect: "Raises critical hit ratio if HP is below 25%",
+    name: "Fruta Lansat",
+    effect: "Aumenta a chance de acerto crítico se os PS estiverem abaixo de 25%",
   },
   "STARF": {
-    name: "Starf Berry",
-    effect: "Sharply raises a random stat if HP is below 25%",
+    name: "Fruta Starf",
+    effect: "Aumenta drasticamente um atributo aleatório se os PS estiverem abaixo de 25%",
   },
   "LEPPA": {
-    name: "Leppa Berry",
-    effect: "Restores 10 PP to a move if its PP reaches 0",
+    name: "Fruta Leppa",
+    effect: "Restaura 10 PP de um movimento se seus PP acabarem",
   },
 } as const;
