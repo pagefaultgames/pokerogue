@@ -2690,7 +2690,7 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   }
 }
 
-export class AuraAbAttr extends AbAttr { }
+export abstract class AuraAbAttr extends AbAttr { }
 
 export class FriendGuardAbAttr extends AuraAbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
