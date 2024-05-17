@@ -64,7 +64,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Fait monter toute l’équipe d’1 niveau",
     },
     "PokemonBaseStatBoosterModifierType": {
-	  description: "{{statName}} de base de base de son porteur augmentée de 10%. Plus les IV sont hauts, plus il peut en porter.",
+	  description: "{{statName}} de base de son porteur augmentée de 10%. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restaure tous les PV de toute l'équipe",
@@ -214,7 +214,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
     "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
 
-	"IV_SCANNER": { name: "Scanner d’IV", description: "Scanne les IV d’un Pokémon sauvage. 2 IV sont révélées par Scanner. Les meilleurs sont montrés en 1er." },
+	"IV_SCANNER": { name: "Scanner d’IV", description: "Scanne les IV d’un Pokémon sauvage. 2 IV sont révélés par Scanner. Les meilleurs sont montrés en 1er." },
 
     "DNA_SPLICERS": { name: "Pointeau ADN" },
 
@@ -236,7 +236,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Attaque +",
-    "x_defense": "Defense +",
+    "x_defense": "Défense +",
     "x_sp_atk": "Atq. Spé. +",
     "x_sp_def": "Déf. Spé. +",
     "x_speed": "Vitesse +",
@@ -375,7 +375,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RUSTED_SWORD": "Épée Rouillée",
     "RUSTED_SHIELD": "Bouclier Rouillé",
     "ICY_REINS_OF_UNITY": "Rênes de l’Unité du Froid",
-    "SHADOW_REINS_OF_UNITY": "Rênes de l’Unité d’Effoi",
+    "SHADOW_REINS_OF_UNITY": "Rênes de l’Unité d’Effroi",
     "WELLSPRING_MASK": "Masque du Puits",
     "HEARTHFLAME_MASK": "Masque du Fourneau",
     "CORNERSTONE_MASK": "Masque de la Pierre",
