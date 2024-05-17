@@ -96,24 +96,17 @@ export function getIconForLatestInput(configs, source, devices, settingName) {
     let config;
     if (source === 'gamepad') config = configs[devices[Device.GAMEPAD]];
     else config = configs[devices[Device.KEYBOARD]];
-    return getIconWithSettingName(config, settingName);
-}
-
-/**
- * Retrieves the setting name associated with the specified button.
- *
- * @param config - The configuration object containing settings.
- * @param button - The button to search for.
- * @param alt - A flag indicating if the search is for an alternate setting.
- * @returns The setting name associated with the specified button.
- */
-export function getSettingNameWithButton(config, button, alt = false) {
-    return Object.keys(config.settings).find(k => {
-        const a = !alt && !k.includes("ALT_");
-        const b = alt && k.includes("ALT_");
-        const c = config.settings[k] === button;
-        return (a || b) && c;
-    });
+    const icon = getIconWithSettingName(config, settingName);
+    if (!icon) {
+        const isAlt = settingName.includes("ALT_");
+        let altSettingName;
+        if (isAlt)
+            altSettingName = settingName.split("ALT_").splice(1)[0];
+        else
+            altSettingName = `ALT_${settingName}`;
+        return getIconWithSettingName(config, altSettingName);
+    }
+    return icon;
 }
 
 export function assign(config, settingNameTarget, keycode): boolean {
