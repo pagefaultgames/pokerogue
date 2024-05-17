@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
-import { Type } from "../data/type";
+import { Type, TypeDamageMultiplier } from "../data/type";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -9,6 +9,7 @@ import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from '../plugins/i18n';
 import {Button} from "../enums/buttons";
+import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -189,13 +190,77 @@ export default class FightUiHandler extends UiHandler {
   }
 
   displayMoves() {
-    const moveset = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getMoveset();
-    for (let m = 0; m < 4; m++) {
-      const moveText = addTextObject(this.scene, m % 2 === 0 ? 0 : 100, m < 2 ? 0 : 16, '-', TextStyle.WINDOW);
-      if (m < moveset.length)
-        moveText.setText(moveset[m].getName());
+    const pokemon = (this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    const moveset = pokemon.getMoveset();
+
+    for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
+      const moveText = addTextObject(this.scene, moveIndex % 2 === 0 ? 0 : 100, moveIndex < 2 ? 0 : 16, '-', TextStyle.WINDOW);
+
+      if (moveIndex < moveset.length) {
+        const pokemonMove = moveset[moveIndex];
+        moveText.setText(pokemonMove.getName());
+
+        if (this.scene.typeHints > 0) {
+          this.setTypeHints(pokemon, pokemonMove, moveText);
+        }
+      }
+
       this.movesContainer.add(moveText);
     }
+  }
+
+  private setTypeHints(pokemon: Pokemon, pokemonMove: PokemonMove, moveText: Phaser.GameObjects.Text) {
+    const opponents = pokemon.getOpponents();
+    if (opponents.length < 1) return;
+
+    const move = pokemonMove.getMove();
+    const moveEffectivenessList = opponents.map((opponent) => opponent.getMoveEffectiveness(pokemon, pokemonMove));
+
+    let text = moveText.text;
+    const effectivenessTextList = moveEffectivenessList.map((effectiveness) => this.getMoveEffectivenessText(effectiveness));
+
+    if (effectivenessTextList.every((text) => text === effectivenessTextList[0])) {
+      if (moveEffectivenessList[0] !== 1) {
+        text += effectivenessTextList[0];
+      }
+    } else {
+      moveEffectivenessList.forEach((effectiveness) => {
+        text += this.getMoveEffectivenessText(effectiveness);
+      });
+    }
+    moveText.setText(text);
+
+    const stab = pokemon.isStabMove(move);
+    if (stab) moveText.setFontStyle('bold');
+
+    const moveColors = moveEffectivenessList.sort((a, b) => b - a).map((effectiveness) => this.getMoveColor(effectiveness));
+    moveText.setColor(moveColors[0]);
+  }
+
+  private getMoveEffectivenessText(moveEffectiveness?: TypeDamageMultiplier): string {
+    if (moveEffectiveness === undefined) return '';
+    return ` ${moveEffectiveness}x`;
+  }
+
+  private getMoveColor(moveEffectiveness?: TypeDamageMultiplier): string {
+    switch (moveEffectiveness) {
+      case 0:
+        return 'black';
+      case 0.125:
+        return 'darkred';
+      case 0.25:
+        return 'red';
+      case 0.5:
+        return 'crimson';
+      case 2:
+        return 'lightgreen';
+      case 4:
+        return 'green';
+      case 8:
+        return 'darkgreen';
+    }
+
+    return 'white';
   }
 
   clear() {

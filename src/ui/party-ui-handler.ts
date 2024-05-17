@@ -870,6 +870,9 @@ class PartySlot extends Phaser.GameObjects.Container {
     slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 2 : 10);
     slotName.setOrigin(0, 0);
 
+    const color = this.pokemon.getNameColor();
+    if (color !== undefined) slotName.setColor(color);
+
     const slotLevelLabel = this.scene.add.image(0, 0, 'party_slot_overlay_lv');
     slotLevelLabel.setPositionRelative(slotName, 8, 12);
     slotLevelLabel.setOrigin(0, 0);

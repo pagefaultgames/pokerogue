@@ -943,6 +943,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isOfType(Type.FLYING, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
+  isStabMove(move: Move): boolean {
+    if (move.category === MoveCategory.STATUS) return false;
+
+    const type = move.type;
+    const types = this.getTypes();
+    const teraType = this.getTeraType();
+    const matchesSourceType = types[0] === type || (types.length > 1 && types[1] === type);
+
+    return (teraType === Type.UNKNOWN && matchesSourceType) || (teraType !== Type.UNKNOWN && teraType === type);
+  }
+
+  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
+    if (move.getMove().category === MoveCategory.STATUS) return undefined;
+    return this.getAttackMoveEffectiveness(source, move);
+  }
+
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
     const typeless = !!move.getMove().getAttrs(TypelessAttr).length;
     const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.getMove().type, source));
@@ -1096,11 +1112,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
-      if (!this.hasTrainer()) {
-        if (new Date() < new Date('2024-05-21'))
-          shinyThreshold.value *= 3;
+      if (!this.hasTrainer())
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-      }
     } else
       shinyThreshold.value = thresholdOverride;
 
@@ -1376,6 +1389,57 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
+  updateNameColor() {
+    const nameColor = this.getNameColor();
+    if (nameColor === undefined) return;
+
+    this.battleInfo.updateNameColor(nameColor);
+  }
+
+  getNameColor(): string | undefined {
+    const typeHints = this.scene.typeHints;
+    if (typeHints === 0) return undefined;
+    const opponents = this.getOpponents();
+
+    const opponentMoveEffectivenessList = opponents.map((opponent) => {
+      return opponent.getMoveset().map((move) => {
+        return this.getMoveEffectiveness(opponent, move);
+      });
+    }).flat().filter((effectiveness) => effectiveness !== undefined);
+
+    const moveEffectivenessList = opponents.map((opponent) => {
+      return this.getMoveset().map((move) => {
+        return opponent.getMoveEffectiveness(this, move);
+      });
+    }).flat().filter((effectiveness) => effectiveness !== undefined);
+
+    const fullHints = typeHints === 2;
+
+    if (fullHints && opponentMoveEffectivenessList.some((effectiveness) => effectiveness === 8)) {
+      return 'darkred';
+    } else if (fullHints && opponentMoveEffectivenessList.some((effectiveness) => effectiveness === 4)) {
+      return 'red';
+    } else if (fullHints && opponentMoveEffectivenessList.some((effectiveness) => effectiveness === 2)) {
+      return 'crimson';
+    } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 8)) {
+      return 'darkgreen';
+    } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 4)) {
+      return 'green';
+    } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 2)) {
+      return 'lightgreen';
+    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0)) {
+      return 'yellow';
+    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0.125)) {
+      return 'darkblue';
+    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0.25)) {
+      return 'blue';
+    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0.5)) {
+      return 'lightblue';
+    }
+
+    return 'white';
+  }
+
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
   }
@@ -1526,11 +1590,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
           const sourceTypes = source.getTypes();
           const matchesSourceType = sourceTypes[0] === type || (sourceTypes.length > 1 && sourceTypes[1] === type);
+
           let stabMultiplier = new Utils.NumberHolder(1);
-          if (sourceTeraType === Type.UNKNOWN && matchesSourceType)
+          if (source.isStabMove(move)) {
             stabMultiplier.value += 0.5;
-          else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === type)
-            stabMultiplier.value += 0.5;
+          }
 
           applyAbAttrs(StabBoostAbAttr, source, null, stabMultiplier);
 

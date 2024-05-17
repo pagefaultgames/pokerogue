@@ -551,6 +551,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.lastName = pokemon.name;
   }
 
+  updateNameColor(color: string) {
+    this.nameText.setColor(color);
+  }
+
   updatePokemonExp(pokemon: Pokemon, instant?: boolean, levelDurationMultiplier: number = 1): Promise<void> {
     return new Promise(resolve => {
       const levelUp = this.lastLevel < pokemon.level;
