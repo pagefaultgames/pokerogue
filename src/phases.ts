@@ -37,7 +37,7 @@ import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
 import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, achvs } from "./system/achv";
-import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
+import { TrainerConfig, TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
@@ -46,7 +46,7 @@ import { loggedInUser, updateUserInfo } from "./account";
 import { PlayerGender, SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
-import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
+import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 import { Setting } from "./system/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
@@ -59,6 +59,7 @@ import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarte
 import i18next from './plugins/i18n';
 import { Abilities } from "./data/enums/abilities";
 import * as Overrides from './overrides';
+import { TextStyle, addTextObject } from "./ui/text";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -160,7 +161,6 @@ export class TitlePhase extends Phase {
     this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
-        console.log(sessionData);
         const biomeKey = getBiomeKey(sessionData.arena.biome);
         const bgTexture = `${biomeKey}_bg`;
         this.scene.arenaBg.setTexture(bgTexture);
@@ -3219,11 +3219,10 @@ export class FaintPhase extends PokemonPhase {
       if (defeatSource?.isOnField()) {
         applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
-        const pvattrs = pvmove.getAttrs(PostVictoryStatChangeAttr);
+        const pvattrs = pvmove.getAttrs(PostVictoryStatChangeAttr) as PostVictoryStatChangeAttr[];
         if (pvattrs.length) {
-          for (let pvattr of pvattrs) {
+          for (let pvattr of pvattrs)
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);
-          }
         }
       }
     }
@@ -3537,12 +3536,10 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.fadeIn(250).then(() => {
-          this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
-            this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-            resolve();
-          }, null, true, 1500);
-        });
+        this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
+          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+          resolve();
+        }, null, true, 1500);
       });
     })
   }
@@ -3563,11 +3560,9 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.fadeIn(250).then(() => {
-          this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
-            resolve();
-          }, null, true, 1500);
-        });
+        this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+          resolve();
+        }, null, true, 1500);
       });
     })
   }
@@ -3619,6 +3614,7 @@ export class GameOverPhase extends BattlePhase {
 
   handleGameOver(): void {
     const doGameOver = (newClear: boolean) => {
+      this.scene.disableMenu = true;
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
         if (this.victory && newClear) {
@@ -3640,20 +3636,40 @@ export class GameOverPhase extends BattlePhase {
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
         activeBattlers.map(p => p.hideInfo());
         this.scene.ui.fadeOut(fadeDuration).then(() => {
-          [ this.scene.field, ...activeBattlers ].map(a => a.setVisible(false));
+          activeBattlers.map(a => a.setVisible(false));
           this.scene.setFieldScale(1, true);
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
-          if (newClear)
-            this.handleUnlocks();
-          if (this.victory && newClear) {
-            for (let species of this.firstRibbons)
-              this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
-            if (!firstClear)
-              this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
+
+          const clear = (endCardPhase?: EndCardPhase) => {
+            if (newClear)
+              this.handleUnlocks();
+            if (this.victory && newClear) {
+              for (let species of this.firstRibbons)
+                this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
+              if (!firstClear)
+                this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
+            }
+            this.scene.pushPhase(new PostGameOverPhase(this.scene, endCardPhase));
+            this.end();
           }
-          this.scene.pushPhase(new PostGameOverPhase(this.scene));
-          this.end();
+
+          if (this.victory) {
+            this.scene.ui.fadeIn(500).then(() => {
+              this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? 'm' : 'f'}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
+                this.scene.ui.showDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1], this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
+                  this.scene.ui.fadeOut(500).then(() => {
+                    this.scene.charSprite.hide().then(() => {
+                      const endCardPhase = new EndCardPhase(this.scene);
+                      this.scene.unshiftPhase(endCardPhase);
+                      clear(endCardPhase);
+                    });
+                  });
+                });
+              });
+            });
+          } else
+            clear();
         });
       });
     };
@@ -3696,6 +3712,41 @@ export class GameOverPhase extends BattlePhase {
   }
 }
 
+export class EndCardPhase extends Phase {
+  public endCard: Phaser.GameObjects.Image;
+  public text: Phaser.GameObjects.Text;
+
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    super.start();
+
+    this.scene.ui.getMessageHandler().bg.setVisible(false);
+    this.scene.ui.getMessageHandler().nameBoxContainer.setVisible(false);
+
+    this.endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}`);
+    this.endCard.setOrigin(0);
+    this.endCard.setScale(0.5);
+    this.scene.field.add(this.endCard);
+
+    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, 'Congratulations!', TextStyle.SUMMARY, { fontSize: '128px' });
+    this.text.setOrigin(0.5);
+    this.scene.field.add(this.text);
+
+    this.scene.ui.clearText();
+    
+    this.scene.ui.fadeIn(1000).then(() => {
+   
+      this.scene.ui.showText('', null, () => {
+        this.scene.ui.getMessageHandler().bg.setVisible(true);
+        this.end();
+      }, null, true);
+    });
+  }
+}
+
 export class UnlockPhase extends Phase {
   private unlockable: Unlockables;
 
@@ -3710,35 +3761,50 @@ export class UnlockPhase extends Phase {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.playSound('level_up_fanfare');
       this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.fadeIn(250).then(() => {
-        this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
-          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-          this.end();
-        }, null, true, 1500);
-      });
+      this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+        this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+        this.end();
+      }, null, true, 1500);
     });
   }
 }
 
 export class PostGameOverPhase extends Phase {
-  constructor(scene: BattleScene) {
+  private endCardPhase: EndCardPhase;
+
+  constructor(scene: BattleScene, endCardPhase: EndCardPhase) {
     super(scene);
+
+    this.endCardPhase = endCardPhase;
   }
 
   start() {
     super.start();
 
-    this.scene.gameData.saveAll(this.scene, true, true, true).then(success => {
-      if (!success)
-        return this.scene.reset(true);
-      this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
-        if (!success[0])
+    const saveAndReset = () => {
+      this.scene.gameData.saveAll(this.scene, true, true, true).then(success => {
+        if (!success)
           return this.scene.reset(true);
-        this.scene.reset();
-        this.scene.unshiftPhase(new TitlePhase(this.scene));
-        this.end();
+        this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
+          if (!success[0])
+            return this.scene.reset(true);
+          this.scene.reset();
+          this.scene.unshiftPhase(new TitlePhase(this.scene));
+          this.end();
+        });
       });
-    });
+    };
+
+    if (this.endCardPhase) {
+      this.scene.ui.fadeOut(500).then(() => {
+        this.scene.ui.getMessageHandler().bg.setVisible(true);
+
+        this.endCardPhase.endCard.destroy();
+        this.endCardPhase.text.destroy();
+        saveAndReset();
+      });
+    } else
+      saveAndReset();
   }
 }
 
