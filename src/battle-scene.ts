@@ -1533,15 +1533,9 @@ export default class BattleScene extends SceneBase {
 			this.standbyPhase = null;
 			return;
 		}
-		if(this.getCurrentPhase()?.constructor.name === 'SwitchSummonPhase'){
-			this.updateGameInfo();
-		}
-		if(this.getCurrentPhase()?.constructor.name === 'SummonPhase'){
-			this.updateGameInfo();
-		}
-		if(this.getCurrentPhase()?.constructor.name === 'TurnInitPhase'){
-			this.updateGameInfo();
-		}
+        if (["SwitchSummonPhase", "SummonPhase", "TurnInitPhase"].includes(this.getCurrentPhase()?.constructor.name)) {
+            this.updateGameInfo();
+        }
 		if (this.phaseQueuePrependSpliceIndex > -1)
 			this.clearPhaseQueueSplice();
 		if (this.phaseQueuePrepend.length) {
@@ -2024,13 +2018,12 @@ export default class BattleScene extends SceneBase {
                             percent: p.getHpRatio(false) * 100,
                         },
                         moveset: p.moveset.map((m) => {
-                            let moveData = m.getMove();
                             return {
                                 moveId: m.moveId,
                                 name: m.getName(),
                                 ppUsed: m.ppUsed,
                                 ppUp: m.ppUp,
-                                ppBase: moveData.pp,
+                                ppMax: m.getMovePp(),
                             };
                         }),
                     };
