@@ -35,7 +35,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "clerk": "Employé",
     "clerk_female": "Employée",
     "colleagues": "Collègues de Bureau",
-    "crush_kin": "Crush Kin",
+    "crush_kin": "Duo Baston",
     "cyclist": "Cycliste",
     "cyclist_female": "Cycliste",
     "cyclists": "Cyclistes",
