@@ -2129,36 +2129,27 @@ export class WeightPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class BattleStatRatioPowerAttr extends VariablePowerAttr {
-  private stat: Stat;
-  private invert: boolean;
-
-  constructor(stat: Stat, invert: boolean = false) {
-    super();
-
-    this.stat = stat;
-    this.invert = invert;
-  }
-
+/**
+ * Attribute used for Electro Ball move.
+ * @extends VariablePowerAttr
+ * @see {@linkcode apply}
+ **/
+export class ElectroBallPowerAttr extends VariablePowerAttr {
+  /**
+   * Move that deals more damage the faster {@linkcode BattleStat.SPD}
+   * the user is compared to the target.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
 
-    const statRatio = target.getStat(this.stat) / user.getStat(this.stat);
+    const statRatio = target.getBattleStat(Stat.SPD) / user.getBattleStat(Stat.SPD);
     const statThresholds = [ 0.25, 1 / 3, 0.5, 1, -1 ];
-    let statThresholdPowers = [ 150, 120, 80, 60, 40 ];
-
-    if (this.invert) {
-      // Gyro ball uses a specific formula
-      let userSpeed = user.getBattleStat(this.stat);
-      if (userSpeed < 1) {
-        // Gen 6+ always have 1 base power
-        power.value = 1;
-        return true;
-      } 
-      let bp = Math.floor(Math.min(150, 25 * target.getBattleStat(this.stat) / userSpeed + 1));
-      power.value = bp;
-      return true;
-    }
+    const statThresholdPowers = [ 150, 120, 80, 60, 40 ];
 
     let w = 0;
     while (w < statThresholds.length - 1 && statRatio > statThresholds[w]) {
@@ -2167,7 +2158,36 @@ export class BattleStatRatioPowerAttr extends VariablePowerAttr {
     }
 
     power.value = statThresholdPowers[w];
+    return true;
+  }
+}
 
+
+/**
+ * Attribute used for Gyro Ball move.
+ * @extends VariablePowerAttr
+ * @see {@linkcode apply}
+ **/
+export class GyroBallPowerAttr extends VariablePowerAttr {
+  /**
+   * Move that deals more damage the slower {@linkcode BattleStat.SPD}
+   * the user is compared to the target.
+   * @param user Pokemon that used the move
+   * @param target The target of the move
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+    const userSpeed = user.getBattleStat(Stat.SPD);
+    if (userSpeed < 1) {
+      // Gen 6+ always have 1 base power
+      power.value = 1;
+      return true;
+    }
+
+    power.value = Math.floor(Math.min(150, 25 * target.getBattleStat(Stat.SPD) / userSpeed + 1));
     return true;
   }
 }
@@ -5388,7 +5408,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1, true)
       .punchingMove(),
     new AttackMove(Moves.GYRO_BALL, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
-      .attr(BattleStatRatioPowerAttr, Stat.SPD, true)
+      .attr(GyroBallPowerAttr)
       .ballBombMove(),
     new SelfStatusMove(Moves.HEALING_WISH, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .attr(SacrificialFullRestoreAttr)
@@ -5741,7 +5761,7 @@ export function initMoves() {
       .condition(unknownTypeCondition)
       .attr(hitsSameTypeAttr),
     new AttackMove(Moves.ELECTRO_BALL, Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
-      .attr(BattleStatRatioPowerAttr, Stat.SPD)
+      .attr(ElectroBallPowerAttr)
       .ballBombMove(),
     new StatusMove(Moves.SOAK, Type.WATER, 100, 20, -1, 0, 5)
       .attr(ChangeTypeAttr, Type.WATER),
