@@ -2,47 +2,47 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
-    name: "Sitrus Berry",
-    effect: "Restores 25% HP if HP is below 50%",
+    name: "Tsitrubeere",
+    effect: "Stellt 25% der KP wieder her, wenn die KP unter 50% sind"
   },
   "LUM": {
-    name: "Lum Berry",
-    effect: "Cures any non-volatile status condition and confusion",
+    name: "Prunusbeere",
+    effect: "Heilt jede nichtflüchtige Statusveränderung und Verwirrung"
   },
   "ENIGMA": {
-    name: "Enigma Berry",
-    effect: "Restores 25% HP if hit by a super effective move",
+    name: "Enigmabeere",
+    effect: "Heilt 25% der KP, wenn der Träger von einer sehr effektiven Attacke getroffen wird",
   },
   "LIECHI": {
-    name: "Liechi Berry",
-    effect: "Raises Attack if HP is below 25%",
+    name: "Lydzibeere",
+    effect: "Steigert den Angriff, wenn die KP unter 25% sind"
   },
   "GANLON": {
-    name: "Ganlon Berry",
-    effect: "Raises Defense if HP is below 25%",
+    name: "Linganbeere",
+    effect: "Steigert die Verteidigung, wenn die KP unter 25% sind"
   },
   "PETAYA": {
-    name: "Petaya Berry",
-    effect: "Raises Sp. Atk if HP is below 25%",
+    name: "Tahaybeere",
+    effect: "Steigert den Spezial-Angriff, wenn die KP unter 25% sind"
   },
   "APICOT": {
-    name: "Apicot Berry",
-    effect: "Raises Sp. Def if HP is below 25%",
+    name: "Apikobeere",
+    effect: "Steigert die Spezial-Verteidigung, wenn die KP unter 25% sind"
   },
   "SALAC": {
-    name: "Salac Berry",
-    effect: "Raises Speed if HP is below 25%",
+    name: "Salkabeere",
+    effect: "Steigert die Initiative, wenn die KP unter 25% sind"
   },
   "LANSAT": {
-    name: "Lansat Berry",
-    effect: "Raises critical hit ratio if HP is below 25%",
+    name: "Lansatbeere",
+    effect: "Erhöht die Volltrefferchance, wenn die KP unter 25% sind"
   },
   "STARF": {
-    name: "Starf Berry",
-    effect: "Sharply raises a random stat if HP is below 25%",
+    name: "Krambobeere",
+    effect: "Erhöht eine Statuswert stark, wenn die KP unter 25% sind"
   },
   "LEPPA": {
-    name: "Leppa Berry",
-    effect: "Restores 10 PP to a move if its PP reaches 0",
+    name: "Jonagobeere",
+    effect: "Stellt 10 AP für eine Attacke wieder her, wenn deren AP auf 0 fallen"
   },
 } as const;
