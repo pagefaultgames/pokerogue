@@ -276,6 +276,10 @@ export class TrainerConfig {
             case TrainerType.LARRY_ELITE:
                 trainerType = TrainerType.LARRY;
                 break;
+            case TrainerType.ROCKET_BOSS_GIOVANNI_1:
+            case TrainerType.ROCKET_BOSS_GIOVANNI_2:
+                trainerType = TrainerType.GIOVANNI;
+                break;
         }
 
         return trainerType;
@@ -402,7 +406,8 @@ export class TrainerConfig {
       if (!getIsInitialized()) {
         initI18n();
       }
-      
+      this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
+      console.log(signatureSpecies);
       signatureSpecies.forEach((speciesPool, s) => {
         if (!Array.isArray(speciesPool)) {
           speciesPool = [speciesPool];
@@ -419,12 +424,8 @@ export class TrainerConfig {
       this.setMoneyMultiplier(2.5);
       this.setBoss();
       this.setStaticParty();
-      this.setBattleBgm('battle_unova_gym');
-      this.setVictoryBgm('victory_gym');
-      // this.setGenModifiersFunc(party => {
-      //     const waveIndex = party[0].scene.currentBattle.waveIndex;
-          // return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null);
-      // });
+      this.setBattleBgm('battle_unova_gym'); // TODO: change
+      this.setVictoryBgm('victory_gym'); // TODO: change
 
       return this;
     }
@@ -841,6 +842,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.NOIVERN],
       [TrainerPoolTier.ULTRA_RARE]: []
   }),
+  
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader([ Species.GEODUDE, Species.ONIX ], Type.ROCK).setBattleBgm('battle_kanto_gym'),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader([ Species.STARYU, Species.PSYDUCK ], Type.WATER).setBattleBgm('battle_kanto_gym'),
   [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader([ Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ ], Type.ELECTRIC).setBattleBgm('battle_kanto_gym'),
@@ -1032,7 +1034,42 @@ export const trainerConfigs: TrainerConfigs = {
       const starter = party[0];
       return [ modifierTypes.TERA_SHARD().generateType(null, [ starter.species.type1 ]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier ];
     }),
+
+    [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig(t = TrainerType.GIOVANNI).setName('Giovanni').initForEvilTeamLeader("Rocket Boss",[])
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PERSIAN , Species.ALOLA_PERSIAN]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.NIDOKING , Species.NIDOQUEEN ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.RHYPERIOR ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.DUGTRIO, Species.ALOLA_DUGTRIO, Species.WUGTRIO]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.MAROWAK , Species.ALOLA_MAROWAK]))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.KANGASKHAN ], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.ULTRA_BALL;
+      p.formIndex = 1;
+    })),
+    [TrainerType.ROCKET_BOSS_GIOVANNI_2]: new TrainerConfig(++t).setName('Giovanni').initForEvilTeamLeader("Rocket Boss", [])
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.TYRANITAR , Species.IRON_THORNS], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.ULTRA_BALL;
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.EXCADRILL ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HIPPOWDON ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.KANGASKHAN ], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.ULTRA_BALL;
+      p.formIndex = 1;
+    }))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GASTRODON]))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.MEWTWO ], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 3);
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    })),
 };
+
+
 
 (function () {
       initTrainerTypeDialogue();

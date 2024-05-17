@@ -9,6 +9,7 @@ export const titles: SimpleTranslationEntries = {
     "rival": "Rival",
     "professor": "Professor",
     "frontier_brain": "Frontier Brain",
+    "rocket_boss": "Team Rocket Boss",
     // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -253,4 +254,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "leon": "Leon",
     "rival": "Finn",
     "rival_female": "Ivy",
+    "rocket_boss_giovanni_1": "Giovanni",
+    "rocket_boss_giovanni_2": "Giovanni",
 } as const;

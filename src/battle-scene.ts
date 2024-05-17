@@ -857,7 +857,7 @@ export default class BattleScene extends SceneBase {
 			return false;
 		}
 		// Evil team no longer shows up after beating the boss
-		if (waveIndex > 105) {
+		if (waveIndex >= 105) {
 			return false;
 		}
 		// Evil team always spawns leading up to the boss

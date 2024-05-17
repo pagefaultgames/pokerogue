@@ -478,6 +478,26 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.ROCKET_BOSS_GIOVANNI_1]: [
+    {
+      encounter: [
+        `So! I must say, I am impressed you got here!`
+      ],
+      victory: [
+        `You only won since my abilities are (N)`
+      ]
+    }
+  ],
+  [TrainerType.ROCKET_BOSS_GIOVANNI_2]: [
+    {
+      encounter: [
+        `For your insolence, you will feel a world of pain!`
+      ],
+      victory: [
+        `How is this possible...?`
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       `My expertise on Rock-type Pokémon will take you down! Come on!`,
