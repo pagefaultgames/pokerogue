@@ -2522,13 +2522,11 @@ export class MoveEffectPhase extends PokemonPhase {
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
           
-          const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
+          const hitResult = !isProtected ? target.apply(user, this.move, firstHit, this) : HitResult.NO_EFFECT;
 
           this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
           applyAttrs.push(new Promise(resolve => {
-            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit),
-              user, target, this.move.getMove()).then(() => {
               if (hitResult !== HitResult.FAIL) {
                 const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).usedChargeEffect(user, this.getTarget(), this.move.getMove()));
                 // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
@@ -2563,7 +2561,6 @@ export class MoveEffectPhase extends PokemonPhase {
                 });
               } else
                 resolve();
-            });
           }));
         }
         // Trigger effect which should only apply one time after all targeted effects have already applied

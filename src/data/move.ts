@@ -1990,6 +1990,31 @@ export class SwapStatsAttr extends MoveEffectAttr
     }
 }
 
+/**
+ * Attribute used for moves which steal the target's positive stat changes.
+ */
+export class StealPositiveStatsAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.PRE_APPLY)
+    }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log("StealPositiveStatsAttr");
+    if (!super.apply(user, target, move, args))
+      return false;
+    let StatRaised = false;
+    for (let i = 0; i < 7; i++) {
+      if (target.summonData.battleStats[i] > 0) {
+        user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [i], target.summonData.battleStats[i]));
+        target.summonData.battleStats[i] = 0;
+        StatRaised = true;
+      }
+    }
+    if (StatRaised)
+      user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s boosted stats!`));
+    target.updateInfo();
+  }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
