@@ -1921,7 +1921,7 @@ export class CopyStatsAttr extends MoveEffectAttr {
     target.updateInfo();
     user.updateInfo();
 
-    target.scene.queueMessage(getPokemonMessage(user, 'copied\n') + getPokemonMessage(target, `'s stat changes!`));
+    target.scene.queueMessage(getPokemonMessage(user, ' copied\n') + getPokemonMessage(target, `'s stat changes!`));
 
     return true;
   }
