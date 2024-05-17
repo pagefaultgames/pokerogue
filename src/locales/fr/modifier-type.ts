@@ -129,7 +129,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RARER_CANDY": { name: "Hyper Bonbon" },
 
     "MEGA_BRACELET": { name: "Méga-Bracelet", description: "Débloque les Méga-Gemmes" },
-    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque les Maxi Champis" },
+    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque le Dynamax" },
     "TERA_ORB": { name: "Orbe Téracristal", description: "Débloque les Téra-Éclats" },
 
     "MAP": { name: "Carte", description: "Vous permet de choisir votre destination à un croisement" },
