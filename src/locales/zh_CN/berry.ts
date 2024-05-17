@@ -2,47 +2,47 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
-    name: "Sitrus Berry",
-    effect: "Restores 25% HP if HP is below 50%",
+    name: "文柚果",
+    effect: "HP低于50%时，回复最大HP的25%",
   },
   "LUM": {
-    name: "Lum Berry",
-    effect: "Cures any non-volatile status condition and confusion",
+    name: "木子果",
+    effect: "治愈任何异常状态和混乱状态",
   },
   "ENIGMA": {
-    name: "Enigma Berry",
-    effect: "Restores 25% HP if hit by a super effective move",
+    name: "谜芝果",
+    effect: "受到效果绝佳的招式攻击时，回复25%最大HP",
   },
   "LIECHI": {
-    name: "Liechi Berry",
-    effect: "Raises Attack if HP is below 25%",
+    name: "枝荔果",
+    effect: "HP低于25%时，攻击提升一个等级",
   },
   "GANLON": {
-    name: "Ganlon Berry",
-    effect: "Raises Defense if HP is below 25%",
+    name: "龙睛果",
+    effect: "HP低于25%时，防御提升一个等级",
   },
   "PETAYA": {
-    name: "Petaya Berry",
-    effect: "Raises Sp. Atk if HP is below 25%",
+    name: "龙火果",
+    effect: "HP低于25%时，特攻提升一个等级",
   },
   "APICOT": {
-    name: "Apicot Berry",
-    effect: "Raises Sp. Def if HP is below 25%",
+    name: "杏仔果",
+    effect: "HP低于25%时，特防提升一个等级",
   },
   "SALAC": {
-    name: "Salac Berry",
-    effect: "Raises Speed if HP is below 25%",
+    name: "沙鳞果",
+    effect: "HP低于25%时，速度提升一个等级",
   },
   "LANSAT": {
-    name: "Lansat Berry",
-    effect: "Raises critical hit ratio if HP is below 25%",
+    name: "兰萨果",
+    effect: "HP低于25%时，击中要害率提升两个等级",
   },
   "STARF": {
-    name: "Starf Berry",
-    effect: "Sharply raises a random stat if HP is below 25%",
+    name: "星桃果",
+    effect: "HP低于25%时，提高随机一项能力两个等级",
   },
   "LEPPA": {
-    name: "Leppa Berry",
-    effect: "Restores 10 PP to a move if its PP reaches 0",
+    name: "苹野果",
+    effect: "有招式的PP降到0时，恢复该招式10PP",
   },
 } as const;
