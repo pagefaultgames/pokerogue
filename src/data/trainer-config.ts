@@ -417,10 +417,8 @@ export class TrainerConfig {
         // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
         this.name = i18next.t(`trainerNames:${nameForCall}`);
-
-
-
-        this.setTitle("gym_leader");
+        this.name = `${i18next.t("titles:gym_leader")} ${this.name}`;
+        this.title = "";
         this.setMoneyMultiplier(2.5);
         this.setBoss();
         this.setStaticParty();
@@ -452,8 +450,8 @@ export class TrainerConfig {
         // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
         this.name = i18next.t(`trainerNames:${nameForCall}`);
-
-        this.setTitle("elite_four");
+        this.name = `${i18next.t("titles:elite_four")} ${this.name}`;
+        this.title = "";
         this.setMoneyMultiplier(3.25);
         this.setBoss();
         this.setStaticParty();
@@ -477,7 +475,8 @@ export class TrainerConfig {
         // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
         this.name = i18next.t(`trainerNames:${nameForCall}`);
-        this.setTitle("champion");
+        this.name = `${i18next.t("titles:champion")} ${this.name}`;
+        this.title = "";
         this.setMoneyMultiplier(10);
         this.setBoss();
         this.setStaticParty();
