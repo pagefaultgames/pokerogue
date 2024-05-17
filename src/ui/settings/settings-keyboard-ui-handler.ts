@@ -40,7 +40,9 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         this.settingBlacklisted = settingKeyboardBlackList;
 
         const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
+        const restoreDefaultEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
         deleteEvent.on('up', this.onDeleteDown, this);
+        restoreDefaultEvent.on('up', this.onHomeDown, this);
     }
 
     setSetting(scene: BattleScene, setting, value: integer): boolean {
@@ -64,6 +66,14 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         // Map the 'noKeyboard' layout options for easy access.
         this.layout['noKeyboard'].optionsContainer = optionsContainer;
         this.layout['noKeyboard'].label = label;
+    }
+
+    /**
+     * Handle the home key press event.
+     */
+    onHomeDown(): void {
+        if (![Mode.SETTINGS_KEYBOARD, Mode.SETTINGS, Mode.SETTINGS_GAMEPAD].includes(this.scene.ui.getMode())) return;
+        this.scene.gameData.resetMappingToFactory();
     }
 
     /**

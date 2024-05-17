@@ -589,6 +589,13 @@ export class GameData {
       return true;  // Return true to indicate the operation was successful
   }
 
+  public resetMappingToFactory(): boolean {
+      if (!localStorage.hasOwnProperty('mappingConfigs'))  // Check if 'mappingConfigs' exists in localStorage
+          return false;  // If 'mappingConfigs' does not exist, return false
+      localStorage.removeItem('mappingConfigs');
+      this.scene.inputController.resetConfigs();
+  }
+
   /**
    * Saves a gamepad setting to localStorage.
    *

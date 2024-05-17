@@ -691,6 +691,13 @@ export class InputsController {
         this.configs[selectedDevice].custom = mappingConfigs.custom;
     }
 
+    resetConfigs(): void {
+        this.configs = new Map();
+        if (this.getGamepadsName()?.length)
+            this.setupGamepad(this.selectedDevice[Device.GAMEPAD]);
+        this.setupKeyboard();
+    }
+
     /**
      * Swaps a binding in the configuration.
      *
