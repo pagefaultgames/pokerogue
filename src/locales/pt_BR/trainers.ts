@@ -52,8 +52,8 @@ export const trainerClasses: SimpleTranslationEntries = {
     "harlequin": "Arlequim",
     "hiker": "Montanhista",
     "hooligans": "Bandoleiro",
-    "hoopster": "Jogador de basquete",
-    "infielder": "Jogador de baseball",
+    "hoopster": "Jogador de Basquete",
+    "infielder": "Jogador de Baseball",
     "janitor": "Faxineiro",
     "lady": "Dama",
     "lass": "Senhorita",
@@ -72,7 +72,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "poké_fan_family": "Família Pokefã",
     "preschooler": "Menino do Prezinho",
     "preschooler_female": "Menina do Prezinho",
-    "preschoolers": "Alunos do prezinho",
+    "preschoolers": "Alunos do Prezinho",
     "psychic": "Médium",
     "psychic_female": "Médium",
     "psychics": "Médiuns",
@@ -109,7 +109,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "waitress": "Garçonete",
     "worker": "Operário",
     "worker_female": "Operária",
-    "workers": "Workers",
+    "workers": "Operários",
     "youngster": "Jovem",
 } as const;
 
