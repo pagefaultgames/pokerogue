@@ -21,7 +21,7 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 
 
-export const esConfig = {
+export const frConfig = {
     ability: ability,
     abilityTriggers: abilityTriggers,
     battle: battle,
