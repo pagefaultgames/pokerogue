@@ -13,11 +13,13 @@ import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
+import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
-import { titles,trainerClasses,trainerNames } from "./trainers";
-import { splashMessages } from "./splash-messages"
-
+import { weather } from "./weather";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { berry } from "./berry";
 
 export const deConfig = {
     ability: ability,
@@ -26,19 +28,22 @@ export const deConfig = {
     commandUiHandler: commandUiHandler,
     egg: egg,
     fightUiHandler: fightUiHandler,
-    menuUiHandler: menuUiHandler,
+    growth: growth,
     menu: menu,
+    menuUiHandler: menuUiHandler,
+    modifierType: modifierType,
     move: move,
+    nature: nature,
     pokeball: pokeball,
-    pokemonStat: pokemonStat,
     pokemon: pokemon,
+    pokemonStat: pokemonStat,
+    splashMessages: splashMessages,
     starterSelectUiHandler: starterSelectUiHandler,
     titles: titles,
     trainerClasses: trainerClasses,
     trainerNames: trainerNames,
     tutorial: tutorial,
-    splashMessages: splashMessages,
-    nature: nature,
-    growth: growth,
-    modifierType: modifierType,
+    weather: weather,
+    battleMessageUiHandler: battleMessageUiHandler,
+    berry: berry,
 }
