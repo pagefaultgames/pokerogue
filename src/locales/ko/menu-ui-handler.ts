@@ -9,7 +9,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "EGG_GACHA": "알 뽑기",
   "MANAGE_DATA": "데이터 관리",
   "COMMUNITY": "커뮤니티",
-  "RETURN_TO_TITLE": "타이틀 화면으로",
+  "SAVE_AND_QUIT": "저장 후 나가기",
   "LOG_OUT": "로그아웃",
   "slot": "슬롯 {{slotNumber}}",
   "importSession": "세션 불러오기",

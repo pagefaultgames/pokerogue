@@ -3,6 +3,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "보스 {{bossName}}(이)가 나타났다.",
   "trainerAppeared": "{{trainerName}}(이)가\n승부를 걸어왔다!",
+  "trainerAppearedDouble": "{{trainerName}}(이)가\n승부를 걸어왔다!",
   "singleWildAppeared": "앗! 야생 {{pokemonName}}(이)가\n튀어나왔다!",
   "multiWildAppeared": "야생 {{pokemonName1}}(과)와\n{{pokemonName2}}(이)가 튀어나왔다!",
   "playerComeBack": "돌아와, {{pokemonName}}!",
@@ -31,6 +32,8 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveNotLearned": "{{pokemonName}}(는)은\n결국 배우지 않았다!",
   "learnMoveForgetQuestion": "어느 기술을 잊게 하고싶은가?",
   "learnMoveForgetSuccess": "{{pokemonName}}(는)은 {{moveName}}를(을) 깨끗이 잊었다!",
+  "countdownPoof": "@d{32}1, @d{15}2, @d{15}… @d{15}… @d{30}@s{pb_bounce_1}짠!",
+  "learnMoveAnd": "그리고…",
   "levelCapUp": "레벨의 최대치가\n{{levelCap}}까지 상승했다!",
   "moveNotImplemented": "{{moveName}}(는)은 아직 구현되지 않아 사용할 수 없다…",
   "moveNoPP": "기술의 남은 포인트가 없다!",
