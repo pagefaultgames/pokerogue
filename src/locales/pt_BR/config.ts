@@ -17,6 +17,7 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { SummaryUiHandler } from "./summary-ui-handler";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
+import { berry } from "./berry";
 
 
 export const ptBrConfig = {
@@ -39,4 +40,5 @@ export const ptBrConfig = {
     biome: biome,
     weather: weather,
     modifierType: modifierType,
+    berry: berry,
 }
