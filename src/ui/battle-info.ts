@@ -270,7 +270,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
 
       const opponentPokemonDexAttr = pokemon.getDexAttr();
-      if ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr || !(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & Math.pow(2, pokemon.abilityIndex)))
+      if ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr || !(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & Math.pow(2, pokemon.abilityIndex))) {
+        if (!dexEntry.caughtAttr) {
+          this.championRibbon.setPositionRelative(this.nameText, 0, 11.75);
+        }
+        this.championRibbon.setVisible(true);
+      }
 
       // Check if Player owns all genders and forms of the Pokemon
       const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr); 
