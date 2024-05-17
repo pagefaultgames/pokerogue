@@ -8,14 +8,14 @@ export function getSplashMessages(): string[] {
   const splashMessages = Array(10).fill(getBattleCountSplashMessage());
   splashMessages.push(...[
     i18next.t('splashMessages:joinTheDiscord'),
-    i18next.t('splashMessages:infiniteLevel'),
+    i18next.t('splashMessages:infiniteLevels'),
     i18next.t('splashMessages:everythingStacks'),
     i18next.t('splashMessages:optionalSaveScumming'),
     i18next.t('splashMessages:biomes'),
     i18next.t('splashMessages:openSource'),
-    i18next.t('splashMessages:playWith5xSpeed'),
+    i18next.t('splashMessages:playWithSpeed'),
     i18next.t('splashMessages:liveBugTesting'),
-    i18next.t('splashMessages:heavyRoR2Influence'),
+    i18next.t('splashMessages:heavyInfluence'),
     i18next.t('splashMessages:pokemonRiskAndPokemonRain'),
     i18next.t('splashMessages:nowWithMoreSalt'),
     i18next.t('splashMessages:infiniteFusionAtHome'),

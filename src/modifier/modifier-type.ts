@@ -511,7 +511,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
 
   getDescription(scene: BattleScene): string {
     // TODO: Need getTypeName?
-    return i18next.t(`modifierType:ModifierType.AttackTypeBoosterModifierType.description`, { moveType: Utils.toReadableString(Type[this.moveType]) });
+    return i18next.t(`modifierType:ModifierType.AttackTypeBoosterModifierType.description`, { moveType: i18next.t(`pokemonInfo:Type.${Type[this.moveType]}`) });
   }
 
   getPregenArgs(): any[] {
@@ -898,11 +898,11 @@ export class TerastallizeModifierType extends PokemonHeldItemModifierType implem
   }
 
   get name(): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
   }
 
   getPregenArgs(): any[] {
@@ -1194,11 +1194,11 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMovePp() - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }, 9),
     new WeightedModifierType(modifierTypes.MAX_ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMovePp() - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.LURE, 2),
@@ -1237,11 +1237,11 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMovePp() - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }, 9),
     new WeightedModifierType(modifierTypes.MAX_ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMovePp() - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
