@@ -821,19 +821,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.randomizeMode){
       switch (button){
-        // Going up, down, left, or right, will take it back to start
         case Button.UP:
           this.startCursorObj.setVisible(false);
           this.setGenMode(true);
           this.setRandomizeMode(false);
           success = true;
           break;
-        // case Button.DOWN:
-        //   this.startCursorObj.setVisible(false);
-        //   this.setGenMode(true);
-        //   this.setRandomizeMode(false);
-        //   success = true;
-        //   break;
         case Button.LEFT:
           this.startCursorObj.setVisible(false);
           this.setGenMode(false);
@@ -849,10 +842,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           break;
         case Button.ACTION:
           this.generateRandomStarterTeam();
-          // if (this.tryStart(true))
-          //   success = true;
-          // else
-          //   error = true;
           success = true;
           break;
       }
@@ -867,7 +856,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               handler: () => {
                 ui.setMode(Mode.STARTER_SELECT);
 
-                // this.generateRandomStarter();
                 let isDupe = false;
                 for (let s = 0; s < this.starterCursors.length; s++) {
                   if (this.starterGens[s] === this.getGenCursorWithScroll() && this.starterCursors[s] === this.cursor) {
@@ -1333,11 +1321,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     } 
     else if (this.randomizeMode){
       changed = super.setCursor(cursor);
-
-      // this.cursorObj.setPosition(54, 160);
-
-      // this.setSpecies(this.randomSpecies[cursor]);
-
       this.updateInstructions();
     }
     else {
@@ -1354,7 +1337,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   getGenCursorWithScroll(): integer {
-    // return this.genCursor + this.genScrollCursor;
     return this.genCursor !== undefined
       ? this.genCursor + this.genScrollCursor
       : undefined;
@@ -1381,8 +1363,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (randomizeMode !== this.randomizeMode) {
       this.randomizeMode = randomizeMode;
-
-      // this.setCursor(this.cursor);
 
       if (randomizeMode)
         this.setSpecies(null);
@@ -1907,10 +1887,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     while (!generatedValidPokemon) {
       // Create a random number for gens 0 - 8
       const gen = Utils.randInt(8, 0);
-      // const gen = 3;
       // Create a random pokemon id based off of how many pokemon are in the gen
       const speciesId = Utils.randInt(this.genSpecies[gen].length - 1, 0);
-      // const speciesId = 2;
       const species = this.genSpecies[gen][speciesId];
 
       // Ownership check
@@ -1925,7 +1903,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           break;
         }
       }
-
       
       // Update value
       if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))){
@@ -2031,7 +2008,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
   }
-
   clearText() {
     this.starterSelectMessageBoxContainer.setVisible(false);
     super.clearText();
