@@ -1990,31 +1990,6 @@ export class SwapStatsAttr extends MoveEffectAttr
     }
 }
 
-/**
- * Attribute used for moves which steal the target's positive stat changes.
- */
-export class StealPositiveStatsAttr extends MoveEffectAttr {
-  constructor() {
-    super(false, MoveEffectTrigger.PRE_APPLY)
-    }
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log("StealPositiveStatsAttr");
-    if (!super.apply(user, target, move, args))
-      return false;
-    let StatRaised = false;
-    for (let i = 0; i < 7; i++) {
-      if (target.summonData.battleStats[i] > 0) {
-        user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [i], target.summonData.battleStats[i]));
-        target.summonData.battleStats[i] = 0;
-        StatRaised = true;
-      }
-    }
-    if (StatRaised)
-      user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s boosted stats!`));
-    target.updateInfo();
-  }
-}
-
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -3401,7 +3376,7 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
   private targetBothSides: boolean;
 
   constructor(targetBothSides: boolean = false) {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, MoveEffectTrigger.POST_APPLY);
     this.targetBothSides = targetBothSides;
   }
 
@@ -6426,7 +6401,6 @@ export function initMoves() {
     new AttackMove(Moves.PRISMATIC_LASER, Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, 0, 7)
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
-      .attr(StealPositiveStatsAttr)
       .partial(),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
