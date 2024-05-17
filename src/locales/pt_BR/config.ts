@@ -12,7 +12,7 @@ import { move } from "./move";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
-import { pokemonStat } from "./pokemon-stat";
+import { pokemonInfo } from "./pokemon-stat";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
@@ -32,7 +32,7 @@ export const ptBrConfig = {
     menu: menu,
     move: move,
     pokeball: pokeball,
-    pokemonStat: pokemonStat,
+    pokemonInfo: pokemonInfo,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
     titles: titles,
