@@ -301,28 +301,6 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         // Fetch the active gamepad configuration from the input controller.
         const activeConfig = this.getActiveConfig();
 
-        const specialIcons = {
-            'BUTTON_HOME': 'T_Home_Key_Dark.png',
-            'BUTTON_DELETE': 'T_Del_Key_Dark.png',
-        }
-        for (const settingName of Object.keys(this.navigationIcons)) {
-            if (Object.keys(specialIcons).includes(settingName)) {
-                this.navigationIcons[settingName].setTexture("keyboard");
-                this.navigationIcons[settingName].setFrame(specialIcons[settingName]);
-                this.navigationIcons[settingName].alpha = 1;
-                continue
-            }
-            const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
-            if (icon) {
-                const type = this.scene.inputController?.getLastSourceType();
-                this.navigationIcons[settingName].setTexture(type);
-                this.navigationIcons[settingName].setFrame(icon);
-                this.navigationIcons[settingName].alpha = 1;
-            } else {
-                this.navigationIcons[settingName].alpha = 0;
-            }
-        }
-
         // Set the UI layout for the active configuration. If unsuccessful, exit the function early.
         if (!this.setLayout(activeConfig)) return;
 
@@ -355,6 +333,30 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         this.setScrollCursor(this.scrollCursor);
     }
 
+    updateNavigationDisplay() {
+        const specialIcons = {
+            'BUTTON_HOME': 'T_Home_Key_Dark.png',
+            'BUTTON_DELETE': 'T_Del_Key_Dark.png',
+        }
+        for (const settingName of Object.keys(this.navigationIcons)) {
+            if (Object.keys(specialIcons).includes(settingName)) {
+                this.navigationIcons[settingName].setTexture("keyboard");
+                this.navigationIcons[settingName].setFrame(specialIcons[settingName]);
+                this.navigationIcons[settingName].alpha = 1;
+                continue
+            }
+            const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
+            if (icon) {
+                const type = this.scene.inputController?.getLastSourceType();
+                this.navigationIcons[settingName].setTexture(type);
+                this.navigationIcons[settingName].setFrame(icon);
+                this.navigationIcons[settingName].alpha = 1;
+            } else {
+                this.navigationIcons[settingName].alpha = 0;
+            }
+        }
+    }
+
     /**
      * Show the UI with the provided arguments.
      *
@@ -364,6 +366,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     show(args: any[]): boolean {
         super.show(args);
 
+        this.updateNavigationDisplay();
         // Update the bindings for the current active gamepad configuration.
         this.updateBindings();
 
@@ -433,6 +436,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         const ui = this.getUi();
         // Defines the maximum number of rows that can be displayed on the screen.
         let success = false;
+        this.updateNavigationDisplay();
 
         // Handle the input based on the button pressed.
         if (button === Button.CANCEL) {
