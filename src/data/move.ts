@@ -7102,7 +7102,8 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.ELECTRO_SHOT, Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, 100, 0, 9)
       .attr(ElectroShotChargeAttr)
-      .ignoresVirtual(),
+      .ignoresVirtual()
+      .partial(),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraBlastCategoryAttr)
       .partial(),
