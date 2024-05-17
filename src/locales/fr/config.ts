@@ -18,8 +18,8 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
-
 
 export const frConfig = {
     ability: ability,
@@ -44,6 +44,6 @@ export const frConfig = {
     trainerNames: trainerNames,
     tutorial: tutorial,
     weather: weather,
+    battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
 }
-
