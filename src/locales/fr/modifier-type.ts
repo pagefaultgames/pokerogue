@@ -52,7 +52,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "{{tempBattleStatName}} augmentée d’1 cran pour tout l’équipe pendant 5 combats",
+	  description: "Augmente d’1 cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
@@ -64,7 +64,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Fait monter toute l’équipe d’1 niveau",
     },
     "PokemonBaseStatBoosterModifierType": {
-	  description: "{{statName}} de base de son porteur augmentée de 10%. Plus les IV sont hauts, plus il peut en porter.",
+	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restaure tous les PV de toute l'équipe",
@@ -129,7 +129,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RARER_CANDY": { name: "Hyper Bonbon" },
 
     "MEGA_BRACELET": { name: "Méga-Bracelet", description: "Débloque les Méga-Gemmes" },
-    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque les Maxi Champis" },
+    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque le Dynamax" },
     "TERA_ORB": { name: "Orbe Téracristal", description: "Débloque les Téra-Éclats" },
 
     "MAP": { name: "Carte", description: "Vous permet de choisir votre destination à un croisement" },
@@ -162,7 +162,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SUPER_LURE": { name: "Super Parfum" },
     "MAX_LURE": { name: "Parfum Max" },
 
-    "MEMORY_MUSHROOM": { name: "Champignon Mémoriel", description: "Remémore une capacité à un Pokémon" },
+    "MEMORY_MUSHROOM": { name: "Champi Mémoriel", description: "Remémore une capacité à un Pokémon" },
 
     "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants reçoivent 20% des Points d’Exp d’un participant" },
     "EXP_BALANCE": { name: "Équilibr’Exp", description: "Équilibre les Points d’Exp à l’avantage des membres de l’équipe aux plus bas niveaux" },
@@ -264,7 +264,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "fairy_feather": "Plume Enchantée",
   },
   BaseStatBoosterItem: {
-    "hp_up": "PP Plus",
+    "hp_up": "PV Plus",
     "protein": "Protéine",
     "iron": "Fer",
     "calcium": "Calcium",

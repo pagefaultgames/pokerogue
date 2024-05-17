@@ -378,16 +378,29 @@ export default class Trainer extends Phaser.GameObjects.Container {
     };
     const sprites = this.getSprites();
     const tintSprites = this.getTintSprites();
-    sprites[0].play(trainerAnimConfig);
-    tintSprites[0].play(trainerAnimConfig);
+
+    // Don't try to play an animation when there isn't one
+    if (sprites.length > 1) {
+      sprites[0].play(trainerAnimConfig);
+      tintSprites[0].play(trainerAnimConfig);
+    }
+    else
+      console.warn(`No animation found for '${this.getKey()}'. Is this intentional?`);
+
     if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       const partnerTrainerAnimConfig = {
         key: this.getKey(true),
         repeat: 0,
         startFrame: 0
       };
-      sprites[1].play(partnerTrainerAnimConfig);
-      tintSprites[1].play(partnerTrainerAnimConfig);
+
+      // Don't try to play an animation when there isn't one
+      if (sprites.length > 1) {
+        sprites[1].play(partnerTrainerAnimConfig);
+        tintSprites[1].play(partnerTrainerAnimConfig);
+      }
+      else
+        console.warn(`No animation found for '${this.getKey()}'. Is this intentional?`);
     }
   }
 
