@@ -14,7 +14,7 @@ import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
-import { allAbilities } from "./ability"
+import { allAbilities } from "./ability";
 
 export enum BattlerTagLapseType {
   FAINT,
