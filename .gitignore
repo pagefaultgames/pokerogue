@@ -24,6 +24,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Docummentation
+docs/*
+
 public/images/trainer/convert/*
 public/images/battle_anims/input/*.png
 public/images/pokemon/input/*.png
