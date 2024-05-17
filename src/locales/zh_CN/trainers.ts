@@ -277,13 +277,13 @@ export const trainerNames: SimpleTranslationEntries = {
     "iris": "艾莉丝",
 
     // 卡洛斯地区 Kalos Region
-    "diantha": "哈乌",
+    "diantha": "卡露妮",
 
     // 阿罗拉地区 Alola Region
-    "hau": "Hau",
+    "hau": "哈乌",
 
     // 伽勒尔地区 Galar Region
-    "leon": "Leon",
+    "leon": "丹帝",
 
     // 帕底亚地区 paldea Region
     "geeta": "也慈",
