@@ -1823,22 +1823,29 @@ export class MultCritAbAttr extends AbAttr {
 }
 
 /**
- * Attribute used by Merciless
- * Guarantees a critical hit if the target is poisoned, except if target prevents critical hits.
+ * Guarantees a critical hit according to the given condition, except if target prevents critical hits. ie. Merciless
+ * @extends AbAttr
+ * @see {@linkcode apply}
  */
-export class CritIfTargetPoisonedAbAttr extends AbAttr {
+export class ConditionalCritAbAttr extends AbAttr {
+  private condition: PokemonAttackCondition;
+
+  constructor(condition: PokemonAttackCondition, checkUser?: Boolean) {
+    super();
+
+    this.condition = condition;
+  }
+
   /**
-   * Multiplies the base additional effect chance by the given multiplier.
-   * @param {Pokemon} pokemon N/A
-   * @param {boolean} passive N/A
-   * @param {cancelled} cancelled N/A 
-   * @param {any[]} args args[0]: BooleanHolder, If true critical hit is guaranteed. args[1]: Target Pokémon.
-   * @returns {boolean} true if function succeeds.
+   * @param pokemon {@linkcode Pokemon} user.
+   * @param args [0] {@linkcode Utils.BooleanHolder} If true critical hit is guaranteed. 
+   *             [1] {@linkcode Pokemon} Target.
+   *             [2] {@linkcode Move} used by ability user.
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const target = (args[1] as Pokemon);
-    if(target.status)
-    if(!(target.status.effect === StatusEffect.TOXIC || target.status.effect === StatusEffect.POISON))
+    const move = (args[2] as Move);
+    if(!this.condition(pokemon,target,move))
       return false;
 
     (args[0] as Utils.BooleanHolder).value = true;
@@ -3465,7 +3472,7 @@ export function initAbilities() {
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
-      .attr(CritIfTargetPoisonedAbAttr),
+      .attr(ConditionalCritAbAttr, (user, target, move) => target.status?.effect === StatusEffect.TOXIC || target.status?.effect === StatusEffect.POISON),
     new Ability(Abilities.SHIELDS_DOWN, 7)
       .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
