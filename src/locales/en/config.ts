@@ -18,6 +18,8 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
+import { berry } from "./berry";
+
 
 export const enConfig = {    
     ability: ability,
@@ -42,4 +44,5 @@ export const enConfig = {
     trainerNames: trainerNames,
     tutorial: tutorial,
     weather: weather,
+    berry: berry,
 }
