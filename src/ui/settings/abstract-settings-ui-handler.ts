@@ -6,6 +6,7 @@ import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
 import {getIconWithSettingName, getKeyWithSettingName} from "#app/configs/configHandler";
+import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings-keyboard";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -63,6 +64,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     abstract navigateMenuRight(): boolean;
     abstract saveSettingToLocalStorage(setting, cursor): void;
     abstract getActiveConfig(): InterfaceConfig;
+    abstract setSetting(scene: BattleScene, setting, value: integer): boolean;
 
     /**
      * Constructor for the AbstractSettingsUiUiHandler.
@@ -388,6 +390,11 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         } else {
             const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
             switch (button) {
+                case Button.ACTION:
+                    if (!this.optionCursors || !this.optionValueLabels) return;
+                    const setting = this.settingDevice[Object.keys(this.settingDevice)[cursor]];
+                    success = this.setSetting(this.scene, setting, 1);
+                    break;
                 case Button.UP: // Move up in the menu.
                     if (!this.optionValueLabels) return false;
                     if (cursor) { // If not at the top, move the cursor up.
@@ -420,16 +427,16 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                         success = successA && successB; // Indicates a successful cursor and scroll adjustment.
                     }
                     break;
-                case Button.LEFT: // Move selection left within the current option set.
-                    if (!this.optionCursors || !this.optionValueLabels) return;
-                    if (this.optionCursors[cursor])
-                        success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
-                    break;
-                case Button.RIGHT: // Move selection right within the current option set.
-                    if (!this.optionCursors || !this.optionValueLabels) return;
-                    if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
-                        success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
-                    break;
+                // case Button.LEFT: // Move selection left within the current option set.
+                //     if (!this.optionCursors || !this.optionValueLabels) return;
+                //     if (this.optionCursors[cursor])
+                //         success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+                //     break;
+                // case Button.RIGHT: // Move selection right within the current option set.
+                //     if (!this.optionCursors || !this.optionValueLabels) return;
+                //     if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
+                //         success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+                //     break;
                 case Button.CYCLE_FORM:
                     success = this.navigateMenuLeft();
                     break;

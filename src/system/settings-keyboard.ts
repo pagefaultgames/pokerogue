@@ -5,7 +5,7 @@ import {Mode} from "#app/ui/ui";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 
 export enum SettingKeyboard {
-    Default_Layout = "DEFAULT_LAYOUT",
+    // Default_Layout = "DEFAULT_LAYOUT",
     Button_Up = "BUTTON_UP",
     Alt_Button_Up = "ALT_BUTTON_UP",
     Button_Down = "BUTTON_DOWN",
@@ -43,45 +43,45 @@ export enum SettingKeyboard {
 }
 
 export const settingKeyboardOptions: SettingOptions = {
-    [SettingKeyboard.Default_Layout]: ['Default'],
-    [SettingKeyboard.Button_Up]: [`KEY ${Button.UP.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Up]: [`KEY ${Button.UP.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Down]: [`KEY ${Button.DOWN.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Down]: [`KEY ${Button.DOWN.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Left]: [`KEY ${Button.LEFT.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Left]: [`KEY ${Button.LEFT.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Right]: [`KEY ${Button.RIGHT.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Right]: [`KEY ${Button.RIGHT.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Stats]: [`KEY ${Button.STATS.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Stats]: [`KEY ${Button.STATS.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Change'],
-    [SettingKeyboard.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, 'Change'],
-    [SettingKeyboard.Alt_Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, 'Change']
+    // [SettingKeyboard.Default_Layout]: ['Default'],
+    [SettingKeyboard.Button_Up]: [`KEY ${Button.UP.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Up]: [`KEY ${Button.UP.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Down]: [`KEY ${Button.DOWN.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Down]: [`KEY ${Button.DOWN.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Left]: [`KEY ${Button.LEFT.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Left]: [`KEY ${Button.LEFT.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Right]: [`KEY ${Button.RIGHT.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Right]: [`KEY ${Button.RIGHT.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Action]: [`KEY ${Button.ACTION.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Menu]: [`KEY ${Button.MENU.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Stats]: [`KEY ${Button.STATS.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Stats]: [`KEY ${Button.STATS.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, 'Press action to assign'],
+    [SettingKeyboard.Alt_Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, 'Press action to assign'],
 };
 
 export const settingKeyboardDefaults: SettingDefaults = {
-    [SettingKeyboard.Default_Layout]: 0,
+    // [SettingKeyboard.Default_Layout]: 0,
     [SettingKeyboard.Button_Up]: 0,
     [SettingKeyboard.Alt_Button_Up]: 0,
     [SettingKeyboard.Button_Down]: 0,
@@ -168,6 +168,7 @@ export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard,
                     const cancelHandler = (success: boolean = false) : boolean => {
                         scene.ui.revertMode();
                         (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
+                        (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
                         return success;
                     }
                     scene.ui.setOverlayMode(Mode.KEYBOARD_BINDING, {
@@ -177,27 +178,27 @@ export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard,
                 }
             }
             break;
-        case SettingKeyboard.Default_Layout:
-            if (value && scene.ui) {
-                    const cancelHandler = () => {
-                        scene.ui.revertMode();
-                        (scene.ui.getHandler() as SettingsKeyboardUiHandler).setOptionCursor(Object.values(SettingKeyboard).indexOf(SettingKeyboard.Default_Layout), 0, true);
-                        (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
-                        return false;
-                    };
-                    const changeKeyboardHandler = (keyboardLayout: string) => {
-                        scene.inputController.setChosenKeyboardLayout(keyboardLayout);
-                        cancelHandler();
-                        return true;
-                    };
-                    scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-                        options: [{
-                            label: 'Default',
-                            handler: changeKeyboardHandler,
-                        }]
-                    });
-                    return false;
-            }
+        // case SettingKeyboard.Default_Layout:
+        //     if (value && scene.ui) {
+        //             const cancelHandler = () => {
+        //                 scene.ui.revertMode();
+        //                 (scene.ui.getHandler() as SettingsKeyboardUiHandler).setOptionCursor(Object.values(SettingKeyboard).indexOf(SettingKeyboard.Default_Layout), 0, true);
+        //                 (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
+        //                 return false;
+        //             };
+        //             const changeKeyboardHandler = (keyboardLayout: string) => {
+        //                 scene.inputController.setChosenKeyboardLayout(keyboardLayout);
+        //                 cancelHandler();
+        //                 return true;
+        //             };
+        //             scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+        //                 options: [{
+        //                     label: 'Default',
+        //                     handler: changeKeyboardHandler,
+        //                 }]
+        //             });
+        //             return false;
+        //     }
     }
     return true;
 

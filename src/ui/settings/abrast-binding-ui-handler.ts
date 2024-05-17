@@ -4,6 +4,7 @@ import {Mode} from "../ui";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 /**
  * Abstract class for handling UI elements related to button bindings.
@@ -24,7 +25,6 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     protected actionLabel: Phaser.GameObjects.Text;
     protected cancelLabel: Phaser.GameObjects.Text;
 
-    // State for listening and button pressed tracking.
     protected listening: boolean = false;
     protected buttonPressed: number | null = null;
 
@@ -35,6 +35,8 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     // Function to call on cancel or completion of binding.
     protected cancelFn: (boolean?) => boolean;
     protected swapAction: () => boolean;
+
+    protected confirmText: string;
 
     // The specific setting being modified.
     protected target;
@@ -105,7 +107,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.cancelLabel.setOrigin(0, 0.5);
         this.cancelLabel.setPositionRelative(this.actionBg, 10, this.actionBg.height / 2);
 
-        this.actionLabel = addTextObject(this.scene, 0, 0, 'Confirm Swap', TextStyle.SETTINGS_LABEL);
+        this.actionLabel = addTextObject(this.scene, 0, 0, this.confirmText, TextStyle.SETTINGS_LABEL);
         this.actionLabel.setOrigin(0, 0.5);
         this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
 

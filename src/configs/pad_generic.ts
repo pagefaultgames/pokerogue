@@ -79,6 +79,12 @@ const pad_generic = {
         LS: SettingGamepad.Button_Speed_Up,
         RS: SettingGamepad.Button_Slow_Down
     },
+    blacklist: [
+        "LC_N",
+        "LC_S",
+        "LC_W",
+        "LC_E",
+    ]
 };
 
 export default pad_generic;

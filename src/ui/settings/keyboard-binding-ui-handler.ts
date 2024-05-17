@@ -11,6 +11,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         super(scene, mode);
         // Listen to gamepad button down events to initiate binding.
         scene.input.keyboard.on('keydown', this.onKeyDown, this);
+        this.confirmText = "Confirm";
     }
 
     getSelectedDevice() {
