@@ -1276,7 +1276,7 @@ export class CursedTag extends BattlerTag {
   }
 }
 
-export class AuraTag extends BattlerTag {
+export abstract class AuraTag extends BattlerTag {
   constructor(tagType: BattlerTagType, sourceId: number) {
     super(tagType, BattlerTagLapseType.CUSTOM, 0, undefined, sourceId);
   }

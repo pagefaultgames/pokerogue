@@ -1455,12 +1455,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, battlerMove, cancelled, power);
         
-        const reducedDamageTag = this.getTag(BattlerTagType.FRIEND_GUARD) as ReceivedMoveDamageMultiplierTag;
         const abilityBypass = new Utils.BooleanHolder(false);
         applyAbAttrs(MoveAbilityBypassAbAttr, source, abilityBypass);
 
-        if (!abilityBypass.value && reducedDamageTag) {
-          power.value *= reducedDamageTag.powerMultiplier;
+        if (!abilityBypass.value) {
+          const reducedDamageTags =
+                this.findTags(t => t instanceof ReceivedMoveDamageMultiplierTag) as ReceivedMoveDamageMultiplierTag[];
+          const powerMultiplier = reducedDamageTags.reduce((acc, t) => acc * t.powerMultiplier, 1);
+          power.value *= powerMultiplier;
         }
 
         power.value *= typeChangeMovePowerMultiplier.value;
