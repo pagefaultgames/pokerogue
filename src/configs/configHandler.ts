@@ -139,6 +139,7 @@ export function swap(config, settingNameTarget, keycode) {
 
     config.custom[prev_key] = new_settingName;
     config.custom[new_key] = prev_settingName;
+    return true;
 }
 
 /**
