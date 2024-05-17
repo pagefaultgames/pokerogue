@@ -2263,7 +2263,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     for(let opp of pokemon.getOpponents()) {
       if(opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
-        pokemon.scene.queueMessage(getPokemonMessage(opp, ' is tormented!'));
+        pokemon.scene.queueMessage(i18next.t('abilityTriggers:badDreams', {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
         hadEffect = true;
       }
     
