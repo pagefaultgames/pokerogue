@@ -3663,7 +3663,7 @@ export class GameOverPhase extends BattlePhase {
             this.end();
           }
 
-          if (this.victory) {
+          if (this.victory && this.scene.gameMode.isClassic) {
             this.scene.ui.fadeIn(500).then(() => {
               this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? 'm' : 'f'}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
                 this.scene.ui.showDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1], this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
