@@ -4,11 +4,17 @@ interface TimedEvent {
     value: number;
     startDate: string;
     endDate: string;
+    bannerFilename: string
 }
 
+/* 
+example: 
+{"name": "3x Shiny Weekend", "eventType": "shiny", "value": 3, 
+"startDate": "2024-05-18", "endDate": "2024-05-21", "bannerFilename": "5-18-banner"},
+*/
 const timedEvents: TimedEvent[] = [
     {"name": "3x Shiny Weekend", "eventType": "shiny", "value": 3, 
-    "startDate": "2024-05-18", "endDate": "2024-05-21"},
+    "startDate": "2024-05-17", "endDate": "2024-05-21", "bannerFilename": "5-18-banner"},
 ];
 
 export class TimedEventManager {  
@@ -37,5 +43,18 @@ export class TimedEventManager {
             }
         }
         return multiplier;
+    }
+    
+    getEventBannerFilename(): string {
+        for (const timedEvent of timedEvents) {
+            const eventStart = new Date(timedEvent.startDate);
+            const now = new Date();
+            const eventEnd = new Date(timedEvent.endDate);
+
+            if (eventStart < now && now < eventEnd) {
+                return timedEvent.bannerFilename;
+            }
+        }
+        return null
     }
 }

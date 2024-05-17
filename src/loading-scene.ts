@@ -31,7 +31,7 @@ export class LoadingScene extends SceneBase {
     // Load menu images
     this.loadAtlas('bg', 'ui');
     if (new TimedEventManager().isEventActive()) {
-      this.loadImage('banner', 'events')
+      this.loadImage(new TimedEventManager().getEventBannerFilename(), 'events')
     }
     this.loadImage('command_fight_labels', 'ui');
     this.loadAtlas('prompt', 'ui');
