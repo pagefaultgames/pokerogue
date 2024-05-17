@@ -11,7 +11,7 @@ export const berry: BerryTranslationEntries = {
   },
   "ENIGMA": {
     name: "Enigmabeere",
-    effect: "Heilt 25% der KP, wenn der Träger von einer sehr effektiven Attacke getroffen wird",
+    effect: "Stellt 25% der KP wieder her, wenn der Träger von einer sehr effektiven Attacke getroffen wird",
   },
   "LIECHI": {
     name: "Lydzibeere",
