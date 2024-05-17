@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const battle: SimpleTranslationEntries = {
-  "bossAppeared": "보스 {{bossName}}(이)가 나타났다.",
+  "bossAppeared": "{{bossName}}(이)가 나타났다.",
   "trainerAppeared": "{{trainerName}}(이)가\n승부를 걸어왔다!",
   "trainerAppearedDouble": "{{trainerName}}(이)가\n승부를 걸어왔다!",
   "singleWildAppeared": "앗! 야생 {{pokemonName}}(이)가\n튀어나왔다!",
@@ -12,7 +12,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerGo": "{{trainerName}}(는)은 {{pokemonName}}를(을) 내보냈다!",
   "switchQuestion": "{{pokemonName}}를(을)\n교체하시겠습니까?",
   "trainerDefeated": `{{trainerName}}과(와)의\n승부에서 이겼다!`,
-  "pokemonCaught": "신난다-!\n{{pokemonName}}을 붙잡았다!",
+  "pokemonCaught": "신난다-!\n{{pokemonName}}(를)을 잡았다!",
   "pokemon": "포켓몬",
   "sendOutPokemon": "가랏! {{pokemonName}}!",
   "hitResultCriticalHit": "급소에 맞았다!",
@@ -25,11 +25,11 @@ export const battle: SimpleTranslationEntries = {
   "expGain": "{{pokemonName}}(는)은\n{{exp}} 경험치를 얻었다!",
   "levelUp": "{{pokemonName}}(는)은\n레벨 {{level}}(으)로 올랐다!",
   "learnMove": "{{pokemonName}}(는)은 새로\n{{moveName}}를(을) 배웠다!",
-  "learnMovePrompt": "{{pokemonName}}(는)은 새로\n{{moveName}}를(을) 배우고 싶다…",
+  "learnMovePrompt": "{{pokemonName}}(는)은 새로\n{{moveName}}를(을) 배우고 싶다!…",
   "learnMoveLimitReached": "그러나 {{pokemonName}}(는)은 기술을 4개\n알고 있으므로 더 이상 배울 수 없다!",
-  "learnMoveReplaceQuestion": "{{moveName}}대신 다른 기술을 잊게 하겠습니까?",
+  "learnMoveReplaceQuestion": "{{moveName}} 대신 다른 기술을 잊게 하겠습니까?",
   "learnMoveStopTeaching": "그럼… {{moveName}}를(을)\n배우는 것을 포기하겠습니까?",
-  "learnMoveNotLearned": "{{pokemonName}}(는)은\n결국 배우지 않았다!",
+  "learnMoveNotLearned": "{{pokemonName}}(는)은 {{moveName}}를(을)\n결국 배우지 않았다!",
   "learnMoveForgetQuestion": "어느 기술을 잊게 하고싶은가?",
   "learnMoveForgetSuccess": "{{pokemonName}}(는)은 {{moveName}}를(을) 깨끗이 잊었다!",
   "countdownPoof": "@d{32}1, @d{15}2, @d{15}… @d{15}… @d{30}@s{pb_bounce_1}짠!",
@@ -51,6 +51,6 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbFlee": "도망칠",
   "notDisabled": "{{pokemonName}}의\n{{moveName}} 사슬묶기가 풀렸다!",
   "skipItemQuestion": "아이템을 받지 않고 넘어가시겠습니까?",
-  "eggHatching": "어라?",
-  "ivScannerUseQuestion": "{{pokemonName}}에게 IV Scanner를 사용하시겠습니까?"
+  "eggHatching": "어라…?",
+  "ivScannerUseQuestion": "{{pokemonName}}에게 개체값탐지기를 사용하시겠습니까?"
 } as const;
