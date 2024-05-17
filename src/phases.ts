@@ -4304,7 +4304,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.clearEnemyHeldItemModifiers();
         this.scene.field.remove(pokemon, true);
       };
-      const addToParty = () => {
+      const addToParty = (modifiersFromReleasedPokemon?: PokemonHeldItemModifier[]) => {
         const newPokemon = pokemon.addToParty(this.pokeballType);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (this.scene.getParty().filter(p => p.isShiny()).length === 6)
@@ -4312,8 +4312,10 @@ export class AttemptCapturePhase extends PokemonPhase {
         Promise.all(modifiers.map(m => this.scene.addModifier(m, true))).then(() => {
           this.scene.updateModifiers(true);
           removePokemon();
-          if (newPokemon)
+          if (newPokemon) {
+            modifiersFromReleasedPokemon?.forEach(m => this.scene.tryTransferHeldItemModifier(m, newPokemon, true, false));
             newPokemon.loadAssets().then(end);
+          }
           else
             end();
         });
@@ -4323,10 +4325,11 @@ export class AttemptCapturePhase extends PokemonPhase {
           const promptRelease = () => {
             this.scene.ui.showText(`Your party is full.\nRelease a Pokémon to make room for ${pokemon.name}?`, null, () => {
               this.scene.ui.setMode(Mode.CONFIRM, () => {
-                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
+                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (releasedPokemonSlotIndex: integer, _option: PartyOption) => {
+                  const releasedItems = this.scene.getParty()[releasedPokemonSlotIndex].getTransferrableHeldItems();
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                    if (slotIndex < 6)
-                      addToParty();
+                    if (releasedPokemonSlotIndex < 6)
+                      addToParty(releasedItems);
                     else
                       promptRelease();
                   });

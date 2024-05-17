@@ -727,28 +727,25 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   doRelease(slotIndex: integer): void {
     this.showText(this.getReleaseMessage(this.scene.getParty()[slotIndex].name), null, () => {
+
+      if (this.partyUiMode === PartyUiMode.RELEASE) {
+        const selectCallback = this.selectCallback;
+        this.selectCallback = null;
+        selectCallback(this.cursor, PartyOption.RELEASE);
+      }
+
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
       const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
-      const releasedItems = releasedPokemon.getTransferrableHeldItems();
 
       releasedPokemon.destroy();
       this.populatePartySlots();
       
       if (this.cursor >= this.scene.getParty().length)
         this.setCursor(this.cursor - 1);
-      if (this.partyUiMode === PartyUiMode.RELEASE) {
-        const selectCallback = this.selectCallback;
-        this.selectCallback = null;
-        selectCallback(this.cursor, PartyOption.RELEASE);
-        if (releasedItems && releasedItems.length > 0) {
-          const newPokemon = this.scene.getParty()[this.scene.getParty().length - 1];
-          releasedItems.forEach(i => this.scene.tryTransferHeldItemModifier(i, newPokemon, true, false));
-          this.showText("Items were transferred beep boop");
-        }
-      }
 
       this.showText(null, 0);
+
     }, null, true);
   }
 
