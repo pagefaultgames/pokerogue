@@ -364,7 +364,8 @@ export class TitlePhase extends Phase {
       this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1)
         this.scene.pushPhase(new SummonPhase(this.scene, 1, true, true));
-      if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
         const minPartySize = this.scene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
@@ -956,7 +957,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
       }
      
-      if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
         const minPartySize = this.scene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers.length > minPartySize) {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
@@ -2325,26 +2326,28 @@ export class MovePhase extends BattlePhase {
       // This should only happen when there are no valid targets left on the field
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {        
         this.cancel();
-        
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
-
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
-
         moveQueue.shift();
-        return this.end();
       }
 
-      if (this.move.moveId && !this.cancelled)
+      // Display move text
+      if (this.move.moveId && (!this.cancelled || this.ignorePp)) {
         this.showMoveText();
-        if (this.failed)
+        if (this.cancelled)
           this.showFailedText();
+      }
+
+      if (this.cancelled)
+        return this.end();
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length)
         this.scene.currentBattle.lastMove = this.move.moveId;
+
 
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
