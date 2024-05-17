@@ -13,10 +13,10 @@ import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
+import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
-import { titles,trainerClasses,trainerNames } from "./trainers";
-import { splashMessages } from "./splash-messages"
 import { weather } from "./weather";
 
 
@@ -27,20 +27,20 @@ export const koConfig = {
   commandUiHandler,
   egg,
   fightUiHandler,
-  menuUiHandler,
+  growth,
   menu,
+  menuUiHandler,
+  modifierType,
   move,
+  nature,
   pokeball,
-  pokemonStat,
   pokemon,
+  pokemonStat,
+  splashMessages,
   starterSelectUiHandler,
   titles,
   trainerClasses,
   trainerNames,
   tutorial,
-  splashMessages,
-  nature,
-  growth,
   weather,
-  modifierType,
 }
