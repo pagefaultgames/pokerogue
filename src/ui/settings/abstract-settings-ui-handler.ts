@@ -21,24 +21,6 @@ export interface LayoutConfig {
     keys: string[];
     bindingSettings: Array<String>;
 }
-
-/**
- * Moves elements in the blacklist to the top of the original array.
- * @param {string[]} originalArray - The original array of strings.
- * @param {string[]} blacklist - The array of strings to be moved to the top.
- * @returns {string[]} - The new array with blacklisted elements at the top.
- */
-function moveBlacklistedToTop(originalArray, blacklist) {
-    // Filter the original array to get blacklisted elements
-    const blacklistedElements = originalArray.filter(element => blacklist.includes(element.toUpperCase()));
-
-    // Filter the original array to get non-blacklisted elements
-    const nonBlacklistedElements = originalArray.filter(element => !blacklist.includes(element.toUpperCase()));
-
-    // Concatenate the blacklisted elements and the non-blacklisted elements
-    return blacklistedElements.concat(nonBlacklistedElements);
-}
-
 /**
  * Abstract class for handling UI elements related to settings.
  */
@@ -171,8 +153,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
             // Fetch default values for these settings and prepare to highlight selected options.
             const optionCursors = Object.values(Object.keys(this.settingDeviceDefaults).filter(s => specificBindingKeys.includes(s)).map(k => this.settingDeviceDefaults[k]));
             // Filter out settings that are not relevant to the current gamepad configuration.
-            const unsortedSettingFiltered = Object.keys(this.settingDevice).filter(_key => specificBindingKeys.includes(this.settingDevice[_key]))
-            const settingFiltered = moveBlacklistedToTop(unsortedSettingFiltered, this.settingBlacklisted);
+            const settingFiltered = Object.keys(this.settingDevice).filter(_key => specificBindingKeys.includes(this.settingDevice[_key]))
             // Loop through the filtered settings to manage display and options.
 
             settingFiltered.forEach((setting, s) => {
@@ -407,11 +388,13 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
             this.scene.ui.revertMode();
         } else {
             const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
+            const setting = this.settingDevice[Object.keys(this.settingDevice)[cursor]];
             switch (button) {
                 case Button.ACTION:
                     if (!this.optionCursors || !this.optionValueLabels) return;
-                    const setting = this.settingDevice[Object.keys(this.settingDevice)[cursor]];
-                    success = this.setSetting(this.scene, setting, 1);
+                    if (this.settingBlacklisted.includes(setting) || !setting.includes('BUTTON_')) success = false;
+                    else
+                        success = this.setSetting(this.scene, setting, 1);
                     break;
                 case Button.UP: // Move up in the menu.
                     if (!this.optionValueLabels) return false;
@@ -445,16 +428,20 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                         success = successA && successB; // Indicates a successful cursor and scroll adjustment.
                     }
                     break;
-                // case Button.LEFT: // Move selection left within the current option set.
-                //     if (!this.optionCursors || !this.optionValueLabels) return;
-                //     if (this.optionCursors[cursor])
-                //         success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
-                //     break;
-                // case Button.RIGHT: // Move selection right within the current option set.
-                //     if (!this.optionCursors || !this.optionValueLabels) return;
-                //     if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
-                //         success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
-                //     break;
+                case Button.LEFT: // Move selection left within the current option set.
+                    if (!this.optionCursors || !this.optionValueLabels) return;
+                    if (this.settingBlacklisted.includes(setting) || setting.includes('BUTTON_')) success = false;
+                    else if (this.optionCursors[cursor]) {
+                        success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+                    }
+                    break;
+                case Button.RIGHT: // Move selection right within the current option set.
+                    if (!this.optionCursors || !this.optionValueLabels) return;
+                    if (this.settingBlacklisted.includes(setting) || setting.includes('BUTTON_')) success = false;
+                    else if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
+                        success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+                    }
+                    break;
                 case Button.CYCLE_FORM:
                     success = this.navigateMenuLeft();
                     break;
