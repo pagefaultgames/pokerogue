@@ -196,7 +196,7 @@ export default class BattleScene extends SceneBase {
 		initSpecies();
 		initMoves();
 		initAbilities();
-		
+
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
@@ -542,17 +542,17 @@ export default class BattleScene extends SceneBase {
 					const species = getPokemonSpecies(parseInt(s));
 					loadPokemonAssets.push(species.loadAssets(this, false, 0, false));
 				}
-	
+
 				Promise.all(loadPokemonAssets).then(() => {
 					const starterCandyColors = {};
 					const rgbaToHexFunc = (r, g, b) => [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
-		
+
 					for (let s of Object.keys(speciesStarters)) {
 						const species = getPokemonSpecies(parseInt(s));
-						
+
 						starterCandyColors[species.speciesId] = species.generateCandyColors(this).map(c => rgbaToHexFunc(c[0], c[1], c[2]));
 					}
-		
+
 					console.log(JSON.stringify(starterCandyColors));
 
 					resolve();
@@ -649,7 +649,7 @@ export default class BattleScene extends SceneBase {
 
 	addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
 		const container = this.add.container(x, y);
-		
+
 		const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
     	icon.setFrame(pokemon.getIconId(true));
 		// Temporary fix to show pokemon's default icon if variant icon doesn't exist
@@ -675,7 +675,7 @@ export default class BattleScene extends SceneBase {
 			const originalFrame = icon.frame;
 
 			const iconHeight = (icon.frame.cutHeight <= fusionIcon.frame.cutHeight ? Math.ceil : Math.floor)((icon.frame.cutHeight + fusionIcon.frame.cutHeight) / 4);
-			
+
 			// Inefficient, but for some reason didn't work with only the unique properties as part of the name
 			const iconFrameId = `${icon.frame.name}f${fusionIcon.frame.name}`;
 
@@ -733,7 +733,7 @@ export default class BattleScene extends SceneBase {
 			this.gameData = new GameData(this);
 
 		this.gameMode = gameModes[GameModes.CLASSIC];
-		
+
 		this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
 
@@ -760,7 +760,7 @@ export default class BattleScene extends SceneBase {
 		this.party = [];
 		for (let p of this.getEnemyParty())
 			p.destroy();
-			
+
 		this.currentBattle = null;
 
 		this.waveCountText.setText(startingWave.toString());
@@ -789,7 +789,7 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
 		this.trainer.setVisible(true);
-		
+
 		this.updateGameInfo();
 
 		if (reloadI18n) {
@@ -835,7 +835,7 @@ export default class BattleScene extends SceneBase {
 		this.resetSeed(newWaveIndex);
 
 		const playerField = this.getPlayerField();
-		
+
 		if (this.gameMode.hasFixedBattles && fixedBattles.hasOwnProperty(newWaveIndex) && trainerData === undefined) {
 			battleConfig = fixedBattles[newWaveIndex];
 			newDouble = battleConfig.double;
@@ -946,7 +946,7 @@ export default class BattleScene extends SceneBase {
 					this.pushPhase(new LevelCapPhase(this));
 			}
 		}
-		
+
 		return this.currentBattle;
 	}
 
@@ -1108,7 +1108,7 @@ export default class BattleScene extends SceneBase {
 		party.forEach((pokemon, p) => {
 			if (!pokemon.pokerus || infectedIndexes.indexOf(p) > -1)
 				return;
-			
+
 			this.executeWithSeedOffset(() => {
 				if (p)
 					spread(p, -1);
@@ -1553,7 +1553,7 @@ export default class BattleScene extends SceneBase {
 		this.currentPhase = this.phaseQueue.shift();
 		this.currentPhase.start();
 	}
-	
+
 	overridePhase(phase: Phase): boolean {
 		if (this.standbyPhase)
 			return false;
@@ -1646,7 +1646,7 @@ export default class BattleScene extends SceneBase {
 					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
 					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(success => resolve(success));
 				}
-				
+
 				for (let rm of modifiersToRemove)
 					this.removeModifier(rm);
 
@@ -1670,7 +1670,7 @@ export default class BattleScene extends SceneBase {
 								args.push(1);
 						} else if (modifier instanceof FusePokemonModifier)
 							args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-							
+
 						if (modifier.shouldApply(args)) {
 							const result = modifier.apply(args);
 							if (result instanceof Promise)
@@ -1679,7 +1679,7 @@ export default class BattleScene extends SceneBase {
 								success ||= result;
 						}
 					}
-					
+
 					return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
 				} else {
 					const args = [ this ];
@@ -1996,7 +1996,7 @@ export default class BattleScene extends SceneBase {
 
 		return false;
 	}
-	
+
 	updateGameInfo(): void {
 		const gameInfo = {
 			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
@@ -2005,12 +2005,49 @@ export default class BattleScene extends SceneBase {
 			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
 			weather: this.arena?.weather || {},
 			wave: this.currentBattle?.waveIndex || 0,
-			 party: this.party ? this.party.map(p => {
-				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, active: p.active, gender: p.gender, fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant, hp: Math.ceil((p.hp/p.stats[0])*100)};
-			}) : [],
-			enemyParty: this.getEnemyParty() ? this.getEnemyParty().map(p => {
-				return { name: p.name, level: p.level, speciesId: p.species.speciesId, fusionId: p.fusionSpecies?.speciesId || -1, active: p.active, gender: p.gender, fieldPosition: p.fieldPosition, speciesVariant: p.variant, fusionVariant: p.fusionVariant, hp: Math.ceil((p.hp/p.stats[0])*100)};
-			}) : [],
+            party: this.party ? this.party.map(p => {
+                return {
+                    name: p.name,
+                    level: p.level,
+                    speciesId: p.species.speciesId,
+                    fusionId: p.fusionSpecies?.speciesId || -1,
+                    active: p.active,
+                    gender: p.gender,
+                    fieldPosition: p.fieldPosition,
+                    speciesVariant: p.variant,
+                    fusionVariant: p.fusionVariant,
+                    ability: p.abilityIndex,
+                    hp: {
+                        current: p.hp,
+                        max: p.getMaxHp(),
+                        percent: (p.getHpRatio(false))*100
+                    },
+                    moveset: p.moveset.map(m =>  {
+                        return {
+                            moveId: m.moveId,
+                            ppUsed: m.ppUsed,
+                            ppUp: m.ppUp,
+                            ppBase: m.getMove().pp
+                        }
+                    })
+                };
+            }) : [],
+            enemyParty: this.getEnemyParty() ? this.getEnemyParty().map(p => {
+                return {
+                    name: p.name,
+                    level: p.level,
+                    speciesId: p.species.speciesId,
+                    fusionId: p.fusionSpecies?.speciesId || -1,
+                    active: p.active,
+                    gender: p.gender,
+                    fieldPosition: p.fieldPosition,
+                    speciesVariant: p.variant,
+                    fusionVariant: p.fusionVariant,
+                    hp: {
+                        percent: (p.getHpRatio(false))*100
+                    }
+                };
+            }) : [],
 
 		};
 		(window as any).gameInfo = gameInfo;
