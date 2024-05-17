@@ -81,34 +81,6 @@ export function getIconWithKey(config, key) {
 }
 
 /**
- * Retrieves the icon for a special case where a key is bound to a different type of binding.
- * This special case occurs when attempting to bind a key from either a main or alternate binding
- * to a different type of binding, resulting in two main or two alternate bindings having the same action.
- * In such cases, the two bindings are swapped to maintain uniqueness.
- *
- * @param config - The configuration object containing icons.
- * @param keycode - The keycode to search for.
- * @param settingName - The setting name to search for.
- * @returns The icon associated with the special case or null if not found.
- */
-export function getIconSpecialCase(config, keycode, settingName) {
-    const potentialKey = getKeySolvingConflict(config, keycode, settingName);
-    if (potentialKey) return getIconWithKey(config, potentialKey);
-    return null;
-}
-
-/**
- * Retrieves the button associated with the specified setting name.
- *
- * @param config - The configuration object containing settings.
- * @param settingName - The setting name to search for.
- * @returns The button associated with the specified setting name.
- */
-export function getButtonWithSettingName(config, settingName) {
-    return config.settings[settingName];
-}
-
-/**
  * Retrieves the icon associated with the specified setting name.
  *
  * @param config - The configuration object containing icons.
@@ -144,76 +116,11 @@ export function getSettingNameWithButton(config, button, alt = false) {
     });
 }
 
-/**
- * Retrieves the key associated with the specified button.
- *
- * @param config - The configuration object containing custom settings.
- * @param button - The button to search for.
- * @param alt - A flag indicating if the search is for an alternate setting.
- * @returns The key associated with the specified button.
- */
-export function getKeyWithButton(config, button, alt = false) {
-    const settingName = getSettingNameWithButton(config, button, alt);
-    return getKeyWithSettingName(config, settingName);
-}
-
-/**
- * Identifies a key that resolves a binding conflict when attempting to bind a keycode to a specified setting name target.
- * This function checks if the keycode is already bound to a different type of binding (main or alternate) and returns
- * the conflicting key if found.
- *
- * @param config - The configuration object containing custom settings.
- * @param keycode - The keycode to check.
- * @param settingNameTarget - The setting name target to bind.
- * @returns The conflicting key if found, or null if no conflict is found.
- */
-export function getKeySolvingConflict(config, keycode, settingNameTarget) {
-    const key = getKeyWithKeycode(config, keycode);
-    const isMain = config.main.includes(key);
-
-    const isTargetMain = !settingNameTarget.includes("ALT_");
-    const potentialExistingButton = getButtonWithSettingName(config, settingNameTarget);
-    const potentialExistingKey = getKeyWithButton(config, potentialExistingButton, !isMain);
-
-    if (potentialExistingKey && isMain !== isTargetMain) return potentialExistingKey;
-    return null;
-}
-
-/**
- * Swaps the binding of a keycode with the specified setting name target.
- * If the target setting is deleted, it directly binds the keycode to the target setting.
- * Otherwise, it handles any potential conflicts by swapping the bindings.
- *
- * @param config - The configuration object containing custom settings.
- * @param settingNameTarget - The setting name target to swap.
- * @param keycode - The keycode to swap.
- */
-export function swap(config, settingNameTarget, keycode) {
-    // Check if the setting name target is already deleted (i.e., not bound to any key).
-    const isDeleted = !getKeyWithSettingName(config, settingNameTarget);
-    // If the setting name target is deleted, bind the new key to the setting name target and return.
-    if (isDeleted) {
-        const new_key = getKeyWithKeycode(config, keycode);
-        config.custom[new_key] = settingNameTarget;
-        return;
-    }
-    // Check for any potential conflict with existing bindings.
-    const potentialExistingKey = getKeySolvingConflict(config, keycode, settingNameTarget);
-
-    const prev_key = potentialExistingKey || getKeyWithSettingName(config, settingNameTarget);
-    const prev_settingName = getSettingNameWithKey(config, prev_key);
-
-    const new_key = getKeyWithKeycode(config, keycode);
-    const new_settingName = getSettingNameWithKey(config, new_key);
-
-    config.custom[prev_key] = new_settingName;
-    config.custom[new_key] = prev_settingName;
-    regenerateIdentifiers(config);
-}
-
-export function assign(config, settingNameTarget, keycode) {
+export function assign(config, settingNameTarget, keycode): boolean {
     // first, we need to check if this keycode is already used on another settingName
     const previousSettingName = getSettingNameWithKeycode(config, keycode);
+    const key = getKeyWithSettingName(config, previousSettingName);
+    if (!canIAssignThisKey(config, key)) return false;
     // if it was already bound, we delete the bind
     if (previousSettingName) {
         const previousKey = getKeyWithSettingName(config, previousSettingName);
@@ -226,6 +133,20 @@ export function assign(config, settingNameTarget, keycode) {
     // then, the new key is assigned to the new settingName
     const newKey = getKeyWithKeycode(config, keycode);
     config.custom[newKey] = settingNameTarget;
+    return true;
+}
+
+export function swap(config, settingNameTarget, keycode) {
+    // only for gamepad
+    if (config.padType === 'keyboard') return false;
+    const prev_key = getKeyWithSettingName(config, settingNameTarget);
+    const prev_settingName = getSettingNameWithKey(config, prev_key);
+
+    const new_key = getKeyWithKeycode(config, keycode);
+    const new_settingName = getSettingNameWithKey(config, new_key);
+
+    config.custom[prev_key] = new_settingName;
+    config.custom[new_key] = prev_settingName;
 }
 
 /**
@@ -236,23 +157,24 @@ export function assign(config, settingNameTarget, keycode) {
  */
 export function deleteBind(config, settingName) {
     const key = getKeyWithSettingName(config, settingName);
+    if (config.blacklist.includes(key) || isTheLatestBind(config, settingName)) return false;
     config.custom[key] = -1;
-    regenerateIdentifiers(config);
+    return true;
 }
 
-/**
- * Deletes the binding of the specified setting name. but prevent the deletion of keys in the blacklist
- *
- * @param config - The configuration object containing custom settings.
- * @param settingName - The setting name to delete.
- */
-export function safeDeleteBind(config, settingName) {
-    const key = getKeyWithSettingName(config, settingName);
-    if (config.blacklist.includes(key) || isTheLatestBind(config, settingName)) return;
-    config.custom[key] = -1;
+export function canIAssignThisKey(config, key) {
+    const settingName = getSettingNameWithKey(config, key);
+    if (settingName === -1) return true;
+    if (config.blacklist?.includes(key) || isTheLatestBind(config, settingName)) return false;
+    return true;
+}
+
+export function canIDeleteThisKey(config, key) {
+    return canIAssignThisKey(config, key);
 }
 
 export function isTheLatestBind(config, settingName) {
+    if (config.padType !== 'keyboard') return false;
     const isAlt = settingName.includes("ALT_");
     let altSettingName;
     if (isAlt)
@@ -261,22 +183,4 @@ export function isTheLatestBind(config, settingName) {
         altSettingName = `ALT_${settingName}`;
     const secondButton = getKeyWithSettingName(config, altSettingName);
     return secondButton === undefined;
-}
-
-/**
- * Regenerates the identifiers for main and alternate settings.
- * This allows distinguishing between main and alternate bindings.
- *
- * @param config - The configuration object containing custom settings.
- */
-export function regenerateIdentifiers(config) {
-    config.main = Object.keys(config.custom).filter(key => {
-        const value = config.custom[key];
-        return value !== -1 && !value.includes("ALT_");
-    });
-
-    config.alt = Object.keys(config.custom).filter(key => {
-        const value = config.custom[key];
-        return value !== -1 && value.includes("ALT_");
-    });
 }

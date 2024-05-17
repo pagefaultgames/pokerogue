@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
-import {getIconSpecialCase, getIconWithSettingName, getKeyWithKeycode} from "#app/configs/configHandler";
+import { getIconWithSettingName, getKeyWithKeycode} from "#app/configs/configHandler";
 import {Device} from "#app/enums/devices";
 
 
@@ -26,16 +26,17 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         const buttonIcon = activeConfig.icons[_key];
         if (!buttonIcon) return;
         this.buttonPressed = key;
-        const specialCaseIcon = getIconSpecialCase(activeConfig, key, this.target);
         const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
-        this.onInputDown(buttonIcon, specialCaseIcon || assignedButtonIcon, 'keyboard');
+        this.onInputDown(buttonIcon, assignedButtonIcon, 'keyboard');
     }
 
     swapAction(): boolean {
         const activeConfig = this.scene.inputController.getActiveConfig(Device.KEYBOARD);
-        this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
-        this.scene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
-        return true;
+        if (this.scene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
+            this.scene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
+            return true;
+        }
+        return false;
     }
 
 }

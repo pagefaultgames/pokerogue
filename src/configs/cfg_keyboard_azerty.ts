@@ -276,8 +276,6 @@ const cfg_keyboard_azerty = {
         KEY_SEMICOLON: -1,
         KEY_ALT: -1
     },
-    main: [],
-    alt: [],
     blacklist: [
         "KEY_ENTER",
         "KEY_ESC",

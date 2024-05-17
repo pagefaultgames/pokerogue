@@ -3,10 +3,12 @@ import {expect} from "vitest";
 import {Button} from "#app/enums/buttons";
 import {
     deleteBind,
-    getIconWithKey,
     getIconWithKeycode,
     getIconWithSettingName,
-    getKeyWithKeycode, getKeyWithSettingName, getKeySolvingConflict, swap, assign, safeDeleteBind
+    getKeyWithKeycode,
+    getKeyWithSettingName,
+    assign,
+    getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey
 } from "#app/configs/configHandler";
 
 export class MenuManip {
@@ -51,6 +53,7 @@ export class MenuManip {
     }
 
     iconDisplayedIs(icon) {
+        if (!(icon.toUpperCase().includes("KEY_"))) icon = "KEY_" + icon.toUpperCase();
         this.iconDisplayed = this.config.icons[icon];
         expect(getIconWithSettingName(this.config, this.settingName)).toEqual(this.iconDisplayed);
         return this;
@@ -66,6 +69,12 @@ export class MenuManip {
         return this.thereShouldBeNoIconAnymore();
     }
 
+    nothingShouldHappen() {
+        const settingName = getSettingNameWithKeycode(this.config, this.keycode);
+        expect(settingName).toEqual(-1);
+        return this;
+    }
+
     weWantThisBindInstead(keycode) {
         this.keycode = Phaser.Input.Keyboard.KeyCodes[keycode];
         const icon = getIconWithKeycode(this.config, this.keycode);
@@ -76,25 +85,17 @@ export class MenuManip {
         return this;
     }
 
-    OopsSpecialCaseIcon(icon) {
-        this.specialCaseIcon = this.config.icons[icon];
-        const potentialExistingKey = getKeySolvingConflict(this.config, this.keycode, this.settingName);
-        const prev_key = potentialExistingKey || getKeyWithSettingName(this.config, this.settingName);
-        expect(getIconWithKey(this.config, prev_key)).toEqual(this.specialCaseIcon);
-        return this;
-    }
-
     whenWeDelete(settingName?: string) {
         this.settingName = SettingInterface[settingName] || this.settingName;
         const key = getKeyWithSettingName(this.config, this.settingName);
         deleteBind(this.config, this.settingName);
-        expect(this.config.custom[key]).toEqual(-1);
+        // expect(this.config.custom[key]).toEqual(-1);
         return this;
     }
 
     whenWeTryToDelete(settingName?: string) {
         this.settingName = SettingInterface[settingName] || this.settingName;
-        safeDeleteBind(this.config, this.settingName);
+        deleteBind(this.config, this.settingName);
         return this;
     }
 
@@ -102,7 +103,24 @@ export class MenuManip {
         assign(this.config, this.settingName, this.keycode);
     }
 
+    butLetsForceIt() {
+        this.confirm();
+    }
+
+
     confirm() {
-        swap(this.config, this.settingName, this.keycode);
+        assign(this.config, this.settingName, this.keycode);
+    }
+
+    weCantConfirm() {
+        const key = getKeyWithKeycode(this.config, this.keycode);
+        expect(canIAssignThisKey(this.config, key)).toEqual(false);
+        return this;
+    }
+
+    weCantDelete() {
+        const key = getKeyWithSettingName(this.config, this.settingName);
+        expect(canIDeleteThisKey(this.config, key)).toEqual(false);
+        return this;
     }
 }

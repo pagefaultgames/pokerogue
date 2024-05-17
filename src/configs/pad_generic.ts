@@ -79,8 +79,6 @@ const pad_generic = {
         LS: SettingGamepad.Button_Speed_Up,
         RS: SettingGamepad.Button_Slow_Down
     },
-    main: [],
-    alt: [],
 };
 
 export default pad_generic;

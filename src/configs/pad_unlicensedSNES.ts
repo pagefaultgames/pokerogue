@@ -71,8 +71,6 @@ const pad_unlicensedSNES = {
         LS: -1,
         RS: -1
     },
-    main: [],
-    alt: [],
 };
 
 export default pad_unlicensedSNES;

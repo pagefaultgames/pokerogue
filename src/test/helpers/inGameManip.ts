@@ -65,6 +65,7 @@ export class InGameManip {
     }
 
     weShouldTriggerTheButton(settingName) {
+        if (!settingName.includes("Button_")) settingName = "Button_" + settingName;
         this.settingName = SettingInterface[this.normalizeSettingNameString(settingName)];
         expect(getSettingNameWithKeycode(this.config, this.keycode)).toEqual(this.settingName);
         return this;

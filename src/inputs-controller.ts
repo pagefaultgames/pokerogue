@@ -11,7 +11,11 @@ import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler"
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_azerty from "./configs/cfg_keyboard_azerty";
 import {Device} from "#app/enums/devices";
-import {getButtonWithKeycode, getIconForLatestInput, regenerateIdentifiers, swap} from "#app/configs/configHandler";
+import {
+    assign,
+    getButtonWithKeycode,
+    getIconForLatestInput, swap,
+} from "#app/configs/configHandler";
 
 export interface DeviceMapping {
     [key: string]: number;
@@ -685,9 +689,6 @@ export class InputsController {
     injectConfig(selectedDevice: string, mappingConfigs): void {
         if (!this.configs[selectedDevice]) this.configs[selectedDevice] = {};
         this.configs[selectedDevice].custom = mappingConfigs.custom;
-        this.configs[selectedDevice].main = mappingConfigs.main;
-        this.configs[selectedDevice].alt = mappingConfigs.alt;
-        regenerateIdentifiers(this.configs[selectedDevice]);
     }
 
     /**
@@ -697,9 +698,11 @@ export class InputsController {
      * @param settingName The name of the setting to swap.
      * @param pressedButton The button that was pressed.
      */
-    swapBinding(config, settingName, pressedButton): void {
+    assignBinding(config, settingName, pressedButton): boolean {
         this.pauseUpdate = true;
-        swap(config, settingName, pressedButton);
         setTimeout(() => this.pauseUpdate = false, 500);
+        if (config.padType === 'keyboard')
+            return assign(config, settingName, pressedButton);
+        else return swap(config, settingName, pressedButton);
     }
 }

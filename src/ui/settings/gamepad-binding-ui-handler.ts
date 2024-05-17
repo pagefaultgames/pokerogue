@@ -2,7 +2,7 @@ import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
 import {Device} from "#app/enums/devices";
-import {getIconSpecialCase, getIconWithSettingName, getKeyWithKeycode} from "#app/configs/configHandler";
+import {getIconWithSettingName, getKeyWithKeycode} from "#app/configs/configHandler";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
@@ -27,15 +27,16 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
         const buttonIcon = activeConfig.icons[key];
         if (!buttonIcon) return;
         this.buttonPressed = button.index;
-        const specialCaseIcon = getIconSpecialCase(activeConfig, button.index, this.target);
         const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
-        this.onInputDown(buttonIcon, specialCaseIcon || assignedButtonIcon, type);
+        this.onInputDown(buttonIcon, assignedButtonIcon, type);
     }
 
     swapAction(): boolean {
         const activeConfig = this.scene.inputController.getActiveConfig(Device.GAMEPAD);
-        this.scene.inputController.swapBinding(activeConfig, this.target, this.buttonPressed)
-        this.scene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
-        return true;
+        if(this.scene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
+            this.scene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
+            return true;
+        }
+        return false;
     }
 }

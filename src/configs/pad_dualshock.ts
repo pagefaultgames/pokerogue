@@ -83,8 +83,6 @@ const pad_dualshock = {
         RS: SettingGamepad.Button_Slow_Down,
         TOUCH: SettingGamepad.Button_Submit,
     },
-    main: [],
-    alt: [],
 };
 
 export default pad_dualshock;

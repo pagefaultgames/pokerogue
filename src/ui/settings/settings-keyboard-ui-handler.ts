@@ -62,11 +62,13 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
         const selection = this.settingLabels[cursor].text;
         const key = reverseValueToKeySetting(selection);
-        const setting = SettingKeyboard[key];
+        const settingName = SettingKeyboard[key];
         const activeConfig = this.getActiveConfig();
-        deleteBind(this.getActiveConfig(), setting);
-        this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
-        this.updateBindings();
+        const success = deleteBind(this.getActiveConfig(), settingName);
+        if (success) {
+            this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
+            this.updateBindings();
+        }
     }
 
     /**

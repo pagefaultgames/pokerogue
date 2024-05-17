@@ -79,8 +79,6 @@ const pad_xbox360 = {
         LS: SettingGamepad.Button_Speed_Up,
         RS: SettingGamepad.Button_Slow_Down
     },
-    main: [],
-    alt: [],
 };
 
 export default pad_xbox360;
