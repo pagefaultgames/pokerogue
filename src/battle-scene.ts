@@ -1998,60 +1998,63 @@ export default class BattleScene extends SceneBase {
 	}
 
 	updateGameInfo(): void {
-		const gameInfo = {
-			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
-			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
-			currentPhase: (this.getCurrentPhase())?.constructor.name || "Unknown",
-			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
-			weather: this.arena?.weather || {},
-			wave: this.currentBattle?.waveIndex || 0,
-            party: this.party ? this.party.map(p => {
-                return {
-                    name: p.name,
-                    level: p.level,
-                    speciesId: p.species.speciesId,
-                    fusionId: p.fusionSpecies?.speciesId || -1,
-                    active: p.active,
-                    gender: p.gender,
-                    fieldPosition: p.fieldPosition,
-                    speciesVariant: p.variant,
-                    fusionVariant: p.fusionVariant,
-                    ability: p.abilityIndex,
-                    hp: {
-                        current: p.hp,
-                        max: p.getMaxHp(),
-                        percent: (p.getHpRatio(false))*100
-                    },
-                    moveset: p.moveset.map(m =>  {
-                        let moveData = m.getMove();
-                        return {
-                            moveId: m.moveId,
-                            name: m.getName(),
-                            ppUsed: m.ppUsed,
-                            ppUp: m.ppUp,
-                            ppBase: moveData.pp,
-                        }
-                    })
-                };
-            }) : [],
-            enemyParty: this.getEnemyParty() ? this.getEnemyParty().map(p => {
-                return {
-                    name: p.name,
-                    level: p.level,
-                    speciesId: p.species.speciesId,
-                    fusionId: p.fusionSpecies?.speciesId || -1,
-                    active: p.active,
-                    gender: p.gender,
-                    fieldPosition: p.fieldPosition,
-                    speciesVariant: p.variant,
-                    fusionVariant: p.fusionVariant,
-                    hp: {
-                        percent: (p.getHpRatio(false))*100
-                    }
-                };
-            }) : [],
-
-		};
-		(window as any).gameInfo = gameInfo;
-	}
+        const gameInfo = {
+            playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+            gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
+            currentPhase: this.getCurrentPhase()?.constructor.name || "Unknown",
+            biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
+            weather: this.arena?.weather || {},
+            wave: this.currentBattle?.waveIndex || 0,
+            party: this.party
+                ? this.party.map((p) => {
+                    return {
+                        name: p.name,
+                        level: p.level,
+                        speciesId: p.species.speciesId,
+                        fusionId: p.fusionSpecies?.speciesId || -1,
+                        active: p.active,
+                        gender: p.gender,
+                        fieldPosition: p.fieldPosition,
+                        speciesVariant: p.variant,
+                        fusionVariant: p.fusionVariant,
+                        ability: p.abilityIndex,
+                        hp: {
+                            current: p.hp,
+                            max: p.getMaxHp(),
+                            percent: p.getHpRatio(false) * 100,
+                        },
+                        moveset: p.moveset.map((m) => {
+                            let moveData = m.getMove();
+                            return {
+                                moveId: m.moveId,
+                                name: m.getName(),
+                                ppUsed: m.ppUsed,
+                                ppUp: m.ppUp,
+                                ppBase: moveData.pp,
+                            };
+                        }),
+                    };
+                })
+                : [],
+            enemyParty: this.getEnemyParty()
+                ? this.getEnemyParty().map((p) => {
+                    return {
+                        name: p.name,
+                        level: p.level,
+                        speciesId: p.species.speciesId,
+                        fusionId: p.fusionSpecies?.speciesId || -1,
+                        active: p.active,
+                        gender: p.gender,
+                        fieldPosition: p.fieldPosition,
+                        speciesVariant: p.variant,
+                        fusionVariant: p.fusionVariant,
+                        hp: {
+                            percent: p.getHpRatio(false) * 100,
+                        },
+                    };
+                })
+                : [],
+        };
+        (window as any).gameInfo = gameInfo;
+    }
 }
