@@ -2052,7 +2052,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        console.log('checking poison immunity', this.name, types, sourcePokemon?.name, sourcePokemon?.id)
         // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
         let poisonImmunity = types.map(defType => {
           // Check if the Pokemon is not immune to Poison/Toxic
