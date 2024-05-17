@@ -288,7 +288,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.STUDENT]: [
+  [TrainerType.SCHOOL_KID]: [
     {
       encounter: [
         `…Heehee. I'm confident in my calculations and analysis.`,
@@ -2289,6 +2289,25 @@ export const battleSpecDialogue = {
     secondStageWin: `…Magnificent.`
   }
 };
+
+export const miscDialogue = {
+  ending: [
+    `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
+    $@c{smile}It's over.@d{64} You ended the loop.
+    $@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
+    $@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?
+    $@c{serious_smile_fists}Your legend will always live on in our hearts.
+    $@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.
+    $@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.`,
+    `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
+    $@c{smile_eclosed}Of course… I always had that feeling.\n@c{smile}It's over now, right? You ended the loop.
+    $@c{smile_ehalf}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
+    $I'll be the only one to remember what you did.\n@c{angry_mopen}I'll try not to forget!
+    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
+    $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
+    $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`
+  ]
+}
 
 export function getCharVariantFromDialogue(message: string): string {
   const variantMatch = /@c\{(.*?)\}/.exec(message);

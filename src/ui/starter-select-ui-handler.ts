@@ -86,7 +86,17 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   }
 }
 
-const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX' ];
+const gens = [
+    i18next.t("starterSelectUiHandler:gen1"),
+    i18next.t("starterSelectUiHandler:gen2"),
+    i18next.t("starterSelectUiHandler:gen3"),
+    i18next.t("starterSelectUiHandler:gen4"),
+    i18next.t("starterSelectUiHandler:gen5"),
+    i18next.t("starterSelectUiHandler:gen6"),
+    i18next.t("starterSelectUiHandler:gen7"),
+    i18next.t("starterSelectUiHandler:gen8"),
+    i18next.t("starterSelectUiHandler:gen9")
+];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
@@ -245,30 +255,54 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    let starterInfoXPosition = 31; // Only text
+    // The position should be set per language
+    const currentLanguage = i18next.language;
+    switch (currentLanguage) {
+      case 'pt_BR':
+        starterInfoXPosition = 32;
+        break;
+      default:
+        starterInfoXPosition = 31;
+        break
+    }
+
+    let starterInfoTextSize = '56px'; // Labels and text
+    // The font size should be set per language
+    // currentLanguage is already defined
+    switch (currentLanguage) {
+      case 'pt_BR':
+        starterInfoTextSize = '47px';
+        break;
+      default:
+        starterInfoTextSize = '56px';
+        break
+    }
+
+    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
-    this.pokemonAbilityText = addTextObject(this.scene, 31, 127, '', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPosition, 127, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
-    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveLabelText.setOrigin(0, 0);
     this.pokemonPassiveLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonPassiveLabelText);
 
-    this.pokemonPassiveText = addTextObject(this.scene, 31, 136, '', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPosition, 136, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureLabelText.setOrigin(0, 0);
     this.pokemonNatureLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, 31, 145, '', TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, starterInfoXPosition, 145, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNatureText);
 
@@ -556,8 +590,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     let instructionTextSize = '42px';
     // The font size should be set per language
-    const currentLanguage = i18next.language;
+    // currentLanguage is already defined in the previous code block
     switch (currentLanguage) {
+      case 'de':
+        instructionTextSize = '35px';
+        break;
       case 'en':
         instructionTextSize = '42px';
         break;
@@ -567,10 +604,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case 'fr':
         instructionTextSize = '42px';
         break;
-      case 'de':
-        instructionTextSize = '35px';
-        break;
       case 'it':
+        instructionTextSize = '38px';
+        break;
+      case 'pt_BR':
         instructionTextSize = '38px';
         break;
       case 'zh_CN':
@@ -1260,15 +1297,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateGenOptions(): void {
     let text = '';
     for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
-      let optionText = gens[g];
-      if (g === this.genScrollCursor && this.genScrollCursor)
-        optionText = '↑';
-      else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
-        optionText = '↓'
-      text += `${text ? '\n' : ''}${optionText}`;
+        let optionText = '';
+        if (g === this.genScrollCursor && this.genScrollCursor)
+            optionText = '↑';
+        else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
+            optionText = '↓'
+        else
+            optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
+        text += `${text ? '\n' : ''}${optionText}`;
     }
     this.genOptionsText.setText(text);
-  }
+}
 
   setGenMode(genMode: boolean): boolean {
     this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);

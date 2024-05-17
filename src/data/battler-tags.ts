@@ -14,7 +14,8 @@ import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
-import { allAbilities } from "./ability"
+import { allAbilities } from "./ability";
+import { Species } from "./enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -117,7 +118,11 @@ export class TrappedTag extends BattlerTag {
   }
   
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.getTag(BattlerTagType.TRAPPED);
+    const isGhost = pokemon.isOfType(Type.GHOST);
+    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+    const isAllowedGhostType = pokemon.species.speciesId === Species.PHANTUMP || pokemon.species.speciesId === Species.TREVENANT;
+
+    return !isTrapped && (!isGhost || isAllowedGhostType);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -541,6 +546,33 @@ export class AquaRingTag extends BattlerTag {
         Math.floor(pokemon.getMaxHp() / 16), `${this.getMoveName()} restored\n${pokemon.name}\'s HP!`, true));
     
     return ret;
+  }
+}
+
+/** Tag used to allow moves that interact with {@link Moves.MINIMIZE} to function */
+export class MinimizeTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE, undefined);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isMax();
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    //If a pokemon dynamaxes they lose minimized status
+    if(pokemon.isMax()){
+      return false
+    }
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
   }
 }
 
@@ -1358,6 +1390,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
+    case BattlerTagType.MINIMIZED:
+      return new MinimizeTag();
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
