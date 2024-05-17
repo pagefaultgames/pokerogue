@@ -23,6 +23,23 @@ export interface LayoutConfig {
 }
 
 /**
+ * Moves elements in the blacklist to the top of the original array.
+ * @param {string[]} originalArray - The original array of strings.
+ * @param {string[]} blacklist - The array of strings to be moved to the top.
+ * @returns {string[]} - The new array with blacklisted elements at the top.
+ */
+function moveBlacklistedToTop(originalArray, blacklist) {
+    // Filter the original array to get blacklisted elements
+    const blacklistedElements = originalArray.filter(element => blacklist.includes(element.toUpperCase()));
+
+    // Filter the original array to get non-blacklisted elements
+    const nonBlacklistedElements = originalArray.filter(element => !blacklist.includes(element.toUpperCase()));
+
+    // Concatenate the blacklisted elements and the non-blacklisted elements
+    return blacklistedElements.concat(nonBlacklistedElements);
+}
+
+/**
  * Abstract class for handling UI elements related to settings.
  */
 export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
@@ -153,9 +170,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
             const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.settings)];
             // Fetch default values for these settings and prepare to highlight selected options.
             const optionCursors = Object.values(Object.keys(this.settingDeviceDefaults).filter(s => specificBindingKeys.includes(s)).map(k => this.settingDeviceDefaults[k]));
-
             // Filter out settings that are not relevant to the current gamepad configuration.
-            const settingFiltered = Object.keys(this.settingDevice).filter(_key => specificBindingKeys.includes(this.settingDevice[_key]));
+            const unsortedSettingFiltered = Object.keys(this.settingDevice).filter(_key => specificBindingKeys.includes(this.settingDevice[_key]))
+            const settingFiltered = moveBlacklistedToTop(unsortedSettingFiltered, this.settingBlacklisted);
             // Loop through the filtered settings to manage display and options.
 
             settingFiltered.forEach((setting, s) => {
@@ -163,7 +180,8 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                 let settingName = setting.replace(/\_/g, ' ');
 
                 // Create and add a text object for the setting name to the scene.
-                const labelStyle = this.settingBlacklisted.includes(this.settingDevice[setting]) ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL
+                const isLock = this.settingBlacklisted.includes(this.settingDevice[setting]);
+                const labelStyle = isLock ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL
                 settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, labelStyle);
                 settingLabels[s].setOrigin(0, 0);
                 optionsContainer.add(settingLabels[s]);
@@ -177,7 +195,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                     if (bindingSettings.includes(this.settingDevice[setting])) {
                         // Create a label for non-null options, typically indicating actionable options like 'change'.
                         if (o) {
-                            const valueLabel = addTextObject(this.scene, 0, 0, option, TextStyle.WINDOW);
+                            const valueLabel = addTextObject(this.scene, 0, 0, isLock ? '' : option, TextStyle.WINDOW);
                             valueLabel.setOrigin(0, 0);
                             optionsContainer.add(valueLabel);
                             valueLabels.push(valueLabel);
