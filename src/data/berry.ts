@@ -7,6 +7,7 @@ import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
+import i18next from '../plugins/i18n';
 
 export enum BerryType {
   SITRUS,
@@ -22,32 +23,12 @@ export enum BerryType {
   LEPPA
 }
 
-export function getBerryName(berryType: BerryType) {
-  return `${Utils.toReadableString(BerryType[berryType])} Berry`;
+export function getBerryName(berryType: BerryType): string {
+  return i18next.t(`berry:${BerryType[berryType]}.name`);
 }
 
-export function getBerryEffectDescription(berryType: BerryType) {
-  switch (berryType) {
-    case BerryType.SITRUS:
-      return 'Restores 25% HP if HP is below 50%';
-    case BerryType.LUM:
-      return 'Cures any non-volatile status condition and confusion';
-    case BerryType.ENIGMA:
-      return 'Restores 25% HP if hit by a super effective move';
-    case BerryType.LIECHI:
-    case BerryType.GANLON:
-    case BerryType.PETAYA:
-    case BerryType.APICOT:
-    case BerryType.SALAC:
-      const stat = (berryType - BerryType.LIECHI) as BattleStat;
-      return `Raises ${getBattleStatName(stat)} if HP is below 25%`;
-    case BerryType.LANSAT:
-      return 'Raises critical hit ratio if HP is below 25%';
-    case BerryType.STARF:
-      return 'Sharply raises a random stat if HP is below 25%';
-    case BerryType.LEPPA:
-      return 'Restores 10 PP to a move if its PP reaches 0';
-  }
+export function getBerryEffectDescription(berryType: BerryType): string {
+  return i18next.t(`berry:${BerryType[berryType]}.effect`);
 }
 
 export type BerryPredicate = (pokemon: Pokemon) => boolean;
