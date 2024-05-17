@@ -779,8 +779,8 @@ export class RecoilAttr extends MoveEffectAttr {
     if (cancelled.value)
       return false;
 
-    const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio),
-      user.turnData.damageDealt ? 1 : 0);
+    const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.currDamageDealt : user.getMaxHp()) * this.damageRatio),
+      user.turnData.currDamageDealt ? 1 : 0);
     if (!recoilDamage)
       return false;
 
