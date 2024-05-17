@@ -2012,11 +2012,14 @@ export default class BattleScene extends SceneBase {
                         speciesVariant: p.variant,
                         fusionVariant: p.fusionVariant,
                         ability: p.abilityIndex,
+                        shiny: p.shiny?? false,
+                        fusionShiny: p.fusionShiny?? false,
                         hp: {
                             current: p.hp,
                             max: p.getMaxHp(),
                             percent: p.getHpRatio(false) * 100,
                         },
+                        ivs: p.ivs,
                         moveset: p.moveset.map((m) => {
                             return {
                                 moveId: m.moveId,
@@ -2041,6 +2044,8 @@ export default class BattleScene extends SceneBase {
                         fieldPosition: p.fieldPosition,
                         speciesVariant: p.variant,
                         fusionVariant: p.fusionVariant,
+                        shiny: p.shiny?? false,
+                        fusionShiny: p.fusionShiny?? false,
                         hp: {
                             percent: p.getHpRatio(false) * 100,
                         },
