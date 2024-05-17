@@ -1640,7 +1640,6 @@ export class TurnInitPhase extends FieldPhase {
 
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {
-        applyAbAttrs(FriendGuardAbAttr, pokemon, undefined);
         if (pokemon.isPlayer())
           this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
 
@@ -2027,6 +2026,8 @@ export class TurnStartPhase extends FieldPhase {
 
       if (turnCommand.skip)
         continue;
+
+      applyAbAttrs(FriendGuardAbAttr, pokemon, undefined);
 
       switch (turnCommand.command) {
         case Command.FIGHT:

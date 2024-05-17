@@ -1279,9 +1279,9 @@ export class CursedTag extends BattlerTag {
 export class FriendGuardTag extends BattlerTag {
   public powerMultiplier: number;
 
-  constructor(powerMultiplier: number) {
-    super(BattlerTagType.FRIEND_GUARD, BattlerTagLapseType.PRE_MOVE, 1, undefined);
-    this.powerMultiplier = 1 - powerMultiplier;
+  constructor() {
+    super(BattlerTagType.FRIEND_GUARD, BattlerTagLapseType.TURN_END, 1, undefined);
+    this.powerMultiplier = 0.75;
   }
 
   /**
@@ -1406,7 +1406,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
     case BattlerTagType.FRIEND_GUARD:
-      return new FriendGuardTag(0.25);
+      return new FriendGuardTag();
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
