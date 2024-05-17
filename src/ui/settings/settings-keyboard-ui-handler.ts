@@ -63,6 +63,21 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         optionsContainer.add(label);
         this.settingsContainer.add(optionsContainer);
 
+        const iconDelete = this.scene.add.sprite(0, 0, 'keyboard');
+        iconDelete.setScale(.1);
+        iconDelete.setOrigin(0, -0.1);
+        iconDelete.setPositionRelative(this.actionsBg, this.headerBg.width - 260, 4);
+        this.navigationIcons['BUTTON_DELETE'] = iconDelete;
+
+        const deleteText = addTextObject(this.scene, 0, 0, 'Delete', TextStyle.SETTINGS_LABEL);
+        deleteText.setOrigin(0, 0);
+        deleteText.setPositionRelative(iconDelete, -deleteText.width/6, -(deleteText.height/6)/2 - 6);
+
+        this.settingsContainer.add(iconDelete)
+        this.settingsContainer.add(deleteText)
+
+
+
         // Map the 'noKeyboard' layout options for easy access.
         this.layout['noKeyboard'].optionsContainer = optionsContainer;
         this.layout['noKeyboard'].label = label;
@@ -72,7 +87,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
      * Handle the home key press event.
      */
     onHomeDown(): void {
-        if (![Mode.SETTINGS_KEYBOARD, Mode.SETTINGS, Mode.SETTINGS_GAMEPAD].includes(this.scene.ui.getMode())) return;
+        if (![Mode.SETTINGS_KEYBOARD, Mode.SETTINGS_GAMEPAD].includes(this.scene.ui.getMode())) return;
         this.scene.gameData.resetMappingToFactory();
     }
 

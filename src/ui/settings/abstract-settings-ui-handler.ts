@@ -32,7 +32,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     protected optionCursors: integer[];
     protected cursorObj: Phaser.GameObjects.NineSlice;
 
+    protected headerBg: Phaser.GameObjects.NineSlice;
     protected optionsBg: Phaser.GameObjects.NineSlice;
+    protected actionsBg: Phaser.GameObjects.NineSlice;
 
     protected settingLabels: Phaser.GameObjects.Text[];
     protected optionValueLabels: Phaser.GameObjects.Text[][];
@@ -57,6 +59,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     protected textureOverride;
     protected titleSelected;
     protected localStoragePropertyName;
+    protected rowsToDisplay: number;
 
     abstract getLocalStorageSetting(): object;
     abstract navigateMenuLeft(): boolean;
@@ -73,6 +76,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
      */
     constructor(scene: BattleScene, mode?: Mode) {
         super(scene, mode);
+        this.rowsToDisplay = 8;
     }
 
     /**
@@ -85,45 +89,86 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
         this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-        const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
-        headerBg.setOrigin(0, 0);
+        this.headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+        this.headerBg.setOrigin(0, 0);
 
         this.navigationIcons = {};
 
         const iconPreviousTab = this.scene.add.sprite(0, 0, 'keyboard');
         iconPreviousTab.setScale(.1);
         iconPreviousTab.setOrigin(0, -0.1);
-        iconPreviousTab.setPositionRelative(headerBg, 8, 4);
+        iconPreviousTab.setPositionRelative(this.headerBg, 8, 4);
         this.navigationIcons['BUTTON_CYCLE_FORM'] = iconPreviousTab;
 
         const iconNextTab = this.scene.add.sprite(0, 0, 'keyboard');
         iconNextTab.setScale(.1);
         iconNextTab.setOrigin(0, -0.1);
-        iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
+        iconNextTab.setPositionRelative(this.headerBg, this.headerBg.width - 20, 4);
         this.navigationIcons['BUTTON_CYCLE_SHINY'] = iconNextTab;
 
         const headerText = addTextObject(this.scene, 0, 0, 'General', TextStyle.SETTINGS_LABEL);
         headerText.setOrigin(0, 0);
-        headerText.setPositionRelative(headerBg, 8 + iconPreviousTab.width/6 - 4, 4);
+        headerText.setPositionRelative(this.headerBg, 8 + iconPreviousTab.width/6 - 4, 4);
 
         const gamepadText = addTextObject(this.scene, 0, 0, 'Gamepad', this.titleSelected === 'Gamepad' ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
         gamepadText.setOrigin(0, 0);
-        gamepadText.setPositionRelative(headerBg, 50 + iconPreviousTab.width/6 - 4, 4);
+        gamepadText.setPositionRelative(this.headerBg, 50 + iconPreviousTab.width/6 - 4, 4);
 
         const keyboardText = addTextObject(this.scene, 0, 0, 'Keyboard', this.titleSelected === 'Keyboard' ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
         keyboardText.setOrigin(0, 0);
-        keyboardText.setPositionRelative(headerBg, 97 + iconPreviousTab.width/6 - 4, 4);
+        keyboardText.setPositionRelative(this.headerBg, 97 + iconPreviousTab.width/6 - 4, 4);
 
-        this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2);
+        this.optionsBg = addWindow(this.scene, 0, this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.headerBg.height - 2);
         this.optionsBg.setOrigin(0, 0);
 
-        this.settingsContainer.add(headerBg);
+        this.actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, 22);
+        this.actionsBg.setOrigin(0, 0);
+
+        const iconAction = this.scene.add.sprite(0, 0, 'keyboard');
+        iconAction.setScale(.1);
+        iconAction.setOrigin(0, -0.1);
+        iconAction.setPositionRelative(this.actionsBg, this.headerBg.width - 20, 4);
+        this.navigationIcons['BUTTON_ACTION'] = iconAction;
+
+        const actionText = addTextObject(this.scene, 0, 0, 'Action', TextStyle.SETTINGS_LABEL);
+        actionText.setOrigin(0, 0);
+        actionText.setPositionRelative(iconAction, 0, 2);
+        actionText.setPositionRelative(iconAction, -actionText.width/6, -(actionText.height/6)/2 - 6);
+
+        const iconCancel = this.scene.add.sprite(0, 0, 'keyboard');
+        iconCancel.setScale(.1);
+        iconCancel.setOrigin(0, -0.1);
+        iconCancel.setPositionRelative(this.actionsBg, this.headerBg.width - 100, 4);
+        this.navigationIcons['BUTTON_CANCEL'] = iconCancel;
+
+        const cancelText = addTextObject(this.scene, 0, 0, 'Cancel', TextStyle.SETTINGS_LABEL);
+        cancelText.setOrigin(0, 0);
+        cancelText.setPositionRelative(iconCancel, -cancelText.width/6, -(cancelText.height/6)/2 - 6);
+
+        const iconReset = this.scene.add.sprite(0, 0, 'keyboard');
+        iconReset.setScale(.1);
+        iconReset.setOrigin(0, -0.1);
+        iconReset.setPositionRelative(this.actionsBg, this.headerBg.width - 180, 4);
+        this.navigationIcons['BUTTON_HOME'] = iconReset;
+
+        const resetText = addTextObject(this.scene, 0, 0, 'Reset all', TextStyle.SETTINGS_LABEL);
+        resetText.setOrigin(0, 0);
+        resetText.setPositionRelative(iconReset, -resetText.width/6, -(resetText.height/6)/2 - 6);
+
+        this.settingsContainer.add(this.headerBg);
         this.settingsContainer.add(headerText);
         this.settingsContainer.add(gamepadText);
         this.settingsContainer.add(keyboardText);
         this.settingsContainer.add(this.optionsBg);
         this.settingsContainer.add(iconNextTab)
         this.settingsContainer.add(iconPreviousTab)
+        this.settingsContainer.add(this.actionsBg)
+        this.settingsContainer.add(iconAction)
+        this.settingsContainer.add(iconCancel)
+        this.settingsContainer.add(iconReset)
+        this.settingsContainer.add(actionText)
+        this.settingsContainer.add(cancelText)
+        this.settingsContainer.add(resetText)
 
         /// Initialize a new configuration "screen" for each type of gamepad.
         for (const config of this.configs) {
@@ -256,7 +301,17 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         // Fetch the active gamepad configuration from the input controller.
         const activeConfig = this.getActiveConfig();
 
+        const specialIcons = {
+            'BUTTON_HOME': 'T_Home_Key_Dark.png',
+            'BUTTON_DELETE': 'T_Del_Key_Dark.png',
+        }
         for (const settingName of Object.keys(this.navigationIcons)) {
+            if (Object.keys(specialIcons).includes(settingName)) {
+                this.navigationIcons[settingName].setTexture("keyboard");
+                this.navigationIcons[settingName].setFrame(specialIcons[settingName]);
+                this.navigationIcons[settingName].alpha = 1;
+                continue
+            }
             const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
             if (icon) {
                 const type = this.scene.inputController?.getLastSourceType();
@@ -377,8 +432,6 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     processInput(button: Button): boolean {
         const ui = this.getUi();
         // Defines the maximum number of rows that can be displayed on the screen.
-        const rowsToDisplay = 9;
-
         let success = false;
 
         // Handle the input based on the button pressed.
@@ -406,18 +459,18 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                     } else {
                         // When at the top of the menu and pressing UP, move to the bottommost item.
                         // First, set the cursor to the last visible element, preparing for the scroll to the end.
-                        const successA = this.setCursor(rowsToDisplay - 1);
+                        const successA = this.setCursor(this.rowsToDisplay - 1);
                         // Then, adjust the scroll to display the bottommost elements of the menu.
-                        const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
+                        const successB = this.setScrollCursor(this.optionValueLabels.length - this.rowsToDisplay);
                         success = successA && successB; // success is just there to play the little validation sound effect
                     }
                     break;
                 case Button.DOWN: // Move down in the menu.
                     if (!this.optionValueLabels) return false;
                     if (cursor < this.optionValueLabels.length - 1) {
-                        if (this.cursor < rowsToDisplay - 1)
+                        if (this.cursor < this.rowsToDisplay - 1)
                             success = this.setCursor(this.cursor + 1);
-                        else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
+                        else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay)
                             success = this.setScrollCursor(this.scrollCursor + 1);
                     } else {
                         // When at the bottom of the menu and pressing DOWN, move to the topmost item.
@@ -557,7 +610,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         // Iterate over all setting labels to update their visibility.
         for (let s = 0; s < this.settingLabels.length; s++) {
             // Determine if the current setting should be visible based on the scroll position.
-            const visible = s >= this.scrollCursor && s < this.scrollCursor + 9;
+            const visible = s >= this.scrollCursor && s < this.scrollCursor + this.rowsToDisplay;
 
             // Set the visibility of the setting label and its corresponding options.
             this.settingLabels[s].setVisible(visible);

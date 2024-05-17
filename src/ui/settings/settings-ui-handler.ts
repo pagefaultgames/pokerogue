@@ -27,7 +27,7 @@ export default class SettingsUiHandler extends UiHandler {
 
   private reloadRequired: boolean;
   private reloadI18n: boolean;
-  private rowsToDisplay: integer;
+  private rowsToDisplay: number;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
@@ -87,16 +87,6 @@ export default class SettingsUiHandler extends UiHandler {
     const cancelText = addTextObject(this.scene, 0, 0, 'Cancel', TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6, -(cancelText.height/6)/2 - 6);
-
-    const iconReset = this.scene.add.sprite(0, 0, 'keyboard');
-    iconReset.setScale(.1);
-    iconReset.setOrigin(0, -0.1);
-    iconReset.setPositionRelative(actionsBg, headerBg.width - 170, 4);
-    this.navigationIcons['BUTTON_HOME'] = iconReset;
-
-    const resetText = addTextObject(this.scene, 0, 0, 'Reset gamepad & keyboard', TextStyle.SETTINGS_LABEL);
-    resetText.setOrigin(0, 0);
-    resetText.setPositionRelative(iconReset, -resetText.width/6, -(resetText.height/6)/2 - 6);
 
     const headerText = addTextObject(this.scene, 0, 0, 'General', TextStyle.SETTINGS_SELECTED);
     headerText.setOrigin(0, 0);
@@ -161,11 +151,9 @@ export default class SettingsUiHandler extends UiHandler {
     this.settingsContainer.add(iconNextTab)
     this.settingsContainer.add(iconAction)
     this.settingsContainer.add(iconCancel)
-    this.settingsContainer.add(iconReset)
     this.settingsContainer.add(iconPreviousTab)
     this.settingsContainer.add(actionText)
     this.settingsContainer.add(cancelText)
-    this.settingsContainer.add(resetText)
 
     ui.add(this.settingsContainer);
 
