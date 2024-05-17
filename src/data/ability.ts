@@ -1315,6 +1315,17 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
   }
 }
 
+export class IgnoreOpponentEvasionAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
+    (args[0] as Utils.IntegerHolder).value = 0;
+    return true;
+  }
+}
+
 export class IntimidateImmunityAbAttr extends AbAttr { 
   constructor() {
     super(false);
@@ -3722,8 +3733,9 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
-      .ignorable() // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
-      .partial(),
+      .attr(ProtectStatAbAttr, BattleStat.ACC)
+      .attr(IgnoreOpponentEvasionAbAttr)
+      .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .attr(PostSummonStatChangeAbAttr, BattleStat.EVA, -1)
       .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),
