@@ -1,7 +1,12 @@
 import BattleScene from "../../battle-scene";
 import {addTextObject, TextStyle} from "../text";
 import {Mode} from "../ui";
-import {SettingGamepad, settingGamepadDefaults, settingGamepadOptions} from "../../system/settings-gamepad";
+import {
+    SettingGamepad,
+    settingGamepadBlackList,
+    settingGamepadDefaults,
+    settingGamepadOptions
+} from "../../system/settings-gamepad";
 import pad_xbox360 from "#app/configs/pad_xbox360";
 import pad_dualshock from "#app/configs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
@@ -33,6 +38,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
         this.configs = [pad_xbox360, pad_dualshock, pad_unlicensedSNES]
         this.commonSettingsCount = 2;
         this.localStoragePropertyName = 'settingsGamepad';
+        this.settingBlacklisted = settingGamepadBlackList;
     }
 
     /**

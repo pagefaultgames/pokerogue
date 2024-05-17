@@ -111,9 +111,8 @@ export function getIconForLatestInput(configs, source, devices, settingName) {
 
 export function assign(config, settingNameTarget, keycode): boolean {
     // first, we need to check if this keycode is already used on another settingName
+    if (!canIAssignThisKey(config, getKeyWithKeycode(config, keycode)) || !canIOverrideThisSetting(config, settingNameTarget)) return false;
     const previousSettingName = getSettingNameWithKeycode(config, keycode);
-    const key = getKeyWithSettingName(config, previousSettingName);
-    if (!canIAssignThisKey(config, key) || ! canIOverrideThisSetting(config, settingNameTarget)) return false;
     // if it was already bound, we delete the bind
     if (previousSettingName) {
         const previousKey = getKeyWithSettingName(config, previousSettingName);
@@ -157,8 +156,9 @@ export function deleteBind(config, settingName) {
 
 export function canIAssignThisKey(config, key) {
     const settingName = getSettingNameWithKey(config, key);
+    if (config.blacklist?.includes(key)) return false;
     if (settingName === -1) return true;
-    if (config.blacklist?.includes(key) || isTheLatestBind(config, settingName)) return false;
+    if (isTheLatestBind(config, settingName)) return false;
     return true;
 }
 

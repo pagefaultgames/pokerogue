@@ -322,7 +322,7 @@ const cfg_keyboard_azerty = {
         "KEY_ARROW_DOWN",
         "KEY_ARROW_LEFT",
         "KEY_ARROW_RIGHT",
-        "KEY_DELETE",
+        "KEY_DEL",
         "KEY_HOME",
     ]
 };

@@ -118,6 +118,16 @@ export const settingKeyboardDefaults: SettingDefaults = {
     [SettingKeyboard.Alt_Button_Submit]: 0,
 };
 
+export const settingKeyboardBlackList = [
+    SettingKeyboard.Button_Submit,
+    SettingKeyboard.Button_Menu,
+    SettingKeyboard.Button_Action,
+    SettingKeyboard.Button_Up,
+    SettingKeyboard.Button_Down,
+    SettingKeyboard.Button_Left,
+    SettingKeyboard.Button_Right,
+];
+
 
 export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard, value: integer): boolean {
     switch (setting) {

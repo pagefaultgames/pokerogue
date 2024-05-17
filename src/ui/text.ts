@@ -23,6 +23,7 @@ export enum TextStyle {
   MONEY,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
+  SETTINGS_LOCKED,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
   MOVE_INFO_CONTENT
@@ -89,6 +90,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.WINDOW_ALT:
     case TextStyle.MESSAGE:
     case TextStyle.SETTINGS_LABEL:
+    case TextStyle.SETTINGS_LOCKED:
     case TextStyle.SETTINGS_SELECTED:
       styleOptions.fontSize = '96px';
       break;
@@ -166,6 +168,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.MONEY:
       return !shadow ? '#e8e8a8' : '#a0a060';
+    case TextStyle.SETTINGS_LOCKED:
     case TextStyle.SUMMARY_GRAY:
       return !shadow ? '#a0a0a0' : '#636363';
     case TextStyle.SUMMARY_GREEN:

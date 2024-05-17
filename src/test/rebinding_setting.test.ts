@@ -393,6 +393,7 @@ describe('Test Rebinding', () => {
         inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
         inGame.whenWePressOnKeyboard("ESC").weShouldTriggerTheButton("Button_Menu");
         inGame.whenWePressOnKeyboard("HOME").nothingShouldHappen();
+        inGame.whenWePressOnKeyboard("DELETE").nothingShouldHappen();
         inTheSettingMenu.whenCursorIsOnSetting("Button_Submit").iconDisplayedIs("KEY_ENTER").whenWeDelete().iconDisplayedIs("KEY_ENTER")
         inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").whenWeDelete().iconDisplayedIs("KEY_ARROW_UP")
         inTheSettingMenu.whenCursorIsOnSetting("Button_Down").iconDisplayedIs("KEY_ARROW_DOWN").whenWeDelete().iconDisplayedIs("KEY_ARROW_DOWN")
@@ -400,6 +401,11 @@ describe('Test Rebinding', () => {
         inTheSettingMenu.whenCursorIsOnSetting("Button_Right").iconDisplayedIs("KEY_ARROW_RIGHT").whenWeDelete().iconDisplayedIs("KEY_ARROW_RIGHT")
         inTheSettingMenu.whenCursorIsOnSetting("Button_Menu").iconDisplayedIs("KEY_ESC").whenWeDelete().iconDisplayedIs("KEY_ESC")
         inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_Z").whenWeDelete().thereShouldBeNoIconAnymore();
+        inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").thereShouldBeNoIcon().weWantThisBindInstead("DELETE").weCantAssignThisKey().butLetsForceIt();
+        inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").thereShouldBeNoIcon().weWantThisBindInstead("HOME").weCantAssignThisKey().butLetsForceIt();
+        inGame.whenWePressOnKeyboard("DELETE").nothingShouldHappen();
+        inGame.whenWePressOnKeyboard("HOME").nothingShouldHappen();
+        inGame.whenWePressOnKeyboard("Z").nothingShouldHappen();
     });
 
     it("check to delete all the binds of an action", () => {

@@ -1,7 +1,12 @@
 import BattleScene from "../../battle-scene";
 import {Mode} from "../ui";
 import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
-import {SettingKeyboard, settingKeyboardDefaults, settingKeyboardOptions} from "#app/system/settings-keyboard";
+import {
+    SettingKeyboard,
+    settingKeyboardBlackList,
+    settingKeyboardDefaults,
+    settingKeyboardOptions
+} from "#app/system/settings-keyboard";
 import {reverseValueToKeySetting, truncateString} from "#app/utils";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {InterfaceConfig} from "#app/inputs-controller";
@@ -31,6 +36,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
         this.commonSettingsCount = 1;
         this.textureOverride = 'keyboard';
         this.localStoragePropertyName = 'settingsKeyboard';
+        this.settingBlacklisted = settingKeyboardBlackList;
 
         const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
         deleteEvent.on('up', this.onDeleteDown, this);

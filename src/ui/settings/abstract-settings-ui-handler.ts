@@ -49,6 +49,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     protected bindingSettings: Array<String>;
 
     protected settingDevice;
+    protected settingBlacklisted;
     protected settingDeviceDefaults;
     protected settingDeviceOptions;
     protected configs;
@@ -160,7 +161,8 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                 let settingName = setting.replace(/\_/g, ' ');
 
                 // Create and add a text object for the setting name to the scene.
-                settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
+                const labelStyle = this.settingBlacklisted.includes(this.settingDevice[setting]) ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL
+                settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, labelStyle);
                 settingLabels[s].setOrigin(0, 0);
                 optionsContainer.add(settingLabels[s]);
 

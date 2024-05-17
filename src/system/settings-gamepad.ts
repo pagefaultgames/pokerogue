@@ -4,6 +4,7 @@ import SettingsGamepadUiHandler from "../ui/settings/settings-gamepad-ui-handler
 import {Mode} from "../ui/ui";
 import {truncateString} from "../utils";
 import {Button} from "../enums/buttons";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 export enum SettingGamepad {
     Default_Controller = "DEFAULT_CONTROLLER",
@@ -70,6 +71,13 @@ export const settingGamepadDefaults: SettingDefaults = {
     [SettingGamepad.Button_Slow_Down]: 0,
     [SettingGamepad.Button_Submit]: 0,
 };
+
+export const settingGamepadBlackList = [
+    SettingKeyboard.Button_Up,
+    SettingKeyboard.Button_Down,
+    SettingKeyboard.Button_Left,
+    SettingKeyboard.Button_Right,
+];
 
 export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
     switch (setting) {
