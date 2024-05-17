@@ -46,7 +46,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}}薄荷",
-      description: "将一只宝可梦的性格改为{{natureName}}并为该宝可\n梦永久解锁该性格",
+      description: "将一只宝可梦的性格改为{{natureName}}并为该宝可\n梦永久解锁该性格.",
     },
     "DoubleBattleChanceBoosterModifierType": {
       description: "接下来的{{battleCount}}场战斗是双打的概率翻倍",
@@ -64,7 +64,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "所有成员宝可梦等级提升1级",
     },
     "PokemonBaseStatBoosterModifierType": {
-      description: "增加持有者的{{statName}}10%. 个体值越高堆叠\n上限越高",
+      description: "增加持有者的{{statName}}10%，个体值越高堆叠\n上限越高.",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "所有宝可梦完全回复HP",
@@ -200,11 +200,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "BERRY_POUCH": { name: "树果袋", description: "使用树果时有25%的几率不会消耗树果" },
 
-    "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷\n入濒死状态。" },
+    "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷入濒死状态" },
 
     "QUICK_CLAW": { name: "先制之爪", description: "有10%的几率无视速度优先使出招式\n(先制技能优先)" },
 
-    "KINGS_ROCK": { name: "王者之证", description: "携带该道具的宝可梦使用任意原本不会造成\n畏缩状态的攻击招式并造成伤害时，有\n10%几率使目标陷入畏缩状态。" },
+    "KINGS_ROCK": { name: "王者之证", description: "携带该道具的宝可梦使用任意原本不会造成\n畏缩状态的攻击招式并造成伤害时，有\n10%几率使目标陷入畏缩状态" },
 
     "LEFTOVERS": { name: "吃剩的东西", description: "携带该道具的宝可梦在每个回合结束时恢复\n最大HP的1/16" },
     "SHELL_BELL": { name: "贝壳之铃", description: "携带该道具的宝可梦在攻击对方成功造成伤\n害时，携带者的HP会恢复其所造成伤害\n的1/8" },
@@ -383,27 +383,5 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "火焰卡带",
     "CHILL_DRIVE": "冰冻卡带",
     "DOUSE_DRIVE": "水流卡带",
-  },
-  TeraType: {
-    "UNKNOWN": "Unknown",
-    "NORMAL": "一般",
-    "FIGHTING": "格斗",
-    "FLYING": "飞行",
-    "POISON": "毒",
-    "GROUND": "地面",
-    "ROCK": "岩石",
-    "BUG": "虫",
-    "GHOST": "幽灵",
-    "STEEL": "钢",
-    "FIRE": "火",
-    "WATER": "水",
-    "GRASS": "草",
-    "ELECTRIC": "电",
-    "PSYCHIC": "超能力",
-    "ICE": "冰",
-    "DRAGON": "龙",
-    "DARK": "恶",
-    "FAIRY": "妖精",
-    "STELLAR": "星晶",
   },
 } as const;
