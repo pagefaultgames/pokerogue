@@ -270,11 +270,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
 
       const opponentPokemonDexAttr = pokemon.getDexAttr();
-      if ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr || !(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & Math.pow(2, pokemon.abilityIndex))) {
-        if (!dexEntry.caughtAttr) {
-          this.championRibbon.setPositionRelative(this.nameText, 0, 11.75);
+      if (pokemon.scene.gameMode.isClassic) {
+        if(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 && pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
+          if (!dexEntry.caughtAttr) {
+            this.championRibbon.setPositionRelative(this.nameText, 0, 11.75);
+          }
+          this.championRibbon.setVisible(true);
         }
-        this.championRibbon.setVisible(true);
       }
 
       // Check if Player owns all genders and forms of the Pokemon
@@ -293,13 +295,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       if (missingDexAttrs || !rootFormHasHiddenAbility)
         this.ownedIcon.setTint(0x808080);
-
-      if(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 && pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
-        if (!dexEntry.caughtAttr) {
-          this.championRibbon.setPositionRelative(this.nameText, 0, 11.75);
-        }
-        this.championRibbon.setVisible(true);
-      }
 
       if (this.boss)
         this.updateBossSegmentDividers(pokemon as EnemyPokemon);
