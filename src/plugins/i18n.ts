@@ -32,6 +32,22 @@ export interface AbilityTranslationEntries {
   [key: string]: AbilityTranslationEntry
 }
 
+export interface ModifierTypeTranslationEntry {
+  name?: string,
+  description?: string,
+  extra?: SimpleTranslationEntries
+}
+
+export interface ModifierTypeTranslationEntries {
+  ModifierType: { [key: string]: ModifierTypeTranslationEntry },
+  AttackTypeBoosterItem: SimpleTranslationEntries,
+  TempBattleStatBoosterItem: SimpleTranslationEntries,
+  BaseStatBoosterItem: SimpleTranslationEntries,
+  EvolutionItem: SimpleTranslationEntries,
+  FormChangeItem: SimpleTranslationEntries,
+  TeraType: SimpleTranslationEntries,
+}
+
 export interface Localizable {
   localize(): void;
 }
@@ -56,6 +72,11 @@ function loadFont(language: string) {
 }
 
 export function initI18n(): void {
+  // Prevent reinitialization
+  if (isInitialized) {
+    return;
+  }
+  isInitialized = true;
   let lang = '';
 
   if (localStorage.getItem('prLang'))
@@ -134,12 +155,25 @@ declare module 'i18next' {
       pokemonStat: SimpleTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
       nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
+      egg: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
     };
   }
 }
 
 export default i18next;
+
+export function getIsInitialized(): boolean {
+  return isInitialized;
+}
+
+let isInitialized = false;
