@@ -2284,6 +2284,11 @@ export class MovePhase extends BattlePhase {
       return false;
     });
 
+    targets.forEach(
+      p => p.findTags(t => t instanceof AuraTag)
+            .forEach(t => p.lapseTag(t.tagType))
+    );
+
     const doMove = () => {
       this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
       
@@ -2510,7 +2515,6 @@ export class MoveEffectPhase extends PokemonPhase {
           }
 
           const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
-          target.findTags(t => t instanceof AuraTag).forEach(t => target.lapseTag(t.tagType));
 
           const firstHit = moveHistoryEntry.result !== MoveResult.SUCCESS;
 
