@@ -1707,9 +1707,16 @@ export class PreStatChangeAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Prevents a Pokemon from being inflicted with status effects, ie. Limber, Insomnia, etc
+ * @extends PreStatChangeAbAttr
+ * @see {@link applyPreStatChange}
+ */
 export class ProtectStatAbAttr extends PreStatChangeAbAttr {
-  private protectedStat: BattleStat;
-  private applyToAlly: boolean;
+  /** BattleStat to be protected by this ability attribute. */
+  private protectedStat: BattleStat; 
+  /** Should this ability attribute apply to their ally too. */
+  private applyToAlly: boolean; 
 
   constructor(protectedStat?: BattleStat, applyToAlly: boolean = false) {
     super();
@@ -1718,6 +1725,15 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
     this.applyToAlly = applyToAlly;
   }
 
+  /**
+   * Check if stat change should be canceled.
+   * @param pokemon {@linkcode Pokemon} that has this ability attribute
+   * @param passive - If this ability is passive
+   * @param stat {@linkcode BattleStat} that is being changed
+   * @param cancelled {@linkcode Utils.BooleanHolder}- Check if the stat change was canceled
+   * @param args [0] boolean of allyCheck - if the ability check is for the ally
+   * @returns true if function succeeds
+   */
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const allyCheck = args[0];
     if ((this.protectedStat === undefined || stat === this.protectedStat) && !allyCheck) {
@@ -1743,9 +1759,16 @@ export class PreSetStatusAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Prevents a Pokemon from being inflicted with status effects, ie. Limber, Insomnia, etc
+ * @extends PreSetStatusAbAttr
+ * @see {@link applyPreSetStatus}
+ */
 export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  private applyToAlly: boolean;
-  private immuneEffects: StatusEffect[];
+  /** Should this ability attribute apply to their ally too. */
+  private applyToAlly: boolean; 
+  /** StatusEffects that this ability attribute prevents */
+  private immuneEffects: StatusEffect[]; 
 
   constructor(immuneEffects: StatusEffect[] = [], applyToAlly: boolean = false) {
     super();
@@ -1754,6 +1777,16 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     this.applyToAlly = applyToAlly;
   }
 
+  /**
+   * Check if status being afflicted should be canceled.
+   * @param pokemon {@linkcode Pokemon} that has this ability attribute
+   * @param passive - If this ability is passive
+   * @param effect {@linkcode StatusEffect} that is being applied
+   * @param cancelled {@linkcode Utils.BooleanHolder}- Check if the status effect was canceled
+   * @param args [0] boolean of quiet - if the trigger is quiet
+   *             [1] boolean of allyCheck - if the ability check is for the ally
+   * @returns true if function succeeds
+   */
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const allyCheck = args[1];
     if ((!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) && !allyCheck) {
@@ -1780,9 +1813,16 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Prevents a Pokemon from being inflicted with status effects, ie. Limber, Insomnia, etc
+ * @extends PreApplyBattlerTagAbAttr
+ * @see {@link applyPreApplyBattlerTag}
+ */
 export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
-  private immuneTagType: BattlerTagType;
-  private applyToAlly: boolean;
+  /** BattlerTag this ability attribute prevents */
+  private immuneTagType: BattlerTagType; 
+  /** Should this ability attribute apply to their ally too */
+  private applyToAlly: boolean; 
 
   constructor(immuneTagType: BattlerTagType, applyToAlly: boolean = false) {
     super();
@@ -1791,6 +1831,15 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
     this.applyToAlly = applyToAlly;
   }
 
+  /**
+   * Check if tag being afflicted should be canceled.
+   * @param pokemon {@linkcode Pokemon} that has this ability attribute
+   * @param passive boolean - If this ability is passive
+   * @param tag {@linkcode BattlerTag} that is being applied
+   * @param cancelled {@linkcode Utils.BooleanHolder}- Check if the tag was canceled
+   * @param args [0] boolean of allyCheck - if the ability check is for the ally
+   * @returns true if function succeeds
+   */
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const allyCheck = args[0];
     if ((tag.tagType === this.immuneTagType) && !allyCheck) {
@@ -3387,8 +3436,8 @@ export function initAbilities() {
     new Ability(Abilities.AROMA_VEIL, 6)
       .ignorable()
       .unimplemented(),
-    new Ability(Abilities.FLOWER_VEIL, 6) // TODO: Check against Spectral Thief once implemented, check against Toxic orb and flame orb once implemented.
-    // Also needs to not prevent the user from using Rest.
+    new Ability(Abilities.FLOWER_VEIL, 6) /** TODO: Check against Spectral Thief once implemented, check against Toxic orb and flame orb once implemented.
+    Also needs to not prevent the user from using Rest. */
       .conditionalAttr(p => (p.isOfType(Type.GRASS)), ProtectStatAbAttr, undefined, true)
       .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, [], true)
       .conditionalAttr(p => (p.isOfType(Type.GRASS)), BattlerTagImmunityAbAttr, BattlerTagType.DROWSY, true)
