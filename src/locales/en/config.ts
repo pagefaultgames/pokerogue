@@ -12,7 +12,7 @@ import { move } from "./move";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
-import { pokemonStat } from "./pokemon-stat";
+import { pokemonInfo } from "./pokemon-info";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
@@ -36,7 +36,7 @@ export const enConfig = {
     nature: nature,
     pokeball: pokeball,
     pokemon: pokemon,
-    pokemonStat: pokemonStat,
+    pokemonInfo: pokemonInfo,
     splashMessages: splashMessages,
     starterSelectUiHandler: starterSelectUiHandler,
     titles: titles,
