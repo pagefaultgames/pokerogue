@@ -14,6 +14,7 @@ import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
+import { berry } from "./berry";
 
 
 export const ptBrConfig = {
@@ -33,4 +34,5 @@ export const ptBrConfig = {
     growth: growth,
     weather: weather,
     modifierType: modifierType,
+    berry: berry,
 }
