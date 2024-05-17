@@ -3,6 +3,7 @@ import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
 import { getIconWithSettingName, getKeyWithKeycode} from "#app/configs/configHandler";
 import {Device} from "#app/enums/devices";
+import {addTextObject, TextStyle} from "#app/ui/text";
 
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
@@ -12,6 +13,23 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
         // Listen to gamepad button down events to initiate binding.
         scene.input.keyboard.on('keydown', this.onKeyDown, this);
         this.confirmText = "Confirm";
+    }
+    setup() {
+        super.setup();
+
+        // New button icon setup.
+        this.newButtonIcon = this.scene.add.sprite(0, 0, 'keyboard');
+        this.newButtonIcon.setScale(0.15);
+        this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 32);
+        this.newButtonIcon.setOrigin(0.5);
+        this.newButtonIcon.setVisible(false);
+
+        this.actionLabel = addTextObject(this.scene, 0, 0, "Assign button", TextStyle.SETTINGS_LABEL);
+        this.actionLabel.setOrigin(0, 0.5);
+        this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 80, this.actionBg.height / 2);
+        this.actionsContainer.add(this.actionLabel);
+
+        this.optionSelectContainer.add(this.newButtonIcon);
     }
 
     getSelectedDevice() {

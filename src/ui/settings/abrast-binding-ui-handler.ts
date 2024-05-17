@@ -85,37 +85,9 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.optionSelectBg.setOrigin(0.5);
         this.optionSelectContainer.add(this.optionSelectBg);
 
-        // New button icon setup.
-        this.newButtonIcon = this.scene.add.sprite(0, 0, 'keyboard');
-        this.newButtonIcon.setScale(0.15);
-        this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 16);
-        this.newButtonIcon.setOrigin(0.5);
-        this.newButtonIcon.setVisible(false);
-
-        this.swapText = addTextObject(this.scene, 0, 0, 'will swap with', TextStyle.WINDOW);
-        this.swapText.setOrigin(0.5);
-        this.swapText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
-        this.swapText.setVisible(false);
-
-        this.targetButtonIcon = this.scene.add.sprite(0, 0, 'keyboard');
-        this.targetButtonIcon.setScale(0.15);
-        this.targetButtonIcon.setPositionRelative(this.optionSelectBg, 78, 48);
-        this.targetButtonIcon.setOrigin(0.5);
-        this.targetButtonIcon.setVisible(false);
-
         this.cancelLabel = addTextObject(this.scene, 0, 0, 'Cancel', TextStyle.SETTINGS_LABEL);
         this.cancelLabel.setOrigin(0, 0.5);
         this.cancelLabel.setPositionRelative(this.actionBg, 10, this.actionBg.height / 2);
-
-        this.actionLabel = addTextObject(this.scene, 0, 0, this.confirmText, TextStyle.SETTINGS_LABEL);
-        this.actionLabel.setOrigin(0, 0.5);
-        this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
-
-        // Add swap and cancel labels to the containers.
-        this.optionSelectContainer.add(this.newButtonIcon);
-        this.optionSelectContainer.add(this.swapText);
-        this.optionSelectContainer.add(this.targetButtonIcon);
-        this.actionsContainer.add(this.actionLabel);
         this.actionsContainer.add(this.cancelLabel);
     }
 
@@ -228,8 +200,6 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.optionSelectContainer.setVisible(false);
         this.actionsContainer.setVisible(false);
         this.newButtonIcon.setVisible(false);
-        this.targetButtonIcon.setVisible(false);
-        this.swapText.setVisible(false);
         this.buttonPressed = null;
     }
 

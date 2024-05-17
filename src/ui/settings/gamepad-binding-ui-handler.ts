@@ -3,6 +3,7 @@ import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
 import {Device} from "#app/enums/devices";
 import {getIconWithSettingName, getKeyWithKeycode} from "#app/configs/configHandler";
+import {addTextObject, TextStyle} from "#app/ui/text";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
@@ -10,7 +11,36 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     constructor(scene: BattleScene, mode: Mode) {
         super(scene, mode);
         this.scene.input.gamepad.on('down', this.gamepadButtonDown, this);
-        this.confirmText = "Confirm swap";
+    }
+    setup() {
+        super.setup();
+
+        // New button icon setup.
+        this.newButtonIcon = this.scene.add.sprite(0, 0, 'xbox');
+        this.newButtonIcon.setScale(0.15);
+        this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 16);
+        this.newButtonIcon.setOrigin(0.5);
+        this.newButtonIcon.setVisible(false);
+
+        this.swapText = addTextObject(this.scene, 0, 0, 'will swap with', TextStyle.WINDOW);
+        this.swapText.setOrigin(0.5);
+        this.swapText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
+        this.swapText.setVisible(false);
+
+        this.targetButtonIcon = this.scene.add.sprite(0, 0, 'xbox');
+        this.targetButtonIcon.setScale(0.15);
+        this.targetButtonIcon.setPositionRelative(this.optionSelectBg, 78, 48);
+        this.targetButtonIcon.setOrigin(0.5);
+        this.targetButtonIcon.setVisible(false);
+
+        this.actionLabel = addTextObject(this.scene, 0, 0, "Confirm swap", TextStyle.SETTINGS_LABEL);
+        this.actionLabel.setOrigin(0, 0.5);
+        this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
+        this.actionsContainer.add(this.actionLabel);
+
+        this.optionSelectContainer.add(this.newButtonIcon);
+        this.optionSelectContainer.add(this.swapText);
+        this.optionSelectContainer.add(this.targetButtonIcon);
     }
 
     getSelectedDevice() {
@@ -38,5 +68,14 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Clear the UI elements and state.
+     */
+    clear() {
+        super.clear();
+        this.targetButtonIcon.setVisible(false);
+        this.swapText.setVisible(false);
     }
 }
