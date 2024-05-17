@@ -70,6 +70,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
      * Handle the delete key press event.
      */
     onDeleteDown(): void {
+        if (this.scene.ui.getMode() !== Mode.SETTINGS_KEYBOARD) return;
         const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
         const selection = this.settingLabels[cursor].text;
         const key = reverseValueToKeySetting(selection);

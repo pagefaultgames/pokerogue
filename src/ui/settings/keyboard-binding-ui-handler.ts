@@ -19,9 +19,19 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     }
 
     onKeyDown(event): void {
+        const blacklist = [
+            Phaser.Input.Keyboard.KeyCodes.UP,
+            Phaser.Input.Keyboard.KeyCodes.DOWN,
+            Phaser.Input.Keyboard.KeyCodes.LEFT,
+            Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            Phaser.Input.Keyboard.KeyCodes.HOME,
+            Phaser.Input.Keyboard.KeyCodes.ENTER,
+            Phaser.Input.Keyboard.KeyCodes.ESC,
+            Phaser.Input.Keyboard.KeyCodes.DELETE,
+        ];
         const key = event.keyCode;
         // // Check conditions before processing the button press.
-        if (!this.listening || this.buttonPressed !== null) return;
+        if (!this.listening || this.buttonPressed !== null || blacklist.includes(key)) return;
         const activeConfig = this.scene.inputController.getActiveConfig(Device.KEYBOARD);
         const _key = getKeyWithKeycode(activeConfig, key);
         const buttonIcon = activeConfig.icons[_key];
