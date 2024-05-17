@@ -2023,11 +2023,13 @@ export default class BattleScene extends SceneBase {
                         percent: (p.getHpRatio(false))*100
                     },
                     moveset: p.moveset.map(m =>  {
+                        let moveData = m.getMove();
                         return {
                             moveId: m.moveId,
+                            name: m.getName(),
                             ppUsed: m.ppUsed,
                             ppUp: m.ppUp,
-                            ppBase: m.getMove().pp
+                            ppBase: moveData.pp,
                         }
                     })
                 };
