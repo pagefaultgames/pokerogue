@@ -1998,9 +1998,9 @@ export class StealPositiveStatsAttr extends MoveEffectAttr {
     super(false, MoveEffectTrigger.PRE_APPLY)
     }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    let StatRaised = false;
     if (!super.apply(user, target, move, args))
       return false;
-    let StatRaised = false;
     for (let i = 0; i < 7; i++) {
       if (target.summonData.battleStats[i] > 0) {
         user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [i], target.summonData.battleStats[i]));
@@ -5218,8 +5218,7 @@ export function initMoves() {
     new AttackMove(Moves.REVENGE, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, -4, 3)
       .attr(TurnDamagedDoublePowerAttr),
     new AttackMove(Moves.BRICK_BREAK, Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3)
-        .attr(RemoveScreensAttr)
-        .partial(),
+        .attr(RemoveScreensAttr),
     new StatusMove(Moves.YAWN, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status),
@@ -6414,8 +6413,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new AttackMove(Moves.PSYCHIC_FANGS, Type.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .bitingMove()
-      .attr(RemoveScreensAttr)
-      .partial(),
+      .attr(RemoveScreensAttr),
     new AttackMove(Moves.STOMPING_TANTRUM, Type.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result == MoveResult.MISS || user.getLastXMoves(2)[1]?.result == MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SHADOW_BONE, Type.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, 20, 0, 7)
