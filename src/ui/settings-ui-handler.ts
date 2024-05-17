@@ -6,6 +6,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
+import i18next from "i18next";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
@@ -67,6 +68,26 @@ export default class SettingsUiHandler extends UiHandler {
       this.optionValueLabels.push(settingOptions[Setting[setting]].map((option, o) => {
         const valueLabel = addTextObject(this.scene, 0, 0, option, settingDefaults[Setting[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
         valueLabel.setOrigin(0, 0);
+
+        // Current the game reloads
+        // this is ideal to show the current set Language, right here
+        if ((Setting[setting] == Setting.Language) && (valueLabel.text == "English")) {
+          var tempLang = i18next.language;
+
+          const displayNames = (() => {
+            try {
+              return new Intl.DisplayNames([tempLang], { type: 'language' });
+            } catch(err) {
+              console.warn(err);
+              // Fallback to English.
+              tempLang = "en";
+              return new Intl.DisplayNames([tempLang], { type: 'language' });
+            }})();
+
+          // Display current set language, translated in the current language.
+          // Except zH, that one mismatches with DisplayNames.
+          valueLabel.text = displayNames.of(tempLang);
+        }
 
         this.optionsContainer.add(valueLabel);
 
