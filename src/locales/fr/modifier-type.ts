@@ -52,7 +52,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’1 cran {{tempBattleStatName}} pour tout l’équipe pendant 5 combats",
+	  description: "Augmente d’1 cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
@@ -129,7 +129,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RARER_CANDY": { name: "Hyper Bonbon" },
 
     "MEGA_BRACELET": { name: "Méga-Bracelet", description: "Débloque les Méga-Gemmes" },
-    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque les Maxi Champis" },
+    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque le Dynamax" },
     "TERA_ORB": { name: "Orbe Téracristal", description: "Débloque les Téra-Éclats" },
 
     "MAP": { name: "Carte", description: "Vous permet de choisir votre destination à un croisement" },
@@ -264,7 +264,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "fairy_feather": "Plume Enchantée",
   },
   BaseStatBoosterItem: {
-    "hp_up": "PP Plus",
+    "hp_up": "PV Plus",
     "protein": "Protéine",
     "iron": "Fer",
     "calcium": "Calcium",
