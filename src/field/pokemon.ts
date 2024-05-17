@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, EncoreTag, FriendGuardTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
+import { BattlerTag, BattlerTagLapseType, EncoreTag, ReceivedMoveDamageMultiplierTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from '../data/enums/species';
 import { WeatherType } from '../data/weather';
@@ -1454,13 +1454,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.getField(true).map(p => applyPreAttackAbAttrs(FieldVariableMovePowerAbAttr, this, source, battlerMove, power));
 
         applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, battlerMove, cancelled, power);
-        const reducedDamageTag = this.getTag(BattlerTagType.FRIEND_GUARD) as FriendGuardTag;
-        console.log(this.findTags(t => true));
+        
+        const reducedDamageTag = this.getTag(BattlerTagType.FRIEND_GUARD) as ReceivedMoveDamageMultiplierTag;
         if (reducedDamageTag) {
-          console.log(power);
-          console.log(reducedDamageTag.powerMultiplier);
           power.value *= reducedDamageTag.powerMultiplier;
-          console.log(power);
         }
 
         power.value *= typeChangeMovePowerMultiplier.value;

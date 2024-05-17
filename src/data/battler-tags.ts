@@ -1276,12 +1276,23 @@ export class CursedTag extends BattlerTag {
   }
 }
 
-export class FriendGuardTag extends BattlerTag {
+export class AuraTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, sourceId: number) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 0, undefined, sourceId);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const source = pokemon.scene.getPokemonById(this.sourceId);
+    return source.isActive(true);
+  }
+}
+
+export class ReceivedMoveDamageMultiplierTag extends AuraTag {
   public powerMultiplier: number;
 
-  constructor() {
-    super(BattlerTagType.FRIEND_GUARD, BattlerTagLapseType.TURN_END, 1, undefined);
-    this.powerMultiplier = 0.75;
+  constructor(tagType: BattlerTagType, sourceId: number, powerMultiplier: number) {
+    super(tagType, sourceId);
+    this.powerMultiplier = powerMultiplier;
   }
 
   /**
@@ -1406,7 +1417,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
     case BattlerTagType.FRIEND_GUARD:
-      return new FriendGuardTag();
+      return new ReceivedMoveDamageMultiplierTag(tagType, sourceId, 0.75);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

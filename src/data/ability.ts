@@ -2696,7 +2696,7 @@ export class FriendGuardAbAttr extends AbAttr {
     if (!ally) {
       return false;
     }
-    ally.addTag(BattlerTagType.FRIEND_GUARD, 1, undefined, pokemon.id);
+    ally.addTag(BattlerTagType.FRIEND_GUARD, 0, undefined, pokemon.id);
 
     return true;
   }

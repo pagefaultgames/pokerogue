@@ -21,7 +21,7 @@ import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { AuraTag, BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage, getPokemonPrefix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
@@ -2510,6 +2510,7 @@ export class MoveEffectPhase extends PokemonPhase {
           }
 
           const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
+          target.findTags(t => t instanceof AuraTag).forEach(t => target.lapseTag(t.tagType));
 
           const firstHit = moveHistoryEntry.result !== MoveResult.SUCCESS;
 
