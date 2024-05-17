@@ -136,9 +136,6 @@ export class InputsController {
     init(): void {
         this.events = this.scene.game.events;
 
-        if (localStorage.hasOwnProperty('selectedDevice')) {
-            this.selectedDevice = JSON.parse(localStorage.getItem('selectedDevice'));
-        }
         this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
             this.loseFocus()
         })
@@ -275,7 +272,6 @@ export class InputsController {
     initChosenGamepad(gamepadName?: String): void {
         if (gamepadName)
             this.selectedDevice[Device.GAMEPAD] = gamepadName.toLowerCase();
-        localStorage.setItem('selectedDevice', JSON.stringify(this.selectedDevice));
         const handler = this.scene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
         handler && handler.updateChosenGamepadDisplay()
     }
@@ -288,7 +284,6 @@ export class InputsController {
     initChosenLayoutKeyboard(layoutKeyboard?: String): void {
         if (layoutKeyboard)
             this.selectedDevice[Device.KEYBOARD] = layoutKeyboard.toLowerCase();
-        localStorage.setItem('selectedDevice', JSON.stringify(this.selectedDevice));
         const handler = this.scene.ui?.handlers[Mode.SETTINGS_KEYBOARD] as SettingsKeyboardUiHandler;
         handler && handler.updateChosenKeyboardDisplay()
     }
@@ -325,7 +320,6 @@ export class InputsController {
      * @param thisGamepad The gamepad that is being set up.
      */
     setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
-        this.lastSource = 'gamepad';
         const allGamepads = this.getGamepadsName();
         for (const gamepad of allGamepads) {
             const gamepadID = gamepad.toLowerCase();
@@ -336,7 +330,7 @@ export class InputsController {
             this.configs[gamepadID] = config;
             this.scene.gameData?.saveMappingConfigs(gamepadID, this.configs[gamepadID]);
         }
-        this.initChosenGamepad(this.selectedDevice[Device.GAMEPAD])
+        this.lastSource = 'gamepad';
     }
 
     /**
