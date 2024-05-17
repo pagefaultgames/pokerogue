@@ -253,7 +253,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
                 const totalWidth = optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
 
                 // Define the minimum width for a label, ensuring it's at least 78 pixels wide or the width of the setting label plus some padding
-                const labelWidth = Math.max(78, settingLabels[s].displayWidth + 8);
+                const labelWidth = Math.max(90, settingLabels[s].displayWidth + 8);
 
                 // Calculate the total available space for placing option labels next to their setting label
                 // We reserve space for the setting label and then distribute the remaining space evenly
