@@ -3545,10 +3545,12 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.fadeIn(250).then(() => {
         this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
           this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
           resolve();
         }, null, true, 1500);
+        });
       });
     })
   }
