@@ -21,6 +21,7 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 
+
 export const zhCnConfig = {
     ability: ability,
     abilityTriggers: abilityTriggers,
