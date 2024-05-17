@@ -42,7 +42,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-      description: "为一只宝可梦的一个招式永久增加{{upPoints}}点PP每5点当前最大PP (最多3点)",
+      description: "为一只宝可梦的一个招式永久增加{{upPoints}}点PP\n每5点当前最大PP (最多3点)",
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}}薄荷",
@@ -52,7 +52,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "接下来的{{battleCount}}场战斗是双打的概率翻倍",
     },
     "TempBattleStatBoosterModifierType": {
-      description: "为所有成员宝可梦提升一级{{tempBattleStatName}}，持续5场战斗",
+      description: "为所有成员宝可梦提升一级{{tempBattleStatName}}\n持续5场战斗",
     },
     "AttackTypeBoosterModifierType": {
       description: "一只宝可梦的{{moveType}}系招式威力提升20%",
@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "招式命中率增加{{accuracyAmount}} (最大100)",
     },
     "PokemonMultiHitModifierType": {
-      description: "攻击造成一次额外伤害，每次堆叠额外伤害分别衰减60/75/82.5%",
+      description: "攻击造成一次额外伤害\n每次堆叠额外伤害分别衰减60/75/82.5%",
     },
     "TmModifierType": {
       name: "招式学习器 {{moveId}} - {{moveName}}",

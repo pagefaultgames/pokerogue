@@ -23,7 +23,8 @@ export enum BerryType {
 }
 
 export function getBerryName(berryType: BerryType) {
-  return `${Utils.toReadableString(BerryType[berryType])} `+i18next.t('berry:Berry');
+  return i18next.t('berry:Berry', { berryTypeString: Utils.toReadableString(BerryType[berryType]) });
+  // i18next.t('battle:multiWildAppeared', {pokemonName1: enemyField[0].name, pokemonName2: enemyField[1].name})
 }
 
 export function getBerryEffectDescription(berryType: BerryType) {
@@ -40,7 +41,7 @@ export function getBerryEffectDescription(berryType: BerryType) {
     case BerryType.APICOT:
     case BerryType.SALAC:
       const stat = (berryType - BerryType.LIECHI) as BattleStat;
-      return `${i18next.t('berry:Raises')} ${getBattleStatName(stat)} `+i18next.t('berry:if_HP_is_below_25%');
+      return i18next.t('berry:Raises', { battleStatName: getBattleStatName(stat) });
     case BerryType.LANSAT:
       return +i18next.t('berry:Raises_critical_hit_ratio_if_HP_is_below_25%');
     case BerryType.STARF:
@@ -64,7 +65,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.GANLON:
     case BerryType.PETAYA:
     case BerryType.APICOT:
-     case BerryType.SALAC:
+    case BerryType.SALAC:
       return (pokemon: Pokemon) => {
         const threshold = new Utils.NumberHolder(0.25);
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
@@ -104,7 +105,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-          hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\n`+i18next.t('berry:restored_its_HP')), true));
+          hpHealed.value, getPokemonMessage(pokemon, i18next.t('berry:restored_its_HP', { berryName: getBerryName(berryType) })), true));
       };
     case BerryType.LUM:
       return (pokemon: Pokemon) => {
@@ -114,7 +115,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
           pokemon.resetStatus();
           pokemon.updateInfo();
-        } 
+        }
         if (pokemon.getTag(BattlerTagType.CONFUSED))
           pokemon.lapseTag(BattlerTagType.CONFUSED);
       };
@@ -129,7 +130,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
         const statLevels = new Utils.NumberHolder(1);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ battleStat ], statLevels.value));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [battleStat], statLevels.value));
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
@@ -143,7 +144,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           pokemon.battleData.berriesEaten.push(berryType);
         const statLevels = new Utils.NumberHolder(2);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], statLevels.value));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.RAND], statLevels.value));
       };
     case BerryType.LEPPA:
       return (pokemon: Pokemon) => {
@@ -151,7 +152,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           pokemon.battleData.berriesEaten.push(berryType);
         const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio());
         ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, `${i18next.t('berry:restored_PP_to_its_move')} ${ppRestoreMove.getName()}\n${i18next.t('berry:using_its')} ${getBerryName(berryType)}!`));
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, i18next.t('berry:restored_PP_to_its_move', { moveName: ppRestoreMove.getName(), berryName: getBerryName(berryType) })));
       };
   }
 }

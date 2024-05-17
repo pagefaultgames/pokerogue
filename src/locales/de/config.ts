@@ -17,6 +17,8 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
 import { titles,trainerClasses,trainerNames } from "./trainers";
 import { splashMessages } from "./splash-messages"
+import { berry } from "./berry";
+import{modifierSelectUiHandler} from "./modifier-select-ui-handler"
 
 
 export const deConfig = {
@@ -41,4 +43,6 @@ export const deConfig = {
     nature: nature,
     growth: growth,
     modifierType: modifierType,
+    berry: berry,
+    modifierSelectUiHandler:modifierSelectUiHandler,
 }

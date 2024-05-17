@@ -61,7 +61,7 @@ export const battle: SimpleTranslationEntries = {
   "Accuracy": "Accuracy",
   "Evasiveness": "Evasiveness",
   "rose": "rose",
-  "sharply_rose": "sharply_rose",
+  "sharply_rose": "sharply rose",
   "rose_drastically": "rose drastically",
   "fell": "fell",
   "harshly_fell": "harshly fell",
