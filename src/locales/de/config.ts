@@ -14,7 +14,7 @@ import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
-import { pokemonStat } from "./pokemon-stat";
+import { pokemonInfo } from "./pokemon-info";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { SummaryUiHandler } from "./summary-ui-handler";
@@ -42,7 +42,7 @@ export const deConfig = {
     nature: nature,
     pokeball: pokeball,
     pokemon: pokemon,
-    pokemonStat: pokemonStat,
+    pokemonInfo: pokemonInfo,
     splashMessages: splashMessages,
     starterSelectUiHandler: starterSelectUiHandler,
     titles: titles,
