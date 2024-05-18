@@ -254,11 +254,25 @@ export class ConfusedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag applied to the {@linkcode Move.DESTINY_BOND} user.
+ * See {@linkcode apply}
+ */
 export class DestinyBondTag extends BattlerTag {
   constructor(sourceMove: Moves, sourceId: integer) {
     super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
   }
 
+  /**
+   * Destiny bond tag.
+   * Lapses either before the user's move and does nothing
+   * or after receiving damage. If the damage received from foe
+   * is fatal, it takes down the foe as well.
+   * 
+   * @param {Pokemon} pokemon Pokemon that is attacking the Destiny Bond user.
+   * @param {BattlerTagLapseType} lapseType CUSTOM or PRE_MOVE
+   * @returns 
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType !== BattlerTagLapseType.CUSTOM) {
       return super.lapse(pokemon, lapseType);

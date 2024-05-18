@@ -4255,9 +4255,17 @@ export class DestinyBondAttr extends MoveEffectAttr {
     super(true, MoveEffectTrigger.PRE_APPLY);
   }
 
+  /**
+   * Applies {@linkcode BattlerTagType.DESTINY_BOND} to the user.
+   * @param {Pokemon} user User that is having the tag applied to.
+   * @param {Pokemon} target N/A
+   * @param {Move} move {@linkcode Move.DESTINY_BOND}
+   * @param {any[]} args N/A
+   * @returns true
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.scene.queueMessage(`${getPokemonMessage(user, ' is trying\nto take its foe down with it!')}`);
-    target.addTag(BattlerTagType.DESTINY_BOND, undefined, move.id, user.id);
+    user.addTag(BattlerTagType.DESTINY_BOND, undefined, move.id, user.id);
     return true;
   }
 }
