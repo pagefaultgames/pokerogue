@@ -1899,8 +1899,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     // Randomly select a point value from the available point values
-    // TODO: Random generation is with bias based on how many pokemon are in each point value
-    const randomPointValue = availablePointValues[Utils.randInt(availablePointValues.length, 0)];
+    // Construct an array with the point values repeated based on the number of pokemon with that point value
+    // This array is used to randomly select a point value with bias
+    const pointValueArray = availablePointValues.reduce((acc, value) => {
+      const numPokemon = this.possibleStarterPokemon[value].length;
+      for (let i = 0; i < numPokemon; i++) {
+        acc.push(value);
+      }
+      return acc;
+    }, []);
+    const randomPointValue = pointValueArray[Utils.randInt(pointValueArray.length, 0)];
+    // const randomPointValue = availablePointValues[Utils.randInt(availablePointValues.length, 0)];
 
     // Randomly select a pokemon from the list of pokemon with the selected point value
     const speciesInf = this.possibleStarterPokemon[randomPointValue][Utils.randInt(this.possibleStarterPokemon[randomPointValue].length, 0)];
@@ -1944,6 +1953,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return true;
     
   }
+  // deprecated function
   _generateRandomStarter(): boolean {
     var generatedValidPokemon:boolean = false;
     var hasValidPokemon:boolean = false;
@@ -2018,7 +2028,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   isValidStarter(species): bigint {
-    const useOnlyOwnedPokemon:boolean = false;
+    const useOnlyOwnedPokemon:boolean = true;
     if (useOnlyOwnedPokemon) {
       return this.scene.gameData.dexData[species.speciesId].caughtAttr;
     }
