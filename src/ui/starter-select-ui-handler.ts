@@ -185,6 +185,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private shinyIcons: Phaser.GameObjects.Image[][];
   private hiddenAbilityIcons: Phaser.GameObjects.Image[];
   private classicWinIcons: Phaser.GameObjects.Image[];
+  private candyUpgradeIcon: Phaser.GameObjects.Image[];
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -445,7 +446,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectContainer.add(ret);
       return ret;
     });
-
+    
     this.classicWinIcons = new Array(81).fill(null).map((_, i) => {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
@@ -457,6 +458,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return ret;
     });
 
+    this.candyUpgradeIcon = new Array(81).fill(null).map((_, i) => {
+      const x = (i % 9) * 18;
+      const y = Math.floor(i / 9) * 18;
+      const ret = this.scene.add.image(x + 163, y + 21, 'candy');
+      ret.setOrigin(0, 0);
+      ret.setScale(0.25);
+      ret.setVisible(false);
+      this.starterSelectContainer.add(ret);
+      return ret;
+    });
+    
     this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
@@ -1274,6 +1286,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
+
+        this.candyUpgradeIcon[s].setVisible(
+          slotVisible && (
+              (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
+              !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) || 
+              (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction] && 
+              this.scene.gameData.starterData[speciesId].valueReduction < 2)
+          )
+      );
       }
     } else {
       changed = super.setCursor(cursor);
@@ -1756,6 +1777,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
     this.starterValueLabels[cursor].setColor(this.getTextColor(textStyle));
     this.starterValueLabels[cursor].setShadowColor(this.getTextColor(textStyle, true));
+
+    this.candyUpgradeIcon[cursor].setVisible(this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) || this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]);
   }
 
   tryUpdateValue(add?: integer): boolean {
