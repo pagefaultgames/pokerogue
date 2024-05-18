@@ -186,6 +186,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private hiddenAbilityIcons: Phaser.GameObjects.Image[];
   private classicWinIcons: Phaser.GameObjects.Image[];
   private candyUpgradeIcon: Phaser.GameObjects.Image[];
+  private candyUpgradeOverlayIcon: Phaser.GameObjects.Image[];
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -446,7 +447,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectContainer.add(ret);
       return ret;
     });
-    
+
     this.classicWinIcons = new Array(81).fill(null).map((_, i) => {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
@@ -462,6 +463,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
       const ret = this.scene.add.image(x + 163, y + 21, 'candy');
+      ret.setOrigin(0, 0);
+      ret.setScale(0.25);
+      ret.setVisible(false);
+      this.starterSelectContainer.add(ret);
+      return ret;
+    });
+
+    this.candyUpgradeOverlayIcon = new Array(81).fill(null).map((_, i) => {
+      const x = (i % 9) * 18;
+      const y = Math.floor(i / 9) * 18;
+      const ret = this.scene.add.image(x + 163, y + 21, 'candy_overlay');
       ret.setOrigin(0, 0);
       ret.setScale(0.25);
       ret.setVisible(false);
@@ -1289,6 +1301,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
+        if (!starterColors[speciesId]) {
+          starterColors[speciesId] = [ 'ffffff', 'ffffff' ]; // Default to white if no colors are found
+        }
+        
+        // Set the candy colors
+        this.candyUpgradeIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
+        this.candyUpgradeOverlayIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
+
+        // Display the candy upgrade icon and its overlay if the species has a passive ability that can be unlocked or if its value can be reduced
         this.candyUpgradeIcon[s].setVisible(
           slotVisible && (
               (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
@@ -1296,6 +1317,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction] && 
               this.scene.gameData.starterData[speciesId].valueReduction < 2)
           )
+        );
+        this.candyUpgradeOverlayIcon[s].setVisible(
+          slotVisible && this.candyUpgradeIcon[s].visible
       );
       }
     } else {
@@ -1786,6 +1810,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.candyUpgradeIcon[cursor].setVisible(
       this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) || this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]);
+    this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
   }
 
   tryUpdateValue(add?: integer): boolean {
