@@ -3728,7 +3728,6 @@ export class GameOverPhase extends BattlePhase {
       this.firstRibbons.push(getPokemonSpecies(pokemonSpecies.getRootSpeciesId(forStarter)));
     }
   }
-
 }
 
 export class EndCardPhase extends Phase {
