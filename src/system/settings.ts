@@ -17,6 +17,7 @@ export enum Setting {
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
   Enable_Retries = "ENABLE_RETRIES",
+  Candy_Upgrade_Icon = "CANDY_UPGRADE_ICON",
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
@@ -50,6 +51,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: ['Off', 'On'],
   [Setting.Enable_Retries]: ['Off', 'On'],
+  [Setting.Candy_Upgrade_Icon]: ['Off', 'Only Passive Unlocks', 'On'],
   [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
   [Setting.Move_Animations]: ['Off', 'On'],
   [Setting.Show_Stats_on_Level_Up]: ['Off', 'On'],
@@ -75,6 +77,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
   [Setting.Enable_Retries]: 0,
+  [Setting.Candy_Upgrade_Icon]: 0,
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
@@ -122,6 +125,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Enable_Retries:
       scene.enableRetries = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Candy_Upgrade_Icon:
+      scene.candyUpgradeIconsMode = value;
       break;
     case Setting.Sprite_Set:
       scene.experimentalSprites = !!value;

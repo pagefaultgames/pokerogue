@@ -984,7 +984,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       if (!success)
                         return this.scene.reset(true);
                     });
-                    this.updateCandyUpgradeIcon(this.cursor);
+                    if (this.scene.candyUpgradeIconsMode !== 0) {this.updateCandyUpgradeIcon(this.cursor)} // If the setting is not set to 0, update the candy upgrade icon
                     ui.setMode(Mode.STARTER_SELECT);
                     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
                     return true;
@@ -1009,7 +1009,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       if (!success)
                         return this.scene.reset(true);
                     });
-                    this.updateCandyUpgradeIcon(this.cursor);
+                    if (this.scene.candyUpgradeIconsMode === 2) {this.updateCandyUpgradeIcon(this.cursor)} // If the setting is set to 2, update the candy upgrade icon
                     this.updateStarterValueLabel(this.cursor);
                     this.tryUpdateValue(0);
                     ui.setMode(Mode.STARTER_SELECT);
@@ -1301,26 +1301,30 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
-        if (!starterColors[speciesId]) {
-          starterColors[speciesId] = [ 'ffffff', 'ffffff' ]; // Default to white if no colors are found
-        }
-        
-        // Set the candy colors
-        this.candyUpgradeIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
-        this.candyUpgradeOverlayIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
+          if (!starterColors[speciesId]) {
+            starterColors[speciesId] = [ 'ffffff', 'ffffff' ]; // Default to white if no colors are found
+          }
 
-        // Display the candy upgrade icon and its overlay if the species has a passive ability that can be unlocked or if its value can be reduced
-        this.candyUpgradeIcon[s].setVisible(
-          slotVisible && (
-              (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
-              !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) || 
-              (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction] && 
-              this.scene.gameData.starterData[speciesId].valueReduction < 2)
-          )
-        );
-        this.candyUpgradeOverlayIcon[s].setVisible(
-          slotVisible && this.candyUpgradeIcon[s].visible
-      );
+          // Set the candy colors
+          this.candyUpgradeIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
+          this.candyUpgradeOverlayIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
+
+          if (this.scene.candyUpgradeIconsMode == 1) { // 'Only Passive Unlocks' mode
+            this.candyUpgradeIcon[s].setVisible(
+              slotVisible && (
+                this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
+                !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)));
+            this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
+
+          } else if (this.scene.candyUpgradeIconsMode == 2) { // 'On' mode
+            this.candyUpgradeIcon[s].setVisible(
+              slotVisible && (
+                (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
+                !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) || 
+                (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction] && 
+                this.scene.gameData.starterData[speciesId].valueReduction < 2)));
+              this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
+          } 
       }
     } else {
       changed = super.setCursor(cursor);
@@ -1808,9 +1812,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateCandyUpgradeIcon(cursor: integer): void {
     const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
 
-    this.candyUpgradeIcon[cursor].setVisible(
-      this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) || this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]);
-    this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
+    if (this.scene.candyUpgradeIconsMode === 1) { // 'Only Passive Unlocks' mode:
+        this.candyUpgradeIcon[cursor].setVisible(this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED));
+        this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
+
+    } else if (this.scene.candyUpgradeIconsMode === 2) { // 'On' mode
+        this.candyUpgradeIcon[cursor].setVisible(
+          (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) ||
+          (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]) && 
+          this.scene.gameData.starterData[speciesId].valueReduction < 2);
+        this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
+    }
   }
 
   tryUpdateValue(add?: integer): boolean {
