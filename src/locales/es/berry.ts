@@ -2,47 +2,47 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
-    name: "Sitrus Berry",
-    effect: "Restores 25% HP if HP is below 50%",
+    name: "Baya Zidra",
+    effect: "Restaura 25% de PS si los PS están debajo del 50%",
   },
   "LUM": {
-    name: "Lum Berry",
-    effect: "Cures any non-volatile status condition and confusion",
+    name: "Baya Ziuela",
+    effect: "Cura cualquier problema de estado no volátil y la confusión",
   },
   "ENIGMA": {
-    name: "Enigma Berry",
-    effect: "Restores 25% HP if hit by a super effective move",
+    name: "Baya Enigma",
+    effect: "Restaura 25% de PS si recibe daño supereficaz",
   },
   "LIECHI": {
-    name: "Liechi Berry",
-    effect: "Raises Attack if HP is below 25%",
+    name: "Baya Lichi",
+    effect: "Sube el Ataque si los PS están por debajo de 25%",
   },
   "GANLON": {
-    name: "Ganlon Berry",
-    effect: "Raises Defense if HP is below 25%",
+    name: "Baya Gonlan",
+    effect: "Sube la Defensa si los PS están por debajo de 25%",
   },
   "PETAYA": {
-    name: "Petaya Berry",
-    effect: "Raises Sp. Atk if HP is below 25%",
+    name: "Baya Yapati",
+    effect: "Sube el Atq. Especial si los PS están por debajo de 25%",
   },
   "APICOT": {
-    name: "Apicot Berry",
-    effect: "Raises Sp. Def if HP is below 25%",
+    name: "Baya Aricoc",
+    effect: "Sube la Def. Especial si los PS están por debajo de 25%",
   },
   "SALAC": {
-    name: "Salac Berry",
-    effect: "Raises Speed if HP is below 25%",
+    name: "Baya Aslac",
+    effect: "Sube la Velocidad si los PS están por debajo de 25%",
   },
   "LANSAT": {
-    name: "Lansat Berry",
-    effect: "Raises critical hit ratio if HP is below 25%",
+    name: "Baya Zonlan",
+    effect: "Sube la probabilidad de golpes críticos si los PS están por debajo de 25%",
   },
   "STARF": {
-    name: "Starf Berry",
-    effect: "Sharply raises a random stat if HP is below 25%",
+    name: "Baya Arabol",
+    effect: "Sube mucho una estadística al azar si los PS están por debajo de 25%",
   },
   "LEPPA": {
-    name: "Leppa Berry",
-    effect: "Restores 10 PP to a move if its PP reaches 0",
+    name: "Baya Zanama",
+    effect: "Restaura 10 PP a un movimiento que llegue a 0 PP",
   },
 } as const;
