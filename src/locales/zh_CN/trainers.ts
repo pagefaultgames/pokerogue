@@ -44,8 +44,8 @@ export const trainerClasses: SimpleTranslationEntries = {
     "depot_agent": "铁路员工",
     "doctor": "医生",
     "doctor_female": "医生",
-    "fishermen": "垂钓者",
-    "fishermen_female": "垂钓者",
+    "fisherman": "垂钓者",
+    "fisherman_female": "垂钓者",
     "gentleman": "绅士",
     "guitarist": "吉他手",
     "guitarist_female": "吉他手",
@@ -61,15 +61,15 @@ export const trainerClasses: SimpleTranslationEntries = {
     "maid": "女仆",
     "madame": "女士",
     "medical_team": "医疗团队",
-    "musican": "音乐家",
+    "musician": "音乐家",
     "hex_maniac": "灵异迷",
     "nurse": "护士",
     "nursery_aide": "幼儿园老师",
     "officer": "警察",
     "parasol_lady": "阳伞姐姐",
     "pilot": "飞行员",
-    "poké_fan": "发烧友俱乐部",
-    "poké_fan_family": "同好夫妇",
+    "pokefan": "发烧友俱乐部",
+    "pokefan_family": "同好夫妇",
     "preschooler": "幼儿园小朋友",
     "preschooler_female": "幼儿园小朋友",
     "preschoolers": "幼儿园小朋友组合",
@@ -80,8 +80,12 @@ export const trainerClasses: SimpleTranslationEntries = {
     "pokémon_rangers": "宝可梦巡护员组合",
     "ranger": "巡护员",
     "restaurant_staff": "服务生组合",
+    "rich": "Rich",
+    "rich_female": "Rich",
     "rich_boy": "富家少爷",
     "rich_couple": "富豪夫妇",
+    "rich_kid": "Rich Kid",
+    "rich_kid_female": "Rich Kid",
     "rich_kids": "富二代组合",
     "roughneck": "光头男",
     "scientist": "研究员",
@@ -248,7 +252,6 @@ export const trainerNames: SimpleTranslationEntries = {
     // 帕底亚地区 Paldea Region
     "rika": "辛俐",
     "poppy": "波琵",
-    "larry_elite": "青木", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "hassel": "八朔",
 
     // 蓝莓学院 Blueberry Academy
@@ -261,9 +264,6 @@ export const trainerNames: SimpleTranslationEntries = {
     // 关都地区 Kanto Region
     "blue": "青绿",
     "red": "赤红",
-
-    // 城都地区 Johto Region
-    "lance_champion": "阿渡", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
 
     // 丰缘地区 Hoenn Region
     "steven": "大吾",
