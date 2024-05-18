@@ -52,7 +52,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "DoubleBattlePreventionModifierType": {
-      description: "Empêche les combats doubles pendant {{battleCount}}",
+      description: "Empêche les combats doubles pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
 	  description: "Augmente d’1 cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
