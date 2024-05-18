@@ -2050,6 +2050,8 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
 
+    this.scene.pushPhase(new BerryPhase(this.scene));
+
     if (this.scene.arena.weather)
       this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
 
@@ -2059,6 +2061,42 @@ export class TurnStartPhase extends FieldPhase {
     }
 
     this.scene.pushPhase(new TurnEndPhase(this.scene));
+
+    this.end();
+  }
+}
+
+/** The phase after attacks where the pokemon eat berries */
+export class BerryPhase extends FieldPhase {
+  start() {
+    super.start();
+
+    this.executeForAll((pokemon) => {
+      const hasUsableBerry = !!this.scene.findModifier((m) => m instanceof BerryModifier && m.shouldApply([pokemon]), pokemon.isPlayer());
+
+      if (hasUsableBerry) {
+        const cancelled = new Utils.BooleanHolder(false);
+        pokemon.getOpponents().map((opp) => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
+
+        if (cancelled.value) {
+          pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is too\nnervous to eat berries!"));
+        } else {
+          this.scene.unshiftPhase(new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM));
+
+          for (const berryModifier of this.scene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon) as BerryModifier[]) {
+            if (berryModifier.consumed) {
+              if (!--berryModifier.stackCount) {
+                this.scene.removeModifier(berryModifier);
+              } else {
+                berryModifier.consumed = false;
+              }
+            }
+          }
+
+          this.scene.updateModifiers(pokemon.isPlayer());
+        }
+      }
+    });
 
     this.end();
   }
@@ -2081,10 +2119,6 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
         pokemon.summonData.disabledMove = Moves.NONE;
       }
-
-      const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]), pokemon.isPlayer());
-      if (hasUsableBerry)
-        this.scene.unshiftPhase(new BerryPhase(this.scene, pokemon.getBattlerIndex()));
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
@@ -3985,38 +4019,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         }, null, true);
       });
     }
-  }
-}
-
-export class BerryPhase extends CommonAnimPhase {
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
-    super(scene, battlerIndex, undefined, CommonAnim.USE_ITEM);
-  }
-
-  start() {
-    let berryModifiers: BerryModifier[];
-
-    const pokemon = this.getPokemon();
-
-    const cancelled = new Utils.BooleanHolder(false);
-    pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
-
-    if (cancelled.value)
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is too\nnervous to eat berries!'));
-    else if ((berryModifiers = this.scene.applyModifiers(BerryModifier, this.player, pokemon) as BerryModifier[])) {
-      for (let berryModifier of berryModifiers) {
-        if (berryModifier.consumed) {
-          if (!--berryModifier.stackCount)
-            this.scene.removeModifier(berryModifier);
-          else
-            berryModifier.consumed = false;
-          this.scene.updateModifiers(this.player);
-        }
-      }
-      return super.start();
-    }
-
-    this.end();
   }
 }
 
