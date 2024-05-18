@@ -1923,6 +1923,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // The value is guaranteed to be less than the value limit so no need to check, simple call suffices
     this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId));
 
+    // set cursor position for selected pokemon
+    const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+    // set's the cursor off screen
+    cursorObj.setPosition(-100, -100); 
+
     // Generate the nature, ability, and moveset for the pokemon
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
