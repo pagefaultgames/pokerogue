@@ -51,7 +51,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: ['Off', 'On'],
   [Setting.Enable_Retries]: ['Off', 'On'],
-  [Setting.Candy_Upgrade_Icon]: ['Off', 'Only Passive Unlocks', 'On'],
+  [Setting.Candy_Upgrade_Icon]: ['Off', 'Passives Only', 'On'],
   [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
   [Setting.Move_Animations]: ['Off', 'On'],
   [Setting.Show_Stats_on_Level_Up]: ['Off', 'On'],
