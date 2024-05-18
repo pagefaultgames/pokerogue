@@ -48,7 +48,6 @@ import { BerryType } from '../data/berry';
 import i18next from '../plugins/i18n';
 import { speciesEggMoves } from '../data/egg-moves';
 import { ModifierTier } from '../modifier/modifier-tier';
-import BattleFlyout, { EnemyBattleFlyout, PlayerBattleFlyout } from '#app/ui/battle-flyout.js';
 
 export enum FieldPosition {
   CENTER,
@@ -67,7 +66,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public variant: Variant;
   public pokeball: PokeballType;
   protected battleInfo: BattleInfo;
-  protected battleFlyout: BattleFlyout;
   public level: integer;
   public exp: integer;
   public levelExp: integer;
@@ -217,16 +215,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.initBattleInfo();
 
-    this.scene.fieldUI.addAt(this.battleFlyout, 0);
     this.scene.fieldUI.addAt(this.battleInfo, 0);
-    this.scene.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.battleFlyout, this.battleInfo);
-    this.scene.fieldUI.moveDown(this.battleFlyout);
-    this.scene.fieldUI.moveDown(this.battleFlyout);
-    this.scene.fieldUI.moveDown(this.battleFlyout);
-    this.scene.fieldUI.moveDown(this.battleFlyout);
-    this.scene.fieldUI.moveDown(this.battleFlyout);
-    this.scene.fieldUI.moveDown(this.battleFlyout);
-    
 
     const getSprite = (hasShadow?: boolean) => {
       const ret = this.scene.addPokemonSprite(this, 0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`, undefined, true);
@@ -533,9 +522,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.battleInfo.setMini(fieldPosition !== FieldPosition.CENTER);
       this.battleInfo.setOffset(fieldPosition === FieldPosition.RIGHT);
-
-      this.battleFlyout.setMini(fieldPosition !== FieldPosition.CENTER);
-      this.battleFlyout.setOffset(fieldPosition === FieldPosition.RIGHT);
 
       const newOffset = this.getFieldPositionOffset();
 
@@ -1363,51 +1349,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         ease: 'Cubic.easeOut'
       });
     }
-    if (!this.battleFlyout.visible) {
-      this.battleFlyout.setX(this.battleFlyout.x + (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
-      this.battleFlyout.setVisible(true);
-      this.scene.tweens.add({
-        targets: this.battleFlyout,
-        x: this.isPlayer() ? '-=150' : `+=${!this.isBoss() ? 150 : 246}`,
-        duration: 1000,
-        ease: 'Cubic.easeOut'
-      });
-    }
   }
 
   hideInfo(): Promise<void> {
     return new Promise(resolve => {
-      if (this.battleInfo.visible || this.battleFlyout.visible) {
-        if (this.battleInfo.visible) {
-          this.scene.tweens.add({
-            targets: [ this.battleInfo, this.battleInfo.expMaskRect ],
-            x: this.isPlayer() ? '+=150' : `-=${!this.isBoss() ? 150 : 246}`,
-            duration: 500,
-            ease: 'Cubic.easeIn',
-            onComplete: () => {
-              if (this.isPlayer())
-                this.battleInfo.expMaskRect.x -= 150;
-              this.battleInfo.setVisible(false);
-              this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
-              resolve();
-            }
-          });
-        }
-        /* if(this.battleFlyout.visible) {
-          this.scene.tweens.add({
-            targets: this.battleFlyout,
-            x: this.isPlayer() ? '+=150' : `-=${!this.isBoss() ? 150 : 246}`,
-            duration: 500,
-            ease: 'Cubic.easeIn',
-            onComplete: () => {              
-              this.battleFlyout.setVisible(false);
-              this.battleFlyout.setX(this.battleFlyout.x - (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
-              resolve();
-            }
-          });
-        } */
-      } 
-      else
+      if (this.battleInfo.visible) {
+        this.scene.tweens.add({
+          targets: [ this.battleInfo, this.battleInfo.expMaskRect ],
+          x: this.isPlayer() ? '+=150' : `-=${!this.isBoss() ? 150 : 246}`,
+          duration: 500,
+          ease: 'Cubic.easeIn',
+          onComplete: () => {
+            if (this.isPlayer())
+              this.battleInfo.expMaskRect.x -= 150;
+            this.battleInfo.setVisible(false);
+            this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
+            resolve();
+          }
+        });
+      } else
         resolve();
     });
   }
@@ -1418,7 +1378,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
-    this.battleFlyout.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {
@@ -2554,7 +2513,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   destroy(): void {
     this.battleInfo?.destroy();
-    this.battleFlyout?.destroy();
     super.destroy();
   }
 }
@@ -2584,9 +2542,6 @@ export class PlayerPokemon extends Pokemon {
   initBattleInfo(): void {
     this.battleInfo = new PlayerBattleInfo(this.scene);
     this.battleInfo.initInfo(this);
-
-    this.battleFlyout = new PlayerBattleFlyout(this.scene);
-    this.battleFlyout.initInfo(this);
   }
 
   isPlayer(): boolean {
@@ -2960,9 +2915,6 @@ export class EnemyPokemon extends Pokemon {
       this.battleInfo = new EnemyBattleInfo(this.scene);
       this.battleInfo.updateBossSegments(this);
       this.battleInfo.initInfo(this);
-
-      this.battleFlyout = new EnemyBattleFlyout(this.scene);      
-      this.battleFlyout.initInfo(this);
     } else
       this.battleInfo.updateBossSegments(this);
   }
