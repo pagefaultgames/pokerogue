@@ -2690,8 +2690,16 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Abstract class for aura effects. Aura effects apply tags
+ * to a list of targets and keeps reapplying them as long
+ * as the aura source is active.
+ */
 export abstract class AuraAbAttr extends AbAttr { }
 
+/**
+ * Damage reduction aura triggered by {@linkcode Abilities.FRIEND_GUARD}.
+ */
 export class FriendGuardAbAttr extends AuraAbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const ally = pokemon.getAlly();
