@@ -462,6 +462,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
       const ret = this.scene.add.image(x + 163, y + 21, 'candy');
+      const retTint = 
       ret.setOrigin(0, 0);
       ret.setScale(0.25);
       ret.setVisible(false);
@@ -972,6 +973,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       if (!success)
                         return this.scene.reset(true);
                     });
+                    this.updateCandyUpgradeIcon(this.cursor);
                     ui.setMode(Mode.STARTER_SELECT);
                     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
                     return true;
@@ -996,6 +998,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       if (!success)
                         return this.scene.reset(true);
                     });
+                    this.updateCandyUpgradeIcon(this.cursor);
                     this.updateStarterValueLabel(this.cursor);
                     this.tryUpdateValue(0);
                     ui.setMode(Mode.STARTER_SELECT);
@@ -1777,8 +1780,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
     this.starterValueLabels[cursor].setColor(this.getTextColor(textStyle));
     this.starterValueLabels[cursor].setShadowColor(this.getTextColor(textStyle, true));
+  }
 
-    this.candyUpgradeIcon[cursor].setVisible(this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) || this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]);
+  updateCandyUpgradeIcon(cursor: integer): void {
+    const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
+
+    this.candyUpgradeIcon[cursor].setVisible(
+      this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) || this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]);
   }
 
   tryUpdateValue(add?: integer): boolean {
