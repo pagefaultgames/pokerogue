@@ -3634,10 +3634,16 @@ export class GameOverPhase extends BattlePhase {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
             for (let pokemon of this.scene.getParty()) {
-              this.awardRibbon(pokemon);
-
+              this.awardRibbon(pokemon.species);
               if (pokemon.species.getRootSpeciesId() != pokemon.species.getRootSpeciesId(true)) {
-                this.awardRibbon(pokemon, true);
+                this.awardRibbon(pokemon.species, true);
+              }
+
+              if(pokemon.isFusion()){
+                this.awardRibbon(pokemon.fusionSpecies);
+                if (pokemon.fusionSpecies.getRootSpeciesId() != pokemon.fusionSpecies.getRootSpeciesId(true)) {
+                  this.awardRibbon(pokemon.fusionSpecies, true);
+                }  
               }
             }
           } else if (this.scene.gameMode.isDaily && newClear)
@@ -3714,14 +3720,15 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
-  awardRibbon(pokemon: Pokemon, forStarter: boolean = false): void {
-    const speciesId = getPokemonSpecies(pokemon.species.speciesId)
+  awardRibbon(pokemonSpecies: PokemonSpecies, forStarter: boolean = false): void {
+    const speciesId = getPokemonSpecies(pokemonSpecies.speciesId)
     const speciesRibbonCount = this.scene.gameData.incrementRibbonCount(speciesId, forStarter);
     // first time classic win, award voucher
     if (speciesRibbonCount === 1) {
-      this.firstRibbons.push(getPokemonSpecies(pokemon.species.getRootSpeciesId(forStarter)));
+      this.firstRibbons.push(getPokemonSpecies(pokemonSpecies.getRootSpeciesId(forStarter)));
     }
   }
+
 }
 
 export class EndCardPhase extends Phase {
