@@ -332,8 +332,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                     this.scene.cachedFetch(`./images/pokemon/variant/${useExpSprite ? 'exp/' : ''}${battleSpritePath}.json`).
                       then(res => {
                         // Prevent the JSON from processing if it failed to load
-                        if (res.status === 404) {
-                          console.error(`Could not load ${res.url}!`)
+                        if (!res.ok) {
+                          console.error(`Could not load ${res.url}!`);
                           return;
                         }
                         res.json()
