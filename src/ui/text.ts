@@ -5,6 +5,8 @@ import { EggTier } from "../data/enums/egg-type";
 import BattleScene from "../battle-scene";
 import { UiTheme } from "../enums/ui-theme";
 
+export const TEXT_SCALE = 1 / 6;
+
 export enum TextStyle {
   MESSAGE,
   WINDOW,
@@ -32,7 +34,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = scene.add.text(x, y, content, styleOptions);
-  ret.setScale(0.1666666667);
+  ret.setScale(TEXT_SCALE);
   ret.setShadow(shadowSize, shadowSize, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing)
     ret.setLineSpacing(5);
@@ -45,7 +47,7 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
 
   const ret = new BBCodeText(scene, x, y, content, styleOptions as BBCodeText.TextStyle);
   scene.add.existing(ret);
-  ret.setScale(0.1666666667);
+  ret.setScale(TEXT_SCALE);
   ret.setShadow(shadowSize, shadowSize, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing)
     ret.setLineSpacing(10);
@@ -58,7 +60,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 
   const ret = new InputText(scene, x, y, width, height, styleOptions as InputText.IConfig);
   scene.add.existing(ret);
-  ret.setScale(0.1666666667);
+  ret.setScale(TEXT_SCALE);
 
   return ret;
 }

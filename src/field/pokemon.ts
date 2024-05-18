@@ -1392,7 +1392,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const typeHints = this.scene.typeHints;
     if (typeHints === 0) return undefined;
     const opponents = this.getOpponents();
-    if (opponents.length < 1) return undefined;
+    if (opponents.length <= 0) return undefined;
 
     const opponentTypeEffectivenessList = opponents.map((opponent) => {
       return opponent.getTypes().map((type) => {
