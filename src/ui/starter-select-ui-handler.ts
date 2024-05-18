@@ -143,6 +143,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonFormText: Phaser.GameObjects.Text;
 
   private starterRandomizeText: Phaser.GameObjects.Text;
+  // Of the format [species, gen, speciesID]
+  private possibleStarterPokemon: {[key: integer]: [species: PokemonSpecies, gen: integer, speciesId: integer][]};
 
   private genMode: boolean;
   private randomizeMode: boolean;
@@ -1857,11 +1859,92 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   generateRandomStarterTeam(): void {
+    this.prepopulateRandomStarterPokemonDictionary();
     this.clearCurrentStarterTeam();
     while (this.generateRandomStarter());
   }
 
+  // Using a list of all possible starters, generates a dictionary of all possible owned starters by point value
+  // {value: [speciesA, speciesB, speciesC, ...]}
+  prepopulateRandomStarterPokemonDictionary(): void {
+    this.possibleStarterPokemon = {};
+    for (let g = 0; g < this.genSpecies.length; g++) {
+      for (let s = 0; s < this.genSpecies[g].length; s++) {
+        const speciesId = this.genSpecies[g][s].speciesId;
+        const value = this.scene.gameData.getSpeciesStarterValue(speciesId);
+        // console.log(speciesId, value);
+        if (this.isValidStarter(this.genSpecies[g][s]) && value > 0) {
+          if (!this.possibleStarterPokemon[value])
+            this.possibleStarterPokemon[value] = [];
+          this.possibleStarterPokemon[value].push([this.genSpecies[g][s], g, s]);
+        }
+      }
+    }
+    // console.log(this.possibleStarterPokemon);
+  }
+
+  // Using possibleStarterPokemon
+  // Grabs a random starter from the dictionary and adds it to the team
+  // Ignores starters that would put the team over the value limit
   generateRandomStarter(): boolean {
+    if (this.starterGens.length >= 6) {
+      return false;
+    }
+
+    // Check if there are any valid pokemon to generate
+    // The available point values are all the keys that are less than the value limit - the current value
+    var availablePointValues = Object.keys(this.possibleStarterPokemon).filter(value => parseInt(value) <= this.getValueLimit() - this.value);
+    if (availablePointValues.length === 0) { // No more valid pokemon to generate
+      return false;
+    }
+
+    // Randomly select a point value from the available point values
+    // TODO: Random generation is with bias based on how many pokemon are in each point value
+    const randomPointValue = availablePointValues[Utils.randInt(availablePointValues.length, 0)];
+
+    // Randomly select a pokemon from the list of pokemon with the selected point value
+    const speciesInf = this.possibleStarterPokemon[randomPointValue][Utils.randInt(this.possibleStarterPokemon[randomPointValue].length, 0)];
+    const species = speciesInf[0];
+    const gen = speciesInf[1];
+    const speciesId = speciesInf[2];
+    // console.log("choosing point value", randomPointValue, "species", speciesId, "gen", gen);
+    // console.log("global species", species);
+    // console.log("local species", this.genSpecies[gen][speciesId]);
+
+    // The value is guaranteed to be less than the value limit so no need to check, simple call suffices
+    this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId));
+
+    // Generate the nature, ability, and moveset for the pokemon
+    this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
+    this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
+    this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
+    this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
+
+    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+
+    this.starterAttr.push(this.dexAttrCursor);
+    this.starterAbilityIndexes.push(this.abilityCursor);
+    this.starterNatures.push(this.natureCursor as unknown as Nature);
+    this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+
+    this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+    this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+
+    this.starterGens.push(gen); 
+    this.starterCursors.push(speciesId);
+
+    // Remove the selected pokemon from the dictionary
+    this.possibleStarterPokemon[randomPointValue].splice(this.possibleStarterPokemon[randomPointValue].indexOf(speciesInf), 1);
+    // console.log("removed", speciesId, "from", randomPointValue);
+    // console.log(this.possibleStarterPokemon[randomPointValue]);
+    // If there is no more pokemon for this key, remove the key
+    if (this.possibleStarterPokemon[randomPointValue].length === 0) {
+      delete this.possibleStarterPokemon[randomPointValue];
+    }
+    return true;
+    
+  }
+  _generateRandomStarter(): boolean {
     var generatedValidPokemon:boolean = false;
     var hasValidPokemon:boolean = false;
 
@@ -1935,7 +2018,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   isValidStarter(species): bigint {
-    return this.scene.gameData.dexData[species.speciesId].caughtAttr;
+    const useOnlyOwnedPokemon:boolean = false;
+    if (useOnlyOwnedPokemon) {
+      return this.scene.gameData.dexData[species.speciesId].caughtAttr;
+    }
+    return 1n;
   }
 
 
