@@ -2,6 +2,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const gameStatsUiHandler: SimpleTranslationEntries = {
   "stats": "Stats",
+  "playTime": "Play Time",
   "totalBattles": "Total Battles",
   "starters": "Starters",
   "shinyStarters": "Shiny Starters",
