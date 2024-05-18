@@ -16,6 +16,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessageText: Phaser.GameObjects.Text;
 
   private titleStatsTimer: number;
+  private timedEventManager: TimedEventManager = new TimedEventManager();
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -35,13 +36,12 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     
     this.titleContainer.add(logo);
     
-    if (new TimedEventManager().isEventActive()) {
+    if (this.timedEventManager.isEventActive() && this.timedEventManager.activeEventHasBanner()) {
       const banner = this.scene.add.image((this.scene.game.canvas.width / 6.5) / 2, (this.scene.game.canvas.height / 4.65) / 2, new TimedEventManager().getEventBannerFilename());
       banner.displayWidth = this.scene.game.canvas.width / 18.33
       banner.displayHeight = banner.displayWidth / 3
       banner.setOrigin(0.315, -0.8);
 
-      
       this.titleContainer.add(banner);
     }
 

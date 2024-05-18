@@ -33,6 +33,19 @@ export class TimedEventManager {
         return false;
     }
 
+    activeEventHasBanner(): boolean {
+        for (const timedEvent of timedEvents) {
+            const eventStart = new Date(timedEvent.startDate);
+            const now = new Date();
+            const eventEnd = new Date(timedEvent.endDate);
+
+            if (eventStart < now && now < eventEnd && timedEvent.bannerFilename) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     getShinyMultiplier(): number {
         let multiplier = 1;
         for (const timedEvent of timedEvents) {
@@ -51,7 +64,7 @@ export class TimedEventManager {
             const now = new Date();
             const eventEnd = new Date(timedEvent.endDate);
 
-            if (eventStart < now && now < eventEnd) {
+            if (eventStart < now && now < eventEnd && timedEvent.bannerFilename) {
                 return timedEvent.bannerFilename;
             }
         }
