@@ -230,9 +230,6 @@ export default class FightUiHandler extends UiHandler {
     }
     moveText.setText(text);
 
-    const stab = pokemon.isStabMove(move);
-    if (stab) moveText.setFontStyle('bold');
-
     const moveColors = moveEffectivenessList.sort((a, b) => b - a).map((effectiveness) => this.getMoveColor(effectiveness));
     const color = moveColors[0];
 

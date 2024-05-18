@@ -943,17 +943,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isOfType(Type.FLYING, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
-  isStabMove(move: Move): boolean {
-    if (move.category === MoveCategory.STATUS) return false;
-
-    const type = move.type;
-    const types = this.getTypes();
-    const teraType = this.getTeraType();
-    const matchesSourceType = types[0] === type || (types.length > 1 && types[1] === type);
-
-    return (teraType === Type.UNKNOWN && matchesSourceType) || (teraType !== Type.UNKNOWN && teraType === type);
-  }
-
   getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
     if (move.getMove().category === MoveCategory.STATUS) return undefined;
     return this.getAttackMoveEffectiveness(source, move);
@@ -1593,11 +1582,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
           const sourceTypes = source.getTypes();
           const matchesSourceType = sourceTypes[0] === type || (sourceTypes.length > 1 && sourceTypes[1] === type);
-
           let stabMultiplier = new Utils.NumberHolder(1);
-          if (source.isStabMove(move)) {
+          if (sourceTeraType === Type.UNKNOWN && matchesSourceType)
             stabMultiplier.value += 0.5;
-          }
+          else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === type)
+            stabMultiplier.value += 0.5;
 
           applyAbAttrs(StabBoostAbAttr, source, null, stabMultiplier);
 
