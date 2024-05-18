@@ -19,6 +19,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { berry } from "./berry";
+import { gameStatsUiHandler } from "./game-stats-ui-handler";
 
 
 export const ptBrConfig = {    
@@ -45,4 +46,5 @@ export const ptBrConfig = {
     weather: weather,
     modifierType: modifierType,
     berry: berry,
+    gameStatsUiHandler: gameStatsUiHandler,
 }
