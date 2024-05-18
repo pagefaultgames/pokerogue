@@ -1314,8 +1314,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           // Set the candy colors
           this.candyUpgradeIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
           this.candyUpgradeOverlayIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
+          
+          if (this.scene.candyUpgradeIconsMode == 0) { // 'Off' mode
+            this.candyUpgradeIcon[s].setVisible(false);
+            this.candyUpgradeOverlayIcon[s].setVisible(false);
 
-          if (this.scene.candyUpgradeIconsMode == 1) { // 'Only Passive Unlocks' mode
+          } else if (this.scene.candyUpgradeIconsMode == 1) { // 'Only Passive Unlocks' mode
             this.candyUpgradeIcon[s].setVisible(
               slotVisible && (
                 this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
