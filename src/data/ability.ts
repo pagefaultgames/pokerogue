@@ -1314,7 +1314,11 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
     return true;
   }
 }
-
+/** 
+ * Ignores opponent's evasion stat changes when determining if a move hits or not
+ * @extends AbAttr
+ * @see {@linkcode apply}
+ */
 export class IgnoreOpponentEvasionAbAttr extends AbAttr {
   constructor() {
     super(false);
