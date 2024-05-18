@@ -906,7 +906,7 @@ export class EncounterPhase extends BattlePhase {
         const showDialogueAndSummon = () => {
           let message: string;
           this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
-          this.scene.ui.showDialogue(message, trainer.getName(), null, () => {
+          this.scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE,true), null, () => {
             this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
           });
         };
