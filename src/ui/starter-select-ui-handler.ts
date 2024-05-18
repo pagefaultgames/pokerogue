@@ -984,7 +984,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       if (!success)
                         return this.scene.reset(true);
                     });
-                    if (this.scene.candyUpgradeIconsMode !== 0) {this.updateCandyUpgradeIcon(this.cursor)} // If the setting is not set to 0, update the candy upgrade icon
+                    // If the setting is not set to 0, update the candy upgrade icon
+                    if (this.scene.candyUpgradeIconsMode !== 0) {
+                      this.updateCandyUpgradeIcon(this.cursor)
+                    }
                     ui.setMode(Mode.STARTER_SELECT);
                     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
                     return true;
@@ -1009,7 +1012,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       if (!success)
                         return this.scene.reset(true);
                     });
-                    if (this.scene.candyUpgradeIconsMode === 2) {this.updateCandyUpgradeIcon(this.cursor)} // If the setting is set to 2, update the candy upgrade icon
+                    // If the setting is set to 2, update the candy upgrade icon
+                    if (this.scene.candyUpgradeIconsMode === 2) {
+                      this.updateCandyUpgradeIcon(this.cursor)
+                    }
                     this.updateStarterValueLabel(this.cursor);
                     this.tryUpdateValue(0);
                     ui.setMode(Mode.STARTER_SELECT);
@@ -1812,16 +1818,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateCandyUpgradeIcon(cursor: integer): void {
     const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
 
-    if (this.scene.candyUpgradeIconsMode === 1) { // 'Only Passive Unlocks' mode:
+    switch (this.scene.candyUpgradeIconsMode) {
+      case 0: // 'Off' mode
+          return
+
+      case 1: // 'Only Passive Unlocks' mode
         this.candyUpgradeIcon[cursor].setVisible(this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED));
         this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
+        return;
 
-    } else if (this.scene.candyUpgradeIconsMode === 2) { // 'On' mode
+      case 2: // 'On' mode
         this.candyUpgradeIcon[cursor].setVisible(
-          (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) ||
-          (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]) && 
-          this.scene.gameData.starterData[speciesId].valueReduction < 2);
+            (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) ||
+            (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]) &&
+            this.scene.gameData.starterData[speciesId].valueReduction < 2);
         this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
+        return;
+
+      default:
+        return;
     }
   }
 
