@@ -21,6 +21,7 @@ interface DisplayStats {
 
 const displayStats: DisplayStats = {
   playTime: {
+    label: i18next.t("gameStatsUiHandler:playTime"),
     sourceFunc: gameData => Utils.getPlayTimeString(gameData.gameStats.playTime)
   },
   battles: i18next.t("gameStatsUiHandler:totalBattles"),
