@@ -872,6 +872,24 @@ export class ContactPoisonProtectedTag extends ProtectedTag {
   }
 }
 
+export class BeakBlastTag extends BattlerTag {
+    constructor() {
+        super(BattlerTagType.BEAK_BLAST, BattlerTagLapseType.CUSTOM, 0, Moves.BEAK_BLAST);
+    }
+  
+    lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+        const ret = super.lapse(pokemon, lapseType);
+
+        const effectPhase = pokemon.scene.getCurrentPhase();
+        if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+            const attacker = effectPhase.getPokemon();
+            attacker.trySetStatus(StatusEffect.BURN, true);
+        }
+
+        return ret;
+    }
+  }
+
 export class ContactBurnProtectedTag extends ProtectedTag {
   constructor(sourceMove: Moves) {
     super(sourceMove, BattlerTagType.BURNING_BULWARK);
@@ -1358,6 +1376,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.SPD, -1);
     case BattlerTagType.BANEFUL_BUNKER:
       return new ContactPoisonProtectedTag(sourceMove);
+    case BattlerTagType.BEAK_BLAST:
+        return new BeakBlastTag();
     case BattlerTagType.BURNING_BULWARK:
       return new ContactBurnProtectedTag(sourceMove);
     case BattlerTagType.ENDURING:
