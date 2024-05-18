@@ -196,9 +196,8 @@ export class Arena {
     return 0;
   }
 
-  getTypeForBiome(biomeObject?: Biome) {
-    const biome = biomeObject || this.biomeType;
-    switch (biome) {
+  getTypeForBiome() {
+    switch (this.biomeType) {
       case Biome.TOWN:
       case Biome.PLAINS:
       case Biome.METROPOLIS:
