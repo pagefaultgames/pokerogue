@@ -330,8 +330,8 @@ export class DoubleBattlePreventionModifierType extends LapsingPersistentModifie
   }
 
   apply(args: any[]): boolean {
-    const doubleBattleChance = args[0] as Utils.NumberHolder;
-    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
+    const newDouble = args[0] as Utils.BooleanHolder;
+    newDouble.value = false;
 
     return true;
   }

@@ -869,15 +869,11 @@ export default class BattleScene extends SceneBase {
 
 		if (double === undefined && newWaveIndex > 1) {
 			if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
-				// Check if Repel and prevent double battle
-				if (this.getModifiers(DoubleBattlePreventionModifierType, true).length > 0) {
-					newDouble = false;
-				} else {
-					const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-					this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-					playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
-					newDouble = !Utils.randSeedInt(doubleChance.value);
-				}
+				const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+				this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+				playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+				newDouble = !Utils.randSeedInt(doubleChance.value);
+				this.applyModifiers(DoubleBattlePreventionModifierType, true, newDouble);
 			} else if (newBattleType === BattleType.TRAINER)
 				newDouble = newTrainer.variant === TrainerVariant.DOUBLE;
 		} else if (!battleConfig)
