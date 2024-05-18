@@ -1629,7 +1629,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             applyMoveAttrs(MoveEffectAttr, user, target, move);
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
-          if (this.sameTurn)
+          if (this.sameTurn) // for beak blast atm
             user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], user.moveset.find(m => m.moveId === move.id), true), this.followUpPriority);
           user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
