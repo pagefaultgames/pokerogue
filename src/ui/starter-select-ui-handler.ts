@@ -986,7 +986,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     // If the setting is not set to 0, update the candy upgrade icon
                     if (this.scene.candyUpgradeIconsMode !== 0) {
-                      this.updateCandyUpgradeIcon(this.cursor)
+                      this.updateCandyUpgradeIcon(this.cursor);
                     }
                     ui.setMode(Mode.STARTER_SELECT);
                     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
@@ -1014,7 +1014,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     // If the setting is set to 2, update the candy upgrade icon
                     if (this.scene.candyUpgradeIconsMode === 2) {
-                      this.updateCandyUpgradeIcon(this.cursor)
+                      this.updateCandyUpgradeIcon(this.cursor);
                     }
                     this.updateStarterValueLabel(this.cursor);
                     this.tryUpdateValue(0);
@@ -1829,7 +1829,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     switch (this.scene.candyUpgradeIconsMode) {
       // 'Off' mode
       case 0: 
-          return
+          return;
 
       // 'Only Passive Unlocks' mode
       case 1: 
