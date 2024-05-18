@@ -9,7 +9,7 @@ export const gameStatsUiHandler: SimpleTranslationEntries = {
   "speciesCaught": "Espèces capt.",
   "ribbonsOwned": "Rubans possédés",
   "classicRuns": "Parties en Classique",
-  "classicWins": "Victoires Classique",
+  "classicWins": "Victoires en Classique",
   "dailyRunAttempts": "Essais Défi du jour",
   "dailyRunWins": "Victoires Défi du jour",
   "endlessRuns": "Parties en Infini?",
