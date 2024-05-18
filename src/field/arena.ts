@@ -18,8 +18,7 @@ import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-
-const WEATHER_OVERRIDE = WeatherType.NONE;
+import { WEATHER_OVERRIDE } from '../overrides';
 
 export class Arena {
   public scene: BattleScene;
@@ -107,7 +106,7 @@ export class Arena {
       
       ret = getPokemonSpecies(species);
 
-      if (ret.pseudoLegendary || ret.legendary || ret.mythical) {
+      if (ret.subLegendary || ret.legendary || ret.mythical) {
         switch (true) {
           case (ret.baseTotal >= 720):
             regen = level < 90;
@@ -337,8 +336,8 @@ export class Arena {
     return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(move);
   }
 
-  isMoveTerrainCancelled(user: Pokemon, move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(user, move);
+  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
+    return this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
   getTerrainType() : TerrainType {
@@ -493,7 +492,7 @@ export class Arena {
 	}
 
   addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
-    const existingTag = this.getTag(tagType);
+    const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;

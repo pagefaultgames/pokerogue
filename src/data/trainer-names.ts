@@ -97,7 +97,7 @@ export const trainerNamePools = {
 	[TrainerType.MAID]: ["Belinda","Sophie","Emily","Elena","Clare","Alica","Tanya","Tammy"],
 	[TrainerType.MUSICIAN]: ["Boris","Preston","Charles","Clyde","Vincent","Dalton","Kirk","Shawn","Fabian","Fernando","Joseph","Marcos","Arturo","Jerry","Lonnie","Tony"],
 	[TrainerType.NURSERY_AIDE]: ["Autumn","Briana","Leah","Miho","Ethel","Hollie","Ilse","June","Kimya","Rosalyn"],
-	[TrainerType.OFFICER]: ["Dirk","Keith","Alex","Bobby","Caleb","Danny","Dylan","Thomas","Daniel","Jeff","Braven","Dell","Neagle","Haruki","Mitchell","Sheriff","Raymond"],
+	[TrainerType.OFFICER]: ["Dirk","Keith","Alex","Bobby","Caleb","Danny","Dylan","Thomas","Daniel","Jeff","Braven","Dell","Neagle","Haruki","Mitchell","Raymond"],
 	[TrainerType.PARASOL_LADY]: ["Angelica","Clarissa","Madeline","Akari","Annabell","Kayley","Rachel","Alexa","Sabrina","April","Gwyneth","Laura","Lumi","Mariah","Melita","Nicole","Tihana","Ingrid","Tyra"],
 	[TrainerType.PILOT]: ["Chase","Leonard","Ted","Elron","Ewing","Flynn","Winslow"],
 	[TrainerType.POKEFAN]: [["Alex","Allan","Brandon","Carter","Colin","Derek","Jeremy","Joshua","Rex","Robert","Trevor","William","Colton","Miguel","Francisco","Kaleb","Leonard","Boone","Elliot","Jude","Norbert","Corey","Gabe","Baxter"],["Beverly","Georgia","Jaime","Ruth","Isabel","Marissa","Vanessa","Annika","Bethany","Kimberly","Meredith","Rebekah","Eleanor","Darcy","Lydia","Sachiko","Abigail","Agnes","Lydie","Roisin","Tara","Carmen","Janet"]],
