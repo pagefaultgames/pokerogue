@@ -1392,10 +1392,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const typeHints = this.scene.typeHints;
     if (typeHints === 0) return undefined;
     const opponents = this.getOpponents();
+    if (opponents.length < 1) return undefined;
 
-    const opponentMoveEffectivenessList = opponents.map((opponent) => {
-      return opponent.getMoveset().map((move) => {
-        return this.getMoveEffectiveness(opponent, move);
+    const opponentTypeEffectivenessList = opponents.map((opponent) => {
+      return opponent.getTypes().map((type) => {
+        return this.getAttackTypeEffectiveness(type, opponent);
       });
     }).flat().filter((effectiveness) => effectiveness !== undefined);
 
@@ -1407,11 +1408,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const fullHints = typeHints === 2;
 
-    if (fullHints && opponentMoveEffectivenessList.some((effectiveness) => effectiveness === 8)) {
+    if (fullHints && opponentTypeEffectivenessList.some((effectiveness) => effectiveness === 8)) {
       return 'darkred';
-    } else if (fullHints && opponentMoveEffectivenessList.some((effectiveness) => effectiveness === 4)) {
+    } else if (fullHints && opponentTypeEffectivenessList.some((effectiveness) => effectiveness === 4)) {
       return 'red';
-    } else if (fullHints && opponentMoveEffectivenessList.some((effectiveness) => effectiveness === 2)) {
+    } else if (fullHints && opponentTypeEffectivenessList.some((effectiveness) => effectiveness === 2)) {
       return 'crimson';
     } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 8)) {
       return 'darkgreen';
@@ -1419,13 +1420,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 'green';
     } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 2)) {
       return 'lightgreen';
-    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0)) {
+    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0)) {
       return 'yellow';
-    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0.125)) {
+    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0.125)) {
       return 'darkblue';
-    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0.25)) {
+    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0.25)) {
       return 'blue';
-    } else if (fullHints && opponentMoveEffectivenessList.every((effectiveness) => effectiveness === 0.5)) {
+    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0.5)) {
       return 'lightblue';
     }
 
