@@ -4828,6 +4828,12 @@ export class ScanIvsPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
+    const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier) as IvScannerModifier;
+
+    // Only show if auto-prompt is enabled.
+    if (!ivScannerModifier.shouldAutoPrompt)
+      return this.end()
+
     this.scene.ui.showText(i18next.t('battle:ivScannerUseQuestion', { pokemonName: pokemon.name }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);

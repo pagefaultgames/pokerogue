@@ -1,5 +1,5 @@
 import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase, ScanIvsPhase, CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
@@ -21,6 +21,13 @@ import { Nature } from '#app/data/nature';
 import { BattlerTagType } from '#app/data/enums/battler-tag-type';
 import * as Overrides from '../overrides';
 import { ModifierType, modifierTypes } from './modifier-type';
+import { Mode } from '#app/ui/ui.js';
+import i18next from 'i18next';
+import { BattleType } from '#app/battle.js';
+import { battleMessageUiHandler } from '#app/locales/de/battle-message-ui-handler.js';
+import BattleMessageUiHandler from '#app/ui/battle-message-ui-handler.js';
+import Button from 'phaser3-rex-plugins/plugins/button';
+import { CommonAnim, CommonBattleAnim } from '#app/data/battle-anims.js';
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -70,6 +77,16 @@ export class ModifierBar extends Phaser.GameObjects.Container {
         if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
           thisArg.updateModifierOverflowVisibility(false);
       });
+
+      /*
+        Pseudo-Click Events.
+        Pseudo because POINTER_DOWN is when input is down.
+        TODO: A real click is when mouse is down, and goes up
+        while still inside the element's X and Y.
+      */
+      icon.on(Phaser.Input.Events.POINTER_DOWN, () => {
+        modifier.onClick(this.scene);
+      })
     });
 
     for (let icon of this.getAll())
@@ -110,6 +127,8 @@ export abstract class Modifier {
   }
 
   abstract apply(args: any[]): boolean | Promise<boolean>;
+
+  onClick(scene: Phaser.Scene) {};
 }
 
 export abstract class PersistentModifier extends Modifier {
@@ -1925,6 +1944,10 @@ export class IvScannerModifier extends PersistentModifier {
     super(type, stackCount);
   }
 
+  // Whether the IV-Scanner, should auto-prompt each wave.
+  public shouldAutoPrompt: boolean = true;
+  private isForceScanning: boolean = false;
+
   match(modifier: Modifier): boolean {
     return modifier instanceof IvScannerModifier;
   }
@@ -1939,6 +1962,133 @@ export class IvScannerModifier extends PersistentModifier {
 
   getMaxStackCount(scene: BattleScene): integer {
     return 3;
+  }
+
+  // Opens the menu for the IV Scanner
+  // Does not implement own sanity checks.
+  openIvScannerMenu(scene: BattleScene): void {
+    // Only if not a Trainer
+    if (scene.currentBattle.battleType !== BattleType.WILD) {
+      return;
+    }
+
+    // We shall prevent this phase being stacked through clicks.
+    if (scene.getCurrentPhase() instanceof ScanIvsPhase)
+      return;
+
+
+    // Interrupt the current phase, if it is our turn
+    if (!(scene.getCurrentPhase() instanceof CommandPhase)) {
+      //console.log("Not our turn!")
+      return;
+    }
+
+    var commandPhase = scene.getCurrentPhase() as CommandPhase;
+    const enemyField = scene.getEnemyField();
+
+    var scanOptions = [];
+
+    // Create buttons for every enemy Pokemon
+    enemyField.map(pokemon => {
+      scanOptions.push({
+        label: `Scan: ${pokemon.name}`,
+        handler: () => {
+          scene.ui.revertMode(); // hide commandPhase controls
+
+          // Show prompt
+          // Handler to close the IV Prompt
+
+          scene.ui.setMode(Mode.MESSAGE);
+          scene.ui.clearText();
+
+          scene.ui.showText(`${pokemon.name}`, null, () => {
+            new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(scene, () => {
+              scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, Math.min(this.getStackCount() * 2, 6))
+
+              // promptIvs has its own Action Handler, and once that is executed, the promise is resolved
+              .then(() => {
+                scene.ui.showText(null, 0);
+                // go back to our commandPhase prompt
+                scene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
+              });
+            });
+          });
+
+          return true;
+        },
+
+        keepOpen: false,
+      })
+    })
+
+    const ivOptions = [
+      {
+        // Label automatically changes text.
+        label: `Toggle ${this.shouldAutoPrompt ? "OFF" : "ON"}`,
+        handler: () => {
+          scene.ui.revertMode();
+          // Message Confirmation Mode
+          scene.ui.setMode(Mode.MESSAGE);
+
+          // Toggle
+          this.shouldAutoPrompt = !this.shouldAutoPrompt;
+
+          let textToShow = `IV-Scanner auto-prompt\nhas been toggled ${this.shouldAutoPrompt ? "ON" : "OFF"}`;
+
+          scene.ui.showText(textToShow, null, () => {
+            scene.ui.showText(null, 0);
+            // go back to our commandPhase prompt
+            scene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
+          }, null, true);
+          return true;
+        },
+
+        // Prevents the container from closing after selecting
+        keepOpen: false,
+      },
+      
+      // Auto put in the Pokemon Scan options right here!
+      // Thanks to the --> ...
+      ...scanOptions.map(option => ({
+        ...option,
+      })),
+
+      {
+        label: i18next.t('menuUiHandler:cancel'),
+        handler: () => {
+          scene.ui.revertMode(); // closes the container ui
+
+          scene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
+          return true;
+        }
+      }
+    ];
+
+    const ivOptionsConfig = {
+      xOffset: 98,
+      options: ivOptions
+    };
+
+    scene.ui.setOverlayMode(Mode.MENU_OPTION_SELECT, ivOptionsConfig);
+  }
+
+  // Click Event for the IV-Scanner
+  onClick(scene: BattleScene): void {
+    this.openIvScannerMenu(scene);
+
+    // Put in queue at the top.
+    //scene.unshiftPhase(scene.getCurrentPhase());
+
+    // Add a Phase for every enemy.
+    /*enemyField.map(
+      p => {
+        var iv = new ScanIvsPhase(scene, p.getBattlerIndex(), Math.min(this.getStackCount() * 2, 6))
+        scene.unshiftPhase(iv);
+      }
+    );*/
+
+    // Interrupt the CommandPhase
+    //scene.shiftPhase();
   }
 }
 
