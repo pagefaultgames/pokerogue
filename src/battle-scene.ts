@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, TurnEndPhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -1581,6 +1581,20 @@ export default class BattleScene extends SceneBase {
 	}
 
 	pushMovePhase(movePhase: MovePhase, priorityOverride?: integer): void {
+        // Remove the current turn-end phase from the queue 
+        // and place it after this new move phase
+        
+        // search for and remove turn end phase in queue
+        var foundTurnEndPhase = false;
+        for (var phase = 0; phase < this.phaseQueue.length; phase++) {
+            if (this.phaseQueue[phase] instanceof TurnEndPhase) {
+                foundTurnEndPhase = true;
+                this.phaseQueue.splice(phase, 1);
+                break;
+            }
+        }
+        
+        // add new move phase
 		const movePriority = new Utils.IntegerHolder(priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority);
 		applyAbAttrs(IncrementMovePriorityAbAttr, movePhase.pokemon, null, movePhase.move.getMove(), movePriority);
 		const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < movePriority.value);
@@ -1588,6 +1602,10 @@ export default class BattleScene extends SceneBase {
 			this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
 		else
 			this.pushPhase(movePhase);
+
+        // if turn end phase was removed from queue, add back at the end
+        if (foundTurnEndPhase)
+            this.pushPhase(new TurnEndPhase(this));
 	}
 
 	queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
