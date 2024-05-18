@@ -7,6 +7,7 @@ import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "../enums/buttons";
+import i18next from '../plugins/i18n';
 
 interface DisplayStat {
   label?: string;
@@ -22,68 +23,68 @@ const displayStats: DisplayStats = {
   playTime: {
     sourceFunc: gameData => Utils.getPlayTimeString(gameData.gameStats.playTime)
   },
-  battles: 'Total Battles',
+  battles: i18next.t("gameStatsUiHandler:totalBattles"),
   startersUnlocked: {
-    label: 'Starters',
+    label: i18next.t("gameStatsUiHandler:starters"),
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!d.caughtAttr);
       return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarters).length) * 1000) / 10}%)`;
     }
   },
   shinyStartersUnlocked: {
-    label: 'Shiny Starters',
+    label: i18next.t("gameStatsUiHandler:shinyStarters"),
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!(d.caughtAttr & DexAttr.SHINY));
       return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarters).length) * 1000) / 10}%)`;
     }
   },
   dexSeen: {
-    label: 'Species Seen',
+    label: i18next.t("gameStatsUiHandler:speciesSeen"),
     sourceFunc: gameData => {
       const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr);
       return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     }
   },
   dexCaught: {
-    label: 'Species Caught',
+    label: i18next.t("gameStatsUiHandler:speciesCaught"),
     sourceFunc: gameData => {
       const caughtCount = gameData.getSpeciesCount(d => !!d.caughtAttr);
       return `${caughtCount} (${Math.floor((caughtCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     }
   },
-  ribbonsOwned: 'Ribbons Owned',
-  classicSessionsPlayed: 'Classic Runs',
-  sessionsWon: 'Classic Wins',
-  dailyRunSessionsPlayed: 'Daily Run Attempts',
-  dailyRunSessionsWon: 'Daily Run Wins',
-  endlessSessionsPlayed: 'Endless Runs?',
-  highestEndlessWave: 'Highest Wave (Endless)?',
-  highestMoney: 'Highest Money',
-  highestDamage: 'Highest Damage',
-  highestHeal: 'Highest HP Healed',
-  pokemonSeen: 'Pokémon Encountered',
-  pokemonDefeated: 'Pokémon Defeated',
-  pokemonCaught: 'Pokémon Caught',
-  pokemonHatched: 'Eggs Hatched',
-  subLegendaryPokemonSeen: 'Sub-Legends Seen?',
-  subLegendaryPokemonCaught: 'Sub-Legends Caught?',
-  subLegendaryPokemonHatched: 'Sub-Legends Hatched?',
-  legendaryPokemonSeen: 'Legends Seen?',
-  legendaryPokemonCaught: 'Legends Caught?',
-  legendaryPokemonHatched: 'Legends Hatched?',
-  mythicalPokemonSeen: 'Mythicals Seen?',
-  mythicalPokemonCaught: 'Mythicals Caught?',
-  mythicalPokemonHatched: 'Mythicals Hatched?',
-  shinyPokemonSeen: 'Shinies Seen?',
-  shinyPokemonCaught: 'Shinies Caught?',
-  shinyPokemonHatched: 'Shinies Hatched?',
-  pokemonFused: 'Pokémon Fused?',
-  trainersDefeated: 'Trainers Defeated',
-  eggsPulled: 'Eggs Pulled',
-  rareEggsPulled: 'Rare Eggs Pulled?',
-  epicEggsPulled: 'Epic Eggs Pulled?',
-  legendaryEggsPulled: 'Legendary Eggs Pulled?',
-  manaphyEggsPulled: 'Manaphy Eggs Pulled?'
+  ribbonsOwned: i18next.t("gameStatsUiHandler:ribbonsOwned"),
+  classicSessionsPlayed: i18next.t("gameStatsUiHandler:classicRuns"),
+  sessionsWon: i18next.t("gameStatsUiHandler:classicWins"),
+  dailyRunSessionsPlayed: i18next.t("gameStatsUiHandler:dailyRunAttempts"),
+  dailyRunSessionsWon: i18next.t("gameStatsUiHandler:dailyRunWins"),
+  endlessSessionsPlayed: i18next.t("gameStatsUiHandler:endlessRuns"),
+  highestEndlessWave: i18next.t("gameStatsUiHandler:highestWaveEndless"),
+  highestMoney: i18next.t("gameStatsUiHandler:highestMoney"),
+  highestDamage: i18next.t("gameStatsUiHandler:highestDamage"),
+  highestHeal: i18next.t("gameStatsUiHandler:highestHPHealed"),
+  pokemonSeen: i18next.t("gameStatsUiHandler:pokemonEncountered"),
+  pokemonDefeated: i18next.t("gameStatsUiHandler:pokemonDefeated"),
+  pokemonCaught: i18next.t("gameStatsUiHandler:pokemonCaught"),
+  pokemonHatched: i18next.t("gameStatsUiHandler:eggsHatched"),
+  subLegendaryPokemonSeen: i18next.t("gameStatsUiHandler:subLegendsSeen"),
+  subLegendaryPokemonCaught: i18next.t("gameStatsUiHandler:subLegendsCaught"),
+  subLegendaryPokemonHatched: i18next.t("gameStatsUiHandler:subLegendsHatched"),
+  legendaryPokemonSeen: i18next.t("gameStatsUiHandler:legendsSeen"),
+  legendaryPokemonCaught: i18next.t("gameStatsUiHandler:legendsCaught"),
+  legendaryPokemonHatched: i18next.t("gameStatsUiHandler:legendsHatched"),
+  mythicalPokemonSeen: i18next.t("gameStatsUiHandler:mythicalsSeen"),
+  mythicalPokemonCaught: i18next.t("gameStatsUiHandler:mythicalsCaught"),
+  mythicalPokemonHatched: i18next.t("gameStatsUiHandler:mythicalsHatched"),
+  shinyPokemonSeen: i18next.t("gameStatsUiHandler:shiniesSeen"),
+  shinyPokemonCaught: i18next.t("gameStatsUiHandler:shiniesCaught"),
+  shinyPokemonHatched: i18next.t("gameStatsUiHandler:shiniesHatched"),
+  pokemonFused: i18next.t("gameStatsUiHandler:pokemonFused"),
+  trainersDefeated: i18next.t("gameStatsUiHandler:trainersDefeated"),
+  eggsPulled: i18next.t("gameStatsUiHandler:eggsPulled"),
+  rareEggsPulled: i18next.t("gameStatsUiHandler:rareEggsPulled"),
+  epicEggsPulled: i18next.t("gameStatsUiHandler:epicEggsPulled"),
+  legendaryEggsPulled: i18next.t("gameStatsUiHandler:legendaryEggsPulled"),
+  manaphyEggsPulled: i18next.t("gameStatsUiHandler:manaphyEggsPulled")
 };
 
 export default class GameStatsUiHandler extends UiHandler {
@@ -110,7 +111,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, 'Stats', TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
