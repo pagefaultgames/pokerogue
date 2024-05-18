@@ -9,7 +9,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
     "EGG_GACHA": "Gacha Uova",
     "MANAGE_DATA": "Gestisci Dati",
     "COMMUNITY": "Community",
-    "SAVE_AND_QUIT": "Save and Quit",
+    "SAVE_AND_QUIT": "Salva ed Esci",
     "LOG_OUT": "Disconnettiti",
     "slot": "Slot {{slotNumber}}",
     "importSession": "Importa Sessione",
