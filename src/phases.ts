@@ -929,7 +929,7 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
       enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier)
+      if (ivScannerModifier && this.scene.IvScannerEnabled)
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
     }
 
@@ -4513,7 +4513,7 @@ export class SelectModifierPhase extends BattlePhase {
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
 
     const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
-      if (rowCursor < 0 || cursor < 0) {
+      if (rowCursor === -2 || cursor < 0) {
         this.scene.ui.showText(i18next.t('battle:skipItemQuestion'), null, () => {
           this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
             this.scene.ui.revertMode();
@@ -4526,6 +4526,21 @@ export class SelectModifierPhase extends BattlePhase {
       let modifierType: ModifierType;
       let cost: integer;
       switch (rowCursor) {
+        case -1:
+          if(cursor === 1){
+            this.scene.IvScannerEnabled = !this.scene.IvScannerEnabled;
+            const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+            uiHandler.updateToggleIvScannerText();
+            return false;
+          } else {
+            this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
+            const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+            uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
+            uiHandler.updateLockRaritiesText();
+            uiHandler.updateRerollCostText();
+            return false;
+          }
+          break;
         case 0:
           if (!cursor) {
             const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
@@ -4540,7 +4555,7 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.updateMoneyText();
               this.scene.playSound('buy');
             }
-          } else if (cursor === 1) {
+          } else  {
             this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
               if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
                 this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers)).then(() => {
@@ -4552,14 +4567,7 @@ export class SelectModifierPhase extends BattlePhase {
               } else
                 this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }, PartyUiHandler.FilterItemMaxStacks);
-          } else {
-            this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
-            const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
-            uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-            uiHandler.updateLockRaritiesText();
-            uiHandler.updateRerollCostText();
-            return false;
-          }
+          } 
           return true;
         case 1:
           modifierType = typeOptions[cursor].type;

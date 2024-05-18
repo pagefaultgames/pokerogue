@@ -4,7 +4,7 @@ import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
-import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
+import { IvScannerModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import {Button} from "../enums/buttons";
 
@@ -14,9 +14,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
   private lockRarityButtonContainer: Phaser.GameObjects.Container;
+  private IvScannerToggleContainer: Phaser.GameObjects.Container;
   private transferButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
+  private IvScannerToggleText: Phaser.GameObjects.Text;
+  
 
   private rowCursor: integer = 0;
   private player: boolean;
@@ -68,6 +71,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonText = addTextObject(this.scene, -4, -2, 'Lock Rarities', TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
+
+    this.IvScannerToggleContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 80, -64);
+    this.IvScannerToggleContainer.setVisible(false);
+    ui.add(this.IvScannerToggleContainer)
+
+    this.IvScannerToggleText = addTextObject(this.scene, -4, -2, 'Toggle IV Scanner', TextStyle.PARTY);
+    this.IvScannerToggleText.setOrigin(0, 0);
+    this.IvScannerToggleContainer.add(this.IvScannerToggleText);
   }
 
   show(args: any[]): boolean {
@@ -90,15 +101,20 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true)).length;
     const canLockRarities = !!this.scene.findModifier(m => m instanceof LockModifierTiersModifier);
+    const canToggleIvScanner = !!this.scene.findModifier(m => m instanceof IvScannerModifier);
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
+    this.transferButtonContainer.setPositionRelative(this.IvScannerToggleContainer, canToggleIvScanner ? 79 : 0, canToggleIvScanner ? -12 : 0);
 
     this.rerollButtonContainer.setVisible(false);
     this.rerollButtonContainer.setAlpha(0);
 
     this.lockRarityButtonContainer.setVisible(false);
     this.lockRarityButtonContainer.setAlpha(0);
+
+    this.IvScannerToggleContainer.setVisible(false);
+    this.IvScannerToggleContainer.setAlpha(0);
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
@@ -175,11 +191,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
       this.rerollButtonContainer.setAlpha(0);
       this.lockRarityButtonContainer.setAlpha(0);
+      this.IvScannerToggleContainer.setAlpha(0);
       this.rerollButtonContainer.setVisible(true);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
+      this.IvScannerToggleContainer.setVisible(canToggleIvScanner);
 
       this.scene.tweens.add({
-        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer ],
+        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer, this.IvScannerToggleContainer ],
         alpha: 1,
         duration: 250
       });
@@ -223,38 +241,54 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           const originalOnActionInput = this.onActionInput;
           this.awaitingActionInput = false;
           this.onActionInput = null;
-          originalOnActionInput(-1);
+          originalOnActionInput(-2);
         }
       }
     } else {
       switch (button) {
         case Button.UP:
-          if (!this.rowCursor && this.cursor === 2)
-            success = this.setCursor(0);
-          else if (this.rowCursor < this.shopOptionsRows.length + 1)
+          if (this.rowCursor < this.shopOptionsRows.length + 1 && this.rowCursor > -1)
             success = this.setRowCursor(this.rowCursor + 1);
+          else if (this.rowCursor === -1 && this.cursor === 1 && !this.transferButtonContainer.visible)
+            success = this.setRowCursor(1) && this.setCursor(this.shopOptionsRows[0].length-1)
+          else if (this.rowCursor === -1 && this.cursor === 0 && this.rerollButtonContainer.visible)
+            success = this.setRowCursor(this.rowCursor + 1)
+          else if (this.rowCursor === -1 && this.cursor === 1 && this.transferButtonContainer)
+            success = this.setRowCursor(this.rowCursor + 1)
           break;
         case Button.DOWN:
-          if (this.rowCursor)
+          if (this.rowCursor > 0)
             success = this.setRowCursor(this.rowCursor - 1);
-          else if (this.lockRarityButtonContainer.visible && !this.cursor)
-            success = this.setCursor(2);
+          else if (!this.rowCursor && this.cursor === 0 && this.lockRarityButtonContainer.visible)
+            success = this.setRowCursor(this.rowCursor - 1);
+          else if (!this.rowCursor && this.cursor === 1 && this.IvScannerToggleContainer.visible)
+            success = (this.setRowCursor(this.rowCursor - 1) && this.setCursor(1));
           break;
         case Button.LEFT:
-          if (!this.rowCursor) {
-            success = this.cursor === 1 && this.rerollButtonContainer.visible && this.setCursor(0);
-          } else if (this.cursor)
+          if (this.rowCursor > 0 && this.cursor > 0) 
             success = this.setCursor(this.cursor - 1);
           else if (this.rowCursor === 1 && this.rerollButtonContainer.visible)
-            success = this.setRowCursor(0);
+            success = this.setRowCursor(this.rowCursor - 1);
+          else if (this.rowCursor === 0 && this.rerollButtonContainer.visible && this.cursor === 1)
+            success = this.setCursor(this.cursor - 1)
+          else if (this.rowCursor === -1 && this.lockRarityButtonContainer.visible && this.cursor === 1)
+            success = this.setCursor(this.cursor - 1)
+          else if (this.rowCursor === -1 && !this.lockRarityButtonContainer.visible && this.rerollButtonContainer.visible && this.cursor === 1)
+            success = (this.setRowCursor(this.rowCursor + 1) && this.setCursor(0))
           break;
         case Button.RIGHT:
-          if (!this.rowCursor)
-            success = this.cursor !== 1 && this.transferButtonContainer.visible && this.setCursor(1);
-          else if (this.cursor < this.getRowItems(this.rowCursor) - 1)
+          if (this.cursor < this.getRowItems(this.rowCursor) - 1)
             success = this.setCursor(this.cursor + 1);
           else if (this.rowCursor === 1 && this.transferButtonContainer.visible)
-            success = this.setRowCursor(0);
+            success = (this.setRowCursor(0) && this.setCursor(1));
+          else if (this.rowCursor === 1 && this.IvScannerToggleContainer.visible)
+            success = (this.setRowCursor(-1) && this.setCursor(1))
+          else if (!this.rowCursor && !this.transferButtonContainer.visible && this.IvScannerToggleContainer.visible)
+            success = (this.setRowCursor(-1) && this.setCursor(1));
+          else if (this.rowCursor === -1 && !this.IvScannerToggleContainer.visible && this.transferButtonContainer.visible)
+            success = (this.setRowCursor(0) && this.setCursor(1));
+          else if (this.rowCursor === -1 && this.IvScannerToggleContainer.visible && this.cursor === 0)
+            success = this.setCursor(this.cursor + 1)
           break;
       }
     }
@@ -278,22 +312,26 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.cursorObj.setScale(this.rowCursor === 1 ? 2 : this.rowCursor >= 2 ? 1.5 : 1);
 
-    if (this.rowCursor) {
+    if (this.rowCursor > 0) {
       let sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
       if (this.rowCursor < 2)
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
       else
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
-    } else if (!cursor) {
+    } else if (!cursor && !this.rowCursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText('Spend money to reroll your item options.');
-    } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
+    } else if (!this.rowCursor && cursor === 1) {
+      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, this.IvScannerToggleContainer ? -72 : -60);
       ui.showText('Transfer a held item from one Pokémon to another.');
-    } else {
+    } else if (!cursor && this.rowCursor === -1){
       this.cursorObj.setPosition(6, -60);
       ui.showText('Lock item rarities on reroll (affects reroll cost).');
+    } else if (cursor === 1 && this.rowCursor === -1){
+      // this.cursorObj.setPosition((this.scene.game.canvas.width / 6) -50, -60);
+      this.cursorObj.setPositionRelative(this.IvScannerToggleContainer, -10, 4);
+      ui.showText('Toggle whether to receive the IV Scanner prompt at battle start.');
     }
 
     return ret;
@@ -305,11 +343,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     if (rowCursor !== lastRowCursor && (rowCursor || this.rerollButtonContainer.visible || this.transferButtonContainer.visible)) {
       this.rowCursor = rowCursor;
       let newCursor = Math.round(this.cursor / Math.max(this.getRowItems(lastRowCursor) - 1, 1) * (this.getRowItems(rowCursor) - 1));
-      if (!rowCursor) {
-        if (!newCursor && !this.rerollButtonContainer.visible)
-          newCursor = 1;
-        else if (newCursor && !this.transferButtonContainer.visible)
+      if (!rowCursor && lastRowCursor > rowCursor) {
+        if (this.cursor < this.getRowItems(1)/2)
           newCursor = 0;
+        else if (this.transferButtonContainer.visible)
+          newCursor = 1;
+        else if (this.IvScannerToggleContainer.visible){
+          newCursor = 1
+          this.rowCursor = this.rowCursor - 1}
       }
       this.cursor = -1;
       this.setCursor(newCursor);
@@ -321,8 +362,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   private getRowItems(rowCursor: integer): integer {
     switch (rowCursor) {
+      case -1:
+        return this.IvScannerToggleContainer.visible||this.lockRarityButtonContainer.visible ? 1 : this.IvScannerToggleContainer.visible && this.lockRarityButtonContainer.visible ? 2 : 0
       case 0:
-        return 2;
+        return this.transferButtonContainer.visible ? 2 : 1;
       case 1:
         return this.options.length;
       default:
@@ -356,6 +399,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonText.setShadowColor(this.getTextColor(textStyle, true));
   }
 
+  updateToggleIvScannerText(): void {
+    const textStyle = !this.scene.IvScannerEnabled ? TextStyle.SUMMARY_RED : TextStyle.PARTY;
+    this.IvScannerToggleText.setColor(this.getTextColor(textStyle));
+    this.IvScannerToggleText.setShadowColor(this.getTextColor(textStyle, true));
+  }
+
   clear() {
     super.clear();
 
@@ -379,7 +428,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onComplete: () => options.forEach(o => o.destroy())
     });
     
-    [ this.rerollButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer ].forEach(container => {
+    [ this.rerollButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer, this.IvScannerToggleContainer ].forEach(container => {
       if (container.visible) {
         this.scene.tweens.add({
           targets: container,
