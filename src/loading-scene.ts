@@ -9,6 +9,7 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
+import { TimedEventManager } from "./timed-event-manager";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -29,6 +30,9 @@ export class LoadingScene extends SceneBase {
 
     // Load menu images
     this.loadAtlas('bg', 'ui');
+    if (new TimedEventManager().isEventActive()) {
+      this.loadImage('banner', 'events')
+    }
     this.loadImage('command_fight_labels', 'ui');
     this.loadAtlas('prompt', 'ui');
     this.loadImage('candy', 'ui');
@@ -208,9 +212,6 @@ export class LoadingScene extends SceneBase {
     this.loadImage('gacha_knob', 'egg');
 
     this.loadImage('egg_list_bg', 'ui');
-
-    this.loadImage('end_m', 'cg');
-    this.loadImage('end_f', 'cg');
 
     for (let i = 0; i < 10; i++) {
       this.loadAtlas(`pokemon_icons_${i}`, '');

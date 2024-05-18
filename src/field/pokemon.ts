@@ -48,6 +48,7 @@ import { BerryType } from '../data/berry';
 import i18next from '../plugins/i18n';
 import { speciesEggMoves } from '../data/egg-moves';
 import { ModifierTier } from '../modifier/modifier-tier';
+import { TimedEventManager } from '#app/timed-event-manager.js';
 
 export enum FieldPosition {
   CENTER,
@@ -1096,9 +1097,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
+      const eventManager = new TimedEventManager()
       if (!this.hasTrainer()) {
-        if (new Date() < new Date('2024-05-21'))
-          shinyThreshold.value *= 3;
+        if (eventManager.isEventActive())
+          shinyThreshold.value *= eventManager.getShinyMultiplier();
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
     } else
