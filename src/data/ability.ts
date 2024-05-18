@@ -2216,6 +2216,7 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
 
     const randomIdx = Utils.randSeedInt(berriesEaten.length);
     const chosenBerry = new BerryModifierType(berriesEaten[randomIdx]);
+    berriesEaten.splice(randomIdx) // Remove berry from memory
 
     const berryModifier = pokemon.scene.findModifier(
       (m) => m instanceof BerryModifier && m.berryType === berriesEaten[randomIdx],
