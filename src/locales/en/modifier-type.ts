@@ -51,6 +51,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Doubles the chance of an encounter being a double battle for {{battleCount}} battles",
     },
+    "DoubleBattlePreventionModifierType": {
+      description: "Prevent double battles from appearing for {{battleCount}} battles",
+    },
     "TempBattleStatBoosterModifierType": {
       description: "Increases the {{tempBattleStatName}} of all party members by 1 stage for 5 battles",
     },
@@ -161,6 +164,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LURE": { name: "Lure" },
     "SUPER_LURE": { name: "Super Lure" },
     "MAX_LURE": { name: "Max Lure" },
+
+    "REPEL": { name: "Repel" },
+    "SUPER_REPEL": { name: "Super Repel" },
+    "MAX_REPEL": { name: "Max Repel" },
 
     "MEMORY_MUSHROOM": { name: "Memory Mushroom", description: "Recall one Pokémon's forgotten move" },
 

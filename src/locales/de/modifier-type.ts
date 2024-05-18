@@ -51,6 +51,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Verdoppelt die Wahrscheinlichkeit, dass die nächsten {{battleCount}} Begegnungen mit wilden Pokémon ein Doppelkampf sind.",
     },
+    "DoubleBattlePreventionModifierType": {
+      description: "Erschweren Sie die Teilnahme an zwei Schlachten pro {{battleCount}} Schlacht",
+    },
     "TempBattleStatBoosterModifierType": {
       description: "Erhöht die {{tempBattleStatName}} aller Teammitglieder für 5 Kämpfe um eine Stufe",
     },
@@ -161,6 +164,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LURE": { name: "Lockparfüm" },
     "SUPER_LURE": { name: "Super-Lockparfüm" },
     "MAX_LURE": { name: "Top-Lockparfüm" },
+
+    "REPEL": { name: "Schutz" },
+    "SUPER_REPEL": { name: "Superschutz" },
+    "MAX_REPEL": { name: "Top-Schutz" },
 
     "MEMORY_MUSHROOM": { name: "Erinnerungspilz", description: "Lässt ein Pokémon eine vergessene Attacke wiedererlernen" },
 
