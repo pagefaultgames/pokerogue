@@ -2927,7 +2927,10 @@ export class StatChangePhase extends PokemonPhase {
           : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}${relLevelStats.length > 2 ? ',' : ''} and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
       } else
         statsFragment = getBattleStatName(relLevelStats[0]);
-        messages.push(getPokemonMessage(this.getPokemon(), i18next.t('battleStat:levelChangeDescripion', { statsFragment: i18next.t(`battleStat:${statsFragment.replace(/\./g, '').replace(/[ ]/g, '_')}`), description: i18next.t(`battleStat:${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1).replace(/\./g, '').replace(/[ ]/g, '_')}`) })));
+	let battleStatTmp=statsFragment.replace(/\./g, '').replace(/[ ]/g, '_');
+	let battleStatLevelChangeDescriptionTmp=getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1).replace(/\./g, '').replace(/[ ]/g, '_');
+	//replace() is for "Sp. Atk" =>"Sp_Atk" and can be translate
+        messages.push(getPokemonMessage(this.getPokemon(), i18next.t('battleStat:levelChangeDescripion', { statsFragment: i18next.t(`battleStat:${battleStatTmp}`), description: i18next.t(`battleStat:${battleStatLevelChangeDescriptionTmp}`) })));
     });
 
     return messages;
