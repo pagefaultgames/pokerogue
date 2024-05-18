@@ -1188,7 +1188,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.PELIPPER, 3, false, false, false, "Water Bird Pokémon", Type.WATER, Type.FLYING, 1.2, 28, Abilities.KEEN_EYE, Abilities.DRIZZLE, Abilities.RAIN_DISH, 440, 60, 50, 100, 95, 70, 65, 45, 50, 154, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.RALTS, 3, false, false, false, "Feeling Pokémon", Type.PSYCHIC, Type.FAIRY, 0.4, 6.6, Abilities.SYNCHRONIZE, Abilities.TRACE, Abilities.TELEPATHY, 198, 28, 25, 25, 45, 35, 40, 235, 35, 40, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.KIRLIA, 3, false, false, false, "Emotion Pokémon", Type.PSYCHIC, Type.FAIRY, 0.8, 20.2, Abilities.SYNCHRONIZE, Abilities.TRACE, Abilities.TELEPATHY, 278, 38, 35, 35, 65, 55, 50, 120, 35, 97, GrowthRate.SLOW, 50, false),
-    new PokemonSpecies(Species.GARDEVOIR, 3, false, false, false, "Embrace Pokémon", Type.PSYCHIC, Type.FAIRY, 1.6, 48.4, Abilities.SYNCHRONIZE, Abilities.TRACE, Abilities.TELEPATHY, 518, 68, 65, 65, 125, 115, 80, 45, 35, 259, GrowthRate.SLOW, 0, false, true,
+    new PokemonSpecies(Species.GARDEVOIR, 3, false, false, false, "Embrace Pokémon", Type.PSYCHIC, Type.FAIRY, 1.6, 48.4, Abilities.SYNCHRONIZE, Abilities.TRACE, Abilities.TELEPATHY, 518, 68, 65, 65, 125, 115, 80, 45, 35, 259, GrowthRate.SLOW, 50, false, true,
       new PokemonForm("Normal", "", Type.PSYCHIC, Type.FAIRY, 1.6, 48.4, Abilities.SYNCHRONIZE, Abilities.TRACE, Abilities.TELEPATHY, 518, 68, 65, 65, 125, 115, 80, 45, 35, 259),
       new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.PSYCHIC, Type.FAIRY, 1.6, 48.4, Abilities.PIXILATE, Abilities.PIXILATE, Abilities.PIXILATE, 618, 68, 85, 65, 165, 135, 100, 45, 35, 259),
     ),

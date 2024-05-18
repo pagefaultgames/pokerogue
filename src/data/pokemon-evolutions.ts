@@ -426,8 +426,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.KIRLIA, 20, null, null)
   ],
   [Species.KIRLIA]: [
-    new SpeciesEvolution(Species.GARDEVOIR, 30, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE)),
-    new SpeciesEvolution(Species.GALLADE, 30, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE))
+    new SpeciesEvolution(Species.GARDEVOIR, 30, null, null),
+    new SpeciesEvolution(Species.GALLADE, EvolutionItem.DAWN_STONE, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SURSKIT]: [
     new SpeciesEvolution(Species.MASQUERAIN, 22, null, null)
@@ -515,8 +515,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUSCLOPS, 37, null, null)
   ],
   [Species.SNORUNT]: [
-    new SpeciesEvolution(Species.GLALIE, 42, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE)),
-    new SpeciesEvolution(Species.FROSLASS, 42, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE))
+    new SpeciesEvolution(Species.GLALIE, 42, null, null),
+    new SpeciesEvolution(Species.FROSLASS, EvolutionItem.DAWN_STONE, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.SPHEAL]: [
     new SpeciesEvolution(Species.SEALEO, 32, null, null)
