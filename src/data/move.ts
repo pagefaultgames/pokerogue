@@ -4250,6 +4250,18 @@ export class MoneyAttr extends MoveEffectAttr {
   }
 }
 
+export class DestinyBondAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.PRE_APPLY);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.scene.queueMessage(`${getPokemonMessage(user, ' is trying\nto take its foe down with it!')}`);
+    target.addTag(BattlerTagType.DESTINY_BOND, undefined, move.id, user.id);
+    return true;
+  }
+}
+
 export class LastResortAttr extends MoveAttr {
   getCondition(): MoveConditionFunc {
     return (user: Pokemon, target: Pokemon, move: Move) => {
@@ -4944,8 +4956,8 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.DESTINY_BOND, Type.GHOST, -1, 5, -1, 0, 2)
       .ignoresProtect()
-      .condition(failOnBossCondition)
-      .unimplemented(),
+      .attr(DestinyBondAttr)
+      .condition(failOnBossCondition),
     new StatusMove(Moves.PERISH_SONG, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(FaintCountdownAttr)
       .ignoresProtect()

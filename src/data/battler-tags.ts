@@ -254,6 +254,25 @@ export class ConfusedTag extends BattlerTag {
   }
 }
 
+export class DestinyBondTag extends BattlerTag {
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType !== BattlerTagLapseType.CUSTOM) {
+      return super.lapse(pokemon, lapseType);
+    }
+    const source = pokemon.scene.getPokemonById(this.sourceId);
+    if (source.isFainted()) {
+      const targetMessage = getPokemonMessage(pokemon, '');
+      pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`)
+      pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
+    }
+    return false;
+  }
+}
+
 export class InfatuatedTag extends BattlerTag {
   constructor(sourceMove: integer, sourceId: integer) {
     super(BattlerTagType.INFATUATED, BattlerTagLapseType.MOVE, 1, sourceMove, sourceId);
@@ -1405,6 +1424,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new MagnetRisenTag(tagType, sourceMove);
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
+    case BattlerTagType.DESTINY_BOND:
+      return new DestinyBondTag(sourceMove, sourceId);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
