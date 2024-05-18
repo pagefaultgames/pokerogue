@@ -6366,8 +6366,7 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, "started\nheating up its beak!", BattlerTagType.BEAK_BLAST, true, true, -3)
       .ballBombMove()
       .makesContact(false)
-      .attr(RemoveBeakBlastTagArr)
-      .partial(),
+      .attr(RemoveBeakBlastTagArr),
     new AttackMove(Moves.CLANGING_SCALES, Type.DRAGON, MoveCategory.SPECIAL, 110, 100, 5, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1, true)
       .soundBased()
