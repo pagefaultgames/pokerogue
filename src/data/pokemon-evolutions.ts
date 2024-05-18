@@ -516,7 +516,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.SNORUNT]: [
     new SpeciesEvolution(Species.GLALIE, 42, null, null),
-    new SpeciesEvolution(Species.FROSLASS, 42, EvolutionItem.DAWN_STONE, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE))
+    new SpeciesEvolution(Species.FROSLASS, 1, EvolutionItem.DAWN_STONE, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE))
   ],
   [Species.SPHEAL]: [
     new SpeciesEvolution(Species.SEALEO, 32, null, null)
