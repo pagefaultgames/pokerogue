@@ -241,7 +241,7 @@ export default class FightUiHandler extends UiHandler {
     return ` ${moveEffectiveness}x`;
   }
 
-  private getMoveColor(moveEffectiveness?: TypeDamageMultiplier): string | undefined {
+  private getMoveColor(moveEffectiveness?: TypeDamageMultiplier): string {
     switch (moveEffectiveness) {
       case 0:
         return 'black';
@@ -251,6 +251,8 @@ export default class FightUiHandler extends UiHandler {
         return 'red';
       case 0.5:
         return 'crimson';
+      case 1:
+        return 'white';
       case 2:
         return 'lightgreen';
       case 4:
@@ -258,8 +260,6 @@ export default class FightUiHandler extends UiHandler {
       case 8:
         return 'darkgreen';
     }
-
-    return undefined;
   }
 
   clear() {
