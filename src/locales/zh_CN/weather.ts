@@ -8,14 +8,14 @@ export const weather: SimpleTranslationEntries = {
     "sunnyLapseMessage": "日照很强。",
     "sunnyClearMessage": "日照复原了。",
 
-    "rainStartMessage": "下大雨了！",
+    "rainStartMessage": "开始下雨了！",
     "rainLapseMessage": "雨继续下。",
     "rainClearMessage": "雨停了。",
 
-    "sandstormStartMessage": "开始刮沙尘暴了！",
-    "sandstormLapseMessage": "沙尘暴肆虐。",
-    "sandstormClearMessage": "沙尘暴停止了。",
-    "sandstormDamageMessage": "沙尘暴袭击了{{pokemonPrefix}}{{pokemonName}}!",
+    "sandstormStartMessage": "开始刮沙暴了！",
+    "sandstormLapseMessage": "沙暴肆虐。",
+    "sandstormClearMessage": "沙暴停止了！",
+    "sandstormDamageMessage": "沙暴袭击了{{pokemonPrefix}}{{pokemonName}}!",
 
     "hailStartMessage": "开始下冰雹了!",
     "hailLapseMessage": "冰雹继续肆虐。",
