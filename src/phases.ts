@@ -3638,11 +3638,11 @@ export class GameOverPhase extends BattlePhase {
               if (pokemon.species.getRootSpeciesId() != pokemon.species.getRootSpeciesId(true)) {
                 this.awardRibbon(pokemon.species, true);
               }
-
               if(pokemon.isFusion()){
-                this.awardRibbon(pokemon.fusionSpecies);
-                if (pokemon.fusionSpecies.getRootSpeciesId() != pokemon.fusionSpecies.getRootSpeciesId(true)) {
-                  this.awardRibbon(pokemon.fusionSpecies, true);
+                let fusionSpecies = pokemon.fusionSpecies
+                this.awardRibbon(fusionSpecies);
+                if (fusionSpecies.getRootSpeciesId() != fusionSpecies.getRootSpeciesId(true)) {
+                  this.awardRibbon(fusionSpecies, true);
                 }  
               }
             }
