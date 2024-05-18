@@ -12,6 +12,6 @@ export const SummaryUiHandler: SimpleTranslationEntries = {
     "lvl": "Lvl",
     "unknown": 'Unbekannt',
     "expPoints": "EP",
-    "nextLv": "Nächstes Lv",
-    "moveStats": "Stärke\nGenauigkeit\nKategorie",
+    "nextLv": "Nächst. Lv.",
+    "moveStats": " Stärke\n Genauigkeit\n Kategorie",
 } as const;

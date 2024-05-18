@@ -816,7 +816,7 @@ export default class SummaryUiHandler extends UiHandler {
         stats.forEach((stat, s) => {
           const statName = stat !== Stat.HP
             ? getStatName(stat)
-            : i18next.t('pokemonStat:HP');
+            : i18next.t('pokemonInfo:Stat.HP');
           const rowIndex = s % 3;
           const colIndex = Math.floor(s / 3);
 

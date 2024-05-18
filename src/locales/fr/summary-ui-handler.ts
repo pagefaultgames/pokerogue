@@ -9,9 +9,9 @@ export const SummaryUiHandler: SimpleTranslationEntries = {
     "apparently": "apparemment",
     "metAtLv":"rencontré au N.",
     "status": "Statut",
-    "lvl": "Niv.",
+    "lvl": "N.",
     "unknown": 'Inconnu',
-    "expPoints": "Points d'Exp’",
+    "expPoints": "Points d’Exp",
     "nextLv": "N. suivant",
     "moveStats": "Puissance\nPrécision\nCatégorie"
 } as const;

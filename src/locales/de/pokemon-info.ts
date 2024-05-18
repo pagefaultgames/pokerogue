@@ -6,7 +6,7 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
         "HPshortened": "MaxKP",
         "ATK": "Angriff",
         "ATKshortened": "Ang",
-        "DEF": "Verteidigung",
+        "DEF": "Vert.",
         "DEFshortened": "Vert",
         "SPATK": "Sp. Ang",
         "SPATKshortened": "SpAng",
