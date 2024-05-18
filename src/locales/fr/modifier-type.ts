@@ -214,7 +214,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
     "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
 
-	"IV_SCANNER": { name: "Scanner d’IV", description: "Scanne et révèle la qualité de 2 IV d’un Pokémon sauvage. Les meilleurs IV sont montrés en priorité." },
+	"IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de 2 IV d’un Pokémon sauvage par scanner. Les meilleurs IV sont révélés en priorité." },
 
     "DNA_SPLICERS": { name: "Pointeau ADN" },
 
