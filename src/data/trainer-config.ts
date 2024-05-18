@@ -505,7 +505,7 @@ export class TrainerConfig {
                         initI18n();
                     }
                     // Check if the female version exists in the i18n file
-                    if (i18next.exists(`trainerClasses:${this.name.toLowerCase().replace}`)) {
+                    if (i18next.exists(`trainerClasses:${this.name.toLowerCase().replace()}`)) {
                         // If it does, return
                         return ret + "_female";
                     } else {
