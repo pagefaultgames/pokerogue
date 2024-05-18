@@ -55,6 +55,7 @@ export enum MoveTarget {
   /** {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_target_all_Pok%C3%A9mon Moves that target all Pokemon} */
   ALL,
   USER_SIDE,
+  /** {@link https://bulbapedia.bulbagarden.net/wiki/Category:Entry_hazard-creating_moves Entry hazard-creating moves} */
   ENEMY_SIDE,
   BOTH_SIDES,
   PARTY
@@ -1921,7 +1922,7 @@ export class CopyStatsAttr extends MoveEffectAttr {
     target.updateInfo();
     user.updateInfo();
 
-    target.scene.queueMessage(getPokemonMessage(user, 'copied\n') + getPokemonMessage(target, `'s stat changes!`));
+    target.scene.queueMessage(getPokemonMessage(user, ' copied\n') + getPokemonMessage(target, `'s stat changes!`));
 
     return true;
   }
