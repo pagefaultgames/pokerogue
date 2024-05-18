@@ -51,6 +51,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
+    "DoubleBattlePreventionModifierType": {
+      description: "Empêcher l'apparition de doubles batailles pour {{battleCount}} batailles",
+    },
     "TempBattleStatBoosterModifierType": {
 	  description: "Augmente d’1 cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
     },
@@ -161,6 +164,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LURE": { name: "Parfum" },
     "SUPER_LURE": { name: "Super Parfum" },
     "MAX_LURE": { name: "Parfum Max" },
+
+    "REPEL": { name: "Repousse" },
+    "SUPER_REPEL": { name: "Super Repousse" },
+    "MAX_REPEL": { name: "Repousse Max" },
 
     "MEMORY_MUSHROOM": { name: "Champi Mémoriel", description: "Remémore une capacité à un Pokémon" },
 

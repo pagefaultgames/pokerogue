@@ -51,6 +51,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas",
     },
+    "DoubleBattlePreventionModifierType": {
+      description: "Prevent double battles from appearing for {{battleCount}} battles",
+    },
     "TempBattleStatBoosterModifierType": {
       description: "Aumenta o atributo de {{tempBattleStatName}} para todos os membros da equipe por 5 batalhas",
     },
@@ -158,9 +161,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PP_UP": { name: "Mais PP" },
     "PP_MAX": { name: "PP Máximo" },
 
-    "LURE": { name: "Incenso" },
-    "SUPER_LURE": { name: "Super Incenso" },
-    "MAX_LURE": { name: "Incenso Máximo" },
+    "LURE": { name: "Lure" },
+    "SUPER_LURE": { name: "Super Lure" },
+    "MAX_LURE": { name: "Max Lure" },
+
+    "REPEL": { name: "Repel" },
+    "SUPER_REPEL": { name: "Super Repel" },
+    "MAX_REPEL": { name: "Max Repel" },
 
     "MEMORY_MUSHROOM": { name: "Cogumemória", description: "Relembra um movimento esquecido" },
 

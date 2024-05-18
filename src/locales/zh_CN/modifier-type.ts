@@ -51,6 +51,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "接下来的{{battleCount}}场战斗是双打的概率翻倍",
     },
+    "DoubleBattlePreventionModifierType": {
+      description: "防止 {{battleCount}} 场战斗出现双重战斗",
+    },
     "TempBattleStatBoosterModifierType": {
       description: "为所有成员宝可梦提升一级{{tempBattleStatName}}，持续5场战斗",
     },
@@ -159,8 +162,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PP_MAX": { name: "PP极限提升剂" },
 
     "LURE": { name: "引虫香水" },
-    "SUPER_LURE": { name: "白银香水" },
-    "MAX_LURE": { name: "黄金香水" },
+    "SUPER_LURE": { name: "白银喷雾" },
+    "MAX_LURE": { name: "黄金喷雾" },
+
+    "REPEL": { name: "除虫喷雾" },
+    "SUPER_REPEL": { name: "Super Repel" },
+    "MAX_REPEL": { name: "Max Repel" },
 
     "MEMORY_MUSHROOM": { name: "回忆蘑菇", description: "回忆一个宝可梦已经遗忘的招式" },
 
