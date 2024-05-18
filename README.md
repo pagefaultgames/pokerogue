@@ -46,7 +46,6 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
   - Pokémon Black/White 2
   - Firel (Custom Metropolis and Laboratory biome music)
   - Lmz (Custom Jungle biome music)
-  - edifette (Title screen music)
 
 ### 🎵 Sound Effects
   - Pokémon Emerald
