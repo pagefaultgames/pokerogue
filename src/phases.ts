@@ -2597,7 +2597,8 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   hitCheck(target: Pokemon): boolean {
-    if (this.move.getMove().moveTarget === MoveTarget.USER)
+    // Moves targeting the user and entry hazards can't miss
+    if ([MoveTarget.USER, MoveTarget.ENEMY_SIDE].includes(this.move.getMove().moveTarget))
       return true;
 
     const user = this.getUserPokemon();
