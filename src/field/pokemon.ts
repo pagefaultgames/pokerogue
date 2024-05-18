@@ -1266,7 +1266,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Weight towards higher power moves, by reducing the power of moves below the highest power.
     // Caps max power at 90 to avoid something like hyper beam ruining the stats.
     // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
-    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
+    // Account for technician boost and priority
+    const hasTechnician = this.hasAbility(Abilities.TECHNICIAN);
+    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power * (hasTechnician && allMoves[m[0]].power <= 60 ? 1.5 : 1) * (allMoves[m[0]].priority > 1 ? 1.5 : 1), v), 40), 90);
     movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
 
     // Weight damaging moves against the lower stat
