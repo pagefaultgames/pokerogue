@@ -562,6 +562,12 @@ export class TrainerConfig {
         return this;
     }
 
+    /**
+     * Retrieves the title for the trainer based on the provided trainer slot and variant.
+     * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
+     * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
+     * @returns {string} - The title of the trainer.
+     **/
     getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
         let ret = this.name;
 
