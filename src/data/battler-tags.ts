@@ -1127,6 +1127,12 @@ export class MagnetRisenTag extends TypeImmuneTag {
   }
 }
 
+/**
+ * Tag that makes the target drop all of it type immunities.
+ * 
+ * Applied by moves: {@linkcode Moves.ODOR_SLEUTH},
+ * {@linkcode Moves.MIRACLE_EYE} and {@linkcode Moves.FORESIGHT}. 
+ */
 export class IgnoreTypeImmunityTag extends BattlerTag {
   public immuneType: Type;
 
