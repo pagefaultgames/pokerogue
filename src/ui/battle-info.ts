@@ -214,6 +214,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
 
+    this.name = pokemon.name
+    this.box.name = pokemon.name;
+
     this.genderText.setText(getGenderSymbol(pokemon.gender));
     this.genderText.setColor(getGenderColor(pokemon.gender));
     this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
