@@ -462,7 +462,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
       const ret = this.scene.add.image(x + 163, y + 21, 'candy');
-      const retTint = 
       ret.setOrigin(0, 0);
       ret.setScale(0.25);
       ret.setVisible(false);
