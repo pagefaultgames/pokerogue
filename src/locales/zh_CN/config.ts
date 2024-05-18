@@ -48,4 +48,5 @@ export const zhCnConfig = {
     weather: weather,
     battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
+    gameStatsUiHandler: gameStatsUiHandler,
 }
