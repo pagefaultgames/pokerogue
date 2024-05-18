@@ -1308,25 +1308,29 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
           if (!starterColors[speciesId]) {
-            starterColors[speciesId] = [ 'ffffff', 'ffffff' ]; // Default to white if no colors are found
+            // Default to white if no colors are found
+            starterColors[speciesId] = [ 'ffffff', 'ffffff' ];
           }
 
           // Set the candy colors
           this.candyUpgradeIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
           this.candyUpgradeOverlayIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
           
-          if (this.scene.candyUpgradeIconsMode == 0) { // 'Off' mode
+          // 'Off' mode
+          if (this.scene.candyUpgradeIconsMode == 0) { 
             this.candyUpgradeIcon[s].setVisible(false);
             this.candyUpgradeOverlayIcon[s].setVisible(false);
 
-          } else if (this.scene.candyUpgradeIconsMode == 1) { // 'Only Passive Unlocks' mode
+            // 'Only Passive Unlocks' mode
+          } else if (this.scene.candyUpgradeIconsMode == 1) { 
             this.candyUpgradeIcon[s].setVisible(
               slotVisible && (
                 this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
                 !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)));
             this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
 
-          } else if (this.scene.candyUpgradeIconsMode == 2) { // 'On' mode
+            // 'On' mode
+          } else if (this.scene.candyUpgradeIconsMode == 2) { 
             this.candyUpgradeIcon[s].setVisible(
               slotVisible && (
                 (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
@@ -1823,15 +1827,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
 
     switch (this.scene.candyUpgradeIconsMode) {
-      case 0: // 'Off' mode
+      // 'Off' mode
+      case 0: 
           return
 
-      case 1: // 'Only Passive Unlocks' mode
+      // 'Only Passive Unlocks' mode
+      case 1: 
         this.candyUpgradeIcon[cursor].setVisible(this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED));
         this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
         return;
 
-      case 2: // 'On' mode
+      // 'On' mode
+      case 2: 
         this.candyUpgradeIcon[cursor].setVisible(
             (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) ||
             (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]) &&
