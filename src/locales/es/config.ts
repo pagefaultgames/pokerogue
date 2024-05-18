@@ -20,6 +20,7 @@ import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { voucher } from "./voucher";
 import { biome } from "./biome";
 
@@ -48,6 +49,7 @@ export const esConfig = {
   weather: weather,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
+  gameStatsUiHandler: gameStatsUiHandler,
   voucher: voucher,
   biome: biome,
 };
