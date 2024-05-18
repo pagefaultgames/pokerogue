@@ -22,6 +22,7 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
+import { Passive } from "#app/system/game-data.js";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -1529,19 +1530,35 @@ export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Download raises either the Attack stat or Special Attack stat by one stage depending on the foe's currently lowest defensive stat: 
+ * it will raise Attack if the foe's current Defense is lower than its current Special Defense stat; 
+ * otherwise, it will raise Special Attack.
+ * @extends PostSummonAbAttr
+ * @see {applyPostSummon}
+ */
 export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: integer;
   private enemySpDef: integer;
   private stats: BattleStat[];
-
+  
+  /**
+   * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account 
+   * vitamins and items, so it needs to use the BattleStat and the stat alone.
+   * @param {Pokemon} pokemon Pokemon that is using the move, as well as seeing the opposing pokemon.
+   * @param {boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns Returns true if ability is used successful, false if not.
+   */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     this.enemyDef = 0;
     this.enemySpDef = 0;
-	
-    for (let opponent of pokemon.getOpponents()) {
-      this.enemyDef += opponent.stats[BattleStat.DEF];
-      this.enemySpDef += opponent.stats[BattleStat.SPDEF];
-    }
+
+    if(pokemon.getOpponents()[0].summonData != undefined)
+      for (let opponent of pokemon.getOpponents()) {
+        this.enemyDef += opponent.getBattleStat(Stat.DEF);
+        this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
+      }
 	
     if (this.enemyDef < this.enemySpDef)
       this.stats = [BattleStat.ATK];
@@ -3139,7 +3156,7 @@ export function initAbilities() {
       .attr(TypeImmunityHealAbAttr, Type.WATER)
       .ignorable(),
     new Ability(Abilities.DOWNLOAD, 4)
-      .attr(DownloadAbAttr),
+      .attr(DownloadAbAttr, true),
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, 4)
