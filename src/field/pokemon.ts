@@ -2160,6 +2160,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.getTag(BattlerTagType.NIGHTMARE))
         this.lapseTag(BattlerTagType.NIGHTMARE);
     }
+    if (this.getTag(BattlerTagType.CONFUSED))
+      this.lapseTag(BattlerTagType.CONFUSED)
   }
 
   primeSummonData(summonDataPrimer: PokemonSummonData): void {
