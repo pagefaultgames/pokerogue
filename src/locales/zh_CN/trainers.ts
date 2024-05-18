@@ -252,7 +252,6 @@ export const trainerNames: SimpleTranslationEntries = {
     // 帕底亚地区 Paldea Region
     "rika": "辛俐",
     "poppy": "波琵",
-    "larry_elite": "青木", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "hassel": "八朔",
 
     // 蓝莓学院 Blueberry Academy
@@ -265,9 +264,6 @@ export const trainerNames: SimpleTranslationEntries = {
     // 关都地区 Kanto Region
     "blue": "青绿",
     "red": "赤红",
-
-    // 城都地区 Johto Region
-    "lance_champion": "阿渡", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
 
     // 丰缘地区 Hoenn Region
     "steven": "大吾",

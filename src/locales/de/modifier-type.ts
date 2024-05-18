@@ -55,7 +55,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Erhöht die {{tempBattleStatName}} aller Teammitglieder für 5 Kämpfe um eine Stufe",
     },
     "AttackTypeBoosterModifierType": {
-      description: "Erhöht die Stärke aller {{moveType}}attacken eines Pokémon um 20%",
+      description: "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%",
     },
     "PokemonLevelIncrementModifierType": {
       description: "Erhöht das Level eines Pokémon um 1",
