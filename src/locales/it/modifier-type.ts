@@ -19,8 +19,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonHpRestoreModifierType": {
       description: "Restituisce {{restorePoints}} PS o {{restorePercent}}% PS ad un Pokémon, a seconda del valore più alto",
       extra: {
-        "fully": "Restituisce tutti gli PS ad un Pokémon",
-        "fullyWithStatus": "Restituisce tutti gli PS ad un Pokémon e lo cura da ogni stato",
+        "fully": "Restituisce tutti i PS ad un Pokémon",
+        "fullyWithStatus": "Restituisce tutti i PS ad un Pokémon e lo cura da ogni stato",
       }
     },
     "PokemonReviveModifierType": {
@@ -67,7 +67,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta {{statName}} di base del possessore del 10%",
     },
     "AllPokemonFullHpRestoreModifierType": {
-      description: "Recupera il 100% degli PS per tutti i Pokémon",
+      description: "Recupera il 100% dei PS per tutti i Pokémon",
     },
     "AllPokemonFullReviveModifierType": {
       description: "Rianima tutti i Pokémon esausti restituendogli tutti i PS",
@@ -195,7 +195,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     
     "MULTI_LENS": { name: "Multilente" },
 
-    "HEALING_CHARM": { name: "Curamuleto", description: "Aumenta del 10% l'efficacia delle mosse e degli oggetti che ripristinano gli PS (escluse le rianimazioni)" },
+    "HEALING_CHARM": { name: "Curamuleto", description: "Aumenta del 10% l'efficacia delle mosse e degli oggetti che ripristinano i PS (escluse le rianimazioni)" },
     "CANDY_JAR": { name: "Barattolo di caramelle", description: "Aumenta di 1 il numero di livelli aggiunti dalle Caramelle Rare" },
 
     "BERRY_POUCH": { name: "Porta Bacche", description: "Aggiunge il 25% di possibilità che una bacca usata non venga consumata" },
