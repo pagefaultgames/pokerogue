@@ -329,9 +329,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                   if (variantSet && variantSet[this.variant] === 1) {
                     if (variantColorCache.hasOwnProperty(key))
                       return resolve();
-                    this.scene.cachedFetch(`./images/pokemon/variant/${useExpSprite ? 'exp/' : ''}${battleSpritePath}.json`).then(res => res.json()).then(c => {
-                      variantColorCache[key] = c;
-                      resolve();
+                    this.scene.cachedFetch(`./images/pokemon/variant/${useExpSprite ? 'exp/' : ''}${battleSpritePath}.json`).
+                      then(res => {
+                        // Prevent the JSON from processing if it failed to load
+                        if (!res.ok) {
+                          console.error(`Could not load ${res.url}!`);
+                          return;
+                        }
+                        res.json()
+                      }).then(c => {
+                          variantColorCache[key] = c;
+                          resolve();
                     });
                   } else
                     resolve();
@@ -493,9 +501,31 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.shinySparkle = shinySparkle;
   }
 
+  /**
+   * Attempts to animate a given {@linkcode Phaser.GameObjects.Sprite}
+   * @see {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
+   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
+   * @param animConfig {@linkcode String} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @returns true if the sprite was able to be animated
+   */
+  tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, key: string): boolean {
+    // Catch errors when trying to play an animation that doesn't exist
+    try {
+      sprite.play(key);
+      tintSprite.play(key);
+    }
+    catch(error: unknown) {
+      console.error(`Couldn't play animation for '${key}'!\nIs the image for this Pokemon missing?\n`, error);
+
+      return false;
+    }
+
+    return true;      
+  }
+  
   playAnim(): void {
-    this.getSprite().play(this.getBattleSpriteKey());
-    this.getTintSprite().play(this.getBattleSpriteKey());
+    this.tryPlaySprite(this.getSprite(), this.getTintSprite(), this.getBattleSpriteKey());
   }
 
   getFieldPositionOffset(): [ number, number ] {
