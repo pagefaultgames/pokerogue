@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fait monter un Pokémon d’1 niveau",
+      description: "Fait monter un Pokémon d’un niveau",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Fait monter toute l’équipe d’1 niveau",
+      description: "Fait monter toute l’équipe d’un niveau",
     },
     "PokemonBaseStatBoosterModifierType": {
 	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
@@ -220,7 +220,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MINI_BLACK_HOLE": { name: "Mini Trou Noir" },
 
-    "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute 1 choix d’objet à la fin de chaque combat" },
+    "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute un choix d’objet à la fin de chaque combat" },
 
     "ENEMY_DAMAGE_BOOSTER": { name: "Jeton Dégâts", description: "Augmente les dégâts de 5%" },
     "ENEMY_DAMAGE_REDUCTION": { name: "Jeton Protection", description: "Diminue les dégâts reçus de 2,5%" },
