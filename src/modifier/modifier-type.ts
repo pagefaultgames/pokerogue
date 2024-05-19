@@ -511,7 +511,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
 
   getDescription(scene: BattleScene): string {
     // TODO: Need getTypeName?
-    return i18next.t(`modifierType:ModifierType.AttackTypeBoosterModifierType.description`, { moveType: Utils.toReadableString(Type[this.moveType]) });
+    return i18next.t(`modifierType:ModifierType.AttackTypeBoosterModifierType.description`, { moveType: i18next.t(`pokemonInfo:Type.${Type[this.moveType]}`) });
   }
 
   getPregenArgs(): any[] {
@@ -898,11 +898,11 @@ export class TerastallizeModifierType extends PokemonHeldItemModifierType implem
   }
 
   get name(): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.name`, { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`modifierType:TeraType.${Type[this.teraType]}`) });
+    return i18next.t(`modifierType:ModifierType.TerastallizeModifierType.description`, { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
   }
 
   getPregenArgs(): any[] {
