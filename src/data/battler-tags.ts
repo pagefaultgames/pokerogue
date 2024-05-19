@@ -271,7 +271,7 @@ export class DestinyBondTag extends BattlerTag {
    * 
    * @param {Pokemon} pokemon Pokemon that is attacking the Destiny Bond user.
    * @param {BattlerTagLapseType} lapseType CUSTOM or PRE_MOVE
-   * @returns 
+   * @returns false if the tag source fainted or one turn has passed since the application
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType !== BattlerTagLapseType.CUSTOM) {
