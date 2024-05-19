@@ -7,6 +7,7 @@ import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
+import i18next from '../plugins/i18n';
 
 export enum BerryType {
   SITRUS,
@@ -22,32 +23,12 @@ export enum BerryType {
   LEPPA
 }
 
-export function getBerryName(berryType: BerryType) {
-  return `${Utils.toReadableString(BerryType[berryType])} Berry`;
+export function getBerryName(berryType: BerryType): string {
+  return i18next.t(`berry:${BerryType[berryType]}.name`);
 }
 
-export function getBerryEffectDescription(berryType: BerryType) {
-  switch (berryType) {
-    case BerryType.SITRUS:
-      return 'Restores 25% HP if HP is below 50%';
-    case BerryType.LUM:
-      return 'Cures any non-volatile status condition and confusion';
-    case BerryType.ENIGMA:
-      return 'Restores 25% HP if hit by a super effective move';
-    case BerryType.LIECHI:
-    case BerryType.GANLON:
-    case BerryType.PETAYA:
-    case BerryType.APICOT:
-    case BerryType.SALAC:
-      const stat = (berryType - BerryType.LIECHI) as BattleStat;
-      return `Raises ${getBattleStatName(stat)} if HP is below 25%`;
-    case BerryType.LANSAT:
-      return 'Raises critical hit ratio if HP is below 25%';
-    case BerryType.STARF:
-      return 'Sharply raises a random stat if HP is below 25%';
-    case BerryType.LEPPA:
-      return 'Restores 10 PP to a move if its PP reaches 0';
-  }
+export function getBerryEffectDescription(berryType: BerryType): string {
+  return i18next.t(`berry:${BerryType[berryType]}.effect`);
 }
 
 export type BerryPredicate = (pokemon: Pokemon) => boolean;
@@ -99,6 +80,8 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.SITRUS:
     case BerryType.ENIGMA:
       return (pokemon: Pokemon) => {
+        if (pokemon.battleData)
+          pokemon.battleData.berriesEaten.push(berryType);
         const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
@@ -106,11 +89,14 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       };
     case BerryType.LUM:
       return (pokemon: Pokemon) => {
+        if (pokemon.battleData)
+          pokemon.battleData.berriesEaten.push(berryType);
         if (pokemon.status) {
           pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
           pokemon.resetStatus();
           pokemon.updateInfo();
-        } else if (pokemon.getTag(BattlerTagType.CONFUSED))
+        } 
+        if (pokemon.getTag(BattlerTagType.CONFUSED))
           pokemon.lapseTag(BattlerTagType.CONFUSED);
       };
     case BerryType.LIECHI:
@@ -119,6 +105,8 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.APICOT:
     case BerryType.SALAC:
       return (pokemon: Pokemon) => {
+        if (pokemon.battleData)
+          pokemon.battleData.berriesEaten.push(berryType);
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
         const statLevels = new Utils.NumberHolder(1);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
@@ -126,16 +114,22 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
+        if (pokemon.battleData)
+          pokemon.battleData.berriesEaten.push(berryType);
         pokemon.addTag(BattlerTagType.CRIT_BOOST);
       };
     case BerryType.STARF:
       return (pokemon: Pokemon) => {
+        if (pokemon.battleData)
+          pokemon.battleData.berriesEaten.push(berryType);
         const statLevels = new Utils.NumberHolder(2);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
         pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], statLevels.value));
       };
     case BerryType.LEPPA:
       return (pokemon: Pokemon) => {
+        if (pokemon.battleData)
+          pokemon.battleData.berriesEaten.push(berryType);
         const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio());
         ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}!`));

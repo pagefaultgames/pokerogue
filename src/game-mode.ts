@@ -1,10 +1,11 @@
 import { fixedBattles } from "./battle";
-import BattleScene, { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from "./battle-scene";
+import BattleScene from "./battle-scene";
 import { Biome } from "./data/enums/biome";
 import { Species } from "./data/enums/species";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
+import * as Overrides from './overrides';
 
 export enum GameModes {
   CLASSIC,
@@ -44,9 +45,15 @@ export class GameMode implements GameModeConfig {
     Object.assign(this, config);
   }
 
+  /**
+   * @returns either: 
+   * - override from overrides.ts
+   * - 20 for Daily Runs
+   * - 5 for all other modes
+   */
   getStartingLevel(): integer {
-    if (STARTING_LEVEL_OVERRIDE)
-      return STARTING_LEVEL_OVERRIDE;
+    if (Overrides.STARTING_LEVEL_OVERRIDE)
+      return Overrides.STARTING_LEVEL_OVERRIDE;
     switch (this.modeId) {
       case GameModes.DAILY:
         return 20;
@@ -55,16 +62,28 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * @returns either:
+   * - override from overrides.ts
+   * - 1000
+   */
   getStartingMoney(): integer {
-    return STARTING_MONEY_OVERRIDE || 1000;
+    return Overrides.STARTING_MONEY_OVERRIDE || 1000;
   }
 
+  /**
+   * @param scene current BattleScene
+   * @returns either:
+   * - random biome for Daily mode
+   * - override from overrides.ts
+   * - Town
+   */
   getStartingBiome(scene: BattleScene): Biome {
     switch (this.modeId) {
       case GameModes.DAILY:
         return scene.generateRandomBiome(this.getWaveForDifficulty(1));
       default:
-        return STARTING_BIOME_OVERRIDE || Biome.TOWN;
+        return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
   }
 
@@ -120,7 +139,7 @@ export class GameMode implements GameModeConfig {
 
   getOverrideSpecies(waveIndex: integer): PokemonSpecies {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
-      const allFinalBossSpecies = allSpecies.filter(s => (s.pseudoLegendary || s.legendary || s.mythical)
+      const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
       return Utils.randSeedItem(allFinalBossSpecies);
     }

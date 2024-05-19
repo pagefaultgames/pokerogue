@@ -11,6 +11,7 @@ import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/
 import { TrainerSlot } from "../data/trainer-config";
 import { Moves } from "../data/enums/moves";
 import { Variant } from "#app/data/variant";
+import { loadBattlerTag } from '../data/battler-tags';
 
 export default class PokemonData {
   public id: integer;
@@ -36,6 +37,7 @@ export default class PokemonData {
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
+  public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -45,6 +47,7 @@ export default class PokemonData {
   public fusionShiny: boolean;
   public fusionVariant: Variant;
   public fusionGender: Gender;
+  public fusionLuck: integer;
 
   public boss: boolean;
 
@@ -75,6 +78,7 @@ export default class PokemonData {
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
+    this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory)
       this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
@@ -85,6 +89,7 @@ export default class PokemonData {
     this.fusionShiny = source.fusionShiny;
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
+    this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
 
     if (!forHistory)
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -108,9 +113,18 @@ export default class PokemonData {
       if (!forHistory && source.summonData) {
         this.summonData.battleStats = source.summonData.battleStats;
         this.summonData.moveQueue = source.summonData.moveQueue;
-        this.summonData.tags = []; // TODO
-        this.summonData.moveset = source.summonData.moveset;
+        this.summonData.disabledMove = source.summonData.disabledMove;
+        this.summonData.disabledTurns = source.summonData.disabledTurns;
+        this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
+
+        this.summonData.ability = source.summonData.ability;
+        this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
         this.summonData.types = source.summonData.types;
+        
+        if (source.summonData.tags)
+          this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
+        else
+          this.summonData.tags = [];
       }
     }
   }

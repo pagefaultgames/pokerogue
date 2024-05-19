@@ -62,6 +62,11 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
   return valueStr;
 }
 
+/**
+* Returns a random integer between min and min + range
+* @param range The amount of possible numbers
+* @param min The starting number
+*/
 export function randInt(range: integer, min: integer = 0): integer {
   if (range === 1)
     return min;
@@ -74,6 +79,11 @@ export function randSeedInt(range: integer, min: integer = 0): integer {
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
 }
 
+/**
+* Returns a random integer between min and max (non-inclusive)
+* @param min The lowest number
+* @param max The highest number
+*/
 export function randIntRange(min: integer, max: integer): integer {
   return randInt(max - min, min);
 }
@@ -104,13 +114,6 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
   const value = Phaser.Math.RND.realInRange(0, 1);
   const easedValue = Phaser.Tweens.Builders.GetEaseFunction(easingFunction)(value);
   return items[Math.floor(easedValue * items.length)];
-}
-
-export function getSunday(date: Date): Date {
-  const day = date.getDay();
-  const diff = date.getDate() - day;
-  const newDate = new Date(date.setDate(diff));
-  return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), newDate.getUTCDate()));
 }
 
 export function getFrameMs(frameCount: integer): integer {
@@ -189,7 +192,9 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
       return '?';
   }
   const digits = ((ret.length + 2) % 3) + 1;
-  const decimalNumber = parseInt(ret.slice(digits, digits + (3 - digits)));
+  let decimalNumber = ret.slice(digits, digits + 2);
+  while (decimalNumber.endsWith('0'))
+      decimalNumber = decimalNumber.slice(0, -1);
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
 }
 
@@ -210,13 +215,13 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = 'pokerogue_sessionId';
-export const isLocal = window.location.hostname === 'localhost';
+export const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '';
 export const serverUrl = isLocal ? 'http://localhost:8001' : '';
-export const apiUrl = isLocal ? serverUrl : 'api';
+export const apiUrl = isLocal ? serverUrl : 'https://api.pokerogue.net';
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
-  expiration.setTime(new Date().getTime() + 3600000 * 24 * 7);
+  expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
   document.cookie = `${cName}=${cValue};SameSite=Strict;path=/;expires=${expiration.toUTCString()}`;
 }
 
@@ -247,15 +252,17 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
   });
 }
 
-export function apiPost(path: string, data?: any, contentType: string = 'application/json'): Promise<Response> {
+export function apiPost(path: string, data?: any, contentType: string = 'application/json', authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
     const headers = {
       'Accept': contentType,
       'Content-Type': contentType,
     };
-    const sId = getCookie(sessionIdKey);
-    if (sId)
-      headers['Authorization'] = sId;
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        headers['Authorization'] = sId;
+    }
     fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));

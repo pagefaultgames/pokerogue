@@ -798,7 +798,7 @@ export abstract class BattleAnim {
                             let sprite: Phaser.GameObjects.Sprite;
                             sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
                             [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
-                            sprite.setPipelineData('spriteKey', (isUser ? user : target).getSpriteKey());
+                            sprite.setPipelineData('spriteKey', (isUser ? user : target).getBattleSpriteKey());
                             sprite.setPipelineData('shiny', (isUser ? user : target).shiny);
                             sprite.setPipelineData('variant', (isUser ? user : target).variant);
                             sprite.setPipelineData('ignoreFieldPos', true);

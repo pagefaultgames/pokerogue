@@ -1,29 +1,16 @@
 import i18next from 'i18next';
-import { menu as enMenu } from '../locales/en/menu';
-import { menu as esMenu } from '../locales/es/menu';
-import { menu as itMenu } from '../locales/it/menu';
-import { menu as frMenu } from '../locales/fr/menu';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
-import { move as enMove } from '../locales/en/move';
-import { move as esMove } from '../locales/es/move';
-import { move as frMove } from '../locales/fr/move';
-
-import { pokeball as enPokeball } from '../locales/en/pokeball';
-import { pokeball as esPokeball } from '../locales/es/pokeball';
-import { pokeball as frPokeball } from '../locales/fr/pokeball';
-
-import { pokemon as enPokemon } from '../locales/en/pokemon';
-import { pokemon as esPokemon } from '../locales/es/pokemon';
-import { pokemon as frPokemon } from '../locales/fr/pokemon';
-
-import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui-handler';
-import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
-import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
-
+import { deConfig } from '#app/locales/de/config.js';
+import { enConfig } from '#app/locales/en/config.js';
+import { esConfig } from '#app/locales/es/config.js';
+import { frConfig } from '#app/locales/fr/config.js';
+import { itConfig } from '#app/locales/it/config.js';
+import { ptBrConfig } from '#app/locales/pt_BR/config.js';
+import { zhCnConfig } from '#app/locales/zh_CN/config.js';
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
-
 
 export interface MoveTranslationEntry {
   name: string,
@@ -34,62 +21,106 @@ export interface MoveTranslationEntries {
   [key: string]: MoveTranslationEntry
 }
 
+export interface AbilityTranslationEntry {
+  name: string,
+  description: string
+}
+
+export interface AbilityTranslationEntries {
+  [key: string]: AbilityTranslationEntry
+}
+
+export interface ModifierTypeTranslationEntry {
+  name?: string,
+  description?: string,
+  extra?: SimpleTranslationEntries
+}
+
+export interface ModifierTypeTranslationEntries {
+  ModifierType: { [key: string]: ModifierTypeTranslationEntry },
+  AttackTypeBoosterItem: SimpleTranslationEntries,
+  TempBattleStatBoosterItem: SimpleTranslationEntries,
+  BaseStatBoosterItem: SimpleTranslationEntries,
+  EvolutionItem: SimpleTranslationEntries,
+  FormChangeItem: SimpleTranslationEntries,
+}
+export interface PokemonInfoTranslationEntries {
+  Stat: SimpleTranslationEntries,
+  Type: SimpleTranslationEntries,
+}
+
+export interface BerryTranslationEntry {
+  name: string,
+  effect: string
+}
+
+export interface BerryTranslationEntries {
+  [key: string]: BerryTranslationEntry
+}
+
 export interface Localizable {
   localize(): void;
 }
 
-const DEFAULT_LANGUAGE_OVERRIDE = '';
-
 export function initI18n(): void {
-  let lang = 'en';
+  // Prevent reinitialization
+  if (isInitialized) {
+    return;
+  }
+  isInitialized = true;
+  let lang = '';
 
   if (localStorage.getItem('prLang'))
     lang = localStorage.getItem('prLang');
 
+
+
   /**
    * i18next is a localization library for maintaining and using translation resources.
-   * 
+   *
    * Q: How do I add a new language?
    * A: To add a new language, create a new folder in the locales directory with the language code.
    *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
-   * 
+   *    Don't forget to declare new language in `supportedLngs` i18next initializer
+   *
    * Q: How do I add a new namespace?
    * A: To add a new namespace, create a new file in each language folder with the translations.
    *    Then update the `resources` field in the init() call and the CustomTypeOptions interface.
+   *
+   * Q: How do I make a language selectable in the settings?
+   * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.init({
-    lng: DEFAULT_LANGUAGE_OVERRIDE ? DEFAULT_LANGUAGE_OVERRIDE : lang,
+  i18next.use(LanguageDetector).init({
+    lng: lang,
     fallbackLng: 'en',
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh_CN','pt_BR'],
     debug: true,
     interpolation: {
       escapeValue: false,
     },
     resources: {
       en: {
-        menu: enMenu,
-        move: enMove,
-        pokeball: enPokeball,
-        pokemon: enPokemon,
-        commandUiHandler: enCommandUiHandler,
+        ...enConfig
       },
       es: {
-        menu: esMenu,
-        move: esMove,
-        pokeball: esPokeball,
-        pokemon: esPokemon,
-        commandUiHandler: esCommandUiHandler,
+        ...esConfig
       },
       fr: {
-        menu: frMenu,
-        move: frMove,
-        pokeball: frPokeball,
-        pokemon: frPokemon,
-        commandUiHandler: frCommandUiHandler,
+        ...frConfig
       },
       it: {
-        menu: itMenu,
+        ...itConfig
       },
+      de: {
+        ...deConfig
+      },
+      pt_BR: {
+        ...ptBrConfig
+      },
+      zh_CN: {
+        ...zhCnConfig
+      }
     },
   });
 }
@@ -98,13 +129,38 @@ export function initI18n(): void {
 declare module 'i18next' {
   interface CustomTypeOptions {
     resources: {
-      menu: typeof enMenu;
-      move: typeof enMove;
-      pokeball: typeof enPokeball;
-      pokemon: typeof enPokemon;
-      commandUiHandler: typeof enCommandUiHandler;
+      menu: SimpleTranslationEntries;
+      menuUiHandler: SimpleTranslationEntries;
+      move: MoveTranslationEntries;
+      battle: SimpleTranslationEntries;
+      abilityTriggers: SimpleTranslationEntries;
+      ability: AbilityTranslationEntries;
+      pokeball: SimpleTranslationEntries;
+      pokemon: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
+      commandUiHandler: SimpleTranslationEntries;
+      fightUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
+      tutorial: SimpleTranslationEntries;
+      starterSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
+      nature: SimpleTranslationEntries;
+      growth: SimpleTranslationEntries;
+      egg: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
+      battleMessageUiHandler: SimpleTranslationEntries;
+      berry: BerryTranslationEntries;
     };
   }
 }
 
 export default i18next;
+
+export function getIsInitialized(): boolean {
+  return isInitialized;
+}
+
+let isInitialized = false;

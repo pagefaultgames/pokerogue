@@ -1,10 +1,10 @@
-import Phaser, { Time } from 'phaser';
+import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { Phase } from './phase';
@@ -17,10 +17,11 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getModifierPoolForType } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
+import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
 import { GameMode, GameModes, gameModes } from './game-mode';
 import FieldSpritePipeline from './pipelines/field-sprite';
@@ -52,59 +53,27 @@ import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler'
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
-import { biomeDepths } from './data/biomes';
-import { initTouchControls } from './touch-controls';
+import { biomeDepths, getBiomeName } from './data/biomes';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
+import * as Overrides from './overrides';
+import {InputsController} from "./inputs-controller";
+import {UiInputs} from "./ui-inputs";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
-export const SEED_OVERRIDE = '';
-export const STARTER_SPECIES_OVERRIDE = 0;
-export const STARTER_FORM_OVERRIDE = 0;
-export const STARTING_LEVEL_OVERRIDE = 0;
-export const STARTING_WAVE_OVERRIDE = 0;
-export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
-export const STARTING_MONEY_OVERRIDE = 0;
-
-export const ABILITY_OVERRIDE = Abilities.NONE;
-export const MOVE_OVERRIDE = Moves.NONE;
-export const OPP_SPECIES_OVERRIDE = 0;
-export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
-export const OPP_MOVE_OVERRIDE = Moves.NONE;
-
 const DEBUG_RNG = false;
 
-export const startingWave = STARTING_WAVE_OVERRIDE || 1;
+export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
-const repeatInputDelayMillis = 250;
 
 export let starterColors: StarterColors;
 interface StarterColors {
 	[key: string]: [string, string]
-}
-
-export enum Button {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	SUBMIT,
-	ACTION,
-	CANCEL,
-	MENU,
-	CYCLE_SHINY,
-	CYCLE_FORM,
-	CYCLE_GENDER,
-	CYCLE_ABILITY,
-	CYCLE_NATURE,
-	CYCLE_VARIANT,
-	SPEED_UP,
-	SLOW_DOWN
 }
 
 export interface PokeballCounts {
@@ -115,8 +84,11 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
+	public inputController: InputsController;
+	public uiInputs: UiInputs;
 
 	public sessionPlayTime: integer = null;
+	public lastSavePlayTime: integer = null;
 	public masterVolume: number = 0.5;
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
@@ -130,12 +102,25 @@ export default class BattleScene extends SceneBase {
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
 	public expGainsSpeed: integer = 0;
+	/**
+	 * Defines the experience gain display mode.
+	 *
+	 * @remarks
+	 * The `expParty` can have several modes:
+	 * - `0` - Default: The normal experience gain display, nothing changed.
+	 * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
+	 * - `2` - Skip: No level up frame nor message.
+	 *
+	 * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
+	 * @default 0 - Uses the default normal experience gain display.
+	 */
+	public expParty: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
-	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
-	
+	public abSwapped: boolean = false;
+
 	public disableMenu: boolean = false;
 
 	public gameData: GameData;
@@ -175,6 +160,8 @@ export default class BattleScene extends SceneBase {
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
 	private scoreText: Phaser.GameObjects.Text;
+	private luckLabelText: Phaser.GameObjects.Text;
+	private luckText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
 	private enemyModifierBar: ModifierBar;
 	private fieldOverlay: Phaser.GameObjects.Rectangle;
@@ -198,33 +185,6 @@ export default class BattleScene extends SceneBase {
 	private bgmResumeTimer: Phaser.Time.TimerEvent;
 	private bgmCache: Set<string> = new Set();
 	private playTimeTimer: Phaser.Time.TimerEvent;
-	
-	private buttonKeys: Phaser.Input.Keyboard.Key[][];
-	private lastProcessedButtonPressTimes: Map<Button, number> = new Map();
-	// movementButtonLock ensures only a single movement key is firing repeated inputs
-	// (i.e. by holding down a button) at a time
-	private movementButtonLock: Button;
-
-  // using a dualshock controller as a map
-  private gamepadKeyConfig = {
-    [Button.UP]: 12, // up
-    [Button.DOWN]: 13, // down
-    [Button.LEFT]: 14, // left
-    [Button.RIGHT]: 15, // right
-    [Button.SUBMIT]: 17, // touchpad
-    [Button.ACTION]: 0, // X
-    [Button.CANCEL]: 1, // O
-    [Button.MENU]: 9, // options
-    [Button.CYCLE_SHINY]: 5, // RB
-    [Button.CYCLE_FORM]: 4, // LB
-    [Button.CYCLE_GENDER]: 6, // LT
-    [Button.CYCLE_ABILITY]: 7, // RT
-    [Button.CYCLE_NATURE]: 2, // square
-    [Button.CYCLE_VARIANT]: 3, // triangle
-    [Button.SPEED_UP]: 10, // L3
-    [Button.SLOW_DOWN]: 11 // R3
-  };
-  public gamepadButtonStates: boolean[] = new Array(17).fill(false);
 
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
@@ -241,12 +201,13 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
+		this.updateGameInfo();
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
-		let variant = atlasPath.includes('variant/');
+		let variant = atlasPath.includes('variant/') || /_[0-3]$/.test(atlasPath);
 		if (experimental)
 			experimental = this.hasExpSprite(key);
 		if (variant)
@@ -268,20 +229,20 @@ export default class BattleScene extends SceneBase {
 				return ret;
 			};
 		}
-		
+
 		populateAnims();
 
-		await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
+		await this.initVariantData();
 	}
 
 	create() {
 		initGameSpeed.apply(this);
+		this.inputController = new InputsController(this);
+		this.uiInputs = new UiInputs(this, this.inputController);
 
 		this.gameData = new GameData(this);
 
 		addUiThemeOverrides(this);
-
-		this.setupControls();
 
 		this.load.setBaseURL();
 
@@ -295,7 +256,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	update() {
-		this.checkInput();
+		this.inputController.update();
 		this.ui?.update();
 	}
 
@@ -400,6 +361,16 @@ export default class BattleScene extends SceneBase {
 		this.scoreText.setOrigin(1, 0);
 		this.fieldUI.add(this.scoreText);
 
+		this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.PARTY, { fontSize: '54px' });
+		this.luckText.setOrigin(1, 0);
+		this.luckText.setVisible(false);
+		this.fieldUI.add(this.luckText);
+
+		this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, 'Luck:', TextStyle.PARTY, { fontSize: '54px' });
+		this.luckLabelText.setOrigin(1, 0);
+		this.luckLabelText.setVisible(false);
+		this.fieldUI.add(this.luckLabelText);
+
 		this.updateUIPositions();
 
 		this.damageNumberHandler = new DamageNumberHandler();
@@ -482,6 +453,8 @@ export default class BattleScene extends SceneBase {
 	initSession(): void {
 		if (this.sessionPlayTime === null)
 			this.sessionPlayTime = 0;
+		if (this.lastSavePlayTime === null)
+			this.lastSavePlayTime = 0;
 
 		if (this.playTimeTimer)
 			this.playTimeTimer.destroy();
@@ -494,6 +467,8 @@ export default class BattleScene extends SceneBase {
 					this.gameData.gameStats.playTime++;
 				if (this.sessionPlayTime !== null)
 					this.sessionPlayTime++;
+				if (this.lastSavePlayTime !== null)
+					this.lastSavePlayTime++;
 			}
 		});
 
@@ -510,6 +485,34 @@ export default class BattleScene extends SceneBase {
 				expSpriteKeys.push(...keys);
 			Promise.resolve();
 		});
+	}
+
+	async initVariantData(): Promise<void> {
+		Object.keys(variantData).forEach(key => delete variantData[key]);
+		await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json())
+			.then(v => {
+				Object.keys(v).forEach(k => variantData[k] = v[k]);
+				if (this.experimentalSprites) {
+					const expVariantData = variantData['exp'];
+					const traverseVariantData = (keys: string[]) => {
+						let variantTree = variantData;
+						let expTree = expVariantData;
+						keys.map((k: string, i: integer) => {
+							if (i < keys.length - 1) {
+								variantTree = variantTree[k];
+								expTree = expTree[k];
+							} else if (variantTree.hasOwnProperty(k) && expTree.hasOwnProperty(k)) {
+								if ([ 'back', 'female' ].includes(k))
+									traverseVariantData(keys.concat(k));
+								else
+									variantTree[k] = expTree[k];
+							}
+						});
+					};
+					Object.keys(expVariantData).forEach(ek => traverseVariantData([ ek ]));
+				}
+				Promise.resolve();
+			});
 	}
 
 	cachedFetch(url: string, init?: RequestInit): Promise<Response> {
@@ -576,41 +579,6 @@ export default class BattleScene extends SceneBase {
 		return true;
 	}
 
-	setupControls() {
-		const keyCodes = Phaser.Input.Keyboard.KeyCodes;
-		const keyConfig = {
-			[Button.UP]: [keyCodes.UP, keyCodes.W],
-			[Button.DOWN]: [keyCodes.DOWN, keyCodes.S],
-			[Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
-			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
-			[Button.SUBMIT]: [keyCodes.ENTER],
-			[Button.ACTION]: [keyCodes.SPACE, keyCodes.ENTER, keyCodes.Z],
-			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
-			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
-			[Button.CYCLE_SHINY]: [keyCodes.R],
-			[Button.CYCLE_FORM]: [keyCodes.F],
-			[Button.CYCLE_GENDER]: [keyCodes.G],
-			[Button.CYCLE_ABILITY]: [keyCodes.E],
-			[Button.CYCLE_NATURE]: [keyCodes.N],
-			[Button.CYCLE_VARIANT]: [keyCodes.V],
-			[Button.SPEED_UP]: [keyCodes.PLUS],
-			[Button.SLOW_DOWN]: [keyCodes.MINUS]
-		};
-		const mobileKeyConfig = {};
-		this.buttonKeys = [];
-		for (let b of Utils.getEnumValues(Button)) {
-			const keys: Phaser.Input.Keyboard.Key[] = [];
-			if (keyConfig.hasOwnProperty(b)) {
-				for (let k of keyConfig[b])
-					keys.push(this.input.keyboard.addKey(k, false));
-				mobileKeyConfig[Button[b]] = keys[0];
-			}
-			this.buttonKeys[b] = keys;
-		}
-
-		initTouchControls(mobileKeyConfig);
-	}
-
 	getParty(): PlayerPokemon[] {
 		return this.party;
 	}
@@ -662,9 +630,11 @@ export default class BattleScene extends SceneBase {
 	}
 
 	addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
-		if (OPP_SPECIES_OVERRIDE)
-			species = getPokemonSpecies(OPP_SPECIES_OVERRIDE);
+		if (Overrides.OPP_SPECIES_OVERRIDE)
+			species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+		overrideModifiers(this, false);
+		overrideHeldItems(this, pokemon, false);
 		if (boss && !dataSource) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
@@ -681,7 +651,16 @@ export default class BattleScene extends SceneBase {
 		const container = this.add.container(x, y);
 		
 		const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
-    icon.setFrame(pokemon.getIconId(true));
+    	icon.setFrame(pokemon.getIconId(true));
+		// Temporary fix to show pokemon's default icon if variant icon doesn't exist
+		if (icon.frame.name != pokemon.getIconId(true)) {
+			console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`)
+			const temp = pokemon.shiny;
+			pokemon.shiny = false;
+			icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
+			icon.setFrame(pokemon.getIconId(true));
+			pokemon.shiny = temp;
+		}
 		icon.setOrigin(0.5, 0);
 
 		container.add(icon);
@@ -755,7 +734,7 @@ export default class BattleScene extends SceneBase {
 
 		this.gameMode = gameModes[GameModes.CLASSIC];
 		
-		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
+		this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
 
 		this.disableMenu = false;
@@ -767,6 +746,9 @@ export default class BattleScene extends SceneBase {
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
+		if (Overrides.POKEBALL_OVERRIDE.active) {
+            this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
@@ -790,7 +772,11 @@ export default class BattleScene extends SceneBase {
 		this.updateScoreText();
 		this.scoreText.setVisible(false);
 
-		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN);
+		[ this.luckLabelText, this.luckText ].map(t => t.setVisible(false));
+
+		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
+
+		this.field.setVisible(true);
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
@@ -803,11 +789,14 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
 		this.trainer.setVisible(true);
+		
+		this.updateGameInfo();
 
 		if (reloadI18n) {
 			const localizable: Localizable[] = [
 				...allSpecies,
 				...allMoves,
+				...allAbilities,
 				...Utils.getEnumValues(ModifierPoolType).map(mpt => getModifierPoolForType(mpt)).map(mp => Object.values(mp).flat().map(mt => mt.modifierType).filter(mt => 'localize' in mt).map(lpb => lpb as unknown as Localizable)).flat()
 			];
 			for (let item of localizable)
@@ -815,6 +804,9 @@ export default class BattleScene extends SceneBase {
 		}
 
 		if (clearScene) {
+			// Reload variant data in case sprite set has changed
+			this.initVariantData();
+
 			this.fadeOutBgm(250, false);
 			this.tweens.add({
 				targets: [ this.uiContainer ],
@@ -886,6 +878,9 @@ export default class BattleScene extends SceneBase {
 		} else if (!battleConfig)
 			newDouble = !!double;
 
+		if (Overrides.DOUBLE_BATTLE_OVERRIDE)
+			newDouble = true;
+
 		const lastBattle = this.currentBattle;
 
 		if (lastBattle?.double && !newDouble)
@@ -904,7 +899,7 @@ export default class BattleScene extends SceneBase {
 
 		if (!waveIndex && lastBattle) {
 			let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
-			if (!isNewBiome && this.gameMode.hasShortBiomes && (newWaveIndex % 10) < 9) {
+			if (!isNewBiome && this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 10) < 9) {
 				let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
 				let biomeWaves = 1;
 				while (w < lastBattle.waveIndex) {
@@ -1007,17 +1002,30 @@ export default class BattleScene extends SceneBase {
 			case Species.BASCULIN:
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
+			case Species.FROAKIE:
+			case Species.FROGADIER:
+			case Species.SCATTERBUG:
+			case Species.SPEWPA:
 			case Species.VIVILLON:
 			case Species.FLABEBE:
 			case Species.FLOETTE:
 			case Species.FLORGES:
+			case Species.FURFROU:
 			case Species.ORICORIO:
+			case Species.MAGEARNA:
+			case Species.ZARUDE:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
 				return Utils.randSeedInt(species.forms.length);
+			case Species.GRENINJA:
+				return Utils.randSeedInt(2);
+			case Species.ZYGARDE:
+				return Utils.randSeedInt(3);
 			case Species.MINIOR:
 				return Utils.randSeedInt(6);
+			case Species.ALCREMIE:
+				return Utils.randSeedInt(9);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
 			case Species.BASCULEGION:
@@ -1065,7 +1073,7 @@ export default class BattleScene extends SceneBase {
 			return 5;
 
 		let isBoss: boolean;
-		if (forceBoss || (species && (species.pseudoLegendary || species.legendary || species.mythical)))
+		if (forceBoss || (species && (species.subLegendary || species.legendary || species.mythical)))
 			isBoss = true;
 		else {
 			this.executeWithSeedOffset(() => {
@@ -1200,11 +1208,44 @@ export default class BattleScene extends SceneBase {
 		this.scoreText.setVisible(this.gameMode.isDaily);
 	}
 
+	updateAndShowLuckText(duration: integer): void {
+		const labels = [ this.luckLabelText, this.luckText ];
+		labels.map(t => {
+			t.setAlpha(0);
+			t.setVisible(true);
+		})
+		const luckValue = getPartyLuckValue(this.getParty());
+		this.luckText.setText(getLuckString(luckValue));
+		if (luckValue < 14)
+			this.luckText.setTint(getLuckTextTint(luckValue));
+		else
+			this.luckText.setTint(0x83a55a, 0xee384a, 0x5271cd, 0x7b487b);
+		this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
+		this.tweens.add({
+			targets: labels,
+			duration: duration,
+			alpha: 1
+		});
+	}
+
+	hideLuckText(duration: integer): void {
+		const labels = [ this.luckLabelText, this.luckText ];
+		this.tweens.add({
+			targets: labels,
+			duration: duration,
+			alpha: 0,
+			onComplete: () => {
+				labels.map(l => l.setVisible(false));
+			}
+		});
+	}
+
 	updateUIPositions(): void {
 		const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
 		this.moneyText.setY(this.waveCountText.y + 10);
 		this.scoreText.setY(this.moneyText.y + 10);
+		[ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
 		const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
 		this.partyExpBar.setY(offsetY);
 		this.candyBar.setY(offsetY + 15);
@@ -1264,159 +1305,13 @@ export default class BattleScene extends SceneBase {
 		return biomes[Utils.randSeedInt(biomes.length)];
 	}
 
-	checkInput(): boolean {
-		let inputSuccess = false;
-		let vibrationLength = 0;
-		if (this.buttonJustPressed(Button.UP) || this.repeatInputDurationJustPassed(Button.UP)) {
-			inputSuccess = this.ui.processInput(Button.UP);
-			vibrationLength = 5;
-			this.setLastProcessedMovementTime(Button.UP)
-		} else if (this.buttonJustPressed(Button.DOWN) || this.repeatInputDurationJustPassed(Button.DOWN)) {
-			inputSuccess = this.ui.processInput(Button.DOWN);
-			vibrationLength = 5;
-			this.setLastProcessedMovementTime(Button.DOWN)
-		} else if (this.buttonJustPressed(Button.LEFT) || this.repeatInputDurationJustPassed(Button.LEFT)) {
-			inputSuccess = this.ui.processInput(Button.LEFT);
-			vibrationLength = 5;
-			this.setLastProcessedMovementTime(Button.LEFT)
-		} else if (this.buttonJustPressed(Button.RIGHT) || this.repeatInputDurationJustPassed(Button.RIGHT)) {
-			inputSuccess = this.ui.processInput(Button.RIGHT);
-			vibrationLength = 5;
-			this.setLastProcessedMovementTime(Button.RIGHT)
-		} else if (this.buttonJustPressed(Button.SUBMIT) || this.repeatInputDurationJustPassed(Button.SUBMIT)) {
-			inputSuccess = this.ui.processInput(Button.SUBMIT) || this.ui.processInput(Button.ACTION);
-			this.setLastProcessedMovementTime(Button.SUBMIT);
-		} else if (this.buttonJustPressed(Button.ACTION) || this.repeatInputDurationJustPassed(Button.ACTION)) {
-			inputSuccess = this.ui.processInput(Button.ACTION);
-			this.setLastProcessedMovementTime(Button.ACTION);
-		} else if (this.buttonJustPressed(Button.CANCEL)|| this.repeatInputDurationJustPassed(Button.CANCEL)) {
-			inputSuccess = this.ui.processInput(Button.CANCEL);
-			this.setLastProcessedMovementTime(Button.CANCEL);
-		} else if (this.buttonJustPressed(Button.MENU)) {
-			if (this.disableMenu)
-				return;
-			switch (this.ui?.getMode()) {
-				case Mode.MESSAGE:
-					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
-						return;
-				case Mode.TITLE:
-				case Mode.COMMAND:
-				case Mode.FIGHT:
-				case Mode.BALL:
-				case Mode.TARGET_SELECT:
-				case Mode.SAVE_SLOT:
-				case Mode.PARTY:
-				case Mode.SUMMARY:
-				case Mode.STARTER_SELECT:
-				case Mode.CONFIRM:
-				case Mode.OPTION_SELECT:
-					this.ui.setOverlayMode(Mode.MENU);
-					inputSuccess = true;
-					break;
-				case Mode.MENU:
-				case Mode.SETTINGS:
-				case Mode.ACHIEVEMENTS:
-					this.ui.revertMode();
-					this.playSound('select');
-					inputSuccess = true;
-					break;
-				default:
-					return;
-			}
-		} else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
-			if (this.buttonJustPressed(Button.CYCLE_SHINY)) {
-				inputSuccess = this.ui.processInput(Button.CYCLE_SHINY);
-        this.setLastProcessedMovementTime(Button.CYCLE_SHINY);
-			} else if (this.buttonJustPressed(Button.CYCLE_FORM)) {
-				inputSuccess = this.ui.processInput(Button.CYCLE_FORM);
-        this.setLastProcessedMovementTime(Button.CYCLE_FORM);
-			} else if (this.buttonJustPressed(Button.CYCLE_GENDER)) {
-				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
-        this.setLastProcessedMovementTime(Button.CYCLE_GENDER);
-			} else if (this.buttonJustPressed(Button.CYCLE_ABILITY)) {
-				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
-        this.setLastProcessedMovementTime(Button.CYCLE_ABILITY);
-			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
-				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
-        this.setLastProcessedMovementTime(Button.CYCLE_NATURE);
-			} else if (this.buttonJustPressed(Button.CYCLE_VARIANT)) {
-				inputSuccess = this.ui.processInput(Button.CYCLE_VARIANT);
-				this.setLastProcessedMovementTime(Button.CYCLE_VARIANT);
-			} else
-				return;
-		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {
-			if (this.gameSpeed < 5) {
-				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
-				if (this.ui?.getMode() === Mode.SETTINGS)
-					(this.ui.getHandler() as SettingsUiHandler).show([]);
-			}
-		} else if (this.buttonJustPressed(Button.SLOW_DOWN)) {
-			if (this.gameSpeed > 1) {
-				this.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) - 1, 0));
-				if (this.ui?.getMode() === Mode.SETTINGS)
-					(this.ui.getHandler() as SettingsUiHandler).show([]);
-			}
-		} else
-			return;
-		if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
-			navigator.vibrate(vibrationLength || 10);		
-	}
-
-  /**
-   * gamepadButtonJustDown returns true if @param button has just been pressed down
-   * or not. It will only return true once, until the key is released and pressed down
-   * again. 
-   */
-	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
-		if (!button || !this.gamepadSupport)
-			return false;
-
-		let ret = false;
-		if (button.pressed) {
-			if (!this.gamepadButtonStates[button.index])
-				ret = true;
-			this.gamepadButtonStates[button.index] = true;
-		} else
-			this.gamepadButtonStates[button.index] = false;
-
-		return ret;
-  }
-
-	buttonJustPressed(button: Button): boolean {
-		const gamepad = this.input.gamepad?.gamepads[0];
-		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
-	}
-
-	/**
-	 * repeatInputDurationJustPassed returns true if @param button has been held down long
-	 * enough to fire a repeated input. A button must claim the movementButtonLock before
-	 * firing a repeated input - this is to prevent multiple buttons from firing repeatedly.
-	 */
-	repeatInputDurationJustPassed(button: Button): boolean {
-		if (this.movementButtonLock !== null && this.movementButtonLock !== button) {
-			return false;
-		}
-		if (this.buttonKeys[button].every(k => k.isUp) && this.gamepadButtonStates.every(b => b == false)) {
-			this.movementButtonLock = null;
-			return false;
-		}
-		if (this.time.now - this.lastProcessedButtonPressTimes.get(button) >= repeatInputDelayMillis) {
-			return true;
-		}
-	}
-
-	setLastProcessedMovementTime(button: Button) {
-		this.lastProcessedButtonPressTimes.set(button, this.time.now);
-		this.movementButtonLock = button;
-	}
-
 	isBgmPlaying(): boolean {
 		return this.bgm && this.bgm.isPlaying;
 	}
 
 	playBgm(bgmName?: string, fadeOut?: boolean): void {
 		if (bgmName === undefined)
-			bgmName = this.currentBattle.getBgmOverride(this) || this.arena.bgm;
+			bgmName = this.currentBattle?.getBgmOverride(this) || this.arena?.bgm;
 		if (this.bgm && bgmName === this.bgm.key) {
 			if (!this.bgm.isPlaying) {
 				this.bgm.play({
@@ -1567,11 +1462,13 @@ export default class BattleScene extends SceneBase {
 				return 13.122;
 			case 'battle_unova_gym':
 				return 19.145;
-			case 'battle_legendary':
+			case 'battle_legendary_regis': //B2W2 Legendary Titan Battle
+				return 49.500;
+			case 'battle_legendary_unova': //BW Unova Legendary Battle
 				return 13.855;
-			case 'battle_legendary_k':
+			case 'battle_legendary_kyurem': //BW Kyurem Battle
 				return 18.314;
-			case 'battle_legendary_rz':
+			case 'battle_legendary_res_zek': //BW Reshiram & Zekrom Battle
 				return 18.329;
 			case 'battle_rival':
 				return 13.689;
@@ -1910,6 +1807,19 @@ export default class BattleScene extends SceneBase {
 		});
 	}
 
+	/**
+	* Removes all modifiers from enemy of PersistentModifier type
+	*/
+	clearEnemyModifiers(): void {
+		const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
+		for (let m of modifiersToRemove)
+			this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
+		this.updateModifiers(false).then(() => this.updateUIPositions());
+	}
+
+	/**
+	* Removes all modifiers from enemy of PokemonHeldItemModifier type
+	*/
 	clearEnemyHeldItemModifiers(): void {
 		const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
 		for (let m of modifiersToRemove)
@@ -2078,5 +1988,18 @@ export default class BattleScene extends SceneBase {
 		}
 
 		return false;
+	}
+	
+	updateGameInfo(): void {
+		const gameInfo = {
+			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
+			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
+			wave: this.currentBattle?.waveIndex || 0,
+			party: this.party ? this.party.map(p => {
+				return { name: p.name, level: p.level };
+			}) : []
+		};
+		(window as any).gameInfo = gameInfo;
 	}
 }

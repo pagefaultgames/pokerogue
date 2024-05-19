@@ -10,6 +10,8 @@ import { PersistentModifier } from "../modifier/modifier";
 import { trainerNamePools } from "../data/trainer-names";
 import { ArenaTagType } from "#app/data/enums/arena-tag-type";
 import { ArenaTag, ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import {getIsInitialized, initI18n} from "#app/plugins/i18n";
+import i18next from "i18next";
 
 export enum TrainerVariant {
   DEFAULT,
@@ -97,9 +99,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle: boolean = false): string {
     let name = this.config.getTitle(trainerSlot, this.variant);
     let title = includeTitle && this.config.title ? this.config.title : null;
+
+
     if (this.name) {
       if (includeTitle)
-        title = name;
+
+      // Check if i18n is initialized
+        if (!getIsInitialized()) {
+          initI18n()
+        }
+        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, '_')}`);
       if (!trainerSlot) {
         name = this.name;
         if (this.partnerName)
@@ -107,6 +116,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       } else
         name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
     }
+
     return title ? `${title} ${name}` : name;
   }
 
@@ -146,6 +156,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     
     const difficultyWaveIndex = this.scene.gameMode.getWaveForDifficulty(waveIndex);
     let baseLevel = 1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2);
+
+    if (this.isDouble() && partyTemplate.size < 2)
+      partyTemplate.size = 2;
 
     for (let i = 0; i < partyTemplate.size; i++) {
       let multiplier = 1;
@@ -357,6 +370,34 @@ export default class Trainer extends Phaser.GameObjects.Container {
     this.getTintSprites().map((tintSprite, i) => tintSprite.setTexture(this.getKey(!!i)).setFrame(0));
   }
 
+  /**
+   * Attempts to animate a given set of {@linkcode Phaser.GameObjects.Sprite}
+   * @see {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
+   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
+   * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @returns true if the sprite was able to be animated
+   */
+  tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, animConfig: Phaser.Types.Animations.PlayAnimationConfig): boolean {
+    // Show an error in the console if there isn't a texture loaded
+    if (sprite.texture.key === '__MISSING') {
+      console.error(`No texture found for '${animConfig.key}'!`);
+
+      return false;
+    }
+    // Don't try to play an animation when there isn't one
+    if (sprite.texture.frameTotal <= 1) {
+      console.warn(`No animation found for '${animConfig.key}'. Is this intentional?`);
+
+      return false;
+    }
+
+    sprite.play(animConfig);
+    tintSprite.play(animConfig);
+
+    return true;      
+  }
+
   playAnim(): void {
     const trainerAnimConfig = {
       key: this.getKey(),
@@ -365,16 +406,18 @@ export default class Trainer extends Phaser.GameObjects.Container {
     };
     const sprites = this.getSprites();
     const tintSprites = this.getTintSprites();
-    sprites[0].play(trainerAnimConfig);
-    tintSprites[0].play(trainerAnimConfig);
+
+    this.tryPlaySprite(sprites[0], tintSprites[0], trainerAnimConfig);
+
+    // Queue an animation for the second trainer if this is a double battle against two separate trainers
     if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       const partnerTrainerAnimConfig = {
         key: this.getKey(true),
         repeat: 0,
         startFrame: 0
       };
-      sprites[1].play(partnerTrainerAnimConfig);
-      tintSprites[1].play(partnerTrainerAnimConfig);
+
+      this.tryPlaySprite(sprites[1], tintSprites[1], partnerTrainerAnimConfig);
     }
   }
 

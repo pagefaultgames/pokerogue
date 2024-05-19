@@ -1,3 +1,5 @@
+import i18next from '../plugins/i18n';
+
 export enum Stat {
   HP = 0,
   ATK,
@@ -11,22 +13,22 @@ export function getStatName(stat: Stat, shorten: boolean = false) {
   let ret: string;
   switch (stat) {
     case Stat.HP:
-      ret = !shorten ? 'Max. HP' : 'MaxHP';
+      ret = !shorten ? i18next.t('pokemonInfo:Stat.HP') : i18next.t('pokemonInfo:Stat.HPshortened');
       break;
     case Stat.ATK:
-      ret = !shorten ? 'Attack' : 'Atk';
+      ret = !shorten ? i18next.t('pokemonInfo:Stat.ATK') : i18next.t('pokemonInfo:Stat.ATKshortened');
       break;
     case Stat.DEF:
-      ret = !shorten ? 'Defense' : 'Def';
+      ret = !shorten ? i18next.t('pokemonInfo:Stat.DEF') : i18next.t('pokemonInfo:Stat.DEFshortened');
       break;
     case Stat.SPATK:
-      ret = !shorten ? 'Sp. Atk' : 'SpAtk';
+      ret = !shorten ? i18next.t('pokemonInfo:Stat.SPATK') : i18next.t('pokemonInfo:Stat.SPATKshortened');
       break;
     case Stat.SPDEF:
-      ret = !shorten ? 'Sp. Def' : 'SpDef';
+      ret = !shorten ? i18next.t('pokemonInfo:Stat.SPDEF') : i18next.t('pokemonInfo:Stat.SPDEFshortened');
       break;
     case Stat.SPD:
-      ret = !shorten ? 'Speed' : 'Spd';
+      ret = !shorten ? i18next.t('pokemonInfo:Stat.SPD') : i18next.t('pokemonInfo:Stat.SPDshortened');
       break;
   }
   return ret;

@@ -1,4 +1,4 @@
-import BattleScene, { Button, bypassLogin } from "../battle-scene";
+import BattleScene, { bypassLogin } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
@@ -8,6 +8,8 @@ import { GameDataType } from "../system/game-data";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { updateUserInfo } from "../account";
+import i18next from '../plugins/i18n';
+import {Button} from "../enums/buttons";
 
 export enum MenuOptions {
   GAME_SETTINGS,
@@ -18,7 +20,7 @@ export enum MenuOptions {
   EGG_GACHA,
   MANAGE_DATA,
   COMMUNITY,
-  RETURN_TO_TITLE,
+  SAVE_AND_QUIT,
   LOG_OUT
 }
 
@@ -57,14 +59,20 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - 100, 0, 98, (this.scene.game.canvas.height / 6) - 2);
+    const menuMessageText = addTextObject(this.scene, 8, 8, '', TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setWordWrapWidth(1224);
+    menuMessageText.setOrigin(0, 0);
+
+    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join('\n'), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
+    this.optionSelectText.setLineSpacing(12);
+    
+    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
+
+    this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
 
     this.menuContainer.add(this.menuBg);
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => Utils.toReadableString(MenuOptions[o])).join('\n'), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
-    this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
-    this.optionSelectText.setLineSpacing(12);
     this.menuContainer.add(this.optionSelectText);
 
     ui.add(this.menuContainer);
@@ -77,9 +85,6 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageBox);
 
-    const menuMessageText = addTextObject(this.scene, 8, 8, '', TextStyle.WINDOW, { maxLines: 2 });
-    menuMessageText.setWordWrapWidth(1224);
-    menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
 
     this.message = menuMessageText;
@@ -92,9 +97,9 @@ export default class MenuUiHandler extends MessageUiHandler {
       ui.revertMode();
       ui.showText(message, null, () => {
         const config: OptionSelectConfig = {
-          options: new Array(3).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
+          options: new Array(5).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
             return {
-              label: `Slot ${i + 1}`,
+              label: i18next.t('menuUiHandler:slot', {slotNumber: i+1}),
               handler: () => {
                 callback(i);
                 ui.revertMode();
@@ -103,7 +108,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               }
             };
           }).concat([{
-            label: 'Cancel',
+            label: i18next.t('menuUiHandler:cancel'),
             handler: () => {
               ui.revertMode();
               ui.showText(null, 0);
@@ -118,27 +123,27 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (Utils.isLocal) {
       manageDataOptions.push({
-        label: 'Import Session',
+        label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
-          confirmSlot('Select a slot to import to.', () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+          confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
           return true;
         },
         keepOpen: true
       });
     }
     manageDataOptions.push({
-      label: 'Export Session',
+      label: i18next.t("menuUiHandler:exportSession"),
       handler: () => {
         const dataSlots: integer[] = [];
         Promise.all(
-          new Array(3).fill(null).map((_, i) => {
+          new Array(5).fill(null).map((_, i) => {
             const slotId = i;
             return this.scene.gameData.getSession(slotId).then(data => {
               if (data)
                 dataSlots.push(slotId);
             })
           })).then(() => {
-            confirmSlot('Select a slot to export from.',
+            confirmSlot(i18next.t("menuUiHandler:exportSlotSelect"),
               i => dataSlots.indexOf(i) > -1,
               slotId => this.scene.gameData.tryExportData(GameDataType.SESSION, slotId));
           });
@@ -148,7 +153,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     });
     if (Utils.isLocal) {
       manageDataOptions.push({
-        label: 'Import Data',
+        label: i18next.t("menuUiHandler:importData"),
         handler: () => {
           this.scene.gameData.importData(GameDataType.SYSTEM);
           return true;
@@ -158,7 +163,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     }
     manageDataOptions.push(
       {
-        label: 'Export Data',
+        label: i18next.t("menuUiHandler:exportData"),
         handler: () => {
           this.scene.gameData.tryExportData(GameDataType.SYSTEM);
           return true;
@@ -166,7 +171,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
-        label: 'Cancel',
+        label: i18next.t('menuUiHandler:cancel'),
         handler: () => {
           this.scene.ui.revertMode();
           return true;
@@ -205,7 +210,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
-        label: 'Cancel',
+        label: i18next.t('menuUiHandler:cancel'),
         handler: () => {
           this.scene.ui.revertMode();
           return true;
@@ -292,22 +297,25 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
           success = true;
           break;
-        case MenuOptions.RETURN_TO_TITLE:
+        case MenuOptions.SAVE_AND_QUIT:
           if (this.scene.currentBattle) {
             success = true;
-            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
-              ui.setOverlayMode(Mode.CONFIRM, () => this.scene.reset(true), () => {
-                ui.revertMode();
-                ui.showText(null, 0);
-              }, false, -98);
-            });
+            if (this.scene.currentBattle.turn > 1) {
+              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
+                  ui.revertMode();
+                  ui.showText(null, 0);
+                }, false, -98);
+              });
+            } else
+              this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
           } else
             error = true;
           break;
         case MenuOptions.LOG_OUT:
           success = true;
           const doLogout = () => {
-            Utils.apiPost('account/logout').then(res => {
+            Utils.apiFetch('account/logout', true).then(res => {
               if (!res.ok)
                 console.error(`Log out failed (${res.status}: ${res.statusText})`);
               Utils.setCookie(Utils.sessionIdKey, '');
@@ -315,7 +323,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             });
           };
           if (this.scene.currentBattle) {
-            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
+            ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
                 ui.revertMode();
                 ui.showText(null, 0);

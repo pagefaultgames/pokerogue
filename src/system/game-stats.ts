@@ -6,6 +6,7 @@ export class GameStats {
   public battles: integer;
   public classicSessionsPlayed: integer;
   public sessionsWon: integer;
+  public ribbonsOwned: integer;
   public dailyRunSessionsPlayed: integer;
   public dailyRunSessionsWon: integer;
   public endlessSessionsPlayed: integer;
@@ -18,6 +19,9 @@ export class GameStats {
   public pokemonDefeated: integer;
   public pokemonCaught: integer;
   public pokemonHatched: integer;
+  public subLegendaryPokemonSeen: integer;
+  public subLegendaryPokemonCaught: integer;
+  public subLegendaryPokemonHatched: integer;
   public legendaryPokemonSeen: integer;
   public legendaryPokemonCaught: integer;
   public legendaryPokemonHatched: integer;
@@ -40,6 +44,7 @@ export class GameStats {
     this.battles = source?.battles || 0;
     this.classicSessionsPlayed = source?.classicSessionsPlayed || 0;
     this.sessionsWon = source?.sessionsWon || 0;
+    this.ribbonsOwned = source?.ribbonsOwned || 0;
     this.dailyRunSessionsPlayed = source?.dailyRunSessionsPlayed || 0;
     this.dailyRunSessionsWon = source?.dailyRunSessionsWon || 0;
     this.endlessSessionsPlayed = source?.endlessSessionsPlayed || 0;
@@ -52,12 +57,16 @@ export class GameStats {
     this.pokemonDefeated = source?.pokemonDefeated || 0;
     this.pokemonCaught = source?.pokemonCaught || 0;
     this.pokemonHatched = source?.pokemonHatched || 0;
+    // Currently handled by migration
+    this.subLegendaryPokemonSeen = source?.subLegendaryPokemonSeen;
+    this.subLegendaryPokemonCaught = source?.subLegendaryPokemonCaught;
+    this.subLegendaryPokemonHatched = source?.subLegendaryPokemonHatched;
     this.legendaryPokemonSeen = source?.legendaryPokemonSeen || 0;
     this.legendaryPokemonCaught = source?.legendaryPokemonCaught || 0;
     this.legendaryPokemonHatched = source?.legendaryPokemonHatched || 0;
     this.mythicalPokemonSeen = source?.mythicalPokemonSeen || 0;
     this.mythicalPokemonCaught = source?.mythicalPokemonCaught || 0;
-    this.mythicalPokemonHatched = source?.mythicalPokemonCaught || 0;
+    this.mythicalPokemonHatched = source?.mythicalPokemonHatched || 0;
     this.shinyPokemonSeen = source?.shinyPokemonSeen || 0;
     this.shinyPokemonCaught = source?.shinyPokemonCaught || 0;
     this.shinyPokemonHatched = source?.shinyPokemonHatched || 0;

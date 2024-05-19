@@ -24,6 +24,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Docummentation
+docs/*
+
 public/images/trainer/convert/*
 public/images/battle_anims/input/*.png
 public/images/pokemon/input/*.png
@@ -33,5 +36,6 @@ public/images/pokemon/icons/input/output/*
 public/images/character/*/
 src/data/battle-anim-raw-data*.ts
 src/data/battle-anim-data.ts
+src/overrides.ts
 
 coverage

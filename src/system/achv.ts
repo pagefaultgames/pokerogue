@@ -7,6 +7,7 @@ export enum AchvTier {
   COMMON,
   GREAT,
   ULTRA,
+  ROGUE,
   MASTER
 }
 
@@ -52,6 +53,8 @@ export class Achv {
   getTier(): AchvTier {
     if (this.score >= 100)
       return AchvTier.MASTER;
+    if (this.score >= 75)
+      return AchvTier.ROGUE;
     if (this.score >= 50)
       return AchvTier.ULTRA;
     if (this.score >= 25)
@@ -67,6 +70,16 @@ export class MoneyAchv extends Achv {
     super(name, `Accumulate a total of ₽${moneyAmount.toLocaleString('en-US')}`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.money >= this.moneyAmount);
 
     this.moneyAmount = moneyAmount;
+  }
+}
+
+export class RibbonAchv extends Achv {
+  private ribbonAmount: integer;
+
+  constructor(name: string, ribbonAmount: integer, iconImage: string, score: integer) {
+    super(name, `Accumulate a total of ${ribbonAmount.toLocaleString('en-US')} Ribbons`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
+
+    this.ribbonAmount = ribbonAmount;
   }
 }
 
@@ -122,6 +135,11 @@ export const achvs = {
   LV_100: new LevelAchv('But Wait, There\'s More!', 100, 'rare_candy', 25).setSecret(),
   LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 50).setSecret(true),
   LV_1000: new LevelAchv('To Go Even Further Beyond', 1000, 'candy_jar', 100).setSecret(true),
+  _10_RIBBONS: new RibbonAchv('Pokémon League Champion', 10, 'bronze_ribbon', 10),
+  _25_RIBBONS: new RibbonAchv('Great League Champion', 25, 'great_ribbon', 25).setSecret(true),
+  _50_RIBBONS: new RibbonAchv('Ultra League Champion', 50, 'ultra_ribbon', 50).setSecret(true),
+  _75_RIBBONS: new RibbonAchv('Rogue League Champion', 75, 'rogue_ribbon', 75).setSecret(true),
+  _100_RIBBONS: new RibbonAchv('Master League Champion', 100, 'master_ribbon', 100).setSecret(true),
   TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 20),
   MAX_FRIENDSHIP: new Achv('Friendmaxxing', 'Reach max friendship on a Pokémon', 'soothe_bell', 25),
   MEGA_EVOLVE: new Achv('Megamorph', 'Mega evolve a Pokémon', 'mega_bracelet', 50),
@@ -131,11 +149,13 @@ export const achvs = {
   SPLICE: new Achv('Infinite Fusion', 'Splice two Pokémon together with DNA Splicers', 'dna_splicers', 10),
   MINI_BLACK_HOLE: new ModifierAchv('A Hole Lot of Items', 'Acquire a Mini Black Hole', 'mini_black_hole', 25, modifier => modifier instanceof TurnHeldItemTransferModifier).setSecret(),
   CATCH_MYTHICAL: new Achv('Mythical', 'Catch a mythical Pokémon', 'strange_ball', 50).setSecret(),
-  CATCH_LEGENDARY: new Achv('Legendary', 'Catch a legendary Pokémon', 'mb', 75).setSecret(),
+  CATCH_SUB_LEGENDARY: new Achv('(Sub-)Legendary', 'Catch a sub-legendary Pokémon', 'rb', 75).setSecret(),
+  CATCH_LEGENDARY: new Achv('Legendary', 'Catch a legendary Pokémon', 'mb', 100).setSecret(),
   SEE_SHINY: new Achv('Shiny', 'Find a shiny Pokémon in the wild', 'pb_gold', 75),
   SHINY_PARTY: new Achv('That\'s Dedication', 'Have a full party of shiny Pokémon', 'shiny_charm', 100).setSecret(true),
   HATCH_MYTHICAL: new Achv('Mythical Egg', 'Hatch a mythical Pokémon from an egg', 'pair_of_tickets', 75).setSecret(),
-  HATCH_LEGENDARY: new Achv('Legendary Egg', 'Hatch a legendary Pokémon from an egg', 'mystic_ticket', 100).setSecret(),
+  HATCH_SUB_LEGENDARY: new Achv('Sub-Legendary Egg', 'Hatch a sub-legendary Pokémon from an egg', 'mystic_ticket', 100).setSecret(),
+  HATCH_LEGENDARY: new Achv('Legendary Egg', 'Hatch a legendary Pokémon from an egg', 'mystic_ticket', 125).setSecret(),
   HATCH_SHINY: new Achv('Shiny Egg', 'Hatch a shiny Pokémon from an egg', 'golden_mystic_ticket', 100).setSecret(),
   HIDDEN_ABILITY: new Achv('Hidden Potential', 'Catch a Pokémon with a hidden ability', 'ability_charm', 75),
   PERFECT_IVS: new Achv('Certificate of Authenticity', 'Get perfect IVs on a Pokémon', 'blunder_policy', 100),

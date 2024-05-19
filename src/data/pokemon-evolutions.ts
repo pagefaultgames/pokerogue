@@ -1,6 +1,5 @@
 import { Gender } from "./gender";
 import { AttackTypeBoosterModifier, FlinchChanceModifier } from "../modifier/modifier";
-import { AttackTypeBoosterModifierType } from "../modifier/modifier-type";
 import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
@@ -626,7 +625,6 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LUMINEON, 31, null, null)
   ],
   [Species.MANTYKE]: [
-    new SpeciesEvolution(Species.MANTINE, 1, null, new SpeciesEvolutionCondition(p => !!p.scene.getParty().find(p => p.species.speciesId === Species.REMORAID)), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.MANTINE, 32, null, new SpeciesEvolutionCondition(p => !!p.scene.gameData.dexData[Species.REMORAID].caughtAttr), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.SNOVER]: [
@@ -1387,15 +1385,15 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.HELIOLISK, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.CHARJABUG]: [
-    new SpeciesEvolution(Species.VIKAVOLT, 1, EvolutionItem.THUNDER_STONE, null)
+    new SpeciesEvolution(Species.VIKAVOLT, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.CRABRAWLER]: [
-    new SpeciesEvolution(Species.CRABOMINABLE, 1, EvolutionItem.ICE_STONE, null)
+    new SpeciesEvolution(Species.CRABOMINABLE, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.ROCKRUFF]: [
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.scene.getSpeciesFormIndex(p.species) === 1), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), null)
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY) && (p.formIndex === 0)), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition(p =>  p.formIndex === 1), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT) && (p.formIndex === 0)), null)
   ],
   [Species.STEENEE]: [
     new SpeciesEvolution(Species.TSAREENA, 28, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.STOMP).length > 0), SpeciesWildEvolutionDelay.LONG)
@@ -1422,7 +1420,15 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(Species.POLTEAGEIST, 'antique', 'antique', 1, EvolutionItem.CHIPPED_POT, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.MILCERY]: [
-    new SpeciesEvolution(Species.ALCREMIE, 1, EvolutionItem.STRAWBERRY_SWEET, null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'vanilla-cream', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.TOWN || p.scene.arena.biomeType === Biome.PLAINS || p.scene.arena.biomeType === Biome.GRASS || p.scene.arena.biomeType === Biome.TALL_GRASS || p.scene.arena.biomeType === Biome.METROPOLIS), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'ruby-cream', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.BADLANDS || p.scene.arena.biomeType === Biome.VOLCANO || p.scene.arena.biomeType === Biome.GRAVEYARD || p.scene.arena.biomeType === Biome.FACTORY || p.scene.arena.biomeType === Biome.SLUM), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'matcha-cream', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.FOREST || p.scene.arena.biomeType === Biome.SWAMP || p.scene.arena.biomeType === Biome.MEADOW || p.scene.arena.biomeType === Biome.JUNGLE), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'mint-cream', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.SEA || p.scene.arena.biomeType === Biome.BEACH || p.scene.arena.biomeType === Biome.LAKE || p.scene.arena.biomeType === Biome.SEABED), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'lemon-cream', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.DESERT || p.scene.arena.biomeType === Biome.POWER_PLANT || p.scene.arena.biomeType === Biome.DOJO || p.scene.arena.biomeType === Biome.RUINS || p.scene.arena.biomeType === Biome.CONSTRUCTION_SITE), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'salted-cream', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.MOUNTAIN || p.scene.arena.biomeType === Biome.CAVE || p.scene.arena.biomeType === Biome.ICE_CAVE || p.scene.arena.biomeType === Biome.FAIRY_CAVE || p.scene.arena.biomeType === Biome.SNOWY_FOREST), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'ruby-swirl', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.WASTELAND || p.scene.arena.biomeType === Biome.LABORATORY), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'caramel-swirl', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.TEMPLE || p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ALCREMIE, '', 'rainbow-swirl', 1, EvolutionItem.STRAWBERRY_SWEET, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.ABYSS || p.scene.arena.biomeType === Biome.SPACE || p.scene.arena.biomeType === Biome.END), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.DURALUDON]: [
     new SpeciesFormEvolution(Species.ARCHALUDON, '', '', 1, EvolutionItem.METAL_ALLOY, null, SpeciesWildEvolutionDelay.VERY_LONG)

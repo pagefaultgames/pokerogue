@@ -19,11 +19,13 @@ export enum TextStyle {
   SUMMARY_PINK,
   SUMMARY_GOLD,
   SUMMARY_GRAY,
+  SUMMARY_GREEN,
   MONEY,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
   TOOLTIP_TITLE,
-  TOOLTIP_CONTENT
+  TOOLTIP_CONTENT,
+  MOVE_INFO_CONTENT
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
@@ -82,6 +84,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.SUMMARY_PINK:
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.SUMMARY_GRAY:
+    case TextStyle.SUMMARY_GREEN:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
     case TextStyle.MESSAGE:
@@ -103,6 +106,10 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.TOOLTIP_CONTENT:
       styleOptions.fontSize = '64px';
       shadowSize = 4;
+      break;
+    case TextStyle.MOVE_INFO_CONTENT:
+      styleOptions.fontSize = '56px';
+      shadowSize = 3;
       break;
   }
 
@@ -128,6 +135,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.MESSAGE:
       return !shadow ? '#f8f8f8' : '#6b5a73';
     case TextStyle.WINDOW:
+    case TextStyle.MOVE_INFO_CONTENT:
     case TextStyle.TOOLTIP_CONTENT:
       if (uiTheme)
         return !shadow ? '#484848' : '#d0d0c8';
@@ -160,6 +168,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? '#e8e8a8' : '#a0a060';
     case TextStyle.SUMMARY_GRAY:
       return !shadow ? '#a0a0a0' : '#636363';
+    case TextStyle.SUMMARY_GREEN:
+      return !shadow ? '#78c850' : '#306850';
     case TextStyle.SETTINGS_LABEL:
       return !shadow ? '#f8b050' : '#c07800';
     case TextStyle.SETTINGS_SELECTED:
