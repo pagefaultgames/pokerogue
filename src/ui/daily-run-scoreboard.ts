@@ -30,11 +30,23 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   private pageCount: integer;
   private page: integer;
   private category: ScoreboardCategory;
+  
+  private _isUpdating: boolean;
 
   constructor(scene: BattleScene, x: number, y: number) {
     super(scene, x, y);
 
+    this._isUpdating = false;
     this.setup();
+  }
+
+  set isUpdating(value) {
+    this._isUpdating = value;
+    this.setButtonsState(!value);
+  }
+
+  get isUpdating() {
+    return this._isUpdating;
   }
 
   setup() {
@@ -141,6 +153,11 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   }
 
   update(category: ScoreboardCategory = this.category, page: integer = this.page) {
+    if (this.isUpdating) {
+      return;
+    }
+
+    this.isUpdating = true;
     this.rankingsContainer.removeAll(true);
 
     this.loadingLabel.setText(i18next.t('menu:loading'));
@@ -150,7 +167,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       this.page = page = 1;
 
     Utils.executeIf(category !== this.category || this.pageCount === undefined,
-      () =>  Utils.apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
+      () => Utils.apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
     ).then(() => {
       Utils.apiFetch(`daily/rankings?category=${category}&page=${page}`)
         .then(response => response.json())
@@ -158,16 +175,36 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
           this.page = page;
           this.category = category;
           this.titleLabel.setText(`${i18next.t(`menu:${ScoreboardCategory[category].toLowerCase()}Rankings`)}`);
-          this.prevPageButton.setAlpha(page > 1 ? 1 : 0.5);
-          this.nextPageButton.setAlpha(page < this.pageCount ? 1 : 0.5);
           this.pageNumberLabel.setText(page.toString());
           if (jsonResponse) {
             this.loadingLabel.setVisible(false);
             this.updateRankings(jsonResponse);
           } else
             this.loadingLabel.setText(i18next.t('menu:noRankings'));
+        }).finally(() => {
+          this.isUpdating = false;
         });
-    }).catch(err => { console.error("Failed to load daily rankings:\n", err) });
+    }).catch(err => { 
+      console.error("Failed to load daily rankings:\n", err)
+    })
+  }
+
+  setButtonsState(enabled: boolean = true) {
+    const buttons = [
+      { button: this.prevPageButton, alphaValue: enabled ? (this.page > 1 ? 1 : 0.5) : 0.5 },
+      { button: this.nextPageButton, alphaValue: enabled ? (this.page < this.pageCount ? 1 : 0.5) : 0.5 },
+      { button: this.nextCategoryButton, alphaValue: enabled ? 1 : 0.5 },
+      { button: this.prevCategoryButton, alphaValue: enabled ? 1 : 0.5 }
+    ];
+
+    buttons.forEach(({ button, alphaValue }) => {
+      if (enabled) {
+        button.setInteractive();
+      } else {
+        button.disableInteractive();
+      }
+      button.setAlpha(alphaValue);
+    });
   }
 }
 
