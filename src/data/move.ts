@@ -2278,15 +2278,23 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
 /**
  * Changes the move's type to match the current terrain.
  * Has no effect if the user is not grounded.
- * @returns whether the type change was successful
+ * @extends VariableMoveTypeAttr
+ * @see {@linkcode apply}
  */
 export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
+  /**
+   * @param user {@linkcode Pokemon} using this move
+   * @param target N/A
+   * @param move N/A
+   * @param args [0] {@linkcode Utils.IntegerHolder} The move's type to be modified
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if(!user.isGrounded)
       return false;
 
     const currentTerrain = user.scene.arena.getTerrainType();
-    const type = (args[0] as Utils.IntegerHolder); // the move's type
+    const type = (args[0] as Utils.IntegerHolder);
 
     switch (currentTerrain) {
       case TerrainType.MISTY:
