@@ -1659,6 +1659,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 this.scene.gameData.gameStats.highestDamage = damage.value;
             }
             source.turnData.damageDealt += damage.value;
+            source.turnData.currDamageDealt = damage.value;
             this.battleData.hitCount++;
             const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
             this.turnData.attacksReceived.unshift(attackResult);
@@ -3381,6 +3382,7 @@ export class PokemonTurnData {
   public hitCount: integer;
   public hitsLeft: integer;
   public damageDealt: integer = 0;
+  public currDamageDealt: integer = 0;
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
 }
