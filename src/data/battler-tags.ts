@@ -1172,6 +1172,12 @@ export class IgnoreTypeImmunityTag extends BattlerTag {
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
 
+  /**
+   * 
+   * @param types {@linkcode Type[]} of the Pokemon
+   * @param moveType {@linkcode Type} of the move targetting it
+   * @returns true if Pokemon is of tag's type and is immune to the move
+   */
   ignoreImmunity(types: Type[], moveType: Type): boolean {
     return types.includes(this.immuneType)
               && getTypeDamageMultiplier(moveType, this.immuneType) == 0;

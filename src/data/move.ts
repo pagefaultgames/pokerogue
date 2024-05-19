@@ -3431,18 +3431,26 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
   }
 }
 
+/**
+ * Drops the target's immunity to types it is immune to
+ * and resets its evasiveness ie. Odor Sleuth, Miracle Eye,
+ * Foresight.
+ * 
+ * @extends AddBattlerTagAttr
+ * @see {@linkcode apply}
+ */
 export class ExposedMoveAttr extends AddBattlerTagAttr {
   constructor(tagType: BattlerTagType) {
     super(tagType, false, true);
   }
 
   /**
-   * Moves that reset the target's evasiveness and makes it vulnerable
-   * to types it is immune to.
-   * @param user Pokemon that used the move
-   * @param target The target of the move
-   * @param move Move with this attribute
-   * @param args None
+   * Resets the target's evasiveness and applies the
+   * {@linkcode IgnoreTypeImmunityTag}
+   * @param user {@linkcode Pokemon} using this move 
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
