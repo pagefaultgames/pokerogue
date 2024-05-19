@@ -14,7 +14,7 @@ import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
-import { allAbilities } from "./ability"
+import { allAbilities } from "./ability";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -117,7 +117,10 @@ export class TrappedTag extends BattlerTag {
   }
   
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.getTag(BattlerTagType.TRAPPED);
+    const isGhost = pokemon.isOfType(Type.GHOST);
+    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+
+    return !isTrapped && !isGhost;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -232,7 +235,7 @@ export class ConfusedTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nconfused!'));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
-      if (pokemon.randSeedInt(2)) {
+      if (pokemon.randSeedInt(3)) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
@@ -498,9 +501,24 @@ export class HelpingHandTag extends BattlerTag {
   }
 }
 
+/**
+ * Applies the Ingrain tag to a pokemon
+ * @extends TrappedTag
+ */
 export class IngrainTag extends TrappedTag {
   constructor(sourceId: integer) {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
+  }
+
+  /**
+   * Check if the Ingrain tag can be added to the pokemon
+   * @param pokemon {@linkcode Pokemon} The pokemon to check if the tag can be added to
+   * @returns boolean True if the tag can be added, false otherwise
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+
+    return !isTrapped;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -541,6 +559,33 @@ export class AquaRingTag extends BattlerTag {
         Math.floor(pokemon.getMaxHp() / 16), `${this.getMoveName()} restored\n${pokemon.name}\'s HP!`, true));
     
     return ret;
+  }
+}
+
+/** Tag used to allow moves that interact with {@link Moves.MINIMIZE} to function */
+export class MinimizeTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE, undefined);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isMax();
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    //If a pokemon dynamaxes they lose minimized status
+    if(pokemon.isMax()){
+      return false
+    }
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
   }
 }
 
@@ -1358,6 +1403,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
+    case BattlerTagType.MINIMIZED:
+      return new MinimizeTag();
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

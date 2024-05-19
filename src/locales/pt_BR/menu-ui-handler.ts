@@ -1,23 +1,23 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const menuUiHandler: SimpleTranslationEntries = {
-    "GAME_SETTINGS": 'Configurações',
+    "GAME_SETTINGS": "Configurações",
     "ACHIEVEMENTS": "Conquistas",
     "STATS": "Estatísticas",
     "VOUCHERS": "Vouchers",
     "EGG_LIST": "Incubadora",
-    "EGG_GACHA": "Gacha de Ovos",
-    "MANAGE_DATA": "Gerenciar Dados",
+    "EGG_GACHA": "Gacha de ovos",
+    "MANAGE_DATA": "Gerenciar dados",
     "COMMUNITY": "Comunidade",
-    "RETURN_TO_TITLE": "Voltar ao Início",
+    "SAVE_AND_QUIT": "Salvar e sair",
     "LOG_OUT": "Logout",
     "slot": "Slot {{slotNumber}}",
-    "importSession": "Importar Sessão",
+    "importSession": "Importar sessão",
     "importSlotSelect": "Selecione um slot para importar.",
-    "exportSession": "Exportar Sessão",
+    "exportSession": "Exportar sessão",
     "exportSlotSelect": "Selecione um slot para exportar.",
-    "importData": "Importar Dados",
-    "exportData": "Exportar Dados",
+    "importData": "Importar dados",
+    "exportData": "Exportar dados",
     "cancel": "Cancelar",
     "losingProgressionWarning": "Você vai perder todo o progresso desde o início da batalha. Confirmar?"
 } as const;
