@@ -373,6 +373,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         // Make the settings container visible to the user.
         this.settingsContainer.setVisible(true);
         // Reset the scroll cursor to the top of the settings container.
+        this.setCursor(0);
         this.setScrollCursor(0);
 
         // Move the settings container to the end of the UI stack to ensure it is displayed on top.
@@ -403,12 +404,6 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         }
         // Extract the type of the gamepad from the active configuration.
         const configType = activeConfig.padType;
-
-        // If a cursor object exists, destroy it to clean up previous UI states.
-        this.cursorObj?.destroy();
-        // Reset the cursor object and scroll cursor to ensure they are re-initialized correctly.
-        this.cursorObj = null;
-        this.scrollCursor = null;
 
         // Retrieve the layout settings based on the type of the gamepad.
         const layout = this.layout[configType];
