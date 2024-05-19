@@ -4,7 +4,7 @@ import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePh
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, DoubleBattleChancePreventerModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { Phase } from './phase';
@@ -861,6 +861,8 @@ export default class BattleScene extends SceneBase {
 					this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
 					playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
 					doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+					if (this.getModifiers(DoubleBattleChancePreventerModifier).length != 0)
+						doubleTrainer = false;
 				}
 				newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
 				this.field.add(newTrainer);
@@ -880,6 +882,9 @@ export default class BattleScene extends SceneBase {
 
 		if (Overrides.DOUBLE_BATTLE_OVERRIDE)
 			newDouble = true;
+
+		if (this.getModifiers(DoubleBattleChancePreventerModifier).length != 0)
+			newDouble = false;
 
 		const lastBattle = this.currentBattle;
 

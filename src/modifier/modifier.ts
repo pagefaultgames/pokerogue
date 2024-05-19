@@ -310,6 +310,30 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   }
 }
 
+export class DoubleBattleChancePreventerModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierTypes.DoubleBattleChancePreventerModifierType, battlesLeft: integer, stackCount?: integer) {
+    super(type, battlesLeft, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    if (modifier instanceof DoubleBattleChancePreventerModifier)
+      return (modifier as DoubleBattleChancePreventerModifier).battlesLeft === this.battlesLeft;
+    return false;
+  }
+
+  clone(): DoubleBattleChancePreventerModifier {
+    return new DoubleBattleChancePreventerModifier(this.type as ModifierTypes.DoubleBattleChancePreventerModifierType, this.battlesLeft, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ this.battlesLeft ];
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+}
+
 export class TempBattleStatBoosterModifier extends LapsingPersistentModifier {
   private tempBattleStat: TempBattleStat;
 

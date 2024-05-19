@@ -51,6 +51,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Doubles the chance of an encounter being a double battle for {{battleCount}} battles",
     },
+    "DoubleBattleChancePreventerModifierType": {
+      description: "Prevents double battles for {{battleCount}} battles",
+    },
     "TempBattleStatBoosterModifierType": {
       description: "Increases the {{tempBattleStatName}} of all party members by 1 stage for 5 battles",
     },
@@ -157,6 +160,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "PP_UP": { name: "PP Up" },
     "PP_MAX": { name: "PP Max" },
+
+    "REPEL": { name: "Repel" },
+    "SUPER_REPEL": { name: "Super Repel" },
+    "MAX_REPEL": { name: "Max Repel" },
 
     "LURE": { name: "Lure" },
     "SUPER_LURE": { name: "Super Lure" },
