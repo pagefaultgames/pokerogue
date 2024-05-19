@@ -3840,6 +3840,10 @@ export class SwitchPhase extends BattlePhase {
     if (this.isModal && !this.scene.getParty().filter(p => !p.isFainted() && !p.isActive(true)).length)
       return super.end();
 
+    // Check if there is any space still in field
+    if (this.isModal && this.scene.getPlayerField().filter(p => !p.isFainted() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount())
+      return super.end();
+
     // Override field index to 0 in case of double battle where 2/3 remaining party members fainted at once
     const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? this.fieldIndex : 0;
 
