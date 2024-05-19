@@ -48,6 +48,13 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 export const STARTER_FORM_OVERRIDE: integer = 0;
 // default 5 or 20 for Daily
 export const STARTING_LEVEL_OVERRIDE: integer = 0;
+/**
+ * SPECIES OVERRIDE
+ * will only apply to the first starter in your party or each enemy pokemon
+ * default is 0 to not override
+ * @example SPECIES_OVERRIDE = Species.Bulbasaur;
+ */
+export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const MOVESET_OVERRIDE: Array<Moves> = [];
@@ -58,20 +65,12 @@ export const VARIANT_OVERRIDE: Variant = 0;
  * OPPONENT / ENEMY OVERRIDES
  */
 
+export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
-
-/**
- * SPECIES OVERRIDE
- * will only apply to the first starter in your party or each enemy pokemon
- * default is 0 to not override
- * @example SPECIES_OVERRIDE = Species.Bulbasaur;
- */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
-export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 
 /**
  * MODIFIER / ITEM OVERRIDES

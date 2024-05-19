@@ -44,8 +44,8 @@ export const trainerClasses: SimpleTranslationEntries = {
     "depot_agent": "Bahnangestellter",
     "doctor": "Arzt",
     "doctor_female": "Ärztin",
-    "fishermen": "Angler",
-    "fishermen_female": "Angler", // Seems to be the same in german but exists in other languages like italian
+    "fisherman": "Angler",
+    "fisherman_female": "Angler", // Seems to be the same in german but exists in other languages like italian
     "gentleman": "Gentleman",
     "guitarist": "Gitarrist",
     "guitarist_female": "Gitarristin",
@@ -61,15 +61,15 @@ export const trainerClasses: SimpleTranslationEntries = {
     "maid": "Zofe",
     "madame": "Madam",
     "medical_team": "Mediziner",
-    "musican": "Musiker",
+    "musician": "Musiker",
     "hex_maniac": "Hexe",
     "nurse": "Pflegerin",
     "nursery_aide": "Erzieherin",
     "officer": "Polizist",
     "parasol_lady": "Schirmdame",
     "pilot": "Pilot",
-    "poké_fan": "Pokéfan",
-    "poké_fan_family": "Pokéfan-Pärchen",
+    "pokefan": "Pokéfan",
+    "pokefan_family": "Pokéfan-Pärchen",
     "preschooler": "Vorschüler",
     "preschooler_female": "Vorschülerin",
     "preschoolers": "Vorschüler",
@@ -80,8 +80,12 @@ export const trainerClasses: SimpleTranslationEntries = {
     "pokémon_rangers": "Pokémon-Ranger",
     "ranger": "Ranger",
     "restaurant_staff": "Restaurant Angestellte",
+    "rich": "Rich",
+    "rich_female": "Rich",
     "rich_boy": "Schnösel",
     "rich_couple": "Reiches Paar",
+    "rich_kid": "Rich Kid",
+    "rich_kid_female": "Rich Kid",
     "rich_kids": "Schnösel",
     "roughneck": "Raufbold",
     "scientist": "Forscher",
@@ -107,8 +111,6 @@ export const trainerClasses: SimpleTranslationEntries = {
     "worker_female": "Arbeiterin",
     "workers": "Arbeiter",
     "youngster": "Knirps"
-
-
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -217,7 +219,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "kahili": "Kahili",
     "rika": "Cay",
     "poppy": "Poppy",
-    "larry_elite": "Aoki", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "hassel": "Sinius",
     "crispin": "Matt",
     "amarys": "Erin",
@@ -225,7 +226,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "drayton": "Levy",
     "blue": "Blau",
     "red": "Rot",
-    "lance_champion": "Siegfried", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "steven": "Troy",
     "wallace": "Wassili",
     "cynthia": "Cynthia",
