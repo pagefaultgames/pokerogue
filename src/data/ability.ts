@@ -2310,7 +2310,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     // The move to replicate cannot come from the Dancer
     if (source.getBattlerIndex() !== dancer.getBattlerIndex()) {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-      if (move.getMove() instanceof AttackMove || move instanceof StatusMove) {
+      if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, target, move, true));
       }
