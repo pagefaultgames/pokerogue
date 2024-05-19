@@ -21,6 +21,7 @@ import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
 import i18next from '#app/plugins/i18n';
 import { getModifierTierTextTint } from '#app/ui/text';
+import { Biome } from '#app/data/enums/biome.js';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -386,7 +387,7 @@ export class RememberMoveModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, group?: string) {
     super(localeKey, iconImage, (type, args) => new Modifiers.RememberMoveModifier(type, (args[0] as PlayerPokemon).id, (args[1] as integer)),
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getLearnableLevelMoves().length)
+        if (!pokemon.getLearnableLevelMoves().length && !pokemon.getLearnableEggMoves().length)
           return PartyUiHandler.NoEffectMessage;
         return null;
       }, group);

@@ -1253,7 +1253,7 @@ export class GameData {
       if (!this.starterData[speciesId].eggMoves)
         this.starterData[speciesId].eggMoves = 0;
 
-      const value = Math.pow(2, eggMoveIndex);
+      const value = Math.pow(2, eggMoveIndex); 
 
       if (this.starterData[speciesId].eggMoves & value) {
         resolve(false);
@@ -1265,6 +1265,23 @@ export class GameData {
       this.scene.playSound('level_up_fanfare');
       this.scene.ui.showText(`${eggMoveIndex === 3 ? 'Rare ' : ''}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
     });
+  }
+
+  /**
+   * @returns {Moves}[] An array of every egg move the player has unlocked for a given species
+   * @param species {PokemonSpecies} species to get the egg moves of
+   */
+  getUnlockedEggMoves(species: PokemonSpecies): Moves[] {
+    const unlockedEggMoves=[];
+    const speciesId = species.getRootSpeciesId(true);
+    if (speciesEggMoves.hasOwnProperty(speciesId) && this.starterData[speciesId].eggMoves){
+      for (let eggMoveIndex = 0; eggMoveIndex < speciesEggMoves[speciesId].length; eggMoveIndex++){
+        const value = Math.pow(2, eggMoveIndex);
+        if (this.starterData[speciesId].eggMoves & value)
+          unlockedEggMoves.push(speciesEggMoves[speciesId][eggMoveIndex]);
+      }
+    }
+    return unlockedEggMoves;
   }
 
   updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {

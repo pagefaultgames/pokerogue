@@ -17,6 +17,7 @@ import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
+import { speciesEggMoves } from "#app/data/egg-moves.js";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -546,6 +547,8 @@ export default class PartyUiHandler extends MessageUiHandler {
     const learnableLevelMoves = this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER
         ? pokemon.getLearnableLevelMoves()
         : null;
+    if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) // Append egg moves to relearn options on starters
+      learnableLevelMoves.push(...pokemon.getLearnableEggMoves());
 
     const itemModifiers = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
       ? this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -617,6 +620,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.options.push(PartyOption.MOVE_1 + m);
     } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
       const learnableMoves = pokemon.getLearnableLevelMoves();
+      learnableMoves.push(...pokemon.getLearnableEggMoves())
       for (let m = 0; m < learnableMoves.length; m++)
         this.options.push(m);
     } else {
