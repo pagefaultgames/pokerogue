@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -492,8 +492,13 @@ export class PostDefendFormChangeAbAttr extends PostDefendAbAttr {
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
       const attackPriority = new Utils.IntegerHolder(move.getMove().priority);
+      applyMoveAttrs(IncrementMovePriorityAttr,attacker,null,move.getMove(),attackPriority);
       applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move.getMove(), attackPriority);
   
+      if(move.getMove().moveTarget===MoveTarget.USER) {
+        return false;
+      }
+
       if(attackPriority.value > 0 && !move.getMove().isMultiTarget()) {
         cancelled.value = true;
         return true;
@@ -2453,18 +2458,42 @@ export class RunSuccessAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Base class for checking if a Pokemon is trapped by arena trap
+ * @extends AbAttr
+ * @see {@linkcode applyCheckTrapped}
+ */
 export class CheckTrappedAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
-  
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+
+  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
+/**
+ * Determines whether a Pokemon is blocked from switching/running away
+ * because of a trapping ability or move.
+ * @extends CheckTrappedAbAttr
+ * @see {@linkcode applyCheckTrapped}
+ */
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean {
+  /**
+   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * @param pokemon The {@link Pokemon} with this {@link AbAttr}
+   * @param passive N/A
+   * @param trapped {@link Utils.BooleanHolder} indicating whether the other Pokemon is trapped or not
+   * @param otherPokemon The {@link Pokemon} that is affected by an Arena Trap ability
+   * @param args N/A
+   * @returns if enemy Pokemon is trapped or not
+   */
+  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
+    if (otherPokemon.getTypes().includes(Type.GHOST)){
+      trapped.value = false;
+      return false;
+    }
     trapped.value = true;
     return true;
   }
@@ -2978,8 +3007,8 @@ export function applyPostTerrainChangeAbAttrs(attrType: { new(...args: any[]): P
 }
 
 export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, args), args, true);
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, otherPokemon, args), args, true);
 }
 
 export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
