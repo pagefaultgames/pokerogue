@@ -17,7 +17,7 @@ import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
 import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from '../data/tms';
-import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
+import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from '../phases';
 import { BattleStat } from '../data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
@@ -2680,6 +2680,42 @@ export class PlayerPokemon extends Pokemon {
       for (let sd of starterData)
         sd.friendship = Math.max((sd.friendship || 0) + starterAmount.value, 0);
     }
+  }
+  /**
+   * Handles Revival Blessing when used by player.
+   * @returns Promise to revive a pokemon.
+   * @see {@linkcode RevivalBlessingAttr}
+   */
+  revivalBlessing(): Promise<void> {
+    return new Promise(resolve => {
+      this.scene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, this.getFieldIndex(), (slotIndex:integer, option: PartyOption) => {
+        if(slotIndex >= 0 && slotIndex<6) {
+          const pokemon = this.scene.getParty()[slotIndex];
+          if(!pokemon || !pokemon.isFainted()) 
+            resolve();
+
+          pokemon.resetTurnData();
+          pokemon.resetStatus();
+          pokemon.heal(Math.min(Math.max(Math.ceil(Math.floor(0.5 * pokemon.getMaxHp())), 1), pokemon.getMaxHp()));
+          this.scene.queueMessage(`${pokemon.name} was revived!`,0,true);
+
+          if(this.scene.currentBattle.double && this.scene.getParty().length > 1) {
+            const allyPokemon = this.getAlly();
+            if(slotIndex<=1) {
+              // Revived ally pokemon
+              this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), slotIndex, false, false, true));
+              this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
+            } else if(allyPokemon.isFainted()) {
+              // Revived party pokemon, and ally pokemon is fainted
+              this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, allyPokemon.getFieldIndex(), slotIndex, false, false, true));
+              this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
+            }
+          }
+
+        }
+        this.scene.ui.setMode(Mode.MESSAGE).then(() => resolve());
+      }, PartyUiHandler.FilterFainted)
+    })
   }
   
   getPossibleEvolution(evolution: SpeciesFormEvolution): Promise<Pokemon> {
