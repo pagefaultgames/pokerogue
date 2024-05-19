@@ -58,7 +58,8 @@ export enum MoveTarget {
   /** {@link https://bulbapedia.bulbagarden.net/wiki/Category:Entry_hazard-creating_moves Entry hazard-creating moves} */
   ENEMY_SIDE,
   BOTH_SIDES,
-  PARTY
+  PARTY,
+  CURSE
 }
 
 export enum MoveFlags {
@@ -916,6 +917,7 @@ export enum MultiHitType {
   _3,
   _3_INCR,
   _1_TO_10,
+  BEAT_UP,
 }
 
 /**
@@ -1233,6 +1235,11 @@ export class MultiHitAttr extends MoveAttr {
             hitTimes = 10;
         }
         break;
+      case MultiHitType.BEAT_UP:
+        // No status means the ally pokemon can contribute to Beat Up
+        hitTimes = user.scene.getParty().reduce((total, pokemon) => {
+          return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1)
+        }, 0);
     }
     (args[0] as Utils.IntegerHolder).value = hitTimes;
     return true;
@@ -2034,6 +2041,46 @@ export class VariablePowerAttr extends MoveAttr {
   }
 }
 
+export class LessPPMorePowerAttr extends VariablePowerAttr {
+  /**
+   * Power up moves when less PP user has
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode Utils.NumberHolder} of power
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const ppMax = move.pp;
+    let ppUsed = user.moveset.find((m) => m.moveId === move.id).ppUsed;
+    
+    let ppRemains = ppMax - ppUsed;
+    /** Reduce to 0 to avoid negative numbers if user has 1PP before attack and target has Ability.PRESSURE */
+    if(ppRemains < 0) ppRemains = 0;
+    
+    const power = args[0] as Utils.NumberHolder;
+
+    switch (ppRemains) {
+      case 0:
+        power.value = 200;
+        break;
+      case 1:
+        power.value = 80;
+        break;
+      case 2:
+        power.value = 60;
+        break;
+      case 3:
+        power.value = 50;
+        break;
+      default:
+        power.value = 40;
+        break;
+    }
+    return true;
+  }
+}
+
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -2047,6 +2094,45 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
     const power = args[0] as Utils.NumberHolder;
     power.value *= this.powerMultiplierFunc(user, target, move);
 
+    return true;
+  }
+}
+
+/**
+ * Helper function to calculate the the base power of an ally's hit when using Beat Up.
+ * @param user The Pokemon that used Beat Up.
+ * @param allyIndex The party position of the ally contributing to Beat Up.
+ * @returns The base power of the Beat Up hit.
+ */
+const beatUpFunc = (user: Pokemon, allyIndex: number): number => {
+  const party = user.scene.getParty();
+
+  for (let i = allyIndex; i < party.length; i++) {
+    const pokemon = party[i];
+
+    // The user contributes to Beat Up regardless of status condition.
+    // Allies can contribute only if they do not have a non-volatile status condition.
+    if (pokemon.id !== user.id && pokemon?.status && pokemon.status.effect !== StatusEffect.NONE) {
+      continue;
+    }
+    return (pokemon.species.getBaseStat(Stat.ATK) / 10) + 5;
+  }
+}
+
+export class BeatUpAttr extends VariablePowerAttr {
+
+  /**
+   * Gets the next party member to contribute to a Beat Up hit, and calculates the base power for it.
+   * @param user Pokemon that used the move
+   * @param _target N/A
+   * @param _move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+    const allyIndex = user.turnData.hitCount - user.turnData.hitsLeft;
+    power.value = beatUpFunc(user, allyIndex);
     return true;
   }
 }
@@ -2775,6 +2861,47 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
     }
 
     return false;
+  }
+}
+
+/**
+ * Changes the move's type to match the current terrain.
+ * Has no effect if the user is not grounded.
+ * @extends VariableMoveTypeAttr
+ * @see {@linkcode apply}
+ */
+export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
+  /**
+   * @param user {@linkcode Pokemon} using this move
+   * @param target N/A
+   * @param move N/A
+   * @param args [0] {@linkcode Utils.IntegerHolder} The move's type to be modified
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if(!user.isGrounded)
+      return false;
+
+    const currentTerrain = user.scene.arena.getTerrainType();
+    const type = (args[0] as Utils.IntegerHolder);
+
+    switch (currentTerrain) {
+      case TerrainType.MISTY:
+        type.value = Type.FAIRY;
+        break;
+      case TerrainType.ELECTRIC:
+        type.value = Type.ELECTRIC;
+        break;
+      case TerrainType.GRASSY:
+        type.value = Type.GRASS;
+        break;
+      case TerrainType.PSYCHIC:
+        type.value = Type.PSYCHIC;
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
 }
 
@@ -4375,7 +4502,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   switch (moveTarget) {
     case MoveTarget.USER:
     case MoveTarget.PARTY:
-      set = [ user];
+      set = [ user ];
       break;
     case MoveTarget.NEAR_OTHER:
     case MoveTarget.OTHER:
@@ -4410,6 +4537,9 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
     case MoveTarget.BOTH_SIDES:
       set = [ user, user.getAlly() ].concat(opponents);
       multiple = true;
+      break;
+    case MoveTarget.CURSE:
+      set = user.getTypes(true).includes(Type.GHOST) ? (opponents.concat([ user.getAlly() ])) : [ user ];
       break;
   }
 
@@ -4897,7 +5027,8 @@ export function initMoves() {
       .soundBased(),
     new StatusMove(Moves.CURSE, Type.GHOST, -1, 10, -1, 0, 2)
       .attr(CurseAttr)
-      .ignoresProtect(true),
+      .ignoresProtect(true)
+      .target(MoveTarget.CURSE),
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.CONVERSION_2, Type.NORMAL, -1, 30, -1, 0, 2)
@@ -5115,8 +5246,9 @@ export function initMoves() {
       .attr(TrapAttr, BattlerTagType.WHIRLPOOL)
       .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
     new AttackMove(Moves.BEAT_UP, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 2)
-      .makesContact(false)
-      .unimplemented(),
+      .attr(MultiHitAttr, MultiHitType.BEAT_UP)
+      .attr(BeatUpAttr)
+      .makesContact(false),
     new AttackMove(Moves.FAKE_OUT, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, 100, 3, 3)
       .attr(FlinchAttr)
       .condition(new FirstMoveCondition()),
@@ -5460,7 +5592,7 @@ export function initMoves() {
         ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
-      .unimplemented(),
+      .attr(LessPPMorePowerAttr),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
@@ -6691,14 +6823,16 @@ export function initMoves() {
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
-      .condition(failIfDampCondition),
+      .condition(failIfDampCondition)
+      .makesContact(false),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
       .partial(),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
     new AttackMove(Moves.TERRAIN_PULSE, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
-      .pulseMove()
-      .partial(),
+      .attr(TerrainPulseTypeAttr)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() !== TerrainType.NONE && user.isGrounded() ? 2 : 1)
+      .pulseMove(),
     new AttackMove(Moves.SKITTER_SMACK, Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new AttackMove(Moves.BURNING_JEALOUSY, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 5, 100, 0, 8)
@@ -7158,7 +7292,10 @@ export function initMoves() {
     new AttackMove(Moves.PSYCHIC_NOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, 0, 9)
       .soundBased()
       .partial(),
-    new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, -1, 3, 9)
+    new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
+      .attr(FlinchAttr)
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].priority > 0 )
+      //TODO: Should also apply when target move priority increased by ability ex. gale wings
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
