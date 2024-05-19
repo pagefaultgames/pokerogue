@@ -1990,26 +1990,32 @@ export class SwapStatsAttr extends MoveEffectAttr
     }
 }
 
-/**Attribute used for moves which steal the target's positive stat changes.*/
+/**Attribute used for moves which steal the target's positive stat changes.
+ * Triggers on {@linkcode MoveEffectTrigger.PRE_APPLY}, as stats need to be stolen before foe faints.
+ * PRE_APPLY is also intended to make stat changes occur before damage is calculated, but that currently does not work properly.
+ * This needs to be investigated going forward.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+*/
 export class StealPositiveStatsAttr extends MoveEffectAttr {
-  /**PRE_APPLY has stats be stolen before damage is applied, since opponent could faint, taking boosts with them;
-   * PR #1038 needed for PRE_APPLY to work properly.*/
   constructor() {
     super(false, MoveEffectTrigger.PRE_APPLY)
     }
+  /**
+   * If the opponent has any boosted stats, steals them for the user and displays a message.
+   * @param user {@linkcode Pokemon} that used the move.
+   * @param target N/A
+   * @param move {@linkcode Moves.SPECTRAL_THIEF} is the only move with this effect.
+   * @param args N/A
+   * @returns true if the opponent has stat boosts stolen.
+   * */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let StatRaised = false;
     if (!super.apply(user, target, move, args))
       return false;
-    /**Below for loop is what actually steals the foe's boosted stats.
-     * The specific loop's arguments, combined with instances of target.summonData.battleStats, gives the foe's current stat stages.
-     * This is supposed to occur before damage is calculated, but stat change phases seem to happen after damage is calculated,
-     * regardless of PRE_APPLY. This needs to be investigated and corrected going forward.*/
     for (let i = 0; i < 7; i++) {
-      /**On each stat. If a stat is boosted, said value is added to the user's stat stages...*/
       if (target.summonData.battleStats[i] > 0) {
         user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [i], target.summonData.battleStats[i]));
-        /**...Before being directly set to zero. Directly setting stats in this manner overrides Clear Body, as intended.*/
         target.summonData.battleStats[i] = 0;
         StatRaised = true;
       }
