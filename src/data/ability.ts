@@ -2282,6 +2282,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 
 /**
  * Triggers just after a move is used either by the opponent or the player
+ * @extends AbAttr
  */
 export class PostMoveUsedAbAttr extends AbAttr {
     applyPostMoveUsed(pokemon: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
@@ -2291,8 +2292,20 @@ export class PostMoveUsedAbAttr extends AbAttr {
 
 /**
  * Triggers after a dance move is used either by the opponent or the player
+ * @extends PostMoveUsedAbAttr
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
+  /**
+   * Resolves the Dancer ability by replicating the move used by the source of the dance
+   * either on the source itself or on the target of the dance
+   * @param dancer {@linkcode Pokemon} with Dancer ability
+   * @param move {@linkcode PokemonMove} Dancing move used by the source
+   * @param source {@linkcode Pokemon} that used the dancing move
+   * @param targets {@linkcode BattlerIndex}Targets of the dancing move
+   * @param args N/A
+   *
+   * @return true if the Dancer ability was resolved
+   */
   applyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
     // The move to replicate cannot come from the Dancer
     if (source.getBattlerIndex() !== dancer.getBattlerIndex()) {
@@ -2312,9 +2325,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   /**
    * Get the correct targets of Dancer ability
    *
-   * @param dancer Pokemon with Dancer ability
-   * @param source Source of the dancing move
-   * @param targets Targets of the dancing move
+   * @param dancer {@linkcode Pokemon} Pokemon with Dancer ability
+   * @param source {@linkcode Pokemon} Source of the dancing move
+   * @param targets {@linkcode BattlerIndex} Targets of the dancing move
    */
   getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]) : BattlerIndex[] {
     if (dancer.isPlayer())
