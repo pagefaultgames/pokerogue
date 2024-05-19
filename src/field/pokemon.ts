@@ -3737,7 +3737,7 @@ export class PokemonMove {
    */
   private isImprisoned(pokemon: Pokemon) {
     const opposingPokemon = pokemon.isPlayer() ? pokemon.scene.getEnemyField() as Pokemon[] : pokemon.scene.getPlayerField() as Pokemon[];
-    const imprisoningOpponents = opposingPokemon.filter(p => p.summonData.tags.some(({ tagType }) => tagType === BattlerTagType.IMPRISONING));
+    const imprisoningOpponents = opposingPokemon.filter(p => p.summonData.tags.some(({ tagType }) => tagType === BattlerTagType.IMPRISON));
     const imprisonedMoves = imprisoningOpponents.flatMap(p => p.moveset);
 
     return imprisonedMoves.some(m => m.moveId === this.moveId);
