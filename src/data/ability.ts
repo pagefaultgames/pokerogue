@@ -1323,7 +1323,14 @@ export class IgnoreOpponentEvasionAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
-
+  /**
+   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * @param pokemon N/A
+   * @param passive N/A
+   * @param cancelled N/A
+   * @param args [0] {@linkcode Utils.IntegerHolder} of BattleStat.EVA
+   * @returns if evasion level was successfully considered as 0
+   */  
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
     (args[0] as Utils.IntegerHolder).value = 0;
     return true;
