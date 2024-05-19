@@ -498,6 +498,106 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.MAGMA_BOSS_MAXIE_1]: [
+    {
+      encounter: [
+        `After defeating you I will remove all the water biomes`
+      ],
+      victory: [
+        `But why...?`
+      ]
+    }
+  ],
+  [TrainerType.MAGMA_BOSS_MAXIE_2]: [
+    {
+      encounter: [
+        `Hold it right there.`
+      ],
+      victory: [
+        `I... I lost again?`
+      ]
+    }
+  ],
+  [TrainerType.AQUA_BOSS_ARCHIE_1]: [
+    {
+      encounter: [
+        `After defeating you I will send you to water jail`
+      ],
+      victory: [
+        `But why...?`
+      ]
+    }
+  ],
+  [TrainerType.AQUA_BOSS_ARCHIE_2]: [
+    {
+      encounter: [
+        `Hold it right there.`
+      ],
+      victory: [
+        `I... I lost again?`
+      ]
+    }
+  ],
+  [TrainerType.GALACTIC_BOSS_CYRUS_1]: [
+    {
+      encounter: [
+        `I will make you regret paying heed to your heart`
+      ],
+      victory: [
+        `Interesting. And quite curious.`
+      ]
+    }
+  ],
+  [TrainerType.GALACTIC_BOSS_CYRUS_2]: [
+    {
+      encounter: [
+        `I'm going to completely crush you!`
+      ],
+      victory: [
+        `How come I didn't get a 680BST legendary?`
+      ]
+    }
+  ],
+  [TrainerType.PLASMA_BOSS_GHETSIS_1]: [
+    {
+      encounter: [
+        `[Ominous latin chanting in the background]`
+      ],
+      victory: [
+        `Don't call me Dennis!`
+      ]
+    }
+  ],
+  [TrainerType.PLASMA_BOSS_GHETSIS_2]: [
+    {
+      encounter: [
+        `Lose and go down in flames!`
+      ],
+      victory: [
+        `I would have won if I rolled DNA splicers!`
+      ]
+    }
+  ],
+  [TrainerType.FLARE_BOSS_LYSANDRE_1]: [
+    {
+      encounter: [
+        `I copied my team from Cyrus`
+      ],
+      victory: [
+        `Maybe I should have copied someone else`
+      ]
+    }
+  ],
+  [TrainerType.FLARE_BOSS_LYSANDRE_2]: [
+    {
+      encounter: [
+        `Enough of this.`
+      ],
+      victory: [
+        `Whaugh!`
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       `My expertise on Rock-type Pokémon will take you down! Come on!`,

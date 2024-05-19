@@ -10,7 +10,6 @@ import { GameMode } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
-import { MoneyAchv } from "./system/achv";
 
 export enum BattleType {
     WILD,
