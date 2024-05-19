@@ -329,7 +329,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.cursorObj.setPosition(6, -60);
       ui.showText('Lock item rarities on reroll (affects reroll cost).');
     } else if (cursor === 1 && this.rowCursor === -1){
-      // this.cursorObj.setPosition((this.scene.game.canvas.width / 6) -50, -60);
       this.cursorObj.setPositionRelative(this.IvScannerToggleContainer, -10, 4);
       ui.showText('Toggle whether to receive the IV Scanner prompt at battle start.');
     }
@@ -400,7 +399,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateToggleIvScannerText(): void {
-    const textStyle = !this.scene.IvScannerEnabled ? TextStyle.SUMMARY_RED : TextStyle.PARTY;
+    const textStyle = !this.scene.IvScannerEnabled ? TextStyle.SUMMARY_GRAY : TextStyle.PARTY;
     this.IvScannerToggleText.setColor(this.getTextColor(textStyle));
     this.IvScannerToggleText.setShadowColor(this.getTextColor(textStyle, true));
   }
