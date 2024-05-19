@@ -867,8 +867,10 @@ export class GameData {
         const ret: PersistentModifierData[] = [];
         if (v === null)
           v = [];
-        for (let md of v)
-          ret.push(new PersistentModifierData(md, player));
+        for (let md of v) {
+          if(md?.className !== 'ExpBalanceModifier') // Temporarily disable EXP Balance until it gets reworked
+            ret.push(new PersistentModifierData(md, player));
+        }
         return ret;
       }
 
