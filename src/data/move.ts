@@ -1211,10 +1211,10 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 /**
  * Causes the target to eat a berry.
- * @param {Pokemon} user Pokemon that used the move
- * @param {Pokemon} target Pokemon that is eating a berry
- * @param {Move} move Move with this attribute
- * @param {any[]} args N/A
+ * @param user {@linkcode Pokemon} Pokemon that used the move
+ * @param target {@linkcode Pokemon} Pokemon that will eat a berry
+ * @param move {@linkcode Move} The move being used
+ * @param args Unused
  * @returns {boolean} true if the function succeeds
  */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1261,8 +1261,8 @@ export class StealEatBerryAttr extends EatBerryAttr {
  * User steals a random berry from the target and then eats it.
  * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
  * @param {Pokemon} target Pokemon that will have its berry stolen
- * @param {Move} move Move with this attribute
- * @param {any[]} args N/A
+ * @param {Move} move Move being used
+ * @param {any[]} args Unused
  * @returns {boolean} true if the function succeeds
  */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6067,11 +6067,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8)
-      .attr(StatChangeAttr, BattleStat.DEF, 2)
-      .attr(EatBerryAttr)
-      .condition((user, target, move) => target.scene.findModifiers(m => m instanceof BerryModifier
-        && (m as BerryModifier).pokemonId === target.id, target.isPlayer()).length > 0 ) // move fails if the target has no berries
-      .target(MoveTarget.USER),
+      .unimplemented(),
     new SelfStatusMove(Moves.NO_RETREAT, Type.FIGHTING, -1, 5, 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, true, 1),
