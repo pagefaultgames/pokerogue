@@ -22,6 +22,7 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
+import { PokeballType, getPokeballName } from "./pokeball";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2276,6 +2277,33 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+/** 
+ * Grabs the last failed Pokeball used 
+ * @extends PostTurnAbAttr 
+ * @see {@linkcode applyPostTurn} */
+export class FetchBallAbAttr extends PostTurnAbAttr {
+  constructor() {
+    super();
+  }
+  /** 
+   * Adds the last used Pokeball back into the player's inventory 
+   * @param pokemon {@linkcode Pokemon} with this ability 
+   * @param passive N/A 
+   * @param args N/A 
+   * @returns true if player has used a pokeball and this pokemon is owned by the player 
+   */
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    let lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
+    if(lastUsed != null && pokemon.isPlayer) {
+      pokemon.scene.pokeballCounts[lastUsed]++;
+      pokemon.scene.currentBattle.lastUsedPokeball = null;
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` found a\n${getPokeballName(lastUsed)}!`));
+      return true;
+    }
+    return false;
+  }
+}
+
 export class PostBiomeChangeAbAttr extends AbAttr { }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
@@ -2643,7 +2671,6 @@ export class SuppressFieldAbilitiesAbAttr extends AbAttr {
     return false;
   }
 }
-
 
 export class AlwaysHitAbAttr extends AbAttr { }
 
@@ -3627,7 +3654,8 @@ export function initAbilities() {
     new Ability(Abilities.LIBERO, 8)
       .unimplemented(),
     new Ability(Abilities.BALL_FETCH, 8)
-      .unimplemented(),
+      .attr(FetchBallAbAttr)
+      .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
     new Ability(Abilities.COTTON_DOWN, 8)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.SPD, -1, false, true)
       .bypassFaint(),
