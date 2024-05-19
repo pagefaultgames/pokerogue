@@ -1919,11 +1919,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // The value is guaranteed to be less than the value limit so no need to check, simple call suffices
     this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId));
 
+    this.setSpecies(species);
     // set cursor position for selected pokemon
     const cursorObj = this.starterCursorObjs[this.starterCursors.length];
     // set's the cursor off screen
     cursorObj.setPosition(-100, -100); 
 
+    
     // Generate the nature, ability, and moveset for the pokemon
     // TODO: Add support for more than the default ability, natures, etc.
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
@@ -2004,6 +2006,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))){
         // < 6 pokemon and the value is less than the limit check
         if (this.starterGens.length < 6 && this.value <= this.getValueLimit()) {
+          this.setSpecies(species);
+
           this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
           this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
           this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
@@ -2015,6 +2019,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterAbilityIndexes.push(this.abilityCursor);
           this.starterNatures.push(this.natureCursor as unknown as Nature);
           this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+          console.log(this.starterMovesets);
 
           this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
           this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
@@ -2068,6 +2073,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterSelectCallback = null;
           originalStarterSelectCallback(new Array(this.starterGens.length).fill(0).map(function (_, i) {
             const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
+            console.log(thisObj.starterMovesets[i]);
             return {
               species: starterSpecies,
               dexAttr: thisObj.starterAttr[i],
