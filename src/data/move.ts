@@ -2041,6 +2041,46 @@ export class VariablePowerAttr extends MoveAttr {
   }
 }
 
+export class LessPPMorePowerAttr extends VariablePowerAttr {
+  /**
+   * Power up moves when less PP user has
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode Utils.NumberHolder} of power
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const ppMax = move.pp;
+    let ppUsed = user.moveset.find((m) => m.moveId === move.id).ppUsed;
+    
+    let ppRemains = ppMax - ppUsed;
+    /** Reduce to 0 to avoid negative numbers if user has 1PP before attack and target has Ability.PRESSURE */
+    if(ppRemains < 0) ppRemains = 0;
+    
+    const power = args[0] as Utils.NumberHolder;
+
+    switch (ppRemains) {
+      case 0:
+        power.value = 200;
+        break;
+      case 1:
+        power.value = 80;
+        break;
+      case 2:
+        power.value = 60;
+        break;
+      case 3:
+        power.value = 50;
+        break;
+      default:
+        power.value = 40;
+        break;
+    }
+    return true;
+  }
+}
+
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -5552,7 +5592,7 @@ export function initMoves() {
         ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
-      .unimplemented(),
+      .attr(LessPPMorePowerAttr),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
