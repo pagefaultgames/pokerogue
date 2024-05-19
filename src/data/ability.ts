@@ -2263,20 +2263,11 @@ export class CheckTrappedAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
-  /**
-   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
-   * @param pokemon N/A
-   * @param passive N/A
-   * @param trapped N/A
-   * @param otherPokemon N/A
-   * @param args N/A
-   * @returns if enemy Pokemon is trapped or not
-   */
+
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
-
 
 /**
  * Determines whether a Pokemon is blocked from switching/running away
