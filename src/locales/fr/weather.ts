@@ -39,6 +39,6 @@ export const weather: SimpleTranslationEntries = {
     "harshSunClearMessage": "Les rayons du soleil s’affaiblissent !",
 
     "strongWindsStartMessage": "Un vent mystérieux se lève !",
-    "strongWindsLapseMessage": "Le vent mystérieux violemment !",
+    "strongWindsLapseMessage": "Le vent mystérieux souffle violemment !",
     "strongWindsClearMessage": "Le vent mystérieux s’est dissipé…"
 }

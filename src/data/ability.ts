@@ -22,6 +22,7 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
+import { PokeballType, getPokeballName } from "./pokeball";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -1822,6 +1823,36 @@ export class MultCritAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Guarantees a critical hit according to the given condition, except if target prevents critical hits. ie. Merciless
+ * @extends AbAttr
+ * @see {@linkcode apply}
+ */
+export class ConditionalCritAbAttr extends AbAttr {
+  private condition: PokemonAttackCondition;
+
+  constructor(condition: PokemonAttackCondition, checkUser?: Boolean) {
+    super();
+
+    this.condition = condition;
+  }
+
+  /**
+   * @param pokemon {@linkcode Pokemon} user.
+   * @param args [0] {@linkcode Utils.BooleanHolder} If true critical hit is guaranteed. 
+   *             [1] {@linkcode Pokemon} Target.
+   *             [2] {@linkcode Move} used by ability user.
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const target = (args[1] as Pokemon);
+    const move = (args[2] as Move);
+    if(!this.condition(pokemon,target,move))
+      return false;
+
+    (args[0] as Utils.BooleanHolder).value = true;
+    return true;
+  }
+}
 
 export class BlockNonDirectDamageAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -2246,6 +2277,33 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+/** 
+ * Grabs the last failed Pokeball used 
+ * @extends PostTurnAbAttr 
+ * @see {@linkcode applyPostTurn} */
+export class FetchBallAbAttr extends PostTurnAbAttr {
+  constructor() {
+    super();
+  }
+  /** 
+   * Adds the last used Pokeball back into the player's inventory 
+   * @param pokemon {@linkcode Pokemon} with this ability 
+   * @param passive N/A 
+   * @param args N/A 
+   * @returns true if player has used a pokeball and this pokemon is owned by the player 
+   */
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    let lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
+    if(lastUsed != null && pokemon.isPlayer) {
+      pokemon.scene.pokeballCounts[lastUsed]++;
+      pokemon.scene.currentBattle.lastUsedPokeball = null;
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` found a\n${getPokeballName(lastUsed)}!`));
+      return true;
+    }
+    return false;
+  }
+}
+
 export class PostBiomeChangeAbAttr extends AbAttr { }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
@@ -2338,18 +2396,42 @@ export class RunSuccessAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Base class for checking if a Pokemon is trapped by arena trap
+ * @extends AbAttr
+ * @see {@linkcode applyCheckTrapped}
+ */
 export class CheckTrappedAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
-  
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+
+  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
+/**
+ * Determines whether a Pokemon is blocked from switching/running away
+ * because of a trapping ability or move.
+ * @extends CheckTrappedAbAttr
+ * @see {@linkcode applyCheckTrapped}
+ */
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean {
+  /**
+   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * @param pokemon The {@link Pokemon} with this {@link AbAttr}
+   * @param passive N/A
+   * @param trapped {@link Utils.BooleanHolder} indicating whether the other Pokemon is trapped or not
+   * @param otherPokemon The {@link Pokemon} that is affected by an Arena Trap ability
+   * @param args N/A
+   * @returns if enemy Pokemon is trapped or not
+   */
+  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
+    if (otherPokemon.getTypes().includes(Type.GHOST)){
+      trapped.value = false;
+      return false;
+    }
     trapped.value = true;
     return true;
   }
@@ -2614,7 +2696,6 @@ export class SuppressFieldAbilitiesAbAttr extends AbAttr {
   }
 }
 
-
 export class AlwaysHitAbAttr extends AbAttr { }
 
 export class UncopiableAbilityAbAttr extends AbAttr {
@@ -2859,8 +2940,8 @@ export function applyPostTerrainChangeAbAttrs(attrType: { new(...args: any[]): P
 }
 
 export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, args), args, true);
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, otherPokemon, args), args, true);
 }
 
 export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
@@ -3442,7 +3523,7 @@ export function initAbilities() {
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
-      .unimplemented(),
+      .attr(ConditionalCritAbAttr, (user, target, move) => target.status?.effect === StatusEffect.TOXIC || target.status?.effect === StatusEffect.POISON),
     new Ability(Abilities.SHIELDS_DOWN, 7)
       .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
@@ -3597,7 +3678,8 @@ export function initAbilities() {
     new Ability(Abilities.LIBERO, 8)
       .unimplemented(),
     new Ability(Abilities.BALL_FETCH, 8)
-      .unimplemented(),
+      .attr(FetchBallAbAttr)
+      .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
     new Ability(Abilities.COTTON_DOWN, 8)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.SPD, -1, false, true)
       .bypassFaint(),
