@@ -1166,6 +1166,42 @@ export class StrengthSapHealAttr extends MoveEffectAttr {
     return true;
   }
 }
+/**
+ * Attribute used for moves that change priority in a turn given a condition,
+ * e.g. Grassy Glide
+ * Called when move order is calculated in {@linkcode TurnStartPhase}.
+ * @extends MoveAttr
+ * @see {@linkcode apply}
+ */
+export class IncrementMovePriorityAttr extends MoveAttr {
+  /** The condition for a move's priority being incremented */
+  private moveIncrementFunc: (pokemon: Pokemon, target:Pokemon, move: Move) => boolean;
+  /** The amount to increment priority by, if condition passes. */
+  private increaseAmount: integer;
+
+  constructor(moveIncrementFunc: (pokemon: Pokemon, target:Pokemon, move: Move) => boolean, increaseAmount = 1) {
+    super();
+
+    this.moveIncrementFunc = moveIncrementFunc;
+    this.increaseAmount = increaseAmount;
+  }
+
+  /**
+   * Increments move priority by set amount if condition passes
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode Utils.IntegerHolder} for move priority.
+   * @returns true if function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!this.moveIncrementFunc(user, target, move))
+      return false;
+      
+    (args[0] as Utils.IntegerHolder).value += this.increaseAmount;
+    return true;
+  }
+}
 
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
@@ -6693,7 +6729,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
       .condition(failIfDampCondition),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
-      .partial(),
+      .attr(IncrementMovePriorityAttr,(user,target,move) =>user.scene.arena.getTerrainType()===TerrainType.GRASSY&&user.isGrounded()),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
     new AttackMove(Moves.TERRAIN_PULSE, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
