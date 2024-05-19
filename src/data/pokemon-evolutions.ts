@@ -1618,15 +1618,15 @@ interface PokemonPrevolutions {
 
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
-{
-  const megaFormKeys = [ SpeciesFormKey.MEGA, '', SpeciesFormKey.MEGA_X, '', SpeciesFormKey.MEGA_Y ].map(sfk => sfk as string);
-  const prevolutionKeys = Object.keys(pokemonEvolutions);
-  prevolutionKeys.forEach(pk => {
-    const evolutions = pokemonEvolutions[pk];
-    for (let ev of evolutions) {
-      if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1)
-        continue;
-      pokemonPrevolutions[ev.speciesId] = parseInt(pk) as Species;
-    }
-  });
+export function initPokemonPrevolutions(): void {
+    const megaFormKeys = [ SpeciesFormKey.MEGA, '', SpeciesFormKey.MEGA_X, '', SpeciesFormKey.MEGA_Y ].map(sfk => sfk as string);
+    const prevolutionKeys = Object.keys(pokemonEvolutions);
+    prevolutionKeys.forEach(pk => {
+      const evolutions = pokemonEvolutions[pk];
+      for (let ev of evolutions) {
+        if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1)
+          continue;
+        pokemonPrevolutions[ev.speciesId] = parseInt(pk) as Species;
+      }
+    });
 }

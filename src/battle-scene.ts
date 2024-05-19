@@ -192,11 +192,6 @@ export default class BattleScene extends SceneBase {
 
 	constructor() {
 		super('battle');
-
-		initSpecies();
-		initMoves();
-		initAbilities();
-		
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;

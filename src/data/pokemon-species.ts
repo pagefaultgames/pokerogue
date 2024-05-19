@@ -3751,23 +3751,3 @@ export const starterPassiveAbilities = {
   [Species.PALDEA_WOOPER]: Abilities.THICK_FAT,
   [Species.BLOODMOON_URSALUNA]: Abilities.BERSERK
 };
-
-// TODO: Remove
-{
-  //setTimeout(() => {
-    /*for (let tc of Object.keys(trainerConfigs)) {
-      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(trainerConfigs[tc].speciesFilter).map(s => {
-        while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
-				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
-        return s;
-      }))].map(s => s.name));
-    }
-
-    const speciesFilter = (species: PokemonSpecies) => !species.legendary && !species.pseudoLegendary && !species.mythical && species.baseTotal >= 540;
-    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(speciesFilter).map(s => {
-      while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
-        s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
-      return s;
-    }))].map(s => s.name));*/
-  //}, 1000);
-}

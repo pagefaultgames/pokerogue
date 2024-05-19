@@ -225,7 +225,7 @@ export default class GameStatsUiHandler extends UiHandler {
   }
 }
 
-(function () {
+export function initStatsKeys() {
   const statKeys = Object.keys(displayStats);
 
   for (let key of statKeys) {
@@ -251,4 +251,4 @@ export default class GameStatsUiHandler extends UiHandler {
       (displayStats[key] as DisplayStat).label = Utils.toReadableString(`${splittableKey[0].toUpperCase()}${splittableKey.slice(1)}`);
     }
   }
-})();
+}

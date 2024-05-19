@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
 				}
 			},
 			threads: false,
+			trace: true,
 			environmentOptions: {
 				jsdom: {
 					resources: 'usable',

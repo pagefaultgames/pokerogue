@@ -5,7 +5,7 @@ import beautify from 'json-beautify';
 import { TrainerType } from "./enums/trainer-type";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Biome } from "./enums/biome";
-import { SpeciesFormEvolution } from "./pokemon-evolutions";
+import {initPokemonPrevolutions, pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1)
@@ -2011,7 +2011,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   }
 };
 
-{
+export function initBiomes() {
   const pokemonBiomes = [
     [ Species.BULBASAUR, Type.GRASS, Type.POISON, [
         [ Biome.GRASS, BiomePoolTier.RARE ]
@@ -7676,123 +7676,121 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   traverseBiome(Biome.TOWN, 0);
   biomeDepths[Biome.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: integer, value: integer) => Math.max(max, value), 0) + 1, 1 ];
 
-  import('./pokemon-evolutions').then(pe => {
-    const pokemonEvolutions = pe.pokemonEvolutions;
-    for (let biome of Utils.getEnumValues(Biome)) {
-      biomePokemonPools[biome] = {};
-      biomeTrainerPools[biome] = {};
+  for (let biome of Utils.getEnumValues(Biome)) {
+    biomePokemonPools[biome] = {};
+    biomeTrainerPools[biome] = {};
 
-      for (let tier of Utils.getEnumValues(BiomePoolTier)) {
-        biomePokemonPools[biome][tier] = {};
-        biomeTrainerPools[biome][tier] = [];
+    for (let tier of Utils.getEnumValues(BiomePoolTier)) {
+      biomePokemonPools[biome][tier] = {};
+      biomeTrainerPools[biome][tier] = [];
 
-        for (let tod of Utils.getEnumValues(TimeOfDay))
-          biomePokemonPools[biome][tier][tod] = [];
-      }
+      for (let tod of Utils.getEnumValues(TimeOfDay))
+        biomePokemonPools[biome][tier][tod] = [];
     }
+  }
 
-    for (let pb of pokemonBiomes) {
-      const speciesId = pb[0] as Species;
-      const biomeEntries = pb[3] as (Biome | BiomePoolTier)[][];
+  for (let pb of pokemonBiomes) {
+    const speciesId = pb[0] as Species;
+    const biomeEntries = pb[3] as (Biome | BiomePoolTier)[][];
 
-      const speciesEvolutions: SpeciesFormEvolution[] = pokemonEvolutions.hasOwnProperty(speciesId)
-        ? pokemonEvolutions[speciesId]
-        : [];
-      
-      if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length)
-        uncatchableSpecies.push(speciesId);
+    if (!pokemonEvolutions) initPokemonPrevolutions();
 
-      for (let b of biomeEntries) {
-        const biome = b[0];
-        const tier = b[1];
-        const timesOfDay = b.length > 2
-          ? Array.isArray(b[2])
-            ? b[2]
-            : [ b[2] ]
-          : [ TimeOfDay.ALL ];
+    const speciesEvolutions: SpeciesFormEvolution[] = pokemonEvolutions.hasOwnProperty(speciesId)
+      ? pokemonEvolutions[speciesId]
+      : [];
 
-        for (let tod of timesOfDay) {
-          if (!biomePokemonPools.hasOwnProperty(biome) || !biomePokemonPools[biome].hasOwnProperty(tier) || !biomePokemonPools[biome][tier].hasOwnProperty(tod))
-            continue;
+    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length)
+      uncatchableSpecies.push(speciesId);
 
-          const biomeTierPool = biomePokemonPools[biome][tier][tod];
+    for (let b of biomeEntries) {
+      const biome = b[0];
+      const tier = b[1];
+      const timesOfDay = b.length > 2
+        ? Array.isArray(b[2])
+          ? b[2]
+          : [ b[2] ]
+        : [ TimeOfDay.ALL ];
 
-          let treeIndex = -1;
-          let arrayIndex = 0;
-
-          for (let t = 0; t < biomeTierPool.length; t++) {
-            const existingSpeciesIds = biomeTierPool[t] as unknown as Species[];
-            for (let es = 0; es < existingSpeciesIds.length; es++) {
-              const existingSpeciesId = existingSpeciesIds[es];
-              if (pokemonEvolutions.hasOwnProperty(existingSpeciesId) && (pokemonEvolutions[existingSpeciesId] as SpeciesFormEvolution[]).find(ese => ese.speciesId === speciesId)) {
-                treeIndex = t;
-                arrayIndex = es + 1;
-                break;
-              } else if (speciesEvolutions && speciesEvolutions.find(se => se.speciesId === existingSpeciesId)) {
-                treeIndex = t;
-                arrayIndex = es;
-                break;
-              }
-            }
-            if (treeIndex > -1)
-              break;
-          }
-
-          if (treeIndex > -1)
-            (biomeTierPool[treeIndex] as unknown as Species[]).splice(arrayIndex, 0, speciesId);
-          else
-            (biomeTierPool as unknown as Species[][]).push([ speciesId ]);
-        }
-      }
-    }
-
-    for (let b of Object.keys(biomePokemonPools)) {
-      for (let t of Object.keys(biomePokemonPools[b])) {
-        const tier = parseInt(t) as BiomePoolTier;
-        for (let tod of Object.keys(biomePokemonPools[b][t])) {
-          const biomeTierTimePool = biomePokemonPools[b][t][tod];
-          for (let e = 0; e < biomeTierTimePool.length; e++) {
-            const entry = biomeTierTimePool[e];
-            if (entry.length === 1)
-              biomeTierTimePool[e] = entry[0];
-            else {
-              const newEntry = {
-                1: [ entry[0] ]
-              };
-              for (let s = 1; s < entry.length; s++) {
-                const speciesId = entry[s];
-                const prevolution = entry.map(s => pokemonEvolutions[s]).flat().find(e => e && e.speciesId === speciesId);
-                const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
-                if (!newEntry.hasOwnProperty(level))
-                  newEntry[level] = [ speciesId ];
-                else
-                  newEntry[level].push(speciesId);
-              }
-              biomeTierTimePool[e] = newEntry;
-            }
-          }
-        }
-      }
-    }
-
-    for (let tb of trainerBiomes) {
-      const trainerType = tb[0] as TrainerType;
-      const biomeEntries = tb[1] as BiomePoolTier[][];
-
-      for (let b of biomeEntries) {
-        const biome = b[0];
-        const tier = b[1];
-
-        if (!biomeTrainerPools.hasOwnProperty(biome) || !biomeTrainerPools[biome].hasOwnProperty(tier))
+      for (let tod of timesOfDay) {
+        if (!biomePokemonPools.hasOwnProperty(biome) || !biomePokemonPools[biome].hasOwnProperty(tier) || !biomePokemonPools[biome][tier].hasOwnProperty(tod))
           continue;
 
-        const biomeTierPool = biomeTrainerPools[biome][tier];
-        biomeTierPool.push(trainerType);
+        const biomeTierPool = biomePokemonPools[biome][tier][tod];
+
+        let treeIndex = -1;
+        let arrayIndex = 0;
+
+        for (let t = 0; t < biomeTierPool.length; t++) {
+          const existingSpeciesIds = biomeTierPool[t] as unknown as Species[];
+          for (let es = 0; es < existingSpeciesIds.length; es++) {
+            const existingSpeciesId = existingSpeciesIds[es];
+            if (pokemonEvolutions.hasOwnProperty(existingSpeciesId) && (pokemonEvolutions[existingSpeciesId] as SpeciesFormEvolution[]).find(ese => ese.speciesId === speciesId)) {
+              treeIndex = t;
+              arrayIndex = es + 1;
+              break;
+            } else if (speciesEvolutions && speciesEvolutions.find(se => se.speciesId === existingSpeciesId)) {
+              treeIndex = t;
+              arrayIndex = es;
+              break;
+            }
+          }
+          if (treeIndex > -1)
+            break;
+        }
+
+        if (treeIndex > -1)
+          (biomeTierPool[treeIndex] as unknown as Species[]).splice(arrayIndex, 0, speciesId);
+        else
+          (biomeTierPool as unknown as Species[][]).push([ speciesId ]);
       }
     }
+  }
 
-    //outputPools();
-  });
+  for (let b of Object.keys(biomePokemonPools)) {
+    for (let t of Object.keys(biomePokemonPools[b])) {
+      const tier = parseInt(t) as BiomePoolTier;
+      for (let tod of Object.keys(biomePokemonPools[b][t])) {
+        const biomeTierTimePool = biomePokemonPools[b][t][tod];
+        for (let e = 0; e < biomeTierTimePool.length; e++) {
+          const entry = biomeTierTimePool[e];
+          if (entry.length === 1)
+            biomeTierTimePool[e] = entry[0];
+          else {
+            const newEntry = {
+              1: [ entry[0] ]
+            };
+            for (let s = 1; s < entry.length; s++) {
+              const speciesId = entry[s];
+              const prevolution = entry.map(s => pokemonEvolutions[s]).flat().find(e => e && e.speciesId === speciesId);
+              const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
+              if (!newEntry.hasOwnProperty(level))
+                newEntry[level] = [ speciesId ];
+              else
+                newEntry[level].push(speciesId);
+            }
+            biomeTierTimePool[e] = newEntry;
+          }
+        }
+      }
+    }
+  }
+
+  for (let tb of trainerBiomes) {
+    const trainerType = tb[0] as TrainerType;
+    const biomeEntries = tb[1] as BiomePoolTier[][];
+
+    for (let b of biomeEntries) {
+      const biome = b[0];
+      const tier = b[1];
+
+      if (!biomeTrainerPools.hasOwnProperty(biome) || !biomeTrainerPools[biome].hasOwnProperty(tier))
+        continue;
+
+      const biomeTierPool = biomeTrainerPools[biome][tier];
+      biomeTierPool.push(trainerType);
+    }
+  }
+
 
   function outputPools() {
     const pokemonOutput = {};
