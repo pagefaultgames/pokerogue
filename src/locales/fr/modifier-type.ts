@@ -52,7 +52,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’1 cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
+	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
@@ -214,7 +214,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
     "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
 
-	"IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de 2 IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
+	"IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de deux IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
 
     "DNA_SPLICERS": { name: "Pointeau ADN" },
 
