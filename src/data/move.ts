@@ -58,7 +58,8 @@ export enum MoveTarget {
   /** {@link https://bulbapedia.bulbagarden.net/wiki/Category:Entry_hazard-creating_moves Entry hazard-creating moves} */
   ENEMY_SIDE,
   BOTH_SIDES,
-  PARTY
+  PARTY,
+  CURSE
 }
 
 export enum MoveFlags {
@@ -4461,7 +4462,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   switch (moveTarget) {
     case MoveTarget.USER:
     case MoveTarget.PARTY:
-      set = [ user];
+      set = [ user ];
       break;
     case MoveTarget.NEAR_OTHER:
     case MoveTarget.OTHER:
@@ -4496,6 +4497,9 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
     case MoveTarget.BOTH_SIDES:
       set = [ user, user.getAlly() ].concat(opponents);
       multiple = true;
+      break;
+    case MoveTarget.CURSE:
+      set = user.getTypes(true).includes(Type.GHOST) ? (opponents.concat([ user.getAlly() ])) : [ user ];
       break;
   }
 
@@ -4983,7 +4987,8 @@ export function initMoves() {
       .soundBased(),
     new StatusMove(Moves.CURSE, Type.GHOST, -1, 10, -1, 0, 2)
       .attr(CurseAttr)
-      .ignoresProtect(true),
+      .ignoresProtect(true)
+      .target(MoveTarget.CURSE),
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.CONVERSION_2, Type.NORMAL, -1, 30, -1, 0, 2)
