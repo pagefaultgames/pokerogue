@@ -1156,23 +1156,45 @@ export class MagnetRisenTag extends TypeImmuneTag {
   }
 }
 
+/**
+ * A tag used to identify when a pokemon has used imprison since it was summoned.
+ * @see {@linkcode onAdd}
+ * @see {@linkcode onOverlap}
+ * @see {@linkcode lapse}
+ * @see {@linkcode getDescriptor}
+ */
 export class ImprisoningTag extends BattlerTag {
   constructor(sourceMove: Integer) {
     super(BattlerTagType.IMPRISONING, BattlerTagLapseType.CUSTOM, Number.MAX_SAFE_INTEGER, sourceMove);
   }
 
+  /**
+   * There are no immediate effects of imprison, all effects occur on opposing pokemon turns.
+   * @param pokemon The pokemon using imprison.
+   */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` sealed any\nmoves its target shares with it!`));
   }
 
+  /**
+   * If the pokemon tries to use imprison a second time, there are no additional effects.
+   * @param pokemon The pokemon using imprison.
+   */
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready imprisoning!'));
   }
   
+  /**
+   * This status only lapses on a faint.
+   * @param pokemon The pokemon that has fainted.
+   * @param lapseType The type of lapse occuring. For imprison, we only care about the FAINT type.
+   * @returns True if the {@linkcode lapseType} is for a faint, the imprisoning status should be removed.
+   * @remarks This isn't strictly necessary since the tag is always removed on a new summon, but it's added for completeness.
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return lapseType === BattlerTagLapseType.FAINT;
   }

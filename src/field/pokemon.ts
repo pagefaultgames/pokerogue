@@ -3730,6 +3730,11 @@ export class PokemonMove {
     this.virtual = !!virtual;
   }
 
+  /**
+   * Checks whether the current move is restricted by an opposing pokemon that has used imprison.
+   * @param pokemon This is the pokemon that is trying to attack, their moves will be limited by opposing pokemon who have used imprisoned.
+   * @returns True if the move is imprisoned by an opposing pokemon and cannot be used, false if the move is useable.
+   */
   private isImprisoned(pokemon: Pokemon) {
     const opposingPokemon = pokemon.isPlayer() ? pokemon.scene.getEnemyField() as Pokemon[] : pokemon.scene.getPlayerField() as Pokemon[];
     const imprisoningOpponents = opposingPokemon.filter(p => p.summonData.tags.some(({ tagType }) => tagType === BattlerTagType.IMPRISONING));
