@@ -370,6 +370,34 @@ export default class Trainer extends Phaser.GameObjects.Container {
     this.getTintSprites().map((tintSprite, i) => tintSprite.setTexture(this.getKey(!!i)).setFrame(0));
   }
 
+  /**
+   * Attempts to animate a given set of {@linkcode Phaser.GameObjects.Sprite}
+   * @see {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
+   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
+   * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @returns true if the sprite was able to be animated
+   */
+  tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, animConfig: Phaser.Types.Animations.PlayAnimationConfig): boolean {
+    // Show an error in the console if there isn't a texture loaded
+    if (sprite.texture.key === '__MISSING') {
+      console.error(`No texture found for '${animConfig.key}'!`);
+
+      return false;
+    }
+    // Don't try to play an animation when there isn't one
+    if (sprite.texture.frameTotal <= 1) {
+      console.warn(`No animation found for '${animConfig.key}'. Is this intentional?`);
+
+      return false;
+    }
+
+    sprite.play(animConfig);
+    tintSprite.play(animConfig);
+
+    return true;      
+  }
+
   playAnim(): void {
     const trainerAnimConfig = {
       key: this.getKey(),
@@ -379,14 +407,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const sprites = this.getSprites();
     const tintSprites = this.getTintSprites();
 
-    // Don't try to play an animation when there isn't one
-    if (sprites.length > 1) {
-      sprites[0].play(trainerAnimConfig);
-      tintSprites[0].play(trainerAnimConfig);
-    }
-    else
-      console.warn(`No animation found for '${this.getKey()}'. Is this intentional?`);
+    this.tryPlaySprite(sprites[0], tintSprites[0], trainerAnimConfig);
 
+    // Queue an animation for the second trainer if this is a double battle against two separate trainers
     if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       const partnerTrainerAnimConfig = {
         key: this.getKey(true),
@@ -394,13 +417,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         startFrame: 0
       };
 
-      // Don't try to play an animation when there isn't one
-      if (sprites.length > 1) {
-        sprites[1].play(partnerTrainerAnimConfig);
-        tintSprites[1].play(partnerTrainerAnimConfig);
-      }
-      else
-        console.warn(`No animation found for '${this.getKey()}'. Is this intentional?`);
+      this.tryPlaySprite(sprites[1], tintSprites[1], partnerTrainerAnimConfig);
     }
   }
 
