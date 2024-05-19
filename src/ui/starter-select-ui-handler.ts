@@ -721,6 +721,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setGenMode(true);
       this.setCursor(0);
       this.tryUpdateValue(0);
+      this.setRandomizeMode(false);
 
       handleTutorial(this.scene, Tutorial.Starter_Select);
 
@@ -1865,7 +1866,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   // Using a list of all possible starters, generates a dictionary of all possible owned starters by point value
-  // {value: [speciesA, speciesB, speciesC, ...]}
+  // {value: [[speciesA, gen, species], ...]}
   prepopulateRandomStarterPokemonDictionary(): void {
     this.possibleStarterPokemon = {};
     for (let g = 0; g < this.genSpecies.length; g++) {
@@ -1880,7 +1881,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
     }
-    // console.log(this.possibleStarterPokemon);
   }
 
   // Using possibleStarterPokemon
@@ -1909,16 +1909,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return acc;
     }, []);
     const randomPointValue = pointValueArray[Utils.randInt(pointValueArray.length, 0)];
-    // const randomPointValue = availablePointValues[Utils.randInt(availablePointValues.length, 0)];
 
     // Randomly select a pokemon from the list of pokemon with the selected point value
     const speciesInf = this.possibleStarterPokemon[randomPointValue][Utils.randInt(this.possibleStarterPokemon[randomPointValue].length, 0)];
     const species = speciesInf[0];
     const gen = speciesInf[1];
     const speciesId = speciesInf[2];
-    // console.log("choosing point value", randomPointValue, "species", speciesId, "gen", gen);
-    // console.log("global species", species);
-    // console.log("local species", this.genSpecies[gen][speciesId]);
 
     // The value is guaranteed to be less than the value limit so no need to check, simple call suffices
     this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId));
@@ -1929,6 +1925,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     cursorObj.setPosition(-100, -100); 
 
     // Generate the nature, ability, and moveset for the pokemon
+    // TODO: Add support for more than the default ability, natures, etc.
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
@@ -1949,8 +1946,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // Remove the selected pokemon from the dictionary
     this.possibleStarterPokemon[randomPointValue].splice(this.possibleStarterPokemon[randomPointValue].indexOf(speciesInf), 1);
-    // console.log("removed", speciesId, "from", randomPointValue);
-    // console.log(this.possibleStarterPokemon[randomPointValue]);
+
     // If there is no more pokemon for this key, remove the key
     if (this.possibleStarterPokemon[randomPointValue].length === 0) {
       delete this.possibleStarterPokemon[randomPointValue];
@@ -1958,7 +1954,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return true;
     
   }
-  // deprecated function
+
+
+  // Deprecated function for less efficient random starter generation
   _generateRandomStarter(): boolean {
     var generatedValidPokemon:boolean = false;
     var hasValidPokemon:boolean = false;
@@ -2031,6 +2029,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
     return false;
   }
+
 
   isValidStarter(species): bigint {
     const useOnlyOwnedPokemon:boolean = true;
