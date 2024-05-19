@@ -96,13 +96,13 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  isWaveTrainer(waveIndex: integer, arena: Arena): boolean {
+  isWaveTrainer(waveIndex: integer, arena: Arena, trainerChanceMod: integer): boolean {
     if (this.isDaily)
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex))
       return true;
     else if (waveIndex % 10 !== 1 && waveIndex % 10) {
-      const trainerChance = arena.getTrainerChance();
+      const trainerChance = trainerChanceMod;
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
@@ -114,7 +114,7 @@ export class GameMode implements GameModeConfig {
             break;
           } else if (w < waveIndex) {
             arena.scene.executeWithSeedOffset(() => {
-              const waveTrainerChance = arena.getTrainerChance();
+              const waveTrainerChance = trainerChanceMod;
               if (!Utils.randSeedInt(waveTrainerChance))
                 allowTrainerBattle = false;
             }, w);
@@ -123,7 +123,7 @@ export class GameMode implements GameModeConfig {
           }
         }
       }
-      return allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance);
+      return allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChanceMod);
     }
     return false;
   }

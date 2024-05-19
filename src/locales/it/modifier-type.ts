@@ -51,6 +51,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Raddoppia la possibilità di imbattersi in doppie battaglie per {{battleCount}} battaglie",
     },
+    "TrainerBattleChanceBoosterModifierType": {
+      description: "Raddoppia la possibilità di imbattersi in battaglie con allenatori per {{battleCount}} battaglie",
+    },
     "TempBattleStatBoosterModifierType": {
       description: "Aumenta {{tempBattleStatName}} di un livello a tutti i Pokémon nel gruppo per 5 battaglie",
     },
@@ -161,6 +164,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LURE": { name: "Profumo Invito" },
     "SUPER_LURE": { name: "Profumo Invito Super" },
     "MAX_LURE": { name: "Profumo Invito Max" },
+
+    "REPEL": { name: "Repellente" },
+    "SUPER_REPEL": { name: "Superrepellente" },
+    "MAX_REPEL": { name: "Repellente max" },
 
     "MEMORY_MUSHROOM": { name: "Fungo della Memoria", description: "Ricorda la mossa dimenticata di un Pokémon" },
 

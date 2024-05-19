@@ -4,7 +4,7 @@ import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePh
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems, TrainerBattleChanceBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { Phase } from './phase';
@@ -846,9 +846,11 @@ export default class BattleScene extends SceneBase {
 		} else {
 			if (!this.gameMode.hasTrainers)
 				newBattleType = BattleType.WILD;
-			else if (battleType === undefined)
-				newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
-			else
+			else if (battleType === undefined) {
+				const trainerChanceMod = new Utils.IntegerHolder(this.arena.getTrainerChance());
+				this.applyModifiers(TrainerBattleChanceBoosterModifier, true, trainerChanceMod);
+				newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena, trainerChanceMod.value) ? BattleType.TRAINER : BattleType.WILD;
+			} else
 				newBattleType = battleType;
 
 			if (newBattleType === BattleType.TRAINER) {
