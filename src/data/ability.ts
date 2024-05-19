@@ -22,7 +22,7 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
-import { Passive } from "#app/system/game-data.js";
+import { PokeballType, getPokeballName } from "./pokeball";
 
 export class Ability implements Localizable {
   public id: Abilities;
