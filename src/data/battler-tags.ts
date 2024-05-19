@@ -1150,12 +1150,15 @@ export class MagnetRisenTag extends TypeImmuneTag {
  * 
  * Applied by moves: {@linkcode Moves.ODOR_SLEUTH},
  * {@linkcode Moves.MIRACLE_EYE} and {@linkcode Moves.FORESIGHT}. 
+ * 
+ * @extends BattlerTag
+ * @see {@linkcode ignoreImmunity}
  */
 export class IgnoreTypeImmunityTag extends BattlerTag {
-  public immuneType: Type;
+  private immuneType: Type;
 
   constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type) {
-    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
+    super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
     this.immuneType = type;
   }
 
@@ -1168,15 +1171,10 @@ export class IgnoreTypeImmunityTag extends BattlerTag {
     this.immuneType = source.type as Type;
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
-  }
-
   /**
-   * 
    * @param types {@linkcode Type[]} of the Pokemon
    * @param moveType {@linkcode Type} of the move targetting it
-   * @returns true if Pokemon is of tag's type and is immune to the move
+   * @returns true if Pokemon is of tag's type and that type is immune to the move
    */
   ignoreImmunity(types: Type[], moveType: Type): boolean {
     return types.includes(this.immuneType)
