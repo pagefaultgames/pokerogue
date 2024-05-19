@@ -235,11 +235,10 @@ export class TrainerConfig {
             if (!getIsInitialized()) {
                 initI18n();
             }
+            // This is only the male name, because the female name is handled in a different function (setHasGenders)
             if (name === 'Finn') {
                 name = i18next.t('trainerNames:rival');
             }
-
-
         }
         this.name = name;
         return this;
@@ -254,6 +253,7 @@ export class TrainerConfig {
         // Make the title lowercase and replace spaces with underscores
         title = title.toLowerCase().replace(/\s/g, '_');
 
+        // Get the title from the i18n file
         this.title = i18next.t(`titles:${title}`);
 
 
@@ -281,21 +281,40 @@ export class TrainerConfig {
         return trainerType;
     }
 
+    /**
+     * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
+     * @param {string} [nameFemale] - The name of the female trainer. If 'Ivy', a localized name will be assigned.
+     * @param {TrainerType | string} [femaleEncounterBgm] - The encounter BGM for the female trainer, which can be a TrainerType or a string.
+     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     **/
     setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
+        // If the female name is 'Ivy' (the rival), assign a localized name.
         if (nameFemale === 'Ivy') {
-            // Give the rival a localized name
-            // First check if i18n is initialized
+            // Check if the internationalization (i18n) system is initialized.
             if (!getIsInitialized()) {
+                // Initialize the i18n system if it is not already initialized.
                 initI18n();
             }
-                this.nameFemale = i18next.t('trainerNames:rival_female');
-            } else {
+            // Set the localized name for the female rival.
+            this.nameFemale = i18next.t('trainerNames:rival_female');
+        } else {
+            // Otherwise, assign the provided female name.
             this.nameFemale = nameFemale;
         }
 
+        // Indicate that this trainer configuration includes genders.
         this.hasGenders = true;
-        if (femaleEncounterBgm)
-            this.femaleEncounterBgm = typeof femaleEncounterBgm === 'number' ? TrainerType[femaleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : femaleEncounterBgm;
+
+        // If a female encounter BGM is provided.
+        if (femaleEncounterBgm) {
+            // If the BGM is a TrainerType (number), convert it to a string, replace underscores with spaces, and convert to lowercase.
+            // Otherwise, assign the provided string as the BGM.
+            this.femaleEncounterBgm = typeof femaleEncounterBgm === 'number'
+                ? TrainerType[femaleEncounterBgm].toString().replace(/_/g, ' ').toLowerCase()
+                : femaleEncounterBgm;
+        }
+
+        // Return the updated TrainerConfig instance.
         return this;
     }
 
@@ -398,29 +417,44 @@ export class TrainerConfig {
         return this;
     }
 
+    /**
+     * Initializes the trainer configuration for a Gym Leader.
+     * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
+     * @param {Type[]} specialtyTypes - The specialty types for the Gym Leader.
+     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * **/
     initForGymLeader(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
+        // Check if the internationalization (i18n) system is initialized.
         if (!getIsInitialized()) {
             initI18n();
         }
 
+        // Set the function to generate the Gym Leader's party template.
         this.setPartyTemplateFunc(getGymLeaderPartyTemplate);
+
+        // Set up party members with their corresponding species.
         signatureSpecies.forEach((speciesPool, s) => {
+            // Ensure speciesPool is an array.
             if (!Array.isArray(speciesPool))
                 speciesPool = [speciesPool];
+            // Set a function to get a random party member from the species pool.
             this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
         });
+
+        // If specialty types are provided, set species filter and specialty types.
         if (specialtyTypes.length) {
             this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
             this.setSpecialtyTypes(...specialtyTypes);
         }
 
-        // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
+        // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
         this.name = i18next.t(`trainerNames:${nameForCall}`);
 
+        // Set the title to "gym_leader". (this is the key in the i18n file)
+        this.setTitle('gym_leader');
 
-
-        this.setTitle("gym_leader");
+        // Configure various properties for the Gym Leader.
         this.setMoneyMultiplier(2.5);
         this.setBoss();
         this.setStaticParty();
@@ -430,75 +464,125 @@ export class TrainerConfig {
             const waveIndex = party[0].scene.currentBattle.waveIndex;
             return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null);
         });
+
         return this;
     }
 
+    /**
+     * Initializes the trainer configuration for an Elite Four member.
+     * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
+     * @param {Type[]} specialtyTypes - The specialty types for the Elite Four member.
+     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     **/
     initForEliteFour(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
+        // Check if the internationalization (i18n) system is initialized.
         if (!getIsInitialized()) {
             initI18n();
         }
 
+        // Set the party templates for the Elite Four.
         this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
+
+        // Set up party members with their corresponding species.
         signatureSpecies.forEach((speciesPool, s) => {
+            // Ensure speciesPool is an array.
             if (!Array.isArray(speciesPool))
                 speciesPool = [speciesPool];
+            // Set a function to get a random party member from the species pool.
             this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
         });
+
+        // Set species filter and specialty types if provided, otherwise filter by base total.
         if (specialtyTypes.length) {
             this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) && p.baseTotal >= 450);
             this.setSpecialtyTypes(...specialtyTypes);
-        } else
+        } else {
             this.setSpeciesFilter(p => p.baseTotal >= 450);
-        // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
+        }
+
+        // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
         this.name = i18next.t(`trainerNames:${nameForCall}`);
 
-        this.setTitle("elite_four");
+        // Set the title to "elite_four". (this is the key in the i18n file)
+        this.setTitle('elite_four');
+
+        // Configure various properties for the Elite Four member.
         this.setMoneyMultiplier(3.25);
         this.setBoss();
         this.setStaticParty();
         this.setBattleBgm('battle_elite');
         this.setVictoryBgm('victory_gym');
         this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null));
+
         return this;
     }
 
+    /**
+     * Initializes the trainer configuration for a Champion.
+     * @param {Species | Species[]} signatureSpecies - The signature species for the Champion.
+     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     **/
     initForChampion(signatureSpecies: (Species | Species[])[]): TrainerConfig {
+        // Check if the internationalization (i18n) system is initialized.
         if (!getIsInitialized()) {
             initI18n();
         }
+
+        // Set the party templates for the Champion.
         this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
+
+        // Set up party members with their corresponding species.
         signatureSpecies.forEach((speciesPool, s) => {
+            // Ensure speciesPool is an array.
             if (!Array.isArray(speciesPool))
                 speciesPool = [speciesPool];
+            // Set a function to get a random party member from the species pool.
             this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
         });
+
+        // Set species filter to only include species with a base total of 470 or higher.
         this.setSpeciesFilter(p => p.baseTotal >= 470);
-        // Handle name by checking this.name - making it lowercase and replacing spaces with underscores and then calling i18next.t with the name
+
+        // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
         const nameForCall = this.name.toLowerCase().replace(/\s/g, '_');
         this.name = i18next.t(`trainerNames:${nameForCall}`);
-        this.setTitle("champion");
+
+        // Set the title to "champion". (this is the key in the i18n file)
+        this.setTitle('champion');
+
+        // Configure various properties for the Champion.
         this.setMoneyMultiplier(10);
         this.setBoss();
         this.setStaticParty();
         this.setBattleBgm('battle_champion_alder');
         this.setVictoryBgm('victory_champion');
         this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 3));
+
         return this;
     }
 
+    /**
+     * Retrieves the title for the trainer based on the provided trainer slot and variant.
+     * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
+     * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
+     * @returns {string} - The title of the trainer.
+     **/
     getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
         let ret = this.name;
 
+        // Check if the variant is double and the name for double exists
         if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble)
             return this.nameDouble;
 
+        // Female variant
         if (this.hasGenders) {
+            // If the name is already set
             if (this.nameFemale) {
+                // Check if the variant is either female or this is for the partner in a double battle
                 if (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER))
                     return this.nameFemale;
             } else
-
                 // Check if !variant is true, if so return the name, else return the name with _female appended
                 if (variant) {
                     if (!getIsInitialized()) {
