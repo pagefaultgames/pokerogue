@@ -239,6 +239,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
      */
     onInputDown(buttonIcon: string, assignedButtonIcon: string, type: string): void {
         clearTimeout(this.countdownTimer);
+        this.timerText.setText("");
         this.newButtonIcon.setTexture(type);
         this.newButtonIcon.setFrame(buttonIcon);
         if (assignedButtonIcon) {
