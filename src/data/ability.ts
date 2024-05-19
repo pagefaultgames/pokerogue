@@ -2277,10 +2277,21 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+/** 
+ * Grabs the last failed Pokeball used 
+ * @extends PostTurnAbAttr 
+ * @see {@linkcode applyPostTurn} */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   constructor() {
     super();
   }
+  /** 
+   * Adds the last used Pokeball back into the player's inventory 
+   * @param pokemon {@linkcode Pokemon} with this ability 
+   * @param passive N/A 
+   * @param args N/A 
+   * @returns true if player has used a pokeball and this pokemon is owned by the player 
+   */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     let lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
     if(lastUsed != null && pokemon.isPlayer) {
