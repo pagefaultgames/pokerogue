@@ -4261,14 +4261,9 @@ export class DestinyBondAttr extends MoveEffectAttr {
    * @param {Pokemon} target N/A
    * @param {Move} move {@linkcode Move.DESTINY_BOND}
    * @param {any[]} args N/A
-   * @returns false in boss battle, true otherwise
+   * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.scene.getField().some(p => p.isBossImmune())) {
-      user.scene.queueMessage('But it failed!');
-      return false;
-    }
-
     user.scene.queueMessage(`${getPokemonMessage(user, ' is trying\nto take its foe down with it!')}`);
     user.addTag(BattlerTagType.DESTINY_BOND, undefined, move.id, user.id);
     return true;

@@ -266,8 +266,8 @@ export class DestinyBondTag extends BattlerTag {
   /**
    * Destiny bond tag.
    * Lapses either before the user's move and does nothing
-   * or after receiving damage. If the damage received from foe
-   * is fatal, it takes down the foe as well.
+   * or after receiving fatal damage. When the damage is fatal,
+   * the attacking Pokemon is taken down as well, unless it's a boss.
    * 
    * @param {Pokemon} pokemon Pokemon that is attacking the Destiny Bond user.
    * @param {BattlerTagLapseType} lapseType CUSTOM or PRE_MOVE
@@ -278,11 +278,23 @@ export class DestinyBondTag extends BattlerTag {
       return super.lapse(pokemon, lapseType);
     }
     const source = pokemon.scene.getPokemonById(this.sourceId);
-    if (source.isFainted()) {
-      const targetMessage = getPokemonMessage(pokemon, '');
-      pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`)
-      pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
+    if (!source.isFainted()) {
+      return true;
     }
+
+    if (source.getAlly() === pokemon) {
+        return false;
+    }
+
+    const targetMessage = getPokemonMessage(pokemon, '');
+
+    if (pokemon.isBossImmune()) {
+      pokemon.scene.queueMessage(`${targetMessage} is unaffected\nby the effects of Destiny Bond.`);
+      return false;
+    }
+
+    pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`)
+    pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
     return false;
   }
 }
