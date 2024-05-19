@@ -133,6 +133,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
     updateChosenGamepadDisplay(): void {
         // Update any bindings that might have changed since the last update.
         this.updateBindings();
+        this.resetScroll();
 
         // Iterate over the keys in the settingDevice enumeration.
         for (const [index, key] of Object.keys(this.settingDevice).entries()) {

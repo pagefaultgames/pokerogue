@@ -129,7 +129,7 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
                     };
                     scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
                         options: [...gp.map((g) => ({
-                            label: truncateString(g, 22), // Truncate the gamepad name for display
+                            label: truncateString(g, 30), // Truncate the gamepad name for display
                             handler: () => changeGamepadHandler(g)
                         })), {
                             label: 'Cancel',

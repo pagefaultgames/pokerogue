@@ -373,8 +373,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         // Make the settings container visible to the user.
         this.settingsContainer.setVisible(true);
         // Reset the scroll cursor to the top of the settings container.
-        this.setCursor(0);
-        this.setScrollCursor(0);
+        this.resetScroll();
 
         // Move the settings container to the end of the UI stack to ensure it is displayed on top.
         this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
@@ -508,6 +507,15 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
             ui.playSelect();
 
         return success; // Return whether the input resulted in a successful action.
+    }
+
+    resetScroll() {
+        this.cursorObj?.destroy();
+        this.cursorObj = null;
+        this.cursor = null;
+        this.setCursor(0);
+        this.setScrollCursor(0);
+        this.updateSettingsScroll();
     }
 
     /**

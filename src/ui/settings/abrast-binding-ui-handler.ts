@@ -21,6 +21,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
 
     // Text elements for displaying instructions and actions.
     protected unlockText: Phaser.GameObjects.Text;
+    protected timerText: Phaser.GameObjects.Text;
     protected swapText: Phaser.GameObjects.Text;
     protected actionLabel: Phaser.GameObjects.Text;
     protected cancelLabel: Phaser.GameObjects.Text;
@@ -37,6 +38,8 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     protected swapAction: () => boolean;
 
     protected confirmText: string;
+    protected timeLeftAutoClose: number = 5;
+    protected countdownTimer;
 
     // The specific setting being modified.
     protected target;
@@ -81,6 +84,11 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.unlockText.setPositionRelative(this.titleBg, 36, 4);
         this.optionSelectContainer.add(this.unlockText);
 
+        this.timerText = addTextObject(this.scene, 0, 0, '(5)', TextStyle.WINDOW);
+        this.timerText.setOrigin(0, 0);
+        this.timerText.setPositionRelative(this.unlockText, (this.unlockText.width/6) + 5, 0);
+        this.optionSelectContainer.add(this.timerText);
+
         this.optionSelectBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());
         this.optionSelectBg.setOrigin(0.5);
         this.optionSelectContainer.add(this.optionSelectBg);
@@ -89,6 +97,18 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.cancelLabel.setOrigin(0, 0.5);
         this.cancelLabel.setPositionRelative(this.actionBg, 10, this.actionBg.height / 2);
         this.actionsContainer.add(this.cancelLabel);
+    }
+
+    manageAutoCloseTimer(){
+        clearTimeout(this.countdownTimer);
+        this.countdownTimer = setTimeout(() => {
+            this.timeLeftAutoClose -= 1;
+            this.timerText.setText(`(${this.timeLeftAutoClose})`);
+            if (this.timeLeftAutoClose >= 0)
+                this.manageAutoCloseTimer();
+            else
+                this.cancelFn();
+        }, 1000);
     }
 
     /**
@@ -100,6 +120,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     show(args: any[]): boolean {
         super.show(args);
         this.buttonPressed = null;
+        this.timeLeftAutoClose = 5;
         this.cancelFn = args[0].cancelHandler;
         this.target = args[0].target;
 
@@ -108,7 +129,10 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.getUi().bringToTop(this.actionsContainer);
 
         this.optionSelectContainer.setVisible(true);
-        setTimeout(() => this.listening = true, 100);
+        setTimeout(() => {
+            this.listening = true;
+            this.manageAutoCloseTimer();
+        }, 100);
         return true;
     }
 
@@ -194,6 +218,9 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
      */
     clear() {
         super.clear();
+        clearTimeout(this.countdownTimer);
+        this.timerText.setText('(5)');
+        this.timeLeftAutoClose = 5;
         this.listening = false;
         this.target = null;
         this.cancelFn = null;

@@ -331,6 +331,8 @@ export class InputsController {
             this.scene.gameData?.saveMappingConfigs(gamepadID, this.configs[gamepadID]);
         }
         this.lastSource = 'gamepad';
+        const handler = this.scene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
+        handler && handler.updateChosenGamepadDisplay()
     }
 
     /**
