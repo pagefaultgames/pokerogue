@@ -256,7 +256,8 @@ export class ConfusedTag extends BattlerTag {
 
 /**
  * Tag applied to the {@linkcode Move.DESTINY_BOND} user.
- * See {@linkcode apply}
+ * @extends BattlerTag
+ * @see {@linkcode apply}
  */
 export class DestinyBondTag extends BattlerTag {
   constructor(sourceMove: Moves, sourceId: integer) {
@@ -264,7 +265,6 @@ export class DestinyBondTag extends BattlerTag {
   }
 
   /**
-   * Destiny bond tag.
    * Lapses either before the user's move and does nothing
    * or after receiving fatal damage. When the damage is fatal,
    * the attacking Pokemon is taken down as well, unless it's a boss.

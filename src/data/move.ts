@@ -4250,6 +4250,11 @@ export class MoneyAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Applies {@linkcode BattlerTagType.DESTINY_BOND} to the user.
+ * 
+ * @extends MoveEffectAttr
+ */
 export class DestinyBondAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.PRE_APPLY);
@@ -4257,9 +4262,9 @@ export class DestinyBondAttr extends MoveEffectAttr {
 
   /**
    * Applies {@linkcode BattlerTagType.DESTINY_BOND} to the user.
-   * @param {Pokemon} user User that is having the tag applied to.
-   * @param {Pokemon} target N/A
-   * @param {Move} move {@linkcode Move.DESTINY_BOND}
+   * @param user {@linkcode Pokemon} that is having the tag applied to.
+   * @param target {@linkcode Pokemon} N/A
+   * @param move {@linkcode Move} {@linkcode Move.DESTINY_BOND}
    * @param {any[]} args N/A
    * @returns true
    */
