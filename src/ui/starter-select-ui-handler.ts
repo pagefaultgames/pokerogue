@@ -164,6 +164,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterMovesets: StarterMoveset[] = [];
   private speciesStarterDexEntry: DexEntry;
   private speciesStarterMoves: Moves[];
+  private customizedProps: {
+    [index: number]: {
+      dexAttr?: DexAttrProps;
+      abilityIndex?: number;
+      natureIndex?: number;
+    }
+  } = {};
   private canCycleShiny: boolean;
   private canCycleForm: boolean;
   private canCycleGender: boolean;
@@ -755,6 +762,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.updateInstructions();
       } else {
         this.blockInput = true;
+        this.customizedProps = {}; // Clear this
         this.scene.clearPhaseQueue();
         this.scene.pushPhase(new TitlePhase(this.scene));
         this.scene.getCurrentPhase().end();
@@ -1349,8 +1357,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const dexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(this.lastSpecies, false, true);
       const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
       const lastSpeciesIcon = (this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(this.genSpecies[this.lastSpecies.generation - 1].indexOf(this.lastSpecies)) as Phaser.GameObjects.Sprite);
-      lastSpeciesIcon.setTexture(this.lastSpecies.getIconAtlasKey(props.formIndex, props.shiny, props.variant), this.lastSpecies.getIconId(props.female, props.formIndex, props.shiny, props.variant));
-      this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
+      //lastSpeciesIcon.setTexture(this.lastSpecies.getIconAtlasKey(props.formIndex, props.shiny, props.variant), this.lastSpecies.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+      //this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
     }
 
@@ -1431,13 +1439,29 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         let props: DexAttrProps;
 
         if (starterIndex > -1) {
+          // If a starter is chosen as a starter and on the list, starterIndex won't be -1
+          // and will make it into this closure.
+          // If you select that starter again, while you're still in the starter selector UI
+          // you're still able to modify the selected Pokemon without having to unselect the starter.
           props = this.scene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, this.starterAbilityIndexes[starterIndex], this.starterNatures[starterIndex]);
         } else {
           const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-          const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-          const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
+          let defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+          let defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+
+          // Merge dex props with user cycled customized props.
+          if (this.customizedProps[species.speciesId]) {
+            Object.assign(props, this.customizedProps[species.speciesId].dexAttr);
+
+            defaultAbilityIndex = (
+              this.customizedProps[species.speciesId].abilityIndex ? this.customizedProps[species.speciesId].abilityIndex : defaultAbilityIndex
+            )
+            defaultNature = (
+              this.customizedProps[species.speciesId].natureIndex ? this.customizedProps[species.speciesId].natureIndex : defaultNature
+            )
+          }
 
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature);
         }
@@ -1515,6 +1539,36 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     if (species) {
+      // Keep track of customizable "cycleable" values.
+      if (!this.customizedProps[species.speciesId]) {
+        this.customizedProps[species.speciesId] = {
+          dexAttr: {} as DexAttrProps,
+        };
+      }
+
+      // Add only changed values.
+      if (shiny !== undefined && shiny != oldProps.shiny) {
+        this.customizedProps[species.speciesId].dexAttr.shiny = shiny;
+      }
+      if (female !== undefined && female != oldProps.female) {
+        this.customizedProps[species.speciesId].dexAttr.female = female;
+      }
+      if (variant !== undefined && variant != oldProps.variant) {
+        this.customizedProps[species.speciesId].dexAttr.variant = variant;
+      }
+      if (formIndex !== undefined && variant != oldProps.formIndex) {
+        this.customizedProps[species.speciesId].dexAttr.formIndex = formIndex;
+      }
+
+      if (abilityIndex !== undefined && abilityIndex != oldAbilityIndex) {
+        this.customizedProps[species.speciesId].abilityIndex = abilityIndex;
+      }
+      if (natureIndex !== undefined && natureIndex != oldNatureIndex) {
+        this.customizedProps[species.speciesId].natureIndex = natureIndex;
+      }
+
+
+      // Cursor
       this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps.shiny)) ? DexAttr.NON_SHINY : DexAttr.SHINY;
       this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps.female)) ? DexAttr.MALE : DexAttr.FEMALE;
       this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps.variant)) ? DexAttr.DEFAULT_VARIANT : variant === 1 ? DexAttr.VARIANT_2 : DexAttr.VARIANT_3;
@@ -1574,6 +1628,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterAttr[starterIndex] = this.dexAttrCursor;
           this.starterAbilityIndexes[starterIndex] = this.abilityCursor;
           this.starterNatures[starterIndex] = this.natureCursor;
+
+          const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
+
+          // Also update the visuals on the party list
+          this.starterIcons[starterIndex].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+          this.starterIcons[starterIndex].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+          this.checkIconId(this.starterIcons[starterIndex], species, props.female, props.formIndex, props.shiny, props.variant);
         }
 
         const assetLoadCancelled = new Utils.BooleanHolder(false);
