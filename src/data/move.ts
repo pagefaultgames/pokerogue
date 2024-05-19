@@ -1990,10 +1990,10 @@ export class SwapStatsAttr extends MoveEffectAttr
     }
 }
 
-/**
- * Attribute used for moves which steal the target's positive stat changes.
- */
+/**Attribute used for moves which steal the target's positive stat changes.*/
 export class StealPositiveStatsAttr extends MoveEffectAttr {
+  /**PRE_APPLY has stats be stolen before damage is applied, since opponent could faint, taking boosts with them;
+   * PR #1038 needed for PRE_APPLY to work properly.*/
   constructor() {
     super(false, MoveEffectTrigger.PRE_APPLY)
     }
@@ -2001,9 +2001,15 @@ export class StealPositiveStatsAttr extends MoveEffectAttr {
     let StatRaised = false;
     if (!super.apply(user, target, move, args))
       return false;
+    /**Below for loop is what actually steals the foe's boosted stats.
+     * The specific loop's arguments, combined with instances of target.summonData.battleStats, gives the foe's current stat stages.
+     * This is supposed to occur before damage is calculated, but stat change phases seem to happen after damage is calculated,
+     * regardless of PRE_APPLY. This needs to be investigated and corrected going forward.*/
     for (let i = 0; i < 7; i++) {
+      /**On each stat. If a stat is boosted, said value is added to the user's stat stages...*/
       if (target.summonData.battleStats[i] > 0) {
         user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [i], target.summonData.battleStats[i]));
+        /**...Before being directly set to zero. Directly setting stats in this manner overrides Clear Body, as intended.*/
         target.summonData.battleStats[i] = 0;
         StatRaised = true;
       }
