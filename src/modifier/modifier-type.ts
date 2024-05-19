@@ -407,11 +407,21 @@ export class DoubleBattleChanceBoosterModifierType extends ModifierType {
   }
 }
 
+/**
+ * Class representing a ModifierType for a Modifier that prevents Double Battles from occurring.
+ * @extends ModifierType
+ */
 export class DoubleBattleChancePreventerModifierType extends ModifierType {
   public battleCount: integer;
 
+  /**
+     * Instantiates the ModifierType
+     * @param {string} localeKey - Used to grab the appropriate language texts
+     * @param {string} iconImage - Used to grab the appropriate icon
+     * @param {integer} battleCount - Represents how long the modifier should exist for
+     */
   constructor(localeKey: string, iconImage: string, battleCount: integer) {
-    super(localeKey, iconImage, (_type, _args) => new Modifiers.DoubleBattleChancePreventerModifier(this, this.battleCount), 'lure');
+    super(localeKey, iconImage, (_type, _args) => new Modifiers.DoubleBattleChancePreventerModifier(this, this.battleCount), 'repel');
 
     this.battleCount = battleCount;
   }
