@@ -1703,7 +1703,9 @@ export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
 }
 
 /**
- * 
+ * Attribute for form changes that occur on switching out
+ * @extends PreSwitchOutAbAttr
+ * @see {@linkcode applyPreSwitchOut}
  */
 export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
   private formFunc: (p: Pokemon) => integer;
@@ -1716,10 +1718,10 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
 
   /**
    * 
-   * @param pokemon 
-   * @param passive 
-   * @param args 
-   * @returns 
+   * @param pokemon The pokemon switching out and changing form {@linkcode Pokemon}
+   * @param passive N/A
+   * @param args N/A
+   * @returns true if the form change was successful
    */
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     const formIndex = this.formFunc(pokemon);

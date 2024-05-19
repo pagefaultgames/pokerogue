@@ -45,7 +45,7 @@ import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import { addUiThemeOverrides } from './ui/ui-theme';
 import PokemonData from './system/pokemon-data';
 import { Nature } from './data/nature';
-import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
 import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 import { BattleSpec } from './enums/battle-spec';
 import { getTypeRgb } from './data/type';
@@ -931,7 +931,10 @@ export default class BattleScene extends SceneBase {
 			for (let pokemon of this.getParty()) {
 				if (pokemon) {
 					if (resetArenaState)
-						pokemon.resetBattleData();
+						{
+							pokemon.resetBattleData();
+							this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+						}
 					this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
 				}
 			}
