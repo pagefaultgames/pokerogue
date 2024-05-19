@@ -4261,9 +4261,14 @@ export class DestinyBondAttr extends MoveEffectAttr {
    * @param {Pokemon} target N/A
    * @param {Move} move {@linkcode Move.DESTINY_BOND}
    * @param {any[]} args N/A
-   * @returns true
+   * @returns false in boss battle, true otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.scene.getField().some(p => p.isBossImmune())) {
+      user.scene.queueMessage('But it failed!');
+      return false;
+    }
+
     user.scene.queueMessage(`${getPokemonMessage(user, ' is trying\nto take its foe down with it!')}`);
     user.addTag(BattlerTagType.DESTINY_BOND, undefined, move.id, user.id);
     return true;
@@ -4964,8 +4969,7 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.DESTINY_BOND, Type.GHOST, -1, 5, -1, 0, 2)
       .ignoresProtect()
-      .attr(DestinyBondAttr)
-      .condition(failOnBossCondition),
+      .attr(DestinyBondAttr),
     new StatusMove(Moves.PERISH_SONG, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(FaintCountdownAttr)
       .ignoresProtect()
