@@ -1822,6 +1822,36 @@ export class MultCritAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Guarantees a critical hit according to the given condition, except if target prevents critical hits. ie. Merciless
+ * @extends AbAttr
+ * @see {@linkcode apply}
+ */
+export class ConditionalCritAbAttr extends AbAttr {
+  private condition: PokemonAttackCondition;
+
+  constructor(condition: PokemonAttackCondition, checkUser?: Boolean) {
+    super();
+
+    this.condition = condition;
+  }
+
+  /**
+   * @param pokemon {@linkcode Pokemon} user.
+   * @param args [0] {@linkcode Utils.BooleanHolder} If true critical hit is guaranteed. 
+   *             [1] {@linkcode Pokemon} Target.
+   *             [2] {@linkcode Move} used by ability user.
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const target = (args[1] as Pokemon);
+    const move = (args[2] as Move);
+    if(!this.condition(pokemon,target,move))
+      return false;
+
+    (args[0] as Utils.BooleanHolder).value = true;
+    return true;
+  }
+}
 
 export class BlockNonDirectDamageAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -3442,7 +3472,7 @@ export function initAbilities() {
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
-      .unimplemented(),
+      .attr(ConditionalCritAbAttr, (user, target, move) => target.status?.effect === StatusEffect.TOXIC || target.status?.effect === StatusEffect.POISON),
     new Ability(Abilities.SHIELDS_DOWN, 7)
       .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
