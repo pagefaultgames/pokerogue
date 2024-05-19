@@ -1156,6 +1156,32 @@ export class MagnetRisenTag extends TypeImmuneTag {
   }
 }
 
+export class ImprisoningTag extends BattlerTag {
+  constructor(sourceMove: Integer) {
+    super(BattlerTagType.IMPRISONING, BattlerTagLapseType.CUSTOM, Number.MAX_SAFE_INTEGER, sourceMove);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` sealed any\nmoves its target shares with it!`));
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    super.onOverlap(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready imprisoning!'));
+  }
+  
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    return lapseType === BattlerTagLapseType.FAINT;
+  }
+
+  getDescriptor(): string {
+    return 'imprison';
+  }
+}
+
 export class TypeBoostTag extends BattlerTag {
   public boostedType: Type;
   public boostValue: number;
@@ -1416,6 +1442,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new MagnetRisenTag(tagType, sourceMove);
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
+  case BattlerTagType.IMPRISONING:
+    return new ImprisoningTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

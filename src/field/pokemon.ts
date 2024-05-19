@@ -3730,8 +3730,16 @@ export class PokemonMove {
     this.virtual = !!virtual;
   }
 
+  #isImprisoned(pokemon: Pokemon) {
+    const opposingPokemon = pokemon.isPlayer() ? pokemon.scene.getEnemyField() as Pokemon[] : pokemon.scene.getPlayerField() as Pokemon[];
+    const imprisoningOpponents = opposingPokemon.filter(p => p.summonData.tags.some(({ tagType }) => tagType === BattlerTagType.IMPRISONING));
+    const imprisonedMoves = imprisoningOpponents.flatMap(p => p.moveset);
+
+    return imprisonedMoves.some(m => m.moveId === this.moveId);
+  }
+
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
+    if (this.moveId && (pokemon.summonData?.disabledMove === this.moveId) || this.#isImprisoned(pokemon))
       return false;
     }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");

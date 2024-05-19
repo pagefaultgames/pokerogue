@@ -3661,6 +3661,12 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
   }
 }
 
+export class ImprisonAttr extends AddBattlerTagAttr {
+  constructor(selfTarget?: boolean) {
+    super(BattlerTagType.IMPRISONING, selfTarget, true, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+  }
+}
+
 /**
  * Attribute used when a move hits a {@linkcode BattlerTagType} for double damage
  * @extends MoveAttr
@@ -5673,7 +5679,7 @@ export function initMoves() {
     new StatusMove(Moves.SKILL_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 3)
       .attr(SwitchAbilitiesAttr),
     new SelfStatusMove(Moves.IMPRISON, Type.PSYCHIC, -1, 10, -1, 0, 3)
-      .unimplemented(),
+      .attr(ImprisonAttr),
     new SelfStatusMove(Moves.REFRESH, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
       .condition((user, target, move) => user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),
