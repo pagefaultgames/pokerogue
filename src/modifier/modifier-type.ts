@@ -225,7 +225,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, group?: string) {
     super(localeKey, iconImage, newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
     selectFilter || ((pokemon: PlayerPokemon) => {
-      if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))
+      if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED)))))
         return PartyUiHandler.NoEffectMessage;
       return null;
     }), group || 'potion');
