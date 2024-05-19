@@ -40,11 +40,20 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.setup();
   }
 
+  /**
+   * Sets the updating state and updates button states accordingly.
+   * If value is true (updating), disables the buttons; if false, enables the buttons.
+   * @param {boolean} value - The new updating state.
+   */
   set isUpdating(value) {
     this._isUpdating = value;
     this.setButtonsState(!value);
   }
 
+  /**
+   * Gets the current updating state.
+   * @returns {boolean} - The current updating state.
+   */
   get isUpdating() {
     return this._isUpdating;
   }
@@ -152,6 +161,18 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     });
   }
 
+  /**
+   * Updates the scoreboard rankings based on the selected category and page.
+   * 
+   * If the update process is already ongoing, the method exits early. Otherwise, it begins the update process by clearing
+   * the current rankings and showing a loading label. If the category changes, the page is reset to 1.
+   * 
+   * The method fetches the total page count if necessary, followed by fetching the rankings for the specified category
+   * and page. It updates the UI with the fetched rankings or shows an appropriate message if no rankings are found.
+   * 
+   * @param {ScoreboardCategory} [category=this.category] - The category to fetch rankings for. Defaults to the current category.
+   * @param {number} [page=this.page] - The page number to fetch. Defaults to the current page.
+  */
   update(category: ScoreboardCategory = this.category, page: integer = this.page) {
     if (this.isUpdating) {
       return;
@@ -189,6 +210,10 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     })
   }
 
+  /**
+   * Sets the state of the navigation buttons.
+   * @param {boolean} [enabled=true] - Whether the buttons should be enabled or disabled.
+   */
   setButtonsState(enabled: boolean = true) {
     const buttons = [
       { button: this.prevPageButton, alphaValue: enabled ? (this.page > 1 ? 1 : 0.5) : 0.5 },
