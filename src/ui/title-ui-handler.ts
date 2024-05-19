@@ -6,6 +6,7 @@ import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
+import { MENU_MESSAGE, MENU_MESSAGE_TEXT_COLOR, MENU_MESSAGE_BACKGROUND_COLOR } from "../overrides";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
@@ -41,6 +42,16 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: '54px' });
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
+	
+    if (MENU_MESSAGE !== "") {
+        this.menuMessage = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 100, MENU_MESSAGE, TextStyle.MESSAGE, {
+            fontSize: '54px',
+            backgroundColor: MENU_MESSAGE_BACKGROUND_COLOR,
+            color: MENU_MESSAGE_TEXT_COLOR !== "" ? MENU_MESSAGE_TEXT_COLOR : "#FFFFFF"
+        });
+        this.menuMessage.setOrigin(1, 0);
+        this.titleContainer.add(this.menuMessage);
+    }
 
     this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, '', TextStyle.MONEY, { fontSize: '54px' });
     this.splashMessageText.setOrigin(0.5, 0.5);

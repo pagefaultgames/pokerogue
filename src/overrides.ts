@@ -12,6 +12,10 @@ import { Stat } from './data/pokemon-stat';
 import { PokeballCounts } from './battle-scene';
 import { PokeballType } from './data/pokeball';
 
+
+export const MENU_MESSAGE: string = "";
+export const MENU_MESSAGE_TEXT_COLOR: string = "";
+export const MENU_MESSAGE_BACKGROUND_COLOR: string = "";
 /**
  * Overrides for testing different in game situations
  * if an override name starts with "STARTING", it will apply when a new run begins
