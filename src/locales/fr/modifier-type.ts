@@ -52,16 +52,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’1 cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
+	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fait monter un Pokémon d’1 niveau",
+      description: "Fait monter un Pokémon d’un niveau",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Fait monter toute l’équipe d’1 niveau",
+      description: "Fait monter toute l’équipe d’un niveau",
     },
     "PokemonBaseStatBoosterModifierType": {
 	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
@@ -214,13 +214,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
     "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
 
-	"IV_SCANNER": { name: "Scanner d’IV", description: "Scanne les IV d’un Pokémon sauvage. 2 IV sont révélés par Scanner. Les meilleurs sont montrés en 1er." },
+	"IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de deux IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
 
     "DNA_SPLICERS": { name: "Pointeau ADN" },
 
     "MINI_BLACK_HOLE": { name: "Mini Trou Noir" },
 
-    "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute 1 choix d’objet à la fin de chaque combat" },
+    "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute un choix d’objet à la fin de chaque combat" },
 
     "ENEMY_DAMAGE_BOOSTER": { name: "Jeton Dégâts", description: "Augmente les dégâts de 5%" },
     "ENEMY_DAMAGE_REDUCTION": { name: "Jeton Protection", description: "Diminue les dégâts reçus de 2,5%" },

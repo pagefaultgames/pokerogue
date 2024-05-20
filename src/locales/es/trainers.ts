@@ -68,8 +68,9 @@ export const trainerClasses: SimpleTranslationEntries = {
     "officer": "Officer",
     "parasol_lady": "Parasol Lady",
     "pilot": "Pilot",
-    "pokefan": "Poké Fan",
-    "pokefan_family": "Poké Fan Family",
+    "pokéfan": "Poké Fan",
+    "pokéfan_female": "Poké Fan",
+    "pokéfan_family": "Poké Fan Family",
     "preschooler": "Preschooler",
     "preschooler_female": "Preschooler",
     "preschoolers": "Preschoolers",
@@ -219,7 +220,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "kahili": "Kahili",
     "rika": "Rika",
     "poppy": "Poppy",
-    "larry_elite": "Larry", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "hassel": "Hassel",
     "crispin": "Crispin",
     "amarys": "Amarys",
@@ -227,7 +227,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "drayton": "Drayton",
     "blue": "Blue",
     "red": "Red",
-    "lance_champion": "Lance", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "steven": "Steven",
     "wallace": "Wallace",
     "cynthia": "Cynthia",
