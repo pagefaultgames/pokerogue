@@ -1732,13 +1732,23 @@ export class CommandPhase extends FieldPhase {
           const move = playerPokemon.getMoveset()[cursor];
           this.scene.ui.setMode(Mode.MESSAGE);
 
-          // Decides between a Disabled, Not Implemented, or No PP translation message
-          const errorMessage = 
-            playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
-            move.getName().endsWith(' (N)') ? 'battle:moveNotImplemented' : 'battle:moveNoPP';
+          // Decides between a Disabled, Not Implemented, Tormented, or No PP translation message
+          var errorMessage;
+          var canTranslate = true;
+          if (playerPokemon.summonData.disabledMove === move.moveId)
+            errorMessage = 'battle:moveDisabled';
+          else if (move.getName().endsWith(' (N)'))
+            errorMessage = 'battle:moveNotImplemented';
+          else if (playerPokemon.summonData.tormented && playerPokemon.getLastXMoves(1)[0] && playerPokemon.getLastXMoves(1)[0].move === move.moveId) {
+            errorMessage = getPokemonMessage(playerPokemon, ' can\'t use the same move twice in a row due to the torment!');
+            canTranslate = false;
+          } else
+            errorMessage = 'battle:moveNoPP';
+
           const moveName = move.getName().replace(' (N)', ''); // Trims off the indicator
 
-          this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+          errorMessage = canTranslate ? i18next.t(errorMessage, { moveName: moveName }) : errorMessage;
+          this.scene.ui.showText(errorMessage, null, () => {
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
           }, null, true);
@@ -2092,6 +2102,12 @@ export class TurnEndPhase extends FieldPhase {
     
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
+
+      // transition from just tormented (tormented status does not apply on same turn it's given) and tormented
+      if (pokemon.summonData.justTormented && !pokemon.summonData.tormented) {
+        pokemon.summonData.justTormented = false;
+        pokemon.summonData.tormented = true;
+      }
       
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
         this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));

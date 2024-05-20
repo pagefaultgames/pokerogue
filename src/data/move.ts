@@ -3021,6 +3021,22 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 }
 
+export class TormentAttr extends MoveEffectAttr {
+    constructor() {
+        super(false);
+    }
+
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+        const ret = this.canApply(user, target, move, args);
+
+        if (ret) {
+            target.summonData.justTormented = true;
+            user.scene.queueMessage(getPokemonMessage(target, ' was subjected to torment!'));
+        }
+        return ret;
+    }
+}
+
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.HIT);
@@ -5141,7 +5157,9 @@ export function initMoves() {
       .attr(WeatherChangeAttr, WeatherType.HAIL)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
-      .unimplemented(),
+      .attr(TormentAttr)
+      .condition((user, target, move) => (!target.summonData.justTormented && !target.summonData.tormented))
+      .partial(),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)
       .attr(ConfuseAttr),
