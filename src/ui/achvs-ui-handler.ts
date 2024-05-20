@@ -33,7 +33,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, i18next.t("achv:Achv.name"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("achv:Achievements.name"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
