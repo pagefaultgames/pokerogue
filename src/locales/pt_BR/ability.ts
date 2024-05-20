@@ -211,7 +211,7 @@ export const ability: AbilityTranslationEntries = {
   },
   pickup: {
     name: "Pickup",
-    description: "Durante a batalha, o Pokémon pode tomar o item do Pokémon adversário. Fora de batalha pode encontrar itens pelo chão.",
+    description: "Após uma batalha, o Pokémon pegará um item que um adversário deixou cair.",
   },
   truant: {
     name: "Truant",
