@@ -4,6 +4,7 @@ import { ModifierTier } from "../modifier/modifier-tier";
 import { EggTier } from "../data/enums/egg-type";
 import BattleScene from "../battle-scene";
 import { UiTheme } from "../enums/ui-theme";
+import i18next from "i18next";
 
 export enum TextStyle {
   MESSAGE,
@@ -27,6 +28,25 @@ export enum TextStyle {
   TOOLTIP_CONTENT,
   MOVE_INFO_CONTENT
 };
+
+interface LanguageSetting {
+  summaryFontSize?: string,
+  battleInfoFontSize?: string,
+  partyFontSize?: string,
+  tooltipContentFontSize?: string,
+  moveInfoFontSize?: string,
+  textScale?: number
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "en":{},
+  "de":{},
+  "es":{},
+  "it":{},
+  "fr":{},
+  "zh_CN":{},
+  "pt_BR":{},
+}
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
   const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
@@ -64,6 +84,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 }
 
 function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
+  const lang = i18next.language;
   let shadowColor: string;
   let shadowSize = 6;
 
@@ -90,25 +111,25 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.MESSAGE:
     case TextStyle.SETTINGS_LABEL:
     case TextStyle.SETTINGS_SELECTED:
-      styleOptions.fontSize = '96px';
+      styleOptions.fontSize = languageSettings[lang]?.summaryFontSize || '96px';
       break;
     case TextStyle.BATTLE_INFO:
     case TextStyle.MONEY:
     case TextStyle.TOOLTIP_TITLE:
-      styleOptions.fontSize = '72px';
+      styleOptions.fontSize = languageSettings[lang]?.battleInfoFontSize || '72px';
       shadowSize = 4.5;
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED:
+      styleOptions.fontSize = languageSettings[lang]?.partyFontSize || '66px';
       styleOptions.fontFamily = 'pkmnems';
-      styleOptions.fontSize = '66px';
       break;
     case TextStyle.TOOLTIP_CONTENT:
-      styleOptions.fontSize = '64px';
+      styleOptions.fontSize = languageSettings[lang]?.tooltipContentFontSize || '64px';
       shadowSize = 4;
       break;
     case TextStyle.MOVE_INFO_CONTENT:
-      styleOptions.fontSize = '56px';
+      styleOptions.fontSize = languageSettings[lang]?.moveInfoFontSize || '56px';
       shadowSize = 3;
       break;
   }
