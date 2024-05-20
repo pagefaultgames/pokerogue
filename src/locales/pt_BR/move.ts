@@ -3808,5 +3808,5 @@ export const move: MoveTranslationEntries = {
   "malignantChain": {
     name: "Malignant Chain",
     effect: "O usuário derrama toxinas no alvo envolvendo-o em uma corrente tóxica e corrosiva. Isso também pode deixar o alvo seriamente envenenado."
-  }
+  },
 } as const;
