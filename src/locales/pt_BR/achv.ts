@@ -1,7 +1,7 @@
 import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
 export const achv: AchievementTranslationEntries = {
-    "Achv": {
+    "Achievements": {
         name: "Conquistas",
     },
     "Locked": {
@@ -41,7 +41,7 @@ export const achv: AchievementTranslationEntries = {
     },
 
     "HealAchv": {
-        description: "Cure {{healAmount}} de PS de uma vez só com um movimento, habilidade ou item segurado",
+        description: "Cure {{healAmount}} {{HP}} de uma vez só com um movimento, habilidade ou item segurado",
     },
     "250_HEAL": {
         name: "Residente",
@@ -57,7 +57,7 @@ export const achv: AchievementTranslationEntries = {
     },
 
     "LevelAchv": {
-        description: "Eleve um Pokémon para o Lv{{level}}",
+        description: "Eleve um Pokémon para o Nv{{level}}",
     },
     "LV_100": {
         name: "Calma Que Tem Mais!",

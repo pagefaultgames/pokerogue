@@ -98,7 +98,7 @@ export class HealAchv extends Achv {
   private healAmount: integer;
 
   constructor(name: string, healAmount: integer, iconImage: string, score: integer) {
-    super(name, i18next.t("achv:HealAchv.description", {"healAmount": healAmount.toLocaleString('en-US')}), iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.healAmount);
+    super(name, i18next.t("achv:HealAchv.description", {"healAmount": healAmount.toLocaleString('en-US'), "HP": i18next.t("pokemonInfo:Stat.HPshortened")}), iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.healAmount);
 
     this.healAmount = healAmount;
   }
