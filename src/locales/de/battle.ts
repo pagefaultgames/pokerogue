@@ -16,7 +16,7 @@ export const battle: SimpleTranslationEntries = {
   "moneyWon": "You got\n₽{{moneyAmount}} for winning!",
   "modifierReceived": "You received\n{{modifierName}}!",
   "pokemonCaught": "{{pokemonName}} wurde gefangen!",
-  "partyFull": "Your party is full.\nRelease a Pokémon to make room for {{pokemonName}}",
+  "partyFull": "Your party is full.\nRelease a Pokémon to make room for {{pokemonName}}?",
   "pokemon": "Pokémon",
   "sendOutPokemon": "Los, {{pokemonName}}!",
   "hitResultCriticalHit": "Ein Volltreffer!",
