@@ -61,7 +61,7 @@ describe("check if every variant's sprite are correctly set", () => {
                         if (!mlist.hasOwnProperty(id)) errors.push(`[${id}] missing key ${id} in masterlist for ${trimmedFilePath}`);
                         else if (mlist[id][parseInt(variant, 10) - 1] !== 2) {
                             const urlJsonFile = `${dirpath}${name}.json`;
-                            const trimmedUrlJsonFilepath = `${trimmedDirpath}${id}.json`;
+                            const trimmedUrlJsonFilepath = `${trimmedDirpath}${name}.json`;
                             const jsonFileExists = fs.existsSync(urlJsonFile);
                             if (mlist[id].includes(1)) {
                                 const msg = `[${id}] MISSING JSON ${trimmedUrlJsonFilepath}`;
