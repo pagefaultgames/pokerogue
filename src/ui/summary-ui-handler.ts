@@ -621,9 +621,7 @@ export default class SummaryUiHandler extends UiHandler {
                   this.showMoveEffect();
                 }
                 else if (this.cursor===Page.MOVES) {
-                  this.moveCursorObj = null; 
-                  this.showMoveSelect();
-                  this.showMoveEffect();
+                  this.moveCursorObj = null;
                 }
               }
               else
