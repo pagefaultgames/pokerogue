@@ -96,29 +96,53 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return this.config.getSpriteKey(this.variant === TrainerVariant.FEMALE || forceFemale);
   }
 
+  /**
+   * Returns the name of the trainer based on the provided trainer slot and the option to include a title.
+   * @param {TrainerSlot} trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
+   * @param {boolean} includeTitle - Whether to include the title in the returned name. Defaults to false.
+   * @returns {string} - The formatted name of the trainer.
+   **/
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle: boolean = false): string {
+    // Get the base title based on the trainer slot and variant.
     let name = this.config.getTitle(trainerSlot, this.variant);
+
+    // Determine the title to include based on the configuration and includeTitle flag.
     let title = includeTitle && this.config.title ? this.config.title : null;
 
-
+    // If the trainer has a name (not null or undefined).
     if (this.name) {
-      if (includeTitle)
-
-      // Check if i18n is initialized
+      // If the title should be included.
+      if (includeTitle) {
+        // Check if the internationalization (i18n) system is initialized.
         if (!getIsInitialized()) {
-          initI18n()
+          // Initialize the i18n system if it is not already initialized.
+          initI18n();
         }
+        // Get the localized trainer class name from the i18n file and set it as the title.
+        // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
         title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, '_')}`);
+      }
+
+      // If no specific trainer slot is set.
       if (!trainerSlot) {
+        // Use the trainer's name.
         name = this.name;
-        if (this.partnerName)
+        // If there is a partner name, concatenate it with the trainer's name using "&".
+        if (this.partnerName) {
           name = `${name} & ${this.partnerName}`;
-      } else
+        }
+      } else {
+        // Assign the name based on the trainer slot:
+        // Use 'this.name' if 'trainerSlot' is TRAINER.
+        // Otherwise, use 'this.partnerName' if it exists, or 'this.name' if it doesn't.
         name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
+      }
     }
 
+    // Return the formatted name, including the title if it is set.
     return title ? `${title} ${name}` : name;
   }
+
 
   isDouble(): boolean {
     return this.config.doubleOnly || this.variant === TrainerVariant.DOUBLE;

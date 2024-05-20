@@ -153,6 +153,7 @@ declare module 'i18next' {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
+	  voucher: SimpleTranslationEntries;
     };
   }
 }
