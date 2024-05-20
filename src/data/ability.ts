@@ -1555,7 +1555,7 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     this.enemyDef = 0;
     this.enemySpDef = 0;
 
-    if(pokemon.getOpponents()[0].summonData != undefined)
+    if(pokemon.getOpponents()[0].summonData !== undefined)
       for (let opponent of pokemon.getOpponents()) {
         this.enemyDef += opponent.getBattleStat(Stat.DEF);
         this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
