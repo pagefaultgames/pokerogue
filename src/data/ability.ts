@@ -2924,7 +2924,8 @@ export function initAbilities() {
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
       .attr(IntimidateImmunityAbAttr)
-      .ignorable(),
+      .ignorable()
+      .partial(),
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true),
     new Ability(Abilities.COMPOUND_EYES, 3)
