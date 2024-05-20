@@ -1717,7 +1717,7 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
   }
 
   /**
-   * 
+   * On switch out, trigger the form change to the one defined in the ability
    * @param pokemon The pokemon switching out and changing form {@linkcode Pokemon}
    * @param passive N/A
    * @param args N/A
