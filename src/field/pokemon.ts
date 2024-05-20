@@ -48,6 +48,7 @@ import { BerryType } from '../data/berry';
 import i18next from '../plugins/i18n';
 import { speciesEggMoves } from '../data/egg-moves';
 import { ModifierTier } from '../modifier/modifier-tier';
+import { ability } from '#app/locales/de/ability.js';
 
 export enum FieldPosition {
   CENTER,
@@ -1708,20 +1709,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
 
 
-            // finally checks and adds Fainted scene
+            // don't want to add another fainted phase, perhaps calculate for multi hit moves if someone fainted
+            // problem is applyAbAttrsInternal() in ability.ts is resetting the phaseQueueSpliceIndex before the moveaffectphase
+            // end() to add the message, don't want to remove it since I have no idea what it's doing
             if (this.isFainted()) {
-              /**
-               * when adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls 
-               * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
-               * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
-               * 
-               * once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
-               */
-
-              // option 1, calcualte and add /queue message here for multi hit moves, and add a conditional for the end the prevent it from adding ag
-              this.scene.setPhaseQueueSplice();
-              this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
-              this.resetSummonData();
+              // option 1: try to add multi move message here, and add a conidtion in end() to not add it a second time
+              // option 2: figure out what applyAbAttrsInternal() is doing and if there is a way to still add the message from end() properly
             }
 
             /**
@@ -1775,6 +1768,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.hp = this.hp - damage;
     // want to add a faint check here, for moves like explosion which deal self damage
     if (this.isFainted()) {
+      /**
+       * when adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls 
+       * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
+       * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
+       * 
+       * once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
+       */
       this.scene.setPhaseQueueSplice();
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(),preventEndure));
       this.resetSummonData();
