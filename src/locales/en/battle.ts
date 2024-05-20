@@ -4,6 +4,7 @@ export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} appeared.",
   "trainerAppeared": "{{trainerName}}\nwould like to battle!",
   "trainerAppearedDouble": "{{trainerName}}\nwould like to battle!",
+  "trainerSendOut": "{{trainerName}} sent out\n{{pokemonName}}!",//
   "singleWildAppeared": "A wild {{pokemonName}} appeared!",
   "multiWildAppeared": "A wild {{pokemonName1}}\nand {{pokemonName2}} appeared!",
   "playerComeBack": "Come back, {{pokemonName}}!",
@@ -12,7 +13,10 @@ export const battle: SimpleTranslationEntries = {
   "trainerGo": "{{trainerName}} sent out {{pokemonName}}!",
   "switchQuestion": "Will you switch\n{{pokemonName}}?",
   "trainerDefeated": `You defeated\n{{trainerName}}!`,
+  "moneyWon": "You got\n₽{{moneyAmount}} for winning!",
+  "modifierReceived": "You received\n{{modifierName}}!",//
   "pokemonCaught": "{{pokemonName}} was caught!",
+  "partyFull": "Your party is full.\nRelease a Pokémon to make room for {{pokemonName}}",
   "pokemon": "Pokémon",
   "sendOutPokemon": "Go! {{pokemonName}}!",
   "hitResultCriticalHit": "A critical hit!",
