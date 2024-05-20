@@ -3323,6 +3323,9 @@ export class PokemonSummonData {
   public abilitySuppressed: boolean = false;
   public justTormented: boolean = false;
   public tormented: boolean = false;
+  public justTaunted: boolean = false;
+  public taunted: boolean = false;
+  public tauntedTurns: integer = 0;
 
   public speciesForm: PokemonSpeciesForm;
   public fusionSpeciesForm: PokemonSpeciesForm;
@@ -3401,9 +3404,14 @@ export class PokemonMove {
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     const isMoveDisabled = this.moveId && pokemon.summonData?.disabledMove === this.moveId;
+    
+    // for taunt: check valid move, pokemon is taunted, 
+    const isMoveDisabledTaunt = this.moveId && pokemon.summonData.taunted && this.getMove().category === MoveCategory.STATUS;
+
     // for torment: check valid move, pokemon is tormented, pokemon has moved this summon, and selected move is the same as previous move
     const isMoveDisabledTorment = this.moveId && pokemon.summonData.tormented && pokemon.getLastXMoves(1)[0] && pokemon.getLastXMoves(1)[0].move === this.moveId;
-    if (isMoveDisabled || isMoveDisabledTorment)
+    
+    if (isMoveDisabled || isMoveDisabledTaunt || isMoveDisabledTorment)
       return false;
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(' (N)');
   }

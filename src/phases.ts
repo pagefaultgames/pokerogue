@@ -2,7 +2,7 @@ import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, SacrificialAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, SacrificialAttr, MoveCategory } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -1732,7 +1732,7 @@ export class CommandPhase extends FieldPhase {
           const move = playerPokemon.getMoveset()[cursor];
           this.scene.ui.setMode(Mode.MESSAGE);
 
-          // Decides between a Disabled, Not Implemented, Tormented, or No PP translation message
+          // Decides between a Disabled, Not Implemented, Taunted, Tormented, or No PP translation message
           var errorMessage;
           var canTranslate = true;
           if (playerPokemon.summonData.disabledMove === move.moveId)
@@ -1741,6 +1741,9 @@ export class CommandPhase extends FieldPhase {
             errorMessage = 'battle:moveNotImplemented';
           else if (playerPokemon.summonData.tormented && playerPokemon.getLastXMoves(1)[0] && playerPokemon.getLastXMoves(1)[0].move === move.moveId) {
             errorMessage = getPokemonMessage(playerPokemon, ' can\'t use the same move twice in a row due to the torment!');
+            canTranslate = false;
+          } else if (playerPokemon.summonData.taunted && move.getMove().category === MoveCategory.STATUS) {
+            errorMessage = getPokemonMessage(playerPokemon, ' can\'t use ' + move.getName() + ' after the taunt!');
             canTranslate = false;
           } else
             errorMessage = 'battle:moveNoPP';
@@ -2108,7 +2111,16 @@ export class TurnEndPhase extends FieldPhase {
         pokemon.summonData.justTormented = false;
         pokemon.summonData.tormented = true;
       }
-      
+
+      if (pokemon.summonData.justTaunted) {
+        pokemon.summonData.justTaunted = false;
+      }
+
+      if (pokemon.summonData.taunted && !--pokemon.summonData.tauntedTurns) {
+        this.scene.pushPhase(new MessagePhase(this.scene, getPokemonMessage(pokemon, " shook off the taunt!")));
+        pokemon.summonData.taunted = false;
+      }
+
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
         this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
         pokemon.summonData.disabledMove = Moves.NONE;
@@ -2259,6 +2271,11 @@ export class MovePhase extends BattlePhase {
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
+      else if (this.pokemon.summonData.taunted && this.move.getMove().category === MoveCategory.STATUS) {
+        if (this.pokemon.summonData.justTaunted)
+            this.pokemon.summonData.tauntedTurns--;
+        this.scene.queueMessage(getPokemonMessage(this.pokemon, ' can\'t use ' + this.move.getName() + ' after the taunt!'))
+      }
       return this.end();
     }
 
@@ -2710,6 +2727,12 @@ export class MoveEndPhase extends PokemonPhase {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     this.scene.arena.setIgnoreAbilities(false);
+
+    // if pokemon was taunted this turn and moved after the pokemon who taunted it,
+    // decrement taunt duration by 1
+    if (pokemon.summonData.justTaunted) {
+        pokemon.summonData.tauntedTurns--;
+    }
 
     this.end();
   }
