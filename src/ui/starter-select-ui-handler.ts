@@ -1000,9 +1000,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${eggMoveCost} ${i18next.t("starterSelectUiHandler:learnEggMove")}`,
                 handler: () => {
-                  if (candyCount >= eggMoveCost || 1==1) {
-                    //starterData.valueReduction++;
-                    console.log("Egg Move Value: " + this.scene.gameData.starterData[this.lastSpecies.speciesId].eggMoves);
+                  if (candyCount >= eggMoveCost) {
                     for (let em = 0; em < 4; em++) {
                       if (!(this.scene.gameData.starterData[this.lastSpecies.speciesId].eggMoves & Math.pow(2, em))) {
                         this.scene.gameData.setEggMoveUnlocked(this.lastSpecies, em);
