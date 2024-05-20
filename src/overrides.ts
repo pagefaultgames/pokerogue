@@ -96,4 +96,4 @@ export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = []; 
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
+export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
