@@ -15,7 +15,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerDefeated": `Vous avez battu\n{{trainerName}} !`,
   "moneyWon": "Vous remportez\n{{moneyAmount}} ₽ !",
   "pokemonCaught": "Vous avez attrapé {{pokemonName}} !",
-  "partyFull": "Votre équipe est pleine.\nÉchanger un Pokémon contre {{pokemonName}} ?",
+  "partyFull": "Votre équipe est pleine.\nRelâcher un Pokémon pour {{pokemonName}} ?",
   "pokemon": "Pokémon",
   "sendOutPokemon": "{{pokemonName}} ! Go !",
   "hitResultCriticalHit": "Coup critique !",
