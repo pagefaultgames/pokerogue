@@ -1,4 +1,4 @@
-import BattleScene from "./battle-scene";
+import BattleScene, { EvilTeam } from "./battle-scene";
 import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
@@ -303,6 +303,62 @@ interface FixedBattleConfigs {
     [key: integer]: FixedBattleConfig
 }
 
+function getEvilTeamBattle(evilTeam: EvilTeam, battle: string) {
+    switch (battle) {
+        case "admin":
+            switch (evilTeam) {
+                case EvilTeam.TEAM_ROCKET:
+                    return TrainerType.ROCKET_GRUNT;
+                case EvilTeam.TEAM_MAGMA:
+                    return TrainerType.MAGMA_GRUNT;
+                case EvilTeam.TEAM_AQUA:
+                    return TrainerType.AQUA_GRUNT;
+                case EvilTeam.TEAM_GALACTIC:
+                    return TrainerType.GALACTIC_GRUNT;
+                case EvilTeam.TEAM_PLASMA:
+                    return TrainerType.PLASMA_GRUNT;
+                case EvilTeam.TEAM_FLARE:
+                    return TrainerType.FLARE_GRUNT;
+                default:
+                    return TrainerType.ROCKET_GRUNT;
+            }
+        case "boss1":
+            switch (evilTeam) {
+                case EvilTeam.TEAM_ROCKET:
+                    return TrainerType.ROCKET_BOSS_GIOVANNI_1;
+                case EvilTeam.TEAM_MAGMA:
+                    return TrainerType.MAXIE;
+                case EvilTeam.TEAM_AQUA:
+                    return TrainerType.ARCHIE;
+                case EvilTeam.TEAM_GALACTIC:
+                    return TrainerType.CYRUS;
+                case EvilTeam.TEAM_PLASMA:
+                    return TrainerType.GHETSIS;
+                case EvilTeam.TEAM_FLARE:
+                    return TrainerType.LYSANDRE;
+                default:
+                    return TrainerType.ROCKET_BOSS_GIOVANNI_1;
+            }
+        case "boss2":
+            switch (evilTeam) {
+                case EvilTeam.TEAM_ROCKET:
+                    return TrainerType.ROCKET_BOSS_GIOVANNI_2;
+                case EvilTeam.TEAM_MAGMA:
+                    return TrainerType.MAXIE_2;
+                case EvilTeam.TEAM_AQUA:
+                    return TrainerType.ARCHIE_2;
+                case EvilTeam.TEAM_GALACTIC:
+                    return TrainerType.CYRUS_2;
+                case EvilTeam.TEAM_PLASMA:
+                    return TrainerType.GHETSIS_2;
+                case EvilTeam.TEAM_FLARE:
+                    return TrainerType.LYSANDRE_2;
+                default:
+                    return TrainerType.ROCKET_BOSS_GIOVANNI_2;
+            }
+    }
+}
+
 export const fixedBattles: FixedBattleConfigs = {
     [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
@@ -314,12 +370,12 @@ export const fixedBattles: FixedBattleConfigs = {
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_3, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [95]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
-    [105]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerVariant.DEFAULT)),
+    [115]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, getEvilTeamBattle(scene.evilTeamThisRun, "boss1"), TrainerVariant.DEFAULT)),
     [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [165]:  new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerVariant.DEFAULT)),
+        .setGetTrainerFunc(scene => new Trainer(scene, getEvilTeamBattle(scene.evilTeamThisRun, "boss2"), TrainerVariant.DEFAULT)),
     [182]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, [ TrainerType.HALA, TrainerType.MOLAYNE ], TrainerType.RIKA, TrainerType.CRISPIN ])),
     [184]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)

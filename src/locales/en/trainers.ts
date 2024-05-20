@@ -10,6 +10,11 @@ export const titles: SimpleTranslationEntries = {
     "professor": "Professor",
     "frontier_brain": "Frontier Brain",
     "rocket_boss": "Team Rocket Boss",
+    "magma_boss": "Team Magma Boss",
+    "aqua_boss": "Team Aqua Boss",
+    "galactic_boss": "Team Galactic Boss",
+    "plasma_boss": "Team Plasma Boss",
+    "flare_boss": "Team Flare Boss",
     // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -254,16 +259,9 @@ export const trainerNames: SimpleTranslationEntries = {
     "leon": "Leon",
     "rival": "Finn",
     "rival_female": "Ivy",
-    "rocket_boss_giovanni_1": "Giovanni",
-    "rocket_boss_giovanni_2": "Giovanni",
-    "magma_boss_maxie_1": "Maxie",
-    "magma_boss_maxie_2": "Maxie",
-    "aqua_boss_archie_1": "Archie",
-    "aqua_boss_archie_2": "Archie",
-    "galactic_boss_cyrus_1": "Cyrus",
-    "galactic_boss_cyrus_2": "Cyrus",
-    "plasma_boss_ghetsis_1": "Ghetsis",
-    "plasma_boss_ghetsis_2": "Ghetsis",
-    "flare_boss_lysandre_1": "Lysandre",
-    "flare_boss_lysandre_2": "Lysandre",
+    "maxie": "Maxie",
+    "archie": "Archie",
+    "cyrus": "Cyrus",
+    "ghetsis": "Ghetsis",
+    "lysandre": "Lysandre",
 } as const;

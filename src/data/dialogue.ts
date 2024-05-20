@@ -498,7 +498,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.MAGMA_BOSS_MAXIE_1]: [
+  [TrainerType.MAXIE]: [
     {
       encounter: [
         `After defeating you I will remove all the water biomes`
@@ -508,7 +508,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.MAGMA_BOSS_MAXIE_2]: [
+  [TrainerType.MAXIE_2]: [
     {
       encounter: [
         `Hold it right there.`
@@ -518,7 +518,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.AQUA_BOSS_ARCHIE_1]: [
+  [TrainerType.ARCHIE]: [
     {
       encounter: [
         `After defeating you I will send you to water jail`
@@ -528,7 +528,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.AQUA_BOSS_ARCHIE_2]: [
+  [TrainerType.ARCHIE_2]: [
     {
       encounter: [
         `Hold it right there.`
@@ -538,7 +538,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.GALACTIC_BOSS_CYRUS_1]: [
+  [TrainerType.CYRUS]: [
     {
       encounter: [
         `I will make you regret paying heed to your heart`
@@ -548,7 +548,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.GALACTIC_BOSS_CYRUS_2]: [
+  [TrainerType.CYRUS_2]: [
     {
       encounter: [
         `I'm going to completely crush you!`
@@ -558,7 +558,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.PLASMA_BOSS_GHETSIS_1]: [
+  [TrainerType.GHETSIS]: [
     {
       encounter: [
         `[Ominous latin chanting in the background]`
@@ -568,17 +568,17 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.PLASMA_BOSS_GHETSIS_2]: [
+  [TrainerType.GHETSIS_2]: [
     {
       encounter: [
-        `Lose and go down in flames!`
+        `Chat who should I fuse?`
       ],
       victory: [
         `I would have won if I rolled DNA splicers!`
       ]
     }
   ],
-  [TrainerType.FLARE_BOSS_LYSANDRE_1]: [
+  [TrainerType.LYSANDRE]: [
     {
       encounter: [
         `I copied my team from Cyrus`
@@ -588,7 +588,7 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.FLARE_BOSS_LYSANDRE_2]: [
+  [TrainerType.LYSANDRE_2]: [
     {
       encounter: [
         `Enough of this.`

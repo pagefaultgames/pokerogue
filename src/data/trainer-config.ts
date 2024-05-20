@@ -280,6 +280,21 @@ export class TrainerConfig {
             case TrainerType.ROCKET_BOSS_GIOVANNI_2:
                 trainerType = TrainerType.GIOVANNI;
                 break;
+            case TrainerType.MAXIE_2:
+                trainerType = TrainerType.MAXIE;
+                break;
+            case TrainerType.ARCHIE_2:
+                trainerType = TrainerType.ARCHIE;
+                break;
+            case TrainerType.CYRUS_2:
+                trainerType = TrainerType.CYRUS;
+                break;
+            case TrainerType.GHETSIS_2:
+                trainerType = TrainerType.GHETSIS;
+                break;
+            case TrainerType.LYSANDRE_2:
+                trainerType = TrainerType.LYSANDRE;
+                break;
         }
 
         return trainerType;
@@ -1157,7 +1172,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     })),
-    [TrainerType.MAGMA_BOSS_MAXIE_1]: new TrainerConfig(++t).setName('Maxie').initForEvilTeamLeader("Magma Boss",[])
+    [TrainerType.MAXIE]: new TrainerConfig(++t).setName('Maxie').initForEvilTeamLeader("Magma Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.MIGHTYENA ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CROBAT, Species.GLISCOR ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.WEEZING, Species.GALAR_WEEZING ]))
@@ -1169,7 +1184,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
-    [TrainerType.MAGMA_BOSS_MAXIE_2]: new TrainerConfig(++t).setName('Maxie').initForEvilTeamLeader("Magma Boss",[])
+    [TrainerType.MAXIE_2]: new TrainerConfig(++t).setName('Maxie').initForEvilTeamLeader("Magma Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SOLROCK, Species.MAGCARGO ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
@@ -1195,7 +1210,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
-    [TrainerType.AQUA_BOSS_ARCHIE_1]: new TrainerConfig(++t).setName('Archie').initForEvilTeamLeader("Aqua Boss",[])
+    [TrainerType.ARCHIE]: new TrainerConfig(++t).setName('Archie').initForEvilTeamLeader("Aqua Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LINOONE ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CROBAT, Species.PELIPPER ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.MUK, Species.ALOLA_MUK ]))
@@ -1207,7 +1222,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
-    [TrainerType.AQUA_BOSS_ARCHIE_2]: new TrainerConfig(++t).setName('Archie').initForEvilTeamLeader("Aqua Boss",[])
+    [TrainerType.ARCHIE_2]: new TrainerConfig(++t).setName('Archie').initForEvilTeamLeader("Aqua Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.KINGDRA, Species.LUDICOLO ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
@@ -1236,7 +1251,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
-    [TrainerType.GALACTIC_BOSS_CYRUS_1]: new TrainerConfig(++t).setName('Cyrus').initForEvilTeamLeader("Galactic Boss",[])
+    [TrainerType.CYRUS]: new TrainerConfig(++t).setName('Cyrus').initForEvilTeamLeader("Galactic Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GYARADOS, Species.BASCULEGION ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HONCHKROW, Species.HISUI_BRAVIARY ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.CROBAT, Species.OVERQWIL ]))
@@ -1251,7 +1266,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
-    [TrainerType.GALACTIC_BOSS_CYRUS_2]: new TrainerConfig(++t).setName('Cyrus').initForEvilTeamLeader("Galactic Boss",[])
+    [TrainerType.CYRUS_2]: new TrainerConfig(++t).setName('Cyrus').initForEvilTeamLeader("Galactic Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AZELF, Species.UXIE, Species.MESPRIT ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
@@ -1269,7 +1284,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
-    [TrainerType.PLASMA_BOSS_GHETSIS_1]: new TrainerConfig(++t).setName('Ghetsis').initForEvilTeamLeader("Plasma Boss",[])
+    [TrainerType.GHETSIS]: new TrainerConfig(++t).setName('Ghetsis').initForEvilTeamLeader("Plasma Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.COFAGRIGUS, Species.RUNERIGUS ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.BOUFFALANT ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SEISMITOAD, Species.CARRACOSTA ]))
@@ -1280,7 +1295,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
-    [TrainerType.PLASMA_BOSS_GHETSIS_2]: new TrainerConfig(++t).setName('Ghetsis').initForEvilTeamLeader("Plasma Boss",[])
+    [TrainerType.GHETSIS_2]: new TrainerConfig(++t).setName('Ghetsis').initForEvilTeamLeader("Plasma Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SLITHER_WING, Species.IRON_MOTH ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
@@ -1299,7 +1314,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
-    [TrainerType.FLARE_BOSS_LYSANDRE_1]: new TrainerConfig(++t).setName('Lysandre').initForEvilTeamLeader("Flare Boss",[])
+    [TrainerType.LYSANDRE]: new TrainerConfig(++t).setName('Lysandre').initForEvilTeamLeader("Flare Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.MIENSHAO ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HONCHKROW, Species.TALONFLAME ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.PYROAR ]))
@@ -1311,7 +1326,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
-    [TrainerType.FLARE_BOSS_LYSANDRE_2]: new TrainerConfig(++t).setName('Lysandre').initForEvilTeamLeader("Flare Boss",[])
+    [TrainerType.LYSANDRE_2]: new TrainerConfig(++t).setName('Lysandre').initForEvilTeamLeader("Flare Boss",[])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SCREAM_TAIL, Species.FLUTTER_MANE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
