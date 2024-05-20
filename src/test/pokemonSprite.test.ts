@@ -56,13 +56,13 @@ describe("check if every variant's sprite are correctly set", () => {
                             }
                         }
                         if (!mlist.hasOwnProperty(id)) errors.push(`missing key ${id} in masterlist for ${filePath}`);
-                        else if (mlist[id][parseInt(variant, 10) - 1] !== 2) errors.push(`the value should be 2 for the index ${parseInt(variant, 10) - 1} - ${filePath}`);
+                        else if (mlist[id][parseInt(variant, 10) - 1] !== 2) errors.push(`${mlist[id]} - the value should be 2 for the index ${parseInt(variant, 10) - 1} - ${filePath}`);
                     }
                 } else if (!mlist.hasOwnProperty(name)) errors.push(`named - missing key ${name} in masterlist for ${filePath}`);else {
                     const raw = fs.readFileSync(filePath, {encoding: 'utf8', flag: 'r'});
                     const data = JSON.parse(raw);
                     for (const key of Object.keys(data)) {
-                        if (mlist[name][key] !== 1) errors.push(`the value should be 1 in the array ${filePath}`);
+                        if (mlist[name][key] !== 1) errors.push(`${mlist[name]} - the value should be 1 for the index ${key} - ${filePath}`);
                     }
                 }
             }
