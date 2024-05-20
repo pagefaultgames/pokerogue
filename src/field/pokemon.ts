@@ -1641,6 +1641,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
           console.log('damage', damage.value, move.name, power.value, sourceAtk, targetDef);
 
+          // if no damage is done, could queue one of the following messages
+          if (source.turnData.hitsLeft === 1) {
+            switch (result as HitResult) {
+              case HitResult.NO_EFFECT:
+                this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
+                break;
+              case HitResult.IMMUNE:
+                this.scene.queueMessage(`${this.name} is unaffected!`);
+                break;
+            }
+          }
 
           if (damage.value) {
             if (this.getHpRatio() === 1)
@@ -1650,7 +1661,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
             const oneHitKo = result === HitResult.ONE_HIT_KO;
 
-            // damageAndUpdate: will queue potential messages for critical hit, effectiveness, fainted - in that order
+            // damageAndUpdate: can potentially queue fainted phase, setting phaseQueueSpliceIndex
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
             this.turnData.damageTaken += damage.value;
 
@@ -1681,6 +1692,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               }
             }
 
+
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
               if (damage.value > this.scene.gameData.gameStats.highestDamage)
@@ -1705,6 +1717,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                * 
                * once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
                */
+
+              // option 1, calcualte and add /queue message here for multi hit moves, and add a conditional for the end the prevent it from adding ag
               this.scene.setPhaseQueueSplice();
               this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
               this.resetSummonData();
@@ -1759,11 +1773,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     damage = Math.min(damage, this.hp);
     this.hp = this.hp - damage;
+    // want to add a faint check here, for moves like explosion which deal self damage
+    if (this.isFainted()) {
+      this.scene.setPhaseQueueSplice();
+      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(),preventEndure));
+      this.resetSummonData();
+    }
 
     return damage;
   }
 
-  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false ): integer {
+  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, 
+      ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
 
