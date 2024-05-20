@@ -14,7 +14,6 @@ export const battle: SimpleTranslationEntries = {
   "switchQuestion": "Möchtest du\n{{pokemonName}} auswechseln?",
   "trainerDefeated": `{{trainerName}}\nwurde besiegt!`,
   "moneyWon": "You got\n₽{{moneyAmount}} for winning!",
-  "modifierReceived": "You received\n{{modifierName}}!",
   "pokemonCaught": "{{pokemonName}} wurde gefangen!",
   "partyFull": "Your party is full.\nRelease a Pokémon to make room for {{pokemonName}}?",
   "pokemon": "Pokémon",
