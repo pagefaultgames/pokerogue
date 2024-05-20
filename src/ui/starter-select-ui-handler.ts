@@ -45,44 +45,40 @@ export interface Starter {
 interface LanguageSetting {
   starterInfoTextSize: string,
   instructionTextSize: string,
-  starterInfoXPosition: integer
+  starterInfoXPos?: integer,
+  starterInfoYOffset?: integer
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
   "en":{
     starterInfoTextSize: '56px',
     instructionTextSize: '42px',
-    starterInfoXPosition: 31
   },
   "de":{
     starterInfoTextSize: '56px',
     instructionTextSize: '35px',
-    starterInfoXPosition: 31
   },
   "es":{
     starterInfoTextSize: '56px',
     instructionTextSize: '35px',
-    starterInfoXPosition: 31
   },
   "it":{
     starterInfoTextSize: '56px',
     instructionTextSize: '38px',
-    starterInfoXPosition: 31
   },
   "fr":{
     starterInfoTextSize: '54px',
     instructionTextSize: '42px',
-    starterInfoXPosition: 31
   },
   "zh_CN":{
-    starterInfoTextSize: '56px',
+    starterInfoTextSize: '40px',
     instructionTextSize: '42px',
-    starterInfoXPosition: 31
+    starterInfoYOffset: 2
   },
   "pt_BR":{
     starterInfoTextSize: '47px',
     instructionTextSize: '38px',
-    starterInfoXPosition: 32
+    starterInfoXPos: 32,
   },
 }
 
@@ -220,6 +216,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
+    const currentLanguage = i18next.language;
+    const textSettings = languageSettings[currentLanguage];
 
     this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.starterSelectContainer.setVisible(false);
@@ -276,37 +274,38 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    const currentLanguage = i18next.language;
+    
     // The position should be set per language
-    let starterInfoXPosition = languageSettings[currentLanguage].starterInfoXPosition;
+    let starterInfoXPos = textSettings?.starterInfoXPos || 31;
+    let starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
 
     // The font size should be set per language
-    let starterInfoTextSize = languageSettings[currentLanguage].starterInfoTextSize;
+    let starterInfoTextSize = textSettings.starterInfoTextSize;
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
-    this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPosition, 127, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPos, 127 + starterInfoYOffset, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
-    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136 + starterInfoYOffset, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveLabelText.setOrigin(0, 0);
     this.pokemonPassiveLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonPassiveLabelText);
 
-    this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPosition, 136, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPos, 136 + starterInfoYOffset, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145 + starterInfoYOffset, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureLabelText.setOrigin(0, 0);
     this.pokemonNatureLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, starterInfoXPosition, 145, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, starterInfoXPos, 145 + starterInfoYOffset, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNatureText);
 
@@ -591,7 +590,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
     // The font size should be set per language
-    let instructionTextSize = languageSettings[currentLanguage].instructionTextSize;
+    let instructionTextSize = textSettings.instructionTextSize;
 
     this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: instructionTextSize });
     this.starterSelectContainer.add(this.instructionsText);
