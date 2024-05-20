@@ -19,7 +19,7 @@ import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitFormChangeAbAttr, applyAbAttrs, applyPostBattleAbAttrs, applyPostBattleInitAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
@@ -933,7 +933,7 @@ export default class BattleScene extends SceneBase {
 					if (resetArenaState)
 						{
 							pokemon.resetBattleData();
-							this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+							this.resetPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
 						}
 					this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
 				}
@@ -1946,6 +1946,32 @@ export default class BattleScene extends SceneBase {
 		if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
 			const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
 			if (matchingFormChange) {
+				let phase: Phase;
+				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet)
+					phase = new FormChangePhase(this, pokemon, matchingFormChange, modal);
+				else
+					phase = new QuietFormChangePhase(this, pokemon, matchingFormChange);
+				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet && modal)
+					this.overridePhase(phase);
+				else if (delayed)
+					this.pushPhase(phase);
+				else
+					this.unshiftPhase(phase);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	resetPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: {new( ... args: any[]): SpeciesFormChangeTrigger}, delayed: boolean = false, modal: boolean = false): boolean {
+		if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
+			
+			// Find the base form that matches the same ability
+			const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && 
+				fc.formKey === pokemon.species.forms[0].formKey &&
+				fc.canChange(pokemon));
+			if (matchingFormChange) {	
 				let phase: Phase;
 				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet)
 					phase = new FormChangePhase(this, pokemon, matchingFormChange, modal);

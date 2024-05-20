@@ -54,8 +54,8 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * default is 0 to not override
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = Species.PALAFIN;
-export const ABILITY_OVERRIDE: Abilities = Abilities.ZERO_TO_HERO;
+export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
+export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
