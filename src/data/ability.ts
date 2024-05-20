@@ -2393,7 +2393,7 @@ export class PreventBerryUseAbAttr extends AbAttr {
   }
 }
 
-/**
+  /**
    * A Pokemon with this ability heals by a percentage of their maximum hp after eating a berry
    * @param healPercent - Percent of Max HP to heal
    * @see {@linkcode apply()} for implementation
