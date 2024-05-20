@@ -12,13 +12,6 @@ import { Stat } from './data/pokemon-stat';
 import { PokeballCounts } from './battle-scene';
 import { PokeballType } from './data/pokeball';
 
-export const MENU_MESSAGE: { active: boolean, text: string, textColor: string, backgroundColor: string } = {
-    active: true,
-    text: "Shiny event active!",
-    textColor: "#FFD700",
-    backgroundColor: "#FAFAD2"
-}
-
 /**
  * Overrides for testing different in game situations
  * if an override name starts with "STARTING", it will apply when a new run begins

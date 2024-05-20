@@ -6,7 +6,6 @@ import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
-import * as Overrides from '../overrides';
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
@@ -14,6 +13,12 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
+  private MENU_MESSAGE: { active: boolean, text: string, textColor: string, backgroundColor: string } = {
+    active: true,
+    text: "Shiny event active!",
+    textColor: "#FFD700",
+    backgroundColor: "#FAFAD2"
+  }
 
   private titleStatsTimer: number;
 
@@ -43,11 +48,11 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 	
-    if (Overrides.MENU_MESSAGE.active) {
-        this.menuMessage = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 100, Overrides.MENU_MESSAGE.text, TextStyle.MESSAGE, {
+    if (this.MENU_MESSAGE.active) {
+        this.menuMessage = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 100, this.MENU_MESSAGE.text, TextStyle.MESSAGE, {
             fontSize: '54px',
-            backgroundColor: Overrides.MENU_MESSAGE.backgroundColor,
-            color: Overrides.MENU_MESSAGE.textColor !== "" ? Overrides.MENU_MESSAGE.textColor : "#FFFFFF"
+            backgroundColor: this.MENU_MESSAGE.backgroundColor,
+            color: this.MENU_MESSAGE.textColor !== "" ? this.MENU_MESSAGE.textColor : "#FFFFFF"
         });
         this.menuMessage.setOrigin(1, 0);
         this.titleContainer.add(this.menuMessage);
