@@ -58,6 +58,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
 ### 🎨 UI
   - GAMEFREAK
   - LJ Birdman
+  - Odizinne (Custom cursor)
 
 ### 🎨 Pagefault Games Intro
   - Spectremint
