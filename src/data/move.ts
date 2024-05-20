@@ -1578,19 +1578,18 @@ export class StealEatBerryAttr extends EatBerryAttr {
 }
 
 /**
- * @param selfTarget - Whether this move targets the user
- * @param ...effects - Status Effects to heal
- * @example
- * ```
- * // A move that unthaws target
- * const thawSelf = new HealStatusEffectAttr(false, StatusEffect.FREEZE)
- * // Pokemon uses 'Refresh' on itself
- * const cureAll = new HealStatusEffectAttr(true, StatusEffect.BURN, StatusEffect.PARALYSIS, StatusEffect.POISON)
- * ```
+ * Move attribute that signals that that move should cure a status effect
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply()}
  */
 export class HealStatusEffectAttr extends MoveEffectAttr {
+  /** Array of Status Effects to cure */
   private effects: StatusEffect[];
-
+  
+  /**
+   * @param selfTarget - Whether this move targets the user
+   * @param ...effects - Array of status effects to cure
+   */
   constructor(selfTarget: boolean, ...effects: StatusEffect[]) {
     super(selfTarget);
 
@@ -1602,7 +1601,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
       return false;
 
     const pokemon = this.selfTarget ? user : target;
-    if (pokemon.hp > 0 && pokemon.status && this.effects.includes(pokemon.status.effect)) {
+    if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
       pokemon.resetStatus();
       pokemon.updateInfo();
