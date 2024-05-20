@@ -1,4 +1,4 @@
-import { PokemonHealPhase, StatChangePhase } from "../phases";
+import { PokemonHealPhase, StatChangePhase, TurnEndPhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
 import { getBattleStatName } from "./battle-stat";
@@ -36,7 +36,7 @@ export type BerryPredicate = (pokemon: Pokemon) => boolean;
 export function getBerryPredicate(berryType: BerryType): BerryPredicate {
   switch (berryType) {
     case BerryType.SITRUS:
-      return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.5;
+      return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.5 && pokemon.scene.getCurrentPhase() instanceof TurnEndPhase;
     case BerryType.LUM:
       return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
     case BerryType.ENIGMA:
@@ -50,19 +50,19 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
         const threshold = new Utils.NumberHolder(0.25);
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
-        return pokemon.getHpRatio() < threshold.value && pokemon.summonData.battleStats[battleStat] < 6;
+        return pokemon.getHpRatio() < threshold.value && pokemon.summonData.battleStats[battleStat] < 6 && pokemon.scene.getCurrentPhase() instanceof TurnEndPhase;
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
         const threshold = new Utils.NumberHolder(0.25);
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
-        return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
+        return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST) && pokemon.scene.getCurrentPhase() instanceof TurnEndPhase;
       };
     case BerryType.STARF:
       return (pokemon: Pokemon) => {
         const threshold = new Utils.NumberHolder(0.25);
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
-        return pokemon.getHpRatio() < 0.25;
+        return pokemon.getHpRatio() < 0.25 && pokemon.scene.getCurrentPhase() instanceof TurnEndPhase;
       };
     case BerryType.LEPPA:
       return (pokemon: Pokemon) => {

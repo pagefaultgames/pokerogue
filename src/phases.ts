@@ -2584,8 +2584,20 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   end() {
+
+    
+    if (this.getTarget()?.isActive()) {
+      const target = this.getTarget()
+      const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ target ]), target.isPlayer());
+      if (hasUsableBerry)
+        this.scene.unshiftPhase(new BerryPhase(this.scene, target.getBattlerIndex()));
+      }
+    
     const user = this.getUserPokemon();
     if (user) {
+      const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ user ]), user.isPlayer());
+      if (hasUsableBerry)
+        this.scene.unshiftPhase(new BerryPhase(this.scene, user.getBattlerIndex()));
       if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive())
         this.scene.unshiftPhase(this.getNewHitPhase());
       else {
