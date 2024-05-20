@@ -1109,7 +1109,7 @@ export const ability: AbilityTranslationEntries = {
     name: "Turbine Éolienne",
     description: "Si le Pokémon est touché par une capacité faisant appel au vent, il se charge en électricité.",
   },
-  zerotoHero: {
+  zeroToHero: {
     name: "Supermutation",
     description: "Le Pokémon prend sa Forme Super en quittant le combat.",
   },
@@ -1129,23 +1129,23 @@ export const ability: AbilityTranslationEntries = {
     name: "Charge Quantique",
     description: "Quand un champ électrifié est actif ou que le Pokémon tient une capsule d’Énergie Booster, sa stat la plus élevée augmente.",
   },
-  goodasGold: {
+  goodAsGold: {
     name: "Corps en Or",
     description: "Le corps en or pur et robuste du Pokémon l’immunise contre les capacités de statut des autres Pokémon.",
   },
-  vesselofRuin: {
+  vesselOfRuin: {
     name: "Urne du Fléau",
     description: "Le pouvoir de l’urne qui appelle le fléau affaiblit l’Attaque Spéciale de tous les autres Pokémon.",
   },
-  swordofRuin: {
+  swordOfRuin: {
     name: "Épée du Fléau",
     description: "Le pouvoir de l’épée qui appelle le fléau affaiblit la Défense de tous les autres Pokémon.",
   },
-  tabletsofRuin: {
+  tabletsOfRuin: {
     name: "Bois du Fléau",
     description: "Le pouvoir du bois qui appelle le fléau affaiblit l’Attaque de tous les autres Pokémon.",
   },
-  beadsofRuin: {
+  beadsOfRuin: {
     name: "Perles du Fléau",
     description: "Le pouvoir des perles qui appellent le fléau affaiblit la Défense Spéciale de tous les autres Pokémon.",
   },

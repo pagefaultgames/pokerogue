@@ -4,6 +4,7 @@ import BattleScene from "../battle-scene";
 import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import { EggTier } from "./enums/egg-type";
+import i18next from '../plugins/i18n';
 
 export const EGG_SEED = 1073741824;
 
@@ -56,34 +57,34 @@ export function getEggDescriptor(egg: Egg): string {
     return 'Manaphy';
   switch (egg.tier) {
     case EggTier.GREAT:
-      return 'Rare';
+      return i18next.t('egg:greatTier');
     case EggTier.ULTRA:
-      return 'Epic';
+      return i18next.t('egg:ultraTier');
     case EggTier.MASTER:
-      return 'Legendary';
+      return i18next.t('egg:masterTier');
     default:
-      return 'Common';
+      return i18next.t('egg:defaultTier');
   }
 }
 
 export function getEggHatchWavesMessage(hatchWaves: integer): string {
   if (hatchWaves <= 5)
-    return 'Sounds can be heard coming from inside! It will hatch soon!';
+    return i18next.t('egg:hatchWavesMessageSoon');
   if (hatchWaves <= 15)
-    return 'It appears to move occasionally. It may be close to hatching.';
+    return i18next.t('egg:hatchWavesMessageClose');
   if (hatchWaves <= 50)
-    return 'What will hatch from this? It doesn\'t seem close to hatching.';
-  return 'It looks like this Egg will take a long time to hatch.';
+    return i18next.t('egg:hatchWavesMessageNotClose');
+  return i18next.t('egg:hatchWavesMessageLongTime');
 }
 
 export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string {
   switch (egg.gachaType) {
     case GachaType.LEGENDARY:
-      return `Legendary Rate Up (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
+      return `${i18next.t('egg:gachaTypeLegendary')} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
     case GachaType.MOVE:
-      return 'Rare Egg Move Rate Up';
+      return i18next.t('egg:gachaTypeMove');
     case GachaType.SHINY:
-      return 'Shiny Rate Up';
+      return i18next.t('egg:gachaTypeShiny');
   }
 }
 

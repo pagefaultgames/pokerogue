@@ -494,20 +494,16 @@ export default class SummaryUiHandler extends UiHandler {
             }
             break;
           case Button.LEFT:
-            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
-              break;
             if (this.cursor)
               success = this.setCursor(this.cursor - 1);
             break;
           case Button.RIGHT:
-            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-              this.setCursor(Page.MOVES); 
-              this.moveSelect = true;
-              success = true;
-              break;
-            }
-            if (this.cursor < pages.length - 1)
+            if (this.cursor < pages.length - 1) {
               success = this.setCursor(this.cursor + 1);
+              if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.cursor === Page.MOVES) {
+                this.moveSelect = true;
+              }
+            }
             break;
         }
       }
@@ -614,13 +610,7 @@ export default class SummaryUiHandler extends UiHandler {
             onComplete: () => {
               if (forward){
                 this.populatePageContainer(this.summaryPageContainer); 
-                if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-                  this.moveCursorObj = null; 
-                  this.extraMoveRowContainer.setVisible(true);
-                  this.setCursor(0, true);
-                  this.showMoveEffect();
-                }
-                else if (this.cursor===Page.MOVES) {
+                if (this.cursor===Page.MOVES) {
                   this.moveCursorObj = null; 
                   this.showMoveSelect();
                   this.showMoveEffect();
@@ -806,7 +796,7 @@ export default class SummaryUiHandler extends UiHandler {
 
           const natureStatMultiplier = getNatureStatMultiplier(this.pokemon.getNature(), s);
 
-          const statLabel = addTextObject(this.scene, 27 + 115 * colIndex, 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+          const statLabel = addTextObject(this.scene, 27 + 115 * colIndex + (colIndex == 1 ?  5 : 0), 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
           statLabel.setOrigin(0.5, 0);
           statsContainer.add(statLabel);
 

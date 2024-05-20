@@ -5,6 +5,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
+import i18next from '../plugins/i18n';
 
 const itemRows = 4;
 const itemCols = 17;
@@ -40,7 +41,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, 'Vouchers', TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("voucher:vouchers"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
@@ -127,7 +128,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.titleText.setText(getVoucherTypeName(voucher.voucherType));
     this.showText(voucher.description);
-    this.unlockText.setText(unlocked ? new Date(voucherUnlocks[voucher.id]).toLocaleDateString() : 'Locked');
+    this.unlockText.setText(unlocked ? new Date(voucherUnlocks[voucher.id]).toLocaleDateString() : i18next.t("voucher:locked"));
   }
 
   processInput(button: Button): boolean {

@@ -42,51 +42,82 @@ export interface Starter {
   pokerus: boolean;
 }
 
+interface LanguageSetting {
+  starterInfoTextSize: string,
+  instructionTextSize: string,
+  starterInfoXPosition: integer
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "en":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '42px',
+    starterInfoXPosition: 31
+  },
+  "de":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '35px',
+    starterInfoXPosition: 31
+  },
+  "es":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '35px',
+    starterInfoXPosition: 31
+  },
+  "it":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '38px',
+    starterInfoXPosition: 31
+  },
+  "fr":{
+    starterInfoTextSize: '54px',
+    instructionTextSize: '42px',
+    starterInfoXPosition: 31
+  },
+  "zh_CN":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '42px',
+    starterInfoXPosition: 31
+  },
+  "pt_BR":{
+    starterInfoTextSize: '47px',
+    instructionTextSize: '38px',
+    starterInfoXPosition: 32
+  },
+}
+
+const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
+  { passive: 50, costReduction: [30, 75] }, // 1
+  { passive: 45, costReduction: [25, 60] }, // 2
+  { passive: 30, costReduction: [20, 50] }, // 3
+  { passive: 25, costReduction: [15, 40] }, // 4
+  { passive: 20, costReduction: [12, 35] }, // 5
+  { passive: 15, costReduction: [10, 30] }, // 6
+  { passive: 10, costReduction: [8, 20] },  // 7
+  { passive: 10, costReduction: [5, 15] },  // 8
+  { passive: 10, costReduction: [3, 10] },  // 9
+  { passive: 10, costReduction: [3, 10] },  // 10
+]
+
 function getPassiveCandyCount(baseValue: integer): integer {
-  switch (baseValue) {
-    case 1:
-      return 50;
-    case 2:
-      return 45;
-    case 3:
-      return 40;
-    case 4:
-      return 30;
-    case 5:
-      return 25;
-    case 6:
-      return 20;
-    case 7:
-      return 15;
-    default:
-      return 10;
-  }
+  return starterCandyCosts[baseValue - 1].passive;
 }
 
 function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
-  switch (baseValue) {
-    case 1:
-      return [ 30, 75];
-    case 2:
-      return [ 25, 60 ];
-    case 3:
-      return [ 20, 50 ];
-    case 4:
-      return [ 15, 40 ];
-    case 5:
-      return [ 12, 35 ];
-    case 6:
-      return [ 10, 30 ];
-    case 7:
-      return [ 8, 20 ];
-    case 8:
-      return [ 5, 15 ];
-    default:
-      return [ 3, 10 ];
-  }
+  return starterCandyCosts[baseValue - 1].costReduction;
 }
 
-const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX' ];
+const gens = [
+    i18next.t("starterSelectUiHandler:gen1"),
+    i18next.t("starterSelectUiHandler:gen2"),
+    i18next.t("starterSelectUiHandler:gen3"),
+    i18next.t("starterSelectUiHandler:gen4"),
+    i18next.t("starterSelectUiHandler:gen5"),
+    i18next.t("starterSelectUiHandler:gen6"),
+    i18next.t("starterSelectUiHandler:gen7"),
+    i18next.t("starterSelectUiHandler:gen8"),
+    i18next.t("starterSelectUiHandler:gen9")
+];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
@@ -245,29 +276,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    let starterInfoXPosition = 31; // Only text
-    // The position should be set per language
     const currentLanguage = i18next.language;
-    switch (currentLanguage) {
-      case 'pt_BR':
-        starterInfoXPosition = 32;
-        break;
-      default:
-        starterInfoXPosition = 31;
-        break
-    }
+    // The position should be set per language
+    let starterInfoXPosition = languageSettings[currentLanguage].starterInfoXPosition;
 
-    let starterInfoTextSize = '56px'; // Labels and text
     // The font size should be set per language
-    // currentLanguage is already defined
-    switch (currentLanguage) {
-      case 'pt_BR':
-        starterInfoTextSize = '47px';
-        break;
-      default:
-        starterInfoTextSize = '56px';
-        break
-    }
+    let starterInfoTextSize = languageSettings[currentLanguage].starterInfoTextSize;
 
     this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
@@ -576,36 +590,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
-
-
-    let instructionTextSize = '42px';
     // The font size should be set per language
-    // currentLanguage is already defined in the previous code block
-    switch (currentLanguage) {
-      case 'de':
-        instructionTextSize = '35px';
-        break;
-      case 'en':
-        instructionTextSize = '42px';
-        break;
-      case 'es':
-        instructionTextSize = '35px';
-        break;
-      case 'fr':
-        instructionTextSize = '42px';
-        break;
-      case 'it':
-        instructionTextSize = '38px';
-        break;
-      case 'pt_BR':
-        instructionTextSize = '38px';
-        break;
-      case 'zh_CN':
-        instructionTextSize = '42px';
-        break;
-
-    }
-
+    let instructionTextSize = languageSettings[currentLanguage].instructionTextSize;
 
     this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: instructionTextSize });
     this.starterSelectContainer.add(this.instructionsText);
@@ -1287,15 +1273,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateGenOptions(): void {
     let text = '';
     for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
-      let optionText = gens[g];
-      if (g === this.genScrollCursor && this.genScrollCursor)
-        optionText = '↑';
-      else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
-        optionText = '↓'
-      text += `${text ? '\n' : ''}${optionText}`;
+        let optionText = '';
+        if (g === this.genScrollCursor && this.genScrollCursor)
+            optionText = '↑';
+        else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
+            optionText = '↓'
+        else
+            optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
+        text += `${text ? '\n' : ''}${optionText}`;
     }
     this.genOptionsText.setText(text);
-  }
+}
 
   setGenMode(genMode: boolean): boolean {
     this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);
