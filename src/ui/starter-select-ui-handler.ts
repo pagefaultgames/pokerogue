@@ -271,6 +271,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // The font size should be set per language
     // currentLanguage is already defined
     switch (currentLanguage) {
+      case 'fr':
+        starterInfoTextSize = '54px';
+        break;
       case 'pt_BR':
         starterInfoTextSize = '47px';
         break;
