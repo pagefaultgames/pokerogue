@@ -6,7 +6,7 @@ import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
-import { MENU_MESSAGE, MENU_MESSAGE_TEXT_COLOR, MENU_MESSAGE_BACKGROUND_COLOR } from "../overrides";
+import * as Overrides from '../overrides';
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
@@ -43,11 +43,11 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 	
-    if (MENU_MESSAGE !== "") {
-        this.menuMessage = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 100, MENU_MESSAGE, TextStyle.MESSAGE, {
+    if (Overrides.MENU_MESSAGE.active) {
+        this.menuMessage = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 100, Overrides.MENU_MESSAGE.text, TextStyle.MESSAGE, {
             fontSize: '54px',
-            backgroundColor: MENU_MESSAGE_BACKGROUND_COLOR,
-            color: MENU_MESSAGE_TEXT_COLOR !== "" ? MENU_MESSAGE_TEXT_COLOR : "#FFFFFF"
+            backgroundColor: Overrides.MENU_MESSAGE.backgroundColor,
+            color: Overrides.MENU_MESSAGE.textColor !== "" ? Overrides.MENU_MESSAGE.textColor : "#FFFFFF"
         });
         this.menuMessage.setOrigin(1, 0);
         this.titleContainer.add(this.menuMessage);
