@@ -9,7 +9,6 @@ const deepCopy = (data) => {
 }
 
 
-
 describe("check if every variant's sprite are correctly set", () => {
     let masterlist;
     let expVariant;
@@ -35,7 +34,7 @@ describe("check if every variant's sprite are correctly set", () => {
         expect(backVariant).not.toBeUndefined();
     });
 
-    function getMissingMasterlist(mlist, dirpath, excludes=[]) {
+    function getMissingMasterlist(mlist, dirpath, excludes = []) {
         const errors = [];
         if (fs.existsSync(dirpath)) {
             const files = fs.readdirSync(dirpath);
@@ -57,13 +56,10 @@ describe("check if every variant's sprite are correctly set", () => {
                             }
                         }
                         if (!mlist.hasOwnProperty(id)) errors.push(`missing key ${id} in masterlist for ${filePath}`);
-                        else if (mlist[id][parseInt(variant, 10)-1] !== 2) errors.push(`the value should be 2 for the index ${parseInt(variant, 10)-1} - ${filePath}`);
+                        else if (mlist[id][parseInt(variant, 10) - 1] !== 2) errors.push(`the value should be 2 for the index ${parseInt(variant, 10) - 1} - ${filePath}`);
                     }
-                } else if (!mlist.hasOwnProperty(name)) {
-                     errors.push(`named - missing key ${name} in masterlist for ${filePath}`);
-                }
-                else {
-                    const raw = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
+                } else if (!mlist.hasOwnProperty(name)) errors.push(`named - missing key ${name} in masterlist for ${filePath}`);else {
+                    const raw = fs.readFileSync(filePath, {encoding: 'utf8', flag: 'r'});
                     const data = JSON.parse(raw);
                     for (const key of Object.keys(data)) {
                         if (mlist[name][key] !== 1) errors.push(`the value should be 1 in the array ${filePath}`);
@@ -82,22 +78,21 @@ describe("check if every variant's sprite are correctly set", () => {
                 let url;
                 if (elm === 0) continue
                 else if (elm === 1) {
-                     url = `${key}.json`
+                    url = `${key}.json`
                     let filePath = `${dirPath}${url}`;
-                    const raw = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
+                    const raw = fs.readFileSync(filePath, {encoding: 'utf8', flag: 'r'});
                     const data = JSON.parse(raw);
                     if (!data.hasOwnProperty(index)) {
                         errors.push(`index: ${index} - ${filePath}`);
                     }
-                }
-                else if (elm ===2) {
-                    url = `${key}_${parseInt(index, 10)+1}.png`;
+                } else if (elm === 2) {
+                    url = `${key}_${parseInt(index, 10) + 1}.png`;
                     let filePath = `${dirPath}${url}`;
                     if (!fs.existsSync(filePath)) {
                         errors.push(filePath)
                     }
 
-                    url = `${key}_${parseInt(index, 10)+1}.json`;
+                    url = `${key}_${parseInt(index, 10) + 1}.json`;
                     filePath = `${dirPath}${url}`;
                     if (!fs.existsSync(filePath)) {
                         errors.push(filePath)
