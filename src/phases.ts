@@ -1250,8 +1250,12 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       });
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
+      const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
+      const pokemonName = this.getPokemon().name;
+      const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
+
       this.scene.pbTrayEnemy.hide();
-      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER)} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
+      this.scene.ui.showText(message, null, () => this.summon());
     }
   }
 
@@ -3509,7 +3513,11 @@ export class MoneyRewardPhase extends BattlePhase {
 
     this.scene.addMoney(moneyAmount.value);
 
-    this.scene.ui.showText(`You got ₽${moneyAmount.value.toLocaleString('en-US')}\nfor winning!`, null, () => this.end(), null, true);
+    const userLocale = navigator.language || 'en-US';
+    const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
+    const message = i18next.t("battle:moneyWon", { moneyAmount: formattedMoneyAmount });
+
+    this.scene.ui.showText(message, null, () => this.end(), null, true);
   }
 }
 
@@ -3544,20 +3552,23 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
     super(scene, modifierTypeFunc);
   }
 
-  doReward(): Promise<void> {
-    return new Promise<void>(resolve => {
+  async doReward(): Promise<void> {
+    await new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.fadeIn(250).then(() => {
-        this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
-          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-          resolve();
-        }, null, true, 1500);
+          const modifierName = newModifier.type.name;
+          const message = i18next.t("battle:modifierReceived", { modifierName });
+
+          this.scene.ui.showText(message, null, () => {
+            this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+            resolve();
+          }, null, true, 1500);
         });
       });
-    })
+    });
   }
 }
 
@@ -4415,14 +4426,14 @@ export class AttemptCapturePhase extends PokemonPhase {
       Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
-            this.scene.ui.showText(`Your party is full.\nRelease a Pokémon to make room for ${pokemon.name}?`, null, () => {
+            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6)
                       addToParty();
                     else
-                      promptRelease();
+                     promptRelease();
                   });
                 });
               }, () => {
