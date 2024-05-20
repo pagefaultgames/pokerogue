@@ -28,7 +28,7 @@ export const zhCnConfig = {
     abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
-    // egg: egg,
+    egg: egg,
     fightUiHandler: fightUiHandler,
     growth: growth,
     menu: menu,
