@@ -23,7 +23,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 
-export const zhCnConfig = {    
+export const zhCnConfig = {
     ability: ability,
     abilityTriggers: abilityTriggers,
     achv: achv,
