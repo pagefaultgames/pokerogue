@@ -55,30 +55,31 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: '42px',
   },
   "de":{
-    starterInfoTextSize: '56px',
+    starterInfoTextSize: '53px',
     instructionTextSize: '35px',
+    starterInfoXPos: 35,
   },
   "es":{
     starterInfoTextSize: '56px',
     instructionTextSize: '35px',
   },
+  "fr":{
+    starterInfoTextSize: '54px',
+    instructionTextSize: '42px',
+  },
   "it":{
     starterInfoTextSize: '56px',
     instructionTextSize: '38px',
   },
-  "fr":{
-    starterInfoTextSize: '54px',
-    instructionTextSize: '42px',
+  "pt_BR":{
+    starterInfoTextSize: '47px',
+    instructionTextSize: '38px',
+    starterInfoXPos: 33,
   },
   "zh_CN":{
     starterInfoTextSize: '40px',
     instructionTextSize: '42px',
     starterInfoYOffset: 2
-  },
-  "pt_BR":{
-    starterInfoTextSize: '47px',
-    instructionTextSize: '38px',
-    starterInfoXPos: 32,
   },
 }
 

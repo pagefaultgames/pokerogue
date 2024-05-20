@@ -13,7 +13,7 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
         "SPDEF": "Def. Esp.",
         "SPDEFshortened": "DefEsp",
         "SPD": "Veloc.",
-        "SPDshortened": "Veloc."
+        "SPDshortened": "Veloc.",
     },
 
     Type: {
@@ -36,6 +36,6 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
         "DRAGON": "Dragão",
         "DARK": "Sombrio",
         "FAIRY": "Fada",
-        "STELLAR": "Estelar"
+        "STELLAR": "Estelar",
       },
 } as const;

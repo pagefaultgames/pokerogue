@@ -1,6 +1,9 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { achv } from "./achv";
 import { battle } from "./battle";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { berry } from "./berry";
 import { commandUiHandler } from "./command-ui-handler";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
@@ -17,34 +20,34 @@ import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
-import { weather } from "./weather";
-import { berry } from "./berry";
 import { voucher } from "./voucher";
+import { weather } from "./weather";
 
-
-export const ptBrConfig = {    
+export const ptBrConfig = {
     ability: ability,
     abilityTriggers: abilityTriggers,
+    achv: achv,
     battle: battle,
+    battleMessageUiHandler: battleMessageUiHandler,
+    berry: berry,
     commandUiHandler: commandUiHandler,
     egg: egg,
     fightUiHandler: fightUiHandler,
-    menuUiHandler: menuUiHandler,
+    growth: growth,
     menu: menu,
+    menuUiHandler: menuUiHandler,
+    modifierType: modifierType,
     move: move,
+    nature: nature,
     pokeball: pokeball,
-    pokemonInfo: pokemonInfo,
     pokemon: pokemon,
+    pokemonInfo: pokemonInfo,
+    splashMessages: splashMessages,
     starterSelectUiHandler: starterSelectUiHandler,
     titles: titles,
     trainerClasses: trainerClasses,
     trainerNames: trainerNames,
     tutorial: tutorial,
-    splashMessages: splashMessages,
-    nature: nature,
-    growth: growth,
-    weather: weather,
-    modifierType: modifierType,
-    berry: berry,
     voucher: voucher,
+    weather: weather,
 }

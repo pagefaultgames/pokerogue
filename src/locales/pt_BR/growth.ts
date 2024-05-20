@@ -6,5 +6,5 @@ export const growth: SimpleTranslationEntries = {
     "Medium_Fast": "Meio Rápido",
     "Medium_Slow": "Meio Lento",
     "Slow": "Lento",
-    "Fluctuating": "Flutuante"
+    "Fluctuating": "Flutuante",
 } as const;

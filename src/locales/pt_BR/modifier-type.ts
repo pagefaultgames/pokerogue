@@ -110,7 +110,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TerastallizeModifierType": {
       name: "{{teraType}} Fragmento Tera",
-      description: "{{teraType}} Terastaliza um Pokémon por até 10 batalhas",
+      description: "{{teraType}} Terastalize um Pokémon por até 10 batalhas",
     },
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente",
