@@ -3552,23 +3552,20 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
     super(scene, modifierTypeFunc);
   }
 
-  async doReward(): Promise<void> {
-    await new Promise<void>(resolve => {
+  doReward(): Promise<void> {
+    return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.fadeIn(250).then(() => {
-          const modifierName = newModifier.type.name;
-          const message = i18next.t("battle:modifierReceived", { modifierName });
-
-          this.scene.ui.showText(message, null, () => {
-            this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-            resolve();
-          }, null, true, 1500);
+        this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
+          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+          resolve();
+        }, null, true, 1500);
         });
       });
-    });
+    })
   }
 }
 
