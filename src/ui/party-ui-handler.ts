@@ -24,6 +24,7 @@ export enum PartyUiMode {
   SWITCH,
   FAINT_SWITCH,
   POST_BATTLE_SWITCH,
+  REVIVAL_BLESSING,
   MODIFIER,
   MOVE_MODIFIER,
   TM_MODIFIER,
@@ -37,6 +38,7 @@ export enum PartyOption {
   CANCEL = -1,
   SEND_OUT,
   PASS_BATON,
+  REVIVE,
   APPLY,
   TEACH,
   TRANSFER,
@@ -102,6 +104,12 @@ export default class PartyUiHandler extends MessageUiHandler {
       return `${pokemon.name} has no energy\nleft to battle!`;
     return null;
   };
+
+  public static FilterFainted = (pokemon: PlayerPokemon) => {
+    if(!pokemon.isFainted())
+      return `${pokemon.name} still has energy\nto battle!`;
+    return null;
+  }
 
   private static FilterAllMoves = (_pokemonMove: PokemonMove) => null;
 
@@ -361,7 +369,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.cursor < 6) {
           this.showOptions();
           ui.playSelect();
-        } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH)
+        } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING)
           ui.playError();
         else
           return this.processInput(Button.CANCEL);
@@ -370,7 +378,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         if ((this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) && this.transferMode) {
           this.clearTransfer();
           ui.playSelect();
-        } else if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH) {
+        } else if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH && this.partyUiMode !== PartyUiMode.REVIVAL_BLESSING) {
           if (this.selectCallback) {
             const selectCallback = this.selectCallback;
             this.selectCallback = null;
@@ -579,6 +587,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             for (let i = 0; i < formChangeItemModifiers.length; i++)
               this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
+          break;
+        case PartyUiMode.REVIVAL_BLESSING:
+          this.options.push(PartyOption.REVIVE);
           break;
         case PartyUiMode.MODIFIER:
           this.options.push(PartyOption.APPLY);
