@@ -1423,7 +1423,7 @@ export class ExpBalanceModifier extends PersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 2;
+    return 4;
   }
 }
 
