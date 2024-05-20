@@ -2,6 +2,7 @@ import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { achv } from "./achv";
 import { battle } from "./battle";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { commandUiHandler } from "./command-ui-handler";
 import { egg } from "./egg";
@@ -22,12 +23,12 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 
-
 export const frConfig = {    
     ability: ability,
     abilityTriggers: abilityTriggers,
     achv: achv,
     battle: battle,
+    battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
     commandUiHandler: commandUiHandler,
     egg: egg,
