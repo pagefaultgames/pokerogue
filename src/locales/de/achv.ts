@@ -2,170 +2,171 @@ import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
 export const achv: AchievementTranslationEntries = {
     "Achievements": {
-        name: "Achievements",
+        name: "Errungenschaften",
     },
     "Locked": {
-        name: "Locked",
+        name: "Gesperrt",
     },
 
+
     "MoneyAchv": {
-        description: "Accumulate a total of ₽{{moneyAmount}}",
+        description:"Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an",
     },
     "10K_MONEY": {
-        name: "Money Haver",
+        name: "Geldhüter",
     },
     "100K_MONEY": {
-        name: "Rich",
+        name: "Reich",
     },
     "1M_MONEY": {
-        name: "Millionaire",
+        name: "Millionär",
     },
     "10M_MONEY": {
-        name: "One Percenter",
+        name: "Einprozenter",
     },
 
     "DamageAchv": {
-        description: "Inflict {{damageAmount}} damage in one hit",
+        description: "Füge mit einem Treffer {{damageAmount}} Schaden zu",
     },
     "250_DMG": {
-        name: "Hard Hitter",
+        name: "Harte Treffer",
     },
     "1000_DMG": {
-        name: "Harder Hitter",
+        name: "Härtere Treffer",
     },
     "2500_DMG": {
-        name: "That's a Lotta Damage!",
+        name: "Das ist ne Menge Schaden!",
     },
     "10000_DMG": {
-        name: "One Punch Man",
+        name: "Ein-Schlag-Mann",
     },
 
     "HealAchv": {
-        description: "Heal {{healAmount}} {{HP}} at once with a move, ability, or held item",
+        description: "Heile {{healAmount}} {{HP}} auf einmal. Mit einer Attacke, einer Fähigkeit oder einem gehaltenen Gegenstand",
     },
     "250_HEAL": {
-        name: "Novice Healer",
+        name: "Anfänger-Heiler",
     },
     "1000_HEAL": {
-        name: "Big Healer",
+        name: "Gesundheitsprofi",
     },
     "2500_HEAL": {
-        name: "Cleric",
+        name: "Kleriker",
     },
     "10000_HEAL": {
-        name: "Recovery Master",
+        name: "Wiederherstellungsmeister",
     },
 
     "LevelAchv": {
-        description: "Level up a Pokémon to Lv{{level}}",
+        description: "Erhöhe das Level eines Pokémon auf {{level}}",
     },
     "LV_100": {
-        name: "But Wait, There's More!",
+        name: "Warte, es gibt mehr!",
     },
     "LV_250": {
         name: "Elite",
     },
     "LV_1000": {
-        name: "To Go Even Further Beyond",
+        name:  "Geh noch höher hinaus!",
     },
 
     "RibbonAchv": {
-        description: "Accumulate a total of {{ribbonAmount}} Ribbons",
+        description: "Sammle insgesamt {{ribbonAmount}} Bänder",
     },
     "10_RIBBONS": {
-        name: "Pokémon League Champion",
+        name:  "Champion der Pokémon Liga",
     },
     "25_RIBBONS": {
-        name: "Great League Champion",
+        name: "Bänder-Sammler",
     },
     "50_RIBBONS": {
-        name: "Ultra League Champion",
+        name: "Bänder-Experte",
     },
     "75_RIBBONS": {
-        name: "Rogue League Champion",
+        name: "Bänder-Guru",
     },
     "100_RIBBONS": {
-        name: "Master League Champion",
+        name: "Bänder-Meister",
     },
 
     "TRANSFER_MAX_BATTLE_STAT": {
         name: "Teamwork",
-        description: "Baton pass to another party member with at least one stat maxed out",
+        description: "Nutze Staffette auf ein anderes Teammitglied, während der Anwender mindestens eines Statuswertes maximiert hat",
     },
     "MAX_FRIENDSHIP": {
-        name: "Friendmaxxing",
-        description: "Reach max friendship on a Pokémon",
+        name:  "Freundschaftsmaximierung",
+        description: "Erreiche maximale Freundschaft bei einem Pokémon",
     },
     "MEGA_EVOLVE": {
-        name: "Megamorph",
-        description: "Mega evolve a Pokémon",
+        name: "Megaverwandlung",
+        description: "Megaentwickle ein Pokémon",
     },
     "GIGANTAMAX": {
-        name: "Absolute Unit",
-        description: "Gigantamax a Pokémon",
+        name: "Absolute Einheit",
+        description: "Gigadynamaximiere ein Pokémon",
     },
     "TERASTALLIZE": {
-        name: "STAB Enthusiast",
-        description: "Terastallize a Pokémon",
+        name: "Typen-Bonus Enthusiast",
+        description: "Terrakristallisiere ein Pokémon",
     },
     "STELLAR_TERASTALLIZE": {
-        name: "The Hidden Type",
-        description: "Stellar Terastallize a Pokémon",
+        name: "Der geheime Typ",
+        description: "Terrakristallisiere ein Pokémon zum Typen Stellar",
     },
     "SPLICE": {
-        name: "Infinite Fusion",
-        description: "Splice two Pokémon together with DNA Splicers",
+        name: "Unendliche Fusion",
+        description: "Kombiniere zwei Pokémon mit einem DNS-Keil",
     },
     "MINI_BLACK_HOLE": {
-        name: "A Hole Lot of Items",
-        description: "Acquire a Mini Black Hole",
+        name: "Ein Loch voller Items",
+        description: "Erlange ein Mini-Schwarzes Loch",
     },
     "CATCH_MYTHICAL": {
-        name: "Mythical",
-        description: "Catch a mythical Pokémon",
+        name:  "Mysteriöses!",
+        description:  "Fange ein mysteriöses Pokémon",
     },
     "CATCH_SUB_LEGENDARY": {
-        name: "(Sub-)Legendary",
-        description: "Catch a sub-legendary Pokémon",
+        name: "Sub-Legendär",
+        description: "Fange ein sub-legendäres Pokémon",
     },
     "CATCH_LEGENDARY": {
-        name: "Legendary",
-        description: "Catch a legendary Pokémon",
+        name: "Legendär",
+        description: "Fange ein legendäres Pokémon",
     },
     "SEE_SHINY": {
-        name: "Shiny",
-        description: "Find a shiny Pokémon in the wild",
+        name: "Schillerndes Licht",
+        description: "Finde ein wildes schillerndes Pokémon",
     },
     "SHINY_PARTY": {
-        name: "That's Dedication",
-        description: "Have a full party of shiny Pokémon",
+        name: "Das ist Hingabe",
+        description: "Habe ein Team aus schillernden Pokémon",
     },
     "HATCH_MYTHICAL": {
-        name: "Mythical Egg",
-        description: "Hatch a mythical Pokémon from an egg",
+        name: "Mysteriöses Ei",
+        description: "Lass ein mysteriöses Pokémon aus einem Ei schlüpfen",
     },
     "HATCH_SUB_LEGENDARY": {
-        name: "Sub-Legendary Egg",
-        description: "Hatch a sub-legendary Pokémon from an egg",
+        name: "Sub-Legendäres Ei",
+        description: "Lass ein sub-legendäres Pokémon aus einem Ei schlüpfen",
     },
     "HATCH_LEGENDARY": {
-        name: "Legendary Egg",
-        description: "Hatch a legendary Pokémon from an egg",
+        name: "Legendäres Ei",
+        description: "Lass ein legendäres Pokémon aus einem Ei schlüpfen",
     },
     "HATCH_SHINY": {
-        name: "Shiny Egg",
-        description: "Hatch a shiny Pokémon from an egg",
+        name: "Schillerndes Ei",
+        description: "Lass ein schillerndes Pokémon aus einem Ei schlüpfen",
     },
     "HIDDEN_ABILITY": {
-        name: "Hidden Potential",
-        description: "Catch a Pokémon with a hidden ability",
+        name: "Geheimes Talent",
+        description: "Fang ein Pokémon mit versteckter Fähigkeit",
     },
     "PERFECT_IVS": {
-        name: "Certificate of Authenticity",
-        description: "Get perfect IVs on a Pokémon",
+        name: "Zertifikat der Echtheit",
+        description: "Erhalte ein Pokémon mit perfekten IS-Werten",
     },
     "CLASSIC_VICTORY": {
-        name: "Undefeated",
-        description: "Beat the game in classic mode",
+        name: "Ungeschlagen",
+        description: "Beende den klassischen Modus erfolgreich",
     },
 } as const;

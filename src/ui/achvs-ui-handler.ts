@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
 import { Button } from "../enums/buttons";
 import i18next from "../plugins/i18n";
-import { Achv, achvs } from "../system/achv";
+import {Achv, achvs, getAchievementDescription} from "../system/achv";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -136,10 +136,11 @@ export default class AchvsUiHandler extends MessageUiHandler {
   }
 
   protected showAchv(achv: Achv) {
+    achv.name = i18next.t(`achv:${achv.localizationKey}.name`)
+    achv.description = getAchievementDescription(achv.localizationKey)
     const achvUnlocks = this.scene.gameData.achvUnlocks;
     const unlocked = achvUnlocks.hasOwnProperty(achv.id);
     const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
-
     this.titleText.setText(unlocked ? achv.name : '???');
     this.showText(!hidden ? achv.description : '');
     this.scoreText.setText(`${achv.score}pt`);

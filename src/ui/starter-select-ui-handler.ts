@@ -55,8 +55,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: '42px',
   },
   "de":{
-    starterInfoTextSize: '56px',
+    starterInfoTextSize: '53px',
     instructionTextSize: '35px',
+    starterInfoXPos: 35,
   },
   "es":{
     starterInfoTextSize: '56px',
