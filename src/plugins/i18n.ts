@@ -43,7 +43,19 @@ export interface ModifierTypeTranslationEntries {
   BaseStatBoosterItem: SimpleTranslationEntries,
   EvolutionItem: SimpleTranslationEntries,
   FormChangeItem: SimpleTranslationEntries,
-  TeraType: SimpleTranslationEntries,
+}
+export interface PokemonInfoTranslationEntries {
+  Stat: SimpleTranslationEntries,
+  Type: SimpleTranslationEntries,
+}
+
+export interface BerryTranslationEntry {
+  name: string,
+  effect: string
+}
+
+export interface BerryTranslationEntries {
+  [key: string]: BerryTranslationEntry
 }
 
 export interface Localizable {
@@ -125,7 +137,7 @@ declare module 'i18next' {
       ability: AbilityTranslationEntries;
       pokeball: SimpleTranslationEntries;
       pokemon: SimpleTranslationEntries;
-      pokemonStat: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
       titles: SimpleTranslationEntries;
@@ -139,6 +151,9 @@ declare module 'i18next' {
       egg: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
       modifierType: ModifierTypeTranslationEntries;
+      battleMessageUiHandler: SimpleTranslationEntries;
+      berry: BerryTranslationEntries;
+	  voucher: SimpleTranslationEntries;
     };
   }
 }
