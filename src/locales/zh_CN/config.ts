@@ -2,7 +2,7 @@ import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
-// import { egg } from "./egg";
+import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
@@ -20,6 +20,7 @@ import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { voucher } from "./voucher";
 
 
 export const zhCnConfig = {
@@ -27,7 +28,7 @@ export const zhCnConfig = {
     abilityTriggers: abilityTriggers,
     battle: battle,
     commandUiHandler: commandUiHandler,
-    // egg: egg,
+    egg: egg,
     fightUiHandler: fightUiHandler,
     growth: growth,
     menu: menu,
@@ -47,4 +48,5 @@ export const zhCnConfig = {
     weather: weather,
     battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
+    voucher: voucher,
 }
