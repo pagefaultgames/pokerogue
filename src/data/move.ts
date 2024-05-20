@@ -1,6 +1,6 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MoveEffectPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MoveEffectPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -12,10 +12,10 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, PreventBerryUseAbAttr, BlockItemTheftAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
@@ -25,6 +25,7 @@ import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
 import { Biome } from "./enums/biome";
 import i18next, { Localizable } from '../plugins/i18n';
+import { BerryType, BerryEffectFunc, getBerryEffectFunc } from './berry';
 
 export enum MoveCategory {
   PHYSICAL,
@@ -781,8 +782,8 @@ export class RecoilAttr extends MoveEffectAttr {
     if (cancelled.value)
       return false;
 
-    const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio),
-      user.turnData.damageDealt ? 1 : 0);
+    const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.currDamageDealt : user.getMaxHp()) * this.damageRatio),
+      user.turnData.currDamageDealt ? 1 : 0);
     if (!recoilDamage)
       return false;
 
@@ -1168,6 +1169,42 @@ export class StrengthSapHealAttr extends MoveEffectAttr {
     return true;
   }
 }
+/**
+ * Attribute used for moves that change priority in a turn given a condition,
+ * e.g. Grassy Glide
+ * Called when move order is calculated in {@linkcode TurnStartPhase}.
+ * @extends MoveAttr
+ * @see {@linkcode apply}
+ */
+export class IncrementMovePriorityAttr extends MoveAttr {
+  /** The condition for a move's priority being incremented */
+  private moveIncrementFunc: (pokemon: Pokemon, target:Pokemon, move: Move) => boolean;
+  /** The amount to increment priority by, if condition passes. */
+  private increaseAmount: integer;
+
+  constructor(moveIncrementFunc: (pokemon: Pokemon, target:Pokemon, move: Move) => boolean, increaseAmount = 1) {
+    super();
+
+    this.moveIncrementFunc = moveIncrementFunc;
+    this.increaseAmount = increaseAmount;
+  }
+
+  /**
+   * Increments move priority by set amount if condition passes
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode Utils.IntegerHolder} for move priority.
+   * @returns true if function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!this.moveIncrementFunc(user, target, move))
+      return false;
+      
+    (args[0] as Utils.IntegerHolder).value += this.increaseAmount;
+    return true;
+  }
+}
 
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
@@ -1440,6 +1477,95 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const heldItems = this.getTargetHeldItems(target);
     return heldItems.length ? -5 : 0;
+  }
+}
+
+/**
+ * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overriden, a random berry will be picked from the target's inventory.
+ */
+export class EatBerryAttr extends MoveEffectAttr {
+  protected chosenBerry: BerryModifier;
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+    this.chosenBerry = undefined;
+  }
+/**
+ * Causes the target to eat a berry.
+ * @param user {@linkcode Pokemon} Pokemon that used the move
+ * @param target {@linkcode Pokemon} Pokemon that will eat a berry
+ * @param move {@linkcode Move} The move being used
+ * @param args Unused
+ * @returns {boolean} true if the function succeeds
+ */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if(this.chosenBerry === undefined) { // if no berry has been provided, pick a random berry from their inventory 
+      const heldBerries = this.getTargetHeldBerries(target);
+      if(heldBerries.length <= 0)
+        return false;
+      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    }
+
+    getBerryEffectFunc(this.chosenBerry.berryType)(target); // target eats the berry
+
+    const preserve = new Utils.BooleanHolder(false);
+    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
+
+    if (!preserve.value){ // remove the eaten berry if not preserved
+      if (!--this.chosenBerry.stackCount)
+        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
+      target.scene.updateModifiers(target.isPlayer());
+}
+    this.chosenBerry = undefined;
+    
+    return true;
+  }
+
+  getTargetHeldBerries(target: Pokemon): BerryModifier[] {
+    return target.scene.findModifiers(m => m instanceof BerryModifier
+      && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
+  }
+
+}
+/**
+ *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
+ *  Used for Pluck & Bug Bite.
+ */
+export class StealEatBerryAttr extends EatBerryAttr {
+  constructor() {
+    super();
+  }
+/**
+ * User steals a random berry from the target and then eats it.
+ * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
+ * @param {Pokemon} target Pokemon that will have its berry stolen
+ * @param {Move} move Move being used
+ * @param {any[]} args Unused
+ * @returns {boolean} true if the function succeeds
+ */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
+    if(cancelled.value == true)
+      return false;
+    
+    const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
+
+    if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
+      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+
+      if (this.chosenBerry.stackCount == 1) // remove modifier if its the last berry
+        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
+      target.scene.updateModifiers(target.isPlayer());
+
+      user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
+      return super.apply(user, user, move, args);
+    }
+
+    return false;
   }
 }
 
@@ -3568,6 +3694,67 @@ export class RemoveScreensAttr extends MoveEffectAttr {
 
   }
 }
+/**
+ * Attribute used for Revival Blessing.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class RevivalBlessingAttr extends MoveEffectAttr {
+  constructor(user?: boolean) {
+    super(true);
+  }
+
+  /**
+   * 
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args N/A
+   * @returns Promise, true if function succeeds.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      // If user is player, checks if the user has fainted pokemon
+      if(user instanceof PlayerPokemon
+        && user.scene.getParty().findIndex(p => p.isFainted())>-1) {
+          (user as PlayerPokemon).revivalBlessing().then(() => {
+            resolve(true)
+          });
+      // If user is enemy, checks that it is a trainer, and it has fainted non-boss pokemon in party 
+      } else if(user instanceof EnemyPokemon
+        && user.hasTrainer()
+        && user.scene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1) {
+          // Selects a random fainted pokemon
+          const faintedPokemon = user.scene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
+          const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length)];
+          const slotIndex = user.scene.getEnemyParty().findIndex(p => pokemon.id === p.id);
+          pokemon.resetStatus();
+          pokemon.heal(Math.min(Math.max(Math.ceil(Math.floor(0.5 * pokemon.getMaxHp())), 1), pokemon.getMaxHp()));
+          user.scene.queueMessage(`${pokemon.name} was revived!`,0,true);
+
+          if(user.scene.currentBattle.double && user.scene.getEnemyParty().length > 1) {
+            const allyPokemon = user.getAlly();
+            if(slotIndex<=1) {
+              user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, pokemon.getFieldIndex(), slotIndex, false, false, false));
+            } else if(allyPokemon.isFainted()){
+              user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, allyPokemon.getFieldIndex(), slotIndex, false, false,false));
+            }
+          }
+          resolve(true);
+      } else {
+        user.scene.queueMessage(`But it failed!`);
+        resolve(false);
+      }
+    })
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    if(user.hasTrainer() && user.scene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1)
+      return 20;
+
+    return -20;
+  }
+}
 
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
@@ -5556,7 +5743,7 @@ export function initMoves() {
       .makesContact(false)
       .ignoresProtect(),
     new AttackMove(Moves.PLUCK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .partial(),
+      .attr(StealEatBerryAttr),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
       .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
@@ -5793,7 +5980,7 @@ export function initMoves() {
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
       .partial(),
     new AttackMove(Moves.BUG_BITE, Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .partial(),
+      .attr(StealEatBerryAttr),
     new AttackMove(Moves.CHARGE_BEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 70, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true),
     new AttackMove(Moves.WOOD_HAMMER, Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 4)
@@ -6655,8 +6842,8 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new StatusMove(Moves.TEATIME, Type.NORMAL, -1, 10, -1, 0, 8)
-      .target(MoveTarget.ALL)
-      .unimplemented(),
+      .attr(EatBerryAttr)
+      .target(MoveTarget.ALL),
     new StatusMove(Moves.OCTOLOCK, Type.FIGHTING, 100, 15, -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
       .partial(),
@@ -6826,7 +7013,7 @@ export function initMoves() {
       .condition(failIfDampCondition)
       .makesContact(false),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
-      .partial(),
+      .attr(IncrementMovePriorityAttr,(user,target,move) =>user.scene.arena.getTerrainType()===TerrainType.GRASSY&&user.isGrounded()),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
     new AttackMove(Moves.TERRAIN_PULSE, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
@@ -7109,7 +7296,8 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.REVIVAL_BLESSING, Type.NORMAL, -1, 1, -1, 0, 9)
       .triageMove()
-      .unimplemented(),
+      .attr(RevivalBlessingAttr)
+      .target(MoveTarget.USER),
     new AttackMove(Moves.SALT_CURE, Type.ROCK, MoveCategory.PHYSICAL, 40, 100, 15, -1, 0, 9)
       .attr(AddBattlerTagAttr, BattlerTagType.SALT_CURED)
       .makesContact(false),
