@@ -43,7 +43,7 @@ export enum TrainerType {
   SMASHER,
   SNOW_WORKER,
   STRIKER,
-  STUDENT,
+  SCHOOL_KID,
   SWIMMER,
   TWINS,
   VETERAN,

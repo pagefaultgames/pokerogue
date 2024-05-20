@@ -1,5 +1,5 @@
 import { Biome } from "./enums/biome";
-import { getPokemonMessage } from "../messages";
+import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import Pokemon from "../field/pokemon";
 import { Type } from "./type";
 import Move, { AttackMove } from "./move";
@@ -172,9 +172,9 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
 export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
   switch (weatherType) {
     case WeatherType.SANDSTORM:
-      return getPokemonMessage(pokemon, ' is buffeted\nby the sandstorm!');
+      return i18next.t('weather:sandstormDamageMessage', {pokemonPrefix: getPokemonPrefix(pokemon), pokemonName: pokemon.name});
     case WeatherType.HAIL:
-      return getPokemonMessage(pokemon, ' is pelted\nby the hail!');
+      return i18next.t('weather:hailDamageMessage', {pokemonPrefix: getPokemonPrefix(pokemon), pokemonName: pokemon.name});
   }
 
   return null;
