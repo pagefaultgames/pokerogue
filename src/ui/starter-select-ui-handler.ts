@@ -76,21 +76,26 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: '38px',
     starterInfoXPos: 33,
   },
-  "zh_CN":{
+  "zh":{
     starterInfoTextSize: '40px',
     instructionTextSize: '42px',
     starterInfoYOffset: 2
+  },
+  "pt":{
+    starterInfoTextSize: '47px',
+    instructionTextSize: '38px',
+    starterInfoXPos: 32,
   },
 }
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
   { passive: 50, costReduction: [30, 75] }, // 1
   { passive: 45, costReduction: [25, 60] }, // 2
-  { passive: 30, costReduction: [20, 50] }, // 3
-  { passive: 25, costReduction: [15, 40] }, // 4
-  { passive: 20, costReduction: [12, 35] }, // 5
-  { passive: 15, costReduction: [10, 30] }, // 6
-  { passive: 10, costReduction: [8, 20] },  // 7
+  { passive: 40, costReduction: [20, 50] }, // 3
+  { passive: 30, costReduction: [15, 40] }, // 4
+  { passive: 25, costReduction: [12, 35] }, // 5
+  { passive: 20, costReduction: [10, 30] }, // 6
+  { passive: 15, costReduction: [8, 20] },  // 7
   { passive: 10, costReduction: [5, 15] },  // 8
   { passive: 10, costReduction: [3, 10] },  // 9
   { passive: 10, costReduction: [3, 10] },  // 10
@@ -218,7 +223,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
     const currentLanguage = i18next.language;
-    const textSettings = languageSettings[currentLanguage];
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
+    const textSettings = languageSettings[langSettingKey];
 
     this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.starterSelectContainer.setVisible(false);
@@ -281,7 +287,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     let starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
 
     // The font size should be set per language
-    let starterInfoTextSize = textSettings.starterInfoTextSize;
+    let starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
 
     this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
