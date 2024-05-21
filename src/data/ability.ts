@@ -2307,6 +2307,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     }
     return hadEffect;
   }
+}
 
 
 /** 
