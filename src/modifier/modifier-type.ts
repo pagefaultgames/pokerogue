@@ -1152,6 +1152,7 @@ export const modifierTypes = {
   ABILITY_CHARM: () => new ModifierType(`modifierType:ModifierType.ABILITY_CHARM`, 'ability_charm', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
 
   IV_SCANNER: () => new ModifierType(`modifierType:ModifierType.IV_SCANNER`, 'scanner', (type, _args) => new Modifiers.IvScannerModifier(type)),
+  ABILITY_SCANNER: () => new ModifierType(`modifierType:ModifierType.ABILITY_SCANNER`, 'ability_scanner', (type, _args) => new Modifiers.AbilityScannerModifier(type)),
 
   DNA_SPLICERS: () => new FusePokemonModifierType(`modifierType:ModifierType.DNA_SPLICERS`, 'dna_splicers'),
 
@@ -1278,6 +1279,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 4),
+    new WeightedModifierType(modifierTypes.ABILITY_SCANNER, 4),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 8),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 12),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 4),

@@ -225,6 +225,19 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
+  promptAbility(pokemonId: integer, abilityName: string): Promise<void> {
+    return new Promise(resolve => {
+      this.scene.executeWithSeedOffset(() => {
+        this.showText(i18next.t('battle:abilityPrompt', {abilityName: abilityName, pokemonName: this.scene.getPokemonById(pokemonId).name}));
+
+        this.awaitingActionInput = true;
+        this.onActionInput = () => {
+          resolve();
+        };
+      }, pokemonId);
+    });
+  }
+
   getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {
     const starterSpecies = this.scene.getPokemonById(pokemonId).species.getRootSpeciesId(true);
     const starterIvs: number[] = this.scene.gameData.dexData[starterSpecies].ivs;

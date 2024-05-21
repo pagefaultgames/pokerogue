@@ -215,6 +215,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ABILITY_CHARM": { name: "Ability Charm", description: "Dramatically increases the chance of a wild Pokémon having a Hidden Ability" },
 
     "IV_SCANNER": { name: "IV Scanner", description: "Allows scanning the IVs of wild Pokémon. 2 IVs are revealed per stack. The best IVs are shown first" },
+    "ABILITY_SCANNER": { name: "Ability Scanner", description: "Allows scanning the Abilities of wild Pokémon." },
 
     "DNA_SPLICERS": { name: "DNA Splicers" },
 

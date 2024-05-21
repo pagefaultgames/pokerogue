@@ -6,7 +6,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, AbilityScannerModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -935,6 +935,9 @@ export class EncounterPhase extends BattlePhase {
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier)
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
+      const abilityScannerModifier = this.scene.findModifier(m => m instanceof AbilityScannerModifier);
+      if (abilityScannerModifier)
+        enemyField.map(p => this.scene.pushPhase(new ScanAbilityPhase(this.scene, p.getBattlerIndex(), Math.min(abilityScannerModifier.getStackCount() * 2, 6))));    
     }
 
     if (!this.loaded) {
@@ -4861,6 +4864,34 @@ export class ScanIvsPhase extends PokemonPhase {
     });
   }
 }
+
+export class ScanAbilityPhase extends PokemonPhase {
+
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, shownIvs: integer) {
+    super(scene, battlerIndex);
+  }
+
+  start() {
+    super.start();
+
+    const pokemon = this.getPokemon();
+
+    this.scene.ui.showText(i18next.t('battle:abilityScannerUseQuestion', { pokemonName: pokemon.name }), null, () => {
+      this.scene.ui.setMode(Mode.CONFIRM, () => {
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.clearText();
+        new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {
+          this.scene.ui.getMessageHandler().promptAbility(pokemon.id, pokemon.getAbility().name).then(() => this.end());
+        });
+      }, () => {
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.clearText();
+        this.end();
+      });
+    });
+  }
+}
+
 
 export class TrainerMessageTestPhase extends BattlePhase {
   private trainerTypes: TrainerType[];

@@ -1942,6 +1942,28 @@ export class IvScannerModifier extends PersistentModifier {
   }
 }
 
+export class AbilityScannerModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof AbilityScannerModifier;
+  }
+
+  clone(): AbilityScannerModifier {
+    return new AbilityScannerModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 3;
+  }
+}
+
 export class ExtraModifierModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
