@@ -217,6 +217,19 @@ export default class Move implements Localizable {
     return false;
   }
 
+  isAllyTarget(): boolean {
+    switch (this.moveTarget) {
+      case MoveTarget.USER:
+      case MoveTarget.NEAR_ALLY:
+      case MoveTarget.ALLY:
+      case MoveTarget.USER_OR_NEAR_ALLY:
+      case MoveTarget.USER_AND_ALLIES:
+      case MoveTarget.USER_SIDE:
+        return true;
+    }
+    return false;
+  }
+
   isTypeImmune(type: Type): boolean {
     switch (type) {
     case Type.GRASS:

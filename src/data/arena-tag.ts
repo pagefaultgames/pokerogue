@@ -9,9 +9,11 @@ import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, allAbilities, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { Abilities } from "./enums/abilities";
+import { Stat, getStatName } from "./pokemon-stat";
 
 export enum ArenaTagSide {
   BOTH,
@@ -143,7 +145,7 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
   }
 
   onAdd(arena: Arena): void {
-    arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? "\non your side" : this.side === ArenaTagSide.ENEMY ? "\non the foe's side" : ""}.`);
+    arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? '\non your side' : this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : ''}.`);
   }
 }
 
@@ -266,6 +268,83 @@ class CraftyShieldTag extends ConditionalProtectTag {
           && moveTarget !== MoveTarget.ALL;
       }
     );
+  }
+}
+
+/**
+ * Arena Tag class for the {@link https://bulbapedia.bulbagarden.net/wiki/Treasures_of_ruin Treasures of Ruin}
+ * abilities. 
+ */
+export class TreasureOfRuinTag extends ArenaTag {
+  private stat: Stat;
+  private sourceAbility: Abilities;
+
+  constructor(tagType: ArenaTagType, sourceAbility: Abilities, sourceId: integer, stat: Stat) {
+    super(tagType, 0, Moves.NONE, sourceId, ArenaTagSide.BOTH);
+
+    this.stat = stat;
+    this.sourceAbility = sourceAbility;
+  }
+
+  getAbilityName(): string {
+    return this.sourceAbility ?
+      allAbilities[this.sourceAbility].name :
+      null;
+  }
+
+  // This might need to be moved to the abilities themselves
+  onAdd(arena: Arena): void {
+    const user: Pokemon = arena.scene.getPokemonById(this.sourceId);
+    const statName: string = getStatName(this.stat);
+
+    arena.scene.queueMessage(
+      `${user.name}'s ${this.getAbilityName()} weakened the ${statName}\nof all surrounding Pokemon!`);
+  }
+
+  // Removes default message for arena tag removal
+  onRemove(arena: Arena) { }
+
+  /**
+   * apply: 
+   * @param arena   (Arena)              The arena containing this tag
+   * @param args[0] (Pokemon)            The Pokemon to which this tag is applied
+   * @param args[1] (Stat)               The type of the checked Stat value
+   * @param args[2] (Utils.NumberHolder) A container for the checked Stat value
+   * @returns true if the flag modifies the Stat value, false otherwise.
+   */
+  apply(arena: Arena, args: any[]): boolean {
+    const target = args[0] as Pokemon;
+    const stat = args[1] as Stat;
+
+    if (target.id !== this.sourceId && this.stat === stat) {
+      (args[2] as Utils.NumberHolder).value *= 0.75;
+      return true;
+    }
+    return false;
+  }
+}
+
+class VesselOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.VESSEL_OF_RUIN, Abilities.VESSEL_OF_RUIN, sourceId, Stat.SPATK);
+  }
+}
+
+class SwordOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.SWORD_OF_RUIN, Abilities.SWORD_OF_RUIN, sourceId, Stat.DEF);
+  }
+}
+
+class TabletsOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.TABLETS_OF_RUIN, Abilities.TABLETS_OF_RUIN, sourceId, Stat.ATK);
+  }
+}
+
+class BeadsOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.BEADS_OF_RUIN, Abilities.BEADS_OF_RUIN, sourceId, Stat.SPDEF);
   }
 }
 
@@ -673,5 +752,13 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new AuroraVeilTag(turnCount, sourceId, side);
   case ArenaTagType.TAILWIND:
     return new TailwindTag(turnCount, sourceId, side);
+  case ArenaTagType.VESSEL_OF_RUIN:
+    return new VesselOfRuinTag(sourceId);
+  case ArenaTagType.SWORD_OF_RUIN:
+    return new SwordOfRuinTag(sourceId);
+  case ArenaTagType.TABLETS_OF_RUIN:
+    return new TabletsOfRuinTag(sourceId);
+  case ArenaTagType.BEADS_OF_RUIN:
+    return new BeadsOfRuinTag(sourceId);
   }
 }
