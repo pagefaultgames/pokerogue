@@ -80,6 +80,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: '38px',
     starterInfoXPos: 32,
   },
+  "ko":{
+    starterInfoTextSize: '52px',
+    instructionTextSize: '38px',
+  }
 }
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
