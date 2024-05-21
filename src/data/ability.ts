@@ -1627,75 +1627,70 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
 
 /** Attempts to copy `copyTarget` after entering the battle  */
 export class PostSummonCopyAbAttr extends PostSummonAbAttr {
-  /**
-   * @param copyTarget what to attempt to copy
-   * @param test this is a test
-   */
   constructor(
-    private copyTarget: "OPP_ABILITY" | "ALLY_STAT_CHANGES", /** Extend this to add more options */
+    /** The thing to attempt to copy. Extend this to add more options */
+    private copyTarget: "OPP_ABILITY" | "ALLY_STAT_CHANGES"
   ) {
-    super()
+    super();
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     switch (this.copyTarget) {
       case "OPP_ABILITY":
-        return this.copyAbility(pokemon)
+        return this.copyAbility(pokemon);
       case "ALLY_STAT_CHANGES":
-        return this.copyAllyStatChanges(pokemon)
+        return this.copyAllyStatChanges(pokemon);
       default:
-        return false
+        return false;
     }
   }
 
   /**
    * Copy the stat changes on an ally pokemon
-   * @param pokemon - that will receive the stat changes
+   * @param pokemon {@linkcode Pokemon} that will receive the stat changes
    * @returns true if successful
    */
   copyAllyStatChanges(pokemon: Pokemon): boolean {
     if (!pokemon.scene.currentBattle.double) {
-      return false
+      return false;
     }
 
-    const ally = pokemon.getAlly()
-    if (!ally || !ally.summonData.battleStats.some(change => change > 0)) {
-      return false
+    const ally = pokemon.getAlly();
+    if (!ally || !ally.summonData.battleStats.some((change) => change > 0)) {
+      return false;
     }
 
-    pokemon.summonData.battleStats = ally.summonData.battleStats
-    pokemon.updateInfo()
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` copied ${ally.name}'s stat changes!`))
+    pokemon.summonData.battleStats = ally.summonData.battleStats;
+    pokemon.updateInfo();
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` copied ${ally.name}'s stat changes!`));
 
-    return true
+    return true;
   }
 
   /**
    * Copy the ability of an enemy pokemon post summon
-   * @param pokemon - that will receive the ability
+   * @param pokemon {@linkcode Pokemon} that will receive the ability
    * @returns true if successful
    */
   copyAbility(pokemon: Pokemon): boolean {
     const targets = pokemon.getOpponents();
-    if (!targets.length)
-      return false;
-    
+    if (!targets.length) return false;
+
     let target: Pokemon;
     if (targets.length > 1)
-      pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
-    else
-      target = targets[0];
+      pokemon.scene.executeWithSeedOffset(() => (target = Utils.randSeedItem(targets)), pokemon.scene.currentBattle.waveIndex);
+    else target = targets[0];
 
     if (
-      target.getAbility().hasAttr(UncopiableAbilityAbAttr) && 
+      target.getAbility().hasAttr(UncopiableAbilityAbAttr) &&
       // Wonder Guard is normally uncopiable so has the attribute, but trace specifically can copy it
       !(pokemon.hasAbility(Abilities.TRACE) && target.getAbility().id === Abilities.WONDER_GUARD)
     ) {
-      return false
+      return false;
     }
 
     pokemon.summonData.ability = target.getAbility().id;
-    pokemon.updateInfo()
+    pokemon.updateInfo();
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` traced ${target.name}'s\n${allAbilities[target.getAbility().id].name}!`));
 
     return true;
@@ -3967,8 +3962,7 @@ export function initAbilities() {
     new Ability(Abilities.SUPREME_OVERLORD, 9)
       .unimplemented(),
     new Ability(Abilities.COSTAR, 9)
-      .attr(PostSummonCopyAbAttr, "ALLY_STAT_CHANGES")
-      .unimplemented(),
+      .attr(PostSummonCopyAbAttr, "ALLY_STAT_CHANGES"),
     new Ability(Abilities.TOXIC_DEBRIS, 9)
       .attr(PostDefendApplyArenaTrapTagAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, ArenaTagType.TOXIC_SPIKES)
       .bypassFaint(),
