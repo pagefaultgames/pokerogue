@@ -336,7 +336,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                           console.error(`Could not load ${res.url}!`);
                           return;
                         }
-                        res.json()
+                        return res.json()
                       }).then(c => {
                           variantColorCache[key] = c;
                           resolve();
