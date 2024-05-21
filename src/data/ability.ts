@@ -461,6 +461,7 @@ export class PostDefendAbAttr extends AbAttr {
   }
 }
 
+/** Compares a pokemon's HP Ratio with an initial HP Ratio. */
 type HpThresholdCondition = (postMovePokemon: Pokemon, initialPokemonHpRatio: integer) => boolean;
 
 /**
