@@ -3274,56 +3274,6 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 }
 
-export class TormentAttr extends MoveEffectAttr {
-    constructor() {
-        super(false);
-    }
-
-    canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-        const hasAromaVeil = (target.getAbility().id === Abilities.AROMA_VEIL) || (target.getPassiveAbility().id === Abilities.AROMA_VEIL);
-        return super.canApply(user, target, move, args) && !hasAromaVeil && !target.isMax();
-    }
-    
-    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-        const ret = this.canApply(user, target, move, args);
-        const hasAromaVeil = (target.getAbility().id === Abilities.AROMA_VEIL);
-        const hasAromaVeilPassive = (target.getPassiveAbility().id === Abilities.AROMA_VEIL)
-
-        if (ret) {
-            target.addTag(BattlerTagType.TORMENT);
-        } else if (hasAromaVeil || hasAromaVeilPassive) {
-            target.scene.abilityBar.showAbility(target, hasAromaVeilPassive);
-            target.scene.queueMessage(getPokemonMessage(target, ' is protected by an aromatic veil!'));
-        }
-
-        return ret;
-    }
-
-    // modified from disable, score of -5 is target is not already tormented
-    getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-        const isTormented = target.summonData.tormented && (target.findTag(t => t instanceof TormentTag) !== undefined);
-        return isTormented ? 0 : -5;
-    }
-}
-
-export class TauntAttr extends MoveEffectAttr {
-    constructor() {
-        super(false);
-    }
-
-    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-        const ret = this.canApply(user, target, move, args);
-
-        if (ret) {
-            target.summonData.justTaunted = true;
-            target.summonData.taunted = true;
-            target.summonData.tauntedTurns = 4;
-            user.scene.queueMessage(getPokemonMessage(target, ' fell for the taunt!'));
-        }
-        return ret;
-    }
-}
-
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.HIT);
@@ -3382,7 +3332,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
     const chance = this.getTagChance(user, target, move);
     if (chance < 0 || chance === 100 || user.randSeedInt(100) < chance)
-      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
+      return (this.selfTarget ? user : target).addTag(this.tagType, user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
 
     return false;
   }
@@ -3408,6 +3358,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.NIGHTMARE:
       case BattlerTagType.DROWSY:
       case BattlerTagType.NO_CRIT:
+      case BattlerTagType.TORMENT:
           return -5;
       case BattlerTagType.SEEDED:
       case BattlerTagType.SALT_CURED:
@@ -5510,8 +5461,9 @@ export function initMoves() {
       .attr(WeatherChangeAttr, WeatherType.HAIL)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
-      .attr(TormentAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.TORMENT)
       .condition((user, target, move) => (!target.summonData.tormented && (target.findTag(t => t instanceof TormentTag) === undefined)))
+      .condition((user, target, move) => (!target.isMax()))
       .partial(),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)
@@ -5541,7 +5493,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, false),
     new StatusMove(Moves.TAUNT, Type.DARK, 100, 20, -1, 0, 3)
-      .attr(TauntAttr)
+    //   .attr(TauntAttr)
       .condition((user, target, move) => (!target.summonData.taunted))
       .partial(),
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
