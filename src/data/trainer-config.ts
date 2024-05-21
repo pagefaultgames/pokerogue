@@ -899,7 +899,7 @@ export const trainerConfigs: TrainerConfigs = {
       [ Species.CATERPIE, Species.WEEDLE, Species.RATTATA, Species.SENTRET, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.BIDOOF, Species.PATRAT, Species.LILLIPUP ]
     ),
    // TODO: sprite, encounter bgm, party template, team pools
-  [TrainerType.ROCKET_GRUNT]: new TrainerConfig(++t).setHasGenders().setHasDouble('Rocket Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+  [TrainerType.ROCKET_GRUNT]: new TrainerConfig(++t).setHasGenders("Rocket Grunt Female").setHasDouble('Rocket Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.WEEDLE, Species.RATTATA, Species.EKANS, Species.SANDSHREW, Species.ZUBAT, Species.GEODUDE, Species.KOFFING],
       [TrainerPoolTier.UNCOMMON]: [Species.GRIMER, Species.CUBONE, Species.ODDISH, Species.GROWLITHE, Species.MURKROW, Species.GASTLY, Species.EXEGGCUTE, Species.VOLTORB],
@@ -907,7 +907,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.PORYGON, Species.ALOLA_RATTATA, Species.ALOLA_SANDSHREW, Species.ALOLA_MEOWTH, Species.ALOLA_GRIMER, Species.ALOLA_GEODUDE],
       [TrainerPoolTier.ULTRA_RARE]: [Species.DRATINI, Species.LARVITAR]
   }),
-  [TrainerType.MAGMA_GRUNT]: new TrainerConfig(++t).setHasGenders().setHasDouble('Magma Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+  [TrainerType.MAGMA_GRUNT]: new TrainerConfig(++t).setHasGenders("Magma Grunt Female").setHasDouble('Magma Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.SLUGMA, Species.POOCHYENA, Species.NUMEL, Species.ZIGZAGOON, Species.DIGLETT, Species.MAGBY],
       [TrainerPoolTier.UNCOMMON]: [Species.PHANPY, Species.SWINUB, Species.GLIGAR, Species.TORKOAL, Species.BALTOY, Species.BARBOACH],
@@ -915,7 +915,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.TRAPINCH, Species.HEATMOR],
       [TrainerPoolTier.ULTRA_RARE]: [Species.TURTONATOR, Species.CHARCADET]
   }),
-  [TrainerType.AQUA_GRUNT]: new TrainerConfig(++t).setHasGenders().setHasDouble('Aqua Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+  [TrainerType.AQUA_GRUNT]: new TrainerConfig(++t).setHasGenders("Aqua Grunt Female").setHasDouble('Aqua Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.CARVANHA, Species.WAILMER, Species.ZIGZAGOON, Species.LOTAD, Species.CORPHISH],
       [TrainerPoolTier.UNCOMMON]: [Species.SPHEAL, Species.CHINCHOU, Species.WOOPER, Species.WINGULL, Species.TENTACOOL ],
@@ -923,7 +923,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.MANTINE, Species.BASCULEGION],
       [TrainerPoolTier.ULTRA_RARE]: [Species.DONDOZO]
   }),
-  [TrainerType.GALACTIC_GRUNT]: new TrainerConfig(++t).setHasGenders().setHasDouble('Galactic Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+  [TrainerType.GALACTIC_GRUNT]: new TrainerConfig(++t).setHasGenders("Galactic Grunt Female").setHasDouble('Galactic Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.GLAMEOW, Species.STUNKY, Species.CROAGUNK, Species.SHINX, Species.WURMPLE],
       [TrainerPoolTier.UNCOMMON]: [Species.BRONZOR, Species.DRIFLOON, Species.BURMY],
@@ -931,7 +931,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.HISUI_GROWLITHE, Species.HISUI_QWILFISH, Species.HISUI_SNEASEL],
       [TrainerPoolTier.ULTRA_RARE]: [Species.HISUI_ZORUA, Species.HISUI_SLIGGOO]
   }),
-  [TrainerType.PLASMA_GRUNT]: new TrainerConfig(++t).setHasGenders().setHasDouble('Plasma Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+  [TrainerType.PLASMA_GRUNT]: new TrainerConfig(++t).setHasGenders("Plasma Grunt Female").setHasDouble('Plasma Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.PATRAT, Species.LILLIPUP, Species.PURRLOIN, Species.SCRAFTY, Species.WOOBAT, Species.VANILLITE],
       [TrainerPoolTier.UNCOMMON]: [ Species.FRILLISH, Species.VENIPEDE, Species.SANDILE, Species.TRUBBISH, Species.GOLETT],
@@ -939,7 +939,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.PAWNIARD, Species.VULLABY, Species.DRUDDIGON, Species.BOUFFALANT, Species.ZORUA],
       [TrainerPoolTier.ULTRA_RARE]: [Species.AXEW, Species.DEINO, Species.DURANT]
   }),
-  [TrainerType.FLARE_GRUNT]: new TrainerConfig(++t).setHasGenders().setHasDouble('Flare Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
+  [TrainerType.FLARE_GRUNT]: new TrainerConfig(++t).setHasGenders("Flare Grunt Female").setHasDouble('Flare Grunts').setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm('battle_plasma_grunt').setPartyTemplates(trainerPartyTemplates.FOUR_WEAK_BALANCED)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.PONYTA, Species.INKAY, Species.HOUNDOUR, Species.SKORUPI],
       [TrainerPoolTier.UNCOMMON]: [Species.HELIOPTILE, Species.ELECTRIKE, Species.SKRELP, Species.GULPIN],

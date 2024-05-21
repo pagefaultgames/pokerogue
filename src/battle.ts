@@ -372,6 +372,10 @@ export const fixedBattles: FixedBattleConfigs = {
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_3, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [95]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
+    [111]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, getEvilTeamBattle(scene.evilTeamThisRun, "admin"), TrainerVariant.DEFAULT)),
+    [113]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, getEvilTeamBattle(scene.evilTeamThisRun, "admin"), TrainerVariant.DEFAULT)),
     [115]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, getEvilTeamBattle(scene.evilTeamThisRun, "boss1"), TrainerVariant.DEFAULT)),
     [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
