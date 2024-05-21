@@ -936,17 +936,13 @@ export class EncounterPhase extends BattlePhase {
     if (!this.loaded) {
       const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
 
-      if (availablePartyMembers[0].isOnField())
-        applyPostBattleInitAbAttrs(PostBattleInitAbAttr, availablePartyMembers[0]);
-      else
+      if (!availablePartyMembers[0].isOnField())
         this.scene.pushPhase(new SummonPhase(this.scene, 0));
 
       if (this.scene.currentBattle.double) {
         if (availablePartyMembers.length > 1) {
           this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
-          if (availablePartyMembers[1].isOnField())
-            applyPostBattleInitAbAttrs(PostBattleInitAbAttr, availablePartyMembers[1]);
-          else
+          if (!availablePartyMembers[1].isOnField())
             this.scene.pushPhase(new SummonPhase(this.scene, 1));
         }
       } else {
@@ -1397,8 +1393,6 @@ export class SwitchSummonPhase extends SummonPhase {
     if (!this.batonPass)
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
 
-    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
-
     this.scene.ui.showText(this.player ?
       i18next.t('battle:playerComeBack', { pokemonName: pokemon.name }) :
       i18next.t('battle:trainerComeBack', {
@@ -1427,6 +1421,7 @@ export class SwitchSummonPhase extends SummonPhase {
     const party = this.player ? this.getParty() : this.scene.getEnemyParty();
     const switchedPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
+    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.batonPass && switchedPokemon) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id));
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {

@@ -2783,7 +2783,7 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
-    if (!pokemon.canApplyAbility(passive)) {
+    if (!pokemon.canApplyAbility(passive, args[0])) {
       if (!passive)
         return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
       else
@@ -3436,7 +3436,7 @@ export function initAbilities() {
       .attr(PostDefendContactDamageAbAttr, 8)
       .bypassFaint(),
     new Ability(Abilities.ZEN_MODE, 5)
-      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 1 : 0)
+      .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 1 : 0)
       .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 1 : 0)
       .attr(UncopiableAbilityAbAttr)
@@ -3534,7 +3534,7 @@ export function initAbilities() {
     new Ability(Abilities.MERCILESS, 7)
       .attr(ConditionalCritAbAttr, (user, target, move) => target.status?.effect === StatusEffect.TOXIC || target.status?.effect === StatusEffect.POISON),
     new Ability(Abilities.SHIELDS_DOWN, 7)
-      .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
+      .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(UncopiableAbilityAbAttr)
@@ -3567,7 +3567,7 @@ export function initAbilities() {
     new Ability(Abilities.SURGE_SURFER, 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPD, 2),
     new Ability(Abilities.SCHOOLING, 7)
-      .attr(PostBattleInitFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
+      .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(PostTurnFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(UncopiableAbilityAbAttr)
@@ -3577,7 +3577,7 @@ export function initAbilities() {
     new Ability(Abilities.DISGUISE, 7)
       .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex == 0 && target.getAttackTypeEffectiveness(move.type, user) > 0)
       .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
+      .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
       .attr(PreDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
       .attr(PostDefendDisguiseAbAttr)
@@ -3589,15 +3589,16 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.BATTLE_BOND, 7)
-      .attr(PostVictoryFormChangeAbAttr, p => p.getFormKey() ? 2 : 1)
+      .attr(PostVictoryFormChangeAbAttr, () => 2)
+      .attr(PostBattleInitFormChangeAbAttr, () => 1)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.POWER_CONSTRUCT, 7) // TODO: 10% Power Construct Zygarde isn't accounted for yet. If changed, update Zygarde's getSpeciesFormIndex entry accordingly
-      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 0)
-      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 0)
-      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 0)
+      .attr(PostBattleInitFormChangeAbAttr, () => 2)
+      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 2)
+      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 2)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
@@ -3823,7 +3824,8 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .attr(PreSwitchOutFormChangeAbAttr, p => p.getFormKey() ? 1 : 0),
+      .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .attr(PreSwitchOutFormChangeAbAttr, () => 1),
     new Ability(Abilities.COMMANDER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -3905,22 +3907,26 @@ export function initAbilities() {
       .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPD, 1, true)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .partial(),
     new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, 9)
       .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPDEF, 1, true)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .partial(),
     new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, 9)
       .attr(PostBattleInitStatChangeAbAttr, BattleStat.ATK, 1, true)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .partial(),
     new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, 9)
       .attr(PostBattleInitStatChangeAbAttr, BattleStat.DEF, 1, true)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .partial(),
     new Ability(Abilities.TERA_SHIFT, 9)
       .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
       .attr(UncopiableAbilityAbAttr)

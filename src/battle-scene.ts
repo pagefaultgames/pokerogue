@@ -933,7 +933,7 @@ export default class BattleScene extends SceneBase {
 					if (resetArenaState)
 						{
 							pokemon.resetBattleData();
-							this.resetPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+							applyPostBattleInitAbAttrs(PostBattleInitFormChangeAbAttr, pokemon, true);
 						}
 					this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
 				}
@@ -1946,32 +1946,6 @@ export default class BattleScene extends SceneBase {
 		if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
 			const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
 			if (matchingFormChange) {
-				let phase: Phase;
-				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet)
-					phase = new FormChangePhase(this, pokemon, matchingFormChange, modal);
-				else
-					phase = new QuietFormChangePhase(this, pokemon, matchingFormChange);
-				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet && modal)
-					this.overridePhase(phase);
-				else if (delayed)
-					this.pushPhase(phase);
-				else
-					this.unshiftPhase(phase);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	resetPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: {new( ... args: any[]): SpeciesFormChangeTrigger}, delayed: boolean = false, modal: boolean = false): boolean {
-		if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
-			
-			// Find the base form that matches the same ability
-			const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && 
-				fc.formKey === pokemon.species.forms[0].formKey &&
-				fc.canChange(pokemon));
-			if (matchingFormChange) {	
 				let phase: Phase;
 				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet)
 					phase = new FormChangePhase(this, pokemon, matchingFormChange, modal);
