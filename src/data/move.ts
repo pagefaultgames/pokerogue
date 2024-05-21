@@ -2,7 +2,7 @@ import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MoveEffectPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag } from "./battler-tags";
+import { EncoreTag, TormentTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
@@ -3279,14 +3279,29 @@ export class TormentAttr extends MoveEffectAttr {
         super(false);
     }
 
+    canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+        const hasAromaVeil = (target.getAbility().id === Abilities.AROMA_VEIL) || (target.getPassiveAbility().id === Abilities.AROMA_VEIL);
+        return super.canApply(user, target, move, args) && !hasAromaVeil && !target.isMax();
+    }
+    
     apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
         const ret = this.canApply(user, target, move, args);
+        const hasAromaVeil = (target.getAbility().id === Abilities.AROMA_VEIL);
+        const hasAromaVeilPassive = (target.getPassiveAbility().id === Abilities.AROMA_VEIL)
 
         if (ret) {
-            target.summonData.justTormented = true;
-            user.scene.queueMessage(getPokemonMessage(target, ' was subjected to torment!'));
+            target.addTag(BattlerTagType.TORMENT);
+        } else if (hasAromaVeil || hasAromaVeilPassive) {
+            target.scene.abilityBar.showAbility(target, hasAromaVeilPassive);
+            target.scene.queueMessage(getPokemonMessage(target, ' is protected by an aromatic veil!'));
         }
+
         return ret;
+    }
+
+    // copied from disable
+    getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+        return -5;
     }
 }
 
@@ -5495,7 +5510,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
       .attr(TormentAttr)
-      .condition((user, target, move) => (!target.summonData.justTormented && !target.summonData.tormented))
+      .condition((user, target, move) => (!target.summonData.tormented && (target.findTag(t => t instanceof TormentTag) === undefined)))
       .partial(),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)

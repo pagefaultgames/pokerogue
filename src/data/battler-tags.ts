@@ -491,6 +491,27 @@ export class EncoreTag extends BattlerTag {
   }
 }
 
+export class TormentTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.TORMENT, BattlerTagLapseType.TURN_END, -1, Moves.TORMENT);
+  }
+
+  // redundant due to TormentAttr (MoveEffectAttr) performing these checks before adding the tag
+  canAdd(pokemon: Pokemon): boolean {
+    const hasAromaVeil = (pokemon.getAbility().id === Abilities.AROMA_VEIL) || (pokemon.getPassiveAbility().id === Abilities.AROMA_VEIL);
+    return !hasAromaVeil && !pokemon.isMax();
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was subjected to torment!'));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType) {
+    pokemon.summonData.tormented = true;
+    return true;
+  }
+}
+
 export class HelpingHandTag extends BattlerTag {
   constructor(sourceId: integer) {
     super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, Moves.HELPING_HAND, sourceId);
@@ -1316,6 +1337,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ChargingTag(sourceMove, sourceId);
     case BattlerTagType.ENCORE:
       return new EncoreTag(sourceId);
+    case BattlerTagType.TORMENT:
+      return new TormentTag();
     case BattlerTagType.HELPING_HAND:
       return new HelpingHandTag(sourceId);
     case BattlerTagType.INGRAIN:

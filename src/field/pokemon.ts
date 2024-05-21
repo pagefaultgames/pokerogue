@@ -3387,13 +3387,12 @@ export class PokemonSummonData {
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
-  public tags: BattlerTag[] = [];
-  public abilitySuppressed: boolean = false;
-  public justTormented: boolean = false;
-  public tormented: boolean = false;
+  public tormented = false;
   public justTaunted: boolean = false;
   public taunted: boolean = false;
   public tauntedTurns: integer = 0;
+  public tags: BattlerTag[] = [];
+  public abilitySuppressed: boolean = false;
 
   public speciesForm: PokemonSpeciesForm;
   public fusionSpeciesForm: PokemonSpeciesForm;

@@ -1735,6 +1735,7 @@ export class CommandPhase extends FieldPhase {
           // Decides between a Disabled, Not Implemented, Taunted, Tormented, or No PP translation message
           var errorMessage;
           var canTranslate = true;
+          
           if (playerPokemon.summonData.disabledMove === move.moveId)
             errorMessage = 'battle:moveDisabled';
           else if (move.getName().endsWith(' (N)'))
@@ -2108,12 +2109,6 @@ export class TurnEndPhase extends FieldPhase {
     
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
-
-      // transition from just tormented (tormented status does not apply on same turn it's given) and tormented
-      if (pokemon.summonData.justTormented && !pokemon.summonData.tormented) {
-        pokemon.summonData.justTormented = false;
-        pokemon.summonData.tormented = true;
-      }
 
       if (pokemon.summonData.justTaunted) {
         pokemon.summonData.justTaunted = false;
