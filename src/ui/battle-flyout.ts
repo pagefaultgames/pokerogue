@@ -1,6 +1,8 @@
 import { EnemyPokemon, default as Pokemon } from '../field/pokemon';
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from '../utils';
+import BattleScene from '#app/battle-scene.js';
+import { UiTheme } from '#app/enums/ui-theme.js';
 
 export default class BattleFlyout extends Phaser.GameObjects.Container {
   private player: boolean;
@@ -8,7 +10,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private boss: boolean;
   private offset: boolean;
   
-  private flyoutWidth = 75;
+  private flyoutWidth = 90;
   private flyoutHeight = 22;
 
   private translationX: number;
@@ -16,13 +18,11 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private anchorY: number;
 
   private flyoutParent: Phaser.GameObjects.Container;
+  private flyoutBox: Phaser.GameObjects.Sprite;
+
   private flyoutContainer: Phaser.GameObjects.Container;
-
-  private flyoutPlaceholder: Phaser.GameObjects.Rectangle;
-  private flyoutTextPlaceholder: Phaser.GameObjects.Text;
-
-  private largeFlyoutParent : Phaser.GameObjects.Container;
-  private largeFlyoutContainer: Phaser.GameObjects.Container;
+  
+  private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
 
   constructor(scene: Phaser.Scene, player: boolean) {
     super(scene, 0, 0);    
@@ -32,41 +32,37 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.offset = false;     
 
     this.translationX = this.player ? -this.flyoutWidth : this.flyoutWidth;
-    this.anchorX = this.player ? -130 : 0;
-    this.anchorY = this.player ? -18.5 : -13;
+    this.anchorX = -15 + (this.player ? -130 : -5);
+    this.anchorY = -2.5 + (this.player ? -18.5 : -13);
 
     this.flyoutParent = this.scene.add.container(this.anchorX - this.translationX, this.anchorY);
     this.flyoutParent.setAlpha(0);
     this.add(this.flyoutParent);
 
-    this.flyoutContainer = this.scene.add.container(this.player ? -this.flyoutWidth : 0, 0);    
-    this.flyoutParent.add(this.flyoutContainer);
+    this.flyoutBox = this.scene.add.sprite(0, 0, `pbinfo_enemy_mini_stats`);
+    this.flyoutBox.setOrigin(0, 0);
+    
+    this.flyoutParent.add(this.flyoutBox);
 
-    /* const color = this.player ? 0x00FF00 : 0xFF0000;
-    const maxX =  22 * (this.player ? -1 : 1);
-    this.flyoutContainer.add(this.scene.add.rectangle(   0,  0, 1, 1, color - 200, 0.75).setOrigin(0.5, 0.5));
-    this.flyoutContainer.add(this.scene.add.rectangle(maxX,  0, 1, 1, color, 0.75).setOrigin(0.5, 0.5));
-    this.flyoutContainer.add(this.scene.add.rectangle(   0, 22, 1, 1, color, 0.75).setOrigin(0.5, 0.5));
-    this.flyoutContainer.add(this.scene.add.rectangle(maxX, 22, 1, 1, color + 200, 0.75).setOrigin(0.5, 0.5)); */
+    this.flyoutContainer = this.scene.add.container(28 + (this.player ? -this.flyoutWidth : 0), 2);
+    this.flyoutParent.add(this.flyoutContainer);    
 
-    this.flyoutPlaceholder = this.scene.add.rectangle(0, 0, this.flyoutWidth, this.flyoutHeight, 0xFFFFFF, 0.5);
-    this.flyoutPlaceholder.setOrigin(0, 0);
+    for (let i = 0; i < 4; i++) {
+      this.flyoutText[i] = addTextObject(this.scene, 50 * (i % 2), 13 * (i < 2 ? 0 : 1), `???`, TextStyle.BATTLE_INFO);
+      this.flyoutText[i].setFontSize(52);
+      this.flyoutText[i].setAlign('center');      
+    }
 
-    this.flyoutContainer.add(this.flyoutPlaceholder);
-
-    this.flyoutTextPlaceholder = addTextObject(this.scene, 5, 0, `Text Goes\nHere!`, TextStyle.BATTLE_INFO);
-    this.flyoutTextPlaceholder.setOrigin(0, 0);
-
-    this.flyoutContainer.add(this.flyoutTextPlaceholder);
-
-    this.largeFlyoutParent = this.scene.add.container()
+    this.flyoutContainer.add(this.flyoutText);
   }
 
   initInfo(pokemon: Pokemon) {
     this.name = `Flyout ${pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${pokemon.name}`;
 
-    this.flyoutTextPlaceholder.text = `${pokemon.name}`
+    for (let i = 0; i < 4; i++) {
+      this.flyoutText[i].text = pokemon.moveset[i].getName();
+    }
   }
 
   setMini(mini: boolean): void {

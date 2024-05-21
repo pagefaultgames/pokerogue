@@ -1199,7 +1199,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	updateMoneyText(): void {
-		this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
+		this.moneyText.setText(`₽${this.money.toLocaleString('en-US', {notation: 'compact'})}`);
 		this.moneyText.setVisible(true);
 	}
 
