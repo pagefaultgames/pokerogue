@@ -3299,9 +3299,10 @@ export class TormentAttr extends MoveEffectAttr {
         return ret;
     }
 
-    // copied from disable
+    // modified from disable, score of -5 is target is not already tormented
     getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-        return -5;
+        const isTormented = target.summonData.tormented && (target.findTag(t => t instanceof TormentTag) !== undefined);
+        return isTormented ? 0 : -5;
     }
 }
 

@@ -1740,7 +1740,7 @@ export class CommandPhase extends FieldPhase {
             errorMessage = 'battle:moveDisabled';
           else if (move.getName().endsWith(' (N)'))
             errorMessage = 'battle:moveNotImplemented';
-          else if (playerPokemon.summonData.tormented && playerPokemon.getLastXMoves(1)[0] && playerPokemon.getLastXMoves(1)[0].move === move.moveId) {
+          else if (playerPokemon.summonData.tormented && playerPokemon.summonData.prevMove === move.moveId) {
             errorMessage = getPokemonMessage(playerPokemon, ' can\'t use the same move twice in a row due to the torment!');
             canTranslate = false;
           } else if (playerPokemon.summonData.taunted && move.getMove().category === MoveCategory.STATUS) {
@@ -2109,6 +2109,9 @@ export class TurnEndPhase extends FieldPhase {
     
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
+
+      // For torment, keep track of last used move. This remains between battles while the pokemon is still on the field.
+      pokemon.summonData.prevMove = pokemon.getLastXMoves(1)[0].move;
 
       if (pokemon.summonData.justTaunted) {
         pokemon.summonData.justTaunted = false;

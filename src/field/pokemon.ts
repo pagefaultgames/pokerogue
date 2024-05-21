@@ -3388,6 +3388,7 @@ export class PokemonSummonData {
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
   public tormented = false;
+  public prevMove: Moves = undefined; // for torment, carry over between battles while summoned
   public justTaunted: boolean = false;
   public taunted: boolean = false;
   public tauntedTurns: integer = 0;
@@ -3477,7 +3478,7 @@ export class PokemonMove {
     const isMoveDisabledTaunt = this.moveId && pokemon.summonData.taunted && this.getMove().category === MoveCategory.STATUS;
 
     // for torment: check valid move, pokemon is tormented, pokemon has moved this summon, and selected move is the same as previous move
-    const isMoveDisabledTorment = this.moveId && pokemon.summonData.tormented && pokemon.getLastXMoves(1)[0] && pokemon.getLastXMoves(1)[0].move === this.moveId;
+    const isMoveDisabledTorment = this.moveId && pokemon.summonData.tormented && pokemon.summonData.prevMove === this.moveId;
     
     if (isMoveDisabled || isMoveDisabledTaunt || isMoveDisabledTorment)
       return false;
