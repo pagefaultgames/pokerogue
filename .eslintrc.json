@@ -7,7 +7,7 @@
       "rules": {
         // General rules that apply to all files
         "eqeqeq": ["error", "always"], // Enforces the use of === and !== instead of == and !=
-        "curly": ["error", "all"], // Requires curly braces for all control statements
+        "curly": [2, "multi-line"], // Enforce curly braces for multi-line control statements
         "indent": ["error", 2], // Enforces a 2-space indentation
         "quotes": ["error", "single"], // Enforces the use of single quotes for strings
         "semi": ["error", "always"], // Requires semicolons at the end of statements
