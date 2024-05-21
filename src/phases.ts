@@ -4326,12 +4326,23 @@ export class AttemptCapturePhase extends PokemonPhase {
             this.scene.ui.showText(`Your party is full.\nRelease a Pokémon to make room for ${pokemon.name}?`, null, () => {
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (releasedPokemonSlotIndex: integer, _option: PartyOption) => {
-                  const releasedItems = releasedPokemonSlotIndex < 6 ? this.scene.getParty()[releasedPokemonSlotIndex].getTransferrableHeldItems() : [];
+                  const releasedPokemon = releasedPokemonSlotIndex < 6 ? this.scene.getParty()[releasedPokemonSlotIndex] : null;
+                  const releasedItems =  releasedPokemon?.getTransferrableHeldItems();
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                    if (releasedPokemonSlotIndex < 6)
-                      addToParty(releasedItems);
-                    else
+                    if (releasedPokemonSlotIndex < 6) {
+                      if (releasedItems != null && releasedItems.length > 0) {
+                        this.scene.ui.showText(`You transferred all items held by ${releasedPokemon.name} to ${pokemon.name}.`, null, () => {
+                          addToParty(releasedItems);
+                        }, 0, true);
+                      }
+                      else {
+                        this.scene.ui.clearText();
+                        addToParty();
+                      }
+                    }
+                    else {
                       promptRelease();
+                    }
                   });
                 });
               }, () => {
