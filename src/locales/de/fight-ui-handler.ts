@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const fightUiHandler: SimpleTranslationEntries = {
-    "pp": "PP",
-    "power": "Power",
-    "accuracy": "Accuracy",
+    "pp": "AP",
+    "power": "Stärke",
+    "accuracy": "Genauigkeit",
 } as const;

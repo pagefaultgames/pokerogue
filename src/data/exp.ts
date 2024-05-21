@@ -43,7 +43,7 @@ export function getLevelTotalExp(level: integer, growthRate: GrowthRate): intege
       ret = Math.pow(level, 3) * 5 / 4;
       break;
     case GrowthRate.FLUCTUATING:
-      ret = (Math.pow(level, 3) + ((level / 2) + 32)) * 4 / (100 + level);
+      ret = (Math.pow(level, 3) * ((level / 2) + 8)) * 4 / (100 + level);
       break;
   }
 

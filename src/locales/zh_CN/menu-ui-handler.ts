@@ -9,7 +9,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
     "EGG_GACHA": "扭蛋机",
     "MANAGE_DATA": "管理数据",
     "COMMUNITY": "社区",
-    "RETURN_TO_TITLE": "返回标题画面",
+    "SAVE_AND_QUIT": "保存并退出",
     "LOG_OUT": "登出",
     "slot": "存档位 {{slotNumber}}",
     "importSession": "导入存档",

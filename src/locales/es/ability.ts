@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   "frisk": {
     name: "Cacheo",
-    description: "Puede ver el objeto que lleva el rival al entrar en combate."
+    description: "Cuando entra en combate, el Pokémon puede comprobar la habilidad de un Pokémon rival."
   },
   "reckless": {
     name: "Audaz",
