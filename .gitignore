@@ -39,3 +39,4 @@ src/data/battle-anim-data.ts
 src/overrides.ts
 
 coverage
+Start server.bat
