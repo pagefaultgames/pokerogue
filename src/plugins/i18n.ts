@@ -71,15 +71,14 @@ const alternativeFonts = {
 }
 
 function loadFont(language: string) {
-  Object.keys(alternativeFonts).forEach(l => {
-    if (language == l) {
-      alternativeFonts[l].forEach(f=> { document.fonts.add(f); });
-    }
-    else {
-      alternativeFonts[l].forEach(f=> {
-        if (f && f.status == "loaded") { document.fonts.delete(f); }
-      });
-    }
+  let altFontLanguages = Object.keys(alternativeFonts);
+  if (!alternativeFonts[language]) { language = language.split(/[-_/]/)[0]; }
+  if (alternativeFonts[language]) {
+    alternativeFonts[language].forEach(f => { document.fonts.add(f); });
+    altFontLanguages.splice(altFontLanguages.indexOf(language), 0);
+  }
+  altFontLanguages.forEach(f=> {
+    if (f && f.status == "loaded") { document.fonts.delete(f); }
   });
 }
 
