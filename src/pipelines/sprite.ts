@@ -1,5 +1,5 @@
 import BattleScene from '../battle-scene';
-import { variantColorCache, variantData } from '#app/data/variant';
+import { variantColorCache } from '#app/data/variant';
 import Pokemon from '../field/pokemon';
 import Trainer from '../field/trainer';
 import FieldSpritePipeline from './field-sprite';

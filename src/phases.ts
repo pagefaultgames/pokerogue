@@ -1,12 +1,12 @@
-import BattleScene, { AnySound, bypassLogin, startingWave } from './battle-scene';
+import BattleScene, { bypassLogin } from './battle-scene';
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from './field/pokemon';
 import * as Utils from './utils';
 import { Moves } from './data/enums/moves';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, SacrificialAttr, IncrementMovePriorityAttr  } from './data/move';
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr  } from './data/move';
 import { Mode } from './ui/ui';
 import { Command } from './ui/command-ui-handler';
 import { Stat } from './data/pokemon-stat';
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier } from './modifier/modifier';
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier } from './modifier/modifier';
 import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler';
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from './data/pokeball';
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -37,7 +37,7 @@ import { BattleType, BattlerIndex, TurnCommand } from './battle';
 import { BattleSpec } from './enums/battle-spec';
 import { Species } from './data/enums/species';
 import { HealAchv, LevelAchv, achvs } from './system/achv';
-import { TrainerConfig, TrainerSlot, trainerConfigs } from './data/trainer-config';
+import { TrainerSlot, trainerConfigs } from './data/trainer-config';
 import { TrainerType } from './data/enums/trainer-type';
 import { EggHatchPhase } from './egg-hatch-phase';
 import { Egg } from './data/egg';
@@ -55,7 +55,7 @@ import { OptionSelectConfig, OptionSelectItem } from './ui/abstact-option-select
 import { SaveSlotUiMode } from './ui/save-slot-select-ui-handler';
 import { fetchDailyRunSeed, getDailyRunStarters } from './data/daily-run';
 import { GameModes, gameModes } from './game-mode';
-import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from './data/pokemon-species';
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from './data/pokemon-species';
 import i18next from './plugins/i18n';
 import { Abilities } from './data/enums/abilities';
 import * as Overrides from './overrides';
@@ -2274,7 +2274,7 @@ export class MovePhase extends BattlePhase {
       //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
       if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length)) {
         //If an ability prevented this move from being redirected, display its ability pop up.
-        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget != moveTarget.value) {
+        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget !== moveTarget.value) {
           this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
         }
         moveTarget.value = oldTarget;
@@ -2366,7 +2366,7 @@ export class MovePhase extends BattlePhase {
         success = false;
       else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;
-        if (failedText == null)
+        if (failedText === null)
           failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
       }
       if (success)
@@ -3647,7 +3647,7 @@ export class GameOverPhase extends BattlePhase {
             for (const pokemon of this.scene.getParty()) {
               this.awardRibbon(pokemon);
 
-              if (pokemon.species.getRootSpeciesId() != pokemon.species.getRootSpeciesId(true)) {
+              if (pokemon.species.getRootSpeciesId() !== pokemon.species.getRootSpeciesId(true)) {
                 this.awardRibbon(pokemon, true);
               }
             }
@@ -3884,9 +3884,8 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     exp.value = Math.floor(exp.value);
     this.scene.ui.showText(i18next.t('battle:expGain', { pokemonName: pokemon.name, exp: exp.value }), null, () => {
       const lastLevel = pokemon.level;
-      let newLevel: integer;
       pokemon.addExp(exp.value);
-      newLevel = pokemon.level;
+      const newLevel = pokemon.level;
       if (newLevel > lastLevel)
         this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, lastLevel, newLevel));
       pokemon.updateInfo().then(() => this.end());
@@ -3912,9 +3911,8 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     exp.value = Math.floor(exp.value);
 
     const lastLevel = pokemon.level;
-    let newLevel: integer;
     pokemon.addExp(exp.value);
-    newLevel = pokemon.level;
+    const newLevel = pokemon.level;
     if (newLevel > lastLevel)
       this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, lastLevel, newLevel));
     this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));

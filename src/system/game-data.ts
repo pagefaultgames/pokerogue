@@ -603,7 +603,7 @@ export class GameData {
       score: scene.score,
       waveIndex: scene.currentBattle.waveIndex,
       battleType: scene.currentBattle.battleType,
-      trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
+      trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime()
     } as SessionSaveData;
@@ -790,7 +790,7 @@ export class GameData {
       const seed = sessionData.seed;
       let daily: string[] = [];
 
-      if (sessionData.gameMode == GameModes.DAILY) {
+      if (sessionData.gameMode === GameModes.DAILY) {
         if (localStorage.hasOwnProperty('daily')) {
           daily = JSON.parse(atob(localStorage.getItem('daily')));
           if (daily.includes(seed)) {

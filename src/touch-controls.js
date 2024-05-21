@@ -48,12 +48,12 @@ function simulateKeyboardEvent(eventType, button, buttonMap) {
  * @param {string} key Key to simulate
  * @param {object} buttonMap Map of buttons to key objects
  */
-function simulateKeyboardInput(key, buttonMap) {
-  simulateKeyboardEvent('keydown', key, buttonMap);
-  window.setTimeout(() => {
-    simulateKeyboardEvent('keyup', key, buttonMap);
-  }, 100);
-}
+// function simulateKeyboardInput(key, buttonMap) {
+//   simulateKeyboardEvent('keydown', key, buttonMap);
+//   window.setTimeout(() => {
+//     simulateKeyboardEvent('keyup', key, buttonMap);
+//   }, 100);
+// }
 
 /**
  * Bind a node by a specific key to simulate on touch

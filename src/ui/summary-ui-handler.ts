@@ -3,10 +3,10 @@ import { Mode } from './ui';
 import UiHandler from './ui-handler';
 import * as Utils from '../utils';
 import { PlayerPokemon } from '../field/pokemon';
-import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
+import { getStarterValueFriendshipCap, speciesStarters } from '../data/pokemon-species';
 import { argbFromRgba } from '@material/material-color-utilities';
 import { Type, getTypeRgb } from '../data/type';
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from './text';
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from './text';
 import Move, { MoveCategory } from '../data/move';
 import { getPokeballAtlasKey } from '../data/pokeball';
 import { getGenderColor, getGenderSymbol } from '../data/gender';
@@ -796,7 +796,7 @@ export default class SummaryUiHandler extends UiHandler {
 
         const natureStatMultiplier = getNatureStatMultiplier(this.pokemon.getNature(), s);
 
-        const statLabel = addTextObject(this.scene, 27 + 115 * colIndex + (colIndex == 1 ?  5 : 0), 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+        const statLabel = addTextObject(this.scene, 27 + 115 * colIndex + (colIndex === 1 ?  5 : 0), 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
         statLabel.setOrigin(0.5, 0);
         statsContainer.add(statLabel);
 

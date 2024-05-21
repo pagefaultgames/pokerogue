@@ -1842,7 +1842,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female, formIndex, shiny, variant) {
-    if (icon.frame.name != species.getIconId(female, formIndex, shiny, variant)) {
+    if (icon.frame.name !== species.getIconId(female, formIndex, shiny, variant)) {
       console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       icon.setFrame(species.getIconId(female, formIndex, false, variant));

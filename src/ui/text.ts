@@ -85,7 +85,6 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 
 function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
   const lang = i18next.language;
-  let shadowColor: string;
   let shadowXpos = 4;
   let shadowYpos = 5;
 
@@ -138,7 +137,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     break;
   }
 
-  shadowColor = getTextColor(style, true, uiTheme);
+  const shadowColor = getTextColor(style, true, uiTheme);
 
   if (extraStyleOptions) {
     if (extraStyleOptions.fontSize) {
