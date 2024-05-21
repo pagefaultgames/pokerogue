@@ -1,8 +1,8 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
-import { Mode } from "./ui";
-import { TextStyle, addTextObject } from "./text";
+import { FormModalUiHandler } from './form-modal-ui-handler';
+import { ModalConfig } from './modal-ui-handler';
+import * as Utils from '../utils';
+import { Mode } from './ui';
+import { TextStyle, addTextObject } from './text';
 import i18next from '../plugins/i18n';
 
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
@@ -31,16 +31,16 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   }
 
   getReadableErrorMessage(error: string): string {
-    let colonIndex = error?.indexOf(':');
+    const colonIndex = error?.indexOf(':');
     if (colonIndex > 0)
       error = error.slice(0, colonIndex);
     switch (error) {
-      case 'invalid username':
-        return i18next.t('menu:invalidRegisterUsername');
-      case 'invalid password':
-        return i18next.t('menu:invalidRegisterPassword');
-      case 'failed to add account record':
-        return i18next.t('menu:usernameAlreadyUsed');
+    case 'invalid username':
+      return i18next.t('menu:invalidRegisterUsername');
+    case 'invalid password':
+      return i18next.t('menu:invalidRegisterPassword');
+    case 'failed to add account record':
+      return i18next.t('menu:usernameAlreadyUsed');
     }
 
     return super.getReadableErrorMessage(error);
@@ -74,11 +74,11 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
           return onFail(this.getReadableErrorMessage('invalid password'));
         if (this.inputs[1].text !== this.inputs[2].text)
           return onFail(i18next.t('menu:passwordNotMatchingConfirmPassword'));
-        Utils.apiPost(`account/register`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
+        Utils.apiPost('account/register', `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
           .then(response => response.text())
           .then(response => {
             if (!response) {
-              Utils.apiPost(`account/login`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
+              Utils.apiPost('account/login', `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
                 .then(response => {
                   if (!response.ok)
                     return response.text();

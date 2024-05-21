@@ -23,9 +23,9 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   let newStr = '';
 
   for (let i = 0; i < str.length; i++) {
-      let charCode = str.charCodeAt(i);
-      let newCharCode = charCode + shiftCount;
-      newStr += String.fromCharCode(newCharCode);
+    const charCode = str.charCodeAt(i);
+    const newCharCode = charCode + shiftCount;
+    newStr += String.fromCharCode(newCharCode);
   }
 
   return newStr;
@@ -137,8 +137,8 @@ export function getPlayTimeString(totalSeconds: integer): string {
 }
 
 export function binToDec(input: string): integer {
-  let place: integer[] = []; 
-  let binary: string[] = [];
+  const place: integer[] = []; 
+  const binary: string[] = [];
   
   let decimalNum = 0;
   
@@ -176,25 +176,25 @@ export function getIvsFromId(id: integer): integer[] {
 export function formatLargeNumber(count: integer, threshold: integer): string {
   if (count < threshold)
     return count.toString();
-  let ret = count.toString();
+  const ret = count.toString();
   let suffix = '';
   switch (Math.ceil(ret.length / 3) - 1) {
-    case 1:
-      suffix = 'K';
-      break;
-    case 2:
-      suffix = 'M';
-      break;
-    case 3:
-      suffix = 'B';
-      break;
-    default:
-      return '?';
+  case 1:
+    suffix = 'K';
+    break;
+  case 2:
+    suffix = 'M';
+    break;
+  case 3:
+    suffix = 'B';
+    break;
+  default:
+    return '?';
   }
   const digits = ((ret.length + 2) % 3) + 1;
   let decimalNumber = ret.slice(digits, digits + 2);
   while (decimalNumber.endsWith('0'))
-      decimalNumber = decimalNumber.slice(0, -1);
+    decimalNumber = decimalNumber.slice(0, -1);
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
 }
 
@@ -302,9 +302,9 @@ export function fixedInt(value: integer): integer {
 }
 
 export function rgbToHsv(r: integer, g: integer, b: integer) {
-  let v = Math.max(r, g, b);
-  let c = v - Math.min(r, g, b);
-  let h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
+  const v = Math.max(r, g, b);
+  const c = v - Math.min(r, g, b);
+  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
   return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v];
 }
 
@@ -327,10 +327,10 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 export function rgbHexToRgba(hex: string) {
   const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
   return {
-      r: parseInt(color[1], 16),
-      g: parseInt(color[2], 16),
-      b: parseInt(color[3], 16),
-      a: 255
+    r: parseInt(color[1], 16),
+    g: parseInt(color[2], 16),
+    b: parseInt(color[3], 16),
+    a: 255
   };
 }
 

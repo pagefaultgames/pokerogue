@@ -1,17 +1,17 @@
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { Phase } from "./phase";
-import BattleScene, { AnySound } from "./battle-scene";
-import * as Utils from "./utils";
-import { Mode } from "./ui/ui";
-import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
-import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
-import { Species } from "./data/enums/species";
-import { PlayerPokemon } from "./field/pokemon";
-import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
-import { achvs } from "./system/achv";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
-import { EggTier } from "./data/enums/egg-type";
-import PokemonInfoContainer from "./ui/pokemon-info-container";
+import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
+import { Phase } from './phase';
+import BattleScene, { AnySound } from './battle-scene';
+import * as Utils from './utils';
+import { Mode } from './ui/ui';
+import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from './data/egg';
+import EggHatchSceneHandler from './ui/egg-hatch-scene-handler';
+import { Species } from './data/enums/species';
+import { PlayerPokemon } from './field/pokemon';
+import { getPokemonSpecies, speciesStarters } from './data/pokemon-species';
+import { achvs } from './system/achv';
+import { pokemonPrevolutions } from './data/pokemon-evolutions';
+import { EggTier } from './data/enums/egg-type';
+import PokemonInfoContainer from './ui/pokemon-info-container';
 
 export class EggHatchPhase extends Phase {
   private egg: Egg;
@@ -83,7 +83,7 @@ export class EggHatchPhase extends Phase {
       this.eggHatchContainer.add(this.eggContainer);
 
       const getPokemonSprite = () => {
-        const ret = this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, `pkmn__sub`);
+        const ret = this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, 'pkmn__sub');
         ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
         return ret;
       };
@@ -151,7 +151,7 @@ export class EggHatchPhase extends Phase {
                   });
                 });
               });
-            })
+            });
           });
         });
       });
@@ -196,7 +196,7 @@ export class EggHatchPhase extends Phase {
                 onComplete: () => resolve()
               });
             }
-          })
+          });
         }
       });
     });
@@ -312,8 +312,8 @@ export class EggHatchPhase extends Phase {
 
     let f = 0;
     let yOffset = 0;
-    let speed = 3 - Utils.randInt(8);
-    let amp = 24 + Utils.randInt(32);
+    const speed = 3 - Utils.randInt(8);
+    const amp = 24 + Utils.randInt(32);
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,
@@ -366,34 +366,34 @@ export class EggHatchPhase extends Phase {
         let maxStarterValue: integer;
 
         switch (this.egg.tier) {
-          case EggTier.GREAT:
-            minStarterValue = 4;
-            maxStarterValue = 5;
-            break;
-          case EggTier.ULTRA:
-            minStarterValue = 6;
-            maxStarterValue = 7;
-            break;
-          case EggTier.MASTER:
-            minStarterValue = 8;
-            maxStarterValue = 9;
-            break;
-          default:
-            minStarterValue = 1;
-            maxStarterValue = 3;
-            break;
+        case EggTier.GREAT:
+          minStarterValue = 4;
+          maxStarterValue = 5;
+          break;
+        case EggTier.ULTRA:
+          minStarterValue = 6;
+          maxStarterValue = 7;
+          break;
+        case EggTier.MASTER:
+          minStarterValue = 8;
+          maxStarterValue = 9;
+          break;
+        default:
+          minStarterValue = 1;
+          maxStarterValue = 3;
+          break;
         }
 
         const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
 
-        let speciesPool = Object.keys(speciesStarters)
+        const speciesPool = Object.keys(speciesStarters)
           .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
           .map(s => parseInt(s) as Species)
           .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
         let totalWeight = 0;
         const speciesWeights = [];
-        for (let speciesId of speciesPool) {
+        for (const speciesId of speciesPool) {
           let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
           const species = getPokemonSpecies(speciesId);
           if (species.isRegional())

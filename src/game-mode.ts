@@ -1,10 +1,10 @@
-import { fixedBattles } from "./battle";
-import BattleScene from "./battle-scene";
-import { Biome } from "./data/enums/biome";
-import { Species } from "./data/enums/species";
-import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
-import { Arena } from "./field/arena";
-import * as Utils from "./utils";
+import { fixedBattles } from './battle';
+import BattleScene from './battle-scene';
+import { Biome } from './data/enums/biome';
+import { Species } from './data/enums/species';
+import PokemonSpecies, { allSpecies } from './data/pokemon-species';
+import { Arena } from './field/arena';
+import * as Utils from './utils';
 import * as Overrides from './overrides';
 
 export enum GameModes {
@@ -55,10 +55,10 @@ export class GameMode implements GameModeConfig {
     if (Overrides.STARTING_LEVEL_OVERRIDE)
       return Overrides.STARTING_LEVEL_OVERRIDE;
     switch (this.modeId) {
-      case GameModes.DAILY:
-        return 20;
-      default:
-        return 5;
+    case GameModes.DAILY:
+      return 20;
+    default:
+      return 5;
     }
   }
 
@@ -80,19 +80,19 @@ export class GameMode implements GameModeConfig {
    */
   getStartingBiome(scene: BattleScene): Biome {
     switch (this.modeId) {
-      case GameModes.DAILY:
-        return scene.generateRandomBiome(this.getWaveForDifficulty(1));
-      default:
-        return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
+    case GameModes.DAILY:
+      return scene.generateRandomBiome(this.getWaveForDifficulty(1));
+    default:
+      return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
   }
 
   getWaveForDifficulty(waveIndex: integer, ignoreCurveChanges: boolean = false): integer {
     switch (this.modeId) {
-      case GameModes.DAILY:
-        return waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0);
-      default:
-        return waveIndex;
+    case GameModes.DAILY:
+      return waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0);
+    default:
+      return waveIndex;
     }
   }
 
@@ -130,10 +130,10 @@ export class GameMode implements GameModeConfig {
   
   isTrainerBoss(waveIndex: integer, biomeType: Biome, offsetGym: boolean): boolean {
     switch (this.modeId) {
-      case GameModes.DAILY:
-        return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
-      default:
-        return (waveIndex % 30) === (offsetGym ? 0 : 20) && (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex));
+    case GameModes.DAILY:
+      return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
+    default:
+      return (waveIndex % 30) === (offsetGym ? 0 : 20) && (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex));
     }
   }
 
@@ -149,46 +149,46 @@ export class GameMode implements GameModeConfig {
 
   isWaveFinal(waveIndex: integer): boolean {
     switch (this.modeId) {
-      case GameModes.CLASSIC:
-        return waveIndex === 200;
-      case GameModes.ENDLESS:
-      case GameModes.SPLICED_ENDLESS:
-        return !(waveIndex % 250);
-      case GameModes.DAILY:
-        return waveIndex === 50;
+    case GameModes.CLASSIC:
+      return waveIndex === 200;
+    case GameModes.ENDLESS:
+    case GameModes.SPLICED_ENDLESS:
+      return !(waveIndex % 250);
+    case GameModes.DAILY:
+      return waveIndex === 50;
     }
   }
 
   getClearScoreBonus(): integer {
     switch (this.modeId) {
-      case GameModes.CLASSIC:
-        return 5000;
-      case GameModes.DAILY:
-        return 2500;
+    case GameModes.CLASSIC:
+      return 5000;
+    case GameModes.DAILY:
+      return 2500;
     }
   }
 
   getEnemyModifierChance(isBoss: boolean): integer {
     switch (this.modeId) {
-      case GameModes.CLASSIC:
-      case GameModes.DAILY:
-        return !isBoss ? 18 : 6;
-      case GameModes.ENDLESS:
-      case GameModes.SPLICED_ENDLESS:
-        return !isBoss ? 12 : 4;
+    case GameModes.CLASSIC:
+    case GameModes.DAILY:
+      return !isBoss ? 18 : 6;
+    case GameModes.ENDLESS:
+    case GameModes.SPLICED_ENDLESS:
+      return !isBoss ? 12 : 4;
     }
   }
 
   getName(): string {
     switch (this.modeId) {
-      case GameModes.CLASSIC:
-        return 'Classic';
-      case GameModes.ENDLESS:
-        return 'Endless';
-      case GameModes.SPLICED_ENDLESS:
-        return 'Endless (Spliced)';
-      case GameModes.DAILY:
-        return 'Daily Run';
+    case GameModes.CLASSIC:
+      return 'Classic';
+    case GameModes.ENDLESS:
+      return 'Endless';
+    case GameModes.SPLICED_ENDLESS:
+      return 'Endless (Spliced)';
+    case GameModes.DAILY:
+      return 'Daily Run';
     }
   }
 }

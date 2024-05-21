@@ -1,11 +1,11 @@
-import { BattlerIndex } from "../battle";
-import BattleScene from "../battle-scene";
-import { Moves } from "../data/enums/moves";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import * as Utils from "../utils";
-import { getMoveTargets } from "../data/move";
-import {Button} from "../enums/buttons";
+import { BattlerIndex } from '../battle';
+import BattleScene from '../battle-scene';
+import { Moves } from '../data/enums/moves';
+import { Mode } from './ui';
+import UiHandler from './ui-handler';
+import * as Utils from '../utils';
+import { getMoveTargets } from '../data/move';
+import {Button} from '../enums/buttons';
 
 export type TargetSelectCallback = (cursor: integer) => void;
 
@@ -55,22 +55,22 @@ export default class TargetSelectUiHandler extends UiHandler {
       success = true;
     } else {
       switch (button) {
-        case Button.UP:
-          if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1)
-            success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
-          break;
-        case Button.DOWN:
-          if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1)
-            success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
-          break;
-        case Button.LEFT:
-          if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1)
-            success = this.setCursor(this.cursor - 1);
-          break;
-        case Button.RIGHT:
-          if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1)
-            success = this.setCursor(this.cursor + 1);
-          break;
+      case Button.UP:
+        if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1)
+          success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
+        break;
+      case Button.DOWN:
+        if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1)
+          success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
+        break;
+      case Button.LEFT:
+        if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1)
+          success = this.setCursor(this.cursor - 1);
+        break;
+      case Button.RIGHT:
+        if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1)
+          success = this.setCursor(this.cursor + 1);
+        break;
       }
     }
 

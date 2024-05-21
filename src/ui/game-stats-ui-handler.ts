@@ -1,12 +1,12 @@
-import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject, getTextColor } from "./text";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import { DexAttr, GameData } from "../system/game-data";
-import { speciesStarters } from "../data/pokemon-species";
-import {Button} from "../enums/buttons";
+import BattleScene from '../battle-scene';
+import { TextStyle, addTextObject, getTextColor } from './text';
+import { Mode } from './ui';
+import UiHandler from './ui-handler';
+import { addWindow } from './ui-theme';
+import * as Utils from '../utils';
+import { DexAttr, GameData } from '../system/game-data';
+import { speciesStarters } from '../data/pokemon-species';
+import {Button} from '../enums/buttons';
 
 interface DisplayStat {
   label?: string;
@@ -193,14 +193,14 @@ export default class GameStatsUiHandler extends UiHandler {
       this.scene.ui.revertMode();
     } else {
       switch (button) {
-        case Button.UP:
-          if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
-          break;
-        case Button.DOWN:
-          if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2))
-            success = this.setCursor(this.cursor + 1);
-          break;
+      case Button.UP:
+        if (this.cursor)
+          success = this.setCursor(this.cursor - 1);
+        break;
+      case Button.DOWN:
+        if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2))
+          success = this.setCursor(this.cursor + 1);
+        break;
       }
     }
 
@@ -228,7 +228,7 @@ export default class GameStatsUiHandler extends UiHandler {
 (function () {
   const statKeys = Object.keys(displayStats);
 
-  for (let key of statKeys) {
+  for (const key of statKeys) {
     if (typeof displayStats[key] === 'string') {
       let label = displayStats[key] as string;
       let hidden = false;

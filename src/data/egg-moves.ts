@@ -1,7 +1,7 @@
-import { Moves } from "./enums/moves";
-import { Species } from "./enums/species";
-import { allMoves } from "./move";
-import * as Utils from "../utils";
+import { Moves } from './enums/moves';
+import { Species } from './enums/species';
+import { allMoves } from './move';
+import * as Utils from '../utils';
 
 
 export const speciesEggMoves = {
@@ -588,7 +588,7 @@ function parseEggMoves(content: string): void {
     const enumSpeciesName = cols[0].toUpperCase().replace(/[ -]/g, '_');
     const species = speciesValues[speciesNames.findIndex(s => s === enumSpeciesName)];
 
-    let eggMoves: Moves[] = [];
+    const eggMoves: Moves[] = [];
 
     for (let m = 0; m < 4; m++) {
       const moveName = cols[m + 1].trim();
@@ -606,7 +606,7 @@ function parseEggMoves(content: string): void {
   console.log(output);
 }
 
-const eggMovesStr = ``;
+const eggMovesStr = '';
 if (eggMovesStr) {
   setTimeout(() => {
     parseEggMoves(eggMovesStr);

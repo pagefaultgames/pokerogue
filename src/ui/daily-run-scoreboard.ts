@@ -1,8 +1,8 @@
-import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
-import { WindowVariant, addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import i18next from "i18next";
+import BattleScene from '../battle-scene';
+import { TextStyle, addTextObject } from './text';
+import { WindowVariant, addWindow } from './ui-theme';
+import * as Utils from '../utils';
+import i18next from 'i18next';
 
 interface RankingEntry {
   rank: integer,
@@ -140,13 +140,13 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       entryContainer.add(scoreLabel);
 
       switch (this.category) {
-        case ScoreboardCategory.DAILY:
-          const waveLabel = addTextObject(this.scene, 68, 0, wave, TextStyle.WINDOW, { fontSize: '54px' });
-          entryContainer.add(waveLabel);
-          break;
-        case ScoreboardCategory.WEEKLY:
-          scoreLabel.x -= 16;
-          break;
+      case ScoreboardCategory.DAILY:
+        const waveLabel = addTextObject(this.scene, 68, 0, wave, TextStyle.WINDOW, { fontSize: '54px' });
+        entryContainer.add(waveLabel);
+        break;
+      case ScoreboardCategory.WEEKLY:
+        scoreLabel.x -= 16;
+        break;
       }
 
       return entryContainer;
@@ -206,8 +206,8 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
           this.isUpdating = false;
         });
     }).catch(err => { 
-      console.error("Failed to load daily rankings:\n", err)
-    })
+      console.error('Failed to load daily rankings:\n', err);
+    });
   }
 
   /**
@@ -235,4 +235,4 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
 export interface DailyRunScoreboard {
   scene: BattleScene
-};
+}

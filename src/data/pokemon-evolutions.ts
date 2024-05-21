@@ -1,17 +1,17 @@
-import { Gender } from "./gender";
-import { AttackTypeBoosterModifier, FlinchChanceModifier } from "../modifier/modifier";
-import { Moves } from "./enums/moves";
-import { PokeballType } from "./pokeball";
-import Pokemon from "../field/pokemon";
-import { Stat } from "./pokemon-stat";
-import { Species } from "./enums/species";
-import { Type } from "./type";
-import * as Utils from "../utils";
-import { SpeciesFormKey } from "./pokemon-species";
-import { WeatherType } from "./weather";
-import { Biome } from "./enums/biome";
-import { TimeOfDay } from "./enums/time-of-day";
-import { Nature } from "./nature";
+import { Gender } from './gender';
+import { AttackTypeBoosterModifier, FlinchChanceModifier } from '../modifier/modifier';
+import { Moves } from './enums/moves';
+import { PokeballType } from './pokeball';
+import Pokemon from '../field/pokemon';
+import { Stat } from './pokemon-stat';
+import { Species } from './enums/species';
+import { Type } from './type';
+import * as Utils from '../utils';
+import { SpeciesFormKey } from './pokemon-species';
+import { WeatherType } from './weather';
+import { Biome } from './enums/biome';
+import { TimeOfDay } from './enums/time-of-day';
+import { Nature } from './nature';
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1486,8 +1486,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.ONIX]: [
     new SpeciesEvolution(Species.STEELIX, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(
-        p => p.moveset.filter(m => m.getMove().type === Type.STEEL).length > 0),
-        SpeciesWildEvolutionDelay.VERY_LONG)
+      p => p.moveset.filter(m => m.getMove().type === Type.STEEL).length > 0),
+    SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.RHYDON]: [
     new SpeciesEvolution(Species.RHYPERIOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => true /* Protector */), SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1498,7 +1498,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.SCYTHER]: [
     new SpeciesEvolution(Species.SCIZOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(
       p => p.moveset.filter(m => m.getMove().type === Type.STEEL).length > 0),
-      SpeciesWildEvolutionDelay.VERY_LONG),
+    SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.KLEAVOR, 1, EvolutionItem.BLACK_AUGURITE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.ELECTABUZZ]: [
@@ -1623,7 +1623,7 @@ export const pokemonPrevolutions: PokemonPrevolutions = {};
   const prevolutionKeys = Object.keys(pokemonEvolutions);
   prevolutionKeys.forEach(pk => {
     const evolutions = pokemonEvolutions[pk];
-    for (let ev of evolutions) {
+    for (const ev of evolutions) {
       if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1)
         continue;
       pokemonPrevolutions[ev.speciesId] = parseInt(pk) as Species;

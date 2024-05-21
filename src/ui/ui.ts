@@ -26,7 +26,7 @@ import { addWindow } from './ui-theme';
 import LoginFormUiHandler from './login-form-ui-handler';
 import RegistrationFormUiHandler from './registration-form-ui-handler';
 import LoadingModalUiHandler from './loading-modal-ui-handler';
-import * as Utils from "../utils";
+import * as Utils from '../utils';
 import GameStatsUiHandler from './game-stats-ui-handler';
 import AwaitableUiHandler from './awaitable-ui-handler';
 import SaveSlotSelectUiHandler from './save-slot-select-ui-handler';
@@ -35,7 +35,7 @@ import SavingIconHandler from './saving-icon-handler';
 import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
-import {Button} from "../enums/buttons";
+import {Button} from '../enums/buttons';
 
 export enum Mode {
   MESSAGE,
@@ -67,7 +67,7 @@ export enum Mode {
   SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED
-};
+}
 
 const transitionModes = [
   Mode.SAVE_SLOT,
@@ -152,7 +152,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    for (let handler of this.handlers)
+    for (const handler of this.handlers)
       handler.setup();
     this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
     this.overlay.setOrigin(0, 0);
@@ -182,7 +182,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipTitle.setOrigin(0.5, 0);
 
     this.tooltipContent = addTextObject(this.scene, 6, 16, '', TextStyle.TOOLTIP_CONTENT);
-    this.tooltipContent.setWordWrapWidth(696)
+    this.tooltipContent.setWordWrapWidth(696);
 
     this.tooltipContainer.add(this.tooltipBg);
     this.tooltipContainer.add(this.tooltipTitle);
@@ -256,9 +256,9 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 684);
     this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split('\n').length - 1);
     if (overlap)
-       (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
+      (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
     else
-       (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
+      (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
   }
 
   hideTooltip(): void {
@@ -360,7 +360,7 @@ export default class UI extends Phaser.GameObjects.Container {
             doSetMode();
             this.fadeIn(250);
           });
-        })
+        });
       } else
         doSetMode();
     });

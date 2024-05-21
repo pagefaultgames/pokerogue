@@ -1,12 +1,12 @@
-import { CommandPhase } from "../phases";
-import BattleScene from "../battle-scene";
-import { getPokeballName } from "../data/pokeball";
-import { addTextObject, TextStyle } from "./text";
-import { Command } from "./command-ui-handler";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
+import { CommandPhase } from '../phases';
+import BattleScene from '../battle-scene';
+import { getPokeballName } from '../data/pokeball';
+import { addTextObject, TextStyle } from './text';
+import { Command } from './command-ui-handler';
+import { Mode } from './ui';
+import UiHandler from './ui-handler';
+import { addWindow } from './ui-theme';
+import {Button} from '../enums/buttons';
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
@@ -84,12 +84,12 @@ export default class BallUiHandler extends UiHandler {
       }
     } else {
       switch (button) {
-        case Button.UP:
-          success = this.setCursor(this.cursor ? this.cursor - 1 : pokeballTypeCount);
-          break;
-        case Button.DOWN:
-          success = this.setCursor(this.cursor < pokeballTypeCount ? this.cursor + 1 : 0);
-          break;
+      case Button.UP:
+        success = this.setCursor(this.cursor ? this.cursor - 1 : pokeballTypeCount);
+        break;
+      case Button.DOWN:
+        success = this.setCursor(this.cursor < pokeballTypeCount ? this.cursor + 1 : 0);
+        break;
       }
     }
 

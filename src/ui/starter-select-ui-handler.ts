@@ -1,34 +1,34 @@
-import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
-import { Variant, getVariantTint } from "#app/data/variant";
-import { argbFromRgba } from "@material/material-color-utilities";
-import i18next from "i18next";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import BattleScene, { starterColors } from "../battle-scene";
-import { allAbilities } from "../data/ability";
-import { speciesEggMoves } from "../data/egg-moves";
-import { Moves } from "../data/enums/moves";
-import { Species } from "../data/enums/species";
-import { GrowthRate, getGrowthRateColor } from "../data/exp";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { allMoves } from "../data/move";
-import { Nature, getNatureName } from "../data/nature";
-import { pokemonFormChanges } from "../data/pokemon-forms";
-import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
-import { Type } from "../data/type";
-import { Button } from "../enums/buttons";
-import { GameModes, gameModes } from "../game-mode";
-import { TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
-import { Tutorial, handleTutorial } from "../tutorial";
-import * as Utils from "../utils";
-import { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import MessageUiHandler from "./message-ui-handler";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
-import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
+import { pokemonPrevolutions } from '#app/data/pokemon-evolutions';
+import { Variant, getVariantTint } from '#app/data/variant';
+import { argbFromRgba } from '@material/material-color-utilities';
+import i18next from 'i18next';
+import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext';
+import BattleScene, { starterColors } from '../battle-scene';
+import { allAbilities } from '../data/ability';
+import { speciesEggMoves } from '../data/egg-moves';
+import { Moves } from '../data/enums/moves';
+import { Species } from '../data/enums/species';
+import { GrowthRate, getGrowthRateColor } from '../data/exp';
+import { Gender, getGenderColor, getGenderSymbol } from '../data/gender';
+import { allMoves } from '../data/move';
+import { Nature, getNatureName } from '../data/nature';
+import { pokemonFormChanges } from '../data/pokemon-forms';
+import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from '../data/pokemon-level-moves';
+import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
+import { Type } from '../data/type';
+import { Button } from '../enums/buttons';
+import { GameModes, gameModes } from '../game-mode';
+import { TitlePhase } from '../phases';
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from '../system/game-data';
+import { Tutorial, handleTutorial } from '../tutorial';
+import * as Utils from '../utils';
+import { OptionSelectItem } from './abstact-option-select-ui-handler';
+import MessageUiHandler from './message-ui-handler';
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from './pokemon-icon-anim-handler';
+import { StatsContainer } from './stats-container';
+import { TextStyle, addBBCodeTextObject, addTextObject } from './text';
+import { Mode } from './ui';
+import { addWindow } from './ui-theme';
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -50,37 +50,37 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "en":{
+  'en':{
     starterInfoTextSize: '56px',
     instructionTextSize: '42px',
   },
-  "de":{
+  'de':{
     starterInfoTextSize: '56px',
     instructionTextSize: '35px',
   },
-  "es":{
+  'es':{
     starterInfoTextSize: '56px',
     instructionTextSize: '35px',
   },
-  "it":{
+  'it':{
     starterInfoTextSize: '56px',
     instructionTextSize: '38px',
   },
-  "fr":{
+  'fr':{
     starterInfoTextSize: '54px',
     instructionTextSize: '42px',
   },
-  "zh":{
+  'zh':{
     starterInfoTextSize: '40px',
     instructionTextSize: '42px',
     starterInfoYOffset: 2
   },
-  "pt":{
+  'pt':{
     starterInfoTextSize: '47px',
     instructionTextSize: '38px',
     starterInfoXPos: 32,
   },
-}
+};
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
   { passive: 50, costReduction: [30, 75] }, // 1
@@ -93,7 +93,7 @@ const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }
   { passive: 10, costReduction: [5, 15] },  // 8
   { passive: 10, costReduction: [3, 10] },  // 9
   { passive: 10, costReduction: [3, 10] },  // 10
-]
+];
 
 function getPassiveCandyCount(baseValue: integer): integer {
   return starterCandyCosts[baseValue - 1].passive;
@@ -104,15 +104,15 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
 }
 
 const gens = [
-    i18next.t("starterSelectUiHandler:gen1"),
-    i18next.t("starterSelectUiHandler:gen2"),
-    i18next.t("starterSelectUiHandler:gen3"),
-    i18next.t("starterSelectUiHandler:gen4"),
-    i18next.t("starterSelectUiHandler:gen5"),
-    i18next.t("starterSelectUiHandler:gen6"),
-    i18next.t("starterSelectUiHandler:gen7"),
-    i18next.t("starterSelectUiHandler:gen8"),
-    i18next.t("starterSelectUiHandler:gen9")
+  i18next.t('starterSelectUiHandler:gen1'),
+  i18next.t('starterSelectUiHandler:gen2'),
+  i18next.t('starterSelectUiHandler:gen3'),
+  i18next.t('starterSelectUiHandler:gen4'),
+  i18next.t('starterSelectUiHandler:gen5'),
+  i18next.t('starterSelectUiHandler:gen6'),
+  i18next.t('starterSelectUiHandler:gen7'),
+  i18next.t('starterSelectUiHandler:gen8'),
+  i18next.t('starterSelectUiHandler:gen9')
 ];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
@@ -258,7 +258,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    this.pokemonGrowthRateLabelText = addTextObject(this.scene, 8, 106, i18next.t("starterSelectUiHandler:growthRate"), TextStyle.SUMMARY_ALT, { fontSize: '36px' });
+    this.pokemonGrowthRateLabelText = addTextObject(this.scene, 8, 106, i18next.t('starterSelectUiHandler:growthRate'), TextStyle.SUMMARY_ALT, { fontSize: '36px' });
     this.pokemonGrowthRateLabelText.setOrigin(0, 0);
     this.pokemonGrowthRateLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
@@ -271,19 +271,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
 
-    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:uncaught"), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
+    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t('starterSelectUiHandler:uncaught'), TextStyle.SUMMARY_ALT, { fontSize: '56px' });
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
     
     // The position should be set per language
-    let starterInfoXPos = textSettings?.starterInfoXPos || 31;
-    let starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
+    const starterInfoXPos = textSettings?.starterInfoXPos || 31;
+    const starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
 
     // The font size should be set per language
-    let starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
+    const starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t('starterSelectUiHandler:ability'), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
@@ -292,7 +292,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonAbilityText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
-    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136 + starterInfoYOffset, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136 + starterInfoYOffset, i18next.t('starterSelectUiHandler:passive'), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveLabelText.setOrigin(0, 0);
     this.pokemonPassiveLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonPassiveLabelText);
@@ -301,7 +301,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonPassiveText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145 + starterInfoYOffset, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145 + starterInfoYOffset, i18next.t('starterSelectUiHandler:nature'), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureLabelText.setOrigin(0, 0);
     this.pokemonNatureLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonNatureLabelText);
@@ -366,7 +366,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.valueLimitLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(this.valueLimitLabel);
 
-    const startLabel = addTextObject(this.scene, 124, 162, i18next.t("starterSelectUiHandler:start"), TextStyle.TOOLTIP_CONTENT);
+    const startLabel = addTextObject(this.scene, 124, 162, i18next.t('starterSelectUiHandler:start'), TextStyle.TOOLTIP_CONTENT);
     startLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(startLabel);
 
@@ -381,7 +381,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       let s = 0;
       this.genSpecies.push([]);
 
-      for (let species of allSpecies) {
+      for (const species of allSpecies) {
         if (!speciesStarters.hasOwnProperty(species.speciesId) || species.generation !== g + 1 || !species.isObtainable())
           continue;
         starterSpecies.push(species.speciesId);
@@ -433,7 +433,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       ret.setVisible(false);
       this.starterSelectContainer.add(ret);
       return ret;
-    }
+    };
 
     this.shinyIcons = new Array(81).fill(null).map((_, i) => {
       return new Array(3).fill(null).map((_, v) => getShinyStar(i, v));
@@ -461,7 +461,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return ret;
     });
 
-    this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
+    this.pokemonSprite = this.scene.add.sprite(53, 63, 'pkmn__sub');
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
@@ -563,7 +563,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonEggMovesContainer = this.scene.add.container(102, 85);
     this.pokemonEggMovesContainer.setScale(0.375);
 
-    const eggMovesLabel = addTextObject(this.scene, -46, 0, i18next.t("starterSelectUiHandler:eggMoves"), TextStyle.WINDOW_ALT);
+    const eggMovesLabel = addTextObject(this.scene, -46, 0, i18next.t('starterSelectUiHandler:eggMoves'), TextStyle.WINDOW_ALT);
     eggMovesLabel.setOrigin(0.5, 0);
 
     this.pokemonEggMovesContainer.add(eggMovesLabel);
@@ -591,7 +591,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
     // The font size should be set per language
-    let instructionTextSize = textSettings.instructionTextSize;
+    const instructionTextSize = textSettings.instructionTextSize;
 
     this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: instructionTextSize });
     this.starterSelectContainer.add(this.instructionsText);
@@ -735,51 +735,51 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.startCursorObj.visible) {
       switch (button) {
-        case Button.ACTION:
-          if (this.tryStart(true))
-            success = true;
-          else
-            error = true;
-          break;
-        case Button.UP:
-          this.startCursorObj.setVisible(false);
-          this.setGenMode(true);
+      case Button.ACTION:
+        if (this.tryStart(true))
           success = true;
-          break;
-        case Button.LEFT:
-          this.startCursorObj.setVisible(false);
-          this.setGenMode(false);
-          this.setCursor(this.cursor + 8);
-          success = true;
-          break;
-        case Button.RIGHT:
-          this.startCursorObj.setVisible(false);
-          this.setGenMode(false);
-          success = true;
-          break;
+        else
+          error = true;
+        break;
+      case Button.UP:
+        this.startCursorObj.setVisible(false);
+        this.setGenMode(true);
+        success = true;
+        break;
+      case Button.LEFT:
+        this.startCursorObj.setVisible(false);
+        this.setGenMode(false);
+        this.setCursor(this.cursor + 8);
+        success = true;
+        break;
+      case Button.RIGHT:
+        this.startCursorObj.setVisible(false);
+        this.setGenMode(false);
+        success = true;
+        break;
       }
     } else if (this.genMode) {
       switch (button) {
-        case Button.UP:
-          if (this.genCursor)
-            success = this.setCursor(this.genCursor - 1);
-          break;
-        case Button.DOWN:
-          if (this.genCursor < 2)
-            success = this.setCursor(this.genCursor + 1);
-          else {
-            this.startCursorObj.setVisible(true);
-            this.setGenMode(true);
-            success = true;
-          }
-          break;
-        case Button.LEFT:
-          success = this.setGenMode(false);
-          this.setCursor(this.cursor + 8);
-          break;
-        case Button.RIGHT:
-          success = this.setGenMode(false);
-          break;
+      case Button.UP:
+        if (this.genCursor)
+          success = this.setCursor(this.genCursor - 1);
+        break;
+      case Button.DOWN:
+        if (this.genCursor < 2)
+          success = this.setCursor(this.genCursor + 1);
+        else {
+          this.startCursorObj.setVisible(true);
+          this.setGenMode(true);
+          success = true;
+        }
+        break;
+      case Button.LEFT:
+        success = this.setGenMode(false);
+        this.setCursor(this.cursor + 8);
+        break;
+      case Button.RIGHT:
+        success = this.setGenMode(false);
+        break;
       }
     } else {
       if (button === Button.ACTION) {
@@ -788,7 +788,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         else if (this.starterCursors.length < 6) {
           const options = [
             {
-              label: i18next.t("starterSelectUiHandler:addToParty"),
+              label: i18next.t('starterSelectUiHandler:addToParty'),
               handler: () => {
                 ui.setMode(Mode.STARTER_SELECT);
                 let isDupe = false;
@@ -826,7 +826,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               overrideSound: true
             },
             {
-              label: i18next.t("starterSelectUiHandler:toggleIVs"),
+              label: i18next.t('starterSelectUiHandler:toggleIVs'),
               handler: () => {
                 this.toggleStatsMode();
                 ui.setMode(Mode.STARTER_SELECT);
@@ -837,28 +837,28 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.speciesStarterMoves.length > 1) {
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
-                ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
+                ui.showText(i18next.t('starterSelectUiHandler:selectMoveSwapOut'), null, () => {
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: moveset.map((m: Moves, i: number) => {
                       const option: OptionSelectItem = {
                         label: allMoves[m].name,
                         handler: () => {
                           ui.setMode(Mode.STARTER_SELECT).then(() => {
-                            ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
+                            ui.showText(`${i18next.t('starterSelectUiHandler:selectMoveSwapWith')} ${allMoves[m].name}.`, null, () => {
                               ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                                 options: this.speciesStarterMoves.filter((sm: Moves) => sm !== m).map(sm => {
                                   // make an option for each available starter move
                                   const option = {
                                     label: allMoves[sm].name,
                                     handler: () => {
-                                      this.switchMoveHandler(i, sm, m)
+                                      this.switchMoveHandler(i, sm, m);
                                       showSwapOptions(this.starterMoveset);
                                       return true;
                                     }
                                   };
                                   return option;
                                 }).concat({
-                                  label: i18next.t("menu:cancel"),
+                                  label: i18next.t('menu:cancel'),
                                   handler: () => {
                                     showSwapOptions(this.starterMoveset);
                                     return true;
@@ -874,7 +874,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       };
                       return option;
                     }).concat({
-                      label: i18next.t("menu:cancel"),
+                      label: i18next.t('menu:cancel'),
                       handler: () => {
                         this.clearText();
                         ui.setMode(Mode.STARTER_SELECT);
@@ -888,7 +888,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             };
             options.push({
-              label: i18next.t("starterSelectUiHandler:manageMoves"),
+              label: i18next.t('starterSelectUiHandler:manageMoves'),
               handler: () => {
                 showSwapOptions(this.starterMoveset);
                 return true;
@@ -901,7 +901,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (passiveAttr & PassiveAttr.UNLOCKED) {
             if (!(passiveAttr & PassiveAttr.ENABLED)) {
               options.push({
-                label: i18next.t("starterSelectUiHandler:enablePassive"),
+                label: i18next.t('starterSelectUiHandler:enablePassive'),
                 handler: () => {
                   starterData.passiveAttr |= PassiveAttr.ENABLED;
                   ui.setMode(Mode.STARTER_SELECT);
@@ -911,7 +911,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             } else {
               options.push({
-                label: i18next.t("starterSelectUiHandler:disablePassive"),
+                label: i18next.t('starterSelectUiHandler:disablePassive'),
                 handler: () => {
                   starterData.passiveAttr ^= PassiveAttr.ENABLED;
                   ui.setMode(Mode.STARTER_SELECT);
@@ -926,7 +926,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
               const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
               options.push({
-                label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
+                label: `x${passiveCost} ${i18next.t('starterSelectUiHandler:unlockPassive')} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
                 handler: () => {
                   if (candyCount >= passiveCost) {
                     starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
@@ -950,7 +950,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (valueReduction < 2) {
               const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
               options.push({
-                label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
+                label: `x${reductionCost} ${i18next.t('starterSelectUiHandler:reduceCost')}`,
                 handler: () => {
                   if (candyCount >= reductionCost) {
                     starterData.valueReduction++;
@@ -973,7 +973,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
             options.push({
-              label: i18next.t("menu:cancel"),
+              label: i18next.t('menu:cancel'),
               handler: () => {
                 ui.setMode(Mode.STARTER_SELECT);
                 return true;
@@ -986,7 +986,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           };
           if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
             options.push({
-              label: i18next.t("starterSelectUiHandler:useCandies"),
+              label: i18next.t('starterSelectUiHandler:useCandies'),
               handler: () => {
                 ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
                 return true;
@@ -994,7 +994,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           }
           options.push({
-            label: i18next.t("menu:cancel"),
+            label: i18next.t('menu:cancel'),
             handler: () => {
               ui.setMode(Mode.STARTER_SELECT);
               return true;
@@ -1012,111 +1012,111 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
         switch (button) {
-          case Button.CYCLE_SHINY:
-            if (this.canCycleShiny) {
-              this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
-              if (this.dexAttrCursor & DexAttr.SHINY)
-                this.scene.playSound('sparkle');
-              else
-                success = true;
-            }
-            break;
-          case Button.CYCLE_FORM:
-            if (this.canCycleForm) {
-              const formCount = this.lastSpecies.forms.length;
-              let newFormIndex = props.formIndex;
-              do {
-                newFormIndex = (newFormIndex + 1) % formCount;
-                if (this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex))
+        case Button.CYCLE_SHINY:
+          if (this.canCycleShiny) {
+            this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
+            if (this.dexAttrCursor & DexAttr.SHINY)
+              this.scene.playSound('sparkle');
+            else
+              success = true;
+          }
+          break;
+        case Button.CYCLE_FORM:
+          if (this.canCycleForm) {
+            const formCount = this.lastSpecies.forms.length;
+            let newFormIndex = props.formIndex;
+            do {
+              newFormIndex = (newFormIndex + 1) % formCount;
+              if (this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex))
+                break;
+            } while (newFormIndex !== props.formIndex);
+            this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
+            success = true;
+          }
+          break;
+        case Button.CYCLE_GENDER:
+          if (this.canCycleGender) {
+            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
+            success = true;
+          }
+          break;
+        case Button.CYCLE_ABILITY:
+          if (this.canCycleAbility) {
+            const abilityCount = this.lastSpecies.getAbilityCount();
+            const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
+            let newAbilityIndex = this.abilityCursor;
+            do {
+              newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
+              if (!newAbilityIndex) {
+                if (abilityAttr & AbilityAttr.ABILITY_1)
                   break;
-              } while (newFormIndex !== props.formIndex);
-              this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
-              success = true;
-            }
-            break;
-          case Button.CYCLE_GENDER:
-            if (this.canCycleGender) {
-              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
-              success = true;
-            }
-            break;
-          case Button.CYCLE_ABILITY:
-            if (this.canCycleAbility) {
-              const abilityCount = this.lastSpecies.getAbilityCount();
-              const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
-              let newAbilityIndex = this.abilityCursor;
-              do {
-                newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-                if (!newAbilityIndex) {
-                  if (abilityAttr & AbilityAttr.ABILITY_1)
-                    break;
-                } else if (newAbilityIndex === 1) {
-                  if (abilityAttr & (this.lastSpecies.ability2 ? AbilityAttr.ABILITY_2 : AbilityAttr.ABILITY_HIDDEN))
-                    break;
-                } else {
-                  if (abilityAttr & AbilityAttr.ABILITY_HIDDEN)
-                    break;
-                }
-              } while (newAbilityIndex !== this.abilityCursor);
-              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
-              success = true;
-            }
-            break;
-          case Button.CYCLE_NATURE:
-            if (this.canCycleNature) {
-              const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
-              const natureIndex = natures.indexOf(this.natureCursor);
-              const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
-              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
-              success = true;
-            }
-            break;
-           case Button.CYCLE_VARIANT:
-            if (this.canCycleVariant) {
-              let newVariant = props.variant;
-              do {
-                newVariant = (newVariant + 1) % 3;
-                if (!newVariant) {
-                  if (this.speciesStarterDexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT)
-                    break;
-                } else if (newVariant === 1) {
-                  if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_2)
-                    break;
-                } else {
-                  if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_3)
-                    break;
-                }
-              } while (newVariant !== props.variant);
-              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
-              success = true;
-            }
-            break;
-          case Button.UP:
-            if (row)
-              success = this.setCursor(this.cursor - 9);
-            break;
-          case Button.DOWN:
-            if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9))
-              success = this.setCursor(this.cursor + 9);
-            break;
-          case Button.LEFT:
-            if (this.cursor % 9)
-              success = this.setCursor(this.cursor - 1);
-            else {
-              if (row >= Math.min(5, rows - 1))
-                this.startCursorObj.setVisible(true);
-              success = this.setGenMode(true);
-            }
-            break;
-          case Button.RIGHT:
-            if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9))
-              success = this.setCursor(this.cursor + 1);
-            else {
-              if (row >= Math.min(5, rows - 1))
-                this.startCursorObj.setVisible(true);
-              success = this.setGenMode(true);
-            }
-            break;
+              } else if (newAbilityIndex === 1) {
+                if (abilityAttr & (this.lastSpecies.ability2 ? AbilityAttr.ABILITY_2 : AbilityAttr.ABILITY_HIDDEN))
+                  break;
+              } else {
+                if (abilityAttr & AbilityAttr.ABILITY_HIDDEN)
+                  break;
+              }
+            } while (newAbilityIndex !== this.abilityCursor);
+            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
+            success = true;
+          }
+          break;
+        case Button.CYCLE_NATURE:
+          if (this.canCycleNature) {
+            const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
+            const natureIndex = natures.indexOf(this.natureCursor);
+            const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
+            success = true;
+          }
+          break;
+        case Button.CYCLE_VARIANT:
+          if (this.canCycleVariant) {
+            let newVariant = props.variant;
+            do {
+              newVariant = (newVariant + 1) % 3;
+              if (!newVariant) {
+                if (this.speciesStarterDexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT)
+                  break;
+              } else if (newVariant === 1) {
+                if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_2)
+                  break;
+              } else {
+                if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_3)
+                  break;
+              }
+            } while (newVariant !== props.variant);
+            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
+            success = true;
+          }
+          break;
+        case Button.UP:
+          if (row)
+            success = this.setCursor(this.cursor - 9);
+          break;
+        case Button.DOWN:
+          if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9))
+            success = this.setCursor(this.cursor + 9);
+          break;
+        case Button.LEFT:
+          if (this.cursor % 9)
+            success = this.setCursor(this.cursor - 1);
+          else {
+            if (row >= Math.min(5, rows - 1))
+              this.startCursorObj.setVisible(true);
+            success = this.setGenMode(true);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9))
+            success = this.setCursor(this.cursor + 1);
+          else {
+            if (row >= Math.min(5, rows - 1))
+              this.startCursorObj.setVisible(true);
+            success = this.setGenMode(true);
+          }
+          break;
         }
       }
     }
@@ -1159,21 +1159,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   updateInstructions(): void {
-    let instructionLines = [ ];
-    let cycleInstructionLines = [];
+    const instructionLines = [ ];
+    const cycleInstructionLines = [];
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (this.canCycleShiny)
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleShiny"));
+        cycleInstructionLines.push(i18next.t('starterSelectUiHandler:cycleShiny'));
       if (this.canCycleForm)
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleForm"));
+        cycleInstructionLines.push(i18next.t('starterSelectUiHandler:cycleForm'));
       if (this.canCycleGender)
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleGender"));
+        cycleInstructionLines.push(i18next.t('starterSelectUiHandler:cycleGender'));
       if (this.canCycleAbility)
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleAbility"));
+        cycleInstructionLines.push(i18next.t('starterSelectUiHandler:cycleAbility'));
       if (this.canCycleNature)
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleNature"));
+        cycleInstructionLines.push(i18next.t('starterSelectUiHandler:cycleNature'));
       if (this.canCycleVariant)
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleVariant"));
+        cycleInstructionLines.push(i18next.t('starterSelectUiHandler:cycleVariant'));
     }
 
     if (cycleInstructionLines.length > 2) {
@@ -1184,7 +1184,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         cycleInstructionLines[2] += ' | ' + cycleInstructionLines.splice(3, 1);
     }
 
-    for (let cil of cycleInstructionLines)
+    for (const cil of cycleInstructionLines)
       instructionLines.push(cil);
 
     this.instructionsText.setText(instructionLines.join('\n'));
@@ -1192,11 +1192,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   getValueLimit(): integer {
     switch (this.gameMode) {
-      case GameModes.ENDLESS:
-      case GameModes.SPLICED_ENDLESS:
-        return 15;
-      default:
-        return 10;
+    case GameModes.ENDLESS:
+    case GameModes.SPLICED_ENDLESS:
+      return 15;
+    default:
+      return 10;
     }
   }
 
@@ -1273,17 +1273,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateGenOptions(): void {
     let text = '';
     for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
-        let optionText = '';
-        if (g === this.genScrollCursor && this.genScrollCursor)
-            optionText = '↑';
-        else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
-            optionText = '↓'
-        else
-            optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
-        text += `${text ? '\n' : ''}${optionText}`;
+      let optionText = '';
+      if (g === this.genScrollCursor && this.genScrollCursor)
+        optionText = '↑';
+      else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
+        optionText = '↓';
+      else
+        optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
+      text += `${text ? '\n' : ''}${optionText}`;
     }
     this.genOptionsText.setText(text);
-}
+  }
 
   setGenMode(genMode: boolean): boolean {
     this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);
@@ -1344,9 +1344,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
-        let growthAux = growthReadable.replace(" ", "_")
-        if(i18next.exists("growth:" + growthAux)){
-          growthReadable = i18next.t("growth:"+ growthAux as any)
+        const growthAux = growthReadable.replace(' ', '_');
+        if(i18next.exists('growth:' + growthAux)){
+          growthReadable = i18next.t('growth:'+ growthAux as any);
         }
         this.pokemonGrowthRateText.setText(growthReadable);
 
@@ -1374,7 +1374,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
 
-          var currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
+          let currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
           if (!currentFriendship || currentFriendship === undefined)
             currentFriendship = 0;
 
@@ -1593,7 +1593,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonAbilityText.setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
 
         const passiveAttr = this.scene.gameData.starterData[species.speciesId].passiveAttr;
-        this.pokemonPassiveText.setText(passiveAttr & PassiveAttr.UNLOCKED ? passiveAttr & PassiveAttr.ENABLED ? allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name : i18next.t("starterSelectUiHandler:disabled") : i18next.t("starterSelectUiHandler:locked"));
+        this.pokemonPassiveText.setText(passiveAttr & PassiveAttr.UNLOCKED ? passiveAttr & PassiveAttr.ENABLED ? allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name : i18next.t('starterSelectUiHandler:disabled') : i18next.t('starterSelectUiHandler:locked'));
         this.pokemonPassiveText.setColor(this.getTextColor(passiveAttr === (PassiveAttr.UNLOCKED | PassiveAttr.ENABLED) ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY));
         this.pokemonPassiveText.setShadowColor(this.getTextColor(passiveAttr === (PassiveAttr.UNLOCKED | PassiveAttr.ENABLED) ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY, true));
 
@@ -1613,7 +1613,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         const speciesMoveData = this.scene.gameData.starterData[species.speciesId].moveset;
-        let moveData: StarterMoveset = speciesMoveData
+        const moveData: StarterMoveset = speciesMoveData
           ? Array.isArray(speciesMoveData)
             ? speciesMoveData as StarterMoveset
             : (speciesMoveData as StarterFormMoveData)[formIndex]
@@ -1719,16 +1719,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterValueLabels[cursor].setText(valueStr);
     let textStyle: TextStyle;
     switch (baseStarterValue - starterValue) {
-      case 0:
-        textStyle = TextStyle.WINDOW;
-        break;
-      case 1:
-      case 0.5:
-        textStyle = TextStyle.SUMMARY_BLUE;
-        break;
-      default:
-        textStyle = TextStyle.SUMMARY_GOLD;
-        break;
+    case 0:
+      textStyle = TextStyle.WINDOW;
+      break;
+    case 1:
+    case 0.5:
+      textStyle = TextStyle.SUMMARY_BLUE;
+      break;
+    default:
+      textStyle = TextStyle.SUMMARY_GOLD;
+      break;
     }
     this.starterValueLabels[cursor].setColor(this.getTextColor(textStyle));
     this.starterValueLabels[cursor].setShadowColor(this.getTextColor(textStyle, true));
@@ -1770,7 +1770,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.clearText();
     };
 
-    ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
+    ui.showText(i18next.t('starterSelectUiHandler:confirmStartTeam'), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         const startRun = (gameMode: GameModes) => {
           this.scene.gameMode = gameModes[gameMode];

@@ -1,15 +1,15 @@
-import BattleScene from "./battle-scene";
-import * as Utils from "./utils";
-import { SpeciesFormKey } from "./data/pokemon-species";
-import { achvs } from "./system/achv";
-import { SpeciesFormChange, getSpeciesFormChangeMessage } from "./data/pokemon-forms";
-import { EndEvolutionPhase, EvolutionPhase } from "./evolution-phase";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
-import { Mode } from "./ui/ui";
-import PartyUiHandler from "./ui/party-ui-handler";
-import { BattleSpec } from "./enums/battle-spec";
-import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
-import { getTypeRgb } from "./data/type";
+import BattleScene from './battle-scene';
+import * as Utils from './utils';
+import { SpeciesFormKey } from './data/pokemon-species';
+import { achvs } from './system/achv';
+import { SpeciesFormChange, getSpeciesFormChangeMessage } from './data/pokemon-forms';
+import { EndEvolutionPhase, EvolutionPhase } from './evolution-phase';
+import Pokemon, { EnemyPokemon, PlayerPokemon } from './field/pokemon';
+import { Mode } from './ui/ui';
+import PartyUiHandler from './ui/party-ui-handler';
+import { BattleSpec } from './enums/battle-spec';
+import { BattlePhase, MovePhase, PokemonHealPhase } from './phases';
+import { getTypeRgb } from './data/type';
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -147,7 +147,7 @@ export class FormChangePhase extends EvolutionPhase {
                   });
                 });
               }
-            })
+            });
           }
         });
       });
@@ -196,7 +196,7 @@ export class QuietFormChangePhase extends BattlePhase {
     }
 
     const getPokemonSprite = () => {
-      const sprite = this.scene.addPokemonSprite(this.pokemon, this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, `pkmn__sub`);
+      const sprite = this.scene.addPokemonSprite(this.pokemon, this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, 'pkmn__sub');
       sprite.setOrigin(0.5, 1);
       sprite.play(this.pokemon.getBattleSpriteKey()).stop();
       sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
@@ -207,7 +207,7 @@ export class QuietFormChangePhase extends BattlePhase {
       });
       this.scene.field.add(sprite);
       return sprite;
-    }
+    };
 
     const [ pokemonTintSprite, pokemonFormTintSprite ] = [ getPokemonSprite(), getPokemonSprite() ];
 
