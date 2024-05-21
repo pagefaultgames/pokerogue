@@ -85,11 +85,11 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
   { passive: 50, costReduction: [30, 75] }, // 1
   { passive: 45, costReduction: [25, 60] }, // 2
-  { passive: 30, costReduction: [20, 50] }, // 3
-  { passive: 25, costReduction: [15, 40] }, // 4
-  { passive: 20, costReduction: [12, 35] }, // 5
-  { passive: 15, costReduction: [10, 30] }, // 6
-  { passive: 10, costReduction: [8, 20] },  // 7
+  { passive: 40, costReduction: [20, 50] }, // 3
+  { passive: 30, costReduction: [15, 40] }, // 4
+  { passive: 25, costReduction: [12, 35] }, // 5
+  { passive: 20, costReduction: [10, 30] }, // 6
+  { passive: 15, costReduction: [8, 20] },  // 7
   { passive: 10, costReduction: [5, 15] },  // 8
   { passive: 10, costReduction: [3, 10] },  // 9
   { passive: 10, costReduction: [3, 10] },  // 10
