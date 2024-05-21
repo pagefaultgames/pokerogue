@@ -1,16 +1,16 @@
-import { Arena } from '../field/arena';
-import { Type } from './type';
-import * as Utils from '../utils';
-import { MoveCategory, allMoves } from './move';
-import { getPokemonMessage } from '../messages';
-import Pokemon, { HitResult, PokemonMove } from '../field/pokemon';
-import { MoveEffectPhase, PokemonHealPhase, StatChangePhase} from '../phases';
-import { StatusEffect } from './status-effect';
-import { BattlerIndex } from '../battle';
-import { Moves } from './enums/moves';
-import { ArenaTagType } from './enums/arena-tag-type';
-import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from './ability';
-import { BattleStat } from './battle-stat';
+import { Arena } from "../field/arena";
+import { Type } from "./type";
+import * as Utils from "../utils";
+import { MoveCategory, allMoves } from "./move";
+import { getPokemonMessage } from "../messages";
+import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import { MoveEffectPhase, PokemonHealPhase, StatChangePhase} from "../phases";
+import { StatusEffect } from "./status-effect";
+import { BattlerIndex } from "../battle";
+import { Moves } from "./enums/moves";
+import { ArenaTagType } from "./enums/arena-tag-type";
+import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BattleStat } from "./battle-stat";
 
 export enum ArenaTagSide {
   BOTH,
@@ -65,7 +65,7 @@ export class MistTag extends ArenaTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(getPokemonMessage(source, '\'s team became\nshrouded in mist!'));
+    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrouded in mist!`));
   }
 
   apply(arena: Arena, args: any[]): boolean {
@@ -372,24 +372,24 @@ class StealthRockTag extends ArenaTrapTag {
     let damageHpRatio: number;
 
     switch (effectiveness) {
-    case 0:
-      damageHpRatio = 0;
-      break;
-    case 0.25:
-      damageHpRatio = 0.03125;
-      break;
-    case 0.5:
-      damageHpRatio = 0.0625;
-      break;
-    case 1:
-      damageHpRatio = 0.125;
-      break;
-    case 2:
-      damageHpRatio = 0.25;
-      break;
-    case 4:
-      damageHpRatio = 0.5;
-      break;
+      case 0:
+        damageHpRatio = 0;
+        break;
+      case 0.25:
+        damageHpRatio = 0.03125;
+        break;
+      case 0.5:
+        damageHpRatio = 0.0625;
+        break;
+      case 1:
+        damageHpRatio = 0.125;
+        break;
+      case 2:
+        damageHpRatio = 0.25;
+        break;
+      case 4:
+        damageHpRatio = 0.5;
+        break;
     }
 
     return damageHpRatio;
@@ -498,36 +498,36 @@ class TailwindTag extends ArenaTag {
 
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
-  case ArenaTagType.MIST:
-    return new MistTag(turnCount, sourceId, side);
-  case ArenaTagType.MUD_SPORT:
-    return new MudSportTag(turnCount, sourceId);
-  case ArenaTagType.WATER_SPORT:
-    return new WaterSportTag(turnCount, sourceId);
-  case ArenaTagType.SPIKES:
-    return new SpikesTag(sourceId, side);
-  case ArenaTagType.TOXIC_SPIKES:
-    return new ToxicSpikesTag(sourceId, side);
-  case ArenaTagType.FUTURE_SIGHT:
-  case ArenaTagType.DOOM_DESIRE:
-    return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
-  case ArenaTagType.WISH:
-    return new WishTag(turnCount, sourceId, side);
-  case ArenaTagType.STEALTH_ROCK:
-    return new StealthRockTag(sourceId, side);
-  case ArenaTagType.STICKY_WEB:
-    return new StickyWebTag(sourceId, side);
-  case ArenaTagType.TRICK_ROOM:
-    return new TrickRoomTag(turnCount, sourceId);
-  case ArenaTagType.GRAVITY:
-    return new GravityTag(turnCount);
-  case ArenaTagType.REFLECT:
-    return new ReflectTag(turnCount, sourceId, side);
-  case ArenaTagType.LIGHT_SCREEN:
-    return new LightScreenTag(turnCount, sourceId, side);
-  case ArenaTagType.AURORA_VEIL:
-    return new AuroraVeilTag(turnCount, sourceId, side);
-  case ArenaTagType.TAILWIND:
-    return new TailwindTag(turnCount, sourceId, side);
+    case ArenaTagType.MIST:
+      return new MistTag(turnCount, sourceId, side);
+    case ArenaTagType.MUD_SPORT:
+      return new MudSportTag(turnCount, sourceId);
+    case ArenaTagType.WATER_SPORT:
+      return new WaterSportTag(turnCount, sourceId);
+    case ArenaTagType.SPIKES:
+      return new SpikesTag(sourceId, side);
+    case ArenaTagType.TOXIC_SPIKES:
+      return new ToxicSpikesTag(sourceId, side);
+    case ArenaTagType.FUTURE_SIGHT:
+    case ArenaTagType.DOOM_DESIRE:
+      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
+    case ArenaTagType.WISH:
+      return new WishTag(turnCount, sourceId, side);
+    case ArenaTagType.STEALTH_ROCK:
+      return new StealthRockTag(sourceId, side);
+    case ArenaTagType.STICKY_WEB:
+      return new StickyWebTag(sourceId, side);
+    case ArenaTagType.TRICK_ROOM:
+      return new TrickRoomTag(turnCount, sourceId);
+    case ArenaTagType.GRAVITY:
+      return new GravityTag(turnCount);
+    case ArenaTagType.REFLECT:
+      return new ReflectTag(turnCount, sourceId, side);
+    case ArenaTagType.LIGHT_SCREEN:
+      return new LightScreenTag(turnCount, sourceId, side);
+    case ArenaTagType.AURORA_VEIL:
+      return new AuroraVeilTag(turnCount, sourceId, side);
+    case ArenaTagType.TAILWIND:
+      return new TailwindTag(turnCount, sourceId, side);
   }
 }

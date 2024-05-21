@@ -33,12 +33,12 @@ function simulateKeyboardEvent(eventType, button, buttonMap) {
   const key = buttonMap[button];
   
   switch (eventType) {
-  case 'keydown':
-    key.onDown({});
-    break;
-  case 'keyup':
-    key.onUp({});
-    break;
+    case 'keydown':
+      key.onDown({});
+      break;
+    case 'keyup':
+      key.onUp({});
+      break;
   }
 }
 

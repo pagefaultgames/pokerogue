@@ -1,5 +1,5 @@
-import BattleScene from '../battle-scene';
-import Pokemon from '../field/pokemon';
+import BattleScene from "../battle-scene";
+import Pokemon from "../field/pokemon";
 
 export default class PokeballTray extends Phaser.GameObjects.Container {
   private player: boolean;
@@ -22,7 +22,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
 
     this.balls = new Array(6).fill(null).map((_, i) => this.scene.add.sprite((this.player ? -83 : 76) + (this.scene.game.canvas.width / 6) * (this.player ? -1 : 1) + 10 * i * (this.player ? 1 : -1), -8, 'pb_tray_ball', 'empty'));
 
-    for (const ball of this.balls) {
+    for (let ball of this.balls) {
       ball.setOrigin(0, 0);
       this.add(ball);
     }
@@ -112,5 +112,5 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
 
       this.shown = false;
     });
-  }
+  };
 }

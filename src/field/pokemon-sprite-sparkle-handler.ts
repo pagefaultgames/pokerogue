@@ -1,6 +1,6 @@
-import BattleScene from '../battle-scene';
-import Pokemon from './pokemon';
-import * as Utils from '../utils';
+import BattleScene from "../battle-scene";
+import Pokemon from "./pokemon";
+import * as Utils from "../utils";
 
 export default class PokemonSpriteSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;
@@ -20,7 +20,7 @@ export default class PokemonSpriteSparkleHandler {
 
   onLapse(): void {
     Array.from(this.sprites.values()).filter(s => !s.scene).map(s => this.sprites.delete(s));
-    for (const s of this.sprites.values()) {
+    for (let s of this.sprites.values()) {
       if (!s.pipelineData['teraColor'] || !(s.pipelineData['teraColor'] as number[]).find(c => c))
         continue;
       if (!s.visible || (s.parentContainer instanceof Pokemon && !s.parentContainer.parentContainer))
@@ -47,7 +47,7 @@ export default class PokemonSpriteSparkleHandler {
   add(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
     if (!Array.isArray(sprites))
       sprites = [ sprites ];
-    for (const s of sprites) {
+    for (let s of sprites) {
       if (this.sprites.has(s))
         continue;
       this.sprites.add(s);
@@ -57,13 +57,13 @@ export default class PokemonSpriteSparkleHandler {
   remove(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
     if (!Array.isArray(sprites))
       sprites = [ sprites ];
-    for (const s of sprites) {
+    for (let s of sprites) {
       this.sprites.delete(s);
     }
   }
 
   removeAll(): void {
-    for (const s of this.sprites.values())
+    for (let s of this.sprites.values())
       this.sprites.delete(s);
   }
 }

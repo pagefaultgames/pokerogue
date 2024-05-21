@@ -1,14 +1,14 @@
-import BattleScene from '../battle-scene';
-import { addTextObject, TextStyle } from './text';
-import { Type } from '../data/type';
-import { Command } from './command-ui-handler';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import * as Utils from '../utils';
-import { CommandPhase } from '../phases';
-import { MoveCategory } from '#app/data/move.js';
+import BattleScene from "../battle-scene";
+import { addTextObject, TextStyle } from "./text";
+import { Type } from "../data/type";
+import { Command } from "./command-ui-handler";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import * as Utils from "../utils";
+import { CommandPhase } from "../phases";
+import { MoveCategory } from "#app/data/move.js";
 import i18next from '../plugins/i18n';
-import {Button} from '../enums/buttons';
+import {Button} from "../enums/buttons";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -68,7 +68,7 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -10, 'ACC', TextStyle.MOVE_INFO_CONTENT);
     this.accuracyLabel.setOrigin(0.0, 0.5);
     this.accuracyLabel.setVisible(false);
-    this.accuracyLabel.setText(i18next.t('fightUiHandler:accuracy'));
+    this.accuracyLabel.setText(i18next.t('fightUiHandler:accuracy'))
     ui.add(this.accuracyLabel);
 
     this.accuracyText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -10, '---', TextStyle.MOVE_INFO_CONTENT);
@@ -110,22 +110,22 @@ export default class FightUiHandler extends UiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (cursor >= 2)
-          success = this.setCursor(cursor - 2);
-        break;
-      case Button.DOWN:
-        if (cursor < 2)
-          success = this.setCursor(cursor + 2);
-        break;
-      case Button.LEFT:
-        if (cursor % 2 === 1)
-          success = this.setCursor(cursor - 1);
-        break;
-      case Button.RIGHT:
-        if (cursor % 2 === 0)
-          success = this.setCursor(cursor + 1);
-        break;
+        case Button.UP:
+          if (cursor >= 2)
+            success = this.setCursor(cursor - 2);
+          break;
+        case Button.DOWN:
+          if (cursor < 2)
+            success = this.setCursor(cursor + 2);
+          break;
+        case Button.LEFT:
+          if (cursor % 2 === 1)
+            success = this.setCursor(cursor - 1);
+          break;
+        case Button.RIGHT:
+          if (cursor % 2 === 0)
+            success = this.setCursor(cursor + 1);
+          break;
       }
     }
 

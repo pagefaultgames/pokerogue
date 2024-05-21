@@ -1,9 +1,9 @@
-import BattleScene from '../battle-scene';
-import { TextStyle, addTextObject } from './text';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import { WindowVariant, addWindow } from './ui-theme';
-import {Button} from '../enums/buttons';
+import BattleScene from "../battle-scene";
+import { TextStyle, addTextObject } from "./text";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import { WindowVariant, addWindow } from "./ui-theme";
+import {Button} from "../enums/buttons";
 
 export interface ModalConfig {
   buttonActions: Function[];
@@ -59,7 +59,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     const buttonTopMargin = this.getButtonTopMargin();
 
-    for (const label of buttonLabels) {
+    for (let label of buttonLabels) {
       const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
       buttonLabel.setOrigin(0.5, 0.5);
 

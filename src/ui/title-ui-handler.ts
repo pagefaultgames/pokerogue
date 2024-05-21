@@ -1,11 +1,11 @@
-import BattleScene from '../battle-scene';
-import { DailyRunScoreboard } from './daily-run-scoreboard';
-import OptionSelectUiHandler from './option-select-ui-handler';
-import { Mode } from './ui';
-import * as Utils from '../utils';
-import { TextStyle, addTextObject } from './text';
-import { getBattleCountSplashMessage, getSplashMessages } from '../data/splash-messages';
-import i18next from 'i18next';
+import BattleScene from "../battle-scene";
+import { DailyRunScoreboard } from "./daily-run-scoreboard";
+import OptionSelectUiHandler from "./option-select-ui-handler";
+import { Mode } from "./ui";
+import * as Utils from "../utils";
+import { TextStyle, addTextObject } from "./text";
+import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
+import i18next from "i18next";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
@@ -34,17 +34,17 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.add(logo);
 
     this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 44);
-    this.dailyRunScoreboard.setup();
+		this.dailyRunScoreboard.setup();
 
     this.titleContainer.add(this.dailyRunScoreboard);
 
-    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, `? ${i18next.t('menu:playersOnline')}`, TextStyle.MESSAGE, { fontSize: '54px' });
+    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: '54px' });
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
     this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, '', TextStyle.MONEY, { fontSize: '54px' });
     this.splashMessageText.setOrigin(0.5, 0.5);
-    this.splashMessageText.setAngle(-20);
+    this.splashMessageText.setAngle(-20)
     this.titleContainer.add(this.splashMessageText);
 
     const originalSplashMessageScale = this.splashMessageText.scale;
@@ -55,19 +55,19 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       scale: originalSplashMessageScale * 1.25,
       loop: -1,
       yoyo: true,
-    });
+    })
   }
 
   updateTitleStats(): void {
-    Utils.apiFetch('game/titlestats')
+    Utils.apiFetch(`game/titlestats`)
       .then(request => request.json())
       .then(stats => {
-        this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t('menu:playersOnline')}`);
+        this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
         if (this.splashMessage === getBattleCountSplashMessage())
           this.splashMessageText.setText(getBattleCountSplashMessage().replace('{COUNT}', stats.battleCount.toLocaleString('en-US')));
       })
       .catch(err => {
-        console.error('Failed to fetch title stats:\n', err);
+        console.error("Failed to fetch title stats:\n", err);
       });
   }
 

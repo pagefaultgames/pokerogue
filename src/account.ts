@@ -1,5 +1,5 @@
-import { bypassLogin } from './battle-scene';
-import * as Utils from './utils';
+import { bypassLogin } from "./battle-scene";
+import * as Utils from "./utils";
 
 export interface UserInfo {
   username: string;

@@ -1,7 +1,7 @@
-import BattleScene from '../battle-scene';
-import AwaitableUiHandler from './awaitable-ui-handler';
-import { Mode } from './ui';
-import * as Utils from '../utils';
+import BattleScene from "../battle-scene";
+import AwaitableUiHandler from "./awaitable-ui-handler";
+import { Mode } from "./ui";
+import * as Utils from "../utils";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent;
@@ -28,22 +28,22 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   private showTextInternal(text: string, delay: integer, callback: Function, callbackDelay: integer, prompt: boolean, promptDelay: integer) {
     if (delay === null || delay === undefined)
       delay = 20;
-    const charVarMap = new Map<integer, string>();
-    const delayMap = new Map<integer, integer>();
-    const soundMap = new Map<integer, string>();
+    let charVarMap = new Map<integer, string>();
+    let delayMap = new Map<integer, integer>();
+    let soundMap = new Map<integer, string>();
     const actionPattern = /@(c|d|s)\{(.*?)\}/;
     let actionMatch: RegExpExecArray;
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
-      case 'c':
-        charVarMap.set(actionMatch.index, actionMatch[2]);
-        break;
-      case 'd':
-        delayMap.set(actionMatch.index, parseInt(actionMatch[2]));
-        break;
-      case 's':
-        soundMap.set(actionMatch.index, actionMatch[2]);
-        break;
+        case 'c':
+          charVarMap.set(actionMatch.index, actionMatch[2]);
+          break;
+        case 'd':
+          delayMap.set(actionMatch.index, parseInt(actionMatch[2]));
+          break;
+        case 's':
+          soundMap.set(actionMatch.index, actionMatch[2]);
+          break;
       }
       text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
     }
@@ -76,7 +76,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       this.textTimer.remove();
       if (this.textCallbackTimer)
         this.textCallbackTimer.callback();
-    }
+    };
     if (prompt) {
       const originalCallback = callback;
       callback = () => {

@@ -1,24 +1,24 @@
-import BattleScene from '../battle-scene';
-import { PokeballType } from '../data/pokeball';
-import * as Utils from '../utils';
+import BattleScene from "../battle-scene";
+import { PokeballType } from "../data/pokeball";
+import * as Utils from "../utils";
 
 export function addPokeballOpenParticles(scene: BattleScene, x: number, y: number, pokeballType: PokeballType): void {
   switch (pokeballType) {
-  case PokeballType.POKEBALL:
-    doDefaultPbOpenParticles(scene, x, y, 48);
-    break;
-  case PokeballType.GREAT_BALL:
-    doDefaultPbOpenParticles(scene, x, y, 96);
-    break;
-  case PokeballType.ULTRA_BALL:
-    doUbOpenParticles(scene, x, y, 8);
-    break;
-  case PokeballType.ROGUE_BALL:
-    doUbOpenParticles(scene, x, y, 10);
-    break;
-  case PokeballType.MASTER_BALL:
-    doMbOpenParticles(scene, x, y);
-    break;
+    case PokeballType.POKEBALL:
+      doDefaultPbOpenParticles(scene, x, y, 48);
+      break;
+    case PokeballType.GREAT_BALL:
+      doDefaultPbOpenParticles(scene, x, y, 96);
+      break;
+    case PokeballType.ULTRA_BALL:
+      doUbOpenParticles(scene, x, y, 8);
+      break;
+    case PokeballType.ROGUE_BALL:
+      doUbOpenParticles(scene, x, y, 10);
+      break;
+    case PokeballType.MASTER_BALL:
+      doMbOpenParticles(scene, x, y);
+      break;
   }
 }
 
@@ -66,7 +66,7 @@ function doDefaultPbOpenParticles(scene: BattleScene, x: number, y: number, radi
 }
 
 function doUbOpenParticles(scene: BattleScene, x: number, y: number, frameIndex: integer) {
-  const particles: Phaser.GameObjects.Image[] = [];
+  let particles: Phaser.GameObjects.Image[] = [];
   for (let i = 0; i < 10; i++)
     particles.push(doFanOutParticle(scene, i * 25, x, y, 1, 1, 5, frameIndex));
 
@@ -77,14 +77,14 @@ function doUbOpenParticles(scene: BattleScene, x: number, y: number, frameIndex:
     alpha: 0,
     ease: 'Sine.easeIn',
     onComplete: () => {
-      for (const particle of particles)
+      for (let particle of particles)
         particle.destroy();
     }
   });
 }
 
 function doMbOpenParticles(scene: BattleScene, x: number, y: number) {
-  const particles: Phaser.GameObjects.Image[] = [];
+  let particles: Phaser.GameObjects.Image[] = [];
   for (let j = 0; j < 2; j++) {
     for (let i = 0; i < 8; i++)
       particles.push(doFanOutParticle(scene, i * 32, x, y, j ? 1 : 2, j ? 2 : 1, 8, 4));
@@ -96,7 +96,7 @@ function doMbOpenParticles(scene: BattleScene, x: number, y: number) {
       alpha: 0,
       ease: 'Sine.easeIn',
       onComplete: () => {
-        for (const particle of particles)
+        for (let particle of particles)
           particle.destroy();
       }
     });

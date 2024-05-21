@@ -1,11 +1,11 @@
-import BattleScene from '../battle-scene';
-import { Setting, reloadSettings, settingDefaults, settingOptions } from '../system/settings';
-import { hasTouchscreen, isMobile } from '../touch-controls';
-import { TextStyle, addTextObject } from './text';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import { addWindow } from './ui-theme';
-import {Button} from '../enums/buttons';
+import BattleScene from "../battle-scene";
+import { Setting, reloadSettings, settingDefaults, settingOptions } from "../system/settings";
+import { hasTouchscreen, isMobile } from "../touch-controls";
+import { TextStyle, addTextObject } from "./text";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import { addWindow } from "./ui-theme";
+import {Button} from "../enums/buttons";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
@@ -82,7 +82,7 @@ export default class SettingsUiHandler extends UiHandler {
 
       let xOffset = 0;
 
-      for (const value of this.optionValueLabels[s]) {
+      for (let value of this.optionValueLabels[s]) {
         value.setPositionRelative(this.settingLabels[s], labelWidth + xOffset, 0);
         xOffset += value.width / 6 + optionSpacing;
       }
@@ -143,45 +143,45 @@ export default class SettingsUiHandler extends UiHandler {
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
-      case Button.UP:
-        if (cursor) {
-          if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
-          else
-            success = this.setScrollCursor(this.scrollCursor - 1);
-        } else {
-          // When at the top of the menu and pressing UP, move to the bottommost item.
-          // First, set the cursor to the last visible element, preparing for the scroll to the end.
-          const successA = this.setCursor(rowsToDisplay - 1);
-          // Then, adjust the scroll to display the bottommost elements of the menu.
-          const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
-          success = successA && successB; // success is just there to play the little validation sound effect
-        }
-        break;
-      case Button.DOWN:
-        if (cursor < this.optionValueLabels.length - 1) {
-          if (this.cursor < rowsToDisplay - 1) // if the visual cursor is in the frame of 0 to 8
-            success = this.setCursor(this.cursor + 1);
-          else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
-            success = this.setScrollCursor(this.scrollCursor + 1);
-        } else {
-          // When at the bottom of the menu and pressing DOWN, move to the topmost item.
-          // First, set the cursor to the first visible element, resetting the scroll to the top.
-          const successA = this.setCursor(0);
-          // Then, reset the scroll to start from the first element of the menu.
-          const successB = this.setScrollCursor(0);
-          success = successA && successB; // Indicates a successful cursor and scroll adjustment.
-        }
-        break;
-      case Button.LEFT:
-        if (this.optionCursors[cursor]) // Moves the option cursor left, if possible.
-          success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
-        break;
-      case Button.RIGHT:
-        // Moves the option cursor right, if possible.
-        if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
-          success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
-        break;
+        case Button.UP:
+          if (cursor) {
+            if (this.cursor)
+              success = this.setCursor(this.cursor - 1);
+            else
+              success = this.setScrollCursor(this.scrollCursor - 1);
+          } else {
+              // When at the top of the menu and pressing UP, move to the bottommost item.
+              // First, set the cursor to the last visible element, preparing for the scroll to the end.
+              const successA = this.setCursor(rowsToDisplay - 1);
+              // Then, adjust the scroll to display the bottommost elements of the menu.
+              const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
+              success = successA && successB; // success is just there to play the little validation sound effect
+          }
+          break;
+        case Button.DOWN:
+          if (cursor < this.optionValueLabels.length - 1) {
+            if (this.cursor < rowsToDisplay - 1) // if the visual cursor is in the frame of 0 to 8
+              success = this.setCursor(this.cursor + 1);
+            else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
+              success = this.setScrollCursor(this.scrollCursor + 1);
+          } else {
+              // When at the bottom of the menu and pressing DOWN, move to the topmost item.
+              // First, set the cursor to the first visible element, resetting the scroll to the top.
+              const successA = this.setCursor(0);
+              // Then, reset the scroll to start from the first element of the menu.
+              const successB = this.setScrollCursor(0);
+              success = successA && successB; // Indicates a successful cursor and scroll adjustment.
+          }
+          break;
+        case Button.LEFT:
+          if (this.optionCursors[cursor]) // Moves the option cursor left, if possible.
+            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+          break;
+        case Button.RIGHT:
+          // Moves the option cursor right, if possible.
+          if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
+            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+          break;
       }
     }
 
@@ -227,7 +227,7 @@ export default class SettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
-      this.scene.gameData.saveSetting(setting, cursor);
+      this.scene.gameData.saveSetting(setting, cursor)
       if (reloadSettings.includes(setting)) {
         this.reloadRequired = true;
         if (setting === Setting.Language)
@@ -257,7 +257,7 @@ export default class SettingsUiHandler extends UiHandler {
     for (let s = 0; s < this.settingLabels.length; s++) {
       const visible = s >= this.scrollCursor && s < this.scrollCursor + 9;
       this.settingLabels[s].setVisible(visible);
-      for (const option of this.optionValueLabels[s])
+      for (let option of this.optionValueLabels[s])
         option.setVisible(visible);
     }
   }

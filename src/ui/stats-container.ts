@@ -1,11 +1,11 @@
-import BBCodeText from 'phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText';
-import BattleScene from '../battle-scene';
-import { Stat, getStatName } from '../data/pokemon-stat';
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from './text';
+import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import BattleScene from "../battle-scene";
+import { Stat, getStatName } from "../data/pokemon-stat";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
-const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
+const ivChartStatIndexes = [0,1,2,5,4,3] // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export class StatsContainer extends Phaser.GameObjects.Container {
@@ -54,7 +54,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       statLabel.setOrigin(0.5);
 
       this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, '0', TextStyle.TOOLTIP_CONTENT);
-      this.ivStatValueTexts[i].setOrigin(0.5);
+      this.ivStatValueTexts[i].setOrigin(0.5)
 
       this.add(statLabel);
       this.add(this.ivStatValueTexts[i]);

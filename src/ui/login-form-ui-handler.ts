@@ -1,7 +1,7 @@
-import { FormModalUiHandler } from './form-modal-ui-handler';
-import { ModalConfig } from './modal-ui-handler';
-import * as Utils from '../utils';
-import { Mode } from './ui';
+import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { ModalConfig } from "./modal-ui-handler";
+import * as Utils from "../utils";
+import { Mode } from "./ui";
 import i18next from '../plugins/i18n';
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
@@ -26,18 +26,18 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   getReadableErrorMessage(error: string): string {
-    const colonIndex = error?.indexOf(':');
+    let colonIndex = error?.indexOf(':');
     if (colonIndex > 0)
       error = error.slice(0, colonIndex);
     switch (error) {
-    case 'invalid username':
-      return i18next.t('menu:invalidLoginUsername');
-    case 'invalid password':
-      return i18next.t('menu:invalidLoginPassword');
-    case 'account doesn\'t exist':
-      return i18next.t('menu:accountNonExistent');
-    case 'password doesn\'t match':
-      return i18next.t('menu:unmatchingPassword');
+      case 'invalid username':
+        return i18next.t('menu:invalidLoginUsername');
+      case 'invalid password':
+        return i18next.t('menu:invalidLoginPassword');
+      case 'account doesn\'t exist':
+        return i18next.t('menu:accountNonExistent');
+      case 'password doesn\'t match':
+        return i18next.t('menu:unmatchingPassword');
     }
 
     return super.getReadableErrorMessage(error);
@@ -59,7 +59,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         };
         if (!this.inputs[0].text)
           return onFail(i18next.t('menu:emptyUsername'));
-        Utils.apiPost('account/login', `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
+        Utils.apiPost(`account/login`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
           .then(response => {
             if (!response.ok)
               return response.text();

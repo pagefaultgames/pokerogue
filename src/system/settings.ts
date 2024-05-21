@@ -1,34 +1,34 @@
-import SettingsUiHandler from '#app/ui/settings-ui-handler';
-import { Mode } from '#app/ui/ui';
-import i18next from 'i18next';
-import BattleScene from '../battle-scene';
-import { hasTouchscreen } from '../touch-controls';
-import { updateWindowType } from '../ui/ui-theme';
-import { PlayerGender } from './game-data';
+import SettingsUiHandler from "#app/ui/settings-ui-handler";
+import { Mode } from "#app/ui/ui";
+import i18next from "i18next";
+import BattleScene from "../battle-scene";
+import { hasTouchscreen } from "../touch-controls";
+import { updateWindowType } from "../ui/ui-theme";
+import { PlayerGender } from "./game-data";
 
 export enum Setting {
-  Game_Speed = 'GAME_SPEED',
-  Master_Volume = 'MASTER_VOLUME',
-  BGM_Volume = 'BGM_VOLUME',
-  SE_Volume = 'SE_VOLUME',
-  Language = 'LANGUAGE',
-  Damage_Numbers = 'DAMAGE_NUMBERS',
-  UI_Theme = 'UI_THEME',
-  Window_Type = 'WINDOW_TYPE',
-  Tutorials = 'TUTORIALS',
-  Enable_Retries = 'ENABLE_RETRIES',
-  Sprite_Set = 'SPRITE_SET',
-  Move_Animations = 'MOVE_ANIMATIONS',
-  Show_Stats_on_Level_Up = 'SHOW_LEVEL_UP_STATS',
-  EXP_Gains_Speed = 'EXP_GAINS_SPEED',
-  EXP_Party_Display = 'EXP_PARTY_DISPLAY',
-  HP_Bar_Speed = 'HP_BAR_SPEED',
-  Fusion_Palette_Swaps = 'FUSION_PALETTE_SWAPS',
-  Player_Gender = 'PLAYER_GENDER',
-  Gamepad_Support = 'GAMEPAD_SUPPORT',
-  Swap_A_and_B = 'SWAP_A_B', // Swaps which gamepad button handles ACTION and CANCEL
-  Touch_Controls = 'TOUCH_CONTROLS',
-  Vibration = 'VIBRATION'
+  Game_Speed = "GAME_SPEED",
+  Master_Volume = "MASTER_VOLUME",
+  BGM_Volume = "BGM_VOLUME",
+  SE_Volume = "SE_VOLUME",
+  Language = "LANGUAGE",
+  Damage_Numbers = "DAMAGE_NUMBERS",
+  UI_Theme = "UI_THEME",
+  Window_Type = "WINDOW_TYPE",
+  Tutorials = "TUTORIALS",
+  Enable_Retries = "ENABLE_RETRIES",
+  Sprite_Set = "SPRITE_SET",
+  Move_Animations = "MOVE_ANIMATIONS",
+  Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
+  EXP_Gains_Speed = "EXP_GAINS_SPEED",
+  EXP_Party_Display = "EXP_PARTY_DISPLAY",
+  HP_Bar_Speed = "HP_BAR_SPEED",
+  Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
+  Player_Gender = "PLAYER_GENDER",
+  Gamepad_Support = "GAMEPAD_SUPPORT",
+  Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
+  Touch_Controls = "TOUCH_CONTROLS",
+  Vibration = "VIBRATION"
 }
 
 export interface SettingOptions {
@@ -93,144 +93,144 @@ export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Se
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
-  case Setting.Game_Speed:
-    scene.gameSpeed = parseFloat(settingOptions[setting][value].replace('x', ''));
-    break;
-  case Setting.Master_Volume:
-    scene.masterVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
-    scene.updateSoundVolume();
-    break;
-  case Setting.BGM_Volume:
-    scene.bgmVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
-    scene.updateSoundVolume();
-    break;
-  case Setting.SE_Volume:
-    scene.seVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
-    scene.updateSoundVolume();
-    break;
-  case Setting.Damage_Numbers:
-    scene.damageNumbersMode = value;
-    break;
-  case Setting.UI_Theme:
-    scene.uiTheme = value;
-    break;
-  case Setting.Window_Type:
-    updateWindowType(scene, parseInt(settingOptions[setting][value]));
-    break;
-  case Setting.Tutorials:
-    scene.enableTutorials = settingOptions[setting][value] === 'On';
-    break;
-  case Setting.Enable_Retries:
-    scene.enableRetries = settingOptions[setting][value] === 'On';
-    break;
-  case Setting.Sprite_Set:
-    scene.experimentalSprites = !!value;
-    if (value)
-      scene.initExpSprites();
-    break;
-  case Setting.Move_Animations:
-    scene.moveAnimations = settingOptions[setting][value] === 'On';
-    break;
-  case Setting.Show_Stats_on_Level_Up:
-    scene.showLevelUpStats = settingOptions[setting][value] === 'On';
-    break;
-  case Setting.EXP_Gains_Speed:
-    scene.expGainsSpeed = value;
-    break;
-  case Setting.EXP_Party_Display:
-    scene.expParty = value;
-    break;
-  case Setting.HP_Bar_Speed:
-    scene.hpBarSpeed = value;
-    break;
-  case Setting.Fusion_Palette_Swaps:
-    scene.fusionPaletteSwaps = !!value;
-    break;
-  case Setting.Player_Gender:
-    if (scene.gameData) {
-      const female = settingOptions[setting][value] === 'Girl';
-      scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
-      scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? 'm' : 'f', female ? 'f' : 'm'));
-    } else
-      return false;
-    break;
-  case Setting.Gamepad_Support:
-    // if we change the value of the gamepad support, we call a method in the inputController to
-    // activate or deactivate the controller listener
-    scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
-    break;
-  case Setting.Swap_A_and_B:
-    scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
-    break;
-  case Setting.Touch_Controls:
-    scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
-    const touchControls = document.getElementById('touchControls');
-    if (touchControls)
-      touchControls.classList.toggle('visible', scene.enableTouchControls);
-    break;
-  case Setting.Vibration:
-    scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
-    break;
-  case Setting.Language:
-    if (value) {
-      if (scene.ui) {
-        const cancelHandler = () => {
-          scene.ui.revertMode();
-          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Object.values(Setting).indexOf(Setting.Language), 0, true);
-        };
-        const changeLocaleHandler = (locale: string): boolean => {
-          try {
-            i18next.changeLanguage(locale);
-            localStorage.setItem('prLang', locale);
-            cancelHandler();
-            scene.reset(true, false, true);
-            return true;
-          } catch (error) {
-            console.error('Error changing locale:', error);
-            return false;
-          }
-        };
-        scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-          options: [
-            {
-              label: 'English',
-              handler: () => changeLocaleHandler('en')
-            },
-            {
-              label: 'Español',
-              handler: () => changeLocaleHandler('es')
-            },
-            {
-              label: 'Italiano',
-              handler: () => changeLocaleHandler('it')
-            },
-            {
-              label: 'Français',
-              handler: () => changeLocaleHandler('fr')
-            },
-            {
-              label: 'Deutsch',
-              handler: () => changeLocaleHandler('de')
-            },
-            {
-              label: 'Português (BR)',
-              handler: () => changeLocaleHandler('pt_BR')
-            },
-            {
-              label: '简体中文',
-              handler: () => changeLocaleHandler('zh_CN')
-            },
-            {
-              label: 'Cancel',
-              handler: () => cancelHandler()
-            }
-          ],
-          maxOptions: 7
-        });
+    case Setting.Game_Speed:
+      scene.gameSpeed = parseFloat(settingOptions[setting][value].replace('x', ''));
+      break;
+    case Setting.Master_Volume:
+      scene.masterVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
+      scene.updateSoundVolume();
+      break;
+    case Setting.BGM_Volume:
+      scene.bgmVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
+      scene.updateSoundVolume();
+      break;
+    case Setting.SE_Volume:
+      scene.seVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
+      scene.updateSoundVolume();
+      break;
+    case Setting.Damage_Numbers:
+      scene.damageNumbersMode = value;
+      break;
+    case Setting.UI_Theme:
+      scene.uiTheme = value;
+      break;
+    case Setting.Window_Type:
+      updateWindowType(scene, parseInt(settingOptions[setting][value]));
+      break;
+    case Setting.Tutorials:
+      scene.enableTutorials = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Enable_Retries:
+      scene.enableRetries = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Sprite_Set:
+      scene.experimentalSprites = !!value;
+      if (value)
+        scene.initExpSprites();
+      break;
+    case Setting.Move_Animations:
+      scene.moveAnimations = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Show_Stats_on_Level_Up:
+      scene.showLevelUpStats = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.EXP_Gains_Speed:
+      scene.expGainsSpeed = value;
+      break;
+    case Setting.EXP_Party_Display:
+      scene.expParty = value;
+      break;
+    case Setting.HP_Bar_Speed:
+      scene.hpBarSpeed = value;
+      break;
+    case Setting.Fusion_Palette_Swaps:
+      scene.fusionPaletteSwaps = !!value;
+      break;
+    case Setting.Player_Gender:
+      if (scene.gameData) {
+        const female = settingOptions[setting][value] === 'Girl';
+        scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
+        scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? 'm' : 'f', female ? 'f' : 'm'));
+      } else
         return false;
+      break;
+    case Setting.Gamepad_Support:
+      // if we change the value of the gamepad support, we call a method in the inputController to
+      // activate or deactivate the controller listener
+      scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
+      break;
+    case Setting.Swap_A_and_B:
+      scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
+      break;
+    case Setting.Touch_Controls:
+      scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
+      const touchControls = document.getElementById('touchControls');
+      if (touchControls)
+        touchControls.classList.toggle('visible', scene.enableTouchControls);
+      break;
+    case Setting.Vibration:
+      scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
+      break;
+    case Setting.Language:
+      if (value) {
+        if (scene.ui) {
+          const cancelHandler = () => {
+            scene.ui.revertMode();
+            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Object.values(Setting).indexOf(Setting.Language), 0, true);
+          };
+          const changeLocaleHandler = (locale: string): boolean => {
+            try {
+              i18next.changeLanguage(locale);
+              localStorage.setItem('prLang', locale);
+              cancelHandler();
+              scene.reset(true, false, true);
+              return true;
+            } catch (error) {
+              console.error('Error changing locale:', error);
+              return false;
+            }
+          };
+          scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+            options: [
+              {
+                label: 'English',
+                handler: () => changeLocaleHandler('en')
+              },
+              {
+                label: 'Español',
+                handler: () => changeLocaleHandler('es')
+              },
+              {
+                label: 'Italiano',
+                handler: () => changeLocaleHandler('it')
+              },
+              {
+                label: 'Français',
+                handler: () => changeLocaleHandler('fr')
+              },
+              {
+                label: 'Deutsch',
+                handler: () => changeLocaleHandler('de')
+              },
+              {
+                label: 'Português (BR)',
+                handler: () => changeLocaleHandler('pt_BR')
+              },
+              {
+                label: '简体中文',
+                handler: () => changeLocaleHandler('zh_CN')
+              },
+              {
+                label: 'Cancel',
+                handler: () => cancelHandler()
+              }
+            ],
+            maxOptions: 7
+          });
+          return false;
+        }
       }
-    }
-    break;
+      break;
   }
 
   return true;

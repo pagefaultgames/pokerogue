@@ -1,7 +1,7 @@
-import { TextStyle, addTextObject } from '../ui/text';
-import Pokemon, { DamageResult, HitResult } from './pokemon';
-import * as Utils from '../utils';
-import { BattlerIndex } from '../battle';
+import { TextStyle, addTextObject } from "../ui/text";
+import Pokemon, { DamageResult, HitResult } from "./pokemon";
+import * as Utils from "../utils";
+import { BattlerIndex } from "../battle";
 
 export default class DamageNumberHandler {
   private damageNumbers: Map<BattlerIndex, Phaser.GameObjects.Text[]>;
@@ -25,21 +25,21 @@ export default class DamageNumberHandler {
     let [ textColor, shadowColor ] = [ null, null ];
 
     switch (result) {
-    case HitResult.SUPER_EFFECTIVE:
-      [ textColor, shadowColor ] = [ '#f8d030', '#b8a038' ];
-      break;
-    case HitResult.NOT_VERY_EFFECTIVE:
-      [ textColor, shadowColor ] = [ '#f08030', '#c03028' ];
-      break;
-    case HitResult.ONE_HIT_KO:
-      [ textColor, shadowColor ] = [ '#a040a0', '#483850' ];
-      break;
-    case HitResult.HEAL:
-      [ textColor, shadowColor ] = [ '#78c850', '#588040' ];
-      break;
-    default:
-      [ textColor, shadowColor ] = [ '#ffffff', '#636363' ];
-      break;
+      case HitResult.SUPER_EFFECTIVE:
+        [ textColor, shadowColor ] = [ '#f8d030', '#b8a038' ];
+        break;
+      case HitResult.NOT_VERY_EFFECTIVE:
+        [ textColor, shadowColor ] = [ '#f08030', '#c03028' ];
+        break;
+      case HitResult.ONE_HIT_KO:
+        [ textColor, shadowColor ] = [ '#a040a0', '#483850' ];
+        break;
+      case HitResult.HEAL:
+        [ textColor, shadowColor ] = [ '#78c850', '#588040' ];
+        break;
+      default:
+        [ textColor, shadowColor ] = [ '#ffffff', '#636363' ];
+        break;
     }
 
     if (textColor)

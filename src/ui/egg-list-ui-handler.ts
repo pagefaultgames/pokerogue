@@ -1,12 +1,12 @@
-import BattleScene from '../battle-scene';
-import { Mode } from './ui';
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from './pokemon-icon-anim-handler';
-import { TextStyle, addTextObject } from './text';
-import MessageUiHandler from './message-ui-handler';
-import { EGG_SEED, Egg, GachaType, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from '../data/egg';
-import * as Utils from '../utils';
-import { addWindow } from './ui-theme';
-import {Button} from '../enums/buttons';
+import BattleScene from "../battle-scene";
+import { Mode } from "./ui";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import { TextStyle, addTextObject } from "./text";
+import MessageUiHandler from "./message-ui-handler";
+import { EGG_SEED, Egg, GachaType, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
+import * as Utils from "../utils";
+import { addWindow } from "./ui-theme";
+import {Button} from "../enums/buttons";
 import i18next from '../plugins/i18n';
 
 export default class EggListUiHandler extends MessageUiHandler {
@@ -72,7 +72,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.cursorObj.setOrigin(0, 0);
     this.eggListContainer.add(this.cursorObj);
 
-    this.eggSprite = this.scene.add.sprite(54, 37, 'egg');
+    this.eggSprite = this.scene.add.sprite(54, 37, `egg`);
     this.eggListContainer.add(this.eggSprite);
 
     this.eggListMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -106,7 +106,7 @@ export default class EggListUiHandler extends MessageUiHandler {
       new Egg(1 + EGG_SEED * 3, GachaType.LEGENDARY, 100, new Date().getTime())
     ];*/
 
-    for (const egg of this.scene.gameData.eggs) {
+    for (let egg of this.scene.gameData.eggs) {
       const x = (e % 11) * 18;
       const y = Math.floor(e / 11) * 18;
       const icon = this.scene.add.sprite(x - 2, y + 2, 'egg_icons');
@@ -127,7 +127,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     let success = false;
-    const error = false;
+    let error = false;
 
     if (button === Button.CANCEL) {
       ui.revertMode();
@@ -137,22 +137,22 @@ export default class EggListUiHandler extends MessageUiHandler {
       const rows = Math.ceil(eggCount / 11);
       const row = Math.floor(this.cursor / 11);
       switch (button) {
-      case Button.UP:
-        if (row)
-          success = this.setCursor(this.cursor - 11);
-        break;
-      case Button.DOWN:
-        if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11))
-          success = this.setCursor(this.cursor + 11);
-        break;
-      case Button.LEFT:
-        if (this.cursor % 11)
-          success = this.setCursor(this.cursor - 1);
-        break;
-      case Button.RIGHT:
-        if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11))
-          success = this.setCursor(this.cursor + 1);
-        break;
+        case Button.UP:
+          if (row)
+            success = this.setCursor(this.cursor - 11);
+          break;
+        case Button.DOWN:
+          if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11))
+            success = this.setCursor(this.cursor + 11);
+          break;
+        case Button.LEFT:
+          if (this.cursor % 11)
+            success = this.setCursor(this.cursor - 1);
+          break;
+        case Button.RIGHT:
+          if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11))
+            success = this.setCursor(this.cursor + 1);
+          break;
       }
     }
   
@@ -182,7 +182,7 @@ export default class EggListUiHandler extends MessageUiHandler {
   setCursor(cursor: integer): boolean {
     let changed = false;
 
-    const lastCursor = this.cursor;
+    let lastCursor = this.cursor;
 
     changed = super.setCursor(cursor);
 

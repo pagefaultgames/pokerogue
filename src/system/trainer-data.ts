@@ -1,6 +1,6 @@
-import BattleScene from '../battle-scene';
-import { TrainerType } from '../data/enums/trainer-type';
-import Trainer, { TrainerVariant } from '../field/trainer';
+import BattleScene from "../battle-scene";
+import { TrainerType } from "../data/enums/trainer-type";
+import Trainer, { TrainerVariant } from "../field/trainer";
 
 export default class TrainerData {
   public trainerType: TrainerType;
