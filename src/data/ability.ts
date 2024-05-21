@@ -2427,7 +2427,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
    * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
    * If the enemy is a Ghost type, it is not trapped
    * If the user has Magnet Pull and the enemy is not a Steel type, it is not trapped.
-   * If the user has Arena Trap and the enemy is a Flying type OR has Levitate, it is not trapped.
+   * If the user has Arena Trap and the enemy is not grounded, it is not trapped.
    * @param pokemon The {@link Pokemon} with this {@link AbAttr}
    * @param passive N/A
    * @param trapped {@link Utils.BooleanHolder} indicating whether the other Pokemon is trapped or not
@@ -2438,7 +2438,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
     if ((otherPokemon.getTypes(true).includes(Type.GHOST)) || 
     (pokemon.hasAbility(Abilities.MAGNET_PULL) && !otherPokemon.getTypes(true).includes(Type.STEEL)) ||
-    (pokemon.hasAbility(Abilities.ARENA_TRAP) && (otherPokemon.hasAbility(Abilities.LEVITATE) || otherPokemon.getTypes(true).includes(Type.FLYING)))){
+    (pokemon.hasAbility(Abilities.ARENA_TRAP) && !otherPokemon.isGrounded())){
       trapped.value = false;
       return false;
     }
