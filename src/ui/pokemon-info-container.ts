@@ -208,7 +208,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     return new Promise<void>(resolve => {
       this.scene.tweens.add({
         targets: this,
-        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
+        duration: Utils.fixedInt(Math.floor(150 / speedMultiplier)),
         ease: 'Cubic.easeInOut',
         x: this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth,
         onComplete: () => {
