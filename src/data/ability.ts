@@ -2425,6 +2425,9 @@ export class CheckTrappedAbAttr extends AbAttr {
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   /**
    * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * If the enemy is a Ghost type, it is not trapped
+   * If the user has Magnet Pull and the enemy is not a Steel type, it is not trapped.
+   * If the user has Arena Trap and the enemy is a Flying type OR has Levitate, it is not trapped.
    * @param pokemon The {@link Pokemon} with this {@link AbAttr}
    * @param passive N/A
    * @param trapped {@link Utils.BooleanHolder} indicating whether the other Pokemon is trapped or not
@@ -2433,7 +2436,9 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
    * @returns if enemy Pokemon is trapped or not
    */
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
-    if (otherPokemon.getTypes().includes(Type.GHOST)){
+    if ((otherPokemon.getTypes(true).includes(Type.GHOST)) || 
+    (pokemon.hasAbility(Abilities.MAGNET_PULL) && !otherPokemon.getTypes(true).includes(Type.STEEL)) ||
+    (pokemon.hasAbility(Abilities.ARENA_TRAP) && (otherPokemon.hasAbility(Abilities.LEVITATE) || otherPokemon.getTypes(true).includes(Type.FLYING)))){
       trapped.value = false;
       return false;
     }
@@ -3097,9 +3102,7 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
-      /*.attr(ArenaTrapAbAttr)
-      .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL))*/
-      .unimplemented(),
+      .attr(ArenaTrapAbAttr),
     new Ability(Abilities.SOUNDPROOF, 3)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.SOUND_BASED))
       .ignorable(),
