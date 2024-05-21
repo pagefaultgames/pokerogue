@@ -1,11 +1,11 @@
-import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import { argbFromRgba } from "@material/material-color-utilities";
-import {Button} from "../enums/buttons";
+import BattleScene from '../battle-scene';
+import { TextStyle, addTextObject } from './text';
+import { Mode } from './ui';
+import UiHandler from './ui-handler';
+import { addWindow } from './ui-theme';
+import * as Utils from '../utils';
+import { argbFromRgba } from '@material/material-color-utilities';
+import {Button} from '../enums/buttons';
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -176,14 +176,14 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         ui.playError();
     } else {
       switch (button) {
-        case Button.UP:
-          if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
-          break;
-        case Button.DOWN:
-          if (this.cursor < options.length - 1)
-            success = this.setCursor(this.cursor + 1);
-          break;
+      case Button.UP:
+        if (this.cursor)
+          success = this.setCursor(this.cursor - 1);
+        break;
+      case Button.DOWN:
+        if (this.cursor < options.length - 1)
+          success = this.setCursor(this.cursor + 1);
+        break;
       }
     }
 
@@ -211,8 +211,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       return options;
 
     const optionsScrollTotal = options.length;
-    let optionStartIndex = this.scrollCursor;
-    let optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal ? this.config.maxOptions - 1 : this.config.maxOptions - 2));
+    const optionStartIndex = this.scrollCursor;
+    const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal ? this.config.maxOptions - 1 : this.config.maxOptions - 2));
 
     if (this.config?.maxOptions && options.length > this.config.maxOptions) {
       options.splice(optionEndIndex, optionsScrollTotal);

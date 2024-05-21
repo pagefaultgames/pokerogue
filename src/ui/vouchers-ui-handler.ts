@@ -1,10 +1,10 @@
-import BattleScene from "../battle-scene";
-import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from "../system/voucher";
-import MessageUiHandler from "./message-ui-handler";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
+import BattleScene from '../battle-scene';
+import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from '../system/voucher';
+import MessageUiHandler from './message-ui-handler';
+import { TextStyle, addTextObject } from './text';
+import { Mode } from './ui';
+import { addWindow } from './ui-theme';
+import {Button} from '../enums/buttons';
 import i18next from '../plugins/i18n';
 
 const itemRows = 4;
@@ -41,7 +41,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, i18next.t("voucher:vouchers"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t('voucher:vouchers'), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
@@ -128,7 +128,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.titleText.setText(getVoucherTypeName(voucher.voucherType));
     this.showText(voucher.description);
-    this.unlockText.setText(unlocked ? new Date(voucherUnlocks[voucher.id]).toLocaleDateString() : i18next.t("voucher:locked"));
+    this.unlockText.setText(unlocked ? new Date(voucherUnlocks[voucher.id]).toLocaleDateString() : i18next.t('voucher:locked'));
   }
 
   processInput(button: Button): boolean {
@@ -143,33 +143,33 @@ export default class VouchersUiHandler extends MessageUiHandler {
       const rowIndex = Math.floor(this.cursor / itemCols);
       const itemOffset = (this.scrollCursor * itemCols);
       switch (button) {
-        case Button.UP:
-          if (this.cursor < itemCols) {
-            if (this.scrollCursor)
-              success = this.setScrollCursor(this.scrollCursor - 1);
-          } else
-            success = this.setCursor(this.cursor - itemCols);
-          break;
-        case Button.DOWN:
-          const canMoveDown = (this.cursor + itemOffset) + itemCols < this.itemsTotal;
-          if (rowIndex >= itemRows - 1) {
-            if (this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows && canMoveDown)
-              success = this.setScrollCursor(this.scrollCursor + 1);
-          } else if (canMoveDown)
-            success = this.setCursor(this.cursor + itemCols);
-          break;
-        case Button.LEFT:
-          if (!this.cursor && this.scrollCursor)
-            success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (itemCols - 1));
-          else if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
-          break;
-        case Button.RIGHT:
-          if (this.cursor + 1 === itemRows * itemCols && this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows) {
-            success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (itemCols - 1));
-          } else if (this.cursor + itemOffset < Object.keys(vouchers).length - 1)
-            success = this.setCursor(this.cursor + 1);
-          break;
+      case Button.UP:
+        if (this.cursor < itemCols) {
+          if (this.scrollCursor)
+            success = this.setScrollCursor(this.scrollCursor - 1);
+        } else
+          success = this.setCursor(this.cursor - itemCols);
+        break;
+      case Button.DOWN:
+        const canMoveDown = (this.cursor + itemOffset) + itemCols < this.itemsTotal;
+        if (rowIndex >= itemRows - 1) {
+          if (this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows && canMoveDown)
+            success = this.setScrollCursor(this.scrollCursor + 1);
+        } else if (canMoveDown)
+          success = this.setCursor(this.cursor + itemCols);
+        break;
+      case Button.LEFT:
+        if (!this.cursor && this.scrollCursor)
+          success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (itemCols - 1));
+        else if (this.cursor)
+          success = this.setCursor(this.cursor - 1);
+        break;
+      case Button.RIGHT:
+        if (this.cursor + 1 === itemRows * itemCols && this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows) {
+          success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (itemCols - 1));
+        } else if (this.cursor + itemOffset < Object.keys(vouchers).length - 1)
+          success = this.setCursor(this.cursor + 1);
+        break;
       }
     }
 
@@ -180,7 +180,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
   }
 
   setCursor(cursor: integer): boolean {
-    let ret = super.setCursor(cursor);
+    const ret = super.setCursor(cursor);
 
     let updateVoucher = ret;
 

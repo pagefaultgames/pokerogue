@@ -1,12 +1,12 @@
-import BattleScene from "../battle-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
-import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
-import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
-import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "../enums/buttons";
+import BattleScene from '../battle-scene';
+import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from '../modifier/modifier-type';
+import { getPokeballAtlasKey, PokeballType } from '../data/pokeball';
+import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from './text';
+import AwaitableUiHandler from './awaitable-ui-handler';
+import { Mode } from './ui';
+import { LockModifierTiersModifier, PokemonHeldItemModifier } from '../modifier/modifier';
+import { handleTutorial, Tutorial } from '../tutorial';
+import {Button} from '../enums/buttons';
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -158,7 +158,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     });
 
     this.scene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
-      for (let shopOption of this.shopOptionsRows.flat())
+      for (const shopOption of this.shopOptionsRows.flat())
         shopOption.show(0, 0);
     });
 
@@ -228,34 +228,34 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
     } else {
       switch (button) {
-        case Button.UP:
-          if (!this.rowCursor && this.cursor === 2)
-            success = this.setCursor(0);
-          else if (this.rowCursor < this.shopOptionsRows.length + 1)
-            success = this.setRowCursor(this.rowCursor + 1);
-          break;
-        case Button.DOWN:
-          if (this.rowCursor)
-            success = this.setRowCursor(this.rowCursor - 1);
-          else if (this.lockRarityButtonContainer.visible && !this.cursor)
-            success = this.setCursor(2);
-          break;
-        case Button.LEFT:
-          if (!this.rowCursor) {
-            success = this.cursor === 1 && this.rerollButtonContainer.visible && this.setCursor(0);
-          } else if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
-          else if (this.rowCursor === 1 && this.rerollButtonContainer.visible)
-            success = this.setRowCursor(0);
-          break;
-        case Button.RIGHT:
-          if (!this.rowCursor)
-            success = this.cursor !== 1 && this.transferButtonContainer.visible && this.setCursor(1);
-          else if (this.cursor < this.getRowItems(this.rowCursor) - 1)
-            success = this.setCursor(this.cursor + 1);
-          else if (this.rowCursor === 1 && this.transferButtonContainer.visible)
-            success = this.setRowCursor(0);
-          break;
+      case Button.UP:
+        if (!this.rowCursor && this.cursor === 2)
+          success = this.setCursor(0);
+        else if (this.rowCursor < this.shopOptionsRows.length + 1)
+          success = this.setRowCursor(this.rowCursor + 1);
+        break;
+      case Button.DOWN:
+        if (this.rowCursor)
+          success = this.setRowCursor(this.rowCursor - 1);
+        else if (this.lockRarityButtonContainer.visible && !this.cursor)
+          success = this.setCursor(2);
+        break;
+      case Button.LEFT:
+        if (!this.rowCursor) {
+          success = this.cursor === 1 && this.rerollButtonContainer.visible && this.setCursor(0);
+        } else if (this.cursor)
+          success = this.setCursor(this.cursor - 1);
+        else if (this.rowCursor === 1 && this.rerollButtonContainer.visible)
+          success = this.setRowCursor(0);
+        break;
+      case Button.RIGHT:
+        if (!this.rowCursor)
+          success = this.cursor !== 1 && this.transferButtonContainer.visible && this.setCursor(1);
+        else if (this.cursor < this.getRowItems(this.rowCursor) - 1)
+          success = this.setCursor(this.cursor + 1);
+        else if (this.rowCursor === 1 && this.transferButtonContainer.visible)
+          success = this.setRowCursor(0);
+        break;
       }
     }
 
@@ -279,7 +279,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.cursorObj.setScale(this.rowCursor === 1 ? 2 : this.rowCursor >= 2 ? 1.5 : 1);
 
     if (this.rowCursor) {
-      let sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
+      const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
       if (this.rowCursor < 2)
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
       else
@@ -321,12 +321,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   private getRowItems(rowCursor: integer): integer {
     switch (rowCursor) {
-      case 0:
-        return 2;
-      case 1:
-        return this.options.length;
-      default:
-        return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
+    case 0:
+      return 2;
+    case 1:
+      return this.options.length;
+    default:
+      return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
     }
   }
 
@@ -336,7 +336,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   updateCostText(): void {
     const shopOptions = this.shopOptionsRows.flat();
-    for (let shopOption of shopOptions)
+    for (const shopOption of shopOptions)
       shopOption.updateCostText();
 
     this.updateRerollCostText();

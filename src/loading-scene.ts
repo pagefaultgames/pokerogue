@@ -1,14 +1,14 @@
-import { GachaType } from "./data/egg";
-import { Biome } from "./data/enums/biome";
-import { TrainerType } from "./data/enums/trainer-type";
-import { trainerConfigs } from "./data/trainer-config";
-import { getBiomeHasProps } from "./field/arena";
-import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
-import { SceneBase } from "./scene-base";
-import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
-import { isMobile } from "./touch-controls";
-import * as Utils from "./utils";
-import { initI18n } from "./plugins/i18n";
+import { GachaType } from './data/egg';
+import { Biome } from './data/enums/biome';
+import { TrainerType } from './data/enums/trainer-type';
+import { trainerConfigs } from './data/trainer-config';
+import { getBiomeHasProps } from './field/arena';
+import CacheBustedLoaderPlugin from './plugins/cache-busted-loader-plugin';
+import { SceneBase } from './scene-base';
+import { WindowVariant, getWindowVariantSuffix } from './ui/ui-theme';
+import { isMobile } from './touch-controls';
+import * as Utils from './utils';
+import { initI18n } from './plugins/i18n';
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -35,7 +35,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage('candy_overlay', 'ui');
     this.loadImage('cursor', 'ui');
     this.loadImage('cursor_reverse', 'ui');
-    for (let wv of Utils.getEnumValues(WindowVariant)) {
+    for (const wv of Utils.getEnumValues(WindowVariant)) {
       for (let w = 1; w <= 5; w++)
         this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, 'ui/windows');
     }
@@ -100,7 +100,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage('summary_bg', 'ui');
     this.loadImage('summary_overlay_shiny', 'ui');
     this.loadImage('summary_profile', 'ui');
-    this.loadImage('summary_profile_prompt_z', 'ui')      // The pixel Z button prompt
+    this.loadImage('summary_profile_prompt_z', 'ui');      // The pixel Z button prompt
     this.loadImage('summary_profile_prompt_a', 'ui');     // The pixel A button prompt
     this.loadImage('summary_profile_ability', 'ui');      // Pixel text 'ABILITY'
     this.loadImage('summary_profile_passive', 'ui');      // Pixel text 'PASSIVE'
@@ -174,8 +174,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas('c_rival_f', 'character', 'rival_f');
 
     // Load pokemon-related images
-    this.loadImage(`pkmn__back__sub`, 'pokemon/back', 'sub.png');
-    this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
+    this.loadImage('pkmn__back__sub', 'pokemon/back', 'sub.png');
+    this.loadImage('pkmn__sub', 'pokemon', 'sub.png');
     this.loadAtlas('battle_stats', 'effects');
     this.loadAtlas('shiny', 'effects');
     this.loadAtlas('shiny_2', 'effects');
@@ -310,8 +310,8 @@ export class LoadingScene extends SceneBase {
       y: height / 2 - 24,
       text: '0%',
       style: {
-        font: "72px emerald",
-        color: "#ffffff",
+        font: '72px emerald',
+        color: '#ffffff',
       },
     });
     percentText.setOrigin(0.5, 0.5);
@@ -319,10 +319,10 @@ export class LoadingScene extends SceneBase {
     const assetText = this.make.text({
       x: width / 2,
       y: height / 2 + 48,
-      text: "",
+      text: '',
       style: {
-        font: "48px emerald",
-        color: "#ffffff",
+        font: '48px emerald',
+        color: '#ffffff',
       },
     });
     assetText.setOrigin(0.5, 0.5);
@@ -331,7 +331,7 @@ export class LoadingScene extends SceneBase {
     intro.setOrigin(0, 0);
     intro.setScale(3);
 
-    this.load.on("progress", (value: string) => {
+    this.load.on('progress', (value: string) => {
       const parsedValue = parseFloat(value);
       percentText.setText(`${Math.floor(parsedValue * 100)}%`);
       progressBar.clear();
@@ -339,7 +339,7 @@ export class LoadingScene extends SceneBase {
       progressBar.fillRect(width / 2 - 320, 360, 640 * parsedValue, 64);
     });
 
-    this.load.on("fileprogress", file => {
+    this.load.on('fileprogress', file => {
       assetText.setText(`Loading asset: ${file.key}`);
     });
     
@@ -360,33 +360,33 @@ export class LoadingScene extends SceneBase {
 
     this.load.on('filecomplete', key => {
       switch (key) {
-        case 'intro_dark':
-          intro.load('intro_dark');
-          intro.on('complete', () => {
-            this.tweens.add({
-              targets: intro,
-              duration: 500,
-              alpha: 0,
-              ease: 'Sine.easeIn'
-            });
-            loadingGraphics.map(g => g.setVisible(true));
+      case 'intro_dark':
+        intro.load('intro_dark');
+        intro.on('complete', () => {
+          this.tweens.add({
+            targets: intro,
+            duration: 500,
+            alpha: 0,
+            ease: 'Sine.easeIn'
           });
-          intro.play();
-          break;
-        case 'loading_bg':
-          bg.setTexture('loading_bg');
-          if (mobile)
-            bg.setVisible(true);
-          break;
-        case 'logo':
-          logo.setTexture('logo');
-          if (mobile)
-            logo.setVisible(true);
-          break;
+          loadingGraphics.map(g => g.setVisible(true));
+        });
+        intro.play();
+        break;
+      case 'loading_bg':
+        bg.setTexture('loading_bg');
+        if (mobile)
+          bg.setVisible(true);
+        break;
+      case 'logo':
+        logo.setTexture('logo');
+        if (mobile)
+          logo.setVisible(true);
+        break;
       }
     });
 
-    this.load.on("complete", () => destroyLoadingAssets());
+    this.load.on('complete', () => destroyLoadingAssets());
   }
 
   get gameHeight() {
@@ -398,6 +398,6 @@ export class LoadingScene extends SceneBase {
   }
 
   async create() {
-    this.scene.start("battle");
+    this.scene.start('battle');
   }
 }

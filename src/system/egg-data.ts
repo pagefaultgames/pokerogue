@@ -1,4 +1,4 @@
-import { Egg, GachaType } from "../data/egg";
+import { Egg, GachaType } from '../data/egg';
 
 export default class EggData {
   public id: integer;

@@ -6,7 +6,7 @@ import PokemonSpecies, { PokemonForm, SpeciesFormKey, allSpecies } from './pokem
 import { GrowthRate } from './exp';
 import { Type } from './type';
 import { allAbilities } from './ability';
-import { Abilities } from "./enums/abilities";
+import { Abilities } from './enums/abilities';
 import { Species } from './enums/species';
 import { pokemonFormLevelMoves } from './pokemon-level-moves';
 import { tmSpecies } from './tms';
@@ -93,16 +93,16 @@ export async function printPokemon() {
 
   const useExistingTmList = true;
 
-  let enumStr = `export enum Species {\n`;
-  let pokemonSpeciesStr = `\tallSpecies.push(\n`;
+  let enumStr = 'export enum Species {\n';
+  let pokemonSpeciesStr = '\tallSpecies.push(\n';
   const speciesLevelMoves: SpeciesLevelMoves = {};
   const speciesFormLevelMoves: SpeciesFormLevelMoves = {};
   const moveTmSpecies: TmSpecies = {};
 
   let pokemonArr: NamedAPIResource[] = [];
 
-  let offset = 0;
-  let pokemonResponse = await api.pokemon.listPokemons(offset, 2000)
+  const offset = 0;
+  const pokemonResponse = await api.pokemon.listPokemons(offset, 2000);
   
   pokemonArr = pokemonResponse.results;
 
@@ -111,7 +111,7 @@ export async function printPokemon() {
 
   const pokemonSpeciesList: PokemonSpecies[] = [];
 
-  for (let p of pokemonArr) {
+  for (const p of pokemonArr) {
     const pokemon = await api.pokemon.getPokemonByName(p.name);
 
     let region: string = '';
@@ -133,7 +133,7 @@ export async function printPokemon() {
       if (ignoredForms.filter(f => formName.indexOf(f) > -1).length)
         continue;
 
-      let shortFormName = formName.indexOf('-') > -1
+      const shortFormName = formName.indexOf('-') > -1
         ? formName.slice(0, formName.indexOf('-'))
         : formName;
 
@@ -143,7 +143,7 @@ export async function printPokemon() {
         const formBaseStats: integer[] = [];
         let formBaseTotal = 0;
         // Assume correct stat order in API result
-        for (let stat of pokemon.stats) {
+        for (const stat of pokemon.stats) {
           formBaseStats.push(stat.base_stat);
           formBaseTotal += stat.base_stat;
         }
@@ -168,7 +168,7 @@ export async function printPokemon() {
           speciesFormLevelMoves[speciesKey] = [];
         speciesFormLevelMoves[speciesKey][pokemonForm.formIndex] = [];
 
-        for (let version of versions) {
+        for (const version of versions) {
           if (pokemon.moves.find(m => m.version_group_details.find(v => v.version_group.name === version && v.move_learn_method.name === 'level-up'))) {
             moveVer = version;
             break;
@@ -186,7 +186,7 @@ export async function printPokemon() {
               const learnMethod = verData.move_learn_method.name;
 
               if (isMoveVer && learnMethod === 'level-up')
-                  speciesFormLevelMoves[speciesKey][pokemonForm.formIndex].push([ verData.level_learned_at, moveId ]);
+                speciesFormLevelMoves[speciesKey][pokemonForm.formIndex].push([ verData.level_learned_at, moveId ]);
 
               if ([ 'machine', 'tutor' ].indexOf(learnMethod) > -1 || (useExistingTmList && tmSpecies.hasOwnProperty(moveId as Moves) && learnMethod === 'level-up')) {
                 if (!moveTmSpecies.hasOwnProperty(moveId))
@@ -235,7 +235,7 @@ export async function printPokemon() {
     const baseStats: integer[] = [];
     let baseTotal = 0;
     // Assume correct stat order in API result
-    for (let stat of pokemon.stats) {
+    for (const stat of pokemon.stats) {
       baseStats.push(stat.base_stat);
       baseTotal += stat.base_stat;
     }
@@ -262,7 +262,7 @@ export async function printPokemon() {
 
     speciesLevelMoves[speciesKey] = [];
 
-    for (let version of versions) {
+    for (const version of versions) {
       if (pokemon.moves.find(m => m.version_group_details.find(v => v.version_group.name === version && v.move_learn_method.name === 'level-up'))) {
         moveVer = version;
         break;
@@ -281,24 +281,24 @@ export async function printPokemon() {
         const moveId = Math.max(Utils.getEnumKeys(Moves).indexOf(moveName), 0);
 
         switch (verData.move_learn_method.name) {
-          case 'level-up':
-            speciesLevelMoves[speciesKey].push([ verData.level_learned_at, moveId ]);
-            break;
-          case 'machine':
-          case 'tutor':
-            if (moveId > 0) {
-              if (!moveTmSpecies.hasOwnProperty(moveId))
-                moveTmSpecies[moveId] = [];
-              if (moveTmSpecies[moveId].indexOf(speciesKey) === -1)
-                moveTmSpecies[moveId].push(speciesKey);
-              speciesTmMoves.push(moveId);
-            }
-            break;
+        case 'level-up':
+          speciesLevelMoves[speciesKey].push([ verData.level_learned_at, moveId ]);
+          break;
+        case 'machine':
+        case 'tutor':
+          if (moveId > 0) {
+            if (!moveTmSpecies.hasOwnProperty(moveId))
+              moveTmSpecies[moveId] = [];
+            if (moveTmSpecies[moveId].indexOf(speciesKey) === -1)
+              moveTmSpecies[moveId].push(speciesKey);
+            speciesTmMoves.push(moveId);
+          }
+          break;
         }
       });
     }
 
-    for (let f of pokemon.forms) {
+    for (const f of pokemon.forms) {
       const form = await api.pokemon.getPokemonFormByName(f.name);
       const formIndex = pokemonSpecies.forms.length;
 
@@ -321,7 +321,7 @@ export async function printPokemon() {
       pokemonForm.generation = pokemonSpecies.generation;
 
       if (!pokemonForm.formIndex && speciesTmMoves.length) {
-        for (let moveId of speciesTmMoves) {
+        for (const moveId of speciesTmMoves) {
           const speciesIndex = moveTmSpecies[moveId].findIndex(s => s === speciesKey);
           moveTmSpecies[moveId][speciesIndex] = [
             speciesKey,
@@ -336,25 +336,25 @@ export async function printPokemon() {
     console.log(pokemonSpecies.name, pokemonSpecies);
   }
 
-  for (let pokemonSpecies of pokemonSpeciesList) {
+  for (const pokemonSpecies of pokemonSpeciesList) {
     const speciesKey = (pokemonSpecies as any).key as string;
 
     enumStr += `  ${speciesKey}${pokemonSpecies.speciesId >= 2000 ? ` = ${pokemonSpecies.speciesId}` : ''},\n`;
     pokemonSpeciesStr += `    new PokemonSpecies(Species.${speciesKey}, "${pokemonSpecies.name}", ${pokemonSpecies.generation}, ${pokemonSpecies.subLegendary}, ${pokemonSpecies.legendary}, ${pokemonSpecies.mythical}, "${pokemonSpecies.species}", Type.${Type[pokemonSpecies.type1]}, ${pokemonSpecies.type2 ? `Type.${Type[pokemonSpecies.type2]}` : 'null'}, ${pokemonSpecies.height}, ${pokemonSpecies.weight}, Abilities.${Abilities[pokemonSpecies.ability1]}, Abilities.${Abilities[pokemonSpecies.ability2]}, Abilities.${Abilities[pokemonSpecies.abilityHidden]}, ${pokemonSpecies.baseTotal}, ${pokemonSpecies.baseStats[0]}, ${pokemonSpecies.baseStats[1]}, ${pokemonSpecies.baseStats[2]}, ${pokemonSpecies.baseStats[3]}, ${pokemonSpecies.baseStats[4]}, ${pokemonSpecies.baseStats[5]}, ${pokemonSpecies.catchRate}, ${pokemonSpecies.baseFriendship}, ${pokemonSpecies.baseExp}, GrowthRate.${GrowthRate[pokemonSpecies.growthRate]}, ${pokemonSpecies.malePercent}, ${pokemonSpecies.genderDiffs}`;
     if (pokemonSpecies.forms.length > 1) {
       pokemonSpeciesStr += `, ${pokemonSpecies.canChangeForm},`;
-      for (let form of pokemonSpecies.forms)
+      for (const form of pokemonSpecies.forms)
         pokemonSpeciesStr += `\n      new PokemonForm("${form.formName}", "${form.formName}", Type.${Type[form.type1]}, ${form.type2 ? `Type.${Type[form.type2]}` : 'null'}, ${form.height}, ${form.weight}, Abilities.${Abilities[form.ability1]}, Abilities.${Abilities[form.ability2]}, Abilities.${Abilities[form.abilityHidden]}, ${form.baseTotal}, ${form.baseStats[0]}, ${form.baseStats[1]}, ${form.baseStats[2]}, ${form.baseStats[3]}, ${form.baseStats[4]}, ${form.baseStats[5]}, ${form.catchRate}, ${form.baseFriendship}, ${form.baseExp}${form.genderDiffs ? ', true' : ''}),`;
       pokemonSpeciesStr += '\n    ';
     }
-    pokemonSpeciesStr += `),\n`;
+    pokemonSpeciesStr += '),\n';
   }
 
-  let speciesLevelMovesStr = `export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {\n`;
-  let speciesFormLevelMovesStr = `export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {\n`;
-  let tmSpeciesStr = `export const tmSpecies: TmSpecies = {\n`;
+  let speciesLevelMovesStr = 'export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {\n';
+  let speciesFormLevelMovesStr = 'export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {\n';
+  let tmSpeciesStr = 'export const tmSpecies: TmSpecies = {\n';
 
-  for (let species of Object.keys(speciesLevelMoves)) {
+  for (const species of Object.keys(speciesLevelMoves)) {
     speciesLevelMovesStr += `  [Species.${species}]: [\n`;
 
     const orderedLevelMoves = speciesLevelMoves[species].sort((a: LevelMove, b: LevelMove) => {
@@ -363,16 +363,16 @@ export async function printPokemon() {
       return a[1] < b[1] ? -1 : 1;
     });
 
-    for (let lm of orderedLevelMoves)
+    for (const lm of orderedLevelMoves)
       speciesLevelMovesStr += `    [ ${lm[0]}, Moves.${Moves[lm[1]]} ],\n`;
 
-    speciesLevelMovesStr += `  ],\n`;
+    speciesLevelMovesStr += '  ],\n';
   }
 
-  for (let species of Object.keys(speciesFormLevelMoves)) {
+  for (const species of Object.keys(speciesFormLevelMoves)) {
     speciesFormLevelMovesStr += `  [Species.${species}]: {\n`;
 
-    for (let f of Object.keys(speciesFormLevelMoves[species])) {
+    for (const f of Object.keys(speciesFormLevelMoves[species])) {
       speciesFormLevelMovesStr += `    ${f}: [\n`;
 
       const orderedLevelMoves = speciesFormLevelMoves[species][f].sort((a: LevelMove, b: LevelMove) => {
@@ -381,18 +381,18 @@ export async function printPokemon() {
         return a[1] < b[1] ? -1 : 1;
       });
 
-      for (let lm of orderedLevelMoves)
+      for (const lm of orderedLevelMoves)
         speciesFormLevelMovesStr += `      [ ${lm[0]}, Moves.${Moves[lm[1]]} ],\n`;
 
-      speciesFormLevelMovesStr += `    ],\n`;
+      speciesFormLevelMovesStr += '    ],\n';
     }
 
-    speciesFormLevelMovesStr += `  },\n`;
+    speciesFormLevelMovesStr += '  },\n';
   }
 
-  for (let moveId of Object.keys(moveTmSpecies)) {
+  for (const moveId of Object.keys(moveTmSpecies)) {
     tmSpeciesStr += `  [Moves.${Moves[parseInt(moveId)]}]: [\n`;
-    for (let species of moveTmSpecies[moveId]) {
+    for (const species of moveTmSpecies[moveId]) {
       if (typeof species === 'string')
         tmSpeciesStr += `    Species.${species},\n`;
       else {
@@ -402,20 +402,20 @@ export async function printPokemon() {
           tmSpeciesStr += `    Species.${species[0]},\n`;
         else {
           tmSpeciesStr += `    [\n      Species.${species[0]},\n`;
-          for (let form of forms)
+          for (const form of forms)
             tmSpeciesStr += `      '${form}',\n`;
-          tmSpeciesStr += `    ],\n`;
+          tmSpeciesStr += '    ],\n';
         }
       }
     }
-    tmSpeciesStr += `  ],\n`;
+    tmSpeciesStr += '  ],\n';
   }
 
-  enumStr += `\n};`;
-  pokemonSpeciesStr += `  );`;
-  speciesLevelMovesStr += `\n};`;
-  speciesFormLevelMovesStr += `\n};`;
-  tmSpeciesStr += `\n};`;
+  enumStr += '\n};';
+  pokemonSpeciesStr += '  );';
+  speciesLevelMovesStr += '\n};';
+  speciesFormLevelMovesStr += '\n};';
+  tmSpeciesStr += '\n};';
 
   console.log(enumStr);
   console.log(pokemonSpeciesStr);
@@ -423,7 +423,7 @@ export async function printPokemon() {
   console.log(speciesFormLevelMovesStr);
   console.log(tmSpeciesStr);
 
-  console.log(moveTmSpecies)
+  console.log(moveTmSpecies);
 }
 
 export async function printAbilities() {
@@ -433,17 +433,17 @@ export async function printAbilities() {
   
   const api = new MainClient();
 
-  let enumStr = `export enum Abilities {\n  NONE,`;
+  let enumStr = 'export enum Abilities {\n  NONE,';
   let abilityStr = '  allAbilities.push(';
 
   abilityContent = abilityContent.slice(abilityContent.indexOf(abilityStr));
 
   let abilities: NamedAPIResource[] = [];
-  let offset = 0;
-  let abilitiesResponse = await api.pokemon.listAbilities(offset, 2000);
+  const offset = 0;
+  const abilitiesResponse = await api.pokemon.listAbilities(offset, 2000);
   abilities = abilitiesResponse.results;
 
-  for (let a of abilities) {
+  for (const a of abilities) {
     const ability = await api.pokemon.getAbilityByName(a.name);
     const abilityEnumName = ability.name.toUpperCase().replace(/\_/g, '').replace(/\-/g, '_');
     enumStr += `\n  ${abilityEnumName},`;
@@ -465,7 +465,7 @@ export async function printAbilities() {
 
     let flavorText: string;
     if (!matchingLine || replaceText) {
-      for (let version of versions) {
+      for (const version of versions) {
         if ((flavorText = ability.flavor_text_entries.find(fte => fte.language.name === 'en' && fte.version_group.name === version)?.flavor_text) || '') {
           if (flavorText.indexOf('forgotten') > -1)
             continue;
@@ -483,8 +483,8 @@ export async function printAbilities() {
     abilityStr += ',';
   }
 
-  enumStr += `\n};`;
-  abilityStr += `\n);`;
+  enumStr += '\n};';
+  abilityStr += '\n);';
 
   console.log(enumStr);
   console.log(abilityStr);
@@ -497,19 +497,19 @@ export async function printMoves() {
   
   const api = new MainClient();
 
-  let enumStr = `export enum Moves {\n  NONE,`;
+  let enumStr = 'export enum Moves {\n  NONE,';
   let moveStr = '  allMoves.push(';
 
   moveContent = moveContent.slice(moveContent.indexOf(moveStr));
 
   let moves: NamedAPIResource[] = [];
-  let offset = 0;
-  let movesResponse = await api.move.listMoves(offset, 2000);
+  const offset = 0;
+  const movesResponse = await api.move.listMoves(offset, 2000);
   moves = movesResponse.results;
   
   console.log(moves);
 
-  for (let m of moves) {
+  for (const m of moves) {
     const move = await api.move.getMoveByName(m.name);
     const moveEnumName = move.name.toUpperCase().replace(/\_/g, '').replace(/\-/g, '_');
     enumStr += `\n  ${moveEnumName},`;
@@ -531,7 +531,7 @@ export async function printMoves() {
 
     let flavorText: string;
     if (!matchingLine || replaceText) {
-      for (let version of versions) {
+      for (const version of versions) {
         if ((flavorText = move.flavor_text_entries.find(fte => fte.language.name === 'en' && fte.version_group.name === version)?.flavor_text) || '') {
           if (flavorText.indexOf('forgotten') > -1)
             continue;
@@ -546,7 +546,7 @@ export async function printMoves() {
     if (matchingLine && matchingLine.length > 1) {
       const newLineIndex = matchingLine.indexOf('\n');
       if (newLineIndex > -1) {
-        console.log(matchingLine.slice(newLineIndex).replace(/(?:\r)?\n[ \t]+.target\(.*?\)/g, ''), newLineIndex)
+        console.log(matchingLine.slice(newLineIndex).replace(/(?:\r)?\n[ \t]+.target\(.*?\)/g, ''), newLineIndex);
         moveStr += matchingLine.slice(newLineIndex).replace(/(?:\r)?\n[ \t]+.target\(.*?\)/g, '');
       }
     }
@@ -555,8 +555,8 @@ export async function printMoves() {
     moveStr += ',';
   }
 
-  enumStr += `\n};`;
-  moveStr += `\n);`;
+  enumStr += '\n};';
+  moveStr += '\n);';
 
   console.log(enumStr);
   console.log(moveStr);
@@ -569,17 +569,17 @@ export async function printTmSpecies() {
 
   const moveIds = Object.keys(tmSpecies).map(k => parseInt(k) as Moves);
   
-  for (let moveId of moveIds) {
+  for (const moveId of moveIds) {
     const move = await api.move.getMoveById(moveId);
 
     moveTmSpecies[moveId] = [];
 
-    for (let species of move.learned_by_pokemon) {
+    for (const species of move.learned_by_pokemon) {
       const dexIdMatch = /\/(\d+)\//.exec(species.url);
       if (!dexIdMatch)
         continue;
 
-      let dexId = parseInt(dexIdMatch[1]);
+      const dexId = parseInt(dexIdMatch[1]);
 
       let matchingSpecies: PokemonSpecies;
       let formKey = '';
@@ -629,11 +629,11 @@ export async function printTmSpecies() {
     }
   }
 
-  let tmSpeciesStr = `export const tmSpecies: TmSpecies = {\n`;
+  let tmSpeciesStr = 'export const tmSpecies: TmSpecies = {\n';
 
-  for (let moveId of Object.keys(moveTmSpecies)) {
+  for (const moveId of Object.keys(moveTmSpecies)) {
     tmSpeciesStr += `  [Moves.${Moves[parseInt(moveId)]}]: [\n`;
-    for (let species of moveTmSpecies[moveId]) {
+    for (const species of moveTmSpecies[moveId]) {
       if (typeof species === 'string')
         tmSpeciesStr += `    Species.${species},\n`;
       else {
@@ -643,16 +643,16 @@ export async function printTmSpecies() {
           tmSpeciesStr += `    Species.${species[0]},\n`;
         else {
           tmSpeciesStr += `    [\n      Species.${species[0]},\n`;
-          for (let form of forms)
+          for (const form of forms)
             tmSpeciesStr += `      '${form}',\n`;
-          tmSpeciesStr += `    ],\n`;
+          tmSpeciesStr += '    ],\n';
         }
       }
     }
-    tmSpeciesStr += `  ],\n`;
+    tmSpeciesStr += '  ],\n';
   }
 
-  tmSpeciesStr += `\n};`;
+  tmSpeciesStr += '\n};';
 
   console.log(tmSpeciesStr);
 }

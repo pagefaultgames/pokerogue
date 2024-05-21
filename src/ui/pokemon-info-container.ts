@@ -1,15 +1,15 @@
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import BattleScene from "../battle-scene";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import Pokemon from "../field/pokemon";
-import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
-import { addWindow } from "./ui-theme";
-import { getNatureName } from "../data/nature";
-import * as Utils from "../utils";
-import { Type } from "../data/type";
-import { getVariantTint } from "#app/data/variant";
-import ConfirmUiHandler from "./confirm-ui-handler";
+import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext';
+import BattleScene from '../battle-scene';
+import { Gender, getGenderColor, getGenderSymbol } from '../data/gender';
+import Pokemon from '../field/pokemon';
+import { StatsContainer } from './stats-container';
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from './text';
+import { addWindow } from './ui-theme';
+import { getNatureName } from '../data/nature';
+import * as Utils from '../utils';
+import { Type } from '../data/type';
+import { getVariantTint } from '#app/data/variant';
+import ConfirmUiHandler from './confirm-ui-handler';
 
 export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private readonly infoWindowWidth = 104;
@@ -153,8 +153,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
         const shinyDescriptor = doubleShiny || baseVariant ?
-        `${baseVariant === 2 ? 'Epic' : baseVariant === 1 ? 'Rare' : 'Common'}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? 'Epic' : pokemon.fusionVariant === 1 ? 'Rare' : 'Common'}` : ''}`
-        : '';
+          `${baseVariant === 2 ? 'Epic' : baseVariant === 1 ? 'Rare' : 'Common'}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? 'Epic' : pokemon.fusionVariant === 1 ? 'Rare' : 'Common'}` : ''}`
+          : '';
         this.pokemonShinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ''}`, true));
         this.pokemonShinyIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
       }
@@ -166,8 +166,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       const starterSpeciesId = pokemon.species.getRootSpeciesId(true);
       const originalIvs: integer[] = this.scene.gameData.dexData[starterSpeciesId].caughtAttr
-      ? this.scene.gameData.dexData[starterSpeciesId].ivs
-      : null;
+        ? this.scene.gameData.dexData[starterSpeciesId].ivs
+        : null;
 
       this.statsContainer.updateIvs(pokemon.ivs, originalIvs);
 
@@ -246,7 +246,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.shown = false;
     });
-  };
+  }
 }
 
 export default interface PokemonInfoContainer {

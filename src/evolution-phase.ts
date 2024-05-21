@@ -1,15 +1,15 @@
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { Phase } from "./phase";
-import BattleScene from "./battle-scene";
-import { SpeciesFormEvolution } from "./data/pokemon-evolutions";
-import EvolutionSceneHandler from "./ui/evolution-scene-handler";
-import * as Utils from "./utils";
-import { Mode } from "./ui/ui";
-import { LearnMovePhase } from "./phases";
-import { cos, sin } from "./field/anims";
-import { PlayerPokemon } from "./field/pokemon";
-import { getTypeRgb } from "./data/type";
-import i18next from "i18next";
+import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
+import { Phase } from './phase';
+import BattleScene from './battle-scene';
+import { SpeciesFormEvolution } from './data/pokemon-evolutions';
+import EvolutionSceneHandler from './ui/evolution-scene-handler';
+import * as Utils from './utils';
+import { Mode } from './ui/ui';
+import { LearnMovePhase } from './phases';
+import { cos, sin } from './field/anims';
+import { PlayerPokemon } from './field/pokemon';
+import { getTypeRgb } from './data/type';
+import i18next from 'i18next';
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
@@ -73,7 +73,7 @@ export class EvolutionPhase extends Phase {
       this.evolutionContainer.add(this.evolutionBgOverlay);
 
       const getPokemonSprite = () => {
-        const ret = this.scene.addPokemonSprite(this.pokemon, this.evolutionBaseBg.displayWidth / 2, this.evolutionBaseBg.displayHeight / 2, `pkmn__sub`);
+        const ret = this.scene.addPokemonSprite(this.pokemon, this.evolutionBaseBg.displayWidth / 2, this.evolutionBaseBg.displayHeight / 2, 'pkmn__sub');
         ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
         return ret;
       };
@@ -217,7 +217,7 @@ export class EvolutionPhase extends Phase {
 
                           this.pokemon.evolve(this.evolution).then(() => {
                             const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
-                            for (let lm of levelMoves)
+                            for (const lm of levelMoves)
                               this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));  
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
@@ -266,7 +266,7 @@ export class EvolutionPhase extends Phase {
                     });
                   });
                 }
-              })
+              });
             }
           });
         });
@@ -485,8 +485,8 @@ export class EvolutionPhase extends Phase {
 
     let f = 0;
     let yOffset = 0;
-    let speed = 3 - Utils.randInt(8);
-    let amp = 48 + Utils.randInt(64);
+    const speed = 3 - Utils.randInt(8);
+    const amp = 48 + Utils.randInt(64);
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,

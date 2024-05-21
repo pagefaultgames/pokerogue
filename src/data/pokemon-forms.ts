@@ -1,12 +1,12 @@
-import { TimeOfDay } from "./enums/time-of-day";
-import { PokemonFormChangeItemModifier } from "../modifier/modifier";
-import Pokemon from "../field/pokemon";
-import { Moves } from "./enums/moves";
-import { SpeciesFormKey } from "./pokemon-species";
-import { Species } from "./enums/species";
-import { StatusEffect } from "./status-effect";
-import { MoveCategory, allMoves } from "./move";
-import { Abilities } from "./enums/abilities";
+import { TimeOfDay } from './enums/time-of-day';
+import { PokemonFormChangeItemModifier } from '../modifier/modifier';
+import Pokemon from '../field/pokemon';
+import { Moves } from './enums/moves';
+import { SpeciesFormKey } from './pokemon-species';
+import { Species } from './enums/species';
+import { StatusEffect } from './status-effect';
+import { MoveCategory, allMoves } from './move';
+import { Abilities } from './enums/abilities';
 
 export enum FormChangeItem {
   NONE,
@@ -123,7 +123,7 @@ export class SpeciesFormChange {
     if (formKeys[pokemon.formIndex] === this.formKey)
       return false;
 
-    for (let condition of this.conditions) {
+    for (const condition of this.conditions) {
       if (!condition.predicate(pokemon))
         return false;
     }
@@ -138,7 +138,7 @@ export class SpeciesFormChange {
     if (!this.trigger.hasTriggerType(triggerType))
       return null;
 
-    let trigger = this.trigger;
+    const trigger = this.trigger;
 
     if (trigger instanceof SpeciesFormChangeCompoundTrigger)
       return trigger.triggers.find(t => t.hasTriggerType(triggerType));
@@ -181,7 +181,7 @@ export class SpeciesFormChangeCompoundTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    for (let trigger of this.triggers) {
+    for (const trigger of this.triggers) {
       if (!trigger.canChange(pokemon))
         return false;
     }
@@ -719,8 +719,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
   const formChangeKeys = Object.keys(pokemonFormChanges);
   formChangeKeys.forEach(pk => {
     const formChanges = pokemonFormChanges[pk];
-    let newFormChanges: SpeciesFormChange[] = [];
-    for (let fc of formChanges) {
+    const newFormChanges: SpeciesFormChange[] = [];
+    for (const fc of formChanges) {
       const itemTrigger = fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger;
       if (itemTrigger && !formChanges.find(c => fc.formKey === c.preFormKey && fc.preFormKey === c.formKey))
         newFormChanges.push(new SpeciesFormChange(fc.speciesId, fc.formKey, fc.preFormKey, new SpeciesFormChangeItemTrigger(itemTrigger.item, false)));

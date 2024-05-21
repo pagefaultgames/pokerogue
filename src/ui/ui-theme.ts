@@ -1,6 +1,6 @@
-import { UiTheme } from "#app/enums/ui-theme";
-import { legacyCompatibleImages } from "#app/scene-base";
-import BattleScene from "../battle-scene";
+import { UiTheme } from '#app/enums/ui-theme';
+import { legacyCompatibleImages } from '#app/scene-base';
+import BattleScene from '../battle-scene';
 
 export enum WindowVariant {
   NORMAL,
@@ -10,12 +10,12 @@ export enum WindowVariant {
 
 export function getWindowVariantSuffix(windowVariant: WindowVariant): string {
   switch (windowVariant) {
-    case WindowVariant.THIN:
-      return '_thin';
-    case WindowVariant.XTHIN:
-      return '_xthin';
-    default:
-      return '';
+  case WindowVariant.THIN:
+    return '_thin';
+  case WindowVariant.XTHIN:
+    return '_xthin';
+  default:
+    return '';
   }
 }
 
@@ -63,10 +63,10 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
   const traverse = (object: any) => {
     if (object.hasOwnProperty('children') && object.children instanceof Phaser.GameObjects.DisplayList) {
       const children = object.children as Phaser.GameObjects.DisplayList;
-      for (let child of children.getAll())
+      for (const child of children.getAll())
         traverse(child);
     } else if (object instanceof Phaser.GameObjects.Container) {
-      for (let child of object.getAll())
+      for (const child of object.getAll())
         traverse(child);
     } else if (object instanceof Phaser.GameObjects.NineSlice) {
       if (object.texture.key.startsWith('window_'))
@@ -77,7 +77,7 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
       if (object.texture?.key === 'bg')
         themedObjects.push(object);
     }
-  }
+  };
 
   traverse(scene);
 
@@ -88,10 +88,10 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
 
   const windowKey = `window_${windowTypeIndex}`;
 
-  for (let [ window, variant ] of windowObjects)
+  for (const [ window, variant ] of windowObjects)
     window.setTexture(`${windowKey}${getWindowVariantSuffix(variant)}`);
 
-  for (let obj of themedObjects)
+  for (const obj of themedObjects)
     obj.setFrame(windowTypeIndex);
 }
 

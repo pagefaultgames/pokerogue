@@ -1,15 +1,15 @@
-import BattleScene from "../battle-scene";
-import { gameModes } from "../game-mode";
-import { SessionSaveData } from "../system/game-data";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import PokemonData from "../system/pokemon-data";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
-import MessageUiHandler from "./message-ui-handler";
-import i18next from "i18next";
-import {Button} from "../enums/buttons";
+import BattleScene from '../battle-scene';
+import { gameModes } from '../game-mode';
+import { SessionSaveData } from '../system/game-data';
+import { TextStyle, addTextObject } from './text';
+import { Mode } from './ui';
+import { addWindow } from './ui-theme';
+import * as Utils from '../utils';
+import PokemonData from '../system/pokemon-data';
+import { PokemonHeldItemModifier } from '../modifier/modifier';
+import MessageUiHandler from './message-ui-handler';
+import i18next from 'i18next';
+import {Button} from '../enums/buttons';
 
 const sessionSlotCount = 5;
 
@@ -78,7 +78,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
     super.show(args);
 
-    this.uiMode = args[0] as SaveSlotUiMode;;
+    this.uiMode = args[0] as SaveSlotUiMode;
     this.saveSlotSelectCallback = args[1] as SaveSlotSelectCallback;
 
     this.saveSlotSelectContainer.setVisible(true);
@@ -103,31 +103,31 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           error = true;
         else {
           switch (this.uiMode) {
-            case SaveSlotUiMode.LOAD:
+          case SaveSlotUiMode.LOAD:
+            this.saveSlotSelectCallback = null;
+            originalCallback(cursor);
+            break;
+          case SaveSlotUiMode.SAVE:
+            const saveAndCallback = () => {
+              const originalCallback = this.saveSlotSelectCallback;
               this.saveSlotSelectCallback = null;
+              ui.revertMode();
+              ui.showText(null, 0);
+              ui.setMode(Mode.MESSAGE);
               originalCallback(cursor);
-              break;
-            case SaveSlotUiMode.SAVE:
-              const saveAndCallback = () => {
-                const originalCallback = this.saveSlotSelectCallback;
-                this.saveSlotSelectCallback = null;
-                ui.revertMode();
-                ui.showText(null, 0);
-                ui.setMode(Mode.MESSAGE);
-                originalCallback(cursor);
-              };
-              if (this.sessionSlots[cursor].hasData) {
-                ui.showText('Overwrite the data in the selected slot?', null, () => {
-                  ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
-                    ui.revertMode();
-                    ui.showText(null, 0);
-                  }, false, 0, 19, 2000);
-                });
-              } else if (this.sessionSlots[cursor].hasData === false)
-                saveAndCallback();
-              else
-                return false;
-              break;
+            };
+            if (this.sessionSlots[cursor].hasData) {
+              ui.showText('Overwrite the data in the selected slot?', null, () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
+                  ui.revertMode();
+                  ui.showText(null, 0);
+                }, false, 0, 19, 2000);
+              });
+            } else if (this.sessionSlots[cursor].hasData === false)
+              saveAndCallback();
+            else
+              return false;
+            break;
           }
           success = true;
         }
@@ -138,18 +138,18 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
     } else {
       switch (button) {
-        case Button.UP:
-          if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
-          else if (this.scrollCursor)
-            success = this.setScrollCursor(this.scrollCursor - 1);
-          break;
-        case Button.DOWN:
-          if (this.cursor < 2)
-            success = this.setCursor(this.cursor + 1);
-          else if (this.scrollCursor < sessionSlotCount - 3)
-            success = this.setScrollCursor(this.scrollCursor + 1);
-          break;
+      case Button.UP:
+        if (this.cursor)
+          success = this.setCursor(this.cursor - 1);
+        else if (this.scrollCursor)
+          success = this.setScrollCursor(this.scrollCursor - 1);
+        break;
+      case Button.DOWN:
+        if (this.cursor < 2)
+          success = this.setCursor(this.cursor + 1);
+        else if (this.scrollCursor < sessionSlotCount - 3)
+          success = this.setScrollCursor(this.scrollCursor + 1);
+        break;
       }
     }
 
@@ -186,7 +186,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
   
   setCursor(cursor: integer): boolean {
-    let changed = super.setCursor(cursor);
+    const changed = super.setCursor(cursor);
     
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight_thick', null, 296, 44, 6, 6, 6, 6);
@@ -199,7 +199,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
 
   setScrollCursor(scrollCursor: integer): boolean {
-    let changed = scrollCursor !== this.scrollCursor;
+    const changed = scrollCursor !== this.scrollCursor;
     
     if (changed) {
       this.scrollCursor = scrollCursor;
@@ -297,7 +297,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const modifierIconsContainer = this.scene.add.container(148, 30);
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
-    for (let m of data.modifiers) {
+    for (const m of data.modifiers) {
       const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
       if (modifier instanceof PokemonHeldItemModifier)
         continue;
@@ -316,7 +316,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       this.scene.gameData.getSession(this.slotId).then(async sessionData => {
         if (!sessionData) {
           this.hasData = false;
-          this.loadingLabel.setText(i18next.t("menu:empty"));
+          this.loadingLabel.setText(i18next.t('menu:empty'));
           resolve(false);
           return;
         }

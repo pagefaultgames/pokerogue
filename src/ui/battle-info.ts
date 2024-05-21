@@ -106,7 +106,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon = this.scene.add.sprite(0, 0, 'shiny_star');
     this.shinyIcon.setVisible(false);
     this.shinyIcon.setOrigin(0, 0);
-    this.shinyIcon.setScale(0.5)
+    this.shinyIcon.setScale(0.5);
     this.shinyIcon.setPositionRelative(this.nameText, 0, 2);
     this.shinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.shinyIcon);
@@ -114,7 +114,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.fusionShinyIcon = this.scene.add.sprite(0, 0, 'shiny_star_2');
     this.fusionShinyIcon.setVisible(false);
     this.fusionShinyIcon.setOrigin(0, 0);
-    this.fusionShinyIcon.setScale(0.5)
+    this.fusionShinyIcon.setScale(0.5);
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.add(this.fusionShinyIcon);
 
@@ -311,7 +311,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.lastExp = pokemon.exp;
       this.lastLevelExp = pokemon.levelExp;
 
-      this.statValuesContainer.setPosition(8, 7)
+      this.statValuesContainer.setPosition(8, 7);
     }
 
     const battleStats = battleStatOrder.map(() => 0);
@@ -387,7 +387,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const maxHp = pokemon.getMaxHp();
       for (let s = 1; s < this.bossSegments; s++) {
         const dividerX = (Math.round((maxHp / this.bossSegments) * s) /  maxHp) * this.hpBar.width;
-        const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height - (uiTheme ? 0 : 1), pokemon.bossSegmentIndex >= s ? 0xFFFFFF : 0x404040)
+        const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height - (uiTheme ? 0 : 1), pokemon.bossSegmentIndex >= s ? 0xFFFFFF : 0x404040);
         divider.setOrigin(0.5, 0);
         this.add(divider);
         this.moveBelow(divider as Phaser.GameObjects.GameObject, this.statsContainer);
@@ -464,7 +464,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         if (hpFrame !== this.lastHpFrame) {
           this.hpBar.setFrame(hpFrame);
           this.lastHpFrame = hpFrame;
-        };
+        }
       };
 
       const updatePokemonHp = () => {
@@ -480,7 +480,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           onUpdate: () => {
             if (this.player && this.lastHp !== pokemon.hp) {
               const tweenHp = Math.ceil(this.hpBar.scaleX * pokemon.getMaxHp());
-              this.setHpNumbers(tweenHp, pokemon.getMaxHp())
+              this.setHpNumbers(tweenHp, pokemon.getMaxHp());
               this.lastHp = tweenHp;
             }
 
@@ -501,7 +501,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
         if ((this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
           const originalResolve = resolve;
-          let durationMultipler = Math.max(Phaser.Tweens.Builders.GetEaseFunction('Cubic.easeIn')(1 - (Math.min(pokemon.level - this.lastLevel, 10) / 10)), 0.1);
+          const durationMultipler = Math.max(Phaser.Tweens.Builders.GetEaseFunction('Cubic.easeIn')(1 - (Math.min(pokemon.level - this.lastLevel, 10) / 10)), 0.1);
           resolve = () => this.updatePokemonExp(pokemon, false, durationMultipler).then(() => originalResolve());
         } else if (isLevelCapped !== this.lastLevelCapped)
           this.setLevel(pokemon.level);
@@ -536,7 +536,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     let displayName = pokemon.name.replace(/[♂♀]/g, '');
     let nameTextWidth: number;
 
-    let nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
+    const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
     nameTextWidth = nameSizeTest.displayWidth;
 
     while (nameTextWidth > (this.player || !this.boss ? 60 : 98) - ((pokemon.gender !== Gender.GENDERLESS ? 6 : 0) + (pokemon.fusionSpecies ? 8 : 0) + (pokemon.isShiny() ? 8 : 0) + (Math.min(pokemon.level.toString().length, 3) - 3) * 8)) {
@@ -565,7 +565,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         instant = true;
       }
       const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - (Math.max(this.lastLevel - 100, 0) / 150));
-      let duration = this.visible && !instant ? (((levelExp - this.lastLevelExp) / relLevelExp) * 1650) * durationMultiplier * levelDurationMultiplier : 0;
+      const duration = this.visible && !instant ? (((levelExp - this.lastLevelExp) / relLevelExp) * 1650) * durationMultiplier * levelDurationMultiplier : 0;
       if (ratio === 1) {
         this.lastLevelExp = 0;
         this.lastLevel++;

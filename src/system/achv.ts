@@ -1,7 +1,7 @@
-import { Modifier } from "typescript";
-import BattleScene from "../battle-scene";
-import * as Utils from "../utils";
-import { TurnHeldItemTransferModifier } from "../modifier/modifier";
+import { Modifier } from 'typescript';
+import BattleScene from '../battle-scene';
+import * as Utils from '../utils';
+import { TurnHeldItemTransferModifier } from '../modifier/modifier';
 
 export enum AchvTier {
   COMMON,
