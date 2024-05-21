@@ -86,8 +86,8 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
   const lang = i18next.language;
   let shadowColor: string;
-  let shadowXpos = 3;
-  let shadowYpos = 4;
+  let shadowXpos = 4;
+  let shadowYpos = 5;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
     fontFamily: 'emerald',
@@ -118,8 +118,8 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.MONEY:
     case TextStyle.TOOLTIP_TITLE:
       styleOptions.fontSize = languageSettings[lang]?.battleInfoFontSize || '72px';
-      shadowXpos = 3;
-      shadowYpos = 4;
+      shadowXpos = 3.5;
+      shadowYpos = 3.5;
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED:
@@ -129,12 +129,12 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.TOOLTIP_CONTENT:
       styleOptions.fontSize = languageSettings[lang]?.tooltipContentFontSize || '64px';
       shadowXpos = 3;
-      shadowYpos = 4;
+      shadowYpos = 3;
       break;
     case TextStyle.MOVE_INFO_CONTENT:
       styleOptions.fontSize = languageSettings[lang]?.moveInfoFontSize || '56px';
       shadowXpos = 3;
-      shadowYpos = 4;
+      shadowYpos = 3;
       break;
   }
 
