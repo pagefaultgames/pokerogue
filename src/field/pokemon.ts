@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -336,7 +336,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                           console.error(`Could not load ${res.url}!`);
                           return;
                         }
-                        res.json()
+                        return res.json()
                       }).then(c => {
                           variantColorCache[key] = c;
                           resolve();
@@ -1127,7 +1127,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
       if (!this.hasTrainer()) {
-        if (new Date() < new Date('2024-05-21'))
+        if (new Date() < new Date(Date.UTC(2024, 4, 22, 0)))
           shinyThreshold.value *= 3;
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
@@ -1282,11 +1282,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (this.isBoss()) // Bosses never get self ko moves
       movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttr).length);
+      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttrOnHit).length);
     if (this.hasTrainer()) {
       // Trainers never get OHKO moves
       movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(OneHitKOAttr).length);
       // Half the weight of self KO moves
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttr).length ? 0.5 : 1)]);
+      movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttrOnHit).length ? 0.5 : 1)]);
       // Trainers get a weight bump to stat buffing moves
       movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatChangeAttr).some(a => (a as StatChangeAttr).levels > 1 && (a as StatChangeAttr).selfTarget) ? 1.25 : 1)]);
       // Trainers get a weight decrease to multiturn moves

@@ -366,10 +366,14 @@ export class TitlePhase extends Phase {
       this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1)
         this.scene.pushPhase(new SummonPhase(this.scene, 1, true, true));
-      if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-        if (this.scene.currentBattle.double && availablePartyMembers > 1)
-          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
+        const minPartySize = this.scene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers > minPartySize) {
+          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+          if (this.scene.currentBattle.double)
+            this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+        }
       }
     }
 
@@ -955,10 +959,13 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
       }
      
-      if (this.scene.currentBattle.waveIndex > startingWave && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-        if (this.scene.currentBattle.double && availablePartyMembers.length > 1)
-          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+       if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
+        const minPartySize = this.scene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers.length > minPartySize) {
+          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+          if (this.scene.currentBattle.double)
+            this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+        }
       }
     }
 
@@ -4424,6 +4431,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
+              this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
