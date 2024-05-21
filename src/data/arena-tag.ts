@@ -427,7 +427,9 @@ class StickyWebTag extends ArenaTrapTag {
 
   onAdd(arena: Arena): void {
     super.onAdd(arena);
-    
+
+    // does not seem to be used anywhere
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const source = arena.scene.getPokemonById(this.sourceId);
     arena.scene.queueMessage(`A ${this.getMoveName()} has been laid out on the ground around the opposing team!`);
   }

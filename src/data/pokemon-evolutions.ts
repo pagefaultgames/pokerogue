@@ -1,5 +1,5 @@
 import { Gender } from './gender';
-import { AttackTypeBoosterModifier, FlinchChanceModifier } from '../modifier/modifier';
+import { FlinchChanceModifier } from '../modifier/modifier';
 import { Moves } from './enums/moves';
 import { PokeballType } from './pokeball';
 import Pokemon from '../field/pokemon';
@@ -1254,7 +1254,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CLOYSTER, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.EXEGGCUTE]: [
-    new SpeciesEvolution(Species.ALOLA_EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.ISLAND || p.scene.arena.biomeType == Biome.BEACH), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.ALOLA_EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.ISLAND || p.scene.arena.biomeType === Biome.BEACH), SpeciesWildEvolutionDelay.LONG),
     new SpeciesEvolution(Species.EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.TANGELA]: [

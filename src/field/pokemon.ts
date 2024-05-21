@@ -17,7 +17,7 @@ import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
 import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from '../data/tms';
-import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from '../phases';
+import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from '../phases';
 import { BattleStat } from '../data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from '../data/enums/battler-tag-type';
@@ -27,10 +27,10 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from '../data/enums/arena-tag-type';
 import { Biome } from '../data/enums/biome';
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr } from '../data/ability';
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr } from '../data/ability';
 import { Abilities } from '#app/data/enums/abilities';
 import PokemonData from '../system/pokemon-data';
-import Battle, { BattlerIndex } from '../battle';
+import { BattlerIndex } from '../battle';
 import { BattleSpec } from '../enums/battle-spec';
 import { Mode } from '../ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from '../ui/party-ui-handler';
@@ -321,11 +321,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               const populateVariantColors = (key: string, back: boolean = false): Promise<void> => {
                 return new Promise(resolve => {
                   const battleSpritePath = this.getBattleSpriteAtlasPath(back, ignoreOverride).replace('variant/', '').replace(/_[1-3]$/, '');
-                  let variantSet: VariantSet;
                   let config = variantData;
                   const useExpSprite = this.scene.experimentalSprites && this.scene.hasExpSprite(this.getBattleSpriteKey(back, ignoreOverride));
                   battleSpritePath.split('/').map(p => config ? config = config[p] : null);
-                  variantSet = config as VariantSet;
+                  const variantSet = config as VariantSet;
                   if (variantSet && variantSet[this.variant] === 1) {
                     if (variantColorCache.hasOwnProperty(key))
                       return resolve();
@@ -778,7 +777,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (includeTeraType) {
       const teraType = this.getTeraType();
-      if (teraType != Type.UNKNOWN)
+      if (teraType !== Type.UNKNOWN)
         types.push(teraType);
     }
 
@@ -1611,7 +1610,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           
         if (!result) {
           if (!typeMultiplier.value)
-            result = move.id == Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
+            result = move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
           else {
             const oneHitKo = new Utils.BooleanHolder(false);
             applyMoveAttrs(OneHitKOAttr, source, this, move, oneHitKo);
@@ -1913,7 +1912,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const scene = sceneOverride || this.scene;
     const cry = this.getSpeciesForm().cry(scene, soundConfig);
     let duration = cry.totalDuration * 1000;
-    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm()) {
+    if (this.fusionSpecies && this.getSpeciesForm() !== this.getFusionSpeciesForm()) {
       let fusionCry = this.getFusionSpeciesForm().cry(scene, soundConfig, true);
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
@@ -1932,11 +1931,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   faintCry(callback: Function): void {
-    if (this.fusionSpecies && this.getSpeciesForm() != this.getFusionSpeciesForm())
+    if (this.fusionSpecies && this.getSpeciesForm() !== this.getFusionSpeciesForm())
       return this.fusionFaintCry(callback);
 
     const key = this.getSpeciesForm().getCryKey(this.formIndex);
-    let i = 0;
     let rate = 0.85;
     const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
     const sprite = this.getSprite();

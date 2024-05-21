@@ -9,7 +9,7 @@ import { BattlerTag } from './battler-tags';
 import { BattlerTagType } from './enums/battler-tag-type';
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from './status-effect';
 import { Gender } from './gender';
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from './move';
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from './move';
 import { ArenaTagSide, ArenaTrapTag } from './arena-tag';
 import { ArenaTagType } from './enums/arena-tag-type';
 import { Stat } from './pokemon-stat';
@@ -20,9 +20,7 @@ import { SpeciesFormChangeManualTrigger } from './pokemon-forms';
 import { Abilities } from './enums/abilities';
 import i18next, { Localizable } from '#app/plugins/i18n.js';
 import { Command } from '../ui/command-ui-handler';
-import Battle from '#app/battle.js';
-import { ability } from '#app/locales/en/ability.js';
-import { PokeballType, getPokeballName } from './pokeball';
+import { getPokeballName } from './pokeball';
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -453,7 +451,7 @@ export class PostDefendAbAttr extends AbAttr {
 export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon.formIndex == 0 && pokemon.battleData.hitCount != 0 && (move.getMove().category == MoveCategory.SPECIAL || move.getMove().category == MoveCategory.PHYSICAL)) {
+    if (pokemon.formIndex === 0 && pokemon.battleData.hitCount !== 0 && (move.getMove().category === MoveCategory.SPECIAL || move.getMove().category === MoveCategory.PHYSICAL)) {
       
       const recoilDamage = Math.ceil((pokemon.getMaxHp() / 8) - attacker.turnData.damageDealt);
       if (!recoilDamage)
@@ -956,7 +954,7 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const type = (args[0] as Utils.IntegerHolder);
-    if (type.value == this.matchType) {
+    if (type.value === this.matchType) {
       type.value = this.newType;
       (args[1] as Utils.NumberHolder).value *= this.powerMultiplier;
       return true;
@@ -1181,7 +1179,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+    if (pokemon !== attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return attacker.trySetStatus(effect, true, pokemon);
     }
@@ -1211,7 +1209,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
+    if (pokemon !== attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
 
 
@@ -2327,7 +2325,7 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
-    if(lastUsed != null && pokemon.isPlayer) {
+    if(lastUsed !== null && pokemon.isPlayer) {
       pokemon.scene.pokeballCounts[lastUsed]++;
       pokemon.scene.currentBattle.lastUsedPokeball = null;
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` found a\n${getPokeballName(lastUsed)}!`));
@@ -3161,8 +3159,8 @@ export function initAbilities() {
     new Ability(Abilities.TRUANT, 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, 3)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5, (user, target, move) => move.category == MoveCategory.PHYSICAL)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8, (user, target, move) => move.category == MoveCategory.PHYSICAL),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5, (user, target, move) => move.category === MoveCategory.PHYSICAL)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8, (user, target, move) => move.category === MoveCategory.PHYSICAL),
     new Ability(Abilities.CUTE_CHARM, 3)
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
     new Ability(Abilities.PLUS, 3)
@@ -3599,7 +3597,7 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.DISGUISE, 7)
-      .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex == 0 && target.getAttackTypeEffectiveness(move.type, user) > 0)
+      .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex === 0 && target.getAttackTypeEffectiveness(move.type, user) > 0)
       .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
       .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
       .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
