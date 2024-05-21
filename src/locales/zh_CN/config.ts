@@ -20,6 +20,7 @@ import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { voucher } from "./voucher";
 
 
 export const zhCnConfig = {
@@ -47,4 +48,5 @@ export const zhCnConfig = {
     weather: weather,
     battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
+    voucher: voucher,
 }

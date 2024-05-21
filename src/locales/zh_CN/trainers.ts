@@ -68,8 +68,9 @@ export const trainerClasses: SimpleTranslationEntries = {
     "officer": "警察",
     "parasol_lady": "阳伞姐姐",
     "pilot": "飞行员",
-    "pokefan": "发烧友俱乐部",
-    "pokefan_family": "同好夫妇",
+    "pokéfan": "发烧友俱乐部",
+    "pokéfan_female": "发烧友俱乐部",
+    "pokéfan_family": "同好夫妇",
     "preschooler": "幼儿园小朋友",
     "preschooler_female": "幼儿园小朋友",
     "preschoolers": "幼儿园小朋友组合",
@@ -77,6 +78,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "psychic_female": "超能力者",
     "psychics": "超能力者组合",
     "pokémon_ranger": "宝可梦巡护员",
+    "pokémon_ranger_female": "宝可梦巡护员",
     "pokémon_rangers": "宝可梦巡护员组合",
     "ranger": "巡护员",
     "restaurant_staff": "服务生组合",
@@ -252,7 +254,6 @@ export const trainerNames: SimpleTranslationEntries = {
     // 帕底亚地区 Paldea Region
     "rika": "辛俐",
     "poppy": "波琵",
-    "larry_elite": "青木", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "hassel": "八朔",
 
     // 蓝莓学院 Blueberry Academy
@@ -265,9 +266,6 @@ export const trainerNames: SimpleTranslationEntries = {
     // 关都地区 Kanto Region
     "blue": "青绿",
     "red": "赤红",
-
-    // 城都地区 Johto Region
-    "lance_champion": "阿渡", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
 
     // 丰缘地区 Hoenn Region
     "steven": "大吾",
