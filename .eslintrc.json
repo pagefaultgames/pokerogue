@@ -7,10 +7,8 @@
       "rules": {
         // General rules that apply to all files
         "eqeqeq": ["error", "always"], // Enforces the use of === and !== instead of == and !=
-        "curly": [2, "multi-line"], // Enforce curly braces for multi-line control statements
         "indent": ["error", 2], // Enforces a 2-space indentation
         "quotes": ["error", "single"], // Enforces the use of single quotes for strings
-        "semi": ["error", "always"], // Requires semicolons at the end of statements
         "no-var": "error", // Disallows the use of var, enforcing let or const instead
         "prefer-const": "error", // Prefers the use of const for variables that are never reassigned
         "no-undef": "off", // Disables the rule that disallows the use of undeclared variables (TypeScript handles this)
@@ -21,6 +19,13 @@
         "import/no-unused-modules": ["error", { "missingExports": true, "unusedExports": false }], // Only checks for unused imports, not unused exports
         "eol-last": ["error", "always"], // Enforces at least one newline at the end of files
         "camelcase": ["error", { "properties": "always" }] // Enforces camelCase naming convention for properties
+      }
+    }, {
+      "files": ["src/**/*.{ts,tsx,js,jsx}"], // Applies these rules to all TypeScript and JavaScript files in the src directory
+      "rules": {
+        "@typescript-eslint/semi": ["error", "always"], // Requires semicolons for TypeScript-specific syntax
+        "semi": "off", // Disables the general semi rule for TypeScript files
+        "@typescript-eslint/no-extra-semi": ["error"] // Disallows unnecessary semicolons for TypeScript-specific syntax
       }
     }
   ]
