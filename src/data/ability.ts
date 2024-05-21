@@ -2148,16 +2148,16 @@ export class PostTerrainChangeTypeAttr extends PostTerrainChangeAbAttr {
 
   applyPostTerrainChange(pokemon: Pokemon, passive: boolean, terrain: TerrainType, args: any[]): boolean {
 
-    if (this.terrainToTypeMap[terrain] == Type.UNKNOWN) {
-      if (pokemon.summonData.types == null) return false;
-      pokemon.summonData.types = null;
-      pokemon.updateInfo();
+    if (this.terrainToTypeMap[terrain] == Type.UNKNOWN) { //If no type is given, transform back to original type
+      if (pokemon.summonData.types == null) return false; //If already original type, ability did not activate
+      pokemon.summonData.types = null;                    //Clear any changed type
+      pokemon.updateInfo();                               //Update info to apply change
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed\nback into its original type!`));
       return true;
     }
 
-    pokemon.summonData.types = [this.terrainToTypeMap[terrain]]
-    pokemon.updateInfo();
+    pokemon.summonData.types = [this.terrainToTypeMap[terrain]] //Changes type to the specified type based on the record
+    pokemon.updateInfo();                                       //Apply changes
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed\ninto the ${Utils.toReadableString(Type[pokemon.getTypes()[0]])} type!`));
     return true;
   }
