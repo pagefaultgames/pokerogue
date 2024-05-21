@@ -16,7 +16,6 @@
           "args": "none", // Allows unused function parameters. Useful for functions with specific signatures where not all parameters are always used.
           "ignoreRestSiblings": true // Allows unused variables that are part of a rest property in object destructuring. Useful for excluding certain properties from an object while using the rest.
         }],
-        "import/no-unused-modules": ["error", { "missingExports": true, "unusedExports": false }], // Only checks for unused imports, not unused exports
         "eol-last": ["error", "always"], // Enforces at least one newline at the end of files
         "camelcase": ["error", { "properties": "always" }] // Enforces camelCase naming convention for properties
       }
