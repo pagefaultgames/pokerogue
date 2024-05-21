@@ -70,12 +70,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: '54px',
     instructionTextSize: '42px',
   },
-  "zh_CN":{
+  "zh":{
     starterInfoTextSize: '40px',
     instructionTextSize: '42px',
     starterInfoYOffset: 2
   },
-  "pt_BR":{
+  "pt":{
     starterInfoTextSize: '47px',
     instructionTextSize: '38px',
     starterInfoXPos: 32,
@@ -217,7 +217,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
     const currentLanguage = i18next.language;
-    const textSettings = languageSettings[currentLanguage];
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
+    const textSettings = languageSettings[langSettingKey];
 
     this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.starterSelectContainer.setVisible(false);
@@ -280,7 +281,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     let starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
 
     // The font size should be set per language
-    let starterInfoTextSize = textSettings.starterInfoTextSize;
+    let starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
 
     this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
