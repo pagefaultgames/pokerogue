@@ -909,7 +909,8 @@ export const trainerTypeDialogue = {
   },
   [TrainerType.MORTY]: {
     encounter: [
-      `With a little more, I could see a future in which I meet the legendary Pokémon. You're going to help me reach that level!`,
+      `With a little more, I could see a future in which I meet the legendary Pokémon.
+      $You're going to help me reach that level!`,
       `It's said that a rainbow-hued Pokémon will come down to appear before a truly powerful Trainer. 
       $I believed that tale, so I have secretly trained here all my life. As a result, I can now see what others cannot. 
       $I see a shadow of the person who will make the Pokémon appear. 
@@ -924,7 +925,8 @@ export const trainerTypeDialogue = {
       `I see… Your journey has taken you to far-away places and you have witnessed much more than I.
       $I envy you for that…`,
       `How is this possible…`,
-      `I don't think our potentials are so different. But you seem to have something more than that… So be it.`,
+      `I don't think our potentials are so different.
+      $But you seem to have something more than that… So be it.`,
       `Guess I need more training.`,
       `That's a shame.`
     ],

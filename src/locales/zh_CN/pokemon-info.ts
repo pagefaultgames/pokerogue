@@ -17,7 +17,7 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     },
 
     Type: {
-        "UNKNOWN": "Unknown",
+        "UNKNOWN": "未知",
         "NORMAL": "一般",
         "FIGHTING": "格斗",
         "FLYING": "飞行",
