@@ -21,6 +21,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutPlaceholder: Phaser.GameObjects.Rectangle;
   private flyoutTextPlaceholder: Phaser.GameObjects.Text;
 
+  private largeFlyoutParent : Phaser.GameObjects.Container;
+  private largeFlyoutContainer: Phaser.GameObjects.Container;
+
   constructor(scene: Phaser.Scene, player: boolean) {
     super(scene, 0, 0);    
     this.player = player;
@@ -55,11 +58,15 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextPlaceholder.setOrigin(0, 0);
 
     this.flyoutContainer.add(this.flyoutTextPlaceholder);
+
+    this.largeFlyoutParent = this.scene.add.container()
   }
 
   initInfo(pokemon: Pokemon) {
     this.name = `Flyout ${pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${pokemon.name}`;
+
+    this.flyoutTextPlaceholder.text = `${pokemon.name}`
   }
 
   setMini(mini: boolean): void {

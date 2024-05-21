@@ -9,6 +9,7 @@ import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from '../plugins/i18n';
 import {Button} from "../enums/buttons";
+import FightFlyout from "./fight-flyout";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -21,6 +22,8 @@ export default class FightUiHandler extends UiHandler {
   private accuracyText: Phaser.GameObjects.Text;
   private cursorObj: Phaser.GameObjects.Image;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
+
+  private commandFlyout: FightFlyout;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -75,6 +78,9 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyText.setOrigin(1, 0.5);
     this.accuracyText.setVisible(false);
     ui.add(this.accuracyText);
+
+    this.commandFlyout = new FightFlyout(this.scene);
+    ui.add(this.commandFlyout);
   }
 
   show(args: any[]): boolean {
@@ -133,6 +139,10 @@ export default class FightUiHandler extends UiHandler {
       ui.playSelect();
 
     return success;
+  }
+
+  processStats(pressed: boolean): void {
+    this.commandFlyout.toggleFlyout(pressed);
   }
 
   getCursor(): integer {

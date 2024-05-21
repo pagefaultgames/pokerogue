@@ -200,10 +200,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.statValuesContainer.add(statNumber);
     });
 
-    this.flyoutMenu = new BattleFlyout(this.scene, this.player);
-    this.add(this.flyoutMenu);
+    if (!this.player) {
+      this.flyoutMenu = new BattleFlyout(this.scene, this.player);
+      this.add(this.flyoutMenu);
 
-    this.moveBelow<Phaser.GameObjects.GameObject>(this.flyoutMenu, this.box);
+      this.moveBelow<Phaser.GameObjects.GameObject>(this.flyoutMenu, this.box);
+    }
 
     this.type1Icon = this.scene.add.sprite(player ? -139 : -15, player ? -17 : -15.5, `pbinfo_${player ? 'player' : 'enemy'}_type1`);
     this.type1Icon.setOrigin(0, 0);
@@ -225,7 +227,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.name = pokemon.name;
     this.box.name = pokemon.name;
 
-    this.flyoutMenu.initInfo(pokemon);
+    this.flyoutMenu?.initInfo(pokemon);
 
     this.genderText.setText(getGenderSymbol(pokemon.gender));
     this.genderText.setColor(getGenderColor(pokemon.gender));
@@ -343,7 +345,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.mini = mini;
 
-    this.flyoutMenu.setMini(this.mini);
+    this.flyoutMenu?.setMini(this.mini);
 
     this.box.setTexture(this.getTextureName());
     this.statsBox.setTexture(`${this.getTextureName()}_stats`);
@@ -374,7 +376,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       alpha: visible ? 1 : 0
     });
 
-    this.flyoutMenu.toggleFlyout(visible);
+    this.flyoutMenu?.toggleFlyout(visible);
   }
 
   updateBossSegments(pokemon: EnemyPokemon): void {
