@@ -444,21 +444,19 @@ export class Arena {
 
   overrideTint(): [integer, integer, integer] {
     if (!Overrides.ARENA_TINT_OVERRIDE) return;
-    let ret;
     switch(Overrides.ARENA_TINT_OVERRIDE) {
       case TimeOfDay.DUSK:
-        ret = [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
+        return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
         break
       case (TimeOfDay.NIGHT):
-        ret = [ 64, 64, 64 ];
+        return [ 64, 64, 64 ];
         break
       case TimeOfDay.DAWN:
       case TimeOfDay.DAY:
       default:
-        ret = [ 128, 128, 128 ];
+        return [ 128, 128, 128 ];
         break
     }
-    return ret;
   }
 
   getDayTint(): [integer, integer, integer] {
