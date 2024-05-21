@@ -29,7 +29,7 @@ export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
 export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
-export const ARENA_TINT_OVERRIDE: TimeOfDay = TimeOfDay.NIGHT;
+export const ARENA_TINT_OVERRIDE: TimeOfDay = 0;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
