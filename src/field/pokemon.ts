@@ -1709,13 +1709,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
 
 
-            // don't want to add another fainted phase, perhaps calculate for multi hit moves if someone fainted
-            // problem is applyAbAttrsInternal() in ability.ts is resetting the phaseQueueSpliceIndex before the moveaffectphase
-            // end() to add the message, don't want to remove it since I have no idea what it's doing
-            if (this.isFainted()) {
+            /**
+             * don't want to add another fainted phase
+             * option could be calculate for multi hit moves if fainted
+             * problem with hit move message display is applyAbAttrsInternal() in ability.ts is 
+             * resetting the phaseQueueSpliceIndex before the moveaffectphase
+             * end() to add the message
+             * 
+            if (this.isFainted()) { }
+
               // option 1: try to add multi move message here, and add a conidtion in end() to not add it a second time
               // option 2: figure out what applyAbAttrsInternal() is doing and if there is a way to still add the message from end() properly
-            }
+             */
 
             /**
              * since damage is an object, I don't see how this would ever by false?
