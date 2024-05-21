@@ -21,7 +21,7 @@ import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TauntTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage, getPokemonPrefix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
@@ -1743,7 +1743,7 @@ export class CommandPhase extends FieldPhase {
           else if (playerPokemon.summonData.tormented && playerPokemon.summonData.prevMove === move.moveId) {
             errorMessage = getPokemonMessage(playerPokemon, ' can\'t use the same move twice in a row due to the torment!');
             canTranslate = false;
-          } else if (playerPokemon.summonData.taunted && move.getMove().category === MoveCategory.STATUS) {
+          } else if ((playerPokemon.findTag(t => t instanceof TauntTag) !== undefined) && move.getMove().category === MoveCategory.STATUS) {
             errorMessage = getPokemonMessage(playerPokemon, ' can\'t use ' + move.getName() + ' after the taunt!');
             canTranslate = false;
           } else
@@ -2111,16 +2111,7 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
       // For torment, keep track of last used move. This remains between battles while the pokemon is still on the field.
-      pokemon.summonData.prevMove = pokemon.getLastXMoves(1)[0].move;
-
-      if (pokemon.summonData.justTaunted) {
-        pokemon.summonData.justTaunted = false;
-      }
-
-      if (pokemon.summonData.taunted && !--pokemon.summonData.tauntedTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, getPokemonMessage(pokemon, " shook off the taunt!")));
-        pokemon.summonData.taunted = false;
-      }
+      pokemon.summonData.prevMove = pokemon.getLastXMoves(1)[0] ? pokemon.getLastXMoves(1)[0].move : undefined;
 
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
         this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
@@ -2269,12 +2260,16 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId]);
 
+    const tauntTag = this.pokemon.findTag(t => t instanceof TauntTag); // undefined if pokemon is not taunted
+
+    // decrement from taunt timer if target was taunted before moving
+    if (tauntTag && (tauntTag as TauntTag).justTaunted)
+        tauntTag.lapse(this.pokemon, BattlerTagLapseType.MOVE); 
+
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
-      else if (this.pokemon.summonData.taunted && this.move.getMove().category === MoveCategory.STATUS) {
-        if (this.pokemon.summonData.justTaunted)
-            this.pokemon.summonData.tauntedTurns--;
+      else if (tauntTag && this.move.getMove().category === MoveCategory.STATUS) {
         this.scene.queueMessage(getPokemonMessage(this.pokemon, ' can\'t use ' + this.move.getName() + ' after the taunt!'))
       }
       return this.end();
@@ -2728,12 +2723,6 @@ export class MoveEndPhase extends PokemonPhase {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     this.scene.arena.setIgnoreAbilities(false);
-
-    // if pokemon was taunted this turn and moved after the pokemon who taunted it,
-    // decrement taunt duration by 1
-    if (pokemon.summonData.justTaunted) {
-        pokemon.summonData.tauntedTurns--;
-    }
 
     this.end();
   }

@@ -118,9 +118,6 @@ export default class PokemonData {
         this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
         this.summonData.tormented = source.summonData.tormented;
         this.summonData.prevMove = source.summonData.prevMove;
-        this.summonData.justTaunted = source.summonData.justTaunted;
-        this.summonData.taunted = source.summonData.taunted;
-        this.summonData.tauntedTurns = source.summonData.tauntedTurns;
 
         this.summonData.ability = source.summonData.ability;
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));

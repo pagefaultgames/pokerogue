@@ -514,6 +514,32 @@ export class TormentTag extends BattlerTag {
   }
 }
 
+export class TauntTag extends BattlerTag {
+  public justTaunted: boolean = true;
+
+  constructor() {
+    super(BattlerTagType.TAUNT, BattlerTagLapseType.TURN_END, 4, Moves.TAUNT);
+  }
+
+  onAdd(pokemon: Pokemon) {
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fell for the taunt!'));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' shook off the taunt!'));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType) {
+    const ret = super.lapse(pokemon, lapseType);
+    this.justTaunted = false;
+    return ret;
+  }
+
+  getDescriptor(): string {
+    return 'taunt';
+  }
+}
+
 export class HelpingHandTag extends BattlerTag {
   constructor(sourceId: integer) {
     super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, Moves.HELPING_HAND, sourceId);
@@ -1341,6 +1367,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new EncoreTag(sourceId);
     case BattlerTagType.TORMENT:
       return new TormentTag();
+    case BattlerTagType.TAUNT:
+      return new TauntTag();
     case BattlerTagType.HELPING_HAND:
       return new HelpingHandTag(sourceId);
     case BattlerTagType.INGRAIN:

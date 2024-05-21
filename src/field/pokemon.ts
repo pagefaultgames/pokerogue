@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from '../phases';
 import { BattleStat } from '../data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TauntTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from '../data/enums/species';
 import { WeatherType } from '../data/weather';
@@ -3389,9 +3389,6 @@ export class PokemonSummonData {
   public disabledTurns: integer = 0;
   public tormented = false;
   public prevMove: Moves = undefined; // for torment, carry over between battles while summoned
-  public justTaunted: boolean = false;
-  public taunted: boolean = false;
-  public tauntedTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
 
@@ -3474,8 +3471,8 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     const isMoveDisabled = this.moveId && pokemon.summonData?.disabledMove === this.moveId;
     
-    // for taunt: check valid move, pokemon is taunted, 
-    const isMoveDisabledTaunt = this.moveId && pokemon.summonData.taunted && this.getMove().category === MoveCategory.STATUS;
+    // for taunt: check valid move, pokemon is taunted, and move is status
+    const isMoveDisabledTaunt = this.moveId && (pokemon.findTag(t => t instanceof TauntTag) !== undefined) && this.getMove().category === MoveCategory.STATUS;
 
     // for torment: check valid move, pokemon is tormented, pokemon has moved this summon, and selected move is the same as previous move
     const isMoveDisabledTorment = this.moveId && pokemon.summonData.tormented && pokemon.summonData.prevMove === this.moveId;
