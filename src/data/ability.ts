@@ -2,7 +2,7 @@ import Pokemon, { EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "..
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { BattleEndPhase, CheckSwitchPhase, NewBattlePhase, PokemonHealPhase, ReturnPhase, ShowAbilityPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, CheckSwitchPhase, NewBattlePhase, PokemonHealPhase, ReturnPhase, SelectModifierPhase, ShowAbilityPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
@@ -443,6 +443,11 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 }
 
+/**
+ * Apply an effect on a pokemon after an instance of damage.
+ * @extends AbAttr
+ * @see {@linkcode applyPostDamage}
+ */
 export class PostDamageAbAttr extends AbAttr {
   applyPostDamage(pokemon: Pokemon, initialPokemonHpRatio: number, passive: boolean): boolean | Promise<boolean> {
     return false;
@@ -457,6 +462,11 @@ export class PostDefendAbAttr extends AbAttr {
 
 type HpThresholdCondition = (postMovePokemon: Pokemon, initialPokemonHpRatio: integer) => boolean;
 
+/**
+ * Apply a forced switch/flee depending on the pokemon's HP ratio before & after an instance of damage.
+ * @extends PostDamageAbAttr
+ * @see {@linkcode applyPostDamage}
+ */
 export class PostDamageForcedSwitchAbAttr extends PostDamageAbAttr {
   private condition: HpThresholdCondition;
 
@@ -466,6 +476,13 @@ export class PostDamageForcedSwitchAbAttr extends PostDamageAbAttr {
     this.condition = condition;
   }
 
+  /**
+   * Forces a switch/flee on the pokemon dependent on context.
+   * @param pokemon The pokemon that's being forced to switch/flee.
+   * @param initialPokemonHpRatio The initial HP ratio of the pokemon that's being forced to switch/flee.
+   * @param passive 
+   * @returns true if the function succeeds.
+   */
   applyPostDamage(pokemon: Pokemon, initialPokemonHpRatio: number, passive: boolean): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (this.condition(pokemon, initialPokemonHpRatio) && pokemon.isPlayer()) {
@@ -475,23 +492,36 @@ export class PostDamageForcedSwitchAbAttr extends PostDamageAbAttr {
         resolve(true);
       } else if (this.condition(pokemon, initialPokemonHpRatio) && !pokemon.hasTrainer()) {
         // Wild pokemon
+        pokemon.updateInfo(false);
         pokemon.hideInfo().then(() => pokemon.destroy());
-	  	  pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fled!'), null, true, 500);
-        pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
-	  	  pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
+        pokemon.active = false;
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fled!'), null, true, 500);
+
+        if (pokemon.scene.getEnemyField().every(enemyPokemon => !enemyPokemon.active || enemyPokemon.isFainted())) {
+          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
+          if (pokemon.scene.getEnemyField().filter(enemyPokemon => enemyPokemon.isFainted()).length >= 1) {
+            pokemon.scene.pushPhase(new SelectModifierPhase(pokemon.scene))
+          }
+          pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
+        }
         resolve(true);
       } else if (this.condition(pokemon, initialPokemonHpRatio) && pokemon.hasTrainer()) {
-        // Enemy trainer pokemon
-        pokemon.updateInfo();
-        pokemon.scene.pushPhase(new SwitchSummonPhase(pokemon.scene, pokemon.getFieldIndex(), pokemon.scene.currentBattle.trainer.getNextSummonIndex((pokemon as EnemyPokemon).trainerSlot), false, false, false));
+        // Enemy trainer's pokemon
+        pokemon.updateInfo(false);
+        if((pokemon.scene.getEnemyParty().filter(enemyPokemon => !enemyPokemon.isFainted()).length > pokemon.scene.getEnemyField().length )) {
+          pokemon.scene.pushPhase(new SwitchSummonPhase(pokemon.scene, pokemon.getFieldIndex(), pokemon.scene.currentBattle.trainer.getNextSummonIndex((pokemon as EnemyPokemon).trainerSlot), false, false, false));
+
+          pokemon.resetTurnData();
+          pokemon.resetSummonData();
+          pokemon.hideInfo();
+          pokemon.setVisible(false);
+          pokemon.scene.field.remove(pokemon);
+          
+          resolve(true);
+        } else {
+          resolve(false);
+        }
         
-        pokemon.resetTurnData();
-        pokemon.resetSummonData();
-        pokemon.hideInfo();
-        pokemon.setVisible(false);
-        pokemon.scene.field.remove(pokemon);
-        
-        resolve(true);
       } else {
         resolve(false);
       }

@@ -2543,7 +2543,7 @@ export class MoveEffectPhase extends PokemonPhase {
                         if (flinched.value)
                           target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
                       }
-                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit),
+                      Utils.executeIf(!isProtected && !chargeEffect && target.active, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit),
                         user, target, this.move.getMove()).then(() => {
                           return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                             if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
