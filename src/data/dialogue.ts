@@ -511,7 +511,7 @@ export const trainerTypeDialogue = {
   [TrainerType.MAXIE_2]: [
     {
       encounter: [
-        `Hold it right there.`
+        `do I need salt cure?`
       ],
       victory: [
         `I... I lost again?`
@@ -531,7 +531,7 @@ export const trainerTypeDialogue = {
   [TrainerType.ARCHIE_2]: [
     {
       encounter: [
-        `Hold it right there.`
+        `do I bring soak?`
       ],
       victory: [
         `I... I lost again?`
@@ -591,10 +591,10 @@ export const trainerTypeDialogue = {
   [TrainerType.LYSANDRE_2]: [
     {
       encounter: [
-        `Enough of this.`
+        `Can someone recommend me some good pokemon?`
       ],
       victory: [
-        `Whaugh!`
+        `Who's a good carry for endless?`
       ]
     }
   ],
