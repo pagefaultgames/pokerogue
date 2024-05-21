@@ -960,6 +960,19 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
   }
 }
 
+export class PreAttackChangeTypeAbAttr extends PreAttackAbAttr {
+  applyPreAttackAbAttr(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    const userTypes = pokemon.getTypes(true);
+    const moveType = move.getMove().type;
+    console.log("Protean triggered!!!")
+    if (!moveType || (userTypes.length !== 1 && userTypes[0] == moveType))
+      return false;
+    
+    pokemon.summonData.types = [ moveType ];
+    return true
+  }
+}
+
 export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     cancelled.value = true;
@@ -3371,7 +3384,8 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .unimplemented(),
+      .attr(PreAttackChangeTypeAbAttr)
+      .partial(),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
