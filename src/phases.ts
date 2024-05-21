@@ -2332,31 +2332,28 @@ export class MovePhase extends BattlePhase {
 
       this.scene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
+      if (this.move.moveId)
+        this.showMoveText();
+
       // This should only happen when there are no valid targets left on the field
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {        
+        this.showFailedText();
         this.cancel();
+        
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+
         moveQueue.shift();
-      }
-
-      // Display move text
-      if (this.move.moveId && (!this.cancelled || this.ignorePp)) {
-        this.showMoveText();
-        if (this.cancelled)
-          this.showFailedText();
-      }
-
-      if (this.cancelled)
         return this.end();
+      }
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length)
         this.scene.currentBattle.lastMove = this.move.moveId;
-
 
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
