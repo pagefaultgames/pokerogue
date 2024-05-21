@@ -633,6 +633,9 @@ export default class BattleScene extends SceneBase {
 		if (Overrides.OPP_SPECIES_OVERRIDE)
 			species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+		if (Overrides.OPP_GENDER_OVERRIDE) {
+			pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
+		}
 		overrideModifiers(this, false);
 		overrideHeldItems(this, pokemon, false);
 		if (boss && !dataSource) {
@@ -946,7 +949,7 @@ export default class BattleScene extends SceneBase {
 					this.pushPhase(new LevelCapPhase(this));
 			}
 		}
-		
+
 		return this.currentBattle;
 	}
 
