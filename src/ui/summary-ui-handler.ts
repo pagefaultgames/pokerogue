@@ -808,10 +808,11 @@ export default class SummaryUiHandler extends UiHandler {
           statValue.setOrigin(1, 0);
           statsContainer.add(statValue);
         });
+//Sort items by item type then item name.
+        let itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
+            .sort(((a, b)=>a.type.name.localeCompare(b.type.name) && a.constructor.name.localeCompare(b.constructor.name)));
 
-        const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[];
-        
         itemModifiers.forEach((item, i) => {
           const icon = item.getIcon(this.scene, true);
 
