@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, StatChangeAttr, StatusEffectAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -964,6 +964,49 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
     
     return false;
   }
+}
+
+function getSheerForceApplyCondition(user: Pokemon, target: Pokemon, move: Move): boolean {
+  // Sheer Force only applies to attacking moves
+  if (move.category === MoveCategory.STATUS) {
+    return false;
+  }
+  
+  /*
+  * Check the move for any attributes that change stats
+  * Sheer Force only applies if the move would increase the user's stats (e.g. Power-Up Punch),
+  * or if the stat change does not apply to the user (e.g. Liquidation).
+  * It does not apply when a move would decrease the user's stats (e.g. Close Combat)
+  */
+  for (let attr of move.getAttrs(StatChangeAttr)) {
+    let statAttr = attr as StatChangeAttr;
+    if ((statAttr.selfTarget && statAttr.levels > 0) || (!statAttr.selfTarget)) {
+      return true;
+    }
+  }
+
+  /*
+  * List of outliers based on https://bulbapedia.bulbagarden.net/wiki/Sheer_Force_(Ability)
+  * and others that don't adhere to any of the common negated effects.
+  * TODO: Verify all outliers are covered from Bulbapedia's "affected moves" list.
+  */
+  const outliers: Moves[] = [
+    Moves.ANCHOR_SHOT,
+    Moves.CEASELESS_EDGE,
+    Moves.EERIE_SPELL,
+    Moves.GENESIS_SUPERNOVA,
+    Moves.SALT_CURE,
+    Moves.SECRET_POWER,
+    Moves.SPARKLING_ARIA,
+    Moves.SPIRIT_SHACKLE,
+    Moves.STONE_AXE,
+    Moves.SYRUP_BOMB
+  ];
+  
+  // Not sure if there's a cleaner way to use getAttrs() here...
+  return !!move.getAttrs(FlinchAttr).length || 
+    !!move.getAttrs(StatusEffectAttr).length || 
+    outliers.includes(move.id);
 }
 
 export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
