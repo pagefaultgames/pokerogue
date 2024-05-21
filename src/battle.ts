@@ -63,6 +63,8 @@ export default class Battle {
     private battleSeedState: string;
     public moneyScattered: number;
     public lastUsedPokeball: PokeballType;
+    public playerFaints: number;
+    public enemyFaints: number;
 
     private rngCounter: integer = 0;
 
@@ -89,6 +91,8 @@ export default class Battle {
         this.battleSeedState = null;
         this.moneyScattered = 0;
         this.lastUsedPokeball = null;
+        this.playerFaints = 0;
+        this.enemyFaints = 0;
     }
 
     private initBattleSpec(): void {
