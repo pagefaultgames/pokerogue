@@ -91,7 +91,7 @@ export default class Battle {
     }
 
     private initBattleSpec(): void {
-        this.battleSpec = this.gameMode.isClassic && this.waveIndex === 200 
+        this.battleSpec = this.gameMode.isClassic && this.gameMode.isWaveFinal(this.waveIndex)
             ? BattleSpec.FINAL_BOSS 
             : BattleSpec.DEFAULT;
     }
@@ -101,7 +101,7 @@ export default class Battle {
         const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
         const bossMultiplier = 1.2;
 
-        if (!(this.waveIndex % 10)) {
+        if (this.gameMode.isBoss(this.waveIndex)) {
             const levelForWave = Math.floor(baseLevel * bossMultiplier);
             if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250))
                 return Math.ceil(levelForWave / 25) * 25;
