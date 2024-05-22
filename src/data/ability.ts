@@ -1303,12 +1303,15 @@ export class PostVictoryFormChangeAbAttr extends PostVictoryAbAttr {
 }
 
 export class PostKnockOutAbAttr extends AbAttr {
-  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, attacker: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
-export class PostKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
+/*
+*  Attribute used for abilities (e.g. Soul Heart) which boost stats from any fainting, including allies
+*/
+export class PostAnyKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
   private stat: BattleStat | ((p: Pokemon) => BattleStat);
   private levels: integer;
 
@@ -1319,7 +1322,7 @@ export class PostKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
     this.levels = levels;
   }
 
-  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, attacker: Pokemon, args: any[]): boolean | Promise<boolean> {
     const stat = typeof this.stat === 'function'
       ? this.stat(pokemon)
       : this.stat;
@@ -1329,12 +1332,41 @@ export class PostKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
   }
 }
 
+/*
+*  Attribute used for abilities (e.g. Beast Boost) which boost stats from an attack's direct damage.
+*/
+export class PostDirectKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
+  private stat: BattleStat | ((p: Pokemon) => BattleStat);
+  private levels: integer;
+
+  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), levels: integer) {
+    super();
+
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, attacker: Pokemon, args: any[]): boolean | Promise<boolean> {
+    if(attacker === pokemon)
+    {
+      const stat = typeof this.stat === 'function'
+        ? this.stat(pokemon)
+        : this.stat;
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], this.levels));
+      
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
   constructor() {
     super();
   }
 
-  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, attacker: Pokemon, args: any[]): boolean | Promise<boolean> {
     if (pokemon.isPlayer() === knockedOut.isPlayer() && !knockedOut.getAbility().hasAttr(UncopiableAbilityAbAttr)) {
       pokemon.summonData.ability = knockedOut.getAbility().id;
       pokemon.scene.queueMessage(getPokemonMessage(knockedOut, `'s ${allAbilities[knockedOut.getAbility().id].name} was taken over!`));
@@ -2907,8 +2939,8 @@ export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAtta
 }
 
 export function applyPostKnockOutAbAttrs(attrType: { new(...args: any[]): PostKnockOutAbAttr },
-  pokemon: Pokemon, knockedOut: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostKnockOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostKnockOut(pokemon, passive, knockedOut, args), args);
+  pokemon: Pokemon, knockedOut: Pokemon, attacker: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostKnockOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostKnockOut(pokemon, passive, knockedOut, attacker, args), args);
 } 
 
 export function applyPostVictoryAbAttrs(attrType: { new(...args: any[]): PostVictoryAbAttr },
@@ -3435,7 +3467,7 @@ export function initAbilities() {
       .attr(PostDefendAbilityGiveAbAttr, Abilities.MUMMY)
       .bypassFaint(),
     new Ability(Abilities.MOXIE, 5)
-      .attr(PostKnockOutStatChangeAbAttr, BattleStat.ATK, 1),
+      .attr(PostDirectKnockOutStatChangeAbAttr, BattleStat.ATK, 1),
     new Ability(Abilities.JUSTIFIED, 5)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.DARK && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1),
     new Ability(Abilities.RATTLED, 5)
@@ -3653,7 +3685,7 @@ export function initAbilities() {
       .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SOUL_HEART, 7)
-      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
+      .attr(PostAnyKnockOutStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.TANGLING_HAIR, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
     new Ability(Abilities.RECEIVER, 7)
@@ -3663,7 +3695,7 @@ export function initAbilities() {
       .attr(CopyFaintedAllyAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.BEAST_BOOST, 7)
-      .attr(PostKnockOutStatChangeAbAttr, p => {
+      .attr(PostDirectKnockOutStatChangeAbAttr, p => {
         const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3).map(s => s as BattleStat);
         let highestBattleStat = 0;
         let highestBattleStatIndex = 0;
@@ -3794,18 +3826,18 @@ export function initAbilities() {
     new Ability(Abilities.DRAGONS_MAW, 8)
       .attr(MoveTypePowerBoostAbAttr, Type.DRAGON),
     new Ability(Abilities.CHILLING_NEIGH, 8)
-      .attr(PostKnockOutStatChangeAbAttr, BattleStat.ATK, 1),
+      .attr(PostDirectKnockOutStatChangeAbAttr, BattleStat.ATK, 1),
     new Ability(Abilities.GRIM_NEIGH, 8)
-      .attr(PostKnockOutStatChangeAbAttr, BattleStat.SPATK, 1),
+      .attr(PostDirectKnockOutStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.AS_ONE_GLASTRIER, 8)
       .attr(PreventBerryUseAbAttr)
-      .attr(PostKnockOutStatChangeAbAttr, BattleStat.ATK, 1)
+      .attr(PostDirectKnockOutStatChangeAbAttr, BattleStat.ATK, 1)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.AS_ONE_SPECTRIER, 8)
       .attr(PreventBerryUseAbAttr)
-      .attr(PostKnockOutStatChangeAbAttr, BattleStat.SPATK, 1)
+      .attr(PostDirectKnockOutStatChangeAbAttr, BattleStat.SPATK, 1)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
