@@ -109,6 +109,8 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.SUMMARY_GREEN:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
+      shadowXpos = 3;
+      shadowYpos = 3;
     case TextStyle.MESSAGE:
     case TextStyle.SETTINGS_LABEL:
     case TextStyle.SETTINGS_SELECTED:
