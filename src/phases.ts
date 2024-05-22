@@ -3755,6 +3755,10 @@ export class SwitchPhase extends BattlePhase {
     if (this.isModal && !this.scene.getParty().filter(p => !p.isFainted() && !p.isActive(true)).length)
       return super.end();
 
+    // Skip if the fainted party member has been revived already
+    if (this.isModal && !this.scene.getParty()[this.fieldIndex].isFainted())
+      return super.end();
+
     // Override field index to 0 in case of double battle where 2/3 remaining party members fainted at once
     const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? this.fieldIndex : 0;
 
