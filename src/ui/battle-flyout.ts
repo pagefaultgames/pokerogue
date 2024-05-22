@@ -22,8 +22,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   private pokemon: Pokemon;
   
-  private flyoutWidth = 110;
-  private flyoutHeight = 22;
+  private flyoutWidth = 118;
+  private flyoutHeight = 23;
 
   private translationX: number;
   private anchorX: number;
@@ -37,6 +37,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
   private moveInfo: MoveInfo[] = new Array();
 
+  private debug: boolean = false;
+
   constructor(scene: Phaser.Scene, player: boolean) {
     super(scene, 0, 0);
     this.battleScene = scene as BattleScene;
@@ -47,23 +49,26 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.offset = false;     
 
     this.translationX = this.player ? -this.flyoutWidth : this.flyoutWidth;
-    this.anchorX = -15 + (this.player ? -130 : -5);
+    this.anchorX = (this.player ? -130 : -40);
     this.anchorY = -2.5 + (this.player ? -18.5 : -13);
 
     this.flyoutParent = this.scene.add.container(this.anchorX - this.translationX, this.anchorY);
     this.flyoutParent.setAlpha(0);
     this.add(this.flyoutParent);
 
-    this.flyoutBox = this.scene.add.sprite(0, 0, `pbinfo_enemy_mini_stats`);
+    this.flyoutBox = this.scene.add.sprite(0, 0, `pbinfo_enemy_boss_stats`);
     this.flyoutBox.setOrigin(0, 0);
     
     this.flyoutParent.add(this.flyoutBox);
 
-    this.flyoutContainer = this.scene.add.container(28 + (this.player ? -this.flyoutWidth : 0), 2);
+    this.flyoutContainer = this.scene.add.container(44 + (this.player ? -this.flyoutWidth : 0), 2);
     this.flyoutParent.add(this.flyoutContainer);    
 
     for (let i = 0; i < 4; i++) {
-      this.flyoutText[i] = addTextObject(this.scene, 18 + 47 * (i % 2), 6 + 11 * (i < 2 ? 0 : 1), `???`, TextStyle.BATTLE_INFO);
+      this.flyoutText[i] = addTextObject(
+        this.scene, 
+        (this.flyoutWidth / 4) + (this.flyoutWidth / 2) * (i % 2), 
+        (this.flyoutHeight / 4) + (this.flyoutHeight / 2) * (i < 2 ? 0 : 1), `???`, TextStyle.BATTLE_INFO);
       this.flyoutText[i].setFontSize(45);
       this.flyoutText[i].setLineSpacing(-10);
       this.flyoutText[i].setAlign('center');
@@ -71,6 +76,18 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     }
 
     this.flyoutContainer.add(this.flyoutText);
+
+    this.flyoutContainer.add(
+      new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth / 2, 0, 1, this.flyoutHeight, 0x000000).setOrigin(0.5, 0));
+    this.flyoutContainer.add(
+      new Phaser.GameObjects.Rectangle(this.scene, 0, this.flyoutHeight / 2, this.flyoutWidth + 5, 1, 0x000000).setOrigin(0, 0.5));
+
+    if (this.debug) {
+      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, 0, 0, 2, 2, 0xFF0000));
+      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth, 0, 2, 2, 0xFF0000));
+      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, 0, this.flyoutHeight, 2, 2, 0xFF0000));
+      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth, this.flyoutHeight, 2, 2, 0xFF0000));
+    }
   }
 
   initInfo(pokemon: Pokemon) {
@@ -87,9 +104,6 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       return;
 
     this.mini = mini;
-
-    //if (this.player)
-    //  this.y -= 12 * (mini ? 1 : -1);
   }
 
   setText() {
@@ -101,7 +115,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
         continue;
 
       const currentPp = Math.max(moveInfo.maxPp - moveInfo.ppUsed, 0);
-      flyoutText.text = `${moveInfo.move.name}\n${currentPp}/${moveInfo.maxPp}`;
+      flyoutText.text = `${moveInfo.move.name}  ${currentPp}/${moveInfo.maxPp}`;
     }
   }
 

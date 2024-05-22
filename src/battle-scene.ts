@@ -1264,6 +1264,12 @@ export default class BattleScene extends SceneBase {
 		this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
 	}
 
+	sendTextToBack(): void {
+		this.fieldUI.sendToBack(this.waveCountText);
+		this.fieldUI.sendToBack(this.moneyText);
+		this.fieldUI.sendToBack(this.scoreText);
+	}
+
 	addFaintedEnemyScore(enemy: EnemyPokemon): void {
 		let scoreIncrease = enemy.getSpeciesForm().getBaseExp() * (enemy.level / this.getMaxExpLevel()) * ((enemy.ivs.reduce((iv: integer, total: integer) => total += iv, 0) / 93) * 0.2 + 0.8);
 		this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(m => scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier());
