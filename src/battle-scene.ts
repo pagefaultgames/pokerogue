@@ -85,11 +85,13 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 export class MoveUsedEvent extends Event {
 	public userIndex: number;
 	public move: Move;
-	constructor(userIndex: number, move: Move) {
+	public ppUsed: number;
+	constructor(userIndex: number, move: Move, ppUsed: number) {
 		super('onMoveUsed');
 
 		this.userIndex = userIndex;
 		this.move = move;
+		this.ppUsed = ppUsed;
 	}
 }
 export default class BattleScene extends SceneBase {
