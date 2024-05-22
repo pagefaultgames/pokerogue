@@ -68,24 +68,35 @@ export class Arena {
     const overrideSpecies = this.scene.gameMode.getOverrideSpecies(waveIndex);
     if (overrideSpecies)
       return overrideSpecies;
-    // const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
-    //   && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
-    const isBoss = true; // OVERIDE
-    // const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
-    // let tier = !isBoss
-    //   ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
-    //   : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
-    const tierValue = 0; // Utils.randSeedInt(!isBoss ? 512 : 128); OVERRIDE
-    let tier = !isBoss
-      ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 40 ? BiomePoolTier.BOSS : tierValue >= 12 ? BiomePoolTier.BOSS_RARE : tierValue >= 2 ? BiomePoolTier.BOSS_SUPER_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_ULTRA_RARE : 
-        biomeConditions[this.biomeType](this) ? BiomePoolTier.BOSS_CONDITIONAL_ULTRA_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
-    console.log("this.scene: " + this.scene);
-    console.log("this.scene get party " + this.scene.getParty());
-    console.log("biome condition: " + biomeConditions[this.biomeType](this));
+    const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
+      && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
+    const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
+    let tier = null;
+    if (isBoss) {
+      if (tierValue >= 20) {
+        tier = BiomePoolTier.BOSS;            // 44/64
+      } else if (tierValue >= 6) {
+        tier = BiomePoolTier.BOSS_RARE;       // 14/64
+      } else if (tierValue >= 1) {
+        tier = BiomePoolTier.BOSS_SUPER_RARE; // 5/64
+      } else {
+        // If the player solves the puzzle the conditional UR replaces the UR 1/64
+        tier = biomeConditions[this.biomeType](this) ? BiomePoolTier.BOSS_CONDITIONAL_ULTRA_RARE : BiomePoolTier.BOSS_ULTRA_RARE; 
+      }
+    } else {
+      if (tierValue >= 156) {
+        tier = BiomePoolTier.COMMON;     // 356/512 
+      } else if (tierValue >= 32) {
+        tier = BiomePoolTier.UNCOMMON;   // 124/512
+      } else if (tierValue >= 6) {
+        tier = BiomePoolTier.RARE;       // 26/512
+      } else if (tierValue >= 1) {
+        tier = BiomePoolTier.SUPER_RARE; // 5/512
+      } else {
+        tier = BiomePoolTier.ULTRA_RARE; // 1/512
+      }
+    }
     console.log(BiomePoolTier[tier]);
-    console.log(this.pokemonPool);
-    console.log(this.pokemonPool[tier]);
     while (!this.pokemonPool[tier].length) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
@@ -153,9 +164,30 @@ export class Arena {
       && this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType, this.scene.offsetGym);
     console.log(isBoss, this.trainerPool)
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
-    let tier = !isBoss
-      ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+    let tier = null;
+    if (isBoss) {
+      if (tierValue >= 20) {
+        tier = BiomePoolTier.BOSS;             // 44/64
+      } else if (tierValue >= 6) {
+        tier = BiomePoolTier.BOSS_RARE;        // 14/64
+      } else if (tierValue >= 1) {
+        tier = BiomePoolTier.BOSS_SUPER_RARE;  // 5/64
+      } else {
+        tier =  BiomePoolTier.BOSS_ULTRA_RARE; // 1/64
+      }
+    } else {
+      if (tierValue >= 156) {
+        tier = BiomePoolTier.COMMON;     // 356/512 
+      } else if (tierValue >= 32) {
+        tier = BiomePoolTier.UNCOMMON;   // 124/512
+      } else if (tierValue >= 6) {
+        tier = BiomePoolTier.RARE;       // 26/512
+      } else if (tierValue >= 1) {
+        tier = BiomePoolTier.SUPER_RARE; // 5/512
+      } else {
+        tier = BiomePoolTier.ULTRA_RARE; // 1/512
+      }
+    }
     console.log(BiomePoolTier[tier]);
     while (tier && !this.trainerPool[tier].length) {
       console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
