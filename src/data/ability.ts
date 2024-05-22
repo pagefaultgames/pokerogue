@@ -2354,16 +2354,17 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     }
 
     const randomIdx = Utils.randSeedInt(berriesEaten.length);
-    const chosenBerry = new BerryModifierType(berriesEaten[randomIdx]);
+    const chosenBerryType = berriesEaten[randomIdx]
+    const chosenBerry = new BerryModifierType(chosenBerryType);
     berriesEaten.splice(randomIdx) // Remove berry from memory
 
     const berryModifier = pokemon.scene.findModifier(
-      (m) => m instanceof BerryModifier && m.berryType === berriesEaten[randomIdx],
+      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType,
       pokemon.isPlayer()
     ) as BerryModifier | undefined;
 
     if (!berryModifier) {
-      pokemon.scene.addModifier(new BerryModifier(chosenBerry, pokemon.id, berriesEaten[randomIdx], 1));
+      pokemon.scene.addModifier(new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1));
     } else {
       berryModifier.stackCount++;
     }
