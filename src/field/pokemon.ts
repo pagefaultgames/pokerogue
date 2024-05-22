@@ -3459,6 +3459,8 @@ export class PokemonMove {
   public moveId: Moves;
   public ppUsed: integer;
   public ppUp: integer;
+  /** Tracks if a move has ever been used before */
+  public used: boolean;
   public virtual: boolean;
 
   constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
@@ -3483,6 +3485,9 @@ export class PokemonMove {
    * @param {number} count Amount of PP to use
    */
   usePp(count: number = 1) {
+    if (count > 0)
+      this.used = true; // If PP has been used, the move has been used
+    
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 
