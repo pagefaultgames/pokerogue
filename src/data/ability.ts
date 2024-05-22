@@ -2929,7 +2929,7 @@ export class FriendGuardAbAttr extends AuraAbAttr {
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     this.targetFunc(pokemon).forEach(
-      target => target.addTag(BattlerTagType.FRIEND_GUARD, 0, undefined, pokemon.id)
+      target => target?.addTag(BattlerTagType.FRIEND_GUARD, 0, undefined, pokemon.id)
     );
 
     return true;
