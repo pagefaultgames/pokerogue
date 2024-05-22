@@ -4,41 +4,41 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  * The weather namespace holds text displayed when weather is active during a battle
  */
 export const weather: SimpleTranslationEntries = {
-    "sunnyStartMessage": "Die Sonne hellt auf!",
-    "sunnyLapseMessage": "Die Sonne blendet.",
-    "sunnyClearMessage": "Die Sonne schwächt ab.",
+    "sunnyStartMessage": "Die Sonnenlicht wird stärker!",
+    "sunnyLapseMessage": "Die Sonnenlicht ist stark.",
+    "sunnyClearMessage": "Die Sonnenlicht verliert wieder an Intensität.",
 
     "rainStartMessage": "Es fängt an zu regnen!",
-    "rainLapseMessage": "Es regnet weiterhin.",
-    "rainClearMessage": "Es hört auf zu regnen.",
+    "rainLapseMessage": "Es regnet weiter.",
+    "rainClearMessage": "Der Regen lässt nach.",
 
-    "sandstormStartMessage": "Ein Sandsturm braut sich zusammen!",
+    "sandstormStartMessage": "Ein Sandsturm kommt auf!",
     "sandstormLapseMessage": "Der Sandsturm tobt.",
-    "sandstormClearMessage": "Der Sandsturm lässt nach.",
-    "sandstormDamageMessage": "{{pokemonPrefix}}{{pokemonName}} ist vom\nSandsturm beeinträchtigt!",
+    "sandstormClearMessage": "Der Sandsturm legt sich.",
+    "sandstormDamageMessage": " Der Sandsturm fügt {{pokemonPrefix}}{{pokemonName}} Schaden zu!",
 
     "hailStartMessage": "Es fängt an zu hageln!",
-    "hailLapseMessage": "Es hagelt weiterhin.",
-    "hailClearMessage": "Es hört auf zu hageln.",
-    "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} ist vom\nHagel beeinträchtigt!",
+    "hailLapseMessage": "Der Hagelsturm tobt.",
+    "hailClearMessage": "Der Hagelsturm legt sich.",
+    "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} wird von Hagelkörnern getroffen!",
 
     "snowStartMessage": "Es fängt an zu schneien!",
-    "snowLapseMessage": "Es schneit weiterhin.",
-    "snowClearMessage": "Es hört auf zu schneien.",
+    "snowLapseMessage": "Der Schneesturm tobt.",
+    "snowClearMessage": "Der Schneesturm legt sich.",
 
-    "fogStartMessage": "Es fängt an zu nebeln!",
-    "fogLapseMessage": "Es nebelt weiterhin.",
-    "fogClearMessage": "Es hört auf zu nebeln.",
+    "fogStartMessage": "Am Boden breitet sich dichter Nebel aus!",
+    "fogLapseMessage": "Der Nebel bleibt dicht.",
+    "fogClearMessage": "Der Nebel lichtet sich.",
 
-    "heavyRainStartMessage": "Ein Starkregen beginnt!",
-    "heavyRainLapseMessage": "Der Starkregen hält an.",
-    "heavyRainClearMessage": "Der Starkregen lässt nach.",
+    "heavyRainStartMessage": "Es fängt an, in Strömen zu regnen!",
+    "heavyRainLapseMessage": "Der strömende Regen hält an.",
+    "heavyRainClearMessage": "Der strömende Regen lässt nach.",
     
-    "harshSunStartMessage": "Das Sonnenlicht wird wärmer!",
-    "harshSunLapseMessage": "Das Sonnenlicht brennt.",
-    "harshSunClearMessage": "Das Sonnenlicht schwächt ab.",
+    "harshSunStartMessage": "Das Sonnenlicht wird sehr viel stärker!",
+    "harshSunLapseMessage": "Das Sonnenlicht ist sehr stark.",
+    "harshSunClearMessage": "Das Sonnenlicht verliert an Intensität.",
 
-    "strongWindsStartMessage": "Ein starker Wind zieht auf!",
-    "strongWindsLapseMessage": "Der starke Wind tobt.",
-    "strongWindsClearMessage": "Der starke Wind legt sich."
+    "strongWindsStartMessage": "Alle Flug-Pokémon werden von rätselhaften Luftströmungen geschützt!",
+    "strongWindsLapseMessage": "Die rätselhafte Luftströmung hält an.",
+    "strongWindsClearMessage": "Die rätselhafte Luftströmung hat sich wieder geleget.",
 }

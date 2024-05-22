@@ -1013,6 +1013,7 @@ export default class BattleScene extends SceneBase {
 			case Species.FURFROU:
 			case Species.ORICORIO:
 			case Species.MAGEARNA:
+			case Species.ZARUDE:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
@@ -1198,7 +1199,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	updateMoneyText(): void {
-		this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
+		this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
 		this.moneyText.setVisible(true);
 	}
 
