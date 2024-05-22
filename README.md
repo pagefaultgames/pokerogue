@@ -16,6 +16,15 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
     - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
 2. Run `npm run start:dev` to locally run the project in `localhost:8000`
 
+## Setting Up Git Hooks
+
+After cloning the repository, run the following command to set up the pre-commit hook:
+
+```sh
+./setup-hooks.sh
+```
+
+This will run npx eslint --fix XXX where XXX is each file in your commit
 ### ❔ FAQ 
 
 **How do I test a new _______?**
