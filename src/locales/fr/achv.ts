@@ -57,7 +57,7 @@ export const achv: AchievementTranslationEntries = {
     },
 
     "LevelAchv": {
-        description: "Monter un Pokémon un N.{{level}}",
+        description: "Monter un Pokémon au N.{{level}}",
     },
     "LV_100": {
         name: "Et c’est pas fini !",
