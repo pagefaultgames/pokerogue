@@ -3609,8 +3609,7 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.CHEEK_POUCH, 6)
-      .attr(HealFromBerryUseAbAttr, 1/3)
-      .partial(),
+      .attr(HealFromBerryUseAbAttr, 1/3),
     new Ability(Abilities.PROTEAN, 6)
       .unimplemented(),
     new Ability(Abilities.FUR_COAT, 6)
