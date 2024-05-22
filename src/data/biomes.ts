@@ -48,7 +48,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 4 ] ],
   [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
-  [Biome.CAVE]: [ Biome.BADLANDS, Biome.BEACH ],
+  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE ],
   [Biome.DESERT]: Biome.RUINS,
   [Biome.ICE_CAVE]: Biome.SNOWY_FOREST,
   [Biome.MEADOW]: [ Biome.PLAINS, [ Biome.FAIRY_CAVE, 2 ] ],
@@ -1647,7 +1647,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.GRASS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.STUDENT ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.SCHOOL_KID ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -7270,7 +7270,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.STRIKER, [] ],
-    [ TrainerType.STUDENT, [
+    [ TrainerType.SCHOOL_KID, [
         [ Biome.GRASS, BiomePoolTier.COMMON ]
       ] 
     ],

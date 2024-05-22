@@ -9,6 +9,7 @@ import { LearnMovePhase } from "./phases";
 import { cos, sin } from "./field/anims";
 import { PlayerPokemon } from "./field/pokemon";
 import { getTypeRgb } from "./data/type";
+import i18next from "i18next";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
@@ -115,7 +116,7 @@ export class EvolutionPhase extends Phase {
     const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
     const preName = this.pokemon.name;
     
-    this.scene.ui.showText(`What?\n${preName} is evolving!`, null, () => {
+    this.scene.ui.showText(i18next.t('menu:evolving', { pokemonName: preName }), null, () => {
       this.pokemon.cry();
 
       this.pokemon.getPossibleEvolution(this.evolution).then(evolvedPokemon => {
@@ -187,8 +188,8 @@ export class EvolutionPhase extends Phase {
 
                           this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
-                          this.scene.ui.showText(`${preName} stopped evolving.`, null, () => {
-                            this.scene.ui.showText(`Would you like to pause evolutions for ${preName}?\nEvolutions can be re-enabled from the party screen.`, null, () => {
+                          this.scene.ui.showText(i18next.t('menu:stoppedEvolving', { pokemonName: preName }), null, () => {
+                            this.scene.ui.showText(i18next.t('menu:pauseEvolutionsQuestion', { pokemonName: preName }), null, () => {
                               const end = () => {
                                 this.scene.ui.showText(null, 0);
                                 this.scene.playBgm();
@@ -198,7 +199,7 @@ export class EvolutionPhase extends Phase {
                               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                                 this.scene.ui.revertMode();
                                 this.pokemon.pauseEvolutions = true;
-                                this.scene.ui.showText(`Evolutions have been paused for ${preName}.`, null, end, 3000);
+                                this.scene.ui.showText(i18next.t('menu:evolutionsPaused', { pokemonName: preName }), null, end, 3000);
                               }, () => {
                                 this.scene.ui.revertMode();
                                 this.scene.time.delayedCall(3000, end);
@@ -249,7 +250,7 @@ export class EvolutionPhase extends Phase {
                                             this.scene.playSoundWithoutBgm('evolution_fanfare');
                                             
                                             evolvedPokemon.destroy();
-                                            this.scene.ui.showText(`Congratulations!\nYour ${preName} evolved into ${this.pokemon.name}!`, null, () => this.end(), null, true, Utils.fixedInt(4000));
+                                            this.scene.ui.showText(i18next.t('menu:evolutionDone', { pokemonName: preName, evolvedPokemonName: this.pokemon.name }), null, () => this.end(), null, true, Utils.fixedInt(4000));
                                             this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
                                           });
                                         });

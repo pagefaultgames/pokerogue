@@ -5,7 +5,7 @@ import { Species } from "./data/enums/species";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
-import { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from './overrides';
+import * as Overrides from './overrides';
 
 export enum GameModes {
   CLASSIC,
@@ -45,9 +45,15 @@ export class GameMode implements GameModeConfig {
     Object.assign(this, config);
   }
 
+  /**
+   * @returns either: 
+   * - override from overrides.ts
+   * - 20 for Daily Runs
+   * - 5 for all other modes
+   */
   getStartingLevel(): integer {
-    if (STARTING_LEVEL_OVERRIDE)
-      return STARTING_LEVEL_OVERRIDE;
+    if (Overrides.STARTING_LEVEL_OVERRIDE)
+      return Overrides.STARTING_LEVEL_OVERRIDE;
     switch (this.modeId) {
       case GameModes.DAILY:
         return 20;
@@ -56,16 +62,28 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * @returns either:
+   * - override from overrides.ts
+   * - 1000
+   */
   getStartingMoney(): integer {
-    return STARTING_MONEY_OVERRIDE || 1000;
+    return Overrides.STARTING_MONEY_OVERRIDE || 1000;
   }
 
+  /**
+   * @param scene current BattleScene
+   * @returns either:
+   * - random biome for Daily mode
+   * - override from overrides.ts
+   * - Town
+   */
   getStartingBiome(scene: BattleScene): Biome {
     switch (this.modeId) {
       case GameModes.DAILY:
         return scene.generateRandomBiome(this.getWaveForDifficulty(1));
       default:
-        return STARTING_BIOME_OVERRIDE || Biome.TOWN;
+        return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
   }
 
@@ -129,8 +147,14 @@ export class GameMode implements GameModeConfig {
     return null;
   }
 
-  isWaveFinal(waveIndex: integer): boolean {
-    switch (this.modeId) {
+  /**
+   * Checks if wave provided is the final for current or specified game mode
+   * @param waveIndex 
+   * @param modeId game mode
+   * @returns if the current wave is final for classic or daily OR a minor boss in endless
+   */
+  isWaveFinal(waveIndex: integer, modeId: GameModes = this.modeId): boolean {
+    switch (modeId) {
       case GameModes.CLASSIC:
         return waveIndex === 200;
       case GameModes.ENDLESS:
@@ -140,6 +164,45 @@ export class GameMode implements GameModeConfig {
         return waveIndex === 50;
     }
   }
+
+    /**
+     * Every 10 waves is a boss battle
+     * @returns true if waveIndex is a multiple of 10
+     */
+    isBoss(waveIndex: integer): boolean {
+      return waveIndex % 10 === 0;
+    }
+
+    /**
+     * Every 50 waves of an Endless mode is a boss
+     * At this time it is paradox pokemon
+     * @returns true if waveIndex is a multiple of 50 in Endless
+     */
+    isEndlessBoss(waveIndex: integer): boolean {
+      return waveIndex % 50 &&
+        (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
+    }
+
+    /**
+     * Every 250 waves of an Endless mode is a minor boss
+     * At this time it is Eternatus
+     * @returns true if waveIndex is a multiple of 250 in Endless
+     */
+    isEndlessMinorBoss(waveIndex: integer): boolean {
+      return waveIndex % 250 === 0 && 
+        (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
+    }
+
+    /**
+     * Every 1000 waves of an Endless mode is a major boss
+     * At this time it is Eternamax Eternatus
+     * @returns true if waveIndex is a multiple of 1000 in Endless
+     */
+    isEndlessMajorBoss(waveIndex: integer): boolean {
+      return waveIndex % 1000 === 0 && 
+        (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
+    }
+
 
   getClearScoreBonus(): integer {
     switch (this.modeId) {
