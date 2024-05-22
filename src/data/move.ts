@@ -7270,7 +7270,8 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(Moves.LAST_RESPECTS, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => {
-          return user.scene.getParty().reduce((acc, pokemonInParty) => acc + (pokemonInParty.status?.effect == StatusEffect.FAINT ? 1 : 0),
+          const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+          return party.reduce((acc, pokemonInParty) => acc + (pokemonInParty.status?.effect == StatusEffect.FAINT ? 1 : 0),
           1,)
         })
       .makesContact(false),
