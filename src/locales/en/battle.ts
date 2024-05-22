@@ -37,7 +37,7 @@ export const battle: SimpleTranslationEntries = {
   "levelCapUp": "The level cap\nhas increased to {{levelCap}}!",
   "moveNotImplemented": "{{moveName}} is not yet implemented and cannot be selected.",
   "moveNoPP": "There's no PP left for\nthis move!",
-  "moveDisabled": "{{moveName}} is disabled!",
+  "moveDisabled": "{{pokemonName}}'s {{moveName}} is disabled!",
   "noPokeballForce": "An unseen force\nprevents using Poké Balls.",
   "noPokeballTrainer": "You can't catch\nanother trainer's Pokémon!",
   "noPokeballMulti": "You can only throw a Poké Ball\nwhen there is one Pokémon remaining!",

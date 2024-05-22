@@ -881,15 +881,8 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
   
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (!attacker.summonData.disabledMove) {
-      if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
-        this.attacker = attacker;
-        this.move = move;
-
-        attacker.summonData.disabledMove = move.moveId;
-        attacker.summonData.disabledTurns = 4;
-        return true;
-      }
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
+      return attacker.addTag(BattlerTagType.DISABLE);
     }
     return false;
   }
@@ -3452,6 +3445,7 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, 6)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DISABLE)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.TORMENT)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.TAUNT)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.ENCORE)

@@ -15,6 +15,7 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
+import i18next from "i18next";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -417,6 +418,31 @@ export class FrenzyTag extends BattlerTag {
 export class ChargingTag extends BattlerTag {
   constructor(sourceMove: Moves, sourceId: integer) {
     super(BattlerTagType.CHARGING, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
+  }
+}
+
+export class DisableTag extends BattlerTag {
+  public disabledMove: Moves = undefined;
+
+  constructor(sourceId) {
+    super(BattlerTagType.DISABLE, BattlerTagLapseType.TURN_END, 4, sourceId);
+  }
+
+  canAdd(pokemon: Pokemon) {
+      return pokemon.summonData.prevMove !== undefined;
+  }
+    
+  onAdd(pokemon: Pokemon) {
+    this.disabledMove = pokemon.summonData.prevMove;
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s ' + allMoves[this.disabledMove].name + ' was disabled!'));
+  }
+    
+  onRemove(pokemon: Pokemon) {
+    pokemon.scene.queueMessage(i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[this.disabledMove].name }));
+  }
+  
+  getDescriptor(): string {
+    return 'disable';
   }
 }
 
@@ -1363,6 +1389,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new FrenzyTag(sourceMove, sourceId);
     case BattlerTagType.CHARGING:
       return new ChargingTag(sourceMove, sourceId);
+    case BattlerTagType.DISABLE:
+      return new DisableTag(sourceId);
     case BattlerTagType.ENCORE:
       return new EncoreTag(sourceId);
     case BattlerTagType.TORMENT:

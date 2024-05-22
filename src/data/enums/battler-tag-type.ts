@@ -10,6 +10,7 @@ export enum BattlerTagType {
   NIGHTMARE = "NIGHTMARE",
   FRENZY = "FRENZY",
   CHARGING = "CHARGING",
+  DISABLE = "DISABLE",
   ENCORE = "ENCORE",
   TORMENT = "TORMENT",
   TAUNT = "TAUNT",
