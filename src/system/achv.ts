@@ -51,9 +51,9 @@ export class Achv {
   }
 
   getTier(): AchvTier {
-    if (this.score >= 150)
-      return AchvTier.MASTER;
     if (this.score >= 100)
+      return AchvTier.MASTER;
+    if (this.score >= 75)
       return AchvTier.ROGUE;
     if (this.score >= 50)
       return AchvTier.ULTRA;
@@ -70,6 +70,16 @@ export class MoneyAchv extends Achv {
     super(name, `Accumulate a total of ₽${moneyAmount.toLocaleString('en-US')}`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.money >= this.moneyAmount);
 
     this.moneyAmount = moneyAmount;
+  }
+}
+
+export class RibbonAchv extends Achv {
+  private ribbonAmount: integer;
+
+  constructor(name: string, ribbonAmount: integer, iconImage: string, score: integer) {
+    super(name, `Accumulate a total of ${ribbonAmount.toLocaleString('en-US')} Ribbons`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
+
+    this.ribbonAmount = ribbonAmount;
   }
 }
 
@@ -125,6 +135,11 @@ export const achvs = {
   LV_100: new LevelAchv('But Wait, There\'s More!', 100, 'rare_candy', 25).setSecret(),
   LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 50).setSecret(true),
   LV_1000: new LevelAchv('To Go Even Further Beyond', 1000, 'candy_jar', 100).setSecret(true),
+  _10_RIBBONS: new RibbonAchv('Pokémon League Champion', 10, 'bronze_ribbon', 10),
+  _25_RIBBONS: new RibbonAchv('Great League Champion', 25, 'great_ribbon', 25).setSecret(true),
+  _50_RIBBONS: new RibbonAchv('Ultra League Champion', 50, 'ultra_ribbon', 50).setSecret(true),
+  _75_RIBBONS: new RibbonAchv('Rogue League Champion', 75, 'rogue_ribbon', 75).setSecret(true),
+  _100_RIBBONS: new RibbonAchv('Master League Champion', 100, 'master_ribbon', 100).setSecret(true),
   TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 20),
   MAX_FRIENDSHIP: new Achv('Friendmaxxing', 'Reach max friendship on a Pokémon', 'soothe_bell', 25),
   MEGA_EVOLVE: new Achv('Megamorph', 'Mega evolve a Pokémon', 'mega_bracelet', 50),
