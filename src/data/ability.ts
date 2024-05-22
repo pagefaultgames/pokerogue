@@ -1147,7 +1147,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     return new Promise<boolean>(resolve => {
       if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, defender, move.getMove()))) {
         const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
-        if (heldItems.length) {
+        if (heldItems.length && !Utils.randSeedInt(3)) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
             if (success)
@@ -1235,7 +1235,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     return new Promise<boolean>(resolve => {
       if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move.getMove()))) {
         const heldItems = this.getTargetHeldItems(attacker).filter(i => i.getTransferrable(false));
-        if (heldItems.length) {
+        if (heldItems.length && Utils.randSeedInt(2)) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
             if (success)
