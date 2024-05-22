@@ -83,12 +83,12 @@ export interface PokeballCounts {
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
 export class MoveUsedEvent extends Event {
-	public user: Pokemon;
+	public userIndex: number;
 	public move: Move;
-	constructor(user: Pokemon, move: Move) {
+	constructor(userIndex: number, move: Move) {
 		super('onMoveUsed');
 
-		this.user = user;
+		this.userIndex = userIndex;
 		this.move = move;
 	}
 }
