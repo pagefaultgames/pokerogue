@@ -15,7 +15,7 @@ import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
-import { allMoves } from "./data/move";
+import Move, { allMoves } from "./data/move";
 import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
@@ -82,6 +82,16 @@ export interface PokeballCounts {
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
+export class MoveUsedEvent extends Event {
+	public userIndex: number;
+	public move: Move;
+	constructor(userIndex: number, move: Move) {
+		super('onMoveUsed');
+
+		this.userIndex = userIndex;
+		this.move = move;
+	}
+}
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
 	public inputController: InputsController;
@@ -189,6 +199,8 @@ export default class BattleScene extends SceneBase {
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
 	public rngOffset: integer = 0;
+
+	public readonly eventTarget: EventTarget = new EventTarget();
 
 	constructor() {
 		super('battle');
