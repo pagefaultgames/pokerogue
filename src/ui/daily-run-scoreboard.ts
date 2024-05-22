@@ -30,11 +30,32 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   private pageCount: integer;
   private page: integer;
   private category: ScoreboardCategory;
+  
+  private _isUpdating: boolean;
 
   constructor(scene: BattleScene, x: number, y: number) {
     super(scene, x, y);
 
+    this._isUpdating = false;
     this.setup();
+  }
+
+  /**
+   * Sets the updating state and updates button states accordingly.
+   * If value is true (updating), disables the buttons; if false, enables the buttons.
+   * @param {boolean} value - The new updating state.
+   */
+  set isUpdating(value) {
+    this._isUpdating = value;
+    this.setButtonsState(!value);
+  }
+
+  /**
+   * Gets the current updating state.
+   * @returns {boolean} - The current updating state.
+   */
+  get isUpdating() {
+    return this._isUpdating;
   }
 
   setup() {
@@ -140,7 +161,24 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     });
   }
 
+  /**
+   * Updates the scoreboard rankings based on the selected category and page.
+   * 
+   * If the update process is already ongoing, the method exits early. Otherwise, it begins the update process by clearing
+   * the current rankings and showing a loading label. If the category changes, the page is reset to 1.
+   * 
+   * The method fetches the total page count if necessary, followed by fetching the rankings for the specified category
+   * and page. It updates the UI with the fetched rankings or shows an appropriate message if no rankings are found.
+   * 
+   * @param {ScoreboardCategory} [category=this.category] - The category to fetch rankings for. Defaults to the current category.
+   * @param {number} [page=this.page] - The page number to fetch. Defaults to the current page.
+  */
   update(category: ScoreboardCategory = this.category, page: integer = this.page) {
+    if (this.isUpdating) {
+      return;
+    }
+
+    this.isUpdating = true;
     this.rankingsContainer.removeAll(true);
 
     this.loadingLabel.setText(i18next.t('menu:loading'));
@@ -150,7 +188,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       this.page = page = 1;
 
     Utils.executeIf(category !== this.category || this.pageCount === undefined,
-      () =>  Utils.apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
+      () => Utils.apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
     ).then(() => {
       Utils.apiFetch(`daily/rankings?category=${category}&page=${page}`)
         .then(response => response.json())
@@ -158,16 +196,40 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
           this.page = page;
           this.category = category;
           this.titleLabel.setText(`${i18next.t(`menu:${ScoreboardCategory[category].toLowerCase()}Rankings`)}`);
-          this.prevPageButton.setAlpha(page > 1 ? 1 : 0.5);
-          this.nextPageButton.setAlpha(page < this.pageCount ? 1 : 0.5);
           this.pageNumberLabel.setText(page.toString());
           if (jsonResponse) {
             this.loadingLabel.setVisible(false);
             this.updateRankings(jsonResponse);
           } else
             this.loadingLabel.setText(i18next.t('menu:noRankings'));
+        }).finally(() => {
+          this.isUpdating = false;
         });
-    }).catch(err => { console.error("Failed to load daily rankings:\n", err) });
+    }).catch(err => { 
+      console.error("Failed to load daily rankings:\n", err)
+    })
+  }
+
+  /**
+   * Sets the state of the navigation buttons.
+   * @param {boolean} [enabled=true] - Whether the buttons should be enabled or disabled.
+   */
+  setButtonsState(enabled: boolean = true) {
+    const buttons = [
+      { button: this.prevPageButton, alphaValue: enabled ? (this.page > 1 ? 1 : 0.5) : 0.5 },
+      { button: this.nextPageButton, alphaValue: enabled ? (this.page < this.pageCount ? 1 : 0.5) : 0.5 },
+      { button: this.nextCategoryButton, alphaValue: enabled ? 1 : 0.5 },
+      { button: this.prevCategoryButton, alphaValue: enabled ? 1 : 0.5 }
+    ];
+
+    buttons.forEach(({ button, alphaValue }) => {
+      if (enabled) {
+        button.setInteractive();
+      } else {
+        button.disableInteractive();
+      }
+      button.setAlpha(alphaValue);
+    });
   }
 }
 

@@ -96,29 +96,53 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return this.config.getSpriteKey(this.variant === TrainerVariant.FEMALE || forceFemale);
   }
 
+  /**
+   * Returns the name of the trainer based on the provided trainer slot and the option to include a title.
+   * @param {TrainerSlot} trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
+   * @param {boolean} includeTitle - Whether to include the title in the returned name. Defaults to false.
+   * @returns {string} - The formatted name of the trainer.
+   **/
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle: boolean = false): string {
+    // Get the base title based on the trainer slot and variant.
     let name = this.config.getTitle(trainerSlot, this.variant);
+
+    // Determine the title to include based on the configuration and includeTitle flag.
     let title = includeTitle && this.config.title ? this.config.title : null;
 
-
+    // If the trainer has a name (not null or undefined).
     if (this.name) {
-      if (includeTitle)
-
-      // Check if i18n is initialized
+      // If the title should be included.
+      if (includeTitle) {
+        // Check if the internationalization (i18n) system is initialized.
         if (!getIsInitialized()) {
-          initI18n()
+          // Initialize the i18n system if it is not already initialized.
+          initI18n();
         }
+        // Get the localized trainer class name from the i18n file and set it as the title.
+        // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
         title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, '_')}`);
+      }
+
+      // If no specific trainer slot is set.
       if (!trainerSlot) {
+        // Use the trainer's name.
         name = this.name;
-        if (this.partnerName)
+        // If there is a partner name, concatenate it with the trainer's name using "&".
+        if (this.partnerName) {
           name = `${name} & ${this.partnerName}`;
-      } else
+        }
+      } else {
+        // Assign the name based on the trainer slot:
+        // Use 'this.name' if 'trainerSlot' is TRAINER.
+        // Otherwise, use 'this.partnerName' if it exists, or 'this.name' if it doesn't.
         name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
+      }
     }
 
+    // Return the formatted name, including the title if it is set.
     return title ? `${title} ${name}` : name;
   }
+
 
   isDouble(): boolean {
     return this.config.doubleOnly || this.variant === TrainerVariant.DOUBLE;
@@ -370,6 +394,34 @@ export default class Trainer extends Phaser.GameObjects.Container {
     this.getTintSprites().map((tintSprite, i) => tintSprite.setTexture(this.getKey(!!i)).setFrame(0));
   }
 
+  /**
+   * Attempts to animate a given set of {@linkcode Phaser.GameObjects.Sprite}
+   * @see {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
+   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
+   * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @returns true if the sprite was able to be animated
+   */
+  tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, animConfig: Phaser.Types.Animations.PlayAnimationConfig): boolean {
+    // Show an error in the console if there isn't a texture loaded
+    if (sprite.texture.key === '__MISSING') {
+      console.error(`No texture found for '${animConfig.key}'!`);
+
+      return false;
+    }
+    // Don't try to play an animation when there isn't one
+    if (sprite.texture.frameTotal <= 1) {
+      console.warn(`No animation found for '${animConfig.key}'. Is this intentional?`);
+
+      return false;
+    }
+
+    sprite.play(animConfig);
+    tintSprite.play(animConfig);
+
+    return true;      
+  }
+
   playAnim(): void {
     const trainerAnimConfig = {
       key: this.getKey(),
@@ -378,16 +430,18 @@ export default class Trainer extends Phaser.GameObjects.Container {
     };
     const sprites = this.getSprites();
     const tintSprites = this.getTintSprites();
-    sprites[0].play(trainerAnimConfig);
-    tintSprites[0].play(trainerAnimConfig);
+
+    this.tryPlaySprite(sprites[0], tintSprites[0], trainerAnimConfig);
+
+    // Queue an animation for the second trainer if this is a double battle against two separate trainers
     if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       const partnerTrainerAnimConfig = {
         key: this.getKey(true),
         repeat: 0,
         startFrame: 0
       };
-      sprites[1].play(partnerTrainerAnimConfig);
-      tintSprites[1].play(partnerTrainerAnimConfig);
+
+      this.tryPlaySprite(sprites[1], tintSprites[1], partnerTrainerAnimConfig);
     }
   }
 
