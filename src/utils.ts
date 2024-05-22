@@ -17,16 +17,15 @@ export function randomString(length: integer, seeded: boolean = false) {
 }
 
 export function shiftCharCodes(str: string, shiftCount: integer) {
-  if (!shiftCount) {
+  if (!shiftCount)
     shiftCount = 0;
-  }
   
   let newStr = '';
 
   for (let i = 0; i < str.length; i++) {
-    const charCode = str.charCodeAt(i);
-    const newCharCode = charCode + shiftCount;
-    newStr += String.fromCharCode(newCharCode);
+      let charCode = str.charCodeAt(i);
+      let newCharCode = charCode + shiftCount;
+      newStr += String.fromCharCode(newCharCode);
   }
 
   return newStr;
@@ -37,9 +36,8 @@ export function clampInt(value: integer, min: integer, max: integer): integer {
 }
 
 export function randGauss(stdev: number, mean: number = 0): number {
-  if (!stdev) {
+  if (!stdev)
     return 0;
-  }
   const u = 1 - Math.random();
   const v = Math.random();
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
@@ -47,9 +45,8 @@ export function randGauss(stdev: number, mean: number = 0): number {
 }
 
 export function randSeedGauss(stdev: number, mean: number = 0): number {
-  if (!stdev) {
+  if (!stdev)
     return 0;
-  }
   const u = 1 - Phaser.Math.RND.realInRange(0, 1);
   const v = Phaser.Math.RND.realInRange(0, 1);
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
@@ -57,13 +54,11 @@ export function randSeedGauss(stdev: number, mean: number = 0): number {
 }
 
 export function padInt(value: integer, length: integer, padWith?: string): string {
-  if (!padWith) {
+  if (!padWith)
     padWith = '0';
-  }
   let valueStr = value.toString();
-  while (valueStr.length < length) {
+  while (valueStr.length < length)
     valueStr = `${padWith}${valueStr}`;
-  }
   return valueStr;
 }
 
@@ -73,16 +68,14 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
 * @param min The starting number
 */
 export function randInt(range: integer, min: integer = 0): integer {
-  if (range === 1) {
+  if (range === 1)
     return min;
-  }
   return Math.floor(Math.random() * range) + min;
 }
 
 export function randSeedInt(range: integer, min: integer = 0): integer {
-  if (range <= 1) {
+  if (range <= 1)
     return min;
-  }
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
 }
 
@@ -114,12 +107,10 @@ export function randSeedWeightedItem<T>(items: T[]): T {
 }
 
 export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = 'Sine.easeIn'): T {
-  if (!items.length) {
+  if (!items.length)
     return null;
-  }
-  if (items.length === 1) {
+  if (items.length === 1)
     return items[0];
-  }
   const value = Phaser.Math.RND.realInRange(0, 1);
   const easedValue = Phaser.Tweens.Builders.GetEaseFunction(easingFunction)(value);
   return items[Math.floor(easedValue * items.length)];
@@ -146,8 +137,8 @@ export function getPlayTimeString(totalSeconds: integer): string {
 }
 
 export function binToDec(input: string): integer {
-  const place: integer[] = []; 
-  const binary: string[] = [];
+  let place: integer[] = []; 
+  let binary: string[] = [];
   
   let decimalNum = 0;
   
@@ -183,29 +174,33 @@ export function getIvsFromId(id: integer): integer[] {
 }
 
 export function formatLargeNumber(count: integer, threshold: integer): string {
-  if (count < threshold) {
+  if (count < threshold)
     return count.toString();
-  }
-  const ret = count.toString();
+  let ret = count.toString();
   let suffix = '';
   switch (Math.ceil(ret.length / 3) - 1) {
-  case 1:
-    suffix = 'K';
-    break;
-  case 2:
-    suffix = 'M';
-    break;
-  case 3:
-    suffix = 'B';
-    break;
-  default:
-    return '?';
+    case 1:
+      suffix = 'K';
+      break;
+    case 2:
+      suffix = 'M';
+      break;
+    case 3:
+      suffix = 'B';
+      break;
+    case 4:
+      suffix = 'T';
+      break;
+    case 5:
+      suffix = 'q';
+      break;
+    default:
+      return '?';
   }
   const digits = ((ret.length + 2) % 3) + 1;
   let decimalNumber = ret.slice(digits, digits + 2);
-  while (decimalNumber.endsWith('0')) {
-    decimalNumber = decimalNumber.slice(0, -1);
-  }
+  while (decimalNumber.endsWith('0'))
+      decimalNumber = decimalNumber.slice(0, -1);
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
 }
 
@@ -241,12 +236,10 @@ export function getCookie(cName: string): string {
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) === ' ') {
+    while (c.charAt(0) === ' ')
       c = c.substring(1);
-    }
-    if (c.indexOf(name) === 0) {
+    if (c.indexOf(name) === 0)
       return c.substring(name.length, c.length);
-    }
   }
   return '';
 }
@@ -256,9 +249,8 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
     const request = {};
     if (authed) {
       const sId = getCookie(sessionIdKey);
-      if (sId) {
+      if (sId)
         request['headers'] = { 'Authorization': sId };
-      }
     }
     fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
@@ -274,9 +266,8 @@ export function apiPost(path: string, data?: any, contentType: string = 'applica
     };
     if (authed) {
       const sId = getCookie(sessionIdKey);
-      if (sId) {
+      if (sId)
         headers['Authorization'] = sId;
-      }
     }
     fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
       .then(response => resolve(response))
@@ -317,9 +308,9 @@ export function fixedInt(value: integer): integer {
 }
 
 export function rgbToHsv(r: integer, g: integer, b: integer) {
-  const v = Math.max(r, g, b);
-  const c = v - Math.min(r, g, b);
-  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
+  let v = Math.max(r, g, b);
+  let c = v - Math.min(r, g, b);
+  let h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
   return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v];
 }
 
@@ -342,10 +333,10 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 export function rgbHexToRgba(hex: string) {
   const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
   return {
-    r: parseInt(color[1], 16),
-    g: parseInt(color[2], 16),
-    b: parseInt(color[3], 16),
-    a: 255
+      r: parseInt(color[1], 16),
+      g: parseInt(color[2], 16),
+      b: parseInt(color[3], 16),
+      a: 255
   };
 }
 
