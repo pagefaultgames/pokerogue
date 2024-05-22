@@ -110,6 +110,7 @@ export class UiInputs {
             case Mode.FIGHT:
             case Mode.BALL:
             case Mode.TARGET_SELECT:
+            case Mode.MODIFIER_SELECT:
             case Mode.SAVE_SLOT:
             case Mode.PARTY:
             case Mode.SUMMARY:
