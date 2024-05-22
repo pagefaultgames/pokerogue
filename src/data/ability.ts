@@ -1356,6 +1356,28 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
     return true;
   }
 }
+/** 
+ * Ignores opponent's evasion stat changes when determining if a move hits or not
+ * @extends AbAttr
+ * @see {@linkcode apply}
+ */
+export class IgnoreOpponentEvasionAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+  /**
+   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * @param pokemon N/A
+   * @param passive N/A
+   * @param cancelled N/A
+   * @param args [0] {@linkcode Utils.IntegerHolder} of BattleStat.EVA
+   * @returns if evasion level was successfully considered as 0
+   */  
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
+    (args[0] as Utils.IntegerHolder).value = 0;
+    return true;
+  }
+}
 
 export class IntimidateImmunityAbAttr extends AbAttr { 
   constructor() {
@@ -2281,6 +2303,34 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
     return false;
   }
 }
+
+
+/**
+ * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep
+ */
+export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
+
+  /**
+   * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
+   * @param {Pokemon} pokemon Pokemon that has this ability 
+   * @param {boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns {boolean} true if any opponents are sleeping
+   */
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    let hadEffect: boolean = false;
+    for(let opp of pokemon.getOpponents()) {
+      if(opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
+        opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
+        pokemon.scene.queueMessage(i18next.t('abilityTriggers:badDreams', {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
+        hadEffect = true;
+      }
+    
+    }
+    return hadEffect;
+  }
+}
+
 
 /** 
  * Grabs the last failed Pokeball used 
@@ -3327,7 +3377,7 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.BAD_DREAMS, 4)
-      .unimplemented(),
+      .attr(PostTurnHurtIfSleepingAbAttr),
     new Ability(Abilities.PICKPOCKET, 5)
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
     new Ability(Abilities.SHEER_FORCE, 5)
@@ -3888,8 +3938,9 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
-      .ignorable() // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
-      .partial(),
+      .attr(ProtectStatAbAttr, BattleStat.ACC)
+      .attr(IgnoreOpponentEvasionAbAttr)
+      .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .attr(PostSummonStatChangeAbAttr, BattleStat.EVA, -1)
       .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),

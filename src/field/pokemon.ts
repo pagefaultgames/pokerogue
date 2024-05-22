@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -1131,11 +1131,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
-      if (!this.hasTrainer()) {
-        if (new Date() < new Date(2024, 4, 21, 20))
-          shinyThreshold.value *= 3;
+      if (!this.hasTrainer())
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-      }
     } else
       shinyThreshold.value = thresholdOverride;
 
@@ -1287,11 +1284,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (this.isBoss()) // Bosses never get self ko moves
       movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttr).length);
+      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttrOnHit).length);
     if (this.hasTrainer()) {
       // Trainers never get OHKO moves
       movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(OneHitKOAttr).length);
       // Half the weight of self KO moves
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttr).length ? 0.5 : 1)]);
+      movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttrOnHit).length ? 0.5 : 1)]);
       // Trainers get a weight bump to stat buffing moves
       movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatChangeAttr).some(a => (a as StatChangeAttr).levels > 1 && (a as StatChangeAttr).selfTarget) ? 1.25 : 1)]);
       // Trainers get a weight decrease to multiturn moves
@@ -1698,18 +1697,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
           console.log('damage', damage.value, move.name, power.value, sourceAtk, targetDef);
 
+          const oneHitKo = result === HitResult.ONE_HIT_KO;
           if (damage.value) {
             if (this.getHpRatio() === 1)
               applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, battlerMove, cancelled, damage);
             else if (!this.isPlayer() && damage.value >= this.hp)
               this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
 
-            const oneHitKo = result === HitResult.ONE_HIT_KO;
-            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
+            /**
+             * We explicitly require to ignore the faint phase here, as we want to show the messages
+             * about the critical hit and the super effective/not very effective messages before the faint phase.
+             */
+            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, true);
             this.turnData.damageTaken += damage.value;
             if (isCritical)
               this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
-            this.scene.setPhaseQueueSplice();
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
               if (damage.value > this.scene.gameData.gameStats.highestDamage)
@@ -1738,10 +1740,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               case HitResult.IMMUNE:
                 this.scene.queueMessage(`${this.name} is unaffected!`);
                 break;
-              case HitResult.ONE_HIT_KO:  
+              case HitResult.ONE_HIT_KO:
                 this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
                 break;
             }
+          }
+
+          if (this.isFainted()) {
+            this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
+            this.resetSummonData();
           }
 
           if (damage)
@@ -1764,7 +1771,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
-  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted())
       return 0;
     const surviveDamage = new Utils.BooleanHolder(false);
@@ -1783,7 +1790,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     damage = Math.min(damage, this.hp);
 
     this.hp = this.hp - damage;
-    if (this.isFainted()) {
+    if (this.isFainted() && !ignoreFaintPhase) {
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
@@ -1791,10 +1798,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return damage;
   }
 
-  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
-    damage = this.damage(damage, ignoreSegments, preventEndure);
+    damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
     return damage;
@@ -3271,7 +3278,7 @@ export class EnemyPokemon extends Pokemon {
     return 0;
   }
 
-  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted())
       return 0;
 
@@ -3307,7 +3314,7 @@ export class EnemyPokemon extends Pokemon {
           damage = Math.min(damage, this.hp - 1);
     }
 
-    let ret = super.damage(damage, ignoreSegments, preventEndure);
+    let ret = super.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
 
     if (this.isBoss()) {
       if (ignoreSegments) {
