@@ -1413,7 +1413,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * 
+   * Apply move to target
    * @param source {@linkcode Pokemon} that is using the move
    * @param battlerMove {@linkcode PokemonMove} that is being used
    * @param firstHit 
