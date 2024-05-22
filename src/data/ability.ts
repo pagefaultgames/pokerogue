@@ -1899,10 +1899,13 @@ export class BlockPoisonToxicDamageAbAttr extends BlockNonDirectDamageAbAttr {
    * @returns Returns true if the damage from Toxic/Poison is blocked
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON)
+    if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON) {
       cancelled.value = true;
-    return true;
+      return true;
+    }
+    return false;
   }
+  
 }
 
 export class BlockOneHitKOAbAttr extends AbAttr {
@@ -2222,12 +2225,17 @@ export class PostTurnPoisonHealAbAttr extends PostTurnAbAttr {
    * @param {any[]} args N/A 
    * @returns Returns true if Poison Heal procs
    */
-  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> { 
     if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON) {
-      pokemon.heal(Math.max(Math.floor((pokemon.getMaxHp() / 8))));
+      if (pokemon.getMaxHp() === pokemon.hp)
+        this.showAbility = false;
+      else
+        this.showAbility = true
+      pokemon.heal(Math.max(Math.floor((pokemon.getMaxHp() / 8)), 1));
       pokemon.updateInfo();
+      return true;
     }
-    return true;
+    return false;
   }
 }
 
@@ -3379,7 +3387,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, 4)
       .attr(PostTurnPoisonHealAbAttr)
-      .attr(BlockPoisonToxicDamageAbAttr),
+      .attr(BlockPoisonToxicDamageAbAttr, false),
     new Ability(Abilities.ADAPTABILITY, 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
