@@ -46,14 +46,14 @@ describe("trainer-config", () => {
       expect(trainerConfig.getTitle(TrainerSlot.TRAINER_PARTNER, TrainerVariant.DOUBLE)).toBe("Laeticia");
     });
 
-    it("returns the trainer type name with the female gender", () => {
+    it("returns the trainer type name with _female appended", () => {
       trainerConfig.hasGenders = true;
-      expect(trainerConfig.getTitle(TrainerSlot.NONE, TrainerVariant.FEMALE)).toBe("Artist♀");
+      expect(trainerConfig.getTitle(TrainerSlot.NONE, TrainerVariant.FEMALE)).toBe("Artist_female");
     });
 
-    it("returns the trainer type name with the male gender", () => {
+    it("returns the trainer type name when gender selected but trainer variant default", () => {
       trainerConfig.hasGenders = true;
-      expect(trainerConfig.getTitle(TrainerSlot.NONE, TrainerVariant.DEFAULT)).toBe("Artist♂");
+      expect(trainerConfig.getTitle(TrainerSlot.NONE, TrainerVariant.DEFAULT)).toBe("Artist");
     });
   });
 });

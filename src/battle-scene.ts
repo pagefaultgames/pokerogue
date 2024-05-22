@@ -4,7 +4,7 @@ import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePh
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { Phase } from './phase';
@@ -48,13 +48,13 @@ import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler'
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
-import { biomeDepths } from './data/biomes';
+import { biomeDepths, getBiomeName } from './data/biomes';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
-import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE, DOUBLE_BATTLE_OVERRIDE } from './overrides';
+import * as Overrides from './overrides';
 import { InputsController } from "./inputs-controller";
 import { UiInputs } from "./ui-inputs";
 
@@ -62,7 +62,7 @@ export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
-export const startingWave = STARTING_WAVE_OVERRIDE || 1;
+export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
 
@@ -83,6 +83,7 @@ export default class BattleScene extends SceneBase {
 	public uiInputs: UiInputs;
 
 	public sessionPlayTime: integer = null;
+	public lastSavePlayTime: integer = null;
 	public masterVolume: number = 0.5;
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
@@ -96,9 +97,21 @@ export default class BattleScene extends SceneBase {
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
 	public expGainsSpeed: integer = 0;
+	/**
+	 * Defines the experience gain display mode.
+	 *
+	 * @remarks
+	 * The `expParty` can have several modes:
+	 * - `0` - Default: The normal experience gain display, nothing changed.
+	 * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
+	 * - `2` - Skip: No level up frame nor message.
+	 *
+	 * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
+	 * @default 0 - Uses the default normal experience gain display.
+	 */
+	public expParty: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
-	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	public abSwapped: boolean = false;
@@ -183,6 +196,7 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
+		this.updateGameInfo();
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
@@ -434,6 +448,8 @@ export default class BattleScene extends SceneBase {
 	initSession(): void {
 		if (this.sessionPlayTime === null)
 			this.sessionPlayTime = 0;
+		if (this.lastSavePlayTime === null)
+			this.lastSavePlayTime = 0;
 
 		if (this.playTimeTimer)
 			this.playTimeTimer.destroy();
@@ -446,6 +462,8 @@ export default class BattleScene extends SceneBase {
 					this.gameData.gameStats.playTime++;
 				if (this.sessionPlayTime !== null)
 					this.sessionPlayTime++;
+				if (this.lastSavePlayTime !== null)
+					this.lastSavePlayTime++;
 			}
 		});
 
@@ -607,9 +625,11 @@ export default class BattleScene extends SceneBase {
 	}
 
 	addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
-		if (OPP_SPECIES_OVERRIDE)
-			species = getPokemonSpecies(OPP_SPECIES_OVERRIDE);
+		if (Overrides.OPP_SPECIES_OVERRIDE)
+			species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+		overrideModifiers(this, false);
+		overrideHeldItems(this, pokemon, false);
 		if (boss && !dataSource) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
@@ -626,7 +646,16 @@ export default class BattleScene extends SceneBase {
 		const container = this.add.container(x, y);
 		
 		const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
-    icon.setFrame(pokemon.getIconId(true));
+    	icon.setFrame(pokemon.getIconId(true));
+		// Temporary fix to show pokemon's default icon if variant icon doesn't exist
+		if (icon.frame.name != pokemon.getIconId(true)) {
+			console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`)
+			const temp = pokemon.shiny;
+			pokemon.shiny = false;
+			icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
+			icon.setFrame(pokemon.getIconId(true));
+			pokemon.shiny = temp;
+		}
 		icon.setOrigin(0.5, 0);
 
 		container.add(icon);
@@ -700,7 +729,7 @@ export default class BattleScene extends SceneBase {
 
 		this.gameMode = gameModes[GameModes.CLASSIC];
 		
-		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
+		this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
 
 		this.disableMenu = false;
@@ -712,6 +741,9 @@ export default class BattleScene extends SceneBase {
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
+		if (Overrides.POKEBALL_OVERRIDE.active) {
+            this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+          }
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
@@ -737,7 +769,9 @@ export default class BattleScene extends SceneBase {
 
 		[ this.luckLabelText, this.luckText ].map(t => t.setVisible(false));
 
-		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN);
+		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
+
+		this.field.setVisible(true);
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
@@ -750,6 +784,8 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
 		this.trainer.setVisible(true);
+		
+		this.updateGameInfo();
 
 		if (reloadI18n) {
 			const localizable: Localizable[] = [
@@ -837,7 +873,7 @@ export default class BattleScene extends SceneBase {
 		} else if (!battleConfig)
 			newDouble = !!double;
 
-		if (DOUBLE_BATTLE_OVERRIDE)
+		if (Overrides.DOUBLE_BATTLE_OVERRIDE)
 			newDouble = true;
 
 		const lastBattle = this.currentBattle;
@@ -963,12 +999,16 @@ export default class BattleScene extends SceneBase {
 			case Species.SAWSBUCK:
 			case Species.FROAKIE:
 			case Species.FROGADIER:
+			case Species.SCATTERBUG:
+			case Species.SPEWPA:
 			case Species.VIVILLON:
 			case Species.FLABEBE:
 			case Species.FLOETTE:
 			case Species.FLORGES:
 			case Species.FURFROU:
 			case Species.ORICORIO:
+			case Species.MAGEARNA:
+			case Species.ZARUDE:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
@@ -1154,7 +1194,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	updateMoneyText(): void {
-		this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
+		this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
 		this.moneyText.setVisible(true);
 	}
 
@@ -1762,6 +1802,19 @@ export default class BattleScene extends SceneBase {
 		});
 	}
 
+	/**
+	* Removes all modifiers from enemy of PersistentModifier type
+	*/
+	clearEnemyModifiers(): void {
+		const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
+		for (let m of modifiersToRemove)
+			this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
+		this.updateModifiers(false).then(() => this.updateUIPositions());
+	}
+
+	/**
+	* Removes all modifiers from enemy of PokemonHeldItemModifier type
+	*/
 	clearEnemyHeldItemModifiers(): void {
 		const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
 		for (let m of modifiersToRemove)
@@ -1930,5 +1983,18 @@ export default class BattleScene extends SceneBase {
 		}
 
 		return false;
+	}
+	
+	updateGameInfo(): void {
+		const gameInfo = {
+			playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
+			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
+			wave: this.currentBattle?.waveIndex || 0,
+			party: this.party ? this.party.map(p => {
+				return { name: p.name, level: p.level };
+			}) : []
+		};
+		(window as any).gameInfo = gameInfo;
 	}
 }

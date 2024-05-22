@@ -10,6 +10,7 @@ import { GameMode } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import { PokeballType } from "./data/pokeball";
 
 export enum BattleType {
     WILD,
@@ -60,6 +61,7 @@ export default class Battle {
     public battleSeed: string;
     private battleSeedState: string;
     public moneyScattered: number;
+    public lastUsedPokeball: PokeballType;
 
     private rngCounter: integer = 0;
 
@@ -85,6 +87,7 @@ export default class Battle {
         this.battleSeed = Utils.randomString(16, true);
         this.battleSeedState = null;
         this.moneyScattered = 0;
+        this.lastUsedPokeball = null;
     }
 
     private initBattleSpec(): void {
