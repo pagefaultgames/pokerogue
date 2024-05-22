@@ -78,9 +78,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutContainer.add(this.flyoutText);
 
     this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth / 2, 0, 1, this.flyoutHeight, 0x000000).setOrigin(0.5, 0));
+      new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth / 2, 0, 1, this.flyoutHeight, 0x212121).setOrigin(0.5, 0));
     this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(this.scene, 0, this.flyoutHeight / 2, this.flyoutWidth + 5, 1, 0x000000).setOrigin(0, 0.5));
+      new Phaser.GameObjects.Rectangle(this.scene, 0, this.flyoutHeight / 2, this.flyoutWidth + 6, 1, 0x212121).setOrigin(0, 0.5));
 
     if (this.debug) {
       this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, 0, 0, 2, 2, 0xFF0000));
