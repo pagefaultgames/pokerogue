@@ -8,7 +8,6 @@ import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
 import { ptBrConfig } from '#app/locales/pt_BR/config.js';
 import { zhCnConfig } from '#app/locales/zh_CN/config.js';
-
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -44,7 +43,19 @@ export interface ModifierTypeTranslationEntries {
   BaseStatBoosterItem: SimpleTranslationEntries,
   EvolutionItem: SimpleTranslationEntries,
   FormChangeItem: SimpleTranslationEntries,
-  TeraType: SimpleTranslationEntries,
+}
+export interface PokemonInfoTranslationEntries {
+  Stat: SimpleTranslationEntries,
+  Type: SimpleTranslationEntries,
+}
+
+export interface BerryTranslationEntry {
+  name: string,
+  effect: string
+}
+
+export interface BerryTranslationEntries {
+  [key: string]: BerryTranslationEntry
 }
 
 export interface Localizable {
@@ -52,10 +63,17 @@ export interface Localizable {
 }
 
 export function initI18n(): void {
+  // Prevent reinitialization
+  if (isInitialized) {
+    return;
+  }
+  isInitialized = true;
   let lang = '';
 
   if (localStorage.getItem('prLang'))
     lang = localStorage.getItem('prLang');
+
+
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -75,8 +93,9 @@ export function initI18n(): void {
 
   i18next.use(LanguageDetector).init({
     lng: lang,
+    nonExplicitSupportedLngs: true,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh_CN','pt_BR'],
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh','pt'],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -119,9 +138,12 @@ declare module 'i18next' {
       ability: AbilityTranslationEntries;
       pokeball: SimpleTranslationEntries;
       pokemon: SimpleTranslationEntries;
-      pokemonStat: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
       splashMessages: SimpleTranslationEntries;
@@ -130,8 +152,17 @@ declare module 'i18next' {
       egg: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
       modifierType: ModifierTypeTranslationEntries;
+      battleMessageUiHandler: SimpleTranslationEntries;
+      berry: BerryTranslationEntries;
+	  voucher: SimpleTranslationEntries;
     };
   }
 }
 
 export default i18next;
+
+export function getIsInitialized(): boolean {
+  return isInitialized;
+}
+
+let isInitialized = false;
