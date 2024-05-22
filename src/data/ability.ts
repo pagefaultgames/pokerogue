@@ -1135,19 +1135,19 @@ export class PostAttackAbAttr extends AbAttr {
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-  private condition: PokemonAttackCondition;
+  private chance: integer;
 
-  constructor(condition?: PokemonAttackCondition) {
+  constructor(chance?: integer) {
     super();
 
-    this.condition = condition;
+    this.chance = chance;
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, defender, move.getMove()))) {
+      if (hitResult < HitResult.NO_EFFECT) {
         const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
-        if (heldItems.length && !Utils.randSeedInt(3)) {
+        if (heldItems.length && Utils.randSeedInt(100) < this.chance) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
             if (success)
@@ -1224,18 +1224,20 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
+  private chance: integer; //Proc chance out of 100
 
-  constructor(condition?: PokemonDefendCondition) {
+  constructor(condition?: PokemonDefendCondition, chance?: integer) {
     super();
 
     this.condition = condition;
+    this.chance = chance;
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move.getMove()))) {
         const heldItems = this.getTargetHeldItems(attacker).filter(i => i.getTransferrable(false));
-        if (heldItems.length && Utils.randSeedInt(2)) {
+        if (heldItems.length && Utils.randSeedInt(100) < this.chance) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
             if (success)
@@ -3357,7 +3359,7 @@ export function initAbilities() {
     new Ability(Abilities.BAD_DREAMS, 4)
       .attr(PostTurnHurtIfSleepingAbAttr),
     new Ability(Abilities.PICKPOCKET, 5)
-      .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
+      .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 50),
     new Ability(Abilities.SHEER_FORCE, 5)
       .unimplemented(),
     new Ability(Abilities.CONTRARY, 5)
@@ -3490,7 +3492,7 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
     new Ability(Abilities.MAGICIAN, 6)
-      .attr(PostAttackStealHeldItemAbAttr),
+      .attr(PostAttackStealHeldItemAbAttr, 30),
     new Ability(Abilities.BULLETPROOF, 6)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.BALLBOMB_MOVE))
       .ignorable(),
