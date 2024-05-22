@@ -3737,7 +3737,7 @@ export class StockpileAttr extends AddBattlerTagAttr {
         break;
     }
 
-    if (willFail || !super.apply(user, target, move, args))
+    if (!super.apply(user, target, move, args))
       return false;
 
     user.scene.queueMessage(this.getTriggerMessage(user, (stock+1)));
