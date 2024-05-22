@@ -144,11 +144,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaOptionsContainer = this.scene.add.container()
 
-    this.eggGachaOptionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6), 148);
+    this.eggGachaOptionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6), 138);
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
 
-    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 112);
+    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 10, 96, 125);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
@@ -156,6 +156,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       { multiplier: 'x1', description: `1 ${i18next.t('egg:pull')}` },
       { multiplier: 'x10', description: `10 ${i18next.t('egg:pulls')}` },
       { multiplier: 'x1', description: `5 ${i18next.t('egg:pulls')}` },
+      { multiplier: 'x5', description: `25 ${i18next.t('egg:pulls')}` },
       { multiplier: 'x1', description: `10 ${i18next.t('egg:pulls')}` },
       { multiplier: 'x1', description: `25 ${i18next.t('egg:pulls')}` }
     ];
@@ -177,8 +178,23 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     optionText.setPositionRelative(this.eggGachaOptionSelectBg, 16, 9);
 
-    new Array(5).fill(null).map((_, i) => {
-      const voucherType = i < 2 ? VoucherType.REGULAR : i === 2 ? VoucherType.PLUS : i === 3 ? VoucherType.PREMIUM : VoucherType.GOLDEN;
+    new Array(6).fill(null).map((_, i) => {
+      let voucherType = VoucherType.GOLDEN;
+      switch (i) {
+        case 0:
+        case 1:
+          voucherType = VoucherType.REGULAR;
+          break;
+        case 2:
+        case 3:
+          voucherType = VoucherType.PLUS;
+          break;
+        case 4:
+          voucherType = VoucherType.PREMIUM;
+          break;
+        default:
+          voucherType = VoucherType.GOLDEN;
+      }
       const icon = this.scene.add.sprite(0, 0, 'items', getVoucherTypeIcon(voucherType));
       icon.setScale(0.5);
       icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 17 + i * 16);
@@ -570,13 +586,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                 }
                 break;
               case 1:
-              case 3:
+              case 4:
                 if ((this.cursor === 1 && this.scene.gameData.voucherCounts[VoucherType.REGULAR] < 10)
-                  || (this.cursor === 3 && !this.scene.gameData.voucherCounts[VoucherType.PREMIUM])) {
+                  || (this.cursor === 4 && !this.scene.gameData.voucherCounts[VoucherType.PREMIUM])) {
                   error = true;
                   this.showError(i18next.t('egg:notEnoughVouchers'));
                 } else if (this.scene.gameData.eggs.length < 90) {
-                  if (this.cursor === 3)
+                  if (this.cursor === 4)
                     this.consumeVouchers(VoucherType.PREMIUM, 1);
                   else
                     this.consumeVouchers(VoucherType.REGULAR, 10);
@@ -587,7 +603,20 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                   this.showError(i18next.t('egg:tooManyEggs'));
                 }
                 break;
-              case 4:
+              case 3:
+                if ((this.cursor === 3 && this.scene.gameData.voucherCounts[VoucherType.PLUS] < 5)) {
+                  error = true;
+                  this.showError(i18next.t('egg:notEnoughVouchers'));
+                } else if (this.scene.gameData.eggs.length < 75) {
+                  this.consumeVouchers(VoucherType.PLUS, 5);
+                  this.pull(25);
+                  success = true;
+                } else {
+                  error = true;
+                  this.showError(i18next.t('egg:tooManyEggs'));
+                }
+                break;
+              case 5:
                 if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN]) {
                   error = true;
                   this.showError(i18next.t('egg:notEnoughVouchers'));
@@ -600,7 +629,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                   this.showError(i18next.t('egg:tooManyEggs'));
                 }
                 break;
-              case 5:
+              case 6:
                 ui.revertMode();
                 success = true;
                 break;
@@ -615,7 +644,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               success = this.setCursor(this.cursor - 1);
             break;
           case Button.DOWN:
-            if (this.cursor < 5)
+            if (this.cursor < 6)
               success = this.setCursor(this.cursor + 1);
             break;
           case Button.LEFT:
