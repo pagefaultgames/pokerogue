@@ -190,6 +190,12 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
     case 3:
       suffix = 'B';
       break;
+    case 4:
+      suffix = 'T';
+      break;
+    case 5:
+      suffix = 'q';
+      break;
     default:
       return '?';
   }

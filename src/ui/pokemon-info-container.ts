@@ -9,8 +9,11 @@ import { getNatureName } from "../data/nature";
 import * as Utils from "../utils";
 import { Type } from "../data/type";
 import { getVariantTint } from "#app/data/variant";
+import ConfirmUiHandler from "./confirm-ui-handler";
 
 export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
+  private readonly infoWindowWidth = 104;
+  
   private pokemonGenderLabelText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
@@ -37,7 +40,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    const infoBg = addWindow(this.scene, 0, 0, 104, 132);
+    const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
     infoBg.setOrigin(0.5, 0.5);
 
     this.pokemonMovesContainer = this.scene.add.container(6, 14);
@@ -172,7 +175,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         targets: this,
         duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
         ease: 'Cubic.easeInOut',
-        x: this.initialX - 104,
+        x: this.initialX - this.infoWindowWidth,
         onComplete: () => {
           resolve();
         }
@@ -198,6 +201,20 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.setVisible(true);
       this.shown = true;
+    });
+  }
+
+  makeRoomForConfirmUi(speedMultiplier: number = 1): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.scene.tweens.add({
+        targets: this,
+        duration: Utils.fixedInt(Math.floor(150 / speedMultiplier)),
+        ease: 'Cubic.easeInOut',
+        x: this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth,
+        onComplete: () => {
+          resolve();
+        }
+      });
     });
   }
 

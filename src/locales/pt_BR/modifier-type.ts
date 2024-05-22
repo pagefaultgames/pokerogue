@@ -45,7 +45,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta permanentemente os PP para o movimento de um Pokémon em {{upPoints}} para cada 5 PP máximos (máximo 3)",
     },
     "PokemonNatureChangeModifierType": {
-      name: "{{natureName}} Mint",
+      name: "Hortelã {{natureName}}",
       description: "Muda a natureza de um Pokémon para {{natureName}} e a desbloqueia permanentemente para seu inicial",
     },
     "DoubleBattleChanceBoosterModifierType": {

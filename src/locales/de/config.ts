@@ -23,6 +23,7 @@ import { splashMessages } from "./splash-messages"
 import { tutorial } from "./tutorial";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { voucher } from "./voucher";
 
 export const deConfig = {
     ability: ability,
@@ -52,4 +53,5 @@ export const deConfig = {
     weather: weather,
     battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
+    voucher: voucher,
 }
