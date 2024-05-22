@@ -15,7 +15,7 @@ import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
-import { allMoves } from "./data/move";
+import Move, { allMoves } from "./data/move";
 import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
@@ -82,6 +82,25 @@ export interface PokeballCounts {
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
+/** 
+ * Container class for `onMoveUsed` events 
+ * @extends Event
+*/
+export class MoveUsedEvent extends Event {
+	/** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
+	public userId: number;
+	/** The {@linkcode Move} used */
+	public move: Move;
+	/** The amount of PP used on the {@linkcode Move} this turn */
+	public ppUsed: number;
+	constructor(userId: number, move: Move, ppUsed: number) {
+		super('onMoveUsed');
+
+		this.userId = userId;
+		this.move = move;
+		this.ppUsed = ppUsed;
+	}
+}
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
 	public inputController: InputsController;
@@ -189,6 +208,14 @@ export default class BattleScene extends SceneBase {
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
 	public rngOffset: integer = 0;
+
+	/** 
+	 * Allows subscribers to listen for events
+	 * 
+	 * Current Events:
+	 * - `onMoveUsed` {@linkcode MoveUsedEvent}
+	 */
+	public readonly eventTarget: EventTarget = new EventTarget();
 
 	constructor() {
 		super('battle');

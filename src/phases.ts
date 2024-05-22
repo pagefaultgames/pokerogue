@@ -1,4 +1,4 @@
-import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene";
+import BattleScene, { AnySound, MoveUsedEvent, bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
@@ -2356,8 +2356,10 @@ export class MovePhase extends BattlePhase {
 
       const moveQueue = this.pokemon.getMoveQueue();
       if (this.cancelled || this.failed) {
-        if (this.failed)
+        if (this.failed) {
           this.move.usePp(ppUsed); // Only use PP if the move failed
+          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove(), ppUsed));
+        }
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
@@ -2386,8 +2388,10 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
-      if (!moveQueue.length || !moveQueue.shift().ignorePP) // using .shift here clears out two turn moves once they've been used
+      if (!moveQueue.length || !moveQueue.shift().ignorePP) { // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
+        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove(), ppUsed));
+      }
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length)
         this.scene.currentBattle.lastMove = this.move.moveId;
