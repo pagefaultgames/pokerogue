@@ -61,7 +61,6 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from './overrides';
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { ability } from "./locales/de/ability";
 
 
 export class LoginPhase extends Phase {
