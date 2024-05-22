@@ -121,7 +121,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   updateInfo(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.userIndex !== this.pokemon?.getBattlerIndex())
+    if (!moveUsedEvent || moveUsedEvent.userIndex !== this.pokemon?.id)
       return;
 
     const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id)
@@ -131,7 +131,6 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: 1})
 
     this.setText();
-    console.log('Event!', moveUsedEvent.move.name, moveUsedEvent.userIndex);
   }
 
   toggleFlyout(visible: boolean): void {
