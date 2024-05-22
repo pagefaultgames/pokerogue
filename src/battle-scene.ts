@@ -1213,7 +1213,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	updateMoneyText(): void {
-		this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
+		this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
 		this.moneyText.setVisible(true);
 	}
 
@@ -1264,12 +1264,6 @@ export default class BattleScene extends SceneBase {
 		this.partyExpBar.setY(offsetY);
 		this.candyBar.setY(offsetY + 15);
 		this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
-	}
-
-	sendTextToBack(): void {
-		this.fieldUI.sendToBack(this.waveCountText);
-		this.fieldUI.sendToBack(this.moneyText);
-		this.fieldUI.sendToBack(this.scoreText);
 	}
 
 	addFaintedEnemyScore(enemy: EnemyPokemon): void {

@@ -89,10 +89,13 @@ export class UiInputs {
     }
 
     buttonStats(pressed: boolean = true): void {
-        for (let p of this.scene.getField().filter(p => p?.isActive(true)))
-            p.toggleStats(pressed);
-
-        this.scene.ui.processStats(pressed);
+        if (pressed) {
+            for (let p of this.scene.getField().filter(p => p?.isActive(true)))
+                p.toggleStats(true);
+        } else {
+            for (let p of this.scene.getField().filter(p => p?.isActive(true)))
+                p.toggleStats(false);
+        }
     }
 
     buttonMenu(): void {
