@@ -1412,6 +1412,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
+  /**
+   * 
+   * @param source {@linkcode Pokemon} that is using the move
+   * @param battlerMove {@linkcode PokemonMove} that is being used
+   * @param firstHit 
+   * @param moveEffectPhase {@linkcode MoveEffectPhase} of the move being used
+   * @returns {@linkcode HitResult} of the move
+   */
   apply(source: Pokemon, battlerMove: PokemonMove, firstHit: boolean, moveEffectPhase: MoveEffectPhase): HitResult {
     let result: HitResult;
     const move = battlerMove.getMove();
@@ -1478,7 +1486,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
           const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
 
-          if (!isTypeImmune) { /** If move hits then apply all move abilities that pre apply before move is calculated. eg Before Damage calculates */
+          /** If move hits then apply all move abilities that pre apply before move is calculated. eg Before Damage calculates */
+          if (!isTypeImmune) {
             applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit), source, this, moveEffectPhase.move.getMove());
           }
 
