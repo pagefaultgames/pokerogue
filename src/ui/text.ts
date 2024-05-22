@@ -49,11 +49,11 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 }
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
-  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(0.1666666667);
-  ret.setShadow(shadowSize, shadowSize, shadowColor);
+  ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing)
     ret.setLineSpacing(5);
 
@@ -61,12 +61,12 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 }
 
 export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
-  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = new BBCodeText(scene, x, y, content, styleOptions as BBCodeText.TextStyle);
   scene.add.existing(ret);
   ret.setScale(0.1666666667);
-  ret.setShadow(shadowSize, shadowSize, shadowColor);
+  ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing)
     ret.setLineSpacing(10);
 
@@ -86,7 +86,8 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
   const lang = i18next.language;
   let shadowColor: string;
-  let shadowSize = 6;
+  let shadowXpos = 4;
+  let shadowYpos = 5;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
     fontFamily: 'emerald',
@@ -108,6 +109,8 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.SUMMARY_GREEN:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
+      shadowXpos = 3;
+      shadowYpos = 3;
     case TextStyle.MESSAGE:
     case TextStyle.SETTINGS_LABEL:
     case TextStyle.SETTINGS_SELECTED:
@@ -117,7 +120,8 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.MONEY:
     case TextStyle.TOOLTIP_TITLE:
       styleOptions.fontSize = languageSettings[lang]?.battleInfoFontSize || '72px';
-      shadowSize = 4.5;
+      shadowXpos = 3.5;
+      shadowYpos = 3.5;
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED:
@@ -126,11 +130,13 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
       break;
     case TextStyle.TOOLTIP_CONTENT:
       styleOptions.fontSize = languageSettings[lang]?.tooltipContentFontSize || '64px';
-      shadowSize = 4;
+      shadowXpos = 3;
+      shadowYpos = 3;
       break;
     case TextStyle.MOVE_INFO_CONTENT:
       styleOptions.fontSize = languageSettings[lang]?.moveInfoFontSize || '56px';
-      shadowSize = 3;
+      shadowXpos = 3;
+      shadowYpos = 3;
       break;
   }
 
@@ -139,12 +145,12 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   if (extraStyleOptions) {
     if (extraStyleOptions.fontSize) {
       const sizeRatio = parseInt(extraStyleOptions.fontSize.toString().slice(0, -2)) / parseInt(styleOptions.fontSize.toString().slice(0, -2));
-      shadowSize *= sizeRatio;
+      shadowXpos *= sizeRatio;
     }
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
   }
 
-  return [ styleOptions, shadowColor, shadowSize ];
+  return [ styleOptions, shadowColor, shadowXpos, shadowYpos ];
 }
 
 export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
