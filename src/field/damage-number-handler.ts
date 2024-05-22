@@ -13,8 +13,9 @@ export default class DamageNumberHandler {
   add(target: Pokemon, amount: integer, result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE, critical: boolean = false): void {
     const scene = target.scene;
 
-    if (!scene?.damageNumbersMode)
+    if (!scene?.damageNumbersMode) {
       return;
+    }
 
     const battlerIndex = target.getBattlerIndex();
     const baseScale = target.getSpriteScale() / 6;
@@ -42,24 +43,28 @@ export default class DamageNumberHandler {
       break;
     }
 
-    if (textColor)
+    if (textColor) {
       damageNumber.setColor(textColor);
+    }
     if (shadowColor) {
       if (critical) {
         damageNumber.setShadowOffset(0, 0);
         damageNumber.setStroke(shadowColor, 12);
-      } else
+      } else {
         damageNumber.setShadowColor(shadowColor);
+      }
     }
 
     scene.fieldUI.add(damageNumber);
 
-    if (!this.damageNumbers.has(battlerIndex))
+    if (!this.damageNumbers.has(battlerIndex)) {
       this.damageNumbers.set(battlerIndex, []);
+    }
 
     const yOffset = this.damageNumbers.get(battlerIndex).length * -10;
-    if (yOffset)
+    if (yOffset) {
       damageNumber.y += yOffset;
+    }
 
     this.damageNumbers.get(battlerIndex).push(damageNumber);
 

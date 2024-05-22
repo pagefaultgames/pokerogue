@@ -32,8 +32,9 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
 
   getReadableErrorMessage(error: string): string {
     const colonIndex = error?.indexOf(':');
-    if (colonIndex > 0)
+    if (colonIndex > 0) {
       error = error.slice(0, colonIndex);
+    }
     switch (error) {
     case 'invalid username':
       return i18next.t('menu:invalidRegisterUsername');
@@ -68,31 +69,37 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
           this.scene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
         };
-        if (!this.inputs[0].text)
+        if (!this.inputs[0].text) {
           return onFail(i18next.t('menu:emptyUsername'));
-        if (!this.inputs[1].text)
+        }
+        if (!this.inputs[1].text) {
           return onFail(this.getReadableErrorMessage('invalid password'));
-        if (this.inputs[1].text !== this.inputs[2].text)
+        }
+        if (this.inputs[1].text !== this.inputs[2].text) {
           return onFail(i18next.t('menu:passwordNotMatchingConfirmPassword'));
+        }
         Utils.apiPost('account/register', `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
           .then(response => response.text())
           .then(response => {
             if (!response) {
               Utils.apiPost('account/login', `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
                 .then(response => {
-                  if (!response.ok)
+                  if (!response.ok) {
                     return response.text();
+                  }
                   return response.json();
                 })
                 .then(response => {
                   if (response.hasOwnProperty('token')) {
                     Utils.setCookie(Utils.sessionIdKey, response.token);
                     originalRegistrationAction();
-                  } else
+                  } else {
                     onFail(response);
+                  }
                 });
-            } else
+            } else {
               onFail(response);
+            }
           });
       };
 

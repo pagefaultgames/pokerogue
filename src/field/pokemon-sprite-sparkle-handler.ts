@@ -21,10 +21,12 @@ export default class PokemonSpriteSparkleHandler {
   onLapse(): void {
     Array.from(this.sprites.values()).filter(s => !s.scene).map(s => this.sprites.delete(s));
     for (const s of this.sprites.values()) {
-      if (!s.pipelineData['teraColor'] || !(s.pipelineData['teraColor'] as number[]).find(c => c))
+      if (!s.pipelineData['teraColor'] || !(s.pipelineData['teraColor'] as number[]).find(c => c)) {
         continue;
-      if (!s.visible || (s.parentContainer instanceof Pokemon && !s.parentContainer.parentContainer))
+      }
+      if (!s.visible || (s.parentContainer instanceof Pokemon && !s.parentContainer.parentContainer)) {
         continue;
+      }
       const pokemon = s.parentContainer instanceof Pokemon ? s.parentContainer as Pokemon : null;
       const parent = (pokemon || s).parentContainer;
       const texture = s.texture;
@@ -45,25 +47,29 @@ export default class PokemonSpriteSparkleHandler {
   }
 
   add(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
-    if (!Array.isArray(sprites))
+    if (!Array.isArray(sprites)) {
       sprites = [ sprites ];
+    }
     for (const s of sprites) {
-      if (this.sprites.has(s))
+      if (this.sprites.has(s)) {
         continue;
+      }
       this.sprites.add(s);
     }
   }
 
   remove(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
-    if (!Array.isArray(sprites))
+    if (!Array.isArray(sprites)) {
       sprites = [ sprites ];
+    }
     for (const s of sprites) {
       this.sprites.delete(s);
     }
   }
 
   removeAll(): void {
-    for (const s of this.sprites.values())
+    for (const s of this.sprites.values()) {
       this.sprites.delete(s);
+    }
   }
 }

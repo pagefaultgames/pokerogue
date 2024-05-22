@@ -247,7 +247,8 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
   }
 
   onBatch(gameObject: Phaser.GameObjects.GameObject): void {
-    if (gameObject)
+    if (gameObject) {
       this.flush();
+    }
   }
 }

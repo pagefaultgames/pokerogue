@@ -9,15 +9,17 @@ export class SceneBase extends Phaser.Scene {
     const manifest = this.game['manifest'];
     if (manifest) {
       const timestamp = manifest[`/${url}`];
-      if (timestamp)
+      if (timestamp) {
         url += `?t=${timestamp}`;
+      }
     }
     return url;
   }
 
   loadImage(key: string, folder: string, filename?: string) {
-    if (!filename)
+    if (!filename) {
       filename = `${key}.png`;
+    }
     this.load.image(key, this.getCachedUrl(`images/${folder}/${filename}`));
     if (folder.startsWith('ui')) {
       legacyCompatibleImages.push(key);
@@ -27,8 +29,9 @@ export class SceneBase extends Phaser.Scene {
   }
 
   loadSpritesheet(key: string, folder: string, size: integer, filename?: string) {
-    if (!filename)
+    if (!filename) {
       filename = `${key}.png`;
+    }
     this.load.spritesheet(key, this.getCachedUrl(`images/${folder}/${filename}`), { frameWidth: size, frameHeight: size });
     if (folder.startsWith('ui')) {
       legacyCompatibleImages.push(key);
@@ -38,10 +41,12 @@ export class SceneBase extends Phaser.Scene {
   }
 
   loadAtlas(key: string, folder: string, filenameRoot?: string) {
-    if (!filenameRoot)
+    if (!filenameRoot) {
       filenameRoot = key;
-    if (folder)
+    }
+    if (folder) {
       folder += '/';
+    }
     this.load.atlas(key, this.getCachedUrl(`images/${folder}${filenameRoot}.png`), this.getCachedUrl(`images/${folder}/${filenameRoot}.json`));
     if (folder.startsWith('ui')) {
       legacyCompatibleImages.push(key);
@@ -51,21 +56,26 @@ export class SceneBase extends Phaser.Scene {
   }
 
   loadSe(key: string, folder?: string, filenames?: string | string[]) {
-    if (!filenames)
+    if (!filenames) {
       filenames = `${key}.wav`;
-    if (!folder)
+    }
+    if (!folder) {
       folder = '';
-    else
+    } else {
       folder += '/';
-    if (!Array.isArray(filenames))
+    }
+    if (!Array.isArray(filenames)) {
       filenames = [ filenames ];
-    for (const f of filenames as string[])
+    }
+    for (const f of filenames as string[]) {
       this.load.audio(key, this.getCachedUrl(`audio/se/${folder}${f}`));
+    }
   }
 
   loadBgm(key: string, filename?: string) {
-    if (!filename)
+    if (!filename) {
       filename = `${key}.mp3`;
+    }
     this.load.audio(key, this.getCachedUrl(`audio/bgm/${filename}`));
   }
 }

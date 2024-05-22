@@ -27,8 +27,9 @@ export enum Region {
 }
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
-  if (species >= 2000)
+  if (species >= 2000) {
     return allSpecies.find(s => s.speciesId === species);
+  }
   return allSpecies[species - 1];
 }
 
@@ -36,8 +37,9 @@ export function getPokemonSpeciesForm(species: Species, formIndex: integer): Pok
   const retSpecies: PokemonSpecies = species >= 2000
     ? allSpecies.find(s => s.speciesId === species)
     : allSpecies[species - 1];
-  if (formIndex < retSpecies.forms?.length)
+  if (formIndex < retSpecies.forms?.length) {
     return retSpecies.forms[formIndex];
+  }
   return retSpecies;
 }
 
@@ -48,18 +50,22 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   const [ speciesAPrefixMatch, speciesBPrefixMatch ] = [ speciesAName, speciesBName ].map(n => /^(?:[^ ]+) /.exec(n));
   const [ speciesAPrefix, speciesBPrefix ] = [ speciesAPrefixMatch, speciesBPrefixMatch ].map(m => m ? m[0] : '');
 
-  if (speciesAPrefix)
+  if (speciesAPrefix) {
     speciesAName = speciesAName.slice(speciesAPrefix.length);
-  if (speciesBPrefix)
+  }
+  if (speciesBPrefix) {
     speciesBName = speciesBName.slice(speciesBPrefix.length);
+  }
 
   const [ speciesASuffixMatch, speciesBSuffixMatch ] = [ speciesAName, speciesBName ].map(n => / (?:[^ ]+)$/.exec(n));
   const [ speciesASuffix, speciesBSuffix ] = [ speciesASuffixMatch, speciesBSuffixMatch ].map(m => m ? m[0] : '');
 
-  if (speciesASuffix)
+  if (speciesASuffix) {
     speciesAName = speciesAName.slice(0, -speciesASuffix.length);
-  if (speciesBSuffix)
+  }
+  if (speciesBSuffix) {
     speciesBName = speciesBName.slice(0, -speciesBSuffix.length);
+  }
 
   const splitNameA = speciesAName.split(/ /g);
   const splitNameB = speciesBName.split(/ /g);
@@ -80,21 +86,25 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
       const prevCharB = fragBMatch[1].slice(fragBMatch.length - 1);
       fragB = (/[\-']/.test(prevCharB) ? prevCharB : '') + fragBMatch[2] || prevCharB;
       if (lastCharA === fragB[0]) {
-        if (/[aiu]/.test(lastCharA))
+        if (/[aiu]/.test(lastCharA)) {
           fragB = fragB.slice(1);
-        else {
+        } else {
           const newCharMatch = new RegExp(`[^${lastCharA}]`).exec(fragB);
-          if (newCharMatch?.index > 0)
+          if (newCharMatch?.index > 0) {
             fragB = fragB.slice(newCharMatch.index);
+          }
         }
       }
-    } else
+    } else {
       fragB = speciesBName;
-  } else
+    }
+  } else {
     fragB = splitNameB[splitNameB.length - 1];
+  }
 
-  if (splitNameA.length > 1)
+  if (splitNameA.length > 1) {
     fragA = `${splitNameA.slice(0, splitNameA.length - 1).join(' ')} ${fragA}`;
+  }
 
   fragB = `${fragB.slice(0, 1).toLowerCase()}${fragB.slice(1)}`;
 
@@ -141,8 +151,9 @@ export abstract class PokemonSpeciesForm {
 
   getRootSpeciesId(forStarter: boolean = false): Species {
     let ret = this.speciesId;
-    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret)))
+    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret))) {
       ret = pokemonPrevolutions[ret];
+    }
     return ret;
   }
 
@@ -159,8 +170,9 @@ export abstract class PokemonSpeciesForm {
   }
 
   getLevelMoves(): LevelMoves {
-    if (pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex))
+    if (pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)) {
       return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex].slice(0);
+    }
     return pokemonSpeciesLevelMoves[this.speciesId].slice(0);
   }
 
@@ -223,8 +235,9 @@ export abstract class PokemonSpeciesForm {
   }
 
   getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer, back?: boolean): string {
-    if (formIndex === undefined || this instanceof PokemonForm)
+    if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
+    }
 
     const formSpriteKey = this.getFormSpriteKey(formIndex);
     const showGenderDiffs = this.genderDiffs && female && ![ SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX ].find(k => formSpriteKey === k);
@@ -250,15 +263,17 @@ export abstract class PokemonSpeciesForm {
   }
 
   getIconId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
-    if (formIndex === undefined)
+    if (formIndex === undefined) {
       formIndex = this.formIndex;
+    }
 
     let ret = this.speciesId.toString();
 
     const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
 
-    if (shiny && !isVariant)
+    if (shiny && !isVariant) {
       ret += 's';
+    }
     
     switch (this.speciesId) {
     case Species.HIPPOPOTAS:
@@ -277,16 +292,18 @@ export abstract class PokemonSpeciesForm {
         break;
       case Species.ZACIAN:
       case Species.ZAMAZENTA:
-        if (formSpriteKey.startsWith('behemoth'))
+        if (formSpriteKey.startsWith('behemoth')) {
           formSpriteKey = 'crowned';
+        }
       default:
         ret += `-${formSpriteKey}`;
         break;
       }
     }
 
-    if (isVariant)
+    if (isVariant) {
       ret += `_${variant + 1}`;
+    }
 
     return ret;
   }
@@ -360,14 +377,17 @@ export abstract class PokemonSpeciesForm {
     for (const moveId of moveset) {
       if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].findIndex(m => m === moveId);
-        if (eggMoveIndex > -1 && eggMoves & Math.pow(2, eggMoveIndex))
+        if (eggMoveIndex > -1 && eggMoves & Math.pow(2, eggMoveIndex)) {
           continue;
+        }
       }
       if (pokemonFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)) {
-        if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId))
+        if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId)) {
           return false;
-      } else if (!pokemonSpeciesLevelMoves[this.speciesId].find(lm => lm[0] <= 5 && lm[1] === moveId))
+        }
+      } else if (!pokemonSpeciesLevelMoves[this.speciesId].find(lm => lm[0] <= 5 && lm[1] === moveId)) {
         return false;
+      }
     }
 
     return true;
@@ -392,16 +412,18 @@ export abstract class PokemonSpeciesForm {
         });
         let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace('variant/', '').replace(/_[1-3]$/, '');
         const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
-        if (useExpSprite)
+        if (useExpSprite) {
           spritePath = `exp/${spritePath}`;
+        }
         let config = variantData;
         spritePath.split('/').map(p => config ? config = config[p] : null);
         const variantSet = config as VariantSet;
         if (variantSet && variantSet[variant] === 1) {
           const populateVariantColors = (key: string): Promise<void> => {
             return new Promise(resolve => {
-              if (variantColorCache.hasOwnProperty(key))
+              if (variantColorCache.hasOwnProperty(key)) {
                 return resolve();
+              }
               scene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
                 variantColorCache[key] = c;
                 resolve();
@@ -414,21 +436,25 @@ export abstract class PokemonSpeciesForm {
         resolve();
       });
       if (startLoad) {
-        if (!scene.load.isLoading())
+        if (!scene.load.isLoading()) {
           scene.load.start();
-      } else
+        }
+      } else {
         resolve();
+      }
     });
   }
 
   cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
     const cryKey = this.getCryKey(this.formIndex);
     let cry = scene.sound.get(cryKey) as AnySound;
-    if (cry?.pendingRemove)
+    if (cry?.pendingRemove) {
       cry = null;
+    }
     cry = scene.playSound(cry || cryKey, soundConfig);
-    if (ignorePlay)
+    if (ignorePlay) {
       cry.stop();
+    }
     return cry;
   }
 
@@ -454,16 +480,18 @@ export abstract class PokemonSpeciesForm {
       if (pixelData[i + 3]) {
         const pixel = pixelData.slice(i, i + 4);
         const [ r, g, b, a ] = pixel; 
-        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b))
+        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
           spriteColors.push([ r, g, b, a ]);
+        }
       }
     }
 
     const pixelColors = [];
     for (let i = 0; i < pixelData.length; i += 4) {
       const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
-      if (!total)
+      if (!total) {
         continue;
+      }
       pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
     }
     
@@ -536,8 +564,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       case SpeciesFormKey.MEGA_Y:
         return `Mega ${this.name} Y`;
       default:
-        if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1)
+        if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
           return `G-Max ${this.name}`;
+        }
       }
     }
     return this.name;
@@ -578,13 +607,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (prevolutionLevels.length) {
       for (let pl = prevolutionLevels.length - 1; pl >= 0; pl--) {
         const prevolutionLevel = prevolutionLevels[pl];
-        if (level < prevolutionLevel[1])
+        if (level < prevolutionLevel[1]) {
           return prevolutionLevel[0];
+        }
       }
     }
 
-    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId))
+    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId)) {
       return this.speciesId;
+    }
 
     const evolutions = pokemonEvolutions[this.speciesId];
 
@@ -596,21 +627,22 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     let noEvolutionChance = 1;
 
     for (const ev of evolutions) {
-      if (ev.level > level)
+      if (ev.level > level) {
         continue;
+      }
 
       let evolutionChance: number;
       
       const evolutionSpecies = getPokemonSpecies(ev.speciesId);
       const isRegionalEvolution = !this.isRegional() && evolutionSpecies.isRegional();
       
-      if (!forTrainer && isRegionalEvolution)
+      if (!forTrainer && isRegionalEvolution) {
         evolutionChance = 0;
-      else {
+      } else {
         if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
-          if (strength === PartyMemberStrength.STRONGER)
+          if (strength === PartyMemberStrength.STRONGER) {
             evolutionChance = 1;
-          else {
+          } else {
             const maxLevelDiff = this.getStrengthLevelDiff(strength);
             const minChance: number = 0.875 - 0.125 * strength;
             
@@ -622,8 +654,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
           if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
             const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
-            if (prevolutionLevel > 1)
+            if (prevolutionLevel > 1) {
               evolutionLevel = prevolutionLevel;
+            }
           }
 
           evolutionChance = Math.min(0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) + 0.35 * easeOutFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
@@ -631,26 +664,30 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
 
       if (evolutionChance > 0) {
-        if (isRegionalEvolution)
+        if (isRegionalEvolution) {
           evolutionChance /= (evolutionSpecies.isRareRegional() ? 16 : 4);
+        }
 
         totalWeight += evolutionChance;
 
         evolutionPool.set(totalWeight, ev.speciesId);
         
-        if ((1 - evolutionChance) < noEvolutionChance)
+        if ((1 - evolutionChance) < noEvolutionChance) {
           noEvolutionChance = 1 - evolutionChance;
+        }
       }
     }
 
-    if (noEvolutionChance === 1 || Phaser.Math.RND.realInRange(0, 1) < noEvolutionChance)
+    if (noEvolutionChance === 1 || Phaser.Math.RND.realInRange(0, 1) < noEvolutionChance) {
       return this.speciesId;
+    }
       
     const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight);
 
     for (const weight of evolutionPool.keys()) {
-      if (randValue < weight)
+      if (randValue < weight) {
         return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength);
+      }
     }
 
     return this.speciesId;
@@ -668,8 +705,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
         evolutionLevels.push([ speciesId, level ]);
         //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
         const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
-        for (const npl of nextEvolutionLevels)
+        for (const npl of nextEvolutionLevels) {
           evolutionLevels.push(npl);
+        }
       }
     }
 
@@ -687,8 +725,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
           const level = e.level;
           prevolutionLevels.push([ speciesId, level ]);
           const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels();
-          for (const spl of subPrevolutionLevels)
+          for (const spl of subPrevolutionLevels) {
             prevolutionLevels.push(spl);
+          }
         }
       }
     }

@@ -1300,8 +1300,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.DUNSPARCE]: [
     new SpeciesFormEvolution(Species.DUDUNSPARCE, '', 'three-segment', 32, null, new SpeciesEvolutionCondition(p => {
       let ret = false;
-      if (p.moveset.filter(m => m.moveId === Moves.HYPER_DRILL).length > 0)
+      if (p.moveset.filter(m => m.moveId === Moves.HYPER_DRILL).length > 0) {
         p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
+      }
       return ret;
     }), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.DUDUNSPARCE, 32, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.HYPER_DRILL).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1624,8 +1625,9 @@ export const pokemonPrevolutions: PokemonPrevolutions = {};
   prevolutionKeys.forEach(pk => {
     const evolutions = pokemonEvolutions[pk];
     for (const ev of evolutions) {
-      if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1)
+      if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
         continue;
+      }
       pokemonPrevolutions[ev.speciesId] = parseInt(pk) as Species;
     }
   });

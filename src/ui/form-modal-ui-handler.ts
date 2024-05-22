@@ -34,8 +34,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   }
 
   getReadableErrorMessage(error: string): string {
-    if (error?.indexOf('connection refused') > -1)
+    if (error?.indexOf('connection refused') > -1) {
       return 'Could not connect to the server';
+    }
 
     return error;
   }
@@ -89,8 +90,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       if (this.buttonBgs.length) {
         this.buttonBgs[0].off('pointerdown');
         this.buttonBgs[0].on('pointerdown', () => {
-          if (this.submitAction)
+          if (this.submitAction) {
             this.submitAction();
+          }
         });
       }
 
@@ -121,8 +123,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   }
 
   sanitizeInputs(): void {
-    for (const input of this.inputs)
+    for (const input of this.inputs) {
       input.text = input.text.trim();
+    }
   }
 
   updateContainer(config?: ModalConfig): void {

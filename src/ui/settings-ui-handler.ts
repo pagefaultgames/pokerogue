@@ -56,8 +56,9 @@ export default class SettingsUiHandler extends UiHandler {
 
     Object.keys(Setting).forEach((setting, s) => {
       let settingName = setting.replace(/\_/g, ' ');
-      if (reloadSettings.includes(Setting[setting]))
+      if (reloadSettings.includes(Setting[setting])) {
         settingName += ' (Requires Reload)';
+      }
 
       this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
       this.settingLabels[s].setOrigin(0, 0);
@@ -145,10 +146,11 @@ export default class SettingsUiHandler extends UiHandler {
       switch (button) {
       case Button.UP:
         if (cursor) {
-          if (this.cursor)
+          if (this.cursor) {
             success = this.setCursor(this.cursor - 1);
-          else
+          } else {
             success = this.setScrollCursor(this.scrollCursor - 1);
+          }
         } else {
           // When at the top of the menu and pressing UP, move to the bottommost item.
           // First, set the cursor to the last visible element, preparing for the scroll to the end.
@@ -160,10 +162,11 @@ export default class SettingsUiHandler extends UiHandler {
         break;
       case Button.DOWN:
         if (cursor < this.optionValueLabels.length - 1) {
-          if (this.cursor < rowsToDisplay - 1) // if the visual cursor is in the frame of 0 to 8
+          if (this.cursor < rowsToDisplay - 1) { // if the visual cursor is in the frame of 0 to 8
             success = this.setCursor(this.cursor + 1);
-          else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
+          } else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay) {
             success = this.setScrollCursor(this.scrollCursor + 1);
+          }
         } else {
           // When at the bottom of the menu and pressing DOWN, move to the topmost item.
           // First, set the cursor to the first visible element, resetting the scroll to the top.
@@ -174,20 +177,23 @@ export default class SettingsUiHandler extends UiHandler {
         }
         break;
       case Button.LEFT:
-        if (this.optionCursors[cursor]) // Moves the option cursor left, if possible.
+        if (this.optionCursors[cursor]) { // Moves the option cursor left, if possible.
           success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+        }
         break;
       case Button.RIGHT:
         // Moves the option cursor right, if possible.
-        if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
+        if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
           success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+        }
         break;
       }
     }
 
     // Plays a select sound effect if an action was successfully processed.
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -230,8 +236,9 @@ export default class SettingsUiHandler extends UiHandler {
       this.scene.gameData.saveSetting(setting, cursor);
       if (reloadSettings.includes(setting)) {
         this.reloadRequired = true;
-        if (setting === Setting.Language)
+        if (setting === Setting.Language) {
           this.reloadI18n = true;
+        }
       }
     }
 
@@ -239,8 +246,9 @@ export default class SettingsUiHandler extends UiHandler {
   }
 
   setScrollCursor(scrollCursor: integer): boolean {
-    if (scrollCursor === this.scrollCursor)
+    if (scrollCursor === this.scrollCursor) {
       return false;
+    }
 
     this.scrollCursor = scrollCursor;
 
@@ -257,8 +265,9 @@ export default class SettingsUiHandler extends UiHandler {
     for (let s = 0; s < this.settingLabels.length; s++) {
       const visible = s >= this.scrollCursor && s < this.scrollCursor + 9;
       this.settingLabels[s].setVisible(visible);
-      for (const option of this.optionValueLabels[s])
+      for (const option of this.optionValueLabels[s]) {
         option.setVisible(visible);
+      }
     }
   }
 
@@ -273,8 +282,9 @@ export default class SettingsUiHandler extends UiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

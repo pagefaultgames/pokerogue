@@ -32,10 +32,12 @@ export class Weather {
   }
 
   lapse(): boolean {
-    if (this.isImmutable())
+    if (this.isImmutable()) {
       return true;
-    if (this.turnsLeft)
+    }
+    if (this.turnsLeft) {
       return !!--this.turnsLeft;
+    }
 
     return true;
   }
@@ -76,17 +78,21 @@ export class Weather {
     switch (this.weatherType) {
     case WeatherType.SUNNY:
     case WeatherType.HARSH_SUN:
-      if (attackType === Type.FIRE)
+      if (attackType === Type.FIRE) {
         return 1.5;
-      if (attackType === Type.WATER)
+      }
+      if (attackType === Type.WATER) {
         return 0.5;
+      }
       break;
     case WeatherType.RAIN:
     case WeatherType.HEAVY_RAIN:
-      if (attackType === Type.FIRE)
+      if (attackType === Type.FIRE) {
         return 0.5;
-      if (attackType === Type.WATER)
+      }
+      if (attackType === Type.WATER) {
         return 1.5;
+      }
       break;
     }
 
@@ -109,10 +115,12 @@ export class Weather {
 
     for (const pokemon of field) {
       let suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
-      if (!suppressWeatherEffectAbAttr)
+      if (!suppressWeatherEffectAbAttr) {
         suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr : null;
-      if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable))
+      }
+      if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable)) {
         return true;
+      }
     }
 
     return false;
@@ -232,8 +240,9 @@ export function getTerrainClearMessage(terrainType: TerrainType): string {
 }
 
 export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
-  if (terrainType === TerrainType.MISTY)
+  if (terrainType === TerrainType.MISTY) {
     return getPokemonMessage(pokemon, ' surrounds itself with a protective mist!');
+  }
   return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain!`);
 }
 
@@ -250,16 +259,18 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
     weatherPool = [
       { weatherType: WeatherType.NONE, weight: 7 }
     ];
-    if (hasSun)
+    if (hasSun) {
       weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 3 });
+    }
     break;
   case Biome.TALL_GRASS:
     weatherPool = [
       { weatherType: WeatherType.NONE, weight: 8 },
       { weatherType: WeatherType.RAIN, weight: 5 },
     ];
-    if (hasSun)
+    if (hasSun) {
       weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 8 });
+    }
     break;
   case Biome.FOREST:
     weatherPool = [
@@ -285,8 +296,9 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       { weatherType: WeatherType.NONE, weight: 8 },
       { weatherType: WeatherType.RAIN, weight: 3 }
     ];
-    if (hasSun)
+    if (hasSun) {
       weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
+    }
     break;
   case Biome.LAKE:
     weatherPool = [
@@ -305,15 +317,17 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       { weatherType: WeatherType.NONE, weight: 8 },
       { weatherType: WeatherType.SANDSTORM, weight: 2 }
     ];
-    if (hasSun)
+    if (hasSun) {
       weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
+    }
     break;
   case Biome.DESERT:
     weatherPool = [
       { weatherType: WeatherType.SANDSTORM, weight: 2 }
     ];
-    if (hasSun)
+    if (hasSun) {
       weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
+    }
     break;
   case Biome.ICE_CAVE:
     weatherPool = [
@@ -326,8 +340,9 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
     weatherPool = [
       { weatherType: WeatherType.NONE, weight: 2 }
     ];
-    if (hasSun)
+    if (hasSun) {
       weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
+    }
   case Biome.VOLCANO:
     weatherPool = [
       { weatherType: hasSun ? WeatherType.SUNNY : WeatherType.NONE, weight: 1 }
@@ -356,8 +371,9 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       { weatherType: WeatherType.NONE, weight: 5 },
       { weatherType: WeatherType.RAIN, weight: 1 },
     ];
-    if (hasSun)
+    if (hasSun) {
       weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
+    }
     break;
   }
 
@@ -369,8 +385,9 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
     let w = 0;
     for (const weather of weatherPool) {
       w += weather.weight;
-      if (rand < w)
+      if (rand < w) {
         return weather.weatherType;
+      }
     }
   }
 

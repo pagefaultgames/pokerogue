@@ -75,8 +75,9 @@ export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
   getStrength(index: integer): PartyMemberStrength {
     let t = 0;
     for (const template of this.templates) {
-      if (t + template.size > index)
+      if (t + template.size > index) {
         return template.getStrength(index - t);
+      }
       t += template.size;
     }
 
@@ -86,8 +87,9 @@ export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
   isSameSpecies(index: integer): boolean {
     let t = 0;
     for (const template of this.templates) {
-      if (t + template.size > index)
+      if (t + template.size > index) {
         return template.isSameSpecies(index - t);
+      }
       t += template.size;
     }
 
@@ -97,8 +99,9 @@ export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
   isBalanced(index: integer): boolean {
     let t = 0;
     for (const template of this.templates) {
-      if (t + template.size > index)
+      if (t + template.size > index) {
         return template.isBalanced(index - t);
+      }
       t += template.size;
     }
 
@@ -223,8 +226,9 @@ export class TrainerConfig {
 
   getSpriteKey(female?: boolean): string {
     let ret = this.getKey();
-    if (this.hasGenders)
+    if (this.hasGenders) {
       ret += `_${female ? 'f' : 'm'}`;
+    }
     return ret;
   }
 
@@ -321,8 +325,9 @@ export class TrainerConfig {
   setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
     this.hasDouble = true;
     this.nameDouble = nameDouble;
-    if (doubleEncounterBgm)
+    if (doubleEncounterBgm) {
       this.doubleEncounterBgm = typeof doubleEncounterBgm === 'number' ? TrainerType[doubleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : doubleEncounterBgm;
+    }
     return this;
   }
 
@@ -435,8 +440,9 @@ export class TrainerConfig {
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {
       // Ensure speciesPool is an array.
-      if (!Array.isArray(speciesPool))
+      if (!Array.isArray(speciesPool)) {
         speciesPool = [speciesPool];
+      }
       // Set a function to get a random party member from the species pool.
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
@@ -486,8 +492,9 @@ export class TrainerConfig {
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {
       // Ensure speciesPool is an array.
-      if (!Array.isArray(speciesPool))
+      if (!Array.isArray(speciesPool)) {
         speciesPool = [speciesPool];
+      }
       // Set a function to get a random party member from the species pool.
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
@@ -535,8 +542,9 @@ export class TrainerConfig {
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {
       // Ensure speciesPool is an array.
-      if (!Array.isArray(speciesPool))
+      if (!Array.isArray(speciesPool)) {
         speciesPool = [speciesPool];
+      }
       // Set a function to get a random party member from the species pool.
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
@@ -572,16 +580,18 @@ export class TrainerConfig {
     const ret = this.name;
 
     // Check if the variant is double and the name for double exists
-    if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble)
+    if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble) {
       return this.nameDouble;
+    }
 
     // Female variant
     if (this.hasGenders) {
       // If the name is already set
       if (this.nameFemale) {
         // Check if the variant is either female or this is for the partner in a double battle
-        if (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER))
+        if (variant === TrainerVariant.FEMALE || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER)) {
           return this.nameFemale;
+        }
       } else
       // Check if !variant is true, if so return the name, else return the name with _female appended
         if (variant) {
@@ -608,8 +618,9 @@ export class TrainerConfig {
       const trainerKey = this.getSpriteKey(variant === TrainerVariant.FEMALE);
       const partnerTrainerKey = this.getSpriteKey(true);
       scene.loadAtlas(trainerKey, 'trainer');
-      if (isDouble)
+      if (isDouble) {
         scene.loadAtlas(partnerTrainerKey, 'trainer');
+      }
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
@@ -636,8 +647,9 @@ export class TrainerConfig {
         }
         resolve();
       });
-      if (!scene.load.isLoading())
+      if (!scene.load.isLoading()) {
         scene.load.start();
+      }
     });
   }
 }
@@ -659,8 +671,9 @@ function getGymLeaderPartyTemplate(scene: BattleScene) {
 function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
   return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
-    if (!ignoreEvolution)
+    if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
+    }
     return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
   };
 }

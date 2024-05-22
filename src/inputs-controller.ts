@@ -236,7 +236,9 @@ export class InputsController {
      */
   getActionGamepadMapping(): ActionGamepadMapping {
     const gamepadMapping = {};
-    if (!this.player?.mapping) return gamepadMapping;
+    if (!this.player?.mapping) {
+      return gamepadMapping;
+    }
     gamepadMapping[this.player.mapping.LC_N] = Button.UP;
     gamepadMapping[this.player.mapping.LC_S] = Button.DOWN;
     gamepadMapping[this.player.mapping.LC_W] = Button.LEFT;
@@ -272,7 +274,9 @@ export class InputsController {
      * - If mapped, emits an 'input_down' event with the controller type and button action, and updates the interaction of this button.
      */
   gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-    if (!this.gamepadSupport) return;
+    if (!this.gamepadSupport) {
+      return;
+    }
     const actionMapping = this.getActionGamepadMapping();
     const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
     if (buttonDown !== undefined) {
@@ -298,7 +302,9 @@ export class InputsController {
      * - If mapped, emits an 'input_up' event with the controller type and button action, and clears the interaction for this button.
      */
   gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-    if (!this.gamepadSupport) return;
+    if (!this.gamepadSupport) {
+      return;
+    }
     const actionMapping = this.getActionGamepadMapping();
     const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
     if (buttonUp !== undefined) {
@@ -353,8 +359,9 @@ export class InputsController {
     for (const b of Utils.getEnumValues(Button)) {
       const keys: Phaser.Input.Keyboard.Key[] = [];
       if (keyConfig.hasOwnProperty(b)) {
-        for (const k of keyConfig[b])
+        for (const k of keyConfig[b]) {
           keys.push(this.scene.input.keyboard.addKey(k, false));
+        }
         mobileKeyConfig[Button[b]] = keys[0];
       }
       this.buttonKeys[b] = keys;
@@ -436,7 +443,9 @@ export class InputsController {
      * firing a repeated input - this is to prevent multiple buttons from firing repeatedly.
      */
   repeatInputDurationJustPassed(button: Button): boolean {
-    if (!this.isButtonLocked(button)) return false;
+    if (!this.isButtonLocked(button)) {
+      return false;
+    }
     if (this.time.now - this.interactions[button].pressTime >= repeatInputDelayMillis) {
       return true;
     }
@@ -458,7 +467,9 @@ export class InputsController {
      * Additionally, this method locks the button (by calling `setButtonLock`) to prevent it from being re-processed until it is released, ensuring that each press is handled distinctly.
      */
   setLastProcessedMovementTime(button: Button, source: String = 'keyboard'): void {
-    if (!this.interactions.hasOwnProperty(button)) return;
+    if (!this.interactions.hasOwnProperty(button)) {
+      return;
+    }
     this.setButtonLock(button);
     this.interactions[button].pressTime = this.time.now;
     this.interactions[button].isPressed = true;
@@ -480,7 +491,9 @@ export class InputsController {
      * It releases the button lock, which prevents the button from being processed repeatedly until it's explicitly released.
      */
   delLastProcessedMovementTime(button: Button): void {
-    if (!this.interactions.hasOwnProperty(button)) return;
+    if (!this.interactions.hasOwnProperty(button)) {
+      return;
+    }
     this.releaseButtonLock(button);
     this.interactions[button].pressTime = null;
     this.interactions[button].isPressed = false;
@@ -543,11 +556,18 @@ export class InputsController {
      * This mechanism allows for up to two buttons to be locked at the same time.
      */
   setButtonLock(button: Button): void {
-    if (this.buttonLock === button || this.buttonLock2 === button) return;
-    if (this.buttonLock === button) this.buttonLock2 = button;
-    else if (this.buttonLock2 === button) this.buttonLock = button;
-    else if (!!this.buttonLock) this.buttonLock2 = button;
-    else this.buttonLock = button;
+    if (this.buttonLock === button || this.buttonLock2 === button) {
+      return;
+    }
+    if (this.buttonLock === button) {
+      this.buttonLock2 = button;
+    } else if (this.buttonLock2 === button) {
+      this.buttonLock = button;
+    } else if (!!this.buttonLock) {
+      this.buttonLock2 = button;
+    } else {
+      this.buttonLock = button;
+    }
   }
 
   /**
@@ -561,7 +581,10 @@ export class InputsController {
      * This action frees the button to be processed again, ensuring it can respond to new inputs.
      */
   releaseButtonLock(button: Button): void {
-    if (this.buttonLock === button) this.buttonLock = null;
-    else if (this.buttonLock2 === button) this.buttonLock2 = null;
+    if (this.buttonLock === button) {
+      this.buttonLock = null;
+    } else if (this.buttonLock2 === button) {
+      this.buttonLock2 = null;
+    }
   }
 }

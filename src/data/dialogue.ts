@@ -2313,8 +2313,9 @@ export const miscDialogue = {
 
 export function getCharVariantFromDialogue(message: string): string {
   const variantMatch = /@c\{(.*?)\}/.exec(message);
-  if (variantMatch)
+  if (variantMatch) {
     return variantMatch[1];
+  }
   return 'neutral';
 }
 
@@ -2325,12 +2326,15 @@ export function initTrainerTypeDialogue(): void {
     const messageTypes = [ 'encounter', 'victory', 'defeat' ];
     for (const messageType of messageTypes) {
       if (Array.isArray(messages)) {
-        if (messages[0][messageType])
+        if (messages[0][messageType]) {
           trainerConfigs[trainerType][`${messageType}Messages`] = messages[0][messageType];
-        if (messages.length > 1)
+        }
+        if (messages.length > 1) {
           trainerConfigs[trainerType][`female${messageType.slice(0, 1).toUpperCase()}${messageType.slice(1)}Messages`] = messages[1][messageType];
-      } else
+        }
+      } else {
         trainerConfigs[trainerType][`${messageType}Messages`] = messages[messageType];
+      }
     }
   }
 }

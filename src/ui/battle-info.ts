@@ -223,8 +223,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 2);
     this.teraIcon.setVisible(this.lastTeraType !== Type.UNKNOWN);
     this.teraIcon.on('pointerover', () => {
-      if (this.lastTeraType !== Type.UNKNOWN)
+      if (this.lastTeraType !== Type.UNKNOWN) {
         (this.scene as BattleScene).ui.showTooltip(null, `${Utils.toReadableString(Type[this.lastTeraType])} Terastallized`);
+      }
     });
     this.teraIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
 
@@ -254,8 +255,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
-    if (isFusion)
+    if (isFusion) {
       this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
+    }
 
     if (!this.player) {
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
@@ -276,18 +278,21 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
 
-      if (missingDexAttrs || !rootFormHasHiddenAbility)
+      if (missingDexAttrs || !rootFormHasHiddenAbility) {
         this.ownedIcon.setTint(0x808080);
+      }
 
-      if (this.boss)
+      if (this.boss) {
         this.updateBossSegmentDividers(pokemon as EnemyPokemon);
+      }
     }
 
     this.hpBar.setScale(pokemon.getHpRatio(true), 1);
     this.lastHpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
     this.hpBar.setFrame(this.lastHpFrame);
-    if (this.player)
+    if (this.player) {
       this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
+    }
     this.lastHp = pokemon.hp;
     this.lastMaxHp = pokemon.getMaxHp();
 
@@ -301,10 +306,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.type1Icon.setFrame(Type[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
     this.type3Icon.setVisible(types.length > 2);
-    if (types.length > 1)
+    if (types.length > 1) {
       this.type2Icon.setFrame(Type[types[1]].toLowerCase());
-    if (types.length > 2)
+    }
+    if (types.length > 2) {
       this.type3Icon.setFrame(Type[types[2]].toLowerCase());
+    }
 
     if (this.player) {
       this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
@@ -325,16 +332,18 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   setMini(mini: boolean): void {
-    if (this.mini === mini)
+    if (this.mini === mini) {
       return;
+    }
 
     this.mini = mini;
 
     this.box.setTexture(this.getTextureName());
     this.statsBox.setTexture(`${this.getTextureName()}_stats`);
 
-    if (this.player)
+    if (this.player) {
       this.y -= 12 * (mini ? 1 : -1);
+    }
 
     const offsetElements = [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.statusIndicator, this.levelContainer ];
     offsetElements.forEach(el => el.y += 1.5 * (mini ? -1 : 1));
@@ -379,8 +388,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateBossSegmentDividers(pokemon: EnemyPokemon): void {
-    while (this.hpBarSegmentDividers.length)
+    while (this.hpBarSegmentDividers.length) {
       this.hpBarSegmentDividers.pop().destroy();
+    }
 
     if (this.boss && this.bossSegments > 1) {
       const uiTheme = (this.scene as BattleScene).uiTheme;
@@ -399,8 +409,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
   
   setOffset(offset: boolean): void {
-    if (this.offset === offset)
+    if (this.offset === offset) {
       return;
+    }
     
     this.offset = offset;
 
@@ -410,8 +421,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
-      if (!this.scene)
+      if (!this.scene) {
         return resolve();
+      }
 
       const nameUpdated = this.lastName !== pokemon.name;
 
@@ -441,12 +453,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
         this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
 
-        if (this.lastStatus !== StatusEffect.NONE)
+        if (this.lastStatus !== StatusEffect.NONE) {
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
+        }
         this.statusIndicator.setVisible(!!this.lastStatus);
         
-        if (!this.player && this.ownedIcon.visible)
+        if (!this.player && this.ownedIcon.visible) {
           this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
+        }
       }
 
       const types = pokemon.getTypes(true);
@@ -454,10 +468,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.type1Icon.setFrame(Type[types[0]].toLowerCase());
       this.type2Icon.setVisible(types.length > 1);
       this.type3Icon.setVisible(types.length > 2);
-      if (types.length > 1)
+      if (types.length > 1) {
         this.type2Icon.setFrame(Type[types[1]].toLowerCase());
-      if (types.length > 2)
+      }
+      if (types.length > 2) {
         this.type3Icon.setFrame(Type[types[2]].toLowerCase());
+      }
 
       const updateHpFrame = () => {
         const hpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
@@ -470,8 +486,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const updatePokemonHp = () => {
         let duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
         const speed = (this.scene as BattleScene).hpBarSpeed;
-        if (speed)
+        if (speed) {
           duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
+        }
         this.scene.tweens.add({
           targets: this.hpBar,
           ease: 'Sine.easeOut',
@@ -491,8 +508,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
             resolve();
           }
         });
-        if (!this.player)
+        if (!this.player) {
           this.lastHp = pokemon.hp;
+        }
         this.lastMaxHp = pokemon.getMaxHp();
       };
 
@@ -503,15 +521,16 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           const originalResolve = resolve;
           const durationMultipler = Math.max(Phaser.Tweens.Builders.GetEaseFunction('Cubic.easeIn')(1 - (Math.min(pokemon.level - this.lastLevel, 10) / 10)), 0.1);
           resolve = () => this.updatePokemonExp(pokemon, false, durationMultipler).then(() => originalResolve());
-        } else if (isLevelCapped !== this.lastLevelCapped)
+        } else if (isLevelCapped !== this.lastLevelCapped) {
           this.setLevel(pokemon.level);
+        }
 
         this.lastLevelCapped = isLevelCapped;
       }
 
-      if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp())
+      if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
         return updatePokemonHp();
-      else if (!this.player && this.lastLevel !== pokemon.level) {
+      } else if (!this.player && this.lastLevel !== pokemon.level) {
         this.setLevel(pokemon.level);
         this.lastLevel = pokemon.level;
       }
@@ -558,10 +577,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
       let ratio = relLevelExp ? levelExp / relLevelExp : 0;
       if (this.lastLevel >= (this.scene as BattleScene).getMaxExpLevel(true)) {
-        if (levelUp)
+        if (levelUp) {
           ratio = 1;
-        else
+        } else {
           ratio = 0;
+        }
         instant = true;
       }
       const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - (Math.max(this.lastLevel - 100, 0) / 150));
@@ -573,18 +593,21 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastExp = pokemon.exp;
         this.lastLevelExp = pokemon.levelExp;
       }
-      if (duration)
+      if (duration) {
         (this.scene as BattleScene).playSound('exp');
+      }
       this.scene.tweens.add({
         targets: this.expMaskRect,
         ease: 'Sine.easeIn',
         x: ratio * 510,
         duration: duration,
         onComplete: () => {
-          if (!this.scene)
+          if (!this.scene) {
             return resolve();
-          if (duration)
+          }
+          if (duration) {
             this.scene.sound.stopByKey('exp');
+          }
           if (ratio === 1) {
             (this.scene as BattleScene).playSound('level_up');
             this.setLevel(this.lastLevel);
@@ -604,23 +627,27 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const isCapped = level >= (this.scene as BattleScene).getMaxExpLevel();
     this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
-    for (let i = 0; i < levelStr.length; i++)
+    for (let i = 0; i < levelStr.length; i++) {
       this.levelNumbersContainer.add(this.scene.add.image(i * 8, 0, `numbers${isCapped && this.player ? '_red' : ''}`, levelStr[i]));
+    }
     this.levelContainer.setX((this.player ? -41 : -50) - 8 * Math.max(levelStr.length - 3, 0));
   }
 
   setHpNumbers(hp: integer, maxHp: integer): void {
-    if (!this.player || !this.scene)
+    if (!this.player || !this.scene) {
       return;
+    }
     this.hpNumbersContainer.removeAll(true);
     const hpStr = hp.toString();
     const maxHpStr = maxHp.toString();
     let offset = 0;
-    for (let i = maxHpStr.length - 1; i >= 0; i--)
+    for (let i = maxHpStr.length - 1; i >= 0; i--) {
       this.hpNumbersContainer.add(this.scene.add.image(offset++ * -8, 0, 'numbers', maxHpStr[i]));
+    }
     this.hpNumbersContainer.add(this.scene.add.image(offset++ * -8, 0, 'numbers', '/'));
-    for (let i = hpStr.length - 1; i >= 0; i--)
+    for (let i = hpStr.length - 1; i >= 0; i--) {
       this.hpNumbersContainer.add(this.scene.add.image(offset++ * -8, 0, 'numbers', hpStr[i]));
+    }
   }
 
   updateBattleStats(battleStats: integer[]): void {

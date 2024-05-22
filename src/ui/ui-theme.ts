@@ -37,8 +37,9 @@ const windowTypeControlColors = {
 };
 
 export function addWindow(scene: BattleScene, x: number, y: number, width: number, height: number, mergeMaskTop?: boolean, mergeMaskLeft?: boolean, maskOffsetX?: number, maskOffsetY?: number, windowVariant?: WindowVariant): Phaser.GameObjects.NineSlice {
-  if (windowVariant === undefined)
+  if (windowVariant === undefined) {
     windowVariant = WindowVariant.NORMAL;
+  }
 
   const borderSize = scene.uiTheme ? 6 : 8;
     
@@ -63,19 +64,23 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
   const traverse = (object: any) => {
     if (object.hasOwnProperty('children') && object.children instanceof Phaser.GameObjects.DisplayList) {
       const children = object.children as Phaser.GameObjects.DisplayList;
-      for (const child of children.getAll())
+      for (const child of children.getAll()) {
         traverse(child);
+      }
     } else if (object instanceof Phaser.GameObjects.Container) {
-      for (const child of object.getAll())
+      for (const child of object.getAll()) {
         traverse(child);
+      }
     } else if (object instanceof Phaser.GameObjects.NineSlice) {
-      if (object.texture.key.startsWith('window_'))
+      if (object.texture.key.startsWith('window_')) {
         windowObjects.push([ object, object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.XTHIN)) ? WindowVariant.XTHIN : object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.THIN)) ? WindowVariant.THIN : WindowVariant.NORMAL ]);
-      else if (object.texture?.key === 'namebox')
+      } else if (object.texture?.key === 'namebox') {
         themedObjects.push(object);
+      }
     } else if (object instanceof Phaser.GameObjects.Sprite) {
-      if (object.texture?.key === 'bg')
+      if (object.texture?.key === 'bg') {
         themedObjects.push(object);
+      }
     }
   };
 
@@ -88,11 +93,13 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
 
   const windowKey = `window_${windowTypeIndex}`;
 
-  for (const [ window, variant ] of windowObjects)
+  for (const [ window, variant ] of windowObjects) {
     window.setTexture(`${windowKey}${getWindowVariantSuffix(variant)}`);
+  }
 
-  for (const obj of themedObjects)
+  for (const obj of themedObjects) {
     obj.setFrame(windowTypeIndex);
+  }
 }
 
 export function addUiThemeOverrides(scene: BattleScene): void {

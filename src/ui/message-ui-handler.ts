@@ -26,8 +26,9 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   }
 
   private showTextInternal(text: string, delay: integer, callback: Function, callbackDelay: integer, prompt: boolean, promptDelay: integer) {
-    if (delay === null || delay === undefined)
+    if (delay === null || delay === undefined) {
       delay = 20;
+    }
     const charVarMap = new Map<integer, string>();
     const delayMap = new Map<integer, integer>();
     const soundMap = new Map<integer, string>();
@@ -64,8 +65,9 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           if (lineCount > lastLineCount) {
             lastLineCount = lineCount;
             newText = `${newText}\n${textWords[w]}`;
-          } else
+          } else {
             newText = nextWordText;
+          }
         }
       }
 
@@ -74,23 +76,26 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
 
     if (this.textTimer) {
       this.textTimer.remove();
-      if (this.textCallbackTimer)
+      if (this.textCallbackTimer) {
         this.textCallbackTimer.callback();
+      }
     }
     if (prompt) {
       const originalCallback = callback;
       callback = () => {
         const showPrompt = () => this.showPrompt(originalCallback, callbackDelay);
-        if (promptDelay)
+        if (promptDelay) {
           this.scene.time.delayedCall(promptDelay, showPrompt);
-        else
+        } else {
           showPrompt();
+        }
       };
     }
     if (delay) {
       this.clearText();
-      if (prompt)
+      if (prompt) {
         this.pendingPrompt = true;
+      }
       this.textTimer = this.scene.time.addEvent({
         delay: delay,
         callback: () => {
@@ -100,10 +105,12 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           const charDelay = delayMap.get(charIndex);
           this.message.setText(text.slice(0, charIndex));
           const advance = () => {
-            if (charVar)
+            if (charVar) {
               this.scene.charSprite.setVariant(charVar);
-            if (charSound)
+            }
+            if (charSound) {
               this.scene.playSound(charSound);
+            }
             if (callback && !this.textTimer.repeatCount) {
               if (callbackDelay && !prompt) {
                 this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
@@ -113,8 +120,9 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
                   }
                   callback();
                 });
-              } else
+              } else {
                 callback();
+              }
             }
           };
           if (charDelay) {
@@ -126,17 +134,20 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
                 advance();
               }
             });
-          } else
+          } else {
             advance();
+          }
         },
         repeat: text.length
       });
     } else {
       this.message.setText(text);
-      if (prompt)
+      if (prompt) {
         this.pendingPrompt = true;
-      if (callback)
+      }
+      if (callback) {
         callback();
+      }
     }
   }
 
@@ -168,8 +179,9 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             }
             callback();
           });
-        } else
+        } else {
           callback();
+        }
       }
     };
   }

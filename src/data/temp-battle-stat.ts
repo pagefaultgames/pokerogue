@@ -11,8 +11,9 @@ export enum TempBattleStat {
 }
 
 export function getTempBattleStatName(tempBattleStat: TempBattleStat) {
-  if (tempBattleStat === TempBattleStat.CRIT)
+  if (tempBattleStat === TempBattleStat.CRIT) {
     return 'critical-hit ratio';
+  }
   return getBattleStatName(tempBattleStat as integer as BattleStat);
 }
 

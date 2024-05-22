@@ -24,8 +24,9 @@ export enum Type {
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
 export function getTypeDamageMultiplier(attackType: integer, defType: integer): TypeDamageMultiplier {
-  if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN)
+  if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN) {
     return 1;
+  }
 
   switch (defType) {
   case Type.NORMAL:

@@ -114,8 +114,9 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
             ease: 'Cubic.easeOut',
             onComplete: () => doBounce()
           });
-        } else if (callback)
+        } else if (callback) {
           callback();
+        }
       }
     });
   };

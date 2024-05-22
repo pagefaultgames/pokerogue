@@ -24,8 +24,9 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       // Migrate old data from before the username was appended
       [ 'data', 'sessionData', 'sessionData1', 'sessionData2', 'sessionData3', 'sessionData4' ].map(d => {
         if (localStorage.hasOwnProperty(d)) {
-          if (localStorage.hasOwnProperty(`${d}_${loggedInUser.username}`))
+          if (localStorage.hasOwnProperty(`${d}_${loggedInUser.username}`)) {
             localStorage.setItem(`${d}_${loggedInUser.username}_bak`, localStorage.getItem(`${d}_${loggedInUser.username}`));
+          }
           localStorage.setItem(`${d}_${loggedInUser.username}`, localStorage.getItem(d));
           localStorage.removeItem(d);
         }

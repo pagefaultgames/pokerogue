@@ -22,8 +22,9 @@ const tutorialHandlers = {
   },
   [Tutorial.Access_Menu]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      if (scene.enableTouchControls)
+      if (scene.enableTouchControls) {
         return resolve();
+      }
       scene.showFieldOverlay(1000).then(() => scene.ui.showText(i18next.t('tutorial:accessMenu'), null, () => scene.hideFieldOverlay(1000).then(() => resolve()), null, true));
     });
   },
@@ -64,19 +65,23 @@ const tutorialHandlers = {
 
 export function handleTutorial(scene: BattleScene, tutorial: Tutorial): Promise<boolean> {
   return new Promise<boolean>(resolve => {
-    if (!scene.enableTutorials)
+    if (!scene.enableTutorials) {
       return resolve(false);
+    }
 
-    if (scene.gameData.getTutorialFlags()[tutorial])
+    if (scene.gameData.getTutorialFlags()[tutorial]) {
       return resolve(false);
+    }
 
     const handler = scene.ui.getHandler();
-    if (handler instanceof AwaitableUiHandler)
+    if (handler instanceof AwaitableUiHandler) {
       handler.tutorialActive = true;
+    }
     tutorialHandlers[tutorial](scene).then(() => {
       scene.gameData.saveTutorialFlag(tutorial, true);
-      if (handler instanceof AwaitableUiHandler)
+      if (handler instanceof AwaitableUiHandler) {
         handler.tutorialActive = false;
+      }
       resolve(true);
     });
   });

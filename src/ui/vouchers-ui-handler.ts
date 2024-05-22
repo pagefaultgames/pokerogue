@@ -145,36 +145,43 @@ export default class VouchersUiHandler extends MessageUiHandler {
       switch (button) {
       case Button.UP:
         if (this.cursor < itemCols) {
-          if (this.scrollCursor)
+          if (this.scrollCursor) {
             success = this.setScrollCursor(this.scrollCursor - 1);
-        } else
+          }
+        } else {
           success = this.setCursor(this.cursor - itemCols);
+        }
         break;
       case Button.DOWN:
         const canMoveDown = (this.cursor + itemOffset) + itemCols < this.itemsTotal;
         if (rowIndex >= itemRows - 1) {
-          if (this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows && canMoveDown)
+          if (this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows && canMoveDown) {
             success = this.setScrollCursor(this.scrollCursor + 1);
-        } else if (canMoveDown)
+          }
+        } else if (canMoveDown) {
           success = this.setCursor(this.cursor + itemCols);
+        }
         break;
       case Button.LEFT:
-        if (!this.cursor && this.scrollCursor)
+        if (!this.cursor && this.scrollCursor) {
           success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (itemCols - 1));
-        else if (this.cursor)
+        } else if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
+        }
         break;
       case Button.RIGHT:
         if (this.cursor + 1 === itemRows * itemCols && this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows) {
           success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (itemCols - 1));
-        } else if (this.cursor + itemOffset < Object.keys(vouchers).length - 1)
+        } else if (this.cursor + itemOffset < Object.keys(vouchers).length - 1) {
           success = this.setCursor(this.cursor + 1);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -193,15 +200,17 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.cursorObj.setPositionRelative(this.voucherIcons[this.cursor], 0, 0);
 
-    if (updateVoucher)
+    if (updateVoucher) {
       this.showVoucher(vouchers[Object.keys(vouchers)[cursor + this.scrollCursor * itemCols]]);
+    }
 
     return ret;
   }
 
   setScrollCursor(scrollCursor: integer): boolean {
-    if (scrollCursor === this.scrollCursor)
+    if (scrollCursor === this.scrollCursor) {
       return false;
+    }
 
     this.scrollCursor = scrollCursor;
 
@@ -226,14 +235,16 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
       icon.setFrame(getVoucherTypeIcon(voucher.voucherType));
       icon.setVisible(true);
-      if (!unlocked)
+      if (!unlocked) {
         icon.setTintFill(0);
-      else
+      } else {
         icon.clearTint();
+      }
     });
 
-    if (voucherRange.length < this.voucherIcons.length)
+    if (voucherRange.length < this.voucherIcons.length) {
       this.voucherIcons.slice(voucherRange.length).map(i => i.setVisible(false));
+    }
   }
 
   clear() {
@@ -243,8 +254,9 @@ export default class VouchersUiHandler extends MessageUiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

@@ -70,10 +70,11 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
         let label = ivs[i].toString();
         if (this.showDiff && originalIvs) {
-          if (originalIvs[i] < ivs[i])
+          if (originalIvs[i] < ivs[i]) {
             label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, (this.scene as BattleScene).uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, (this.scene as BattleScene).uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
-          else
+          } else {
             label += ' (-)';
+          }
         }
         t.setText(`[shadow]${label}[/shadow]`);
       });

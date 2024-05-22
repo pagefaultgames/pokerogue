@@ -67,8 +67,9 @@ function doDefaultPbOpenParticles(scene: BattleScene, x: number, y: number, radi
 
 function doUbOpenParticles(scene: BattleScene, x: number, y: number, frameIndex: integer) {
   const particles: Phaser.GameObjects.Image[] = [];
-  for (let i = 0; i < 10; i++)
+  for (let i = 0; i < 10; i++) {
     particles.push(doFanOutParticle(scene, i * 25, x, y, 1, 1, 5, frameIndex));
+  }
 
   scene.tweens.add({
     targets: particles,
@@ -77,8 +78,9 @@ function doUbOpenParticles(scene: BattleScene, x: number, y: number, frameIndex:
     alpha: 0,
     ease: 'Sine.easeIn',
     onComplete: () => {
-      for (const particle of particles)
+      for (const particle of particles) {
         particle.destroy();
+      }
     }
   });
 }
@@ -86,8 +88,9 @@ function doUbOpenParticles(scene: BattleScene, x: number, y: number, frameIndex:
 function doMbOpenParticles(scene: BattleScene, x: number, y: number) {
   const particles: Phaser.GameObjects.Image[] = [];
   for (let j = 0; j < 2; j++) {
-    for (let i = 0; i < 8; i++)
+    for (let i = 0; i < 8; i++) {
       particles.push(doFanOutParticle(scene, i * 32, x, y, j ? 1 : 2, j ? 2 : 1, 8, 4));
+    }
 
     scene.tweens.add({
       targets: particles,
@@ -96,8 +99,9 @@ function doMbOpenParticles(scene: BattleScene, x: number, y: number) {
       alpha: 0,
       ease: 'Sine.easeIn',
       onComplete: () => {
-        for (const particle of particles)
+        for (const particle of particles) {
           particle.destroy();
+        }
       }
     });
   }
@@ -110,8 +114,9 @@ function doFanOutParticle(scene: BattleScene, trigIndex: integer, x: integer, y:
   scene.field.add(particle);
   
   const updateParticle = () => {
-    if (!particle.scene)
+    if (!particle.scene) {
       return particleTimer.remove();
+    }
     particle.x = x + sin(trigIndex, f * xSpeed);
     particle.y = y + cos(trigIndex, f * ySpeed);
     trigIndex = (trigIndex + angle);

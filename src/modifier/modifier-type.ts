@@ -68,10 +68,12 @@ export class ModifierType {
   }
 
   getOrInferTier(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierTier {
-    if (this.tier)
+    if (this.tier) {
       return this.tier;
-    if (!this.id)
+    }
+    if (!this.id) {
       return null;
+    }
     let poolTypes: ModifierPoolType[];
     switch (poolType) {
     case ModifierPoolType.PLAYER:
@@ -91,10 +93,12 @@ export class ModifierType {
     for (const type of poolTypes) {
       const pool = getModifierPoolForType(type);
       for (const tier of Utils.getEnumValues(ModifierTier)) {
-        if (!pool.hasOwnProperty(tier))
+        if (!pool.hasOwnProperty(tier)) {
           continue;
-        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === (this.generatorId || this.id)))
+        }
+        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === (this.generatorId || this.id))) {
           return (this.tier = tier);
+        }
       }
     }
     return null;
@@ -203,10 +207,12 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
       const dummyModifier = this.newModifier(pokemon);
       const matchingModifier = pokemon.scene.findModifier(m => m instanceof Modifiers.PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(dummyModifier)) as Modifiers.PokemonHeldItemModifier;
       const maxStackCount = dummyModifier.getMaxStackCount(pokemon.scene);
-      if (!maxStackCount)
+      if (!maxStackCount) {
         return i18next.t('modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable', { 'pokemonName': pokemon.name });
-      if (matchingModifier && matchingModifier.stackCount === maxStackCount)
+      }
+      if (matchingModifier && matchingModifier.stackCount === maxStackCount) {
         return i18next.t('modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany', { 'pokemonName': pokemon.name });
+      }
       return null;
     }, group, soundName);
   }
@@ -224,8 +230,9 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, group?: string) {
     super(localeKey, iconImage, newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
       selectFilter || ((pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || !pokemon.status)))
+        if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || !pokemon.status))) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }), group || 'potion');
 
@@ -250,14 +257,16 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(localeKey: string, iconImage: string, restorePercent: integer) {
     super(localeKey, iconImage, 0, restorePercent, false, (_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, 0, this.restorePercent, false, true),
       ((pokemon: PlayerPokemon) => {
-        if (!pokemon.isFainted())
+        if (!pokemon.isFainted()) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }), 'revive');
 
     this.selectFilter = (pokemon: PlayerPokemon) => {
-      if (pokemon.hp)
+      if (pokemon.hp) {
         return PartyUiHandler.NoEffectMessage;
+      }
       return null;
     };
   }
@@ -271,8 +280,9 @@ export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
       ((pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || !pokemon.status)
+        if (!pokemon.hp || !pokemon.status) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }));
   }
@@ -300,8 +310,9 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
       (_pokemon: PlayerPokemon) => {
         return null;
       }, (pokemonMove: PokemonMove) => {
-        if (!pokemonMove.ppUsed)
+        if (!pokemonMove.ppUsed) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }, 'ether');
 
@@ -322,8 +333,9 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, restorePoints: integer) {
     super(localeKey, iconImage, (_type, args) => new Modifiers.PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getMoveset().filter(m => m.ppUsed).length)
+        if (!pokemon.getMoveset().filter(m => m.ppUsed).length) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }, 'elixir');
 
@@ -346,8 +358,9 @@ export class PokemonPpUpModifierType extends PokemonMoveModifierType {
       (_pokemon: PlayerPokemon) => {
         return null;
       }, (pokemonMove: PokemonMove) => {
-        if (pokemonMove.getMove().pp < 5 || pokemonMove.ppUp >= 3)
+        if (pokemonMove.getMove().pp < 5 || pokemonMove.ppUp >= 3) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }, 'ppUp');
 
@@ -365,8 +378,9 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
   constructor(nature: Nature) {
     super('', `mint_${Utils.getEnumKeys(Stat).find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)?.toLowerCase() || 'neutral' }`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
       ((pokemon: PlayerPokemon) => {
-        if (pokemon.getNature() === this.nature)
+        if (pokemon.getNature() === this.nature) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }), 'mint');
 
@@ -386,8 +400,9 @@ export class RememberMoveModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, group?: string) {
     super(localeKey, iconImage, (type, args) => new Modifiers.RememberMoveModifier(type, (args[0] as PlayerPokemon).id, (args[1] as integer)),
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getLearnableLevelMoves().length)
+        if (!pokemon.getLearnableLevelMoves().length) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }, group);
   }
@@ -687,8 +702,9 @@ export class TmModifierType extends PokemonModifierType {
   constructor(moveId: Moves) {
     super('', `tm_${Type[allMoves[moveId].type].toLowerCase()}`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
-        if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.getMoveset().filter(m => m?.moveId === moveId).length)
+        if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.getMoveset().filter(m => m?.moveId === moveId).length) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       }, 'tm');
 
@@ -714,11 +730,12 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
     super('', EvolutionItem[evolutionItem].toLowerCase(), (_type, args) => new Modifiers.EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.item === this.evolutionItem
-          && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX))
+          && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX)) {
           return null;
-        else if (pokemon.isFusion() && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.item === this.evolutionItem
-        && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX))
+        } else if (pokemon.isFusion() && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.item === this.evolutionItem
+        && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX)) {
           return null;
+        }
 
         return PartyUiHandler.NoEffectMessage;
       });
@@ -746,8 +763,9 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
     super('', FormChangeItem[formChangeItem].toLowerCase(), (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
       (pokemon: PlayerPokemon) => {
         if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
-        && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem))
+        && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem)) {
           return null;
+        }
 
         return PartyUiHandler.NoEffectMessage;
       });
@@ -772,8 +790,9 @@ export class FusePokemonModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, (_type, args) => new Modifiers.FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
-        if (pokemon.isFusion())
+        if (pokemon.isFusion()) {
           return PartyUiHandler.NoEffectMessage;
+        }
         return null;
       });
   }
@@ -786,28 +805,33 @@ export class FusePokemonModifierType extends PokemonModifierType {
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs)
+      if (pregenArgs) {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
+      }
 
       const attackMoveTypes = party.map(p => p.getMoveset().map(m => m.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
-      if (!attackMoveTypes.length)
+      if (!attackMoveTypes.length) {
         return null;
+      }
 
       const attackMoveTypeWeights = new Map<Type, integer>();
       let totalWeight = 0;
       for (const t of attackMoveTypes) {
         if (attackMoveTypeWeights.has(t)) {
-          if (attackMoveTypeWeights.get(t) < 3)
+          if (attackMoveTypeWeights.get(t) < 3) {
             attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t) + 1);
-          else
+          } else {
             continue;
-        } else
+          }
+        } else {
           attackMoveTypeWeights.set(t, 1);
+        }
         totalWeight++;
       }
 
-      if (!totalWeight)
+      if (!totalWeight) {
         return null;
+      }
 
       let type: Type;
       
@@ -833,8 +857,9 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
     super((party: Pokemon[]) => {
       const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(' (N)')).filter((tm, i, array) => array.indexOf(tm) === i);
-      if (!tierUniqueCompatibleTms.length)
+      if (!tierUniqueCompatibleTms.length) {
         return null;
+      }
       const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length);
       return new TmModifierType(tierUniqueCompatibleTms[randTmIndex]);
     });
@@ -844,8 +869,9 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(rare: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs)
+      if (pregenArgs) {
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
+      }
 
       const evolutionItemPool = [
         party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
@@ -858,8 +884,9 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         }).flat()
       ].flat().flatMap(e => e.item).filter(i => (i > 50) === rare);
 
-      if (!evolutionItemPool.length)
+      if (!evolutionItemPool.length) {
         return null;
+      }
 
       return new EvolutionItemModifierType(evolutionItemPool[Utils.randSeedInt(evolutionItemPool.length)]);
     });
@@ -869,8 +896,9 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
 class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs)
+      if (pregenArgs) {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
+      }
 
       const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
@@ -880,8 +908,9 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
           .filter(t => t && t.active && !p.scene.findModifier(m => m instanceof Modifiers.PokemonFormChangeItemModifier && m.pokemonId === p.id && m.formChangeItem === t.item));
       }).flat().flatMap(fc => fc.item);
 
-      if (!formChangeItemPool.length)
+      if (!formChangeItemPool.length) {
         return null;
+      }
 
       return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length)]);
     });
@@ -1040,8 +1069,9 @@ export const modifierTypes = {
   MAX_LURE: () => new DoubleBattleChanceBoosterModifierType('modifierType:ModifierType.MAX_LURE', 'max_lure', 25),
 
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs)
+    if (pregenArgs) {
       return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
+    }
     const randTempBattleStat = Utils.randSeedInt(6) as TempBattleStat;
     return new TempBattleStatBoosterModifierType(randTempBattleStat);
   }),
@@ -1059,39 +1089,45 @@ export const modifierTypes = {
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
   MINT: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs)
+    if (pregenArgs) {
       return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
+    }
     return new PokemonNatureChangeModifierType(Utils.randSeedInt(Utils.getEnumValues(Nature).length) as Nature);
   }),
 
   TERA_SHARD: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs)
+    if (pregenArgs) {
       return new TerastallizeModifierType(pregenArgs[0] as Type);
-    if (!party[0].scene.getModifiers(Modifiers.TerastallizeAccessModifier).length)
+    }
+    if (!party[0].scene.getModifiers(Modifiers.TerastallizeAccessModifier).length) {
       return null;
+    }
     let type: Type;
     if (!Utils.randSeedInt(3)) {
       const partyMemberTypes = party.map(p => p.getTypes(false, false, true)).flat();
       type = Utils.randSeedItem(partyMemberTypes);
-    } else
+    } else {
       type = Utils.randSeedInt(64) ? Utils.randSeedInt(18) as Type : Type.STELLAR;
+    }
     return new TerastallizeModifierType(type);
   }),
 
   BERRY: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs)
+    if (pregenArgs) {
       return new BerryModifierType(pregenArgs[0] as BerryType);
+    }
     const berryTypes = Utils.getEnumValues(BerryType);
     let randBerryType: BerryType;
     const rand = Utils.randSeedInt(12);
-    if (rand < 2)
+    if (rand < 2) {
       randBerryType = BerryType.SITRUS;
-    else if (rand < 4)
+    } else if (rand < 4) {
       randBerryType = BerryType.LUM;
-    else if (rand < 6)
+    } else if (rand < 6) {
       randBerryType = BerryType.LEPPA;
-    else
+    } else {
       randBerryType = berryTypes[Utils.randSeedInt(berryTypes.length - 3) + 2];
+    }
     return new BerryModifierType(randBerryType);
   }),
 
@@ -1205,7 +1241,9 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 1),
-  ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.COMMON); return m; 
+  }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
     new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
@@ -1253,15 +1291,18 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic ? 1 : 0, 1),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
-      if (!party.find(p => p.getLearnableLevelMoves().length))
+      if (!party.find(p => p.getLearnableLevelMoves().length)) {
         return 0;
+      }
       const highestPartyLevel = party.map(p => p.level).reduce((highestLevel: integer, level: integer) => Math.max(highestLevel, level), 1);
       return Math.min(Math.ceil(highestPartyLevel / 20), 4);
     }, 4),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
-  ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.GREAT); return m; 
+  }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 24),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
@@ -1283,7 +1324,9 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 4),
     new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(party[0].scene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
     new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(3 - rerollCount, 0) : 0, 3),
-  ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ULTRA); return m; 
+  }),
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, 24),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, 2),
@@ -1305,7 +1348,9 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, 18),
     new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 8, 32),
     new WeightedModifierType(modifierTypes.DYNAMAX_BAND, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 8, 32),
-  ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ROGUE); return m; 
+  }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 24),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 14),
@@ -1314,38 +1359,56 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(9 - rerollCount * 3, 0) : 0, 9),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0, 1),
-  ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+  ].map(m => {
+    m.setTier(ModifierTier.MASTER); return m; 
+  })
 };
 
 const wildModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.BERRY, 1)
-  ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.COMMON); return m; 
+  }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)
-  ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.GREAT); return m; 
+  }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-  ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ULTRA); return m; 
+  }),
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
-  ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ROGUE); return m; 
+  }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)
-  ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+  ].map(m => {
+    m.setTier(ModifierTier.MASTER); return m; 
+  })
 };
 
 const trainerModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.BERRY, 8),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)
-  ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.COMMON); return m; 
+  }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
-  ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.GREAT); return m; 
+  }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 1),
-  ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ULTRA); return m; 
+  }),
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 2),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
@@ -1353,12 +1416,16 @@ const trainerModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 1),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 1),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 1),
-  ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ROGUE); return m; 
+  }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 1),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
-  ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+  ].map(m => {
+    m.setTier(ModifierTier.MASTER); return m; 
+  })
 };
 
 const enemyBuffModifierPool: ModifierPool = {
@@ -1373,14 +1440,18 @@ const enemyBuffModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
-  ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.COMMON); return m; 
+  }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
-  ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.GREAT); return m; 
+  }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
@@ -1388,42 +1459,59 @@ const enemyBuffModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 5)
-  ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
-  [ModifierTier.ROGUE]: [ ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
-  [ModifierTier.MASTER]: [ ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+  ].map(m => {
+    m.setTier(ModifierTier.ULTRA); return m; 
+  }),
+  [ModifierTier.ROGUE]: [ ].map(m => {
+    m.setTier(ModifierTier.ROGUE); return m; 
+  }),
+  [ModifierTier.MASTER]: [ ].map(m => {
+    m.setTier(ModifierTier.MASTER); return m; 
+  })
 };
 
 const dailyStarterModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1),
     new WeightedModifierType(modifierTypes.BERRY, 3),
-  ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.COMMON); return m; 
+  }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
-  ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.GREAT); return m; 
+  }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, 1),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 1),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 1),
-  ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ULTRA); return m; 
+  }),
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
-  ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
+  ].map(m => {
+    m.setTier(ModifierTier.ROGUE); return m; 
+  }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
-  ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+  ].map(m => {
+    m.setTier(ModifierTier.MASTER); return m; 
+  })
 };
 
 export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierType {
   const modifierType = modifierTypeFunc();
-  if (!modifierType.id)
+  if (!modifierType.id) {
     modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc);
+  }
   return modifierType;
 }
 
@@ -1495,25 +1583,27 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         modifierTableData[modifierId] = { weight: outputWeight, tier: parseInt(t), tierPercent: 0, totalPercent: 0 };
         tierMaxWeight += outputWeight;
       }
-      if (weight)
+      if (weight) {
         total += weight;
-      else {
+      } else {
         ignoredIndexes[t].push(i++);
         return total;
       }
       thresholds.set(total, i++);
       return total;
     }, 0);
-    for (const id of tierModifierIds)
+    for (const id of tierModifierIds) {
       modifierTableData[id].tierPercent = Math.floor((modifierTableData[id].weight / tierMaxWeight) * 10000) / 100;
+    }
     return [ t, Object.fromEntries(thresholds) ];
   })));
   for (const id of Object.keys(modifierTableData)) {
     modifierTableData[id].totalPercent = Math.floor(modifierTableData[id].tierPercent * tierWeights[modifierTableData[id].tier] * 100) / 100;
     modifierTableData[id].tier = ModifierTier[modifierTableData[id].tier];
   }
-  if (outputModifierData)
+  if (outputModifierData) {
     console.table(modifierTableData);
+  }
   switch (poolType) {
   case ModifierPoolType.PLAYER:
     modifierPoolThresholds = thresholds;
@@ -1545,16 +1635,18 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   new Array(count).fill(0).map((_, i) => {
     let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers?.length > i ? modifierTiers[i] : undefined);
     let r = 0;
-    while (options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length)
+    while (options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) {
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
+    }
     options.push(candidate);
   });
   return options;
 }
 
 export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
-  if (!(waveIndex % 10))
+  if (!(waveIndex % 10)) {
     return [];
+  }
 
   const options = [
     [
@@ -1594,8 +1686,9 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
   let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
   let r = 0;
   let matchingModifier: Modifiers.PersistentModifier;
-  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate.type.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1))
+  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate.type.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)) {
     candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
+  }
 
   const modifier = candidate.type.newModifier() as Modifiers.EnemyPersistentModifier;
   modifier.stackCount = tierStackCount;
@@ -1605,8 +1698,9 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance: integer = 0): PokemonHeldItemModifierType[] {
   const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance) ? 1 : 0).type as PokemonHeldItemModifierType);
-  if (!(waveIndex % 1000))
+  if (!(waveIndex % 1000)) {
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
+  }
   return ret;
 }
 
@@ -1647,27 +1741,31 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   }
   if (tier === undefined) {
     const tierValue = Utils.randSeedInt(1024);
-    if (!upgradeCount)
+    if (!upgradeCount) {
       upgradeCount = 0;
+    }
     if (player && tierValue) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       let upgraded = false;
       do {
         upgraded = Utils.randSeedInt(upgradeOdds) < 4;
-        if (upgraded)
+        if (upgraded) {
           upgradeCount++;
+        }
       } while (upgraded);
     }
     tier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
     // Does this actually do anything?
-    if (!upgradeCount)
+    if (!upgradeCount) {
       upgradeCount = Math.min(upgradeCount, ModifierTier.MASTER - tier);
+    }
     tier += upgradeCount;
     while (tier && (!modifierPool.hasOwnProperty(tier) || !modifierPool[tier].length)) {
       tier--;
-      if (upgradeCount)
+      if (upgradeCount) {
         upgradeCount--;
+      }
     }
   } else if (upgradeCount === undefined && player) {
     upgradeCount = 0;
@@ -1675,10 +1773,11 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
       const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
       while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
-        if (!Utils.randSeedInt(upgradeOdds))
+        if (!Utils.randSeedInt(upgradeOdds)) {
           upgradeCount++;
-        else
+        } else {
           break;
+        }
       }
       tier += upgradeCount;
     }
@@ -1699,17 +1798,20 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     }
   }
 
-  if (index === undefined)
+  if (index === undefined) {
     return null;
+  }
   
-  if (player)
+  if (player) {
     console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+  }
   let modifierType: ModifierType = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {
-      if (player)
+      if (player) {
         console.log(ModifierTier[tier], upgradeCount);
+      }
       return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
     }
   }
@@ -1721,8 +1823,9 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
   let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || ModifierTier.COMMON][0];
-  if (modifierType instanceof WeightedModifierType)
+  if (modifierType instanceof WeightedModifierType) {
     modifierType = (modifierType as WeightedModifierType).modifierType;
+  }
   return modifierType;
 }
 

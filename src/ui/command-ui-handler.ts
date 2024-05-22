@@ -53,10 +53,11 @@ export default class CommandUiHandler extends UiHandler {
 
     let commandPhase: CommandPhase;
     const currentPhase = this.scene.getCurrentPhase();
-    if (currentPhase instanceof CommandPhase)
+    if (currentPhase instanceof CommandPhase) {
       commandPhase = currentPhase;
-    else
+    } else {
       commandPhase = this.scene.getStandbyPhase() as CommandPhase;
+    }
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.commandWindow.setVisible(true);
@@ -81,8 +82,9 @@ export default class CommandUiHandler extends UiHandler {
         switch (cursor) {
         // Fight
         case 0:
-          if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride())
+          if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
             return true;
+          }
           ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
           success = true;
           break;
@@ -102,31 +104,37 @@ export default class CommandUiHandler extends UiHandler {
           success = true;
           break;
         }
-      } else
+      } else {
         (this.scene.getCurrentPhase() as CommandPhase).cancel();
+      }
     } else {
       switch (button) {
       case Button.UP:
-        if (cursor >= 2)
+        if (cursor >= 2) {
           success = this.setCursor(cursor - 2);
+        }
         break;
       case Button.DOWN:
-        if (cursor < 2)
+        if (cursor < 2) {
           success = this.setCursor(cursor + 2);
+        }
         break;
       case Button.LEFT:
-        if (cursor % 2 === 1)
+        if (cursor % 2 === 1) {
           success = this.setCursor(cursor - 1);
+        }
         break;
       case Button.RIGHT:
-        if (cursor % 2 === 0)
+        if (cursor % 2 === 0) {
           success = this.setCursor(cursor + 1);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -138,10 +146,11 @@ export default class CommandUiHandler extends UiHandler {
   setCursor(cursor: integer): boolean {
     const changed = this.getCursor() !== cursor;
     if (changed) {
-      if (!this.fieldIndex)
+      if (!this.fieldIndex) {
         this.cursor = cursor;
-      else
+      } else {
         this.cursor2 = cursor;
+      }
     }
 
     if (!this.cursorObj) {
@@ -163,8 +172,9 @@ export default class CommandUiHandler extends UiHandler {
   }
 
   eraseCursor(): void {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

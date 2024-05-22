@@ -20,8 +20,9 @@ export default class PokemonIconAnimHandler {
     const onAlternate = (tween: Phaser.Tweens.Tween) => {
       const value = tween.getValue();
       this.toggled = !!value;
-      for (const i of this.icons.keys())
+      for (const i of this.icons.keys()) {
         i.y += this.getModeYDelta(this.icons.get(i)) * (this.toggled ? 1 : -1);
+      }
     };
     scene.tweens.addCounter({
       duration: Utils.fixedInt(200),
@@ -46,11 +47,13 @@ export default class PokemonIconAnimHandler {
   }
 
   addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
-    if (!Array.isArray(icons))
+    if (!Array.isArray(icons)) {
       icons = [ icons ];
+    }
     for (const i of icons) {
-      if (this.icons.has(i) && this.icons.get(i) === mode)
+      if (this.icons.has(i) && this.icons.get(i) === mode) {
         continue;
+      }
       if (this.toggled) {
         const lastYDelta = this.icons.has(i)
           ? this.icons.get(i)
@@ -63,19 +66,22 @@ export default class PokemonIconAnimHandler {
   }
 
   remove(icons: PokemonIcon | PokemonIcon[]): void {
-    if (!Array.isArray(icons))
+    if (!Array.isArray(icons)) {
       icons = [ icons ];
+    }
     for (const i of icons) {
-      if (this.toggled)
+      if (this.toggled) {
         i.y -= this.getModeYDelta(this.icons.get(i));
+      }
       this.icons.delete(i);
     }
   }
 
   removeAll(): void {
     for (const i of this.icons.keys()) {
-      if (this.toggled)
+      if (this.toggled) {
         i.y -= this.getModeYDelta(this.icons.get(i));
+      }
       this.icons.delete(i);
     }
   }

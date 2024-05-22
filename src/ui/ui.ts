@@ -152,8 +152,9 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    for (const handler of this.handlers)
+    for (const handler of this.handlers) {
       handler.setup();
+    }
     this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
     this.overlay.setOrigin(0, 0);
     (this.scene as BattleScene).uiContainer.add(this.overlay);
@@ -200,13 +201,15 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   processInput(button: Button): boolean {
-    if (this.overlayActive)
+    if (this.overlayActive) {
       return false;
+    }
 
     const handler = this.getHandler();
 
-    if (handler instanceof AwaitableUiHandler && handler.tutorialActive)
+    if (handler instanceof AwaitableUiHandler && handler.tutorialActive) {
       return handler.processTutorialInput(button);
+    }
 
     return handler.processInput(button);
   }
@@ -222,10 +225,11 @@ export default class UI extends Phaser.GameObjects.Container {
       showMessageAndCallback();
     } else {
       const handler = this.getHandler();
-      if (handler instanceof MessageUiHandler)
+      if (handler instanceof MessageUiHandler) {
         (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
-      else
+      } else {
         this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+      }
     }
   }
 
@@ -240,10 +244,11 @@ export default class UI extends Phaser.GameObjects.Container {
       showMessageAndCallback();
     } else {
       const handler = this.getHandler();
-      if (handler instanceof MessageUiHandler)
+      if (handler instanceof MessageUiHandler) {
         (handler as MessageUiHandler).showDialogue(text, name, delay, callback, callbackDelay, true, promptDelay);
-      else
+      } else {
         this.getMessageHandler().showDialogue(text, name, delay, callback, callbackDelay, true, promptDelay);
+      }
     }
   }
 
@@ -255,10 +260,11 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipContent.y = title ? 16 : 4;
     this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 684);
     this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split('\n').length - 1);
-    if (overlap)
+    if (overlap) {
       (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
-    else
+    } else {
       (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
+    }
   }
 
   hideTooltip(): void {
@@ -275,16 +281,18 @@ export default class UI extends Phaser.GameObjects.Container {
 
   clearText(): void {
     const handler = this.getHandler();
-    if (handler instanceof MessageUiHandler)
+    if (handler instanceof MessageUiHandler) {
       (handler as MessageUiHandler).clearText();
-    else
+    } else {
       this.getMessageHandler().clearText();
+    }
   }
 
   setCursor(cursor: integer): boolean {
     const changed = this.getHandler().setCursor(cursor);
-    if (changed)
+    if (changed) {
       this.playSelect();
+    }
 
     return changed;
   }
@@ -299,8 +307,9 @@ export default class UI extends Phaser.GameObjects.Container {
 
   fadeOut(duration: integer): Promise<void> {
     return new Promise(resolve => {
-      if (this.overlayActive)
+      if (this.overlayActive) {
         return resolve();
+      }
       this.overlayActive = true;
       this.overlay.setAlpha(0);
       this.overlay.setVisible(true);
@@ -316,8 +325,9 @@ export default class UI extends Phaser.GameObjects.Container {
 
   fadeIn(duration: integer): Promise<void> {
     return new Promise(resolve => {
-      if (!this.overlayActive)
+      if (!this.overlayActive) {
         return resolve();
+      }
       this.scene.tweens.add({
         targets: this.overlay,
         alpha: 0,
@@ -340,14 +350,17 @@ export default class UI extends Phaser.GameObjects.Container {
       }
       const doSetMode = () => {
         if (this.mode !== mode) {
-          if (clear)
+          if (clear) {
             this.getHandler().clear();
-          if (chainMode && this.mode && !clear)
+          }
+          if (chainMode && this.mode && !clear) {
             this.modeChain.push(this.mode);
+          }
           this.mode = mode;
           const touchControls = document.getElementById('touchControls');
-          if (touchControls)
+          if (touchControls) {
             touchControls.dataset.uiMode = Mode[mode];
+          }
           this.getHandler().show(args);
         }
         resolve();
@@ -361,8 +374,9 @@ export default class UI extends Phaser.GameObjects.Container {
             this.fadeIn(250);
           });
         });
-      } else
+      } else {
         doSetMode();
+      }
     });
   }
 
@@ -388,8 +402,9 @@ export default class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!this?.modeChain?.length)
+      if (!this?.modeChain?.length) {
         return resolve(false);
+      }
 
       const lastMode = this.mode;
 
@@ -397,8 +412,9 @@ export default class UI extends Phaser.GameObjects.Container {
         this.getHandler().clear();
         this.mode = this.modeChain.pop();
         const touchControls = document.getElementById('touchControls');
-        if (touchControls)
+        if (touchControls) {
           touchControls.dataset.uiMode = Mode[this.mode];
+        }
         resolve(true);
       };
 
@@ -409,15 +425,17 @@ export default class UI extends Phaser.GameObjects.Container {
             this.fadeIn(250);
           });
         });
-      } else
+      } else {
         doRevertMode();
+      }
     });
   }
 
   revertModes(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!this?.modeChain?.length)
+      if (!this?.modeChain?.length) {
         return resolve();
+      }
       this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
     });
   }

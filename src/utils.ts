@@ -17,8 +17,9 @@ export function randomString(length: integer, seeded: boolean = false) {
 }
 
 export function shiftCharCodes(str: string, shiftCount: integer) {
-  if (!shiftCount)
+  if (!shiftCount) {
     shiftCount = 0;
+  }
   
   let newStr = '';
 
@@ -36,8 +37,9 @@ export function clampInt(value: integer, min: integer, max: integer): integer {
 }
 
 export function randGauss(stdev: number, mean: number = 0): number {
-  if (!stdev)
+  if (!stdev) {
     return 0;
+  }
   const u = 1 - Math.random();
   const v = Math.random();
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
@@ -45,8 +47,9 @@ export function randGauss(stdev: number, mean: number = 0): number {
 }
 
 export function randSeedGauss(stdev: number, mean: number = 0): number {
-  if (!stdev)
+  if (!stdev) {
     return 0;
+  }
   const u = 1 - Phaser.Math.RND.realInRange(0, 1);
   const v = Phaser.Math.RND.realInRange(0, 1);
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
@@ -54,11 +57,13 @@ export function randSeedGauss(stdev: number, mean: number = 0): number {
 }
 
 export function padInt(value: integer, length: integer, padWith?: string): string {
-  if (!padWith)
+  if (!padWith) {
     padWith = '0';
+  }
   let valueStr = value.toString();
-  while (valueStr.length < length)
+  while (valueStr.length < length) {
     valueStr = `${padWith}${valueStr}`;
+  }
   return valueStr;
 }
 
@@ -68,14 +73,16 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
 * @param min The starting number
 */
 export function randInt(range: integer, min: integer = 0): integer {
-  if (range === 1)
+  if (range === 1) {
     return min;
+  }
   return Math.floor(Math.random() * range) + min;
 }
 
 export function randSeedInt(range: integer, min: integer = 0): integer {
-  if (range <= 1)
+  if (range <= 1) {
     return min;
+  }
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
 }
 
@@ -107,10 +114,12 @@ export function randSeedWeightedItem<T>(items: T[]): T {
 }
 
 export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = 'Sine.easeIn'): T {
-  if (!items.length)
+  if (!items.length) {
     return null;
-  if (items.length === 1)
+  }
+  if (items.length === 1) {
     return items[0];
+  }
   const value = Phaser.Math.RND.realInRange(0, 1);
   const easedValue = Phaser.Tweens.Builders.GetEaseFunction(easingFunction)(value);
   return items[Math.floor(easedValue * items.length)];
@@ -174,8 +183,9 @@ export function getIvsFromId(id: integer): integer[] {
 }
 
 export function formatLargeNumber(count: integer, threshold: integer): string {
-  if (count < threshold)
+  if (count < threshold) {
     return count.toString();
+  }
   const ret = count.toString();
   let suffix = '';
   switch (Math.ceil(ret.length / 3) - 1) {
@@ -193,8 +203,9 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
   }
   const digits = ((ret.length + 2) % 3) + 1;
   let decimalNumber = ret.slice(digits, digits + 2);
-  while (decimalNumber.endsWith('0'))
+  while (decimalNumber.endsWith('0')) {
     decimalNumber = decimalNumber.slice(0, -1);
+  }
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
 }
 
@@ -230,10 +241,12 @@ export function getCookie(cName: string): string {
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) === ' ')
+    while (c.charAt(0) === ' ') {
       c = c.substring(1);
-    if (c.indexOf(name) === 0)
+    }
+    if (c.indexOf(name) === 0) {
       return c.substring(name.length, c.length);
+    }
   }
   return '';
 }
@@ -243,8 +256,9 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
     const request = {};
     if (authed) {
       const sId = getCookie(sessionIdKey);
-      if (sId)
+      if (sId) {
         request['headers'] = { 'Authorization': sId };
+      }
     }
     fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
@@ -260,8 +274,9 @@ export function apiPost(path: string, data?: any, contentType: string = 'applica
     };
     if (authed) {
       const sId = getCookie(sessionIdKey);
-      if (sId)
+      if (sId) {
         headers['Authorization'] = sId;
+      }
     }
     fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
       .then(response => resolve(response))

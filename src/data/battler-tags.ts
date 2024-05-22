@@ -390,8 +390,9 @@ export class NightmareTag extends BattlerTag {
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
-      if (!cancelled.value)
+      if (!cancelled.value) {
         pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 4));
+      }
     }
     
     return ret;
@@ -437,17 +438,20 @@ export class EncoreTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    if (pokemon.isMax())
+    if (pokemon.isMax()) {
       return false;
+    }
     
     const lastMoves = pokemon.getLastXMoves(1);
-    if (!lastMoves.length)
+    if (!lastMoves.length) {
       return false;
+    }
   
     const repeatableMove = lastMoves[0];
 
-    if (!repeatableMove.move || repeatableMove.virtual)
+    if (!repeatableMove.move || repeatableMove.virtual) {
       return false;
+    }
 
     switch (repeatableMove.move) {
     case Moves.MIMIC:
@@ -460,8 +464,9 @@ export class EncoreTag extends BattlerTag {
       return false;
     }
   
-    if (allMoves[repeatableMove.move].getAttrs(ChargeAttr).length && repeatableMove.result === MoveResult.OTHER)
+    if (allMoves[repeatableMove.move].getAttrs(ChargeAttr).length && repeatableMove.result === MoveResult.OTHER) {
       return false;
+    }
 
     this.moveId = repeatableMove.move;
 
@@ -524,9 +529,10 @@ export class IngrainTag extends TrappedTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
-    if (ret)
+    if (ret) {
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(), Math.floor(pokemon.getMaxHp() / 16),
         getPokemonMessage(pokemon, ' absorbed\nnutrients with its roots!'), true));
+    }
     
     return ret;
   }
@@ -554,9 +560,10 @@ export class AquaRingTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
-    if (ret)
+    if (ret) {
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
         Math.floor(pokemon.getMaxHp() / 16), `${this.getMoveName()} restored\n${pokemon.name}\'s HP!`, true));
+    }
     
     return ret;
   }
@@ -650,8 +657,9 @@ export abstract class DamagingTrapTag extends TrappedTag {
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
-      if (!cancelled.value)
+      if (!cancelled.value) {
         pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 8));
+      }
     }
 
     return ret;
@@ -940,10 +948,11 @@ export class PerishSongTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = super.lapse(pokemon, lapseType);
 
-    if (ret)
+    if (ret) {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, `\'s perish count fell to ${this.turnCount}.`));
-    else
+    } else {
       pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, true, true);
+    }
 
     return ret;
   }
@@ -974,8 +983,9 @@ export class TruantTag extends AbilityBattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (!pokemon.hasAbility(Abilities.TRUANT))
+    if (!pokemon.hasAbility(Abilities.TRUANT)) {
       return super.lapse(pokemon, lapseType);
+    }
     const passive = pokemon.getAbility().id !== Abilities.TRUANT;
 
     const lastMove = pokemon.getLastXMoves().find(() => true);
@@ -1002,8 +1012,9 @@ export class SlowStartTag extends AbilityBattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (!pokemon.hasAbility(this.ability))
+    if (!pokemon.hasAbility(this.ability)) {
       this.turnCount = 1;
+    }
 
     return super.lapse(pokemon, lapseType);
   }

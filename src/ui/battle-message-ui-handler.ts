@@ -102,8 +102,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     let levelUpStatsLabelText = '';
 
     const stats = Utils.getEnumValues(Stat);
-    for (const s of stats)
+    for (const s of stats) {
       levelUpStatsLabelText += `${getStatName(s)}\n`;
+    }
     levelUpStatsLabelsContent.text = levelUpStatsLabelText;
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;
 
@@ -167,21 +168,23 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
   promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean): Promise<void> {
     return new Promise(resolve => {
-      if (!this.scene.showLevelUpStats)
+      if (!this.scene.showLevelUpStats) {
         return resolve();
+      }
       const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
       let levelUpStatsValuesText = '';
       const stats = Utils.getEnumValues(Stat);
-      for (const s of stats)
+      for (const s of stats) {
         levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
+      }
       this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
       this.levelUpStatsIncrContent.setVisible(!showTotals);
       this.levelUpStatsContainer.setVisible(true);
       this.awaitingActionInput = true;
       this.onActionInput = () => {
-        if (!showTotals)
+        if (!showTotals) {
           return this.promptLevelUpStats(partyMemberIndex, null, true).then(() => resolve());
-        else {
+        } else {
           this.levelUpStatsContainer.setVisible(false);
           resolve();
         }
@@ -209,10 +212,12 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
             shownStats.push(shownStat);
             statsPool.splice(statsPool.indexOf(shownStat), 1);
           }
-        } else
+        } else {
           shownStats = stats;
-        for (const s of stats)
+        }
+        for (const s of stats) {
           levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s, pokemonId) : '???'}\n`;
+        }
         this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
         this.levelUpStatsIncrContent.setVisible(false);
         this.levelUpStatsContainer.setVisible(true);
@@ -237,16 +242,21 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       return `[color=${color}][shadow=${getTextColor(textStyle, true, uiTheme)}]${text}[/shadow][/color]`;
     };
 
-    if (value > 30)
+    if (value > 30) {
       return coloredText(i18next.t('battleMessageUiHandler:ivBest'), value > starterIvs[typeIv]);
-    if (value === 30)
+    }
+    if (value === 30) {
       return coloredText(i18next.t('battleMessageUiHandler:ivFantastic'), value > starterIvs[typeIv]);
-    if (value > 20)
+    }
+    if (value > 20) {
       return coloredText(i18next.t('battleMessageUiHandler:ivVeryGood'), value > starterIvs[typeIv]);
-    if (value > 10)
+    }
+    if (value > 10) {
       return coloredText(i18next.t('battleMessageUiHandler:ivPrettyGood'), value > starterIvs[typeIv]);
-    if (value > 0)
+    }
+    if (value > 0) {
       return coloredText(i18next.t('battleMessageUiHandler:ivDecent'), value > starterIvs[typeIv]);
+    }
 
     return coloredText(i18next.t('battleMessageUiHandler:ivNoGood'), value > starterIvs[typeIv]);
   }

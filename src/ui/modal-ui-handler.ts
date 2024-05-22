@@ -93,8 +93,9 @@ export abstract class ModalUiHandler extends UiHandler {
       this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
-        if (a < this.buttonBgs.length)
+        if (a < this.buttonBgs.length) {
           this.buttonBgs[a].on('pointerdown', (_) => config.buttonActions[a]());
+        }
       }
 
       return true;

@@ -19,7 +19,10 @@
         "eol-last": ["error", "always"], // Enforces at least one newline at the end of files
         "@typescript-eslint/semi": ["error", "always"], // Requires semicolons for TypeScript-specific syntax
         "semi": "off", // Disables the general semi rule for TypeScript files
-        "@typescript-eslint/no-extra-semi": ["error"] // Disallows unnecessary semicolons for TypeScript-specific syntax
+        "@typescript-eslint/no-extra-semi": ["error"], // Disallows unnecessary semicolons for TypeScript-specific syntax
+        "brace-style": "off", // Note: you must disable the base rule as it can report incorrect errors
+        "curly": ["error", "all"], // Enforces the use of curly braces for all control statements
+        "@typescript-eslint/brace-style": ["error", "1tbs"]
       }
     }
   ]

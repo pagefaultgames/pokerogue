@@ -32,8 +32,9 @@ export default class BallUiHandler extends UiHandler {
 
     let optionsTextContent = '';
 
-    for (let pb = 0; pb < Object.keys(this.scene.pokeballCounts).length; pb++)
+    for (let pb = 0; pb < Object.keys(this.scene.pokeballCounts).length; pb++) {
       optionsTextContent += `${getPokeballName(pb)}\n`;
+    }
     optionsTextContent += 'Cancel';
     const optionsText = addTextObject(this.scene, 0, 0, optionsTextContent, TextStyle.WINDOW, { align: 'right', maxLines: 6 });
     optionsText.setOrigin(0, 0);
@@ -76,8 +77,9 @@ export default class BallUiHandler extends UiHandler {
             this.scene.ui.setMode(Mode.MESSAGE);
             success = true;
           }
-        } else
+        } else {
           ui.playError();
+        }
       } else {
         ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
         success = true;
@@ -93,8 +95,9 @@ export default class BallUiHandler extends UiHandler {
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -123,8 +126,9 @@ export default class BallUiHandler extends UiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

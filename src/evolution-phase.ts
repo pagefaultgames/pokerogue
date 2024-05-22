@@ -48,8 +48,9 @@ export class EvolutionPhase extends Phase {
 
     this.setMode().then(() => {
 
-      if (!this.validate())
+      if (!this.validate()) {
         return this.end();
+      }
 
       this.scene.fadeOutBgm(null, false);
 
@@ -102,8 +103,9 @@ export class EvolutionPhase extends Phase {
         sprite.setPipelineData('shiny', this.pokemon.shiny);
         sprite.setPipelineData('variant', this.pokemon.variant);
         [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
-          if (this.pokemon.summonData?.speciesForm)
+          if (this.pokemon.summonData?.speciesForm) {
             k += 'Base';
+          }
           sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
         });
       });
@@ -128,8 +130,9 @@ export class EvolutionPhase extends Phase {
           sprite.setPipelineData('shiny', evolvedPokemon.shiny);
           sprite.setPipelineData('variant', evolvedPokemon.variant);
           [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
-            if (evolvedPokemon.summonData?.speciesForm)
+            if (evolvedPokemon.summonData?.speciesForm) {
               k += 'Base';
+            }
             sprite.pipelineData[k] = evolvedPokemon.getSprite().pipelineData[k];
           });
         });
@@ -217,8 +220,9 @@ export class EvolutionPhase extends Phase {
 
                           this.pokemon.evolve(this.evolution).then(() => {
                             const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
-                            for (const lm of levelMoves)
-                              this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));  
+                            for (const lm of levelMoves) {
+                              this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));
+                            }  
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
                             this.scene.playSound('shine');
@@ -283,8 +287,9 @@ export class EvolutionPhase extends Phase {
       onRepeat: () => {
         if (f < 64) {
           if (!(f & 7)) {
-            for (let i = 0; i < 4; i++)
+            for (let i = 0; i < 4; i++) {
               this.doSpiralUpwardParticle((f & 120) * 2 + i * 64);
+            }
           }
           f++;
         }
@@ -301,8 +306,9 @@ export class EvolutionPhase extends Phase {
       onRepeat: () => {
         if (f < 96) {
           if (f < 6) {
-            for (let i = 0; i < 9; i++)
+            for (let i = 0; i < 9; i++) {
               this.doArcDownParticle(i * 16);
+            }
           }
           f++;
         }
@@ -328,11 +334,12 @@ export class EvolutionPhase extends Phase {
         duration: 500 / l,
         yoyo: !isLastCycle,
         onComplete: () => {
-          if (evolutionHandler.cancelled)
+          if (evolutionHandler.cancelled) {
             return resolve(false);
-          if (l < lastCycle)
+          }
+          if (l < lastCycle) {
             this.doCycle(l + 0.5, lastCycle).then(success => resolve(success));
-          else {
+          } else {
             this.pokemonTintSprite.setVisible(false);
             resolve(true);
           }
@@ -349,11 +356,13 @@ export class EvolutionPhase extends Phase {
       duration: Utils.getFrameMs(1),
       onRepeat: () => {
         if (!f) {
-          for (let i = 0; i < 16; i++)
+          for (let i = 0; i < 16; i++) {
             this.doCircleInwardParticle(i * 16, 4);
+          }
         } else if (f === 32) {
-          for (let i = 0; i < 16; i++)
+          for (let i = 0; i < 16; i++) {
             this.doCircleInwardParticle(i * 16, 8);
+          }
         }
         f++;
       }
@@ -368,10 +377,12 @@ export class EvolutionPhase extends Phase {
       duration: Utils.getFrameMs(1),
       onRepeat: () => {
         if (!f) {
-          for (let i = 0; i < 8; i++)
+          for (let i = 0; i < 8; i++) {
             this.doSprayParticle(i);
-        } else if (f < 50)
+          }
+        } else if (f < 50) {
           this.doSprayParticle(Utils.randInt(8));
+        }
         f++;
       }
     });
@@ -400,8 +411,9 @@ export class EvolutionPhase extends Phase {
         particle.x += cos(trigIndex, amp);
         particle.setScale(1 - (f / 80));
         trigIndex += 4;
-        if (f & 1)
+        if (f & 1) {
           amp--;
+        }
         f++;
       } else {
         particle.destroy();
@@ -497,13 +509,15 @@ export class EvolutionPhase extends Phase {
     });
 
     const updateParticle = () => {
-      if (!(f & 3))
+      if (!(f & 3)) {
         yOffset++;
+      }
       if (trigIndex < 128) {
         particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
         particle.y += -sin(trigIndex, amp);
-        if (f > 108)
+        if (f > 108) {
           particle.setScale((1 - (f - 108) / 20));
+        }
         trigIndex++;
         f++;
       } else {

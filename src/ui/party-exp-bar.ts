@@ -31,8 +31,9 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
   showPokemonExp(pokemon: Pokemon, expValue: integer, showOnlyLevelUp: boolean, newLevel: number): Promise<void> {
     return new Promise<void>(resolve => {
-      if (this.shown)
+      if (this.shown) {
         return resolve();
+      }
 
       this.pokemonIcon = (this.scene as BattleScene).addPokemonIcon(pokemon, -8, 15, 0, 0.5);
       this.pokemonIcon.setScale(0.5);
@@ -55,8 +56,9 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       (this.scene as BattleScene).fieldUI.bringToTop(this);
 
-      if (this.tween)
+      if (this.tween) {
         this.tween.stop();
+      }
 
       this.tween = this.scene.tweens.add({
         targets: this,
@@ -76,11 +78,13 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
   hide(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!this.shown)
+      if (!this.shown) {
         return resolve();
+      }
 
-      if (this.tween)
+      if (this.tween) {
         this.tween.stop();
+      }
 
       this.tween = this.scene.tweens.add({
         targets: this,

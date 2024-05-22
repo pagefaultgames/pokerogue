@@ -137,28 +137,33 @@ export default class EggListUiHandler extends MessageUiHandler {
       const row = Math.floor(this.cursor / 11);
       switch (button) {
       case Button.UP:
-        if (row)
+        if (row) {
           success = this.setCursor(this.cursor - 11);
+        }
         break;
       case Button.DOWN:
-        if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11))
+        if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11)) {
           success = this.setCursor(this.cursor + 11);
+        }
         break;
       case Button.LEFT:
-        if (this.cursor % 11)
+        if (this.cursor % 11) {
           success = this.setCursor(this.cursor - 1);
+        }
         break;
       case Button.RIGHT:
-        if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11))
+        if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11)) {
           success = this.setCursor(this.cursor + 1);
+        }
         break;
       }
     }
   
-    if (success)
+    if (success) {
       ui.playSelect();
-    else if (error)
+    } else if (error) {
       ui.playError();
+    }
 
     return success || error;
   }
@@ -188,8 +193,9 @@ export default class EggListUiHandler extends MessageUiHandler {
     if (changed) {
       this.cursorObj.setPosition(114 + 18 * (cursor % 11), 10 + 18 * Math.floor(cursor / 11));
 
-      if (lastCursor > -1)
+      if (lastCursor > -1) {
         this.iconAnimHandler.addOrUpdate(this.eggListIconContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.NONE);
+      }
       this.iconAnimHandler.addOrUpdate(this.eggListIconContainer.getAt(cursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.ACTIVE);
 
       this.setEggDetails(this.scene.gameData.eggs[cursor]);

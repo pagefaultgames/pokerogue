@@ -62,8 +62,9 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.scoreText.setVisible(achv instanceof Achv);
     this.descriptionText.setText(achv.description);
 
-    if (achv instanceof Achv)
+    if (achv instanceof Achv) {
       this.scoreText.setText(`+${(achv as Achv).score}pt`);
+    }
 
     (this.scene as BattleScene).playSound('achv');
 
@@ -81,8 +82,9 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   }
 
   protected hide(): void {
-    if (!this.shown)
+    if (!this.shown) {
       return;
+    }
 
     this.scene.tweens.add({
       targets: this,
@@ -92,8 +94,9 @@ export default class AchvBar extends Phaser.GameObjects.Container {
       onComplete: () => {
         this.shown = false;
         this.setVisible(false);
-        if (this.queue.length)
+        if (this.queue.length) {
           this.showAchv(this.queue.shift());
+        }
       }
     });
   }

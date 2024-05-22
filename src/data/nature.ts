@@ -44,17 +44,19 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
     let decreasedStat: Stat = null;
     for (const stat of stats) {
       const multiplier = getNatureStatMultiplier(nature, stat);
-      if (multiplier > 1)
+      if (multiplier > 1) {
         increasedStat = stat;
-      else if (multiplier < 1)
+      } else if (multiplier < 1) {
         decreasedStat = stat;
+      }
     }
     const textStyle = forStarterSelect ? TextStyle.SUMMARY_ALT : TextStyle.WINDOW;
     const getTextFrag = !ignoreBBCode ? (text: string, style: TextStyle) => getBBCodeFrag(text, style, uiTheme) : (text: string, style: TextStyle) => text;
-    if (increasedStat && decreasedStat)
+    if (increasedStat && decreasedStat) {
       ret = `${getTextFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(`, textStyle)}${getTextFrag(`+${getStatName(increasedStat, true)}`, TextStyle.SUMMARY_PINK)}${getTextFrag('/', textStyle)}${getTextFrag(`-${getStatName(decreasedStat, true)}`, TextStyle.SUMMARY_BLUE)}${getTextFrag(')', textStyle)}`;
-    else
+    } else {
       ret = getTextFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(-)`, textStyle);
+    }
   }
   return ret;
 }

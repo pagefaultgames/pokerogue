@@ -139,8 +139,9 @@ export default class MenuUiHandler extends MessageUiHandler {
           new Array(5).fill(null).map((_, i) => {
             const slotId = i;
             return this.scene.gameData.getSession(slotId).then(data => {
-              if (data)
+              if (data) {
                 dataSlots.push(slotId);
+              }
             });
           })).then(() => {
           confirmSlot(i18next.t('menuUiHandler:exportSlotSelect'),
@@ -254,10 +255,11 @@ export default class MenuUiHandler extends MessageUiHandler {
     if (button === Button.ACTION) {
       let adjustedCursor = this.cursor;
       for (const imo of this.ignoredMenuOptions) {
-        if (adjustedCursor >= imo)
+        if (adjustedCursor >= imo) {
           adjustedCursor++;
-        else
+        } else {
           break;
+        }
       }
       switch (adjustedCursor) {
       case MenuOptions.GAME_SETTINGS:
@@ -281,8 +283,9 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.revertMode();
           ui.setOverlayMode(Mode.EGG_LIST);
           success = true;
-        } else
+        } else {
           error = true;
+        }
         break;
       case MenuOptions.EGG_GACHA:
         ui.revertMode();
@@ -307,17 +310,20 @@ export default class MenuUiHandler extends MessageUiHandler {
                 ui.showText(null, 0);
               }, false, -98);
             });
-          } else
+          } else {
             this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
-        } else
+          }
+        } else {
           error = true;
+        }
         break;
       case MenuOptions.LOG_OUT:
         success = true;
         const doLogout = () => {
           Utils.apiFetch('account/logout', true).then(res => {
-            if (!res.ok)
+            if (!res.ok) {
               console.error(`Log out failed (${res.status}: ${res.statusText})`);
+            }
             Utils.setCookie(Utils.sessionIdKey, '');
             updateUserInfo().then(() => this.scene.reset(true, true));
           });
@@ -329,37 +335,42 @@ export default class MenuUiHandler extends MessageUiHandler {
               ui.showText(null, 0);
             }, false, -98);
           });
-        } else
+        } else {
           doLogout();
+        }
         break;
       }
     } else if (button === Button.CANCEL) {
       success = true;
       ui.revertMode().then(result => {
-        if (!result)
+        if (!result) {
           ui.setMode(Mode.MESSAGE);
+        }
       });
     } else {
       switch (button) {
       case Button.UP:
-        if (this.cursor)
+        if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
-        else
+        } else {
           success = this.setCursor(this.menuOptions.length - 1);
+        }
         break;
       case Button.DOWN:
-        if (this.cursor + 1 < this.menuOptions.length)
+        if (this.cursor + 1 < this.menuOptions.length) {
           success = this.setCursor(this.cursor + 1);
-        else
+        } else {
           success = this.setCursor(0);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
-    else if (error)
+    } else if (error) {
       ui.playError();
+    }
 
     return success || error;
   }
@@ -391,8 +402,9 @@ export default class MenuUiHandler extends MessageUiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

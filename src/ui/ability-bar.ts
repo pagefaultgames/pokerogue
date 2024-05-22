@@ -42,13 +42,15 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     this.pokemonNameText.setText(`${pokemon.name}'s${passive ? ' Passive' : ''}`);
     this.abilityNameText.setText((!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name);
 
-    if (this.shown)
+    if (this.shown) {
       return;
+    }
 
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
-    if (this.tween)
+    if (this.tween) {
       this.tween.stop();
+    }
 
     this.y = baseY + ((this.scene as BattleScene).currentBattle.double ? 14 : 0);
     this.tween = this.scene.tweens.add({
@@ -67,14 +69,17 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   hide(): void {
-    if (!this.shown)
+    if (!this.shown) {
       return;
+    }
 
-    if (this.autoHideTimer)
+    if (this.autoHideTimer) {
       clearInterval(this.autoHideTimer);
+    }
 
-    if (this.tween)
+    if (this.tween) {
       this.tween.stop();
+    }
 
     this.tween = this.scene.tweens.add({
       targets: this,
@@ -91,8 +96,9 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   resetAutoHideTimer(): void {
-    if (this.autoHideTimer)
+    if (this.autoHideTimer) {
       clearInterval(this.autoHideTimer);
+    }
     this.autoHideTimer = setTimeout(() => {
       this.hide();
       this.autoHideTimer = null;

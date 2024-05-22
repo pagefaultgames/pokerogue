@@ -134,8 +134,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setShadowColor(getGenderColor(pokemon.gender, true));
         this.pokemonGenderLabelText.setVisible(true);
         this.pokemonGenderText.setVisible(true);
-      } else
+      } else {
         this.pokemonGenderText.setVisible(false);
+      }
 
       const abilityTextStyle = pokemon.abilityIndex === (pokemon.species.ability2 ? 2 : 1) ? TextStyle.MONEY : TextStyle.WINDOW;
       this.pokemonAbilityText.setText(pokemon.getAbility(true).name);
@@ -161,8 +162,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   
       this.pokemonFusionShinyIcon.setPosition(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y);
       this.pokemonFusionShinyIcon.setVisible(doubleShiny);
-      if (isFusion)
+      if (isFusion) {
         this.pokemonFusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
+      }
 
       const starterSpeciesId = pokemon.species.getRootSpeciesId(true);
       const originalIvs: integer[] = this.scene.gameData.dexData[starterSpeciesId].caughtAttr
@@ -220,8 +222,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
   hide(speedMultiplier: number = 1): Promise<void> {
     return new Promise(resolve => {
-      if (!this.shown)
+      if (!this.shown) {
         return resolve();
+      }
 
       this.scene.tweens.add({
         targets: this.pokemonMovesContainer,

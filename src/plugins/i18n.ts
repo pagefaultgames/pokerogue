@@ -70,8 +70,9 @@ export function initI18n(): void {
   isInitialized = true;
   let lang = '';
 
-  if (localStorage.getItem('prLang'))
+  if (localStorage.getItem('prLang')) {
     lang = localStorage.getItem('prLang');
+  }
 
 
 

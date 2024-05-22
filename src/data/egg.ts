@@ -32,8 +32,9 @@ export class Egg {
   }
 
   getKey(): string {
-    if (this.isManaphyEgg())
+    if (this.isManaphyEgg()) {
       return 'manaphy';
+    }
     return this.tier.toString();
   }
 }
@@ -51,8 +52,9 @@ export function getEggTierDefaultHatchWaves(tier: EggTier): integer {
 }
 
 export function getEggDescriptor(egg: Egg): string {
-  if (egg.isManaphyEgg())
+  if (egg.isManaphyEgg()) {
     return 'Manaphy';
+  }
   switch (egg.tier) {
   case EggTier.GREAT:
     return i18next.t('egg:greatTier');
@@ -66,12 +68,15 @@ export function getEggDescriptor(egg: Egg): string {
 }
 
 export function getEggHatchWavesMessage(hatchWaves: integer): string {
-  if (hatchWaves <= 5)
+  if (hatchWaves <= 5) {
     return i18next.t('egg:hatchWavesMessageSoon');
-  if (hatchWaves <= 15)
+  }
+  if (hatchWaves <= 15) {
     return i18next.t('egg:hatchWavesMessageClose');
-  if (hatchWaves <= 50)
+  }
+  if (hatchWaves <= 50) {
     return i18next.t('egg:hatchWavesMessageNotClose');
+  }
   return i18next.t('egg:hatchWavesMessageLongTime');
 }
 

@@ -101,8 +101,9 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
     this.prevPageButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
     this.prevPageButton.on('pointerup', () => {
-      if (this.page > 1)
+      if (this.page > 1) {
         this.update(undefined, this.page > 1 ? this.page - 1 : this.pageCount);
+      }
     });
 
     this.pageNumberLabel = addTextObject(this.scene, window.displayWidth / 2, titleWindow.displayHeight + window.displayHeight - 16, '1', TextStyle.WINDOW, { fontSize: '64px' });
@@ -116,8 +117,9 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
     this.nextPageButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
     this.nextPageButton.on('pointerup', () => {
-      if (this.page < this.pageCount)
+      if (this.page < this.pageCount) {
         this.update(undefined, this.page < this.pageCount ? this.page + 1 : 0);
+      }
     });
 
     this.add(this.loadingLabel);
@@ -184,8 +186,9 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.loadingLabel.setText(i18next.t('menu:loading'));
     this.loadingLabel.setVisible(true);
 
-    if (category !== this.category)
+    if (category !== this.category) {
       this.page = page = 1;
+    }
 
     Utils.executeIf(category !== this.category || this.pageCount === undefined,
       () => Utils.apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
@@ -200,8 +203,9 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
           if (jsonResponse) {
             this.loadingLabel.setVisible(false);
             this.updateRankings(jsonResponse);
-          } else
+          } else {
             this.loadingLabel.setText(i18next.t('menu:noRankings'));
+          }
         }).finally(() => {
           this.isUpdating = false;
         });

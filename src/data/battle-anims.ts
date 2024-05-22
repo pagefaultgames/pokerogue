@@ -118,8 +118,9 @@ export class AnimConfig {
       this.graphic = source.graphic;
       const frames: any[][] = source.frames;
       frames.map(animFrames => {
-        for (let f = 0; f < animFrames.length; f++)
+        for (let f = 0; f < animFrames.length; f++) {
           animFrames[f] = new ImportedAnimFrame(animFrames[f]);
+        }
       });
       this.frames = frames;
 
@@ -146,8 +147,9 @@ export class AnimConfig {
 
       this.position = source.position;
       this.hue = source.hue;
-    } else
+    } else {
       this.frames = [];
+    }
   }
 
   getSoundResourceNames(): string[] {
@@ -155,8 +157,9 @@ export class AnimConfig {
 
     for (const ftes of this.frameTimedEvents.values()) {
       for (const fte of ftes) {
-        if (fte instanceof AnimTimedSoundEvent && fte.resourceName)
+        if (fte instanceof AnimTimedSoundEvent && fte.resourceName) {
           sounds.add(fte.resourceName);
+        }
       }
     }
 
@@ -168,8 +171,9 @@ export class AnimConfig {
 
     for (const ftes of this.frameTimedEvents.values()) {
       for (const fte of ftes) {
-        if (fte instanceof AnimTimedAddBgEvent && fte.resourceName)
+        if (fte instanceof AnimTimedAddBgEvent && fte.resourceName) {
           backgrounds.add(fte.resourceName);
+        }
       }
     }
 
@@ -201,30 +205,36 @@ class AnimFrame {
     flashR: integer, flashG: integer, flashB: integer, flashA: integer, locked: boolean, priority: integer, focus: AnimFocus, init?: boolean) {
     this.x = !init ? ((x || 0) - 128) * 0.5 : x;
     this.y = !init ? ((y || 0) - 224) * 0.5 : y;
-    if (zoomX)
+    if (zoomX) {
       this.zoomX = zoomX;
-    else if (init)
+    } else if (init) {
       this.zoomX = 0;
-    if (zoomY)
+    }
+    if (zoomY) {
       this.zoomY = zoomY;
-    else if (init)
+    } else if (init) {
       this.zoomY = 0;
-    if (angle)
+    }
+    if (angle) {
       this.angle = angle;
-    else if (init)
+    } else if (init) {
       this.angle = 0;
-    if (mirror)
+    }
+    if (mirror) {
       this.mirror = mirror;
-    else if (init)
+    } else if (init) {
       this.mirror = false;
-    if (visible)
+    }
+    if (visible) {
       this.visible = visible;
-    else if (init)
+    } else if (init) {
       this.visible = false;
-    if (blendType)
+    }
+    if (blendType) {
       this.blendType = blendType;
-    else if (init)
+    } else if (init) {
       this.blendType = AnimBlendType.NORMAL;
+    }
     if (!init) {
       let target = AnimFrameTarget.GRAPHIC;
       switch (pattern) {
@@ -238,30 +248,36 @@ class AnimFrame {
       this.target = target;
       this.graphicFrame = pattern >= 0 ? pattern : 0;
     }
-    if (opacity)
+    if (opacity) {
       this.opacity = opacity;
-    else if (init)
+    } else if (init) {
       this.opacity = 0;
-    if (colorR || colorG || colorB || colorA)
+    }
+    if (colorR || colorG || colorB || colorA) {
       this.color = [ colorR || 0, colorG || 0, colorB || 0, colorA || 0 ];
-    else if (init)
+    } else if (init) {
       this.color = [ 0, 0, 0, 0 ];
-    if (toneR || toneG || toneB || toneA)
+    }
+    if (toneR || toneG || toneB || toneA) {
       this.tone = [ toneR || 0, toneG || 0, toneB || 0, toneA || 0 ];
-    else if (init)
+    } else if (init) {
       this.tone = [ 0, 0, 0, 0 ];
-    if (flashR || flashG || flashB || flashA)
+    }
+    if (flashR || flashG || flashB || flashA) {
       this.flash = [ flashR || 0, flashG || 0, flashB || 0, flashA || 0 ];
-    else if (init)
+    } else if (init) {
       this.flash = [ 0, 0, 0, 0 ];
-    if (locked)
+    }
+    if (locked) {
       this.locked = locked;
-    else if (init)
+    } else if (init) {
       this.locked = false;
-    if (priority)
+    }
+    if (priority) {
       this.priority = priority;
-    else if (init)
+    } else if (init) {
       this.priority = 0;
+    }
     this.focus = focus || AnimFocus.TARGET;
   }
 }
@@ -313,8 +329,9 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
         console.error(err);
       }
       return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
-    } else
+    } else {
       return Math.ceil((battleAnim.user.cry(soundConfig).totalDuration * 1000) / 33.33);
+    }
   }
 
   getEventType(): string {
@@ -367,12 +384,15 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
 
   execute(scene: BattleScene, moveAnim: MoveAnim): integer {
     const tweenProps = {};
-    if (this.bgX !== undefined)
+    if (this.bgX !== undefined) {
       tweenProps['x'] = (this.bgX * 0.5) - 320;
-    if (this.bgY !== undefined)
+    }
+    if (this.bgY !== undefined) {
       tweenProps['y'] = (this.bgY * 0.5) - 284;
-    if (this.opacity !== undefined)
+    }
+    if (this.opacity !== undefined) {
       tweenProps['alpha'] = (this.opacity || 0) / 255;
+    }
     if (Object.keys(tweenProps).length) {
       scene.tweens.add(Object.assign({
         targets: moveAnim.bgSprite,
@@ -393,8 +413,9 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
   }
 
   execute(scene: BattleScene, moveAnim: MoveAnim): integer {
-    if (moveAnim.bgSprite)
+    if (moveAnim.bgSprite) {
       moveAnim.bgSprite.destroy();
+    }
     moveAnim.bgSprite = this.resourceName
       ? scene.add.tileSprite(this.bgX - 320, this.bgY - 284, 896, 576, this.resourceName)
       : scene.add.rectangle(this.bgX - 320, this.bgY - 284, 896, 576, 0);
@@ -403,8 +424,9 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     scene.field.add(moveAnim.bgSprite);
     const fieldPokemon = scene.getEnemyPokemon() || scene.getPlayerPokemon();
-    if (fieldPokemon?.isOnField())
+    if (fieldPokemon?.isOnField()) {
       scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
+    }
 
     scene.tweens.add({
       targets: moveAnim.bgSprite,
@@ -441,14 +463,15 @@ export function initCommonAnims(scene: BattleScene): Promise<void> {
 export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
   return new Promise(resolve => {
     if (moveAnims.has(move)) {
-      if (moveAnims.get(move) !== null)
+      if (moveAnims.get(move) !== null) {
         resolve();
-      else {
+      } else {
         const loadedCheckTimer = setInterval(() => {
           if (moveAnims.get(move) !== null) {
             const chargeAttr = allMoves[move].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[move].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
-            if (chargeAttr && chargeAnims.get(chargeAttr.chargeAnim) === null)
+            if (chargeAttr && chargeAnims.get(chargeAttr.chargeAnim) === null) {
               return;
+            }
             clearInterval(loadedCheckTimer);
             resolve();
           }
@@ -472,13 +495,15 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             if (Array.isArray(ba)) {
               populateMoveAnim(move, ba[0]);
               populateMoveAnim(move, ba[1]);
-            } else
+            } else {
               populateMoveAnim(move, ba);
+            }
             const chargeAttr = allMoves[move].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[move].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
-            if (chargeAttr)
+            if (chargeAttr) {
               initMoveChargeAnim(scene, chargeAttr.chargeAnim).then(() => resolve());
-            else
+            } else {
               resolve();
+            }
           });
       };
       fetchAnimAndResolve(move);
@@ -489,9 +514,9 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
 export function initMoveChargeAnim(scene: BattleScene, chargeAnim: ChargeAnim): Promise<void> {
   return new Promise(resolve => {
     if (chargeAnims.has(chargeAnim)) {
-      if (chargeAnims.get(chargeAnim) !== null)
+      if (chargeAnims.get(chargeAnim) !== null) {
         resolve();
-      else {
+      } else {
         const loadedCheckTimer = setInterval(() => {
           if (chargeAnims.get(chargeAnim) !== null) {
             clearInterval(loadedCheckTimer);
@@ -507,8 +532,9 @@ export function initMoveChargeAnim(scene: BattleScene, chargeAnim: ChargeAnim): 
           if (Array.isArray(ca)) {
             populateMoveChargeAnim(chargeAnim, ca[0]);
             populateMoveChargeAnim(chargeAnim, ca[1]);
-          } else
+          } else {
             populateMoveChargeAnim(chargeAnim, ca);
+          }
           resolve();
         });
     }
@@ -547,8 +573,9 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
       if (chargeAttr) {
         const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
         moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims[0]);
-        if (Array.isArray(moveChargeAnims))
+        if (Array.isArray(moveChargeAnims)) {
           moveAnimations.push(moveChargeAnims[1]);
+        }
       }
     }
     loadAnimAssets(scene, moveAnimations, startLoad).then(() => resolve());
@@ -560,27 +587,35 @@ function loadAnimAssets(scene: BattleScene, anims: AnimConfig[], startLoad?: boo
     const backgrounds = new Set<string>();
     const sounds = new Set<string>();
     for (const a of anims) {
-      if (!a.frames?.length)
+      if (!a.frames?.length) {
         continue;
+      }
       const animSounds = a.getSoundResourceNames();
-      for (const ms of animSounds)
+      for (const ms of animSounds) {
         sounds.add(ms);
+      }
       const animBackgrounds = a.getBackgroundResourceNames();
-      for (const abg of animBackgrounds)
+      for (const abg of animBackgrounds) {
         backgrounds.add(abg);
-      if (a.graphic)
+      }
+      if (a.graphic) {
         scene.loadSpritesheet(a.graphic, 'battle_anims', 96);
+      }
     }
-    for (const bg of backgrounds)
+    for (const bg of backgrounds) {
       scene.loadImage(bg, 'battle_anims');
-    for (const s of sounds)
+    }
+    for (const s of sounds) {
       scene.loadSe(s, 'battle_anims', s);
+    }
     if (startLoad) {
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
-      if (!scene.load.isLoading()) 
+      if (!scene.load.isLoading()) {
         scene.load.start();
-    } else
+      }
+    } else {
       resolve();
+    }
   });
 }
 
@@ -619,10 +654,12 @@ function repositionY(x1: number, y1: number, x2: number, y2: number, tx: number,
 }
 
 function isReversed(src1: number, src2: number, dst1: number, dst2: number) {
-  if (src1 === src2)
+  if (src1 === src2) {
     return false;
-  if (src1 < src2)
+  }
+  if (src1 < src2) {
     return dst1 > dst2;
+  }
   return dst1 < dst2;
 }
 
@@ -698,8 +735,9 @@ export abstract class BattleAnim {
             this.dstLine[0], this.dstLine[1] - userHalfHeight, this.dstLine[2], this.dstLine[3] - targetHalfHeight, x, y);
           x = point[0];
           y = point[1];
-          if (frame.target === AnimFrameTarget.GRAPHIC && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2]))
+          if (frame.target === AnimFrameTarget.GRAPHIC && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])) {
             scaleX = scaleX * -1;
+          }
           break;
         }
         const angle = -frame.angle;
@@ -716,8 +754,9 @@ export abstract class BattleAnim {
       const target = !isOppAnim ? this.target : this.user;
 
       if (!target.isOnField()) {
-        if (callback)
+        if (callback) {
           callback();
+        }
         return;
       }
 
@@ -742,22 +781,28 @@ export abstract class BattleAnim {
         targetSprite.setAlpha(1);
         targetSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
         targetSprite.setAngle(0);
-        if (!this.isHideUser())
+        if (!this.isHideUser()) {
           userSprite.setVisible(true);
-        if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser()))
-          targetSprite.setVisible(true);
-        for (const ms of Object.values(spriteCache).flat()) {
-          if (ms)
-            ms.destroy();
         }
-        if (this.bgSprite)
+        if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser())) {
+          targetSprite.setVisible(true);
+        }
+        for (const ms of Object.values(spriteCache).flat()) {
+          if (ms) {
+            ms.destroy();
+          }
+        }
+        if (this.bgSprite) {
           this.bgSprite.destroy();
-        if (callback)
+        }
+        if (callback) {
           callback();
+        }
       };
 
-      if (!scene.moveAnimations)
+      if (!scene.moveAnimations) {
         return cleanUpAndComplete();
+      }
 
       const anim = this.getAnim();
 
@@ -789,8 +834,9 @@ export abstract class BattleAnim {
           for (const frame of spriteFrames) {
             if (frame.target !== AnimFrameTarget.GRAPHIC) {
               const isUser = frame.target === AnimFrameTarget.USER;
-              if (isUser && target === user)
+              if (isUser && target === user) {
                 continue;
+              }
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
               const spriteSource = isUser ? userSprite : targetSprite;
               if ((isUser ? u : t) === sprites.length) {
@@ -843,10 +889,11 @@ export abstract class BattleAnim {
                   case 2:
                     switch (frame.focus) {
                     case AnimFocus.USER:
-                      if (this.bgSprite)
+                      if (this.bgSprite) {
                         scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
-                      else
+                      } else {
                         scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user);
+                      }
                       break;
                     case AnimFocus.TARGET:
                       scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target);
@@ -889,8 +936,9 @@ export abstract class BattleAnim {
             }
           }
           if (anim.frameTimedEvents.has(f)) {
-            for (const event of anim.frameTimedEvents.get(f))
+            for (const event of anim.frameTimedEvents.get(f)) {
               r = Math.max((anim.frames.length - f) + event.execute(scene, this), r);
+            }
           }
           const targets = Utils.getEnumValues(AnimFrameTarget);
           for (const i of targets) {
@@ -901,8 +949,9 @@ export abstract class BattleAnim {
                 if (!rs.getData('locked') as boolean) {
                   const spriteCacheIndex = spriteCache[i].indexOf(rs);
                   spriteCache[i].splice(spriteCacheIndex, 1);
-                  if (i === AnimFrameTarget.GRAPHIC)
+                  if (i === AnimFrameTarget.GRAPHIC) {
                     spritePriorities.splice(spriteCacheIndex, 1);
+                  }
                   rs.destroy();
                 }
               }
@@ -913,16 +962,18 @@ export abstract class BattleAnim {
         },
         onComplete: () => {
           for (const ms of Object.values(spriteCache).flat()) {
-            if (ms && !ms.getData('locked'))
+            if (ms && !ms.getData('locked')) {
               ms.destroy();
+            }
           }
           if (r) {
             scene.tweens.addCounter({
               duration: Utils.getFrameMs(r),
               onComplete: () => cleanUpAndComplete()
             });
-          } else
+          } else {
             cleanUpAndComplete();
+          }
         }
       });
     }
@@ -1022,26 +1073,29 @@ export async function populateAnims() {
     if (!nameField.startsWith('name: Move:') && !(isOppMove = nameField.startsWith('name: OppMove:'))) {
       const nameMatch = commonNamePattern.exec(nameField);
       const name = nameMatch[2].toLowerCase();
-      if (commonAnimMatchNames.indexOf(name) > -1)
+      if (commonAnimMatchNames.indexOf(name) > -1) {
         commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];
-      else if (chargeAnimMatchNames.indexOf(name) > -1) {
+      } else if (chargeAnimMatchNames.indexOf(name) > -1) {
         isOppMove = nameField.startsWith('name: Opp ');
         chargeAnimId = chargeAnimIds[chargeAnimMatchNames.indexOf(name)];
       }
     }
     const nameIndex = nameField.indexOf(':', 5) + 1;
     const animName = nameField.slice(nameIndex, nameField.indexOf('\n', nameIndex));
-    if (!moveNameToId.hasOwnProperty(animName) && !commonAnimId && !chargeAnimId)
+    if (!moveNameToId.hasOwnProperty(animName) && !commonAnimId && !chargeAnimId) {
       continue;
+    }
     const anim = commonAnimId || chargeAnimId ? new AnimConfig() : new AnimConfig();
-    if (anim instanceof AnimConfig)
+    if (anim instanceof AnimConfig) {
       (anim as AnimConfig).id = moveNameToId[animName];
-    if (commonAnimId)
+    }
+    if (commonAnimId) {
       commonAnims.set(commonAnimId, anim);
-    else if (chargeAnimId)
+    } else if (chargeAnimId) {
       chargeAnims.set(chargeAnimId, !isOppMove ? anim : [ chargeAnims.get(chargeAnimId) as AnimConfig, anim ]);
-    else
+    } else {
       moveAnims.set(moveNameToId[animName], !isOppMove ? anim as AnimConfig : [ moveAnims.get(moveNameToId[animName]) as AnimConfig, anim as AnimConfig ]);
+    }
     for (let f = 0; f < fields.length; f++) {
       const field = fields[f];
       const fieldName = field.slice(0, field.indexOf(':'));
@@ -1089,8 +1143,9 @@ export async function populateAnims() {
                 }
                 return true;
               });
-              if (!ext)
+              if (!ext) {
                 ext = '.wav';
+              }
               resourceName += `.${ext}`;
             }
             timedEvent = new AnimTimedSoundEvent(frameIndex, resourceName);
@@ -1102,8 +1157,9 @@ export async function populateAnims() {
             timedEvent = new AnimTimedUpdateBgEvent(frameIndex, resourceName.slice(0, resourceName.indexOf('.')));
             break;
           }
-          if (!timedEvent)
+          if (!timedEvent) {
             continue;
+          }
           const propPattern = /([a-z]+): (.*?)(?:,|\})/ig;
           let propMatch: RegExpExecArray;
           while ((propMatch = propPattern.exec(timingData))) {
@@ -1131,11 +1187,13 @@ export async function populateAnims() {
               value = parseInt(value);
               break;
             }
-            if (timedEvent.hasOwnProperty(prop))
+            if (timedEvent.hasOwnProperty(prop)) {
               timedEvent[prop] = value;
+            }
           }
-          if (!anim.frameTimedEvents.has(frameIndex))
+          if (!anim.frameTimedEvents.has(frameIndex)) {
             anim.frameTimedEvents.set(frameIndex, []);
+          }
           anim.frameTimedEvents.get(frameIndex).push(timedEvent);
         }
         break;
@@ -1152,12 +1210,15 @@ export async function populateAnims() {
   // used in commented code
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const animReplacer = (k, v) => {
-    if (k === 'id' && !v)
+    if (k === 'id' && !v) {
       return undefined;
-    if (v instanceof Map)
+    }
+    if (v instanceof Map) {
       return Object.fromEntries(v);
-    if (v instanceof AnimTimedEvent)
+    }
+    if (v instanceof AnimTimedEvent) {
       v['eventType'] = v.getEventType();
+    }
     return v;
   };
 
@@ -1172,8 +1233,9 @@ export async function populateAnims() {
     for (let p = 0; p < propSets.length; p++) {
       props = propSets[p];
       const ai = props.indexOf(a.key);
-      if (ai === -1)
+      if (ai === -1) {
         continue;
+      }
       const bi = props.indexOf(b.key);
 
       return ai < bi ? -1 : ai > bi ? 1 : 0;

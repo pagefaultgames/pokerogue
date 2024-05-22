@@ -21,8 +21,9 @@ export class LoadingScene extends SceneBase {
   preload() {
     this.load['manifest'] = this.game['manifest'];
 
-    if (!isMobile())
+    if (!isMobile()) {
       this.load.video('intro_dark', 'images/intro_dark.mp4', true);
+    }
 
     this.loadImage('loading_bg', 'arenas');
     this.loadImage('logo', '');
@@ -36,8 +37,9 @@ export class LoadingScene extends SceneBase {
     this.loadImage('cursor', 'ui');
     this.loadImage('cursor_reverse', 'ui');
     for (const wv of Utils.getEnumValues(WindowVariant)) {
-      for (let w = 1; w <= 5; w++)
+      for (let w = 1; w <= 5; w++) {
         this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, 'ui/windows');
+      }
     }
     this.loadAtlas('namebox', 'ui');
     this.loadImage('pbinfo_player', 'ui');
@@ -112,8 +114,9 @@ export class LoadingScene extends SceneBase {
     this.loadImage('summary_moves_overlay_row', 'ui');
     this.loadImage('summary_moves_overlay_pp', 'ui');
     this.loadAtlas('summary_moves_cursor', 'ui');
-    for (let t = 1; t <= 3; t++)
+    for (let t = 1; t <= 3; t++) {
       this.loadImage(`summary_tabs_${t}`, 'ui');
+    }
 
     this.loadImage('starter_select_bg', 'ui');
     this.loadImage('select_cursor', 'ui');
@@ -133,22 +136,25 @@ export class LoadingScene extends SceneBase {
       const baseAKey = `${btKey}_a`;
       const baseBKey = `${btKey}_b`;
       this.loadImage(`${btKey}_bg`, 'arenas');
-      if (!isBaseAnimated)
+      if (!isBaseAnimated) {
         this.loadImage(baseAKey, 'arenas');
-      else
+      } else {
         this.loadAtlas(baseAKey, 'arenas');
-      if (!isBaseAnimated)
+      }
+      if (!isBaseAnimated) {
         this.loadImage(baseBKey, 'arenas');
-      else
+      } else {
         this.loadAtlas(baseBKey, 'arenas');
+      }
       if (getBiomeHasProps(bt)) {
         for (let p = 1; p <= 3; p++) {
           const isPropAnimated = p === 3 && [ 'power_plant', 'end' ].find(b => b === btKey);
           const propKey = `${btKey}_b_${p}`;
-          if (!isPropAnimated)
+          if (!isPropAnimated) {
             this.loadImage(propKey, 'arenas');
-          else
+          } else {
             this.loadAtlas(propKey, 'arenas');
+          }
         }
       }
     });
@@ -165,8 +171,9 @@ export class LoadingScene extends SceneBase {
     Utils.getEnumValues(TrainerType).map(tt => {
       const config = trainerConfigs[tt];
       this.loadAtlas(config.getSpriteKey(), 'trainer');
-      if (config.doubleOnly || config.hasDouble)
+      if (config.doubleOnly || config.hasDouble) {
         this.loadAtlas(config.getSpriteKey(true), 'trainer');
+      }
     });
 
     // Load character sprites
@@ -214,8 +221,9 @@ export class LoadingScene extends SceneBase {
 
     for (let i = 0; i < 10; i++) {
       this.loadAtlas(`pokemon_icons_${i}`, '');
-      if (i)
+      if (i) {
         this.loadAtlas(`pokemon_icons_${i}v`, '');
+      }
     }
 
     this.loadSe('select');
@@ -345,8 +353,9 @@ export class LoadingScene extends SceneBase {
     
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
 
-    if (!mobile)
+    if (!mobile) {
       loadingGraphics.map(g => g.setVisible(false));
+    }
 
     const destroyLoadingAssets = () => {
       intro.destroy();
@@ -375,13 +384,15 @@ export class LoadingScene extends SceneBase {
         break;
       case 'loading_bg':
         bg.setTexture('loading_bg');
-        if (mobile)
+        if (mobile) {
           bg.setVisible(true);
+        }
         break;
       case 'logo':
         logo.setTexture('logo');
-        if (mobile)
+        if (mobile) {
           logo.setVisible(true);
+        }
         break;
       }
     });

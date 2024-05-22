@@ -239,8 +239,9 @@ export class ArenaTrapTag extends ArenaTag {
 
   apply(arena: Arena, args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    if (this.sourceId === pokemon.id || (this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer())
+    if (this.sourceId === pokemon.id || (this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer()) {
       return false;
+    }
 
     return this.activateTrap(pokemon);
   }
@@ -277,7 +278,9 @@ class SpikesTag extends ArenaTrapTag {
 
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
-        if (pokemon.turnData) pokemon.turnData.damageTaken += damage;
+        if (pokemon.turnData) {
+          pokemon.turnData.damageTaken += damage;
+        }
         return true;
       }
     }
@@ -302,8 +305,9 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   onRemove(arena: Arena): void {
-    if (!this.neutralized)
+    if (!this.neutralized) {
       super.onRemove(arena);
+    }
   }
 
   activateTrap(pokemon: Pokemon): boolean {
@@ -316,8 +320,9 @@ class ToxicSpikesTag extends ArenaTrapTag {
         }
       } else if (!pokemon.status) {
         const toxic = this.layers > 1;
-        if (pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, 0, `the ${this.getMoveName()}`))
-          return true;      
+        if (pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, 0, `the ${this.getMoveName()}`)) {
+          return true;
+        }      
       }
     }
 
@@ -325,10 +330,12 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
-    if (pokemon.isGrounded() || !pokemon.canSetStatus(StatusEffect.POISON, true))
+    if (pokemon.isGrounded() || !pokemon.canSetStatus(StatusEffect.POISON, true)) {
       return 1;
-    if (pokemon.isOfType(Type.POISON))
+    }
+    if (pokemon.isOfType(Type.POISON)) {
       return 1.25;
+    }
     return super.getMatchupScoreMultiplier(pokemon);
   }
 }
@@ -345,8 +352,9 @@ class DelayedAttackTag extends ArenaTag {
   lapse(arena: Arena): boolean {
     const ret = super.lapse(arena);
 
-    if (!ret)
+    if (!ret) {
       arena.scene.unshiftPhase(new MoveEffectPhase(arena.scene, this.sourceId, [ this.targetIndex ], new PokemonMove(this.sourceMove, 0, 0, true)));
+    }
 
     return ret;
   }
@@ -399,8 +407,9 @@ class StealthRockTag extends ArenaTrapTag {
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockNonDirectDamageAbAttr,  pokemon, cancelled);
 
-    if (cancelled.value)
+    if (cancelled.value) {
       return false;
+    }
     
     const damageHpRatio = this.getDamageHpRatio(pokemon);
 
@@ -408,7 +417,9 @@ class StealthRockTag extends ArenaTrapTag {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
-      if (pokemon.turnData) pokemon.turnData.damageTaken += damage;
+      if (pokemon.turnData) {
+        pokemon.turnData.damageTaken += damage;
+      }
     }
 
     return false;

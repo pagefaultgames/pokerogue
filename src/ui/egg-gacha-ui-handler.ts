@@ -247,8 +247,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.setGachaCursor(1);
 
-    for (let g = 0; g < this.gachaContainers.length; g++)
+    for (let g = 0; g < this.gachaContainers.length; g++) {
       this.updateGachaInfo(g);
+    }
 
     this.updateVoucherCounts();
 
@@ -262,8 +263,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   getDelayValue(delay: integer) {
-    if (this.transitioning && this.transitionCancelled)
+    if (this.transitioning && this.transitionCancelled) {
       delay = Math.ceil(delay / 5);
+    }
     return Utils.fixedInt(delay);
   }
 
@@ -272,8 +274,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.setTransitioning(true);
 
     const doPull = () => {
-      if (this.transitionCancelled)
+      if (this.transitionCancelled) {
         return this.showSummary(eggs);
+      }
 
       const egg = this.scene.add.sprite(127, 75, 'egg', `egg_${eggs[count].getKey()}`);
       egg.setScale(0.5);
@@ -315,10 +318,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                         duration: this.getDelayValue(350),
                         ease: 'Cubic.easeIn',
                         onComplete: () => {
-                          if (++count < pullCount)
+                          if (++count < pullCount) {
                             this.pull(pullCount, count, eggs);
-                          else
+                          } else {
                             this.showSummary(eggs);
+                          }
                         }
                       });
                     }
@@ -347,14 +351,17 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             this.scene.time.delayedCall(this.getDelayValue(350), doPullAnim);
           }
         });
-      } else
+      } else {
         doPullAnim();
+      }
     };
 
-    if (!pullCount)
+    if (!pullCount) {
       pullCount = 1;
-    if (!count)
+    }
+    if (!count) {
       count = 0;
+    }
     if (!eggs) {
       eggs = [];
       const tierValueOffset = this.gachaCursor === GachaType.LEGENDARY ? 1 : 0;
@@ -362,10 +369,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         const tierValue = Utils.randInt(256);
         return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
       });
-      if (pullCount >= 25 && !tiers.filter(t => t >= EggTier.ULTRA).length)
+      if (pullCount >= 25 && !tiers.filter(t => t >= EggTier.ULTRA).length) {
         tiers[Utils.randInt(tiers.length)] = EggTier.ULTRA;
-      else if (pullCount >= 10 && !tiers.filter(t => t >= EggTier.GREAT).length)
+      } else if (pullCount >= 10 && !tiers.filter(t => t >= EggTier.GREAT).length) {
         tiers[Utils.randInt(tiers.length)] = EggTier.GREAT;
+      }
 
       const timestamp = new Date().getTime();
 
@@ -393,8 +401,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       }
 
       (this.scene.currentBattle ? this.scene.gameData.saveAll(this.scene, true, true, true) : this.scene.gameData.saveSystem()).then(success => {
-        if (!success)
+        if (!success) {
           return this.scene.reset(true);
+        }
         doPull();
       });
       return;
@@ -493,8 +502,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
-    if (!text)
+    if (!text) {
       text = this.defaultText;
+    }
     
     if (text?.indexOf('\n') === -1) {
       this.eggGachaMessageBox.setSize(320, 32);
@@ -514,8 +524,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   setTransitioning(transitioning: boolean): void {
-    if (this.transitioning === transitioning)
+    if (this.transitioning === transitioning) {
       return;
+    }
     this.transitioning = transitioning;
     this.transitionCancelled = false;
   }
@@ -530,8 +541,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       if (!this.transitionCancelled && (button === Button.ACTION || button === Button.CANCEL)) {
         this.transitionCancelled = true;
         success = true;
-      } else
+      } else {
         return false;
+      }
     } else {
       
       if (this.eggGachaSummaryContainer.visible) {
@@ -576,10 +588,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               error = true;
               this.showError(i18next.t('egg:notEnoughVouchers'));
             } else if (this.scene.gameData.eggs.length < 90) {
-              if (this.cursor === 3)
+              if (this.cursor === 3) {
                 this.consumeVouchers(VoucherType.PREMIUM, 1);
-              else
+              } else {
                 this.consumeVouchers(VoucherType.REGULAR, 10);
+              }
               this.pull(10);
               success = true;
             } else {
@@ -611,29 +624,34 @@ export default class EggGachaUiHandler extends MessageUiHandler {
           success = true;
           break;
         case Button.UP:
-          if (this.cursor)
+          if (this.cursor) {
             success = this.setCursor(this.cursor - 1);
+          }
           break;
         case Button.DOWN:
-          if (this.cursor < 5)
+          if (this.cursor < 5) {
             success = this.setCursor(this.cursor + 1);
+          }
           break;
         case Button.LEFT:
-          if (this.gachaCursor)
+          if (this.gachaCursor) {
             success = this.setGachaCursor(this.gachaCursor - 1);
+          }
           break;
         case Button.RIGHT:
-          if (this.gachaCursor < Utils.getEnumKeys(GachaType).length - 1)
+          if (this.gachaCursor < Utils.getEnumKeys(GachaType).length - 1) {
             success = this.setGachaCursor(this.gachaCursor + 1);
+          }
           break;
         }
       }
     }
   
-    if (success)
+    if (success) {
       ui.playSelect();
-    else if (error)
+    } else if (error) {
       ui.playError();
+    }
 
     return success || error;
   }

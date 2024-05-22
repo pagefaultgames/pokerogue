@@ -117,8 +117,9 @@ export default class GameStatsUiHandler extends UiHandler {
     const statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 2;
     const [ statsBgLeft, statsBgRight ] = new Array(2).fill(null).map((_, i) => {
       let width = statsBgWidth;
-      if (!i)
+      if (!i) {
         width += 5;
+      }
       const statsBg = addWindow(this.scene, statsBgWidth * i, headerBg.height, width, (this.scene.game.canvas.height / 6) - headerBg.height - 2, false, !!i, 2);
       statsBg.setOrigin(0, 0);
       return statsBg;
@@ -194,18 +195,21 @@ export default class GameStatsUiHandler extends UiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (this.cursor)
+        if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
+        }
         break;
       case Button.DOWN:
-        if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2))
+        if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2)) {
           success = this.setCursor(this.cursor + 1);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -213,8 +217,9 @@ export default class GameStatsUiHandler extends UiHandler {
   setCursor(cursor: integer): boolean {
     const ret = super.setCursor(cursor);
 
-    if (ret)
+    if (ret) {
       this.updateStats();
+    }
 
     return ret;
   }

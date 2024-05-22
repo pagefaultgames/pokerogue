@@ -137,8 +137,9 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
         const startChildIndex = elements.indexOf(trainerListHeader);
         const endChildIndex = elements.findIndex(h => h.nodeName === 'H2' && elements.indexOf(h) > startChildIndex);
         const tables = elements.filter(t => {
-          if (t.nodeName !== 'TABLE' || t['className'] !== 'expandable')
+          if (t.nodeName !== 'TABLE' || t['className'] !== 'expandable') {
             return false;
+          }
           const childIndex = elements.indexOf(t);
           return childIndex > startChildIndex && childIndex < endChildIndex;
         }).map(t => t as Element);
@@ -150,11 +151,13 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
             const content = nameCell.innerHTML;
             if (content.indexOf(' <a ') > -1) {
               const female = /♀/.test(content);
-              if (url === 'Twins')
+              if (url === 'Twins') {
                 console.log(content);
+              }
               const nameMatch = />([a-z]+(?: &amp; [a-z]+)?)<\/a>/i.exec(content);
-              if (nameMatch)
+              if (nameMatch) {
                 (female || forceFemale ? femaleTrainerNames : trainerNames).add(nameMatch[1].replace('&amp;', '&'));
+              }
             }
           }
         }

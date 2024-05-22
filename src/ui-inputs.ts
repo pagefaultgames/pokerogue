@@ -30,20 +30,25 @@ export class UiInputs {
   listenInputs(): void {
     this.events.on('input_down', (event) => {
       const actions = this.getActionsKeyDown();
-      if (!actions.hasOwnProperty(event.button)) return;
+      if (!actions.hasOwnProperty(event.button)) {
+        return;
+      }
       actions[event.button]();
     }, this);
 
     this.events.on('input_up', (event) => {
       const actions = this.getActionsKeyUp();
-      if (!actions.hasOwnProperty(event.button)) return;
+      if (!actions.hasOwnProperty(event.button)) {
+        return;
+      }
       actions[event.button]();
     }, this);
   }
 
   doVibration(inputSuccess: boolean, vibrationLength: number): void {
-    if (inputSuccess && this.scene.enableVibration && typeof navigator.vibrate !== 'undefined')
+    if (inputSuccess && this.scene.enableVibration && typeof navigator.vibrate !== 'undefined') {
       navigator.vibrate(vibrationLength);
+    }
   }
 
   getActionsKeyDown(): ActionKeys {
@@ -90,21 +95,25 @@ export class UiInputs {
 
   buttonStats(pressed: boolean = true): void {
     if (pressed) {
-      for (const p of this.scene.getField().filter(p => p?.isActive(true)))
+      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
         p.toggleStats(true);
+      }
     } else {
-      for (const p of this.scene.getField().filter(p => p?.isActive(true)))
+      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
         p.toggleStats(false);
+      }
     }
   }
 
   buttonMenu(): void {
-    if (this.scene.disableMenu)
+    if (this.scene.disableMenu) {
       return;
+    }
     switch (this.scene.ui?.getMode()) {
     case Mode.MESSAGE:
-      if (!(this.scene.ui.getHandler() as MessageUiHandler).pendingPrompt)
+      if (!(this.scene.ui.getHandler() as MessageUiHandler).pendingPrompt) {
         return;
+      }
     case Mode.TITLE:
     case Mode.COMMAND:
     case Mode.FIGHT:
@@ -139,15 +148,17 @@ export class UiInputs {
     if (up) {
       if (this.scene.gameSpeed < 5) {
         this.scene.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.scene.gameSpeed}x`) + 1);
-        if (this.scene.ui?.getMode() === Mode.SETTINGS)
+        if (this.scene.ui?.getMode() === Mode.SETTINGS) {
           (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
+        }
       }
       return;
     }
     if (this.scene.gameSpeed > 1) {
       this.scene.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.scene.gameSpeed}x`) - 1, 0));
-      if (this.scene.ui?.getMode() === Mode.SETTINGS)
+      if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
+      }
     }
   }
 

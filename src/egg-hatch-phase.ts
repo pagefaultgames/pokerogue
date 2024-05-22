@@ -47,13 +47,15 @@ export class EggHatchPhase extends Phase {
 
     this.scene.ui.setModeForceTransition(Mode.EGG_HATCH_SCENE).then(() => {
 
-      if (!this.egg)
+      if (!this.egg) {
         return this.end();
+      }
 
       const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === this.egg.id);
 
-      if (eggIndex === -1)
+      if (eggIndex === -1) {
         return this.end();
+      }
 
       this.scene.gameData.eggs.splice(eggIndex, 1);
 
@@ -106,8 +108,9 @@ export class EggHatchPhase extends Phase {
       this.eggHatchContainer.add(this.infoContainer);
 
       const pokemon = this.generatePokemon();
-      if (pokemon.fusionSpecies)
+      if (pokemon.fusionSpecies) {
         pokemon.clearFusionSpecies();
+      }
 
       this.pokemonSprite.setVisible(false);
 
@@ -117,37 +120,44 @@ export class EggHatchPhase extends Phase {
         this.canSkip = true;
 
         this.scene.time.delayedCall(1000, () => {
-          if (!this.hatched)
+          if (!this.hatched) {
             this.evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
+          }
         });
 
         this.scene.time.delayedCall(2000, () => {
-          if (this.hatched)
+          if (this.hatched) {
             return;
+          }
           this.eggCrackSprite.setVisible(true);
           this.doSpray(1, this.eggSprite.displayHeight / -2);
           this.doEggShake(2).then(() => {
-            if (this.hatched)
+            if (this.hatched) {
               return;
+            }
             this.scene.time.delayedCall(1000, () => {
-              if (this.hatched)
+              if (this.hatched) {
                 return;
+              }
               this.doSpray(2, this.eggSprite.displayHeight / -4);
               this.eggCrackSprite.setFrame('1');
               this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('2'));
               this.doEggShake(4).then(() => {
-                if (this.hatched)
+                if (this.hatched) {
                   return;
+                }
                 this.scene.time.delayedCall(1000, () => {
-                  if (this.hatched)
+                  if (this.hatched) {
                     return;
+                  }
                   this.scene.playSound('egg_crack');
                   this.doSpray(4);
                   this.eggCrackSprite.setFrame('3');
                   this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('4'));
                   this.doEggShake(8, 2).then(() => {
-                    if (!this.hatched)
+                    if (!this.hatched) {
                       this.doHatch();
+                    }
                   });
                 });
               });
@@ -159,19 +169,22 @@ export class EggHatchPhase extends Phase {
   }
 
   end() {
-    if (this.scene.findPhase((p) => p instanceof EggHatchPhase))
+    if (this.scene.findPhase((p) => p instanceof EggHatchPhase)) {
       this.eggHatchHandler.clear();
-    else
+    } else {
       this.scene.time.delayedCall(250, () => this.scene.setModifiersVisible(true));
+    }
     super.end();
   }
 
   doEggShake(intensity: number, repeatCount?: integer, count?: integer): Promise<void> {
     return new Promise(resolve => {
-      if (repeatCount === undefined)
+      if (repeatCount === undefined) {
         repeatCount = 0;
-      if (count === undefined)
+      }
+      if (count === undefined) {
         count = 0;
+      }
       this.scene.playSound('pb_move');
       this.scene.tweens.add({
         targets: this.eggContainer,
@@ -186,8 +199,9 @@ export class EggHatchPhase extends Phase {
             duration: 250,
             onComplete: () => {
               count++;
-              if (count < repeatCount)
+              if (count < repeatCount) {
                 return this.doEggShake(intensity, repeatCount, count).then(() => resolve());
+              }
               this.scene.tweens.add({
                 targets: this.eggContainer,
                 x: `-=${intensity / 2}`,
@@ -203,23 +217,27 @@ export class EggHatchPhase extends Phase {
   }
 
   trySkip(): boolean {
-    if (!this.canSkip || this.skipped)
+    if (!this.canSkip || this.skipped) {
       return false;
+    }
     this.skipped = true;
-    if (!this.hatched)
+    if (!this.hatched) {
       this.doHatch();
-    else
+    } else {
       this.doReveal();
+    }
     return true;
   }
 
   doHatch(): void {
     this.canSkip = false;
     this.hatched = true;
-    if (this.evolutionBgm)
+    if (this.evolutionBgm) {
       SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
-    for (let e = 0; e < 5; e++)
+    }
+    for (let e = 0; e < 5; e++) {
       this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound('egg_hatch', { volume: 1 - (e * 0.2) }));
+    }
     this.eggLightraysOverlay.setVisible(true);
     this.eggLightraysOverlay.play('egg_lightrays');
     this.scene.tweens.add({
@@ -234,21 +252,26 @@ export class EggHatchPhase extends Phase {
     });
     this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
       this.canSkip = false;
-      if (!this.skipped)
+      if (!this.skipped) {
         this.doReveal();
+      }
     });
   }
 
   doReveal(): void {
     const isShiny = this.pokemon.isShiny();
-    if (this.pokemon.species.subLegendary)
+    if (this.pokemon.species.subLegendary) {
       this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
-    if (this.pokemon.species.legendary)
+    }
+    if (this.pokemon.species.legendary) {
       this.scene.validateAchv(achvs.HATCH_LEGENDARY);
-    if (this.pokemon.species.mythical)
+    }
+    if (this.pokemon.species.mythical) {
       this.scene.validateAchv(achvs.HATCH_MYTHICAL);
-    if (isShiny)
+    }
+    if (isShiny) {
       this.scene.validateAchv(achvs.HATCH_SHINY);
+    }
     this.eggContainer.setVisible(false);
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
     this.pokemonSprite.setPipelineData('ignoreTimeTint', true);
@@ -329,8 +352,9 @@ export class EggHatchPhase extends Phase {
       if (trigIndex < 160) {
         particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
         particle.y += -this.sin(trigIndex, amp);
-        if (f > 108)
+        if (f > 108) {
           particle.setScale((1 - (f - 108) / 20));
+        }
         trigIndex += 2 * speedMultiplier;
         f += speedMultiplier;
       } else {
@@ -354,8 +378,9 @@ export class EggHatchPhase extends Phase {
         speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;
       } else if (this.egg.tier === EggTier.MASTER
         && this.egg.gachaType === GachaType.LEGENDARY) {
-        if (!Utils.randSeedInt(2))
+        if (!Utils.randSeedInt(2)) {
           speciesOverride = getLegendaryGachaSpeciesForTimestamp(this.scene, this.egg.timestamp);
+        }
       }
 
       if (speciesOverride) {
@@ -396,8 +421,9 @@ export class EggHatchPhase extends Phase {
         for (const speciesId of speciesPool) {
           let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
           const species = getPokemonSpecies(speciesId);
-          if (species.isRegional())
+          if (species.isRegional()) {
             weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
+          }
           speciesWeights.push(totalWeight + weight);
           totalWeight += weight;
         }
@@ -422,8 +448,9 @@ export class EggHatchPhase extends Phase {
 
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
-      for (let s = 0; s < ret.ivs.length; s++)
+      for (let s = 0; s < ret.ivs.length; s++) {
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
+      }
       
       const baseChance = this.egg.gachaType === GachaType.MOVE ? 3 : 6;
       this.eggMoveIndex = Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))

@@ -27,8 +27,9 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   setMode(): Promise<void> {
-    if (!this.modal)
+    if (!this.modal) {
       return super.setMode();
+    }
     return this.scene.ui.setOverlayMode(Mode.EVOLUTION_SCENE);
   }
 
@@ -44,8 +45,9 @@ export class FormChangePhase extends EvolutionPhase {
         sprite.setPipelineData('shiny', transformedPokemon.shiny);
         sprite.setPipelineData('variant', transformedPokemon.variant);
         [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
-          if (transformedPokemon.summonData?.speciesForm)
+          if (transformedPokemon.summonData?.speciesForm) {
             k += 'Base';
+          }
           sprite.pipelineData[k] = transformedPokemon.getSprite().pipelineData[k];
         });
       });
@@ -90,8 +92,9 @@ export class FormChangePhase extends EvolutionPhase {
                       this.doCircleInward();
                       this.scene.time.delayedCall(900, () => {
                         this.pokemon.changeForm(this.formChange).then(() => {
-                          if (!this.modal)
+                          if (!this.modal) {
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
+                          }
 
                           this.scene.playSound('shine');
                           this.doSpray();
@@ -165,8 +168,9 @@ export class FormChangePhase extends EvolutionPhase {
 
         super.end();
       });
-    } else
+    } else {
       super.end();
+    }
   }
 }
 
@@ -183,8 +187,9 @@ export class QuietFormChangePhase extends BattlePhase {
   start(): void {
     super.start();
 
-    if (this.pokemon.formIndex === this.pokemon.species.forms.findIndex(f => f.formKey === this.formChange.formKey))
+    if (this.pokemon.formIndex === this.pokemon.species.forms.findIndex(f => f.formKey === this.formChange.formKey)) {
       return this.end();
+    }
 
     const preName = this.pokemon.name;
 
@@ -201,8 +206,9 @@ export class QuietFormChangePhase extends BattlePhase {
       sprite.play(this.pokemon.getBattleSpriteKey()).stop();
       sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
       [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
-        if (this.pokemon.summonData?.speciesForm)
+        if (this.pokemon.summonData?.speciesForm) {
           k += 'Base';
+        }
         sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
       });
       this.scene.field.add(sprite);
@@ -212,10 +218,11 @@ export class QuietFormChangePhase extends BattlePhase {
     const [ pokemonTintSprite, pokemonFormTintSprite ] = [ getPokemonSprite(), getPokemonSprite() ];
 
     this.pokemon.getSprite().on('animationupdate', (_anim, frame) => {
-      if (frame.textureKey === pokemonTintSprite.texture.key)
+      if (frame.textureKey === pokemonTintSprite.texture.key) {
         pokemonTintSprite.setFrame(frame.textureFrame);
-      else
+      } else {
         pokemonFormTintSprite.setFrame(frame.textureFrame);
+      }
     });
 
     pokemonTintSprite.setAlpha(0);
@@ -282,8 +289,9 @@ export class QuietFormChangePhase extends BattlePhase {
       this.pokemon.cry();
       
       const movePhase = this.scene.findPhase(p => p instanceof MovePhase && p.pokemon === this.pokemon) as MovePhase;
-      if (movePhase)
+      if (movePhase) {
         movePhase.cancel();
+      }
     }
 
     super.end();

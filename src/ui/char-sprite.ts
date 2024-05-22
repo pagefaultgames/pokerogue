@@ -29,13 +29,16 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
   showCharacter(key: string, variant: string): Promise<void> {
     return new Promise(resolve => {
-      if (!key.startsWith('c_'))
+      if (!key.startsWith('c_')) {
         key = `c_${key}`;
+      }
       if (this.shown) {
-        if (key === this.key && variant === this.variant)
+        if (key === this.key && variant === this.variant) {
           return resolve();
-        if (key !== this.key)
+        }
+        if (key !== this.key) {
           return this.hide().then(() => this.showCharacter(key, variant));
+        }
         this.setVariant(variant).then(() => resolve());
         return;
       }
@@ -86,8 +89,9 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
   hide(): Promise<void> {
     return new Promise(resolve => {
-      if (!this.shown)
+      if (!this.shown) {
         return resolve();
+      }
 
       this.scene.tweens.add({
         targets: this,
@@ -95,8 +99,9 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         duration: 750,
         ease: 'Cubic.easeIn',
         onComplete: () => {
-          if (!this.shown)
+          if (!this.shown) {
             this.setVisible(false);
+          }
           resolve();
         }
       });

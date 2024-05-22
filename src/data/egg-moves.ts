@@ -595,12 +595,14 @@ function parseEggMoves(content: string): void {
       const moveIndex = moveName !== 'N/A' ? moveNames.findIndex(mn => mn === moveName.toLowerCase()) : -1;
       eggMoves.push(moveIndex > -1 ? moveIndex as Moves : Moves.NONE);
 
-      if (moveIndex === -1)
+      if (moveIndex === -1) {
         console.warn(moveName, 'could not be parsed');
+      }
     }
 
-    if (eggMoves.find(m => m !== Moves.NONE))
+    if (eggMoves.find(m => m !== Moves.NONE)) {
       output += `[Species.${Species[species]}]: [ ${eggMoves.map(m => `Moves.${Moves[m]}`).join(', ')} ],\n`;
+    }
   });
 
   console.log(output);

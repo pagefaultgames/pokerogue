@@ -33,8 +33,9 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
 
   showPbTray(party: Pokemon[]): Promise<void> {
     return new Promise(resolve => {
-      if (this.shown)
+      if (this.shown) {
         return resolve();
+      }
 
       (this.scene as BattleScene).fieldUI.bringToTop(this);
 
@@ -46,12 +47,13 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
       this.balls.forEach((ball, b) => {
         ball.x += (this.scene.game.canvas.width / 6 + 104) * (this.player ? 1 : -1);
         let ballFrame = 'ball';
-        if (b >= party.length)
+        if (b >= party.length) {
           ballFrame = 'empty';
-        else if (!party[b].hp)
+        } else if (!party[b].hp) {
           ballFrame = 'faint';
-        else if (party[b].status)
+        } else if (party[b].status) {
           ballFrame = 'status';
+        }
         ball.setFrame(ballFrame);
       });
 
@@ -84,8 +86,9 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
 
   hide(): Promise<void> {
     return new Promise(resolve => {
-      if (!this.shown)
+      if (!this.shown) {
         return resolve();
+      }
 
       this.balls.forEach((ball, b) => {
         this.scene.tweens.add({

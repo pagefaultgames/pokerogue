@@ -19,8 +19,9 @@ const expLevels = [
 export function getLevelTotalExp(level: integer, growthRate: GrowthRate): integer {
   if (level < 100) {
     const levelExp = expLevels[growthRate][level - 1];
-    if (growthRate !== GrowthRate.MEDIUM_FAST)
+    if (growthRate !== GrowthRate.MEDIUM_FAST) {
       return Math.floor(levelExp * 0.325 + getLevelTotalExp(level, GrowthRate.MEDIUM_FAST) * 0.675);
+    }
     return levelExp;
   }
 
@@ -47,8 +48,9 @@ export function getLevelTotalExp(level: integer, growthRate: GrowthRate): intege
     break;
   }
 
-  if (growthRate !== GrowthRate.MEDIUM_FAST)
+  if (growthRate !== GrowthRate.MEDIUM_FAST) {
     return Math.floor(ret * 0.325 + getLevelTotalExp(level, GrowthRate.MEDIUM_FAST) * 0.675);
+  }
 
   return Math.floor(ret);
 }

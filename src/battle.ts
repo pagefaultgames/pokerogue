@@ -93,8 +93,9 @@ export default class Battle {
   private initBattleSpec(): void {
     let spec = BattleSpec.DEFAULT;
     if (this.gameMode.isClassic) {
-      if (this.waveIndex === 200)
+      if (this.waveIndex === 200) {
         spec = BattleSpec.FINAL_BOSS;
+      }
     }
     this.battleSpec = spec;
   }
@@ -106,11 +107,13 @@ export default class Battle {
 
     if (!(this.waveIndex % 10)) {
       const ret = Math.floor(baseLevel * bossMultiplier);
-      if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250))
+      if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250)) {
         return Math.ceil(ret / 25) * 25;
+      }
       let levelOffset = 0;
-      if (!this.gameMode.isWaveFinal(this.waveIndex))
+      if (!this.gameMode.isWaveFinal(this.waveIndex)) {
         levelOffset = Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(levelWaveIndex / 10));
+      }
       return ret + levelOffset;
     }
 
@@ -124,8 +127,9 @@ export default class Battle {
 
   randSeedGaussForLevel(value: number): number { 
     let rand = 0;
-    for (let i = value; i > 0; i--)
+    for (let i = value; i > 0; i--) {
       rand += Phaser.Math.RND.realInRange(0, 1);
+    }
     return rand / value;
   }
 
@@ -168,11 +172,13 @@ export default class Battle {
 
   addBattleScore(scene: BattleScene): void {
     let partyMemberTurnMultiplier = scene.getEnemyParty().length / 2 + 0.5;
-    if (this.double)
+    if (this.double) {
       partyMemberTurnMultiplier /= 1.5;
+    }
     for (const p of scene.getEnemyParty()) {
-      if (p.isBoss())
+      if (p.isBoss()) {
         partyMemberTurnMultiplier *= (p.bossSegments / 1.5) / scene.getEnemyParty().length;
+      }
     }
     const turnMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - Math.min(this.turn - 2, 10 * partyMemberTurnMultiplier) / (10 * partyMemberTurnMultiplier));
     const finalBattleScore = Math.ceil(this.battleScore * turnMultiplier);
@@ -185,47 +191,57 @@ export default class Battle {
   getBgmOverride(scene: BattleScene): string {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
     if (this.battleType === BattleType.TRAINER) {
-      if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length)
+      if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
+      }
       return this.trainer.getBattleBgm();
-    } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS)
+    } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
       return 'end_summit';
+    }
     for (const pokemon of battlers) {
       if (this.battleSpec === BattleSpec.FINAL_BOSS) {
-        if (pokemon.formIndex)
+        if (pokemon.formIndex) {
           return 'battle_final';
+        }
         return 'battle_final_encounter';
       }
       if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
-        if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO)
+        if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO) {
           return 'battle_legendary_regis';
-        if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT)
+        }
+        if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT) {
           return 'battle_legendary_unova';
-        if (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM)
+        }
+        if (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM) {
           return 'battle_legendary_res_zek';
-        if (pokemon.species.speciesId === Species.KYUREM)
+        }
+        if (pokemon.species.speciesId === Species.KYUREM) {
           return 'battle_legendary_kyurem';
-        if (pokemon.species.legendary)
+        }
+        if (pokemon.species.legendary) {
           return 'battle_legendary_res_zek';
+        }
         return 'battle_legendary_unova';
       }
     }
 
-    if (scene.gameMode.isClassic && this.waveIndex <= 4)
+    if (scene.gameMode.isClassic && this.waveIndex <= 4) {
       return 'battle_wild';
+    }
 
     return null;
   }
 
   randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
-    if (range <= 1)
+    if (range <= 1) {
       return min;
+    }
     const tempRngCounter = scene.rngCounter;
     const tempSeedOverride = scene.rngSeedOverride;
     const state = Phaser.Math.RND.state();
-    if (this.battleSeedState)
+    if (this.battleSeedState) {
       Phaser.Math.RND.state(this.battleSeedState);
-    else {
+    } else {
       Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
       console.log('Battle Seed:', this.battleSeed);
     }
@@ -243,8 +259,9 @@ export default class Battle {
 export class FixedBattle extends Battle {
   constructor(scene: BattleScene, waveIndex: integer, config: FixedBattleConfig) {
     super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : null, config.double);
-    if (config.getEnemyParty)
+    if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty(scene);
+    }
   }
 }
 

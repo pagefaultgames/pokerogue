@@ -54,8 +54,9 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(0.1666666667);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
-  if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing)
+  if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(5);
+  }
 
   return ret;
 }
@@ -67,8 +68,9 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
   scene.add.existing(ret);
   ret.setScale(0.1666666667);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
-  if (!(styleOptions as BBCodeText.TextStyle).lineSpacing)
+  if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
     ret.setLineSpacing(10);
+  }
 
   return ret;
 }
@@ -161,14 +163,16 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.WINDOW:
   case TextStyle.MOVE_INFO_CONTENT:
   case TextStyle.TOOLTIP_CONTENT:
-    if (uiTheme)
+    if (uiTheme) {
       return !shadow ? '#484848' : '#d0d0c8';
+    }
     return !shadow ? '#f8f8f8' : '#6b5a73';
   case TextStyle.WINDOW_ALT:
     return !shadow ? '#484848' : '#d0d0c8';
   case TextStyle.BATTLE_INFO:
-    if (uiTheme)
+    if (uiTheme) {
       return !shadow ? '#404040' : '#ded6b5';
+    }
     return !shadow ? '#f8f8f8' : '#6b5a73';
   case TextStyle.PARTY:
     return !shadow ? '#f8f8f8' : '#707070';
@@ -177,8 +181,9 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.SUMMARY:
     return !shadow ? '#ffffff' : '#636363';
   case TextStyle.SUMMARY_ALT:
-    if (uiTheme)
+    if (uiTheme) {
       return !shadow ? '#ffffff' : '#636363';
+    }
     return !shadow ? '#484848' : '#d0d0c8';
   case TextStyle.SUMMARY_RED:
   case TextStyle.TOOLTIP_TITLE:

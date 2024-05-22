@@ -71,8 +71,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected setupOptions() {
     const options = this.config?.options || [];
 
-    if (this.optionSelectText)
+    if (this.optionSelectText) {
       this.optionSelectText.destroy();
+    }
     if (this.optionSelectIcons?.length) {
       this.optionSelectIcons.map(i => i.destroy());
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
@@ -85,8 +86,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
-    if (this.config?.options.length > this.config?.maxOptions)
+    if (this.config?.options.length > this.config?.maxOptions) {
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.label).join('\n'));
+    }
 
     this.optionSelectBg.height = this.getWindowHeight();
 
@@ -119,8 +121,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (!args.length || !args[0].hasOwnProperty('options') || !args[0].options.length)
+    if (!args.length || !args[0].hasOwnProperty('options') || !args[0].options.length) {
       return false;
+    }
 
     super.show(args);
 
@@ -162,53 +165,62 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         if (this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
           this.scrollCursor = (this.config.options.length - this.config.maxOptions) + 1;
           this.cursor = options.length - 1;
-        } else if (!this.config?.noCancel)
+        } else if (!this.config?.noCancel) {
           this.setCursor(options.length - 1);
-        else
+        } else {
           return false;
+        }
       }
       const option = this.config.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
       if (option.handler()) {
-        if (!option.keepOpen)
+        if (!option.keepOpen) {
           this.clear();
+        }
         playSound = !option.overrideSound;
-      } else
+      } else {
         ui.playError();
+      }
     } else {
       switch (button) {
       case Button.UP:
-        if (this.cursor)
+        if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
+        }
         break;
       case Button.DOWN:
-        if (this.cursor < options.length - 1)
+        if (this.cursor < options.length - 1) {
           success = this.setCursor(this.cursor + 1);
+        }
         break;
       }
     }
 
-    if (success && playSound)
+    if (success && playSound) {
       ui.playSelect();
+    }
 
     return success;
   }
 
   unblockInput(): void {
-    if (!this.blockInput)
+    if (!this.blockInput) {
       return;
+    }
 
     this.blockInput = false;
     this.optionSelectText.setAlpha(1);
   }
 
   getOptionsWithScroll(): OptionSelectItem[] {
-    if (!this.config)
+    if (!this.config) {
       return [];
+    }
 
     const options = this.config.options.slice(0);
 
-    if (!this.config.maxOptions || this.config.options.length < this.config.maxOptions)
+    if (!this.config.maxOptions || this.config.options.length < this.config.maxOptions) {
       return options;
+    }
 
     const optionsScrollTotal = options.length;
     const optionStartIndex = this.scrollCursor;
@@ -217,16 +229,18 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     if (this.config?.maxOptions && options.length > this.config.maxOptions) {
       options.splice(optionEndIndex, optionsScrollTotal);
       options.splice(0, optionStartIndex);
-      if (optionStartIndex)
+      if (optionStartIndex) {
         options.unshift({
           label: scrollUpLabel,
           handler: () => true
         });
-      if (optionEndIndex < optionsScrollTotal)
+      }
+      if (optionEndIndex < optionsScrollTotal) {
         options.push({
           label: scrollDownLabel,
           handler: () => true
         });
+      }
     }
 
     return options;
@@ -255,14 +269,16 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
             this.scrollCursor--;
           }
         }
-        if (isScroll && this.scrollCursor === 1)
+        if (isScroll && this.scrollCursor === 1) {
           this.scrollCursor += isDown ? 1 : -1;
+        }
       }
     }
-    if (isScroll)
+    if (isScroll) {
       this.setupOptions();
-    else
+    } else {
       this.cursor = cursor;
+    }
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, 'cursor');
@@ -282,8 +298,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

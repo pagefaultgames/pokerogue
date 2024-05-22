@@ -118,10 +118,11 @@ export default class AchvsUiHandler extends MessageUiHandler {
       const tinted = !hidden && !unlocked;
 
       icon.setFrame(!hidden ? achv.iconImage : 'unknown');
-      if (tinted)
+      if (tinted) {
         icon.setTintFill(0);
-      else
+      } else {
         icon.clearTint();
+      }
     });
 
     this.achvsContainer.setVisible(true);
@@ -156,26 +157,31 @@ export default class AchvsUiHandler extends MessageUiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (this.cursor >= 17)
+        if (this.cursor >= 17) {
           success = this.setCursor(this.cursor - 17);
+        }
         break;
       case Button.DOWN:
-        if (this.cursor + 17 < Object.keys(achvs).length)
+        if (this.cursor + 17 < Object.keys(achvs).length) {
           success = this.setCursor(this.cursor + 17);
+        }
         break;
       case Button.LEFT:
-        if (this.cursor)
+        if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
+        }
         break;
       case Button.RIGHT:
-        if (this.cursor < Object.keys(achvs).length - 1)
+        if (this.cursor < Object.keys(achvs).length - 1) {
           success = this.setCursor(this.cursor + 1);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -194,8 +200,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     this.cursorObj.setPositionRelative(this.achvIcons[this.cursor], 0, 0);
 
-    if (updateAchv)
+    if (updateAchv) {
       this.showAchv(achvs[Object.keys(achvs)[cursor]]);
+    }
 
     return ret;
   }
@@ -207,8 +214,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

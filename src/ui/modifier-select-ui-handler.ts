@@ -79,8 +79,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       return false;
     }
 
-    if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function))
+    if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function)) {
       return false;
+    }
 
     super.show(args);
 
@@ -131,8 +132,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.scene.add.existing(option);
       this.modifierContainer.add(option);
 
-      if (row >= this.shopOptionsRows.length)
+      if (row >= this.shopOptionsRows.length) {
         this.shopOptionsRows.push([]);
+      }
       this.shopOptionsRows[row].push(option);
     }
 
@@ -158,8 +160,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     });
 
     this.scene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
-      for (const shopOption of this.shopOptionsRows.flat())
+      for (const shopOption of this.shopOptionsRows.flat()) {
         shopOption.show(0, 0);
+      }
     });
 
     this.scene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
@@ -200,8 +203,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   processInput(button: Button): boolean {
     const ui = this.getUi();
 
-    if (!this.awaitingActionInput)
+    if (!this.awaitingActionInput) {
       return false;
+    }
 
     let success = false;
 
@@ -229,38 +233,43 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (!this.rowCursor && this.cursor === 2)
+        if (!this.rowCursor && this.cursor === 2) {
           success = this.setCursor(0);
-        else if (this.rowCursor < this.shopOptionsRows.length + 1)
+        } else if (this.rowCursor < this.shopOptionsRows.length + 1) {
           success = this.setRowCursor(this.rowCursor + 1);
+        }
         break;
       case Button.DOWN:
-        if (this.rowCursor)
+        if (this.rowCursor) {
           success = this.setRowCursor(this.rowCursor - 1);
-        else if (this.lockRarityButtonContainer.visible && !this.cursor)
+        } else if (this.lockRarityButtonContainer.visible && !this.cursor) {
           success = this.setCursor(2);
+        }
         break;
       case Button.LEFT:
         if (!this.rowCursor) {
           success = this.cursor === 1 && this.rerollButtonContainer.visible && this.setCursor(0);
-        } else if (this.cursor)
+        } else if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
-        else if (this.rowCursor === 1 && this.rerollButtonContainer.visible)
+        } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
           success = this.setRowCursor(0);
+        }
         break;
       case Button.RIGHT:
-        if (!this.rowCursor)
+        if (!this.rowCursor) {
           success = this.cursor !== 1 && this.transferButtonContainer.visible && this.setCursor(1);
-        else if (this.cursor < this.getRowItems(this.rowCursor) - 1)
+        } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
           success = this.setCursor(this.cursor + 1);
-        else if (this.rowCursor === 1 && this.transferButtonContainer.visible)
+        } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
           success = this.setRowCursor(0);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -280,10 +289,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     if (this.rowCursor) {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
-      if (this.rowCursor < 2)
+      if (this.rowCursor < 2) {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
-      else
+      } else {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
+      }
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (!cursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
@@ -306,10 +316,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.rowCursor = rowCursor;
       let newCursor = Math.round(this.cursor / Math.max(this.getRowItems(lastRowCursor) - 1, 1) * (this.getRowItems(rowCursor) - 1));
       if (!rowCursor) {
-        if (!newCursor && !this.rerollButtonContainer.visible)
+        if (!newCursor && !this.rerollButtonContainer.visible) {
           newCursor = 1;
-        else if (newCursor && !this.transferButtonContainer.visible)
+        } else if (newCursor && !this.transferButtonContainer.visible) {
           newCursor = 0;
+        }
       }
       this.cursor = -1;
       this.setCursor(newCursor);
@@ -336,8 +347,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   updateCostText(): void {
     const shopOptions = this.shopOptionsRows.flat();
-    for (const shopOption of shopOptions)
+    for (const shopOption of shopOptions) {
       shopOption.updateCostText();
+    }
 
     this.updateRerollCostText();
   }
@@ -387,10 +399,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           duration: 250,
           ease: 'Cubic.easeIn',
           onComplete: () => {
-            if (!this.options.length)
+            if (!this.options.length) {
               container.setVisible(false);
-            else
+            } else {
               container.setAlpha(1);
+            }
           }
         });
       }
@@ -398,8 +411,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }
@@ -493,14 +507,16 @@ class ModifierOption extends Phaser.GameObjects.Container {
         duration: 1250,
         ease: 'Bounce.Out',
         onUpdate: t => {
-          if (!this.scene)
+          if (!this.scene) {
             return;
+          }
           const value = t.getValue();
           if (!bounce && value > lastValue) {
             (this.scene as BattleScene).playSound('pb_bounce_1', { volume: 1 / ++bounceCount });
             bounce = true;
-          } else if (bounce && value < lastValue)
+          } else if (bounce && value < lastValue) {
             bounce = false;
+          }
           lastValue = value;
         }
       });
@@ -536,8 +552,9 @@ class ModifierOption extends Phaser.GameObjects.Container {
     }
 
     this.scene.time.delayedCall(remainingDuration + 2000, () => {
-      if (!this.scene)
+      if (!this.scene) {
         return;
+      }
 
       if (!this.modifierTypeOption.cost) {
         this.pb.setTexture('pb', `${this.getPbAtlasKey(0)}_open`);

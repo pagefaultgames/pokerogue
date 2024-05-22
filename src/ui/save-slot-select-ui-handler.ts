@@ -73,8 +73,9 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
-    if ((args.length < 2 || !(args[1] instanceof Function)))
+    if ((args.length < 2 || !(args[1] instanceof Function))) {
       return false;
+    }
 
     super.show(args);
 
@@ -99,9 +100,9 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       const originalCallback = this.saveSlotSelectCallback;
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
-        if (this.uiMode === SaveSlotUiMode.LOAD && !this.sessionSlots[cursor].hasData)
+        if (this.uiMode === SaveSlotUiMode.LOAD && !this.sessionSlots[cursor].hasData) {
           error = true;
-        else {
+        } else {
           switch (this.uiMode) {
           case SaveSlotUiMode.LOAD:
             this.saveSlotSelectCallback = null;
@@ -123,10 +124,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
                   ui.showText(null, 0);
                 }, false, 0, 19, 2000);
               });
-            } else if (this.sessionSlots[cursor].hasData === false)
+            } else if (this.sessionSlots[cursor].hasData === false) {
               saveAndCallback();
-            else
+            } else {
               return false;
+            }
             break;
           }
           success = true;
@@ -139,24 +141,27 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (this.cursor)
+        if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
-        else if (this.scrollCursor)
+        } else if (this.scrollCursor) {
           success = this.setScrollCursor(this.scrollCursor - 1);
+        }
         break;
       case Button.DOWN:
-        if (this.cursor < 2)
+        if (this.cursor < 2) {
           success = this.setCursor(this.cursor + 1);
-        else if (this.scrollCursor < sessionSlotCount - 3)
+        } else if (this.scrollCursor < sessionSlotCount - 3) {
           success = this.setScrollCursor(this.scrollCursor + 1);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
-    else if (error)
+    } else if (error) {
       ui.playError();
+    }
 
     return success || error;
   }
@@ -224,8 +229,9 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 
@@ -299,13 +305,15 @@ class SessionSlot extends Phaser.GameObjects.Container {
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
       const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
-      if (modifier instanceof PokemonHeldItemModifier)
+      if (modifier instanceof PokemonHeldItemModifier) {
         continue;
+      }
       const icon = modifier.getIcon(this.scene, false);
       icon.setPosition(24 * visibleModifierIndex, 0);
       modifierIconsContainer.add(icon);
-      if (++visibleModifierIndex === 12)
+      if (++visibleModifierIndex === 12) {
         break;
+      }
     }
 
     this.add(modifierIconsContainer);

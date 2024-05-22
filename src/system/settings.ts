@@ -125,8 +125,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     break;
   case Setting.Sprite_Set:
     scene.experimentalSprites = !!value;
-    if (value)
+    if (value) {
       scene.initExpSprites();
+    }
     break;
   case Setting.Move_Animations:
     scene.moveAnimations = settingOptions[setting][value] === 'On';
@@ -151,8 +152,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       const female = settingOptions[setting][value] === 'Girl';
       scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
       scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? 'm' : 'f', female ? 'f' : 'm'));
-    } else
+    } else {
       return false;
+    }
     break;
   case Setting.Gamepad_Support:
     // if we change the value of the gamepad support, we call a method in the inputController to
@@ -165,8 +167,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
   case Setting.Touch_Controls:
     scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
     const touchControls = document.getElementById('touchControls');
-    if (touchControls)
+    if (touchControls) {
       touchControls.classList.toggle('visible', scene.enableTouchControls);
+    }
     break;
   case Setting.Vibration:
     scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();

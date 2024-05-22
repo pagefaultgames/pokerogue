@@ -38,23 +38,27 @@ export default class Trainer extends Phaser.GameObjects.Container {
       this.name = name || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
-          if (partnerName)
+          if (partnerName) {
             this.partnerName = partnerName;
-          else
+          } else {
             [ this.name, this.partnerName ] = this.name.split(' & ');
-        } else
+          }
+        } else {
           this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
+        }
       }
     }
 
     switch (this.variant) {
     case TrainerVariant.FEMALE:
-      if (!this.config.hasGenders)
+      if (!this.config.hasGenders) {
         variant = TrainerVariant.DEFAULT;
+      }
       break;
     case TrainerVariant.DOUBLE:
-      if (!this.config.hasDouble)
+      if (!this.config.hasDouble) {
         variant = TrainerVariant.DEFAULT;
+      }
       break;
     }
 
@@ -168,8 +172,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getPartyTemplate(): TrainerPartyTemplate {
-    if (this.config.partyTemplateFunc)
+    if (this.config.partyTemplateFunc) {
       return this.config.partyTemplateFunc(this.scene);
+    }
     return this.config.partyTemplates[this.partyTemplateIndex];
   }
 
@@ -180,8 +185,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const difficultyWaveIndex = this.scene.gameMode.getWaveForDifficulty(waveIndex);
     const baseLevel = 1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2);
 
-    if (this.isDouble() && partyTemplate.size < 2)
+    if (this.isDouble() && partyTemplate.size < 2) {
       partyTemplate.size = 2;
+    }
 
     for (let i = 0; i < partyTemplate.size; i++) {
       let multiplier = 1;
@@ -243,8 +249,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
       if (template instanceof TrainerPartyCompoundTemplate) {
         for (const innerTemplate of template.templates) {
-          if (offset + innerTemplate.size > index)
+          if (offset + innerTemplate.size > index) {
             break;
+          }
           offset += innerTemplate.size;
         }
       }
@@ -274,20 +281,22 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
       const tierPool = this.config.speciesPools[tier];
       species = getPokemonSpecies(Utils.randSeedItem(tierPool));
-    } else
+    } else {
       species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
+    }
 
     let ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
     let retry = false;
 
     console.log(ret.getName());
 
-    if (pokemonPrevolutions.hasOwnProperty(species.speciesId) && ret.speciesId !== species.speciesId)
+    if (pokemonPrevolutions.hasOwnProperty(species.speciesId) && ret.speciesId !== species.speciesId) {
       retry = true;
-    else if (template.isBalanced(battle.enemyParty.length)) {
+    } else if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.map(p => p.getTypes(true)).flat();
-      if (partyMemberTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1))
+      if (partyMemberTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)) {
         retry = true;
+      }
     }
 
     if (!retry && this.config.specialtyTypes.length && !this.config.specialtyTypes.find(t => ret.isOfType(t))) {
@@ -297,8 +306,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
         console.log(ret.name);
-        if (this.config.specialtyTypes.find(t => ret.isOfType(t)))
+        if (this.config.specialtyTypes.find(t => ret.isOfType(t))) {
           retry = false;
+        }
       }
     }
 
@@ -311,8 +321,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {
-    if (trainerSlot && !this.isDouble())
+    if (trainerSlot && !this.isDouble()) {
       trainerSlot = TrainerSlot.NONE;
+    }
     
     const party = this.scene.getEnemyParty();
     const nonFaintedPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => !p.isFainted()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
@@ -321,12 +332,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
       let score = 0;
       for (const playerPokemon of playerField) {
         score += p.getMatchupScore(playerPokemon);
-        if (playerPokemon.species.legendary)
+        if (playerPokemon.species.legendary) {
           score /= 2;
+        }
       }
       score /= playerField.length;
-      if (forSwitch && !p.isOnField())
+      if (forSwitch && !p.isOnField()) {
         this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
+      }
       return [ party.indexOf(p), score ];
     });
 
@@ -345,8 +358,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getNextSummonIndex(trainerSlot: TrainerSlot = TrainerSlot.NONE, partyMemberScores: [integer, integer][] = this.getPartyMemberMatchupScores(trainerSlot)): integer {
-    if (trainerSlot && !this.isDouble())
+    if (trainerSlot && !this.isDouble()) {
       trainerSlot = TrainerSlot.NONE;
+    }
 
     const sortedPartyMemberScores = this.getSortedPartyMemberMatchupScores(partyMemberScores);
 
@@ -377,8 +391,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   genModifiers(party: EnemyPokemon[]): PersistentModifier[] {
-    if (this.config.genModifiersFunc)
+    if (this.config.genModifiersFunc) {
       return this.config.genModifiersFunc(party);
+    }
     return [];
   }
 
@@ -446,8 +461,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const ret: Phaser.GameObjects.Sprite[] = [
       this.getAt(0)
     ];
-    if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly)
+    if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       ret.push(this.getAt(2));
+    }
     return ret;
   }
 
@@ -455,8 +471,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const ret: Phaser.GameObjects.Sprite[] = [
       this.getAt(1)
     ];
-    if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly)
+    if (this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       ret.push(this.getAt(3));
+    }
     return ret;
   }
 
@@ -475,8 +492,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
           duration: duration,
           ease: ease || 'Linear'
         });
-      } else
+      } else {
         tintSprite.setAlpha(alpha);
+      }
     });
   }
 

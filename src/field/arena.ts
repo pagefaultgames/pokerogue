@@ -58,16 +58,18 @@ export class Arena {
     const timeOfDay = this.getTimeOfDay();
     if (timeOfDay !== this.lastTimeOfDay) {
       this.pokemonPool = {};
-      for (const tier of Object.keys(biomePokemonPools[this.biomeType]))
+      for (const tier of Object.keys(biomePokemonPools[this.biomeType])) {
         this.pokemonPool[tier] = Object.assign([], biomePokemonPools[this.biomeType][tier][TimeOfDay.ALL]).concat(biomePokemonPools[this.biomeType][tier][timeOfDay]);
+      }
       this.lastTimeOfDay = timeOfDay;
     }
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
     const overrideSpecies = this.scene.gameMode.getOverrideSpecies(waveIndex);
-    if (overrideSpecies)
+    if (overrideSpecies) {
       return overrideSpecies;
+    }
     const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
@@ -82,23 +84,24 @@ export class Arena {
     const tierPool = this.pokemonPool[tier];
     let ret: PokemonSpecies;
     let regen = false;
-    if (!tierPool.length)
+    if (!tierPool.length) {
       ret = this.scene.randomSpecies(waveIndex, level);
-    else {
+    } else {
       const entry = tierPool[Utils.randSeedInt(tierPool.length)];
       let species: Species;
-      if (typeof entry === 'number')
+      if (typeof entry === 'number') {
         species = entry as Species;
-      else {
+      } else {
         const levelThresholds = Object.keys(entry);
         for (let l = levelThresholds.length - 1; l >= 0; l--) {
           const levelThreshold = parseInt(levelThresholds[l]);
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
-            if (speciesIds.length > 1)
+            if (speciesIds.length > 1) {
               species = speciesIds[Utils.randSeedInt(speciesIds.length)];
-            else
+            } else {
               species = speciesIds[0];
+            }
             break;
           }
         }
@@ -286,11 +289,13 @@ export class Arena {
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
   trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
-    if (Overrides.WEATHER_OVERRIDE)
+    if (Overrides.WEATHER_OVERRIDE) {
       return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
+    }
     
-    if (this.weather?.weatherType === (weather || undefined))
+    if (this.weather?.weatherType === (weather || undefined)) {
       return false;
+    }
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
@@ -314,19 +319,22 @@ export class Arena {
   }
 
   trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {
-    if (this.terrain?.terrainType === (terrain || undefined))
+    if (this.terrain?.terrainType === (terrain || undefined)) {
       return false;
+    }
 
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
     
     if (this.terrain) {
-      if (!ignoreAnim)
+      if (!ignoreAnim) {
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
+      }
       this.scene.queueMessage(getTerrainStartMessage(terrain));
-    } else
+    } else {
       this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
+    }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => 'terrainTypes' in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
@@ -350,12 +358,14 @@ export class Arena {
 
   getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {
     let weatherMultiplier = 1;
-    if (this.weather && !this.weather.isEffectSuppressed(this.scene))
+    if (this.weather && !this.weather.isEffectSuppressed(this.scene)) {
       weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
+    }
 
     let terrainMultiplier = 1;
-    if (this.terrain && grounded)
+    if (this.terrain && grounded) {
       terrainMultiplier = this.terrain.getAttackTypeMultiplier(attackType);
+    }
 
     return weatherMultiplier * terrainMultiplier;
   }
@@ -412,14 +422,17 @@ export class Arena {
 
     const waveCycle = ((this.scene.currentBattle?.waveIndex || 0) + this.scene.waveCycleOffset) % 40;
 
-    if (waveCycle < 15)
+    if (waveCycle < 15) {
       return TimeOfDay.DAY;
+    }
 
-    if (waveCycle < 20)
+    if (waveCycle < 20) {
       return TimeOfDay.DUSK;
+    }
 
-    if (waveCycle < 35)
+    if (waveCycle < 35) {
       return TimeOfDay.NIGHT;
+    }
 
     return TimeOfDay.DAWN;
   }
@@ -452,8 +465,9 @@ export class Arena {
   }
 
   getDuskTint(): [integer, integer, integer] {
-    if (!this.isOutside())
+    if (!this.isOutside()) {
       return [ 0, 0, 0 ];
+    }
 
     switch (this.biomeType) {
     default:
@@ -469,8 +483,9 @@ export class Arena {
       return this.getDayTint();
     }
 
-    if (!this.isOutside())
+    if (!this.isOutside()) {
       return [ 64, 64, 64 ];
+    }
 
     switch (this.biomeType) {
     default:
@@ -486,8 +501,9 @@ export class Arena {
     let tags = typeof tagType === 'string'
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
-    if (side !== ArenaTagSide.BOTH)
+    if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
+    }
     tags.forEach(t => t.apply(this, args));
   }
   
@@ -717,8 +733,9 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           repeat: -1
         });
         this.base.play(baseKey);
-      } else
+      } else {
         this.base.stop();
+      }
 
       this.add(this.base);
     }
@@ -741,8 +758,9 @@ export class ArenaBase extends Phaser.GameObjects.Container {
               repeat: -1
             });
             prop.play(propKey);
-          } else
+          } else {
             prop.stop();
+          }
 
           prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
           this.add(prop);

@@ -36,8 +36,9 @@ export default class EggHatchSceneHandler extends UiHandler {
   processInput(button: Button): boolean {
     if (button === Button.ACTION || button === Button.CANCEL) {
       const phase = this.scene.getCurrentPhase();
-      if (phase instanceof EggHatchPhase && phase.trySkip())
+      if (phase instanceof EggHatchPhase && phase.trySkip()) {
         return true;
+      }
     }
 
     return this.scene.ui.getMessageHandler().processInput(button);

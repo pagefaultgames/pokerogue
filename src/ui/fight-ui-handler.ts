@@ -100,10 +100,11 @@ export default class FightUiHandler extends UiHandler {
 
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
-        if ((this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, cursor, false))
+        if ((this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, cursor, false)) {
           success = true;
-        else
+        } else {
           ui.playError();
+        }
       } else {
         ui.setMode(Mode.COMMAND, this.fieldIndex);
         success = true;
@@ -111,26 +112,31 @@ export default class FightUiHandler extends UiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (cursor >= 2)
+        if (cursor >= 2) {
           success = this.setCursor(cursor - 2);
+        }
         break;
       case Button.DOWN:
-        if (cursor < 2)
+        if (cursor < 2) {
           success = this.setCursor(cursor + 2);
+        }
         break;
       case Button.LEFT:
-        if (cursor % 2 === 1)
+        if (cursor % 2 === 1) {
           success = this.setCursor(cursor - 1);
+        }
         break;
       case Button.RIGHT:
-        if (cursor % 2 === 0)
+        if (cursor % 2 === 0) {
           success = this.setCursor(cursor + 1);
+        }
         break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -144,10 +150,11 @@ export default class FightUiHandler extends UiHandler {
 
     const changed = this.getCursor() !== cursor;
     if (changed) {
-      if (!this.fieldIndex)
+      if (!this.fieldIndex) {
         this.cursor = cursor;
-      else
+      } else {
         this.cursor2 = cursor;
+      }
     }
 
     if (!this.cursorObj) {
@@ -192,8 +199,9 @@ export default class FightUiHandler extends UiHandler {
     const moveset = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getMoveset();
     for (let m = 0; m < 4; m++) {
       const moveText = addTextObject(this.scene, m % 2 === 0 ? 0 : 100, m < 2 ? 0 : 16, '-', TextStyle.WINDOW);
-      if (m < moveset.length)
+      if (m < moveset.length) {
         moveText.setText(moveset[m].getName());
+      }
       this.movesContainer.add(moveText);
     }
   }
@@ -217,8 +225,9 @@ export default class FightUiHandler extends UiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

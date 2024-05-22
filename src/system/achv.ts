@@ -51,14 +51,18 @@ export class Achv {
   }
 
   getTier(): AchvTier {
-    if (this.score >= 100)
+    if (this.score >= 100) {
       return AchvTier.MASTER;
-    if (this.score >= 75)
+    }
+    if (this.score >= 75) {
       return AchvTier.ROGUE;
-    if (this.score >= 50)
+    }
+    if (this.score >= 50) {
       return AchvTier.ULTRA;
-    if (this.score >= 25)
+    }
+    if (this.score >= 25) {
       return AchvTier.GREAT;
+    }
     return AchvTier.COMMON;
   }
 }
@@ -167,8 +171,9 @@ export const achvs = {
     const achvKeys = Object.keys(achvs);
     achvKeys.forEach((a: string, i: integer) => {
       achvs[a].id = a;
-      if (achvs[a].hasParent)
+      if (achvs[a].hasParent) {
         achvs[a].parentId = achvKeys[i - 1];
+      }
     });
   })();
 }

@@ -57,8 +57,9 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return 'data';
   case GameDataType.SESSION:
     let ret = 'sessionData';
-    if (slotId)
+    if (slotId) {
       ret += slotId;
+    }
     return ret;
   case GameDataType.SETTINGS:
     return 'settings';
@@ -321,8 +322,9 @@ export class GameData {
     return new Promise<boolean>(resolve => {
       console.log('Client Session:', clientSessionId);
 
-      if (bypassLogin && !localStorage.getItem(`data_${loggedInUser.username}`))
+      if (bypassLogin && !localStorage.getItem(`data_${loggedInUser.username}`)) {
         return resolve(false);
+      }
 
       if (!bypassLogin) {
         Utils.apiFetch(`savedata/system?clientSessionId=${clientSessionId}`, true)
@@ -343,8 +345,9 @@ export class GameData {
             const cachedSystem = localStorage.getItem(`data_${loggedInUser.username}`);
             this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : null).then(resolve);
           });
-      } else
+      } else {
         this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)).then(resolve);
+      }
     });
   }
 
@@ -359,8 +362,9 @@ export class GameData {
             console.debug('Use cached system');
             systemData = cachedSystemData;
             systemDataStr = cachedSystemDataStr;
-          } else
+          } else {
             this.clearLocalData();
+          }
         }
 
         console.debug(systemData);
@@ -387,54 +391,62 @@ export class GameData {
 
           if (systemData['starterMoveData']) {
             const starterMoveData = systemData['starterMoveData'];
-            for (const s of Object.keys(starterMoveData))
+            for (const s of Object.keys(starterMoveData)) {
               this.starterData[s].moveset = starterMoveData[s];
+            }
           }
 
           if (systemData['starterEggMoveData']) {
             const starterEggMoveData = systemData['starterEggMoveData'];
-            for (const s of Object.keys(starterEggMoveData))
+            for (const s of Object.keys(starterEggMoveData)) {
               this.starterData[s].eggMoves = starterEggMoveData[s];
+            }
           }
 
           this.migrateStarterAbilities(systemData, this.starterData);
         } else {
-          if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
+          if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion)) {
             this.migrateStarterAbilities(systemData);
+          }
           //this.fixVariantData(systemData);
           this.fixStarterData(systemData);
           // Migrate ability starter data if empty for caught species
           Object.keys(systemData.starterData).forEach(sd => {
-            if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
+            if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr) {
               systemData.starterData[sd].abilityAttr = 1;
+            }
           });
           this.starterData = systemData.starterData;
         }
 
         if (systemData.gameStats) {
-          if (systemData.gameStats.legendaryPokemonCaught !== undefined && systemData.gameStats.subLegendaryPokemonCaught === undefined)
+          if (systemData.gameStats.legendaryPokemonCaught !== undefined && systemData.gameStats.subLegendaryPokemonCaught === undefined) {
             this.fixLegendaryStats(systemData);
+          }
           this.gameStats = systemData.gameStats;
         }
 
         if (systemData.unlocks) {
           for (const key of Object.keys(systemData.unlocks)) {
-            if (this.unlocks.hasOwnProperty(key))
+            if (this.unlocks.hasOwnProperty(key)) {
               this.unlocks[key] = systemData.unlocks[key];
+            }
           }
         }
 
         if (systemData.achvUnlocks) {
           for (const a of Object.keys(systemData.achvUnlocks)) {
-            if (achvs.hasOwnProperty(a))
+            if (achvs.hasOwnProperty(a)) {
               this.achvUnlocks[a] = systemData.achvUnlocks[a];
+            }
           } 
         }
 
         if (systemData.voucherUnlocks) {
           for (const v of Object.keys(systemData.voucherUnlocks)) {
-            if (vouchers.hasOwnProperty(v))
+            if (vouchers.hasOwnProperty(v)) {
               this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+            }
           }
         }
 
@@ -458,8 +470,9 @@ export class GameData {
           for (const s of starterIds) {
             this.starterData[s].candyCount += this.dexData[s].caughtCount;
             this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
-            if (this.dexData[s].caughtAttr & DexAttr.SHINY)
+            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
               this.starterData[s].candyCount += 4;
+            }
           }
         }
 
@@ -473,14 +486,16 @@ export class GameData {
 
   private parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
-      if (k === 'gameStats')
+      if (k === 'gameStats') {
         return new GameStats(v);
-      else if (k === 'eggs') {
+      } else if (k === 'eggs') {
         const ret: EggData[] = [];
-        if (v === null)
+        if (v === null) {
           v = [];
-        for (const e of v)
+        }
+        for (const e of v) {
           ret.push(new EggData(e));
+        }
         return ret;
       }
 
@@ -495,15 +510,17 @@ export class GameData {
     }
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
-    for (const k in fromKeys)
+    for (const k in fromKeys) {
       dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace('$', '\\$')}`, 'g'), toKeys[k]);
+    }
 
     return dataStr;
   }
 
   public async verify(): Promise<boolean> {
-    if (bypassLogin)
+    if (bypassLogin) {
       return true;
+    }
 
     const response = await Utils.apiPost('savedata/system/verify', JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
       .then(response => response.json());
@@ -519,23 +536,27 @@ export class GameData {
   }
 
   public clearLocalData(): void {
-    if (bypassLogin)
+    if (bypassLogin) {
       return;
+    }
     localStorage.removeItem(`data_${loggedInUser.username}`);
-    for (let s = 0; s < 5; s++)
+    for (let s = 0; s < 5; s++) {
       localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
+    }
   }
 
   public saveSetting(setting: Setting, valueIndex: integer): boolean {
     let settings: object = {};
-    if (localStorage.hasOwnProperty('settings'))
+    if (localStorage.hasOwnProperty('settings')) {
       settings = JSON.parse(localStorage.getItem('settings'));
+    }
 
     setSetting(this.scene, setting as Setting, valueIndex);
 
     Object.keys(settingDefaults).forEach(s => {
-      if (s === setting)
+      if (s === setting) {
         settings[s] = valueIndex;
+      }
     });
 
     localStorage.setItem('settings', JSON.stringify(settings));
@@ -546,26 +567,30 @@ export class GameData {
   private loadSettings(): boolean {
     Object.values(Setting).map(setting => setting as Setting).forEach(setting => setSetting(this.scene, setting, settingDefaults[setting]));
 
-    if (!localStorage.hasOwnProperty('settings'))
+    if (!localStorage.hasOwnProperty('settings')) {
       return false;
+    }
 
     const settings = JSON.parse(localStorage.getItem('settings'));
 
-    for (const setting of Object.keys(settings))
+    for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting as Setting, settings[setting]);
+    }
   }
 
   public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
     let tutorials: object = {};
-    if (localStorage.hasOwnProperty('tutorials'))
+    if (localStorage.hasOwnProperty('tutorials')) {
       tutorials = JSON.parse(localStorage.getItem('tutorials'));
+    }
 
     Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
       const key = Tutorial[t];
-      if (key === tutorial)
+      if (key === tutorial) {
         tutorials[key] = flag;
-      else
+      } else {
         tutorials[key] ??= false;
+      }
     });
 
     localStorage.setItem('tutorials', JSON.stringify(tutorials));
@@ -577,13 +602,15 @@ export class GameData {
     const ret: TutorialFlags = {};
     Object.values(Tutorial).map(tutorial => tutorial as Tutorial).forEach(tutorial => ret[Tutorial[tutorial]] = false);
 
-    if (!localStorage.hasOwnProperty('tutorials'))
+    if (!localStorage.hasOwnProperty('tutorials')) {
       return ret;
+    }
 
     const tutorials = JSON.parse(localStorage.getItem('tutorials'));
 
-    for (const tutorial of Object.keys(tutorials))
+    for (const tutorial of Object.keys(tutorials)) {
       ret[tutorial] = tutorials[tutorial];
+    }
 
     return ret;
   }
@@ -611,8 +638,9 @@ export class GameData {
 
   getSession(slotId: integer): Promise<SessionSaveData> {
     return new Promise(async (resolve, reject) => {
-      if (slotId < 0)
+      if (slotId < 0) {
         return resolve(null);
+      }
       const handleSessionData = async (sessionDataStr: string) => {
         try {
           const sessionData = this.parseSessionData(sessionDataStr);
@@ -638,10 +666,11 @@ export class GameData {
           });
       } else {
         const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`);
-        if (sessionData)
+        if (sessionData) {
           await handleSessionData(decrypt(sessionData, bypassLogin));
-        else
+        } else {
           return resolve(null);
+        }
       }
     });
   }
@@ -684,8 +713,9 @@ export class GameData {
           scene.money = sessionData.money || 0;
           scene.updateMoneyText();
 
-          if (scene.money > this.gameStats.highestMoney)
+          if (scene.money > this.gameStats.highestMoney) {
             this.gameStats.highestMoney = scene.money;
+          }
 
           scene.score = sessionData.score;
           scene.updateScoreText();
@@ -702,8 +732,9 @@ export class GameData {
           sessionData.enemyParty.forEach((enemyData, e) => {
             const enemyPokemon = enemyData.toPokemon(scene, battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;
             battle.enemyParty[e] = enemyPokemon;
-            if (battleType === BattleType.WILD)
+            if (battleType === BattleType.WILD) {
               battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+            }
 
             loadPokemonAssets.push(enemyPokemon.loadAssets());
           });
@@ -716,25 +747,27 @@ export class GameData {
 
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
-            if (modifier)
+            if (modifier) {
               scene.addModifier(modifier, true);
+            }
           }
 
           scene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
             const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
-            if (modifier)
+            if (modifier) {
               scene.addEnemyModifier(modifier, true);
+            }
           }
 
           scene.updateModifiers(false);
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
         };
-        if (sessionData)
+        if (sessionData) {
           initSessionFromData(sessionData);
-        else {
+        } else {
           this.getSession(slotId)
             .then(data => initSessionFromData(data))
             .catch(err => {
@@ -757,8 +790,9 @@ export class GameData {
       }
 
       updateUserInfo().then(success => {
-        if (success !== null && !success)
+        if (success !== null && !success) {
           return resolve(false);
+        }
         Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
@@ -819,8 +853,9 @@ export class GameData {
       }
 
       updateUserInfo().then(success => {
-        if (success !== null && !success)
+        if (success !== null && !success) {
           return resolve([false, false]);
+        }
         const sessionData = this.getSessionSaveData(scene);
         Utils.apiPost(`savedata/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok) {
@@ -829,8 +864,9 @@ export class GameData {
           }
           return response.json();
         }).then(jsonResponse => {
-          if (!jsonResponse.error)
+          if (!jsonResponse.error) {
             return resolve([true, jsonResponse.success as boolean]);
+          }
           if (jsonResponse && jsonResponse.error.startsWith('session out of date')) {
             this.scene.clearPhaseQueue();
             this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
@@ -852,31 +888,37 @@ export class GameData {
 
       if (k === 'party' || k === 'enemyParty') {
         const ret: PokemonData[] = [];
-        if (v === null)
+        if (v === null) {
           v = [];
-        for (const pd of v)
+        }
+        for (const pd of v) {
           ret.push(new PokemonData(pd));
+        }
         return ret;
       }
 
-      if (k === 'trainer')
+      if (k === 'trainer') {
         return v ? new TrainerData(v) : null;
+      }
 
       if (k === 'modifiers' || k === 'enemyModifiers') {
         const player = k === 'modifiers';
         const ret: PersistentModifierData[] = [];
-        if (v === null)
+        if (v === null) {
           v = [];
+        }
         for (const md of v) {
-          if(md?.className === 'ExpBalanceModifier') // Temporarily limit EXP Balance until it gets reworked
+          if(md?.className === 'ExpBalanceModifier') { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
+          }
           ret.push(new PersistentModifierData(md, player));
         }
         return ret;
       }
 
-      if (k === 'arena')
+      if (k === 'arena') {
         return new ArenaData(v);
+      }
 
       return v;
     }) as SessionSaveData;
@@ -885,10 +927,12 @@ export class GameData {
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success !== null && !success)
+        if (success !== null && !success) {
           return resolve(false);
-        if (sync)
+        }
+        if (sync) {
           this.scene.ui.savingIcon.show();
+        }
         const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
 
         const maxIntAttrValue = Math.pow(2, 31);
@@ -970,8 +1014,9 @@ export class GameData {
           });
       } else {
         const data = localStorage.getItem(dataKey);
-        if (data)
+        if (data) {
           handleData(decrypt(data, bypassLogin));
+        }
         resolve(!!data);
       }
     });
@@ -981,8 +1026,9 @@ export class GameData {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser.username}`;
 
     let saveFile: any = document.getElementById('saveFile');
-    if (saveFile)
+    if (saveFile) {
       saveFile.remove();
+    }
   
     saveFile = document.createElement('input');
     saveFile.id = 'saveFile';
@@ -1035,16 +1081,18 @@ export class GameData {
 
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
 
-            if (!valid)
+            if (!valid) {
               return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
+            }
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
-                    if (!success)
+                    if (!success) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
+                    }
                     Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, dataStr, undefined, true)
                       .then(response => response.text())
                       .then(error => {
@@ -1055,8 +1103,9 @@ export class GameData {
                         window.location = window.location;
                       });
                   });
-                } else
+                } else {
                   window.location = window.location;
+                }
               }, () => {
                 this.scene.ui.revertMode();
                 this.scene.ui.showText(null, 0);
@@ -1089,8 +1138,9 @@ export class GameData {
 
     this.scene.executeWithSeedOffset(() => {
       const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
-      for (let s = 0; s < defaultStarterSpecies.length; s++)
+      for (let s = 0; s < defaultStarterSpecies.length; s++) {
         defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
+      }
     }, 0, 'default');
 
     for (let ds = 0; ds < defaultStarterSpecies.length; ds++) {
@@ -1098,8 +1148,9 @@ export class GameData {
       entry.seenAttr = defaultStarterAttr;
       entry.caughtAttr = defaultStarterAttr;
       entry.natureAttr = Math.pow(2, defaultStarterNatures[ds] + 1);
-      for (const i in entry.ivs)
+      for (const i in entry.ivs) {
         entry.ivs[i] = 10;
+      }
     }
 
     this.defaultDexData = Object.assign({}, data);
@@ -1133,14 +1184,16 @@ export class GameData {
     if (incrementCount) {
       dexEntry.seenCount++;
       this.gameStats.pokemonSeen++;
-      if (!trainer && pokemon.species.subLegendary)
+      if (!trainer && pokemon.species.subLegendary) {
         this.gameStats.subLegendaryPokemonSeen++;
-      else if (!trainer && pokemon.species.legendary)
+      } else if (!trainer && pokemon.species.legendary) {
         this.gameStats.legendaryPokemonSeen++;
-      else if (!trainer && pokemon.species.mythical)
+      } else if (!trainer && pokemon.species.mythical) {
         this.gameStats.mythicalPokemonSeen++;
-      if (!trainer && pokemon.isShiny())
+      }
+      if (!trainer && pokemon.isShiny()) {
         this.gameStats.shinyPokemonSeen++;
+      }
     }
   }
 
@@ -1153,8 +1206,9 @@ export class GameData {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
-      if (noStarterFormKeys.includes(pokemon.getFormKey()))
+      if (noStarterFormKeys.includes(pokemon.getFormKey())) {
         pokemon.formIndex = 0;
+      }
       const dexAttr = pokemon.getDexAttr();
       pokemon.formIndex = formIndex;
       dexEntry.caughtAttr |= dexAttr;
@@ -1173,44 +1227,51 @@ export class GameData {
         if (!fromEgg) {
           dexEntry.caughtCount++;
           this.gameStats.pokemonCaught++;
-          if (pokemon.species.subLegendary)
+          if (pokemon.species.subLegendary) {
             this.gameStats.subLegendaryPokemonCaught++;
-          else if (pokemon.species.legendary)
+          } else if (pokemon.species.legendary) {
             this.gameStats.legendaryPokemonCaught++;
-          else if (pokemon.species.mythical)
+          } else if (pokemon.species.mythical) {
             this.gameStats.mythicalPokemonCaught++;
-          if (pokemon.isShiny())
+          }
+          if (pokemon.isShiny()) {
             this.gameStats.shinyPokemonCaught++;
+          }
         } else {
           dexEntry.hatchedCount++;
           this.gameStats.pokemonHatched++;
-          if (pokemon.species.subLegendary)
+          if (pokemon.species.subLegendary) {
             this.gameStats.subLegendaryPokemonHatched++;
-          else if (pokemon.species.legendary)
+          } else if (pokemon.species.legendary) {
             this.gameStats.legendaryPokemonHatched++;
-          else if (pokemon.species.mythical)
+          } else if (pokemon.species.mythical) {
             this.gameStats.mythicalPokemonHatched++;
-          if (pokemon.isShiny())
+          }
+          if (pokemon.isShiny()) {
             this.gameStats.shinyPokemonHatched++;
+          }
         }
 
-        if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg))
+        if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg)) {
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
+        }
       }
     
       const checkPrevolution = () => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
           return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg).then(() => resolve());
-        } else
+        } else {
           resolve();
+        }
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
         this.scene.playSound('level_up_fanfare');
         this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
-      } else
+      } else {
         checkPrevolution();
+      }
     });
   }
 
@@ -1221,21 +1282,27 @@ export class GameData {
       this.starterData[speciesIdToIncrement].classicWinCount = 0;
     }
     
-    if (!this.starterData[speciesIdToIncrement].classicWinCount)
+    if (!this.starterData[speciesIdToIncrement].classicWinCount) {
       this.scene.gameData.gameStats.ribbonsOwned++;
+    }
 
     const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
 
-    if (ribbonsInStats >= 100)
+    if (ribbonsInStats >= 100) {
       this.scene.validateAchv(achvs._100_RIBBONS);
-    if (ribbonsInStats >= 75)
+    }
+    if (ribbonsInStats >= 75) {
       this.scene.validateAchv(achvs._75_RIBBONS);
-    if (ribbonsInStats >= 50)
+    }
+    if (ribbonsInStats >= 50) {
       this.scene.validateAchv(achvs._50_RIBBONS);
-    if (ribbonsInStats >= 25)
+    }
+    if (ribbonsInStats >= 25) {
       this.scene.validateAchv(achvs._25_RIBBONS);
-    if (ribbonsInStats >= 10)
+    }
+    if (ribbonsInStats >= 10) {
       this.scene.validateAchv(achvs._10_RIBBONS);
+    }
 
     return ++this.starterData[speciesIdToIncrement].classicWinCount;
   }
@@ -1253,8 +1320,9 @@ export class GameData {
         return;
       }
 
-      if (!this.starterData[speciesId].eggMoves)
+      if (!this.starterData[speciesId].eggMoves) {
         this.starterData[speciesId].eggMoves = 0;
+      }
 
       const value = Math.pow(2, eggMoveIndex);
 
@@ -1276,11 +1344,13 @@ export class GameData {
       dexEntry = this.scene.gameData.dexData[speciesId];
       const dexIvs = dexEntry.ivs;
       for (let i = 0; i < dexIvs.length; i++) {
-        if (dexIvs[i] < ivs[i])
+        if (dexIvs[i] < ivs[i]) {
           dexIvs[i] = ivs[i];
+        }
       }
-      if (dexIvs.filter(iv => iv === 31).length === 6)
+      if (dexIvs.filter(iv => iv === 31).length === 6) {
         this.scene.validateAchv(achvs.PERFECT_IVS);
+      }
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
   }
 
@@ -1288,8 +1358,9 @@ export class GameData {
     const dexKeys = Object.keys(this.dexData);
     let speciesCount = 0;
     for (const s of dexKeys) {
-      if (dexEntryPredicate(this.dexData[s]))
+      if (dexEntryPredicate(this.dexData[s])) {
         speciesCount++;
+      }
     }
     return speciesCount;
   }
@@ -1299,8 +1370,9 @@ export class GameData {
     let starterCount = 0;
     for (const s of starterKeys) {
       const starterDexEntry = this.dexData[s];
-      if (dexEntryPredicate(starterDexEntry))
+      if (dexEntryPredicate(starterDexEntry)) {
         starterCount++;
+      }
     }
     return starterCount;
   }
@@ -1342,8 +1414,9 @@ export class GameData {
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
     const dexEntry = this.dexData[species.speciesId];
     for (let n = 0; n < 25; n++) {
-      if (dexEntry.natureAttr & Math.pow(2, n + 1))
+      if (dexEntry.natureAttr & Math.pow(2, n + 1)) {
         return n as Nature;
+      }
     }
     return 0 as Nature;
   }
@@ -1359,8 +1432,9 @@ export class GameData {
   getNaturesForAttr(natureAttr: integer): Nature[] {
     const ret: Nature[] = [];
     for (let n = 0; n < 25; n++) {
-      if (natureAttr & Math.pow(2, n + 1))
+      if (natureAttr & Math.pow(2, n + 1)) {
         ret.push(n);
+      }
     }
     return ret;
   }
@@ -1370,25 +1444,29 @@ export class GameData {
     let value = baseValue;
 
     const decrementValue = (value: number) => {
-      if (value > 1)
+      if (value > 1) {
         value--;
-      else
+      } else {
         value /= 2;
+      }
       return value;
     };
 
-    for (let v = 0; v < this.starterData[speciesId].valueReduction; v++)
+    for (let v = 0; v < this.starterData[speciesId].valueReduction; v++) {
       value = decrementValue(value);
+    }
 
     return value;
   }
 
   getFormIndex(attr: bigint): integer {
-    if (!attr || attr < DexAttr.DEFAULT_FORM)
+    if (!attr || attr < DexAttr.DEFAULT_FORM) {
       return 0;
+    }
     let f = 0;
-    while (!(attr & this.getFormAttr(f)))
+    while (!(attr & this.getFormAttr(f))) {
       f++;
+    }
     return f;
   }
 
@@ -1399,10 +1477,12 @@ export class GameData {
   consolidateDexData(dexData: DexData): void {
     for (const k of Object.keys(dexData)) {
       const entry = dexData[k] as DexEntry;
-      if (!entry.hasOwnProperty('hatchedCount'))
+      if (!entry.hasOwnProperty('hatchedCount')) {
         entry.hatchedCount = 0;
-      if (!entry.hasOwnProperty('natureAttr') || (entry.caughtAttr && !entry.natureAttr))
+      }
+      if (!entry.hasOwnProperty('natureAttr') || (entry.caughtAttr && !entry.natureAttr)) {
         entry.natureAttr = this.defaultDexData[k].natureAttr || Math.pow(2, Utils.randInt(25, 1));
+      }
     }
   }
 
@@ -1416,12 +1496,15 @@ export class GameData {
         | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
         | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
       if (dexAttr) {
-        if (!(dexAttr & DexAttr.DEFAULT_VARIANT))
+        if (!(dexAttr & DexAttr.DEFAULT_VARIANT)) {
           dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;
-        if (dexAttr & DexAttr.VARIANT_2)
+        }
+        if (dexAttr & DexAttr.VARIANT_2) {
           dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-        if (dexAttr & DexAttr.VARIANT_3)
+        }
+        if (dexAttr & DexAttr.VARIANT_3) {
           dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+        }
       }
     }
   }
@@ -1441,24 +1524,29 @@ export class GameData {
             seenVariant2 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_2);
             seenVariant3 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_3);
             if (pokemonEvolutions.hasOwnProperty(es)) {
-              for (const pe of pokemonEvolutions[es])
+              for (const pe of pokemonEvolutions[es]) {
                 checkEvoSpecies(pe.speciesId);
+              }
             }
           };
           checkEvoSpecies(s);
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2 && !seenVariant2)
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_2 && !seenVariant2) {
             dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3 && !seenVariant3)
+          }
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_3 && !seenVariant3) {
             dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+          }
           starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
             | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
             | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
         } else {
           const tempCaughtAttr = dexData[s].caughtAttr;
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2)
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_2) {
             dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3)
+          }
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_3) {
             dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+          }
           starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
             | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
             | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
@@ -1468,8 +1556,9 @@ export class GameData {
   }
   
   fixStarterData(systemData: SystemSaveData): void {
-    for (const starterId of defaultStarterSpecies)
+    for (const starterId of defaultStarterSpecies) {
       systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+    }
   }
 
   fixLegendaryStats(systemData: SystemSaveData): void {
