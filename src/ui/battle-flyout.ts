@@ -1,14 +1,25 @@
-import { EnemyPokemon, default as Pokemon } from '../field/pokemon';
+import { default as Pokemon } from '../field/pokemon';
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from '../utils';
-import BattleScene from '#app/battle-scene.js';
+import BattleScene, { MoveUsedEvent } from '#app/battle-scene.js';
 import { UiTheme } from '#app/enums/ui-theme.js';
+import { Move } from 'pokenode-ts';
+
+interface MoveInfo {
+  move: Move,
+  ppUsed: number,
+  maxPp: number,
+}
 
 export default class BattleFlyout extends Phaser.GameObjects.Container {
+  private battleScene: BattleScene;
+
   private player: boolean;
   private mini: boolean;
   private boss: boolean;
   private offset: boolean;
+
+  private pokemon: Pokemon;
   
   private flyoutWidth = 90;
   private flyoutHeight = 22;
@@ -25,7 +36,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
 
   constructor(scene: Phaser.Scene, player: boolean) {
-    super(scene, 0, 0);    
+    super(scene, 0, 0);
+    this.battleScene = scene as BattleScene;
+
     this.player = player;
     this.mini = !player;
     this.boss = false;
@@ -54,14 +67,18 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     }
 
     this.flyoutContainer.add(this.flyoutText);
+
+    this.battleScene.eventTarget.addEventListener('onMoveUsed', this.updateInfo);
   }
 
   initInfo(pokemon: Pokemon) {
-    this.name = `Flyout ${pokemon.name}`;
-    this.flyoutParent.name = `Flyout Parent ${pokemon.name}`;
+    this.pokemon = pokemon;
+
+    this.name = `Flyout ${this.pokemon.name}`;
+    this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
 
     for (let i = 0; i < 4; i++) {
-      this.flyoutText[i].text = pokemon.moveset[i].getName();
+      this.flyoutText[i].text = this.pokemon.moveset[i].getName();
     }
   }
 
@@ -73,6 +90,10 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
     //if (this.player)
     //  this.y -= 12 * (mini ? 1 : -1);
+  }
+
+  updateInfo(event: MoveUsedEvent) {
+    console.log('Event!', event.move.name);
   }
 
   toggleFlyout(visible: boolean): void {
