@@ -2052,11 +2052,11 @@ export class TurnStartPhase extends FieldPhase {
         case Command.RUN:
           let runningPokemon = pokemon;
           if (this.scene.currentBattle.double) {
-            const playerPokemon = field.filter(pokemon => pokemon.isPlayer());
-            // use the faster stats if not
-            const fasterPokemon = playerPokemon[0].getStat(Stat.SPD) > playerPokemon[1].getStat(Stat.SPD) ? playerPokemon[0] : playerPokemon[1];
-            // check if either active player pokemon has run away
-            const hasRunAway = playerPokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
+            const playerActivePokemon = field.filter(pokemon => pokemon.isPlayer());
+            // find which active pokemon has faster speed
+            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
+            // check if either active pokemon has the ability "Run Away"
+            const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
             runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
           }
           this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
