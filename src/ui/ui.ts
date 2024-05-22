@@ -36,6 +36,7 @@ import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
 import {Button} from "../enums/buttons";
+import i18next from "i18next";
 
 export enum Mode {
   MESSAGE,
@@ -230,6 +231,10 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   showDialogue(text: string, name: string, delay: integer = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    // Get localized dialogue (if available)
+   if (i18next.exists(text.toString()) ) {
+        text = i18next.t(text.toString());
+   }
     if (text.indexOf('$') > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       let showMessageAndCallback = () => callback();
