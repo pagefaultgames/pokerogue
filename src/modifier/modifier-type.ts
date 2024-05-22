@@ -1592,15 +1592,20 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
   const tierStackCount = tier === ModifierTier.ULTRA ? 5 : tier === ModifierTier.GREAT ? 3 : 1;
   const retryCount = 50;
   let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
-  let r = 0;
-  let matchingModifier: Modifiers.PersistentModifier;
-  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate.type.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1))
-    candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
-
-  const modifier = candidate.type.newModifier() as Modifiers.EnemyPersistentModifier;
-  modifier.stackCount = tierStackCount;
-
-  return modifier;
+  if (candidate != null) {
+    let r = 0;
+    let matchingModifier: Modifiers.PersistentModifier;
+    while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate.type.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1))
+      candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
+    
+    const modifier = candidate.type.newModifier() as Modifiers.EnemyPersistentModifier;
+    modifier.stackCount = tierStackCount;
+  
+    return modifier;
+    } else {
+    return null;
+    }
+  
 }
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance: integer = 0): PokemonHeldItemModifierType[] {
