@@ -3551,7 +3551,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.DUNSPARCE]: [
     [ 1, Moves.DEFENSE_CURL ],
     [ 1, Moves.FLAIL ],
-    [ 1, Moves.Tackle ],
+    [ 1, Moves.TACKLE ],
     [ 4, Moves.MUD_SLAP ],
     [ 8, Moves.ROLLOUT ],
     [ 12, Moves.GLARE ],
