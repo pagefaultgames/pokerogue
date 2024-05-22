@@ -2324,7 +2324,7 @@ export class MovePhase extends BattlePhase {
       if (this.cancelled || this.failed) {
         if (this.failed) {
           this.move.usePp(ppUsed); // Only use PP if the move failed
-          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.getBattlerIndex(), this.move.getMove()));
+          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove()));
         }
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
@@ -2356,7 +2356,7 @@ export class MovePhase extends BattlePhase {
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) { // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
-        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.getBattlerIndex(), this.move.getMove()));
+        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove()));
       }
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length)
