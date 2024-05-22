@@ -116,6 +116,14 @@ export class LoadingScene extends SceneBase {
       this.loadImage(`summary_tabs_${t}`, 'ui');
     }
     (i18next.options.supportedLngs as Array<any>).forEach(lang => {
+      switch(lang){
+        case 'pt':
+          lang = 'pt_BR'
+          break;
+        case 'zh':
+          lang = 'zh_CN'
+          break;
+      }
       if(Utils.verifyLang(lang)){
         this.loadImage(`starter_select_bg_${lang}`, 'ui');
         this.loadImage(`summary_bg_${lang}`, 'ui');
@@ -207,6 +215,14 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas('items', '');
     this.loadAtlas('types', '');
     (i18next.options.supportedLngs as Array<any>).forEach(lang => {
+      switch(lang){
+        case 'pt':
+          lang = 'pt_BR'
+          break;
+        case 'zh':
+          lang = 'zh_CN'
+          break;
+      }
       if(Utils.verifyLang(lang)){
         this.loadAtlas(`types_${lang}`, '');
       }

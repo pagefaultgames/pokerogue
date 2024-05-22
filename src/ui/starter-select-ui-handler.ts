@@ -285,22 +285,22 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    
+    let starterInfoXPos;
     // The position should be set per language
-    const currentLanguage = i18next.language;
     switch (currentLanguage) {
       case 'pt_BR':
-        starterInfoXPosition = 32;
+        starterInfoXPos = 32;
         break;
       case 'de':
-        starterInfoXPosition = 36;
+        starterInfoXPos = 36;
         break;
       default:
-        starterInfoXPosition = textSettings?.starterInfoXPos || 31;
+        starterInfoXPos = textSettings?.starterInfoXPos || 31;
         break
     }
-    starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
+    let starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
 
+    let starterInfoTextSize;
     // The font size should be set per language
     // currentLanguage is already defined
     switch (currentLanguage) {
