@@ -3460,11 +3460,27 @@ export enum HitResult {
 
 export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;
 
+export class PpUsedEvent extends Event {
+  public pokemonMove: PokemonMove;
+  public count: number;
+
+  constructor(pokemonMove: PokemonMove, count: number) {
+    super('PpUsed');
+
+    this.pokemonMove = pokemonMove;
+    this.count = count;
+  }
+}
+
 export class PokemonMove {
   public moveId: Moves;
   public ppUsed: integer;
   public ppUp: integer;
+  /** Tracks if a move has ever been used before */
+  public used: boolean;
   public virtual: boolean;
+
+  public eventTarget: EventTarget;
 
   constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
     this.moveId = moveId;
@@ -3488,7 +3504,12 @@ export class PokemonMove {
    * @param {number} count Amount of PP to use
    */
   usePp(count: number = 1) {
+    if (count > 0)
+      this.used = true; // If PP has been used, the move has been used
+
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
+
+    this.eventTarget.dispatchEvent(new PpUsedEvent(this, count)); // Alert Subscribers
   }
 
   getMovePp(): integer {
