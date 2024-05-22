@@ -58,6 +58,24 @@ export interface BerryTranslationEntries {
   [key: string]: BerryTranslationEntry
 }
 
+export interface DialogueTranslationEntry {
+  [key: number]: string;
+}
+
+export interface DialogueTranslationCategory {
+  encounter: DialogueTranslationEntry;
+  victory: DialogueTranslationEntry;
+    defeat: DialogueTranslationEntry;
+}
+
+export interface DialogueTranslationTrainerClass {
+  [key: string]: DialogueTranslationCategory;
+}
+
+export interface DialogueTranslationEntries {
+  [key: string]: DialogueTranslationTrainerClass;
+}
+
 export interface Localizable {
   localize(): void;
 }
@@ -155,6 +173,7 @@ declare module 'i18next' {
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
+      dialogue: DialogueTranslationEntries;
     };
   }
 }

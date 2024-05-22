@@ -1,6 +1,8 @@
 import { trainerConfigs } from "./trainer-config";
 import { TrainerType } from "./enums/trainer-type";
 import { BattleSpec } from "../enums/battle-spec";
+import i18next from "i18next";
+import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 
 export interface TrainerTypeMessages {
   encounter?: string | string[],
@@ -12,38 +14,43 @@ export interface TrainerTypeDialogue {
   [key: integer]: TrainerTypeMessages | [ TrainerTypeMessages, TrainerTypeMessages ]
 }
 
-export const trainerTypeDialogue = {
+export function getTrainerTypeDialogue(): TrainerTypeDialogue {
+  return trainerTypeDialogue
+}
+
+export let trainerTypeDialogue = {
   [TrainerType.YOUNGSTER]: [
     {
       encounter: [
-        `Hey, wanna battle?`,
-        `Are you a new trainer too?`,
-        `Hey, I haven't seen you before. Let's battle!`,
-        `I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!`,
-        `Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!`,
-        `All right! Let's go!`,
-        `All right! Here I come! I'll show you my power!`,
-        `Haw haw haw... I'll show you how hawesome my Pokémon are!`,
-        `No need to waste time saying hello. Bring it on whenever you're ready!`,
-        `Don't let your guard down, or you may be crying when a kid beats you.`,
-        `I've raised my Pokémon with great care. You're not allowed to hurt them!`,
-        `Glad you made it! It won't be an easy job from here.`,
-        `The battles continue forever! Welcome to the world with no end!`
+         'dialogue:youngster.encounter.1',
+          'dialogue:youngster.encounter.2',
+          'dialogue:youngster.encounter.3',
+          'dialogue:youngster.encounter.4',
+          'dialogue:youngster.encounter.5',
+          'dialogue:youngster.encounter.6',
+          'dialogue:youngster.encounter.7',
+          'dialogue:youngster.encounter.8',
+          'dialogue:youngster.encounter.9',
+          'dialogue:youngster.encounter.10',
+          'dialogue:youngster.encounter.11',
+          'dialogue:youngster.encounter.12',
+          'dialogue:youngster.encounter.13'
       ],
       victory: [
-        `Wow! You're strong!`,
-        `I didn't stand a chance, huh?`,
-        `I'll find you again when I'm older and beat you!`,
-        `Ugh. I don't have any more Pokémon.`,
-        `No way… NO WAY! How could I lose again…`,
-        `No! I lost!`,
-        `Whoa! You are incredible! I'm amazed and surprised!`,
-        `Could it be… How… My Pokémon and I are the strongest, though…`,
-        `I won't lose next time! Let's battle again sometime!`,
-        `Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!`,
-        `Your Pokémon are more amazing! Trade with me!`,
-        `I got a little carried away earlier, but what job was I talking about?`,
-        `Ahaha! There it is! That's right! You're already right at home in this world!`
+          'dialogue:youngster.victory.1',
+          'dialogue:youngster.victory.2',
+          'dialogue:youngster.victory.3',
+          'dialogue:youngster.victory.4',
+          'dialogue:youngster.victory.5',
+          'dialogue:youngster.victory.6',
+          'dialogue:youngster.victory.7',
+          'dialogue:youngster.victory.8',
+          'dialogue:youngster.victory.9',
+          'dialogue:youngster.victory.10',
+          'dialogue:youngster.victory.11',
+          'dialogue:youngster.victory.12',
+          'dialogue:youngster.victory.13',
+
       ]
     },
     //LASS

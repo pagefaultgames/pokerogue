@@ -162,7 +162,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
   showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     this.showNameText(name);
-    super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+    // Get localized text
+    let localizedText = i18next.t(text.toString());
+    super.showDialogue(localizedText, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean): Promise<void> {
