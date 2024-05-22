@@ -2107,7 +2107,9 @@ export class BerryPhase extends FieldPhase {
         if (cancelled.value) {
           pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is too\nnervous to eat berries!"));
         } else {
-          this.scene.unshiftPhase(new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM));
+          this.scene.unshiftPhase(
+            new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM)
+          );
 
           for (const berryModifier of this.scene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon) as BerryModifier[]) {
             if (berryModifier.consumed) {

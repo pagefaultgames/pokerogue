@@ -2519,14 +2519,14 @@ export class HealFromBerryUseAbAttr extends AbAttr {
   private healPercent: number;
 
   constructor(healPercent: number) {
-    super()
+    super();
 
     // Clamp healPercent so its between [0,1].
     this.healPercent = Math.max(Math.min(healPercent, 1), 0);
   }
 
   apply(pokemon: Pokemon, passive: boolean, ...args: [Utils.BooleanHolder, any[]]): boolean {
-    const { name: abilityName } = passive ? pokemon.getPassiveAbility() : pokemon.getAbility()
+    const { name: abilityName } = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
     pokemon.scene.unshiftPhase(
       new PokemonHealPhase(
         pokemon.scene,
@@ -2537,7 +2537,7 @@ export class HealFromBerryUseAbAttr extends AbAttr {
       )
     );
 
-    return true
+    return true;
   }
 }
 
