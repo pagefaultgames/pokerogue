@@ -235,7 +235,7 @@ export class ConfusedTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nconfused!'));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
-      if (pokemon.randSeedInt(2)) {
+      if (pokemon.randSeedInt(3)) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
