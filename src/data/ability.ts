@@ -1889,6 +1889,22 @@ export class BlockNonDirectDamageAbAttr extends AbAttr {
   }
 }
 
+export class BlockPoisonToxicDamageAbAttr extends BlockNonDirectDamageAbAttr {
+  /**
+   * This is so we don't have to edit each switch case in phase.ts, if the damage is Toxic or Poison, it will cancel.
+   * @param {Pokemon} pokemon The pokemon with the ability Poison Heal
+   * @param {boolean} passive N/A
+   * @param {Utils.BooleanHolder} cancelled Whether to cancel the Toxic/Poison damage or not
+   * @param {any[]} args N/A
+   * @returns Returns true if the damage from Toxic/Poison is blocked
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON)
+      cancelled.value = true;
+    return true;
+  }
+}
+
 export class BlockOneHitKOAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
@@ -2195,6 +2211,23 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
 export class PostTurnAbAttr extends AbAttr {
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
+  }
+}
+
+export class PostTurnPoisonHealAbAttr extends PostTurnAbAttr {
+  /**
+   * After the turn ends, if the ability Pokemon is either Toxic'd or Poisoned, it will heal 1/8 rather than damage the Pokemon.
+   * @param {Pokemon} pokemon The pokemon with the ability Poison Heal
+   * @param {boolean} passive N/A 
+   * @param {any[]} args N/A 
+   * @returns Returns true if Poison Heal procs
+   */
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON) {
+      pokemon.heal(Math.max(Math.floor((pokemon.getMaxHp() / 8))));
+      pokemon.updateInfo();
+    }
+    return true;
   }
 }
 
@@ -3345,7 +3378,8 @@ export function initAbilities() {
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, 4)
-      .unimplemented(),
+      .attr(PostTurnPoisonHealAbAttr)
+      .attr(BlockPoisonToxicDamageAbAttr),
     new Ability(Abilities.ADAPTABILITY, 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
