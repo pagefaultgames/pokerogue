@@ -1815,8 +1815,14 @@ export class CommandPhase extends FieldPhase {
           const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
           const trapped = new Utils.BooleanHolder(false);
           const batonPass = isSwitch && args[0] as boolean;
-          if (!batonPass)
+          const runAway = playerPokemon.hasAbility(Abilities.RUN_AWAY) as boolean;
+          if (!batonPass) 
             enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped, playerPokemon));
+          if(!isSwitch && runAway) {
+            success = true;
+            this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.RUN };
+            break;
+          }
           if (batonPass || (!trapTag && !trapped.value)) {
             this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
