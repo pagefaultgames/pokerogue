@@ -2893,22 +2893,44 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
 }
 
 /**
- * Abstract class for aura effects. Aura effects apply tags
+ * Base class for aura effects. Aura effects apply tags
  * to a list of targets and keeps reapplying them as long
  * as the aura source is active.
+ * 
+ * @extends AbAttr
  */
-export abstract class AuraAbAttr extends AbAttr { }
+export class AuraAbAttr extends AbAttr {
+  protected targetFunc: (source: Pokemon) => [Pokemon];
+
+  constructor(targetFunc: (source: Pokemon) => [Pokemon]) {
+    super();
+    this.targetFunc = targetFunc;
+  }
+ }
 
 /**
  * Damage reduction aura triggered by {@linkcode Abilities.FRIEND_GUARD}.
+ * 
+ * @extends AuraAbAttr
+ * @see {@linkcode apply}
  */
 export class FriendGuardAbAttr extends AuraAbAttr {
+  constructor() {
+    super((source: Pokemon) => [source.getAlly()]);
+  }
+
+  /**
+   * Applies {@linkcode BattlerTagType.FRIEND_GUARD} to ally pokemon.
+   * @param {Pokemon} pokemon that is the source of the aura effect.
+   * @param {boolean} passive N/A
+   * @param {Utils.BooleanHolder} cancelled N/A 
+   * @param args N/A
+   * @returns true
+   */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const ally = pokemon.getAlly();
-    if (!ally) {
-      return false;
-    }
-    ally.addTag(BattlerTagType.FRIEND_GUARD, 0, undefined, pokemon.id);
+    this.targetFunc(pokemon).forEach(
+      target => target.addTag(BattlerTagType.FRIEND_GUARD, 0, undefined, pokemon.id)
+    );
 
     return true;
   }
