@@ -2083,7 +2083,7 @@ export class StockpileStatChangeAttr extends StatChangeAttr {
     const stock = getStockpiles(user);
     
     if (this.levels < 0) {
-      this.levels *= stock;
+      this.levels = stock * -1;
 
       // remove the stats equal to the number of stocks
       for (let tagType of this.tagTypes)
@@ -3733,9 +3733,10 @@ export class StockpileAttr extends AddBattlerTagAttr {
         this.tagType = BattlerTagType.STOCKPILE_TWO;
         break;
       default:
-        // keep tagType at default
+        this.tagType = BattlerTagType.STOCKPILE_THREE;
         break;
     }
+
 
     if (!super.apply(user, target, move, args))
       return false;
