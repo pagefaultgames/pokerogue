@@ -211,6 +211,18 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
+  processStats(pressed: boolean) {
+    if (this.overlayActive)
+      return false;
+
+    if([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
+      this.handlers[Mode.FIGHT]?.processStats(pressed);
+      return true;
+    }
+
+    return false;
+  }
+
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
     if (prompt && text.indexOf('$') > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
