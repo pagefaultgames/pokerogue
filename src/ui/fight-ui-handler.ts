@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
-import { addTextObject, TEXT_SCALE, TextStyle } from "./text";
-import { Type, TypeDamageMultiplier } from "../data/type";
+import { addTextObject, TextStyle } from "./text";
+import { getTypeDamageMultiplierColor, Type } from "../data/type";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -20,8 +20,6 @@ export default class FightUiHandler extends UiHandler {
   private ppText: Phaser.GameObjects.Text;
   private powerText: Phaser.GameObjects.Text;
   private accuracyText: Phaser.GameObjects.Text;
-  private effectivenessLabel: Phaser.GameObjects.Text;
-  private effectivenessText: Phaser.GameObjects.Text;
   private cursorObj: Phaser.GameObjects.Image;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
 
@@ -76,17 +74,6 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyText = addTextObject(this.scene, 58, rowSpacing * 2, '---', TextStyle.MOVE_INFO_CONTENT);
     this.accuracyText.setOrigin(1, 0.5);
     this.moveInfoContainer.add(this.accuracyText);
-
-    this.effectivenessLabel = addTextObject(this.scene, 0, rowSpacing * 3, 'EFFECT', TextStyle.MOVE_INFO_CONTENT);
-    this.effectivenessLabel.setOrigin(0.0, 0.5);
-    this.effectivenessLabel.setVisible(false);
-    this.effectivenessLabel.setText(i18next.t('fightUiHandler:effect'))
-    this.moveInfoContainer.add(this.effectivenessLabel);
-
-    this.effectivenessText = addTextObject(this.scene, 58, rowSpacing * 3, '---', TextStyle.MOVE_INFO_CONTENT);
-    this.effectivenessText.setOrigin(1, 0.5);
-    this.effectivenessText.setVisible(false);
-    this.moveInfoContainer.add(this.effectivenessText);
   }
 
   show(args: any[]): boolean {
@@ -173,8 +160,6 @@ export default class FightUiHandler extends UiHandler {
     const hasMove = cursor < moveset.length;
 
     if (hasMove) {
-      this.updateMoveInfoSize();
-
       const pokemonMove = moveset[cursor];
       this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
       this.moveCategoryIcon.setTexture('categories', MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
@@ -183,18 +168,18 @@ export default class FightUiHandler extends UiHandler {
       const accuracy = pokemonMove.getMove().accuracy;
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
-      const effectiveness = this.getEffectivenessText(pokemon, pokemonMove);
 
       this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
       this.powerText.setText(`${power >= 0 ? power : '---'}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : '---'}`);
-      this.effectivenessText.setText(`${effectiveness ? effectiveness : '---'}`);
+
+      pokemon.getOpponents().forEach((opponent) => {
+        opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+      });
     }
 
     this.typeIcon.setVisible(hasMove);
     this.moveInfoContainer.setVisible(hasMove);
-    this.effectivenessLabel.setVisible(this.scene.typeHints > 0);
-    this.effectivenessText.setVisible(this.scene.typeHints > 0);
     this.moveCategoryIcon.setVisible(hasMove);
 
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
@@ -202,32 +187,11 @@ export default class FightUiHandler extends UiHandler {
     return changed;
   }
 
-  private updateMoveInfoSize() {
-    const typeHints = this.scene.typeHints > 0;
-    const spacing = typeHints ? rowSpacing * 0.75 : rowSpacing;
-    const scale = typeHints ? TEXT_SCALE * 0.75 : TEXT_SCALE;
+  private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
+    const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove);
+    if (effectiveness === undefined) return undefined;
 
-    let row = 0;
-    this.moveInfoContainer.getAll().forEach((object, index) => {
-      const text = object as Phaser.GameObjects.Text;
-      text.y = row * spacing;
-      text.setScale(scale);
-
-      if (index % 2 !== 0) row++;
-    });
-  }
-
-  private getEffectivenessText(pokemon: Pokemon, pokemonMove: PokemonMove): string {
-    const opponents = pokemon.getOpponents();
-    if (opponents.length <= 0) return '';
-
-    const text = opponents.map((opponent) => {
-      return opponent.getMoveEffectiveness(pokemon, pokemonMove);
-    }).filter((effectiveness) => effectiveness !== undefined).map((effectiveness) => {
-      return `${effectiveness}x`;
-    }).join('/');
-
-    return text;
+    return `${effectiveness}x`;
   }
 
   displayMoves() {
@@ -256,31 +220,10 @@ export default class FightUiHandler extends UiHandler {
     const moveColors = opponents.map((opponent) => {
       return opponent.getMoveEffectiveness(pokemon, pokemonMove);
     }).sort((a, b) => b - a).map((effectiveness) => {
-      return this.getMoveEffectivenessColor(effectiveness);
+      return getTypeDamageMultiplierColor(effectiveness, 'offense');
     });
 
     return moveColors[0] ?? 'white';
-  }
-
-  private getMoveEffectivenessColor(moveEffectiveness?: TypeDamageMultiplier): string | undefined {
-    switch (moveEffectiveness) {
-      case 0:
-        return 'black';
-      case 0.125:
-        return 'darkred';
-      case 0.25:
-        return 'red';
-      case 0.5:
-        return 'crimson';
-      case 1:
-        return 'white';
-      case 2:
-        return 'lightgreen';
-      case 4:
-        return 'green';
-      case 8:
-        return 'darkgreen';
-    }
   }
 
   clear() {
@@ -294,6 +237,11 @@ export default class FightUiHandler extends UiHandler {
 
   clearMoves() {
     this.movesContainer.removeAll(true);
+
+    const opponents = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
+    opponents.forEach((opponent) => {
+      opponent.updateEffectiveness(undefined);
+    });
   }
 
   eraseCursor() {

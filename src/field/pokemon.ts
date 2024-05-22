@@ -7,7 +7,7 @@ import { Moves } from "../data/enums/moves";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
-import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
+import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeDamageMultiplierColor, getTypeRgb } from '../data/type';
 import { getLevelTotalExp } from '../data/exp';
 import { Stat } from '../data/pokemon-stat';
 import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from '../modifier/modifier';
@@ -48,6 +48,8 @@ import { BerryType } from '../data/berry';
 import i18next from '../plugins/i18n';
 import { speciesEggMoves } from '../data/egg-moves';
 import { ModifierTier } from '../modifier/modifier-tier';
+import { TextStyle, addTextObject } from '#app/ui/text.js';
+import { WindowVariant, addWindow } from '#app/ui/ui-theme.js';
 
 export enum FieldPosition {
   CENTER,
@@ -105,6 +107,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public maskSprite: Phaser.GameObjects.Sprite;
 
   private shinySparkle: Phaser.GameObjects.Sprite;
+  private effectivenessContainer: Phaser.GameObjects.Container;
+  private effectivenessWindow: Phaser.GameObjects.NineSlice;
+  private effectivenessText: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, x, y);
@@ -233,6 +238,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.addAt(sprite, 0);
     this.addAt(tintSprite, 1);
+
+    if (!this.isPlayer()) {
+      this.effectivenessContainer = this.scene.add.container(0, 0);
+      this.effectivenessContainer.setPositionRelative(sprite, -20, -45);
+      this.effectivenessContainer.setVisible(false);
+      this.addAt(this.effectivenessContainer, 2);
+
+      this.effectivenessText = addTextObject(this.scene, 5, 4.5, '', TextStyle.BATTLE_INFO);
+      this.effectivenessWindow = addWindow(this.scene, 0, 0, 0, 20, false, false, null, null, WindowVariant.XTHIN);
+
+      this.effectivenessContainer.add(this.effectivenessWindow);
+      this.effectivenessContainer.add(this.effectivenessText);
+    }
 
     if (this.isShiny() && !this.shinySparkle)
       this.initShinySparkle();
@@ -1419,7 +1437,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getNameColor(): string | undefined {
     const typeHints = this.scene.typeHints;
-    if (typeHints === 0) return undefined;
+    if (typeHints !== 2) return undefined;
     const opponents = this.getOpponents();
     if (opponents.length <= 0) return undefined;
 
@@ -1427,39 +1445,41 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return opponent.getTypes().map((type) => {
         return this.getAttackTypeEffectiveness(type, opponent);
       });
-    }).flat().filter((effectiveness) => effectiveness !== undefined);
+    }).flat().filter((effectiveness) => effectiveness !== undefined).sort();
 
     const moveEffectivenessList = opponents.map((opponent) => {
       return this.getMoveset().map((move) => {
         return opponent.getMoveEffectiveness(this, move);
       });
-    }).flat().filter((effectiveness) => effectiveness !== undefined);
+    }).flat().filter((effectiveness) => effectiveness !== undefined).sort();
 
-    const fullHints = typeHints === 2;
+    const maxOpponentTypeEffectiveness = opponentTypeEffectivenessList[opponentTypeEffectivenessList.length - 1];
+    if (maxOpponentTypeEffectiveness > 1) {
+      return getTypeDamageMultiplierColor(maxOpponentTypeEffectiveness, 'defense');
+    }
 
-    if (fullHints && opponentTypeEffectivenessList.some((effectiveness) => effectiveness === 8)) {
-      return 'darkred';
-    } else if (fullHints && opponentTypeEffectivenessList.some((effectiveness) => effectiveness === 4)) {
-      return 'red';
-    } else if (fullHints && opponentTypeEffectivenessList.some((effectiveness) => effectiveness === 2)) {
-      return 'crimson';
-    } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 8)) {
-      return 'darkgreen';
-    } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 4)) {
-      return 'green';
-    } else if (moveEffectivenessList.some((effectiveness) => effectiveness === 2)) {
-      return 'lightgreen';
-    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0)) {
-      return 'yellow';
-    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0.125)) {
-      return 'darkblue';
-    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0.25)) {
-      return 'blue';
-    } else if (fullHints && opponentTypeEffectivenessList.every((effectiveness) => effectiveness === 0.5)) {
-      return 'lightblue';
+    const maxMoveEffectiveness = moveEffectivenessList[moveEffectivenessList.length - 1];
+    if (maxMoveEffectiveness > 1) {
+      return getTypeDamageMultiplierColor(maxMoveEffectiveness, 'offense');
+    }
+
+    const minOpponentTypeEffectiveness = opponentTypeEffectivenessList[0];
+    if (minOpponentTypeEffectiveness < 1) {
+      return getTypeDamageMultiplierColor(minOpponentTypeEffectiveness, 'defense');
     }
 
     return 'white';
+  }
+
+  updateEffectiveness(effectiveness?: string) {
+    if (this.isPlayer() || this.scene.typeHints === 0 || effectiveness === undefined) {
+      this.effectivenessContainer.setVisible(false);
+      return;
+    }
+    
+    this.effectivenessText.setText(effectiveness);
+    this.effectivenessWindow.width = 10 + this.effectivenessText.displayWidth;
+    this.effectivenessContainer.setVisible(true);
   }
 
   toggleStats(visible: boolean): void {
