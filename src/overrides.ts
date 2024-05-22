@@ -57,7 +57,6 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -68,9 +67,12 @@ export const VARIANT_OVERRIDE: Variant = 0;
 export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
+
+
+export const MOVESET_OVERRIDE: Array<Moves> = [Moves.EMBER, Moves.ACID, Moves.RECOVER, Moves.IMPRISON];
+export const OPP_MOVESET_OVERRIDE: Array<Moves> = [Moves.EMBER, Moves.ACID];
 
 /**
  * MODIFIER / ITEM OVERRIDES
