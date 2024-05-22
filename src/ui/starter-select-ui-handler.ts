@@ -42,48 +42,65 @@ export interface Starter {
   pokerus: boolean;
 }
 
+interface LanguageSetting {
+  starterInfoTextSize: string,
+  instructionTextSize: string,
+  starterInfoXPos?: integer,
+  starterInfoYOffset?: integer
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "en":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '42px',
+  },
+  "de":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '35px',
+  },
+  "es":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '35px',
+  },
+  "it":{
+    starterInfoTextSize: '56px',
+    instructionTextSize: '38px',
+  },
+  "fr":{
+    starterInfoTextSize: '54px',
+    instructionTextSize: '42px',
+  },
+  "zh":{
+    starterInfoTextSize: '40px',
+    instructionTextSize: '42px',
+    starterInfoYOffset: 2
+  },
+  "pt":{
+    starterInfoTextSize: '47px',
+    instructionTextSize: '38px',
+    starterInfoXPos: 32,
+  },
+}
+
+const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
+  { passive: 50, costReduction: [30, 75] }, // 1
+  { passive: 45, costReduction: [25, 60] }, // 2
+  { passive: 40, costReduction: [20, 50] }, // 3
+  { passive: 30, costReduction: [15, 40] }, // 4
+  { passive: 25, costReduction: [12, 35] }, // 5
+  { passive: 20, costReduction: [10, 30] }, // 6
+  { passive: 15, costReduction: [8, 20] },  // 7
+  { passive: 10, costReduction: [5, 15] },  // 8
+  { passive: 10, costReduction: [3, 10] },  // 9
+  { passive: 10, costReduction: [3, 10] },  // 10
+]
+
 function getPassiveCandyCount(baseValue: integer): integer {
-  switch (baseValue) {
-    case 1:
-      return 50;
-    case 2:
-      return 45;
-    case 3:
-      return 40;
-    case 4:
-      return 30;
-    case 5:
-      return 25;
-    case 6:
-      return 20;
-    case 7:
-      return 15;
-    default:
-      return 10;
-  }
+  return starterCandyCosts[baseValue - 1].passive;
 }
 
 function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
-  switch (baseValue) {
-    case 1:
-      return [ 30, 75];
-    case 2:
-      return [ 25, 60 ];
-    case 3:
-      return [ 20, 50 ];
-    case 4:
-      return [ 15, 40 ];
-    case 5:
-      return [ 12, 35 ];
-    case 6:
-      return [ 10, 30 ];
-    case 7:
-      return [ 8, 20 ];
-    case 8:
-      return [ 5, 15 ];
-    default:
-      return [ 3, 10 ];
-  }
+  return starterCandyCosts[baseValue - 1].costReduction;
 }
 
 const gens = [
@@ -199,6 +216,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
+    const currentLanguage = i18next.language;
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
+    const textSettings = languageSettings[langSettingKey];
 
     this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.starterSelectContainer.setVisible(false);
@@ -255,57 +275,38 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    let starterInfoXPosition = 31; // Only text
+    
     // The position should be set per language
-    const currentLanguage = i18next.language;
-    switch (currentLanguage) {
-      case 'pt_BR':
-        starterInfoXPosition = 32;
-        break;
-      default:
-        starterInfoXPosition = 31;
-        break
-    }
+    let starterInfoXPos = textSettings?.starterInfoXPos || 31;
+    let starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
 
-    let starterInfoTextSize = '56px'; // Labels and text
     // The font size should be set per language
-    // currentLanguage is already defined
-    switch (currentLanguage) {
-      case 'fr':
-        starterInfoTextSize = '54px';
-        break;
-      case 'pt_BR':
-        starterInfoTextSize = '47px';
-        break;
-      default:
-        starterInfoTextSize = '56px';
-        break
-    }
+    let starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
-    this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPosition, 127, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPos, 127 + starterInfoYOffset, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
-    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136 + starterInfoYOffset, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveLabelText.setOrigin(0, 0);
     this.pokemonPassiveLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonPassiveLabelText);
 
-    this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPosition, 136, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPos, 136 + starterInfoYOffset, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145 + starterInfoYOffset, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureLabelText.setOrigin(0, 0);
     this.pokemonNatureLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, starterInfoXPosition, 145, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, starterInfoXPos, 145 + starterInfoYOffset, '', TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNatureText);
 
@@ -589,36 +590,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
-
-
-    let instructionTextSize = '42px';
     // The font size should be set per language
-    // currentLanguage is already defined in the previous code block
-    switch (currentLanguage) {
-      case 'de':
-        instructionTextSize = '35px';
-        break;
-      case 'en':
-        instructionTextSize = '42px';
-        break;
-      case 'es':
-        instructionTextSize = '35px';
-        break;
-      case 'fr':
-        instructionTextSize = '42px';
-        break;
-      case 'it':
-        instructionTextSize = '38px';
-        break;
-      case 'pt_BR':
-        instructionTextSize = '38px';
-        break;
-      case 'zh_CN':
-        instructionTextSize = '42px';
-        break;
-
-    }
-
+    let instructionTextSize = textSettings.instructionTextSize;
 
     this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: instructionTextSize });
     this.starterSelectContainer.add(this.instructionsText);
