@@ -13,7 +13,7 @@ import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, Stat
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
@@ -23,6 +23,7 @@ import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
 import { PokeballType, getPokeballName } from "./pokeball";
+import { BerryModifierType } from "#app/modifier/modifier-type";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -127,7 +128,7 @@ export abstract class AbAttr {
     return null;
   }
 
-  getCondition(): AbAttrCondition {
+  getCondition(): AbAttrCondition | null {
     return this.extraCondition || null;
   }
 
@@ -1356,6 +1357,28 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
     return true;
   }
 }
+/** 
+ * Ignores opponent's evasion stat changes when determining if a move hits or not
+ * @extends AbAttr
+ * @see {@linkcode apply}
+ */
+export class IgnoreOpponentEvasionAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+  /**
+   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * @param pokemon N/A
+   * @param passive N/A
+   * @param cancelled N/A
+   * @param args [0] {@linkcode Utils.IntegerHolder} of BattleStat.EVA
+   * @returns if evasion level was successfully considered as 0
+   */  
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
+    (args[0] as Utils.IntegerHolder).value = 0;
+    return true;
+  }
+}
 
 export class IntimidateImmunityAbAttr extends AbAttr { 
   constructor() {
@@ -2206,6 +2229,71 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   }
 }
 
+/**
+ * After the turn ends, try to create an extra item
+ */
+export class PostTurnLootAbAttr extends PostTurnAbAttr {
+  /**
+   * @param itemType - The type of item to create
+   * @param procChance - Chance to create an item
+   * @see {@linkcode applyPostTurn()}
+   */
+  constructor(
+    /** Extend itemType to add more options */
+    private itemType: "EATEN_BERRIES" | "HELD_BERRIES",
+    private procChance: (pokemon: Pokemon) => number
+  ) {
+    super();
+  }
+
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    const pass = Phaser.Math.RND.realInRange(0, 1);
+    // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
+    if (Math.max(Math.min(this.procChance(pokemon), 1), 0) < pass) {
+      return false;
+    }
+
+    if (this.itemType === "EATEN_BERRIES") {
+      return this.createEatenBerry(pokemon);
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Create a new berry chosen randomly from the berries the pokemon ate this battle
+   * @param pokemon The pokemon with this ability
+   * @returns whether a new berry was created
+   */
+  createEatenBerry(pokemon: Pokemon): boolean {
+    const berriesEaten = pokemon.battleData.berriesEaten;
+
+    if (!berriesEaten.length) {
+      return false;
+    }
+
+    const randomIdx = Utils.randSeedInt(berriesEaten.length);
+    const chosenBerry = new BerryModifierType(berriesEaten[randomIdx]);
+    berriesEaten.splice(randomIdx) // Remove berry from memory
+
+    const berryModifier = pokemon.scene.findModifier(
+      (m) => m instanceof BerryModifier && m.berryType === berriesEaten[randomIdx],
+      pokemon.isPlayer()
+    ) as BerryModifier | undefined;
+
+    if (!berryModifier) {
+      pokemon.scene.addModifier(new BerryModifier(chosenBerry, pokemon.id, berriesEaten[randomIdx], 1));
+    } else {
+      berryModifier.stackCount++;
+    }
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` harvested one ${chosenBerry.name}!`));
+    pokemon.scene.updateModifiers(pokemon.isPlayer());
+
+    return true;
+  }
+}
+
 export class MoodyAbAttr extends PostTurnAbAttr {
   constructor() {
     super(true);
@@ -2281,6 +2369,34 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
     return false;
   }
 }
+
+
+/**
+ * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep
+ */
+export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
+
+  /**
+   * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
+   * @param {Pokemon} pokemon Pokemon that has this ability 
+   * @param {boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns {boolean} true if any opponents are sleeping
+   */
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    let hadEffect: boolean = false;
+    for(let opp of pokemon.getOpponents()) {
+      if(opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
+        opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
+        pokemon.scene.queueMessage(i18next.t('abilityTriggers:badDreams', {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
+        hadEffect = true;
+      }
+    
+    }
+    return hadEffect;
+  }
+}
+
 
 /** 
  * Grabs the last failed Pokeball used 
@@ -3327,7 +3443,7 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.BAD_DREAMS, 4)
-      .unimplemented(),
+      .attr(PostTurnHurtIfSleepingAbAttr),
     new Ability(Abilities.PICKPOCKET, 5)
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
     new Ability(Abilities.SHEER_FORCE, 5)
@@ -3368,7 +3484,13 @@ export function initAbilities() {
     new Ability(Abilities.FLARE_BOOST, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, 5)
-      .unimplemented(),
+      .attr(
+        PostTurnLootAbAttr, 
+        "EATEN_BERRIES", 
+        /** Rate is doubled when under sun {@link https://dex.pokemonshowdown.com/abilities/harvest} */
+        (pokemon) => 0.5 * (getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)(pokemon) ? 2 : 1)
+      )
+      .partial(),
     new Ability(Abilities.TELEPATHY, 5)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon.getAlly() === attacker && move.getMove() instanceof AttackMove)
       .ignorable(),
@@ -3888,8 +4010,9 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
-      .ignorable() // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
-      .partial(),
+      .attr(ProtectStatAbAttr, BattleStat.ACC)
+      .attr(IgnoreOpponentEvasionAbAttr)
+      .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .attr(PostSummonStatChangeAbAttr, BattleStat.EVA, -1)
       .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),

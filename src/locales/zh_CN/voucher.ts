@@ -1,11 +1,11 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const voucher: SimpleTranslationEntries = {
-  "vouchers": "Vouchers",
-  "eggVoucher": "Egg Voucher",
-  "eggVoucherPlus": "Egg Voucher Plus",
-  "eggVoucherPremium": "Egg Voucher Premium",
-  "eggVoucherGold": "Egg Voucher Gold",
-  "locked": "Locked",
-  "defeatTrainer": "Defeat {{trainerName}}"
+  "vouchers": "兑换券",
+  "eggVoucher": "初级扭蛋券",
+  "eggVoucherPlus": "中级扭蛋券",
+  "eggVoucherPremium": "高级扭蛋券",
+  "eggVoucherGold": "黄金扭蛋券",
+  "locked": "锁定",
+  "defeatTrainer": "你打败了{{trainerName}}"
 } as const;

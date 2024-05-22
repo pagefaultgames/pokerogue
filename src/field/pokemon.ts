@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -337,7 +337,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                           console.error(`Could not load ${res.url}!`);
                           return;
                         }
-                        res.json()
+                        return res.json()
                       }).then(c => {
                           variantColorCache[key] = c;
                           resolve();
@@ -1127,11 +1127,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
-      if (!this.hasTrainer()) {
-        if (new Date() < new Date('2024-05-21'))
-          shinyThreshold.value *= 3;
+      if (!this.hasTrainer())
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-      }
     } else
       shinyThreshold.value = thresholdOverride;
 
@@ -1283,11 +1280,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (this.isBoss()) // Bosses never get self ko moves
       movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttr).length);
+      movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttrOnHit).length);
     if (this.hasTrainer()) {
       // Trainers never get OHKO moves
       movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(OneHitKOAttr).length);
       // Half the weight of self KO moves
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttr).length ? 0.5 : 1)]);
+      movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].getAttrs(SacrificialAttrOnHit).length ? 0.5 : 1)]);
       // Trainers get a weight bump to stat buffing moves
       movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatChangeAttr).some(a => (a as StatChangeAttr).levels > 1 && (a as StatChangeAttr).selfTarget) ? 1.25 : 1)]);
       // Trainers get a weight decrease to multiturn moves
@@ -1642,58 +1641,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
           console.log('damage', damage.value, move.name, power.value, sourceAtk, targetDef);
 
-          // if no damage is done, could queue one of the following messages
-          if (source.turnData.hitsLeft === 1) {
-            switch (result as HitResult) {
-              case HitResult.NO_EFFECT:
-                this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
-                break;
-              case HitResult.IMMUNE:
-                this.scene.queueMessage(`${this.name} is unaffected!`);
-                break;
-            }
-          }
-
+          const oneHitKo = result === HitResult.ONE_HIT_KO;
           if (damage.value) {
             if (this.getHpRatio() === 1)
               applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, battlerMove, cancelled, damage);
             else if (!this.isPlayer() && damage.value >= this.hp)
               this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
 
-            const oneHitKo = result === HitResult.ONE_HIT_KO;
-
-            // damageAndUpdate: can potentially queue fainted phase, setting phaseQueueSpliceIndex
-            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
+            /**
+             * We explicitly require to ignore the faint phase here, as we want to show the messages
+             * about the critical hit and the super effective/not very effective messages before the faint phase.
+             */
+            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, true);
             this.turnData.damageTaken += damage.value;
 
             // queue critical message before effectiveness
             if (isCritical)
               this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
-
-            // hitsLeft: for multi-hit moves, only want to render effectiveness text at end.
-            // also want to render if a pokemon fainted
-            //console.log(`the number of hits left for this turn for ${this.name} is ${source.turnData.hitsLeft}`)
-            if (source.turnData.hitsLeft === 1 || this.isFainted()) {
-              switch (result as HitResult) {
-                case HitResult.SUPER_EFFECTIVE:
-                  this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
-                  break;
-                case HitResult.NOT_VERY_EFFECTIVE:
-                  this.scene.queueMessage(i18next.t('battle:hitResultNotVeryEffective'));
-                  break;
-                case HitResult.NO_EFFECT:
-                  this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
-                  break;
-                case HitResult.IMMUNE:
-                  this.scene.queueMessage(`${this.name} is unaffected!`);
-                  break;
-                case HitResult.ONE_HIT_KO:  
-                  this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
-                  break;
-              }
-            }
-
-
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
               if (damage.value > this.scene.gameData.gameStats.highestDamage)
@@ -1707,34 +1671,50 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.turnData.attacksReceived.unshift(attackResult);
             if (source.isPlayer() && !this.isPlayer())
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
-
-
-            /**
-             * don't want to add another fainted phase
-             * option could be calculate for multi hit moves if fainted
-             * problem with hit move message display is applyAbAttrsInternal() in ability.ts is 
-             * resetting the phaseQueueSpliceIndex before the moveaffectphase
-             * end() to add the message
-             * 
-            if (this.isFainted()) { }
-
-              // option 1: try to add multi move message here, and add a conidtion in end() to not add it a second time
-              // option 2: figure out what applyAbAttrsInternal() is doing and if there is a way to still add the message from end() properly
-             */
-
-            /**
-             * since damage is an object, I don't see how this would ever by false?
-             * i think the motivation was to have this here to counter setPhaseQueueSplice()
-             * not sure the original motivation 
-             * 
-             * It would be bad to run both the top if block and the one below commented out without changing the later's condition 
-             */
-            /*
-            if (damage){
-              this.scene.clearPhaseQueueSplice();
-            }
-            */
           }
+
+          // want to include is.Fainted() in case multi hit move ends early, still want to render message
+          if (source.turnData.hitsLeft === 1 || this.isFainted()) {
+            switch (result) {
+              case HitResult.SUPER_EFFECTIVE:
+                this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
+                break;
+              case HitResult.NOT_VERY_EFFECTIVE:
+                this.scene.queueMessage(i18next.t('battle:hitResultNotVeryEffective'));
+                break;
+              case HitResult.NO_EFFECT:
+                this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
+                break;
+              case HitResult.IMMUNE:
+                this.scene.queueMessage(`${this.name} is unaffected!`);
+                break;
+              case HitResult.ONE_HIT_KO:
+                this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
+                break;
+            }
+          }
+
+          if (this.isFainted()) {
+            // set splice index here, so future scene queues happen before FaintedPhase
+            this.scene.setPhaseQueueSplice();
+            this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
+            this.resetSummonData();
+          }
+
+          /**
+           * since damage is an object, I don't see how this would ever by false?
+           * i think the motivation was to have this here to counter setPhaseQueueSplice()
+           * not sure the original motivation 
+           * 
+           * It would be bad to run both the top if block and the one below commented out without changing the later's condition 
+           */
+
+
+          /*
+          if (damage){
+            this.scene.clearPhaseQueueSplice();
+          }
+          */
         }
         break;
       case MoveCategory.STATUS:
@@ -1753,7 +1733,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
-  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted())
       return 0;
     const surviveDamage = new Utils.BooleanHolder(false);
@@ -1771,8 +1751,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     damage = Math.min(damage, this.hp);
     this.hp = this.hp - damage;
-    // want to add a faint check here, for moves like explosion which deal self damage
-    if (this.isFainted()) {
+    if (this.isFainted() && !ignoreFaintPhase) {
       /**
        * when adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls 
        * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
@@ -1781,19 +1760,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        * once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
        */
       this.scene.setPhaseQueueSplice();
-      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(),preventEndure));
+      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
 
     return damage;
   }
 
-  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, 
-      ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
-
-    damage = this.damage(damage, ignoreSegments, preventEndure);
+    damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
     return damage;
@@ -3133,7 +3110,7 @@ export class EnemyPokemon extends Pokemon {
 
               const target = this.scene.getField()[mt];
               let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-              if (move.name.endsWith(' (N)') || !move.applyConditions(this, target, move))
+              if ((move.name.endsWith(' (N)') || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND].includes(move.id))
                 targetScore = -20;
               else if (move instanceof AttackMove) {
                 const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
@@ -3270,7 +3247,7 @@ export class EnemyPokemon extends Pokemon {
     return 0;
   }
 
-  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted())
       return 0;
 
@@ -3306,7 +3283,7 @@ export class EnemyPokemon extends Pokemon {
           damage = Math.min(damage, this.hp - 1);
     }
 
-    let ret = super.damage(damage, ignoreSegments, preventEndure);
+    let ret = super.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
 
     if (this.isBoss()) {
       if (ignoreSegments) {

@@ -74,7 +74,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
 ### 🎨 Trainer Portraits
   - pkmn_realidea (Paid Commissions)
 
-### 🎨 Pokemon Sprites
+### 🎨 Pokemon Sprites and Animation
   - GAMEFREAK (Pokémon Black/White 2)
   - Smogon Sprite Project (Various Artists)
   - Skyflyer
@@ -100,6 +100,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
   - bizcoeindoloro
   - mangalos810
   - Involuntary-Twitch
+  - selstar
 
 ### 🎨 Move Animations
   - Pokémon Reborn
