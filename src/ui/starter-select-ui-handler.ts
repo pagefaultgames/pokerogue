@@ -733,7 +733,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         error = true;
       }
     } else if (button === Button.CANCEL) {
-      if (this.statsMode != StatsMode.NONE) {
+      if (this.statsMode !== StatsMode.NONE) {
         this.toggleStatsMode(StatsMode.NONE);
         success = true;
       } else if (this.starterCursors.length) {
@@ -923,23 +923,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           }
           const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
-		  if(this.canCycleNature){
+          if(this.canCycleNature){
             const showNatureOptions = () => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
-				  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
+                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: natures.map((n: Nature, i: number) => {
                       const option: OptionSelectItem = {
-						label: getNatureName(n, true, true, true, this.scene.uiTheme),
+                        label: getNatureName(n, true, true, true, this.scene.uiTheme),
                         handler: () => {
-						  starterData.nature = n as unknown as integer;
+                          starterData.nature = n as unknown as integer;
                           this.clearText();
                           ui.setMode(Mode.STARTER_SELECT);
-						  this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
+                          this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
                           return true;
-						}
-					  };
+                        }
+                      };
                       return option;
                     }).concat({
                       label: i18next.t("menu:cancel"),
@@ -955,15 +955,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 });
               });
             };
-		    options.push({
+            options.push({
               label: i18next.t("starterSelectUiHandler:manageNature"),
               handler: () => {
                 showNatureOptions();
                 return true;
               }
             });
-		  };
-		  
+          }
+          
           const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) {
@@ -1411,26 +1411,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
-	this.baseStats = species?.baseStats;
-	this.formsBaseStats = species?.forms.map(f => f.baseStats) || [];
+    this.baseStats = species?.baseStats;
+    this.formsBaseStats = species?.forms.map(f => f.baseStats) || [];
 
-    if (this.statsMode != StatsMode.NONE) {
+    if (this.statsMode !== StatsMode.NONE) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
         this.statsContainer.setVisible(true);
         this.showStats();
       } else {
         this.statsContainer.setVisible(false);
-		switch(this.statsMode){
-			case StatsMode.IV:
-				this.statsContainer.updateIvs(null);
-				break;
-			case StatsMode.Base:
-				console.log(this.lastSpecies)
-				this.statsContainer.updateBase(null);
-				break;
-			default:
-				break;
-		}
+        switch(this.statsMode){
+        case StatsMode.IV:
+          this.statsContainer.updateIvs(null);
+          break;
+        case StatsMode.Base:
+          this.statsContainer.updateBase(null);
+          break;
+        default:
+          break;
+        }
       }
     }
 
@@ -1690,7 +1689,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonSprite.setPipelineData("shiny", shiny);
           this.pokemonSprite.setPipelineData("variant", variant);
           this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
-          this.pokemonSprite.setVisible(this.statsMode == StatsMode.NONE);
+          this.pokemonSprite.setVisible(this.statsMode === StatsMode.NONE);
         });
 
         (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite)
@@ -1942,21 +1941,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   toggleStatsMode(mode?: StatsMode): void {
-	mode |= StatsMode.NONE;
-	this.statsMode = mode;
-	switch(mode){
-		case StatsMode.BASE:
-		case StatsMode.IV:
-			this.showStats();
-			this.pokemonSprite.setVisible(false);
-			break;
-		case StatsMode.NONE:
-		default:
-			this.statsContainer.setVisible(false);
-			this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
-			this.statsContainer.updateIvs(null);
-			break;
-	  }
+    mode |= StatsMode.NONE;
+    this.statsMode = mode;
+    switch(mode){
+    case StatsMode.BASE:
+    case StatsMode.IV:
+      this.showStats();
+      this.pokemonSprite.setVisible(false);
+      break;
+    case StatsMode.NONE:
+    default:
+      this.statsContainer.setVisible(false);
+      this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
+      this.statsContainer.updateIvs(null);
+      break;
+    }
   }
 
   showStats(): void {
@@ -1966,16 +1965,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.statsContainer.setVisible(true);
 
-	switch(this.statsMode){
-		case StatsMode.BASE:
-			this.statsContainer.updateBase(this.baseStats, this.formsBaseStats);
-			break;
-		case StatsMode.IV:
-			this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
-			break;
-		default:
-			break;
-	}
+    switch(this.statsMode){
+    case StatsMode.BASE:
+      this.statsContainer.updateBase(this.baseStats, this.formsBaseStats);
+      break;
+    case StatsMode.IV:
+      this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
+      break;
+    default:
+      break;
+    }
   }
 
   clearText() {
@@ -1993,7 +1992,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.popStarter();
     }
 
-    if (this.statsMode != StatsMode.NONE) {
+    if (this.statsMode !== StatsMode.NONE) {
       this.toggleStatsMode(StatsMode.NONE);
     }
   }
