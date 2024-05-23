@@ -13,7 +13,7 @@ interface FieldEffectInfo {
   maxDuration: number;
   duration: number;
 }
-export default class FightFlyout extends Phaser.GameObjects.Container {  
+export default class FightFlyout extends Phaser.GameObjects.Container {
   private battleScene: BattleScene;
 
   private flyoutWidth = 160;
@@ -39,7 +39,7 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
   private readonly fieldEffectInfo: FieldEffectInfo[] = new Array();
 
   constructor(scene: Phaser.Scene) {
-    super(scene, 0, 0);   
+    super(scene, 0, 0);
     this.battleScene = this.scene as BattleScene;
 
     this.translationX = this.flyoutWidth;
@@ -59,7 +59,7 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeaderPlayer = addTextObject(this.scene, 8, 7, "Player Effects", TextStyle.SUMMARY_BLUE);
     this.flyoutTextHeaderPlayer.setFontSize(54);
     this.flyoutTextHeaderPlayer.setAlign("left");
-    this.flyoutTextHeaderPlayer.setOrigin(0, 0);    
+    this.flyoutTextHeaderPlayer.setOrigin(0, 0);
 
     this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
 
@@ -80,7 +80,7 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextPlayer = addTextObject(this.scene, 8, 15, "", TextStyle.BATTLE_INFO);
     this.flyoutTextPlayer.setFontSize(48);
     this.flyoutTextPlayer.setAlign("left");
-    this.flyoutTextPlayer.setOrigin(0, 0);    
+    this.flyoutTextPlayer.setOrigin(0, 0);
 
     this.flyoutContainer.add(this.flyoutTextPlayer);
 
@@ -121,10 +121,10 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
         tags += this.formatText(tag.tagType);
         if (tag.turnCount > 0 && tag.turnCount < 15) { // Don't add tags with infinite duration
           tags += " - " + tag.turnCount;
-        } 
+        }
         tags += "\n";
       });
-    
+
     textObject.text += tags;
   }
 
@@ -134,16 +134,16 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.fieldEffectInfo.length; i++) {
       const fieldEffectInfo = this.fieldEffectInfo[i];
 
-      this.flyoutTextField.text += 
+      this.flyoutTextField.text +=
         this.formatText(fieldEffectInfo.type) + " - " + fieldEffectInfo.duration + "/" + fieldEffectInfo.maxDuration + "\n";
     }
   }
 
   onNewArena(event: Event) {
     this.fieldEffectInfo.length = 0;
-    
+
     this.battleScene.arena.eventTarget.addEventListener("onWeatherChanged", (e) => this.onFieldEffectChanged(e));
-    this.battleScene.arena.eventTarget.addEventListener("onTerrainChanged", (e) => this.onFieldEffectChanged(e));    
+    this.battleScene.arena.eventTarget.addEventListener("onTerrainChanged", (e) => this.onFieldEffectChanged(e));
   }
 
   onFieldEffectChanged(event: Event) {
@@ -152,16 +152,16 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
       return;
     }
 
-    const oldType = 
-    fieldEffectChangedEvent instanceof WeatherChangedEvent 
-      ? WeatherType[fieldEffectChangedEvent.oldWeatherType] 
+    const oldType =
+    fieldEffectChangedEvent instanceof WeatherChangedEvent
+      ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
       : TerrainType[fieldEffectChangedEvent.oldTerrainType];
     const newInfo = {
-      type: 
-        fieldEffectChangedEvent instanceof WeatherChangedEvent 
-          ? WeatherType[fieldEffectChangedEvent.newWeatherType] 
-          : TerrainType[fieldEffectChangedEvent.newTerrainType], 
-      maxDuration: fieldEffectChangedEvent.duration, 
+      type:
+        fieldEffectChangedEvent instanceof WeatherChangedEvent
+          ? WeatherType[fieldEffectChangedEvent.newWeatherType]
+          : TerrainType[fieldEffectChangedEvent.newTerrainType],
+      maxDuration: fieldEffectChangedEvent.duration,
       duration: fieldEffectChangedEvent.duration};
 
     const foundIndex = this.fieldEffectInfo.findIndex(info => [newInfo.type, oldType].includes(info.type));
@@ -175,7 +175,7 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
 
     this.updateFieldText();
   }
-  
+
   onTurnEnd(event: Event) {
     const turnEndEvent = event as TurnEndEvent;
     if (!turnEndEvent) {
@@ -184,7 +184,7 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
 
     for (let i = 0; i < this.fieldEffectInfo.length; i++) {
       const fieldEffectInfo = this.fieldEffectInfo[i];
-      
+
       --fieldEffectInfo.duration;
     }
 

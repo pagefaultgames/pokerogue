@@ -21,7 +21,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private offset: boolean;
 
   private pokemon: Pokemon;
-  
+
   private flyoutWidth = 118;
   private flyoutHeight = 23;
 
@@ -33,7 +33,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutBox: Phaser.GameObjects.Sprite;
 
   private flyoutContainer: Phaser.GameObjects.Container;
-  
+
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
   private moveInfo: MoveInfo[] = new Array();
 
@@ -46,7 +46,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.player = player;
     this.mini = !player;
     this.boss = false;
-    this.offset = false;     
+    this.offset = false;
 
     this.translationX = this.player ? -this.flyoutWidth : this.flyoutWidth;
     this.anchorX = (this.player ? -130 : -40);
@@ -58,16 +58,16 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutBox = this.scene.add.sprite(0, 0, "pbinfo_enemy_boss_stats");
     this.flyoutBox.setOrigin(0, 0);
-    
+
     this.flyoutParent.add(this.flyoutBox);
 
     this.flyoutContainer = this.scene.add.container(44 + (this.player ? -this.flyoutWidth : 0), 2);
-    this.flyoutParent.add(this.flyoutContainer);    
+    this.flyoutParent.add(this.flyoutContainer);
 
     for (let i = 0; i < 4; i++) {
       this.flyoutText[i] = addTextObject(
-        this.scene, 
-        (this.flyoutWidth / 4) + (this.flyoutWidth / 2) * (i % 2), 
+        this.scene,
+        (this.flyoutWidth / 4) + (this.flyoutWidth / 2) * (i % 2),
         (this.flyoutHeight / 4) + (this.flyoutHeight / 2) * (i < 2 ? 0 : 1), "???", TextStyle.BATTLE_INFO);
       this.flyoutText[i].setFontSize(45);
       this.flyoutText[i].setLineSpacing(-10);
@@ -111,7 +111,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.flyoutText.length; i++) {
       const flyoutText = this.flyoutText[i];
       const moveInfo = this.moveInfo[i];
-      
+
       if (!moveInfo) {
         continue;
       }
