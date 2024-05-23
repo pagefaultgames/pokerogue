@@ -1311,8 +1311,12 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       });
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
+      const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
+      const pokemonName = this.getPokemon().name;
+      const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
+
       this.scene.pbTrayEnemy.hide();
-      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER)} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
+      this.scene.ui.showText(message, null, () => this.summon());
     }
   }
 
@@ -3739,7 +3743,11 @@ export class MoneyRewardPhase extends BattlePhase {
 
     this.scene.addMoney(moneyAmount.value);
 
-    this.scene.ui.showText(`You got ₽${moneyAmount.value.toLocaleString("en-US")}\nfor winning!`, null, () => this.end(), null, true);
+    const userLocale = navigator.language || "en-US";
+    const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
+    const message = i18next.t("battle:moneyWon", { moneyAmount: formattedMoneyAmount });
+
+    this.scene.ui.showText(message, null, () => this.end(), null, true);
   }
 }
 
@@ -4651,7 +4659,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
-            this.scene.ui.showText(`Your party is full.\nRelease a Pokémon to make room for ${pokemon.name}?`, null, () => {
+            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
               this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
