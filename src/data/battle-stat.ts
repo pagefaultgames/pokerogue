@@ -12,21 +12,21 @@ export enum BattleStat {
 export function getBattleStatName(stat: BattleStat) {
   switch (stat) {
   case BattleStat.ATK:
-    return 'Attack';
+    return "Attack";
   case BattleStat.DEF:
-    return 'Defense';
+    return "Defense";
   case BattleStat.SPATK:
-    return 'Sp. Atk';
+    return "Sp. Atk";
   case BattleStat.SPDEF:
-    return 'Sp. Def';
+    return "Sp. Def";
   case BattleStat.SPD:
-    return 'Speed';
+    return "Speed";
   case BattleStat.ACC:
-    return 'Accuracy';
+    return "Accuracy";
   case BattleStat.EVA:
-    return 'Evasiveness';
+    return "Evasiveness";
   default:
-    return '???';
+    return "???";
   }
 }
 
@@ -34,30 +34,30 @@ export function getBattleStatLevelChangeDescription(levels: integer, up: boolean
   if (up) {
     switch (levels) {
     case 1:
-      return 'rose';
+      return "rose";
     case 2:
-      return 'sharply rose';
+      return "sharply rose";
     case 3:
     case 4:
     case 5:
     case 6:
-      return 'rose drastically'; 
+      return "rose drastically"; 
     default:
-      return 'won\'t go any higher';
+      return "won't go any higher";
     }
   } else {
     switch (levels) {
     case 1:
-      return 'fell';
+      return "fell";
     case 2:
-      return 'harshly fell';
+      return "harshly fell";
     case 3:
     case 4:
     case 5:
     case 6:
-      return 'severely fell';
+      return "severely fell";
     default:
-      return 'won\'t go any lower';
+      return "won't go any lower";
     }
   }
 }

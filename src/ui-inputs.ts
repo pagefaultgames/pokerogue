@@ -1,11 +1,11 @@
-import Phaser from 'phaser';
-import {Mode} from './ui/ui';
-import {InputsController} from './inputs-controller';
-import MessageUiHandler from './ui/message-ui-handler';
-import StarterSelectUiHandler from './ui/starter-select-ui-handler';
-import {Setting, settingOptions} from './system/settings';
-import SettingsUiHandler from './ui/settings-ui-handler';
-import {Button} from './enums/buttons';
+import Phaser from "phaser";
+import {Mode} from "./ui/ui";
+import {InputsController} from "./inputs-controller";
+import MessageUiHandler from "./ui/message-ui-handler";
+import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
+import {Setting, settingOptions} from "./system/settings";
+import SettingsUiHandler from "./ui/settings-ui-handler";
+import {Button} from "./enums/buttons";
 
 export interface ActionKeys {
     [key in Button]: () => void;
@@ -28,7 +28,7 @@ export class UiInputs {
   }
 
   listenInputs(): void {
-    this.events.on('input_down', (event) => {
+    this.events.on("input_down", (event) => {
       const actions = this.getActionsKeyDown();
       if (!actions.hasOwnProperty(event.button)) {
         return;
@@ -36,7 +36,7 @@ export class UiInputs {
       actions[event.button]();
     }, this);
 
-    this.events.on('input_up', (event) => {
+    this.events.on("input_up", (event) => {
       const actions = this.getActionsKeyUp();
       if (!actions.hasOwnProperty(event.button)) {
         return;
@@ -46,7 +46,7 @@ export class UiInputs {
   }
 
   doVibration(inputSuccess: boolean, vibrationLength: number): void {
-    if (inputSuccess && this.scene.enableVibration && typeof navigator.vibrate !== 'undefined') {
+    if (inputSuccess && this.scene.enableVibration && typeof navigator.vibrate !== "undefined") {
       navigator.vibrate(vibrationLength);
     }
   }
@@ -131,7 +131,7 @@ export class UiInputs {
     case Mode.SETTINGS:
     case Mode.ACHIEVEMENTS:
       this.scene.ui.revertMode();
-      this.scene.playSound('select');
+      this.scene.playSound("select");
       break;
     default:
       return;

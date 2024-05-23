@@ -2,8 +2,8 @@
  * Generic pad mapping
  */
 const pad_xbox360 = {
-  padID: 'Xbox 360 controller (XInput STANDARD GAMEPAD)',
-  padType: 'xbox',
+  padID: "Xbox 360 controller (XInput STANDARD GAMEPAD)",
+  padType: "xbox",
   gamepadMapping: {
     RC_S: 0,
     RC_E: 1,

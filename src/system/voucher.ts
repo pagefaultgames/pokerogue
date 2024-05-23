@@ -1,7 +1,7 @@
-import BattleScene from '../battle-scene';
-import { TrainerType } from '../data/enums/trainer-type';
-import { Achv, AchvTier, achvs } from './achv';
-import i18next from '../plugins/i18n';
+import BattleScene from "../battle-scene";
+import { TrainerType } from "../data/enums/trainer-type";
+import { Achv, AchvTier, achvs } from "./achv";
+import i18next from "../plugins/i18n";
 
 export enum VoucherType {
   REGULAR,
@@ -52,26 +52,26 @@ export class Voucher {
 export function getVoucherTypeName(voucherType: VoucherType): string {
   switch (voucherType) {
   case VoucherType.REGULAR:
-    return i18next.t('voucher:eggVoucher');
+    return i18next.t("voucher:eggVoucher");
   case VoucherType.PLUS:
-    return i18next.t('voucher:eggVoucherPlus');
+    return i18next.t("voucher:eggVoucherPlus");
   case VoucherType.PREMIUM:
-    return i18next.t('voucher:eggVoucherPremium');
+    return i18next.t("voucher:eggVoucherPremium");
   case VoucherType.GOLDEN:
-    return i18next.t('voucher:eggVoucherGold');
+    return i18next.t("voucher:eggVoucherGold");
   }
 }
 
 export function getVoucherTypeIcon(voucherType: VoucherType): string {
   switch (voucherType) {
   case VoucherType.REGULAR:
-    return 'coupon';
+    return "coupon";
   case VoucherType.PLUS:
-    return 'pair_of_tickets';
+    return "pair_of_tickets";
   case VoucherType.PREMIUM:
-    return 'mystic_ticket';
+    return "mystic_ticket";
   case VoucherType.GOLDEN:
-    return 'golden_mystic_ticket';
+    return "golden_mystic_ticket";
   }
 }
 
@@ -85,7 +85,7 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
 
 {
   (function() {
-    import('../data/trainer-config').then(tc => {
+    import("../data/trainer-config").then(tc => {
       const trainerConfigs = tc.trainerConfigs;
 
       for (const achv of voucherAchvs) {
@@ -110,7 +110,7 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
         const trainerName = trainerConfigs[trainerType].name;
         vouchers[key] = new Voucher(
           voucherType,
-          i18next.t('voucher:defeatTrainer', { trainerName })
+          i18next.t("voucher:defeatTrainer", { trainerName })
         );
       }
 

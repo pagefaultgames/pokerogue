@@ -1,7 +1,7 @@
-import BattleScene from '../battle-scene';
-import AwaitableUiHandler from './awaitable-ui-handler';
-import { Mode } from './ui';
-import * as Utils from '../utils';
+import BattleScene from "../battle-scene";
+import AwaitableUiHandler from "./awaitable-ui-handler";
+import { Mode } from "./ui";
+import * as Utils from "../utils";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent;
@@ -36,13 +36,13 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     let actionMatch: RegExpExecArray;
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
-      case 'c':
+      case "c":
         charVarMap.set(actionMatch.index, actionMatch[2]);
         break;
-      case 'd':
+      case "d":
         delayMap.set(actionMatch.index, parseInt(actionMatch[2]));
         break;
-      case 's':
+      case "s":
         soundMap.set(actionMatch.index, actionMatch[2]);
         break;
       }
@@ -51,13 +51,13 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
 
     if (text) {
       // Predetermine overflow line breaks to avoid words breaking while displaying
-      const textWords = text.split(' ');
+      const textWords = text.split(" ");
       let lastLineCount = 1;
-      let newText = '';
+      let newText = "";
       for (let w = 0; w < textWords.length; w++) {
         const nextWordText = newText ? `${newText} ${textWords[w]}` : textWords[w];
         
-        if (textWords[w].includes('\n')) {
+        if (textWords[w].includes("\n")) {
           newText = nextWordText;
           lastLineCount++;
         } else {
@@ -155,13 +155,13 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
-    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: '96px emerald' });
+    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: "96px emerald" });
     lastLineTest.setScale(this.message.scale);
     const lastLineWidth = lastLineTest.displayWidth;
     lastLineTest.destroy();
     if (this.prompt) {
       this.prompt.setPosition(lastLineWidth + 2, (textLinesCount - 1) * 18 + 2);
-      this.prompt.play('prompt');
+      this.prompt.play("prompt");
     }
     this.pendingPrompt = false;
     this.awaitingActionInput = true;
@@ -187,7 +187,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   }
 
   clearText() {
-    this.message.setText('');
+    this.message.setText("");
     this.pendingPrompt = false;
   }
 

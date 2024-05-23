@@ -1,16 +1,16 @@
-import BattleScene from '../battle-scene';
-import { pokemonPrevolutions } from '../data/pokemon-evolutions';
-import PokemonSpecies, { getPokemonSpecies } from '../data/pokemon-species';
-import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyTemplate, TrainerPoolTier, TrainerSlot, trainerConfigs, trainerPartyTemplates } from '../data/trainer-config';
-import { PartyMemberStrength } from '../data/enums/party-member-strength';
-import { TrainerType } from '../data/enums/trainer-type';
-import { EnemyPokemon } from './pokemon';
-import * as Utils from '../utils';
-import { PersistentModifier } from '../modifier/modifier';
-import { trainerNamePools } from '../data/trainer-names';
-import { ArenaTagSide, ArenaTrapTag } from '#app/data/arena-tag';
-import {getIsInitialized, initI18n} from '#app/plugins/i18n';
-import i18next from 'i18next';
+import BattleScene from "../battle-scene";
+import { pokemonPrevolutions } from "../data/pokemon-evolutions";
+import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
+import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyTemplate, TrainerPoolTier, TrainerSlot, trainerConfigs, trainerPartyTemplates } from "../data/trainer-config";
+import { PartyMemberStrength } from "../data/enums/party-member-strength";
+import { TrainerType } from "../data/enums/trainer-type";
+import { EnemyPokemon } from "./pokemon";
+import * as Utils from "../utils";
+import { PersistentModifier } from "../modifier/modifier";
+import { trainerNamePools } from "../data/trainer-names";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import {getIsInitialized, initI18n} from "#app/plugins/i18n";
+import i18next from "i18next";
 
 export enum TrainerVariant {
   DEFAULT,
@@ -41,7 +41,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
           if (partnerName) {
             this.partnerName = partnerName;
           } else {
-            [ this.name, this.partnerName ] = this.name.split(' & ');
+            [ this.name, this.partnerName ] = this.name.split(" & ");
           }
         } else {
           this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
@@ -123,7 +123,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         }
         // Get the localized trainer class name from the i18n file and set it as the title.
         // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
-        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, '_')}`);
+        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
       }
 
       // If no specific trainer slot is set.
@@ -301,7 +301,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     if (!retry && this.config.specialtyTypes.length && !this.config.specialtyTypes.find(t => ret.isOfType(t))) {
       retry = true;
-      console.log('Attempting reroll of species evolution to fit specialty type...');
+      console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
@@ -313,7 +313,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     if (retry && (attempt || 0) < 10) {
-      console.log('Rerolling party member...');
+      console.log("Rerolling party member...");
       ret = this.genNewPartyMemberSpecies(level, strength, (attempt || 0) + 1);
     }
 
@@ -416,7 +416,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
    */
   tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, animConfig: Phaser.Types.Animations.PlayAnimationConfig): boolean {
     // Show an error in the console if there isn't a texture loaded
-    if (sprite.texture.key === '__MISSING') {
+    if (sprite.texture.key === "__MISSING") {
       console.error(`No texture found for '${animConfig.key}'!`);
 
       return false;
@@ -490,7 +490,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
           targets: tintSprite,
           alpha: alpha || 1,
           duration: duration,
-          ease: ease || 'Linear'
+          ease: ease || "Linear"
         });
       } else {
         tintSprite.setAlpha(alpha);
@@ -506,7 +506,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
           targets: tintSprite,
           alpha: 0,
           duration: duration,
-          ease: ease || 'Linear',
+          ease: ease || "Linear",
           onComplete: () => {
             tintSprite.setVisible(false);
             tintSprite.setAlpha(1);

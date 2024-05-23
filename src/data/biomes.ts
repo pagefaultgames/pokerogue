@@ -1,27 +1,27 @@
-import { Species } from './enums/species';
-import { Type } from './type';
-import * as Utils from '../utils';
-import beautify from 'json-beautify';
-import { TrainerType } from './enums/trainer-type';
-import { TimeOfDay } from './enums/time-of-day';
-import { Biome } from './enums/biome';
-import { SpeciesFormEvolution } from './pokemon-evolutions';
+import { Species } from "./enums/species";
+import { Type } from "./type";
+import * as Utils from "../utils";
+import beautify from "json-beautify";
+import { TrainerType } from "./enums/trainer-type";
+import { TimeOfDay } from "./enums/time-of-day";
+import { Biome } from "./enums/biome";
+import { SpeciesFormEvolution } from "./pokemon-evolutions";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1) {
-    return 'Somewhere you can\'t remember';
+    return "Somewhere you can't remember";
   }
   switch (biome) {
   case Biome.GRASS:
-    return 'Grassy Field';
+    return "Grassy Field";
   case Biome.RUINS:
-    return 'Ancient Ruins';
+    return "Ancient Ruins";
   case Biome.ABYSS:
-    return 'The Abyss';
+    return "The Abyss";
   case Biome.SPACE:
-    return 'Stratosphere';
+    return "Stratosphere";
   case Biome.END:
-    return 'Final Destination';
+    return "Final Destination";
   default:
     return Utils.toReadableString(Biome[biome]);
   }
@@ -7677,7 +7677,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   traverseBiome(Biome.TOWN, 0);
   biomeDepths[Biome.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: integer, value: integer) => Math.max(max, value), 0) + 1, 1 ];
 
-  import('./pokemon-evolutions').then(pe => {
+  import("./pokemon-evolutions").then(pe => {
     const pokemonEvolutions = pe.pokemonEvolutions;
     for (const biome of Utils.getEnumValues(Biome)) {
       biomePokemonPools[biome] = {};
@@ -7824,7 +7824,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
           pokemonOutput[biome][tier][timeOfDay] = [];
 
           for (const f of biomePokemonPools[b][t][tod]) {
-            if (typeof f === 'number') {
+            if (typeof f === "number") {
               pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
             } else {
               const tree = {};
@@ -7851,8 +7851,8 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       }
     }
 
-    console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, '$1Species.$2').replace(/"(\d+)": /g, '$1: ').replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, '$1[TimeOfDay.$2]').replace(/(    )"(.*?)"/g, '$1[BiomePoolTier.$2]').replace(/(  )"(.*?)"/g, '$1[Biome.$2]'));
-    console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, '$1TrainerType.$2').replace(/"(\d+)": /g, '$1: ').replace(/(    )"(.*?)"/g, '$1[BiomePoolTier.$2]').replace(/(  )"(.*?)"/g, '$1[Biome.$2]'));
+    console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+    console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
   }
 
   /*for (let pokemon of allSpecies) {

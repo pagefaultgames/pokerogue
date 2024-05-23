@@ -2,8 +2,8 @@
  * Generic pad mapping
  */
 const pad_generic = {
-  padID: 'Generic',
-  padType: 'generic',
+  padID: "Generic",
+  padType: "generic",
   gamepadMapping: {
     RC_S: 0,
     RC_E: 1,

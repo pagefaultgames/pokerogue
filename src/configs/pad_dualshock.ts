@@ -2,8 +2,8 @@
  * Dualshock mapping
  */
 const pad_dualshock = {
-  padID: 'Dualshock',
-  padType: 'Sony',
+  padID: "Dualshock",
+  padType: "Sony",
   gamepadMapping: {
     RC_S: 0,
     RC_E: 1,

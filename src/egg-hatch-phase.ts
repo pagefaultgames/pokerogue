@@ -1,17 +1,17 @@
-import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
-import { Phase } from './phase';
-import BattleScene, { AnySound } from './battle-scene';
-import * as Utils from './utils';
-import { Mode } from './ui/ui';
-import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from './data/egg';
-import EggHatchSceneHandler from './ui/egg-hatch-scene-handler';
-import { Species } from './data/enums/species';
-import { PlayerPokemon } from './field/pokemon';
-import { getPokemonSpecies, speciesStarters } from './data/pokemon-species';
-import { achvs } from './system/achv';
-import { pokemonPrevolutions } from './data/pokemon-evolutions';
-import { EggTier } from './data/enums/egg-type';
-import PokemonInfoContainer from './ui/pokemon-info-container';
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { Phase } from "./phase";
+import BattleScene, { AnySound } from "./battle-scene";
+import * as Utils from "./utils";
+import { Mode } from "./ui/ui";
+import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
+import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
+import { Species } from "./data/enums/species";
+import { PlayerPokemon } from "./field/pokemon";
+import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import { achvs } from "./system/achv";
+import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { EggTier } from "./data/enums/egg-type";
+import PokemonInfoContainer from "./ui/pokemon-info-container";
 
 export class EggHatchPhase extends Phase {
   private egg: Egg;
@@ -65,17 +65,17 @@ export class EggHatchPhase extends Phase {
 
       this.eggHatchContainer = this.eggHatchHandler.eggHatchContainer;
 
-      this.eggHatchBg = this.scene.add.image(0, 0, 'default_bg');
+      this.eggHatchBg = this.scene.add.image(0, 0, "default_bg");
       this.eggHatchBg.setOrigin(0, 0);
       this.eggHatchContainer.add(this.eggHatchBg);
 
       this.eggContainer = this.scene.add.container(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2);
 
-      this.eggSprite = this.scene.add.sprite(0, 0, 'egg', `egg_${this.egg.getKey()}`);
-      this.eggCrackSprite = this.scene.add.sprite(0, 0, 'egg_crack', '0');
+      this.eggSprite = this.scene.add.sprite(0, 0, "egg", `egg_${this.egg.getKey()}`);
+      this.eggCrackSprite = this.scene.add.sprite(0, 0, "egg_crack", "0");
       this.eggCrackSprite.setVisible(false);
 
-      this.eggLightraysOverlay = this.scene.add.sprite((-this.eggHatchBg.displayWidth / 2) + 4, -this.eggHatchBg.displayHeight / 2, 'egg_lightrays', '3');
+      this.eggLightraysOverlay = this.scene.add.sprite((-this.eggHatchBg.displayWidth / 2) + 4, -this.eggHatchBg.displayHeight / 2, "egg_lightrays", "3");
       this.eggLightraysOverlay.setOrigin(0, 0);
       this.eggLightraysOverlay.setVisible(false);
 
@@ -85,14 +85,14 @@ export class EggHatchPhase extends Phase {
       this.eggHatchContainer.add(this.eggContainer);
 
       const getPokemonSprite = () => {
-        const ret = this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, 'pkmn__sub');
+        const ret = this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, "pkmn__sub");
         ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
         return ret;
       };
 
       this.eggHatchContainer.add((this.pokemonSprite = getPokemonSprite()));
 
-      this.pokemonShinySparkle = this.scene.add.sprite(this.pokemonSprite.x, this.pokemonSprite.y, 'shiny');
+      this.pokemonShinySparkle = this.scene.add.sprite(this.pokemonSprite.x, this.pokemonSprite.y, "shiny");
       this.pokemonShinySparkle.setVisible(false);
 
       this.eggHatchContainer.add(this.pokemonShinySparkle);
@@ -121,7 +121,7 @@ export class EggHatchPhase extends Phase {
 
         this.scene.time.delayedCall(1000, () => {
           if (!this.hatched) {
-            this.evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
+            this.evolutionBgm = this.scene.playSoundWithoutBgm("evolution");
           }
         });
 
@@ -140,8 +140,8 @@ export class EggHatchPhase extends Phase {
                 return;
               }
               this.doSpray(2, this.eggSprite.displayHeight / -4);
-              this.eggCrackSprite.setFrame('1');
-              this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('2'));
+              this.eggCrackSprite.setFrame("1");
+              this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame("2"));
               this.doEggShake(4).then(() => {
                 if (this.hatched) {
                   return;
@@ -150,10 +150,10 @@ export class EggHatchPhase extends Phase {
                   if (this.hatched) {
                     return;
                   }
-                  this.scene.playSound('egg_crack');
+                  this.scene.playSound("egg_crack");
                   this.doSpray(4);
-                  this.eggCrackSprite.setFrame('3');
-                  this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('4'));
+                  this.eggCrackSprite.setFrame("3");
+                  this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame("4"));
                   this.doEggShake(8, 2).then(() => {
                     if (!this.hatched) {
                       this.doHatch();
@@ -185,17 +185,17 @@ export class EggHatchPhase extends Phase {
       if (count === undefined) {
         count = 0;
       }
-      this.scene.playSound('pb_move');
+      this.scene.playSound("pb_move");
       this.scene.tweens.add({
         targets: this.eggContainer,
         x: `-=${intensity / (count ? 1 : 2)}`,
-        ease: 'Sine.easeInOut',
+        ease: "Sine.easeInOut",
         duration: 125,
         onComplete: () => {
           this.scene.tweens.add({
             targets: this.eggContainer,
             x: `+=${intensity}`,
-            ease: 'Sine.easeInOut',
+            ease: "Sine.easeInOut",
             duration: 250,
             onComplete: () => {
               count++;
@@ -205,7 +205,7 @@ export class EggHatchPhase extends Phase {
               this.scene.tweens.add({
                 targets: this.eggContainer,
                 x: `-=${intensity / 2}`,
-                ease: 'Sine.easeInOut',
+                ease: "Sine.easeInOut",
                 duration: 125,
                 onComplete: () => resolve()
               });
@@ -236,15 +236,15 @@ export class EggHatchPhase extends Phase {
       SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
     }
     for (let e = 0; e < 5; e++) {
-      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound('egg_hatch', { volume: 1 - (e * 0.2) }));
+      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound("egg_hatch", { volume: 1 - (e * 0.2) }));
     }
     this.eggLightraysOverlay.setVisible(true);
-    this.eggLightraysOverlay.play('egg_lightrays');
+    this.eggLightraysOverlay.play("egg_lightrays");
     this.scene.tweens.add({
       duration: Utils.fixedInt(125),
       targets: this.eggHatchOverlay,
       alpha: 1,
-      ease: 'Cubic.easeIn',
+      ease: "Cubic.easeIn",
       onComplete: () => {
         this.skipped = false;
         this.canSkip = true;
@@ -274,23 +274,23 @@ export class EggHatchPhase extends Phase {
     }
     this.eggContainer.setVisible(false);
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
-    this.pokemonSprite.setPipelineData('ignoreTimeTint', true);
-    this.pokemonSprite.setPipelineData('spriteKey', this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData('shiny', this.pokemon.shiny);
-    this.pokemonSprite.setPipelineData('variant', this.pokemon.variant);
+    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
+    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
+    this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
+    this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
     this.scene.time.delayedCall(Utils.fixedInt(250), () => {
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(Utils.fixedInt(500), () => {
-          this.pokemonShinySparkle.play(`sparkle${this.pokemon.variant ? `_${this.pokemon.variant + 1}` : ''}`);
-          this.scene.playSound('sparkle');
+          this.pokemonShinySparkle.play(`sparkle${this.pokemon.variant ? `_${this.pokemon.variant + 1}` : ""}`);
+          this.scene.playSound("sparkle");
         });
       }
       this.scene.time.delayedCall(Utils.fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
-        this.scene.playSoundWithoutBgm('evolution_fanfare');
+        this.scene.playSoundWithoutBgm("evolution_fanfare");
         
         this.scene.ui.showText(`${this.pokemon.name} hatched from the egg!`, null, () => {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
@@ -308,7 +308,7 @@ export class EggHatchPhase extends Phase {
       duration: Utils.fixedInt(this.skipped ? 500 : 3000),
       targets: this.eggHatchOverlay,
       alpha: 0,
-      ease: 'Cubic.easeOut'
+      ease: "Cubic.easeOut"
     });
   }
 
@@ -329,8 +329,8 @@ export class EggHatchPhase extends Phase {
   doSprayParticle(trigIndex: integer, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
-    const shardKey = !this.egg.isManaphyEgg() ? this.egg.tier.toString() : '1';
-    const particle = this.scene.add.image(initialX, initialY, 'egg_shard', `${shardKey}_${Math.floor(trigIndex / 2)}`);
+    const shardKey = !this.egg.isManaphyEgg() ? this.egg.tier.toString() : "1";
+    const particle = this.scene.add.image(initialX, initialY, "egg_shard", `${shardKey}_${Math.floor(trigIndex / 2)}`);
     this.eggHatchContainer.add(particle);
 
     let f = 0;

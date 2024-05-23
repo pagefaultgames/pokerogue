@@ -2,8 +2,8 @@
  * 081f-e401 - UnlicensedSNES
  */
 const pad_unlicensedSNES = {
-  padID: '081f-e401',
-  padType: 'snes',
+  padID: "081f-e401",
+  padType: "snes",
   gamepadMapping : {
     RC_S: 2,
     RC_E: 1,

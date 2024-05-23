@@ -1,26 +1,26 @@
-import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from '../phases';
-import BattleScene from '../battle-scene';
-import { getLevelTotalExp } from '../data/exp';
-import { PokeballType } from '../data/pokeball';
-import Pokemon, { PlayerPokemon } from '../field/pokemon';
-import { Stat } from '../data/pokemon-stat';
-import { addTextObject, TextStyle } from '../ui/text';
-import { Type } from '../data/type';
-import { EvolutionPhase } from '../evolution-phase';
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from '../data/pokemon-evolutions';
-import { getPokemonMessage } from '../messages';
-import * as Utils from '../utils';
-import { TempBattleStat } from '../data/temp-battle-stat';
-import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
-import { StatusEffect, getStatusEffectHealText } from '../data/status-effect';
-import { achvs } from '../system/achv';
-import { VoucherType } from '../system/voucher';
-import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
-import { Nature } from '#app/data/nature';
-import { BattlerTagType } from '#app/data/enums/battler-tag-type';
-import * as Overrides from '../overrides';
-import { ModifierType, modifierTypes } from './modifier-type';
+import * as ModifierTypes from "./modifier-type";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
+import BattleScene from "../battle-scene";
+import { getLevelTotalExp } from "../data/exp";
+import { PokeballType } from "../data/pokeball";
+import Pokemon, { PlayerPokemon } from "../field/pokemon";
+import { Stat } from "../data/pokemon-stat";
+import { addTextObject, TextStyle } from "../ui/text";
+import { Type } from "../data/type";
+import { EvolutionPhase } from "../evolution-phase";
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { getPokemonMessage } from "../messages";
+import * as Utils from "../utils";
+import { TempBattleStat } from "../data/temp-battle-stat";
+import { BerryType, getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
+import { achvs } from "../system/achv";
+import { VoucherType } from "../system/voucher";
+import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { Nature } from "#app/data/nature";
+import { BattlerTagType } from "#app/data/enums/battler-tag-type";
+import * as Overrides from "../overrides";
+import { ModifierType, modifierTypes } from "./modifier-type";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -61,13 +61,13 @@ export class ModifierBar extends Phaser.GameObjects.Container {
       this.add(icon);
       this.setModifierIconPosition(icon, visibleIconModifiers.length);
       icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
-      icon.on('pointerover', () => {
+      icon.on("pointerover", () => {
         (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.getDescription(this.scene as BattleScene));
         if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
           thisArg.updateModifierOverflowVisibility(true);
         }
       });
-      icon.on('pointerout', () => {
+      icon.on("pointerout", () => {
         (this.scene as BattleScene).ui.hideTooltip();
         if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
           thisArg.updateModifierOverflowVisibility(false);
@@ -174,7 +174,7 @@ export abstract class PersistentModifier extends Modifier {
   getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
     const container = scene.add.container(0, 0);
 
-    const item = scene.add.sprite(0, 12, 'items');
+    const item = scene.add.sprite(0, 12, "items");
     item.setFrame(this.type.iconImage);
     item.setOrigin(0, 0.5);
     container.add(item);
@@ -197,7 +197,7 @@ export abstract class PersistentModifier extends Modifier {
       return null;
     }
 
-    const text = scene.add.bitmapText(10, 15, 'item-count', this.stackCount.toString(), 11);
+    const text = scene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
     text.letterSpacing = -0.5;
     if (this.getStackCount() >= this.getMaxStackCount(scene)) {
       text.setTint(0xf89890);
@@ -276,9 +276,9 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   getIcon(scene: BattleScene): Phaser.GameObjects.Container {
     const container = super.getIcon(scene);
 
-    const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: '66px', color: '#f89890' });
+    const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: "66px", color: "#f89890" });
     battleCountText.setShadow(0, 0, null);
-    battleCountText.setStroke('#984038', 16);
+    battleCountText.setStroke("#984038", 16);
     battleCountText.setOrigin(1, 0);
     container.add(battleCountText);
 
@@ -472,10 +472,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
       container.add(pokemonIcon);
 
-      const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, 'items');
+      const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, "items");
       item.setScale(0.5);
       item.setOrigin(0, 0.5);
-      item.setTexture('items', this.type.iconImage);
+      item.setTexture("items", this.type.iconImage);
       container.add(item);
 
       const stackText = this.getIconStackText(scene);
@@ -533,9 +533,9 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
     const container = super.getIcon(scene, forSummary);
 
     if (this.getPokemon(scene).isPlayer()) {
-      const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: '66px', color: '#f89890' });
+      const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: "66px", color: "#f89890" });
       battleCountText.setShadow(0, 0, null);
-      battleCountText.setStroke('#984038', 16);
+      battleCountText.setStroke("#984038", 16);
       battleCountText.setOrigin(1, 0);
       container.add(battleCountText);
     }
@@ -688,7 +688,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 3 && typeof args[1] === 'number' && args[2] instanceof Utils.NumberHolder;
+    return super.shouldApply(args) && args.length === 3 && typeof args[1] === "number" && args[2] instanceof Utils.NumberHolder;
   }
 
   /**
@@ -1048,7 +1048,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && (this.fainted || (args.length > 1 && typeof(args[1]) === 'number'));
+    return super.shouldApply(args) && (this.fainted || (args.length > 1 && typeof(args[1]) === "number"));
   }
 
   apply(args: any[]): boolean {
@@ -1238,13 +1238,13 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
 
     let matchingEvolution = pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
       ? pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
-        && (e.evoFormKey === null || (e.preFormKey || '') === pokemon.getFormKey())
+        && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFormKey())
         && (!e.condition || e.condition.predicate(pokemon)))
       : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
       matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
-        && (e.evoFormKey === null || (e.preFormKey || '') === pokemon.getFusionFormKey())
+        && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFusionFormKey())
         && (!e.condition || e.condition.predicate(pokemon)));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
@@ -1720,7 +1720,7 @@ export class MoneyInterestModifier extends PersistentModifier {
     const interestAmount = Math.floor(scene.money * 0.1 * this.getStackCount());
     scene.addMoney(interestAmount);
 
-    scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString('en-US')}\nfrom the ${this.type.name}!`, null, true);
+    scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString("en-US")}\nfrom the ${this.type.name}!`, null, true);
 
     return true;
   }
@@ -2104,7 +2104,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), getPokemonMessage(pokemon, '\nrestored some HP!'), true, false, false, false, true));
+        Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), getPokemonMessage(pokemon, "\nrestored some HP!"), true, false, false, false, true));
       return true;
     }
 

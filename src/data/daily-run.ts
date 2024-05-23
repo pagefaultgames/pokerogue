@@ -1,11 +1,11 @@
-import BattleScene from '../battle-scene';
-import { PlayerPokemon } from '../field/pokemon';
-import { GameModes, gameModes } from '../game-mode';
-import { Starter } from '../ui/starter-select-ui-handler';
-import * as Utils from '../utils';
-import { Species } from './enums/species';
-import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from './pokemon-species';
-import { PartyMemberStrength } from './enums/party-member-strength';
+import BattleScene from "../battle-scene";
+import { PlayerPokemon } from "../field/pokemon";
+import { GameModes, gameModes } from "../game-mode";
+import { Starter } from "../ui/starter-select-ui-handler";
+import * as Utils from "../utils";
+import { Species } from "./enums/species";
+import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
+import { PartyMemberStrength } from "./enums/party-member-strength";
 
 export interface DailyRunConfig {
   seed: integer;
@@ -14,7 +14,7 @@ export interface DailyRunConfig {
 
 export function fetchDailyRunSeed(): Promise<string> {
   return new Promise<string>((resolve, reject) => {
-    Utils.apiFetch('daily/seed').then(response => {
+    Utils.apiFetch("daily/seed").then(response => {
       if (!response.ok) {
         resolve(null);
         return;

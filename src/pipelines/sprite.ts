@@ -1,9 +1,9 @@
-import BattleScene from '../battle-scene';
-import { variantColorCache } from '#app/data/variant';
-import Pokemon from '../field/pokemon';
-import Trainer from '../field/trainer';
-import FieldSpritePipeline from './field-sprite';
-import * as Utils from '../utils';
+import BattleScene from "../battle-scene";
+import { variantColorCache } from "#app/data/variant";
+import Pokemon from "../field/pokemon";
+import Trainer from "../field/trainer";
+import FieldSpritePipeline from "./field-sprite";
+import * as Utils from "../utils";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -318,7 +318,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
   constructor(game: Phaser.Game) {
     super(game, {
       game: game,
-      name: 'sprite',
+      name: "sprite",
       fragShader: spriteFragShader,
       vertShader: spriteVertShader
     });
@@ -329,16 +329,16 @@ export default class SpritePipeline extends FieldSpritePipeline {
   onPreRender(): void {
     super.onPreRender();
 
-    this.set1f('teraTime', 0);
-    this.set3fv('teraColor', [ 0, 0, 0 ]);
-    this.set1i('hasShadow', 0);
-    this.set1i('yCenter', 0);
-    this.set2f('relPosition', 0, 0);
-    this.set2f('texFrameUv', 0, 0);
-    this.set2f('size', 0, 0);
-    this.set2f('texSize', 0, 0);
-    this.set1f('yOffset', 0);
-    this.set4fv('tone', this._tone);
+    this.set1f("teraTime", 0);
+    this.set3fv("teraColor", [ 0, 0, 0 ]);
+    this.set1i("hasShadow", 0);
+    this.set1i("yCenter", 0);
+    this.set2f("relPosition", 0, 0);
+    this.set2f("texFrameUv", 0, 0);
+    this.set2f("size", 0, 0);
+    this.set2f("texSize", 0, 0);
+    this.set1f("yOffset", 0);
+    this.set4fv("tone", this._tone);
   }
 
   onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -347,11 +347,11 @@ export default class SpritePipeline extends FieldSpritePipeline {
     const sprite = (gameObject as Phaser.GameObjects.Sprite);
 
     const data = sprite.pipelineData;
-    const tone = data['tone'] as number[];
-    const teraColor = data['teraColor'] as integer[] ?? [ 0, 0, 0 ];
-    const hasShadow = data['hasShadow'] as boolean;
-    const ignoreFieldPos = data['ignoreFieldPos'] as boolean;
-    const ignoreOverride = data['ignoreOverride'] as boolean;
+    const tone = data["tone"] as number[];
+    const teraColor = data["teraColor"] as integer[] ?? [ 0, 0, 0 ];
+    const hasShadow = data["hasShadow"] as boolean;
+    const ignoreFieldPos = data["ignoreFieldPos"] as boolean;
+    const ignoreOverride = data["ignoreOverride"] as boolean;
 
     const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
     const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
@@ -366,22 +366,22 @@ export default class SpritePipeline extends FieldSpritePipeline {
     if (sprite.originY === 0.5) {
       position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1) + (!ignoreFieldPos ? (sprite.y - field.y) : 0);
     }
-    this.set1f('teraTime', (this.game.getTime() % 500000) / 500000);
-    this.set3fv('teraColor', teraColor.map(c => c / 255));
-    this.set1i('hasShadow', hasShadow ? 1 : 0);
-    this.set1i('yCenter', sprite.originY === 0.5 ? 1 : 0);
-    this.set1f('fieldScale', field?.scale || 1);
-    this.set2f('relPosition', position[0], position[1]);
-    this.set2f('texFrameUv', sprite.frame.u0, sprite.frame.v0);
-    this.set2f('size', sprite.frame.width, sprite.height);
-    this.set2f('texSize', sprite.texture.source[0].width, sprite.texture.source[0].height);
-    this.set1f('yOffset', sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
-    this.set4fv('tone', tone);
-    this.bindTexture(this.game.textures.get('tera').source[0].glTexture, 1);
+    this.set1f("teraTime", (this.game.getTime() % 500000) / 500000);
+    this.set3fv("teraColor", teraColor.map(c => c / 255));
+    this.set1i("hasShadow", hasShadow ? 1 : 0);
+    this.set1i("yCenter", sprite.originY === 0.5 ? 1 : 0);
+    this.set1f("fieldScale", field?.scale || 1);
+    this.set2f("relPosition", position[0], position[1]);
+    this.set2f("texFrameUv", sprite.frame.u0, sprite.frame.v0);
+    this.set2f("size", sprite.frame.width, sprite.height);
+    this.set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height);
+    this.set1f("yOffset", sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
+    this.set4fv("tone", tone);
+    this.bindTexture(this.game.textures.get("tera").source[0].glTexture, 1);
         
     if ((gameObject.scene as BattleScene).fusionPaletteSwaps) {
-      const spriteColors = ((ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || []) as number[][];
-      const fusionSpriteColors = ((ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || []) as number[][];
+      const spriteColors = ((ignoreOverride && data["spriteColorsBase"]) || data["spriteColors"] || []) as number[][];
+      const fusionSpriteColors = ((ignoreOverride && data["fusionSpriteColorsBase"]) || data["fusionSpriteColors"] || []) as number[][];
 
       const emptyColors = [ 0, 0, 0, 0 ];
       const flatSpriteColors: integer[] = [];
@@ -391,8 +391,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
         flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, ...(c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors));
       }
 
-      this.set4iv('spriteColors', flatSpriteColors.flat());
-      this.set4iv('fusionSpriteColors', flatFusionSpriteColors.flat());
+      this.set4iv("spriteColors", flatSpriteColors.flat());
+      this.set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
     }
   }
 
@@ -401,8 +401,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
       const sprite = (gameObject as Phaser.GameObjects.Sprite);
       const data = sprite.pipelineData;
 
-      const variant: integer = data.hasOwnProperty('variant')
-        ? data['variant']
+      const variant: integer = data.hasOwnProperty("variant")
+        ? data["variant"]
         : sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.variant
           : 0;
       let variantColors;
@@ -411,8 +411,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
       const flatBaseColors: integer[] = [];
       const flatVariantColors: number[] = [];
 
-      if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data['shiny'])
-                && (variantColors = variantColorCache[sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.getSprite().texture.key : data['spriteKey']]) && variantColors.hasOwnProperty(variant)) {
+      if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data["shiny"])
+                && (variantColors = variantColorCache[sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.getSprite().texture.key : data["spriteKey"]]) && variantColors.hasOwnProperty(variant)) {
         const baseColors = Object.keys(variantColors[variant]);
         for (let c = 0; c < 32; c++) {
           if (c < baseColors.length) {
@@ -432,8 +432,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
         }
       }
 
-      this.set4iv('baseVariantColors', flatBaseColors.flat());
-      this.set4fv('variantColors', flatVariantColors.flat());
+      this.set4iv("baseVariantColors", flatBaseColors.flat());
+      this.set4fv("variantColors", flatVariantColors.flat());
     }
 
     super.onBatch(gameObject);
@@ -444,9 +444,9 @@ export default class SpritePipeline extends FieldSpritePipeline {
     texture?: Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper, unit?: number): boolean {
     const sprite = gameObject as Phaser.GameObjects.Sprite;
 
-    this.set1f('vCutoff', v1);
+    this.set1f("vCutoff", v1);
 
-    const hasShadow = sprite.pipelineData['hasShadow'] as boolean;
+    const hasShadow = sprite.pipelineData["hasShadow"] as boolean;
     if (hasShadow) {
       const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
       const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;

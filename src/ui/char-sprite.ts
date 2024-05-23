@@ -1,5 +1,5 @@
-import BattleScene from '../battle-scene';
-import * as Utils from '../utils';
+import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
 
 export default class CharSprite extends Phaser.GameObjects.Container {
   private sprite: Phaser.GameObjects.Sprite;
@@ -15,7 +15,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
   setup(): void {
     [ this.sprite, this.transitionSprite ] = new Array(2).fill(null).map(() => {
-      const ret = this.scene.add.sprite(0, 0, '', '');
+      const ret = this.scene.add.sprite(0, 0, "", "");
       ret.setOrigin(0.5, 1);
       this.add(ret);
       return ret;
@@ -29,7 +29,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
   showCharacter(key: string, variant: string): Promise<void> {
     return new Promise(resolve => {
-      if (!key.startsWith('c_')) {
+      if (!key.startsWith("c_")) {
         key = `c_${key}`;
       }
       if (this.shown) {
@@ -51,7 +51,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         targets: this,
         x: (this.scene.game.canvas.width / 6) - 102,
         duration: 750,
-        ease: 'Cubic.easeOut',
+        ease: "Cubic.easeOut",
         onComplete: () => {
           resolve();
         }
@@ -76,7 +76,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         targets: this.transitionSprite,
         alpha: 1,
         duration: 250,
-        ease: 'Sine.easeIn',
+        ease: "Sine.easeIn",
         onComplete: () => {
           this.sprite.setTexture(this.key, variant);
           this.transitionSprite.setVisible(false);
@@ -97,7 +97,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         targets: this,
         x: (this.scene.game.canvas.width / 6) + 32,
         duration: 750,
-        ease: 'Cubic.easeIn',
+        ease: "Cubic.easeIn",
         onComplete: () => {
           if (!this.shown) {
             this.setVisible(false);

@@ -1,13 +1,13 @@
-import { Biome } from './enums/biome';
-import { getPokemonMessage, getPokemonPrefix } from '../messages';
-import Pokemon from '../field/pokemon';
-import { Type } from './type';
-import Move, { AttackMove } from './move';
-import * as Utils from '../utils';
-import BattleScene from '../battle-scene';
-import { SuppressWeatherEffectAbAttr } from './ability';
-import { TerrainType } from './terrain';
-import i18next from 'i18next';
+import { Biome } from "./enums/biome";
+import { getPokemonMessage, getPokemonPrefix } from "../messages";
+import Pokemon from "../field/pokemon";
+import { Type } from "./type";
+import Move, { AttackMove } from "./move";
+import * as Utils from "../utils";
+import BattleScene from "../battle-scene";
+import { SuppressWeatherEffectAbAttr } from "./ability";
+import { TerrainType } from "./terrain";
+import i18next from "i18next";
 
 export enum WeatherType {
   NONE,
@@ -130,23 +130,23 @@ export class Weather {
 export function getWeatherStartMessage(weatherType: WeatherType): string {
   switch (weatherType) {
   case WeatherType.SUNNY:
-    return i18next.t('weather:sunnyStartMessage');
+    return i18next.t("weather:sunnyStartMessage");
   case WeatherType.RAIN:
-    return i18next.t('weather:rainStartMessage');
+    return i18next.t("weather:rainStartMessage");
   case WeatherType.SANDSTORM:
-    return i18next.t('weather:sandstormStartMessage');
+    return i18next.t("weather:sandstormStartMessage");
   case WeatherType.HAIL:
-    return i18next.t('weather:hailStartMessage');
+    return i18next.t("weather:hailStartMessage");
   case WeatherType.SNOW:
-    return i18next.t('weather:snowStartMessage');
+    return i18next.t("weather:snowStartMessage");
   case WeatherType.FOG:
-    return i18next.t('weather:fogStartMessage');
+    return i18next.t("weather:fogStartMessage");
   case WeatherType.HEAVY_RAIN:
-    return i18next.t('weather:heavyRainStartMessage');
+    return i18next.t("weather:heavyRainStartMessage");
   case WeatherType.HARSH_SUN:
-    return i18next.t('weather:harshSunStartMessage');
+    return i18next.t("weather:harshSunStartMessage");
   case WeatherType.STRONG_WINDS:
-    return i18next.t('weather:strongWindsStartMessage');
+    return i18next.t("weather:strongWindsStartMessage");
   }
 
   return null;
@@ -155,23 +155,23 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
 export function getWeatherLapseMessage(weatherType: WeatherType): string {
   switch (weatherType) {
   case WeatherType.SUNNY:
-    return i18next.t('weather:sunnyLapseMessage');
+    return i18next.t("weather:sunnyLapseMessage");
   case WeatherType.RAIN:
-    return i18next.t('weather:rainLapseMessage');
+    return i18next.t("weather:rainLapseMessage");
   case WeatherType.SANDSTORM:
-    return i18next.t('weather:sandstormLapseMessage');
+    return i18next.t("weather:sandstormLapseMessage");
   case WeatherType.HAIL:
-    return i18next.t('weather:hailLapseMessage');
+    return i18next.t("weather:hailLapseMessage");
   case WeatherType.SNOW:
-    return i18next.t('weather:snowLapseMessage');
+    return i18next.t("weather:snowLapseMessage");
   case WeatherType.FOG:
-    return i18next.t('weather:fogLapseMessage');
+    return i18next.t("weather:fogLapseMessage");
   case WeatherType.HEAVY_RAIN:
-    return i18next.t('weather:heavyRainLapseMessage');
+    return i18next.t("weather:heavyRainLapseMessage");
   case WeatherType.HARSH_SUN:
-    return i18next.t('weather:harshSunLapseMessage');
+    return i18next.t("weather:harshSunLapseMessage");
   case WeatherType.STRONG_WINDS:
-    return i18next.t('weather:strongWindsLapseMessage');
+    return i18next.t("weather:strongWindsLapseMessage");
   }
 
   return null;
@@ -180,9 +180,9 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
 export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
   switch (weatherType) {
   case WeatherType.SANDSTORM:
-    return i18next.t('weather:sandstormDamageMessage', {pokemonPrefix: getPokemonPrefix(pokemon), pokemonName: pokemon.name});
+    return i18next.t("weather:sandstormDamageMessage", {pokemonPrefix: getPokemonPrefix(pokemon), pokemonName: pokemon.name});
   case WeatherType.HAIL:
-    return i18next.t('weather:hailDamageMessage', {pokemonPrefix: getPokemonPrefix(pokemon), pokemonName: pokemon.name});
+    return i18next.t("weather:hailDamageMessage", {pokemonPrefix: getPokemonPrefix(pokemon), pokemonName: pokemon.name});
   }
 
   return null;
@@ -191,23 +191,23 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
 export function getWeatherClearMessage(weatherType: WeatherType): string {
   switch (weatherType) {
   case WeatherType.SUNNY:
-    return i18next.t('weather:sunnyClearMessage');
+    return i18next.t("weather:sunnyClearMessage");
   case WeatherType.RAIN:
-    return i18next.t('weather:rainClearMessage');
+    return i18next.t("weather:rainClearMessage");
   case WeatherType.SANDSTORM:
-    return i18next.t('weather:sandstormClearMessage');
+    return i18next.t("weather:sandstormClearMessage");
   case WeatherType.HAIL:
-    return i18next.t('weather:hailClearMessage');
+    return i18next.t("weather:hailClearMessage");
   case WeatherType.SNOW:
-    return i18next.t('weather:snowClearMessage');
+    return i18next.t("weather:snowClearMessage");
   case WeatherType.FOG:
-    return i18next.t('weather:fogClearMessage');
+    return i18next.t("weather:fogClearMessage");
   case WeatherType.HEAVY_RAIN:
-    return i18next.t('weather:heavyRainClearMessage');
+    return i18next.t("weather:heavyRainClearMessage");
   case WeatherType.HARSH_SUN:
-    return i18next.t('weather:harshSunClearMessage');
+    return i18next.t("weather:harshSunClearMessage");
   case WeatherType.STRONG_WINDS:
-    return i18next.t('weather:strongWindsClearMessage');
+    return i18next.t("weather:strongWindsClearMessage");
   }
 
   return null;
@@ -216,32 +216,32 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
 export function getTerrainStartMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return 'Mist swirled around the battlefield!';
+    return "Mist swirled around the battlefield!";
   case TerrainType.ELECTRIC:
-    return 'An electric current ran across the battlefield!';
+    return "An electric current ran across the battlefield!";
   case TerrainType.GRASSY:
-    return 'Grass grew to cover the battlefield!';
+    return "Grass grew to cover the battlefield!";
   case TerrainType.PSYCHIC:
-    return 'The battlefield got weird!';
+    return "The battlefield got weird!";
   }
 }
 
 export function getTerrainClearMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return 'The mist disappeared from the battlefield.';
+    return "The mist disappeared from the battlefield.";
   case TerrainType.ELECTRIC:
-    return 'The electricity disappeared from the battlefield.';
+    return "The electricity disappeared from the battlefield.";
   case TerrainType.GRASSY:
-    return 'The grass disappeared from the battlefield.';
+    return "The grass disappeared from the battlefield.";
   case TerrainType.PSYCHIC:
-    return 'The weirdness disappeared from the battlefield!';
+    return "The weirdness disappeared from the battlefield!";
   }
 }
 
 export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
   if (terrainType === TerrainType.MISTY) {
-    return getPokemonMessage(pokemon, ' surrounds itself with a protective mist!');
+    return getPokemonMessage(pokemon, " surrounds itself with a protective mist!");
   }
   return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain!`);
 }

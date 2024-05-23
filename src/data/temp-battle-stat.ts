@@ -1,4 +1,4 @@
-import { BattleStat, getBattleStatName } from './battle-stat';
+import { BattleStat, getBattleStatName } from "./battle-stat";
 
 export enum TempBattleStat {
   ATK,
@@ -12,7 +12,7 @@ export enum TempBattleStat {
 
 export function getTempBattleStatName(tempBattleStat: TempBattleStat) {
   if (tempBattleStat === TempBattleStat.CRIT) {
-    return 'critical-hit ratio';
+    return "critical-hit ratio";
   }
   return getBattleStatName(tempBattleStat as integer as BattleStat);
 }
@@ -20,18 +20,18 @@ export function getTempBattleStatName(tempBattleStat: TempBattleStat) {
 export function getTempBattleStatBoosterItemName(tempBattleStat: TempBattleStat) {
   switch (tempBattleStat) {
   case TempBattleStat.ATK:
-    return 'X Attack';
+    return "X Attack";
   case TempBattleStat.DEF:
-    return 'X Defense';
+    return "X Defense";
   case TempBattleStat.SPATK:
-    return 'X Sp. Atk';
+    return "X Sp. Atk";
   case TempBattleStat.SPDEF:
-    return 'X Sp. Def';
+    return "X Sp. Def";
   case TempBattleStat.SPD:
-    return 'X Speed';
+    return "X Speed";
   case TempBattleStat.ACC:
-    return 'X Accuracy';
+    return "X Accuracy";
   case TempBattleStat.CRIT:
-    return 'Dire Hit';
+    return "Dire Hit";
   }
 }

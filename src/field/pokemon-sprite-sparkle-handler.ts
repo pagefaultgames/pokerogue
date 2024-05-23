@@ -1,6 +1,6 @@
-import BattleScene from '../battle-scene';
-import Pokemon from './pokemon';
-import * as Utils from '../utils';
+import BattleScene from "../battle-scene";
+import Pokemon from "./pokemon";
+import * as Utils from "../utils";
 
 export default class PokemonSpriteSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;
@@ -21,7 +21,7 @@ export default class PokemonSpriteSparkleHandler {
   onLapse(): void {
     Array.from(this.sprites.values()).filter(s => !s.scene).map(s => this.sprites.delete(s));
     for (const s of this.sprites.values()) {
-      if (!s.pipelineData['teraColor'] || !(s.pipelineData['teraColor'] as number[]).find(c => c)) {
+      if (!s.pipelineData["teraColor"] || !(s.pipelineData["teraColor"] as number[]).find(c => c)) {
         continue;
       }
       if (!s.visible || (s.parentContainer instanceof Pokemon && !s.parentContainer.parentContainer)) {
@@ -34,12 +34,12 @@ export default class PokemonSpriteSparkleHandler {
       const [ pixelX, pixelY ] = [ Utils.randInt(width), Utils.randInt(height) ];
       const ratioX = s.width / width;
       const ratioY = s.height / height;
-      const pixel = texture.manager.getPixel(pixelX, pixelY, texture.key, '__BASE');
+      const pixel = texture.manager.getPixel(pixelX, pixelY, texture.key, "__BASE");
       if (pixel.alpha) {
         const [ xOffset, yOffset ] = [ -s.originX * s.width, -s.originY * s.height];
-        const sparkle = (s.scene as BattleScene).addFieldSprite(((pokemon?.x || 0) + s.x + pixelX * ratioX + xOffset), ((pokemon?.y || 0) + s.y + pixelY * ratioY + yOffset), 'tera_sparkle');
-        sparkle.pipelineData['ignoreTimeTint'] = s.pipelineData['ignoreTimeTint'];
-        sparkle.play('tera_sparkle');
+        const sparkle = (s.scene as BattleScene).addFieldSprite(((pokemon?.x || 0) + s.x + pixelX * ratioX + xOffset), ((pokemon?.y || 0) + s.y + pixelY * ratioY + yOffset), "tera_sparkle");
+        sparkle.pipelineData["ignoreTimeTint"] = s.pipelineData["ignoreTimeTint"];
+        sparkle.play("tera_sparkle");
         parent.add(sparkle);
         s.scene.time.delayedCall(Utils.fixedInt(Math.floor((1000 / 12) * 13)), () => sparkle.destroy());
       }

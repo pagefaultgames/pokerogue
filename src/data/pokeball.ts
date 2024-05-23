@@ -1,5 +1,5 @@
-import BattleScene from '../battle-scene';
-import i18next from '../plugins/i18n';
+import BattleScene from "../battle-scene";
+import i18next from "../plugins/i18n";
 
 export enum PokeballType {
   POKEBALL,
@@ -13,17 +13,17 @@ export enum PokeballType {
 export function getPokeballAtlasKey(type: PokeballType): string {
   switch (type) {
   case PokeballType.POKEBALL:
-    return 'pb';
+    return "pb";
   case PokeballType.GREAT_BALL:
-    return 'gb';
+    return "gb";
   case PokeballType.ULTRA_BALL:
-    return 'ub';
+    return "ub";
   case PokeballType.ROGUE_BALL:
-    return 'rb';
+    return "rb";
   case PokeballType.MASTER_BALL:
-    return 'mb';
+    return "mb";
   case PokeballType.LUXURY_BALL:
-    return 'lb';
+    return "lb";
   }
 }
 
@@ -31,22 +31,22 @@ export function getPokeballName(type: PokeballType): string {
   let ret: string;
   switch (type) {
   case PokeballType.POKEBALL:
-    ret = i18next.t('pokeball:pokeBall');
+    ret = i18next.t("pokeball:pokeBall");
     break;
   case PokeballType.GREAT_BALL:
-    ret = i18next.t('pokeball:greatBall');
+    ret = i18next.t("pokeball:greatBall");
     break;
   case PokeballType.ULTRA_BALL:
-    ret = i18next.t('pokeball:ultraBall');
+    ret = i18next.t("pokeball:ultraBall");
     break;
   case PokeballType.ROGUE_BALL:
-    ret = i18next.t('pokeball:rogueBall');
+    ret = i18next.t("pokeball:rogueBall");
     break;
   case PokeballType.MASTER_BALL:
-    ret = i18next.t('pokeball:masterBall');
+    ret = i18next.t("pokeball:masterBall");
     break;
   case PokeballType.LUXURY_BALL:
-    ret = i18next.t('pokeball:luxuryBall');
+    ret = i18next.t("pokeball:luxuryBall");
     break;
   }
   return ret;
@@ -97,9 +97,9 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
       targets: pokeball,
       y: y2,
       duration: bouncePower * baseBounceDuration,
-      ease: 'Cubic.easeIn',
+      ease: "Cubic.easeIn",
       onComplete: () => {
-        scene.playSound('pb_bounce_1', { volume: bouncePower });
+        scene.playSound("pb_bounce_1", { volume: bouncePower });
 
         bouncePower = bouncePower > 0.01 ? bouncePower * 0.5 : 0;
 
@@ -111,7 +111,7 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
             targets: pokeball,
             y: bounceY,
             duration: bouncePower * baseBounceDuration,
-            ease: 'Cubic.easeOut',
+            ease: "Cubic.easeOut",
             onComplete: () => doBounce()
           });
         } else if (callback) {
