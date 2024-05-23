@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Amuleto de Cura", description: "Aumenta a eficácia dos movimentos e itens que restauram PS em 10% (exceto Reanimador)" },
     "CANDY_JAR": { name: "Pote de Doces", description: "Aumenta o número de níveis adicionados pelo Doce Raro em 1" },
 
-    "BERRY_POUCH": { name: "Bolsa de Berries", description: "Adiciona uma chance de 25% de que uma berry usada não seja consumida" },
+    "BERRY_POUCH": { name: "Bolsa de Berries", description: "Adiciona uma chance de 33% de que uma berry usada não seja consumida" },
 
     "FOCUS_BAND": { name: "Bandana", description: "Adiciona uma chance de 10% de sobreviver com 1 PS após ser danificado o suficiente para desmaiar" },
 

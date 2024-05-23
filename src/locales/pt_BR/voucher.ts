@@ -7,5 +7,5 @@ export const voucher: SimpleTranslationEntries = {
   "eggVoucherPremium": "Voucher de Ovo Premium",
   "eggVoucherGold": "Voucher de Ovo Dourado",
   "locked": "Bloqueado",
-  "defeatTrainer": "Derrote {{trainerName}}",
+  "defeatTrainer": "Derrote {{trainerName}}"
 } as const;
