@@ -3743,7 +3743,7 @@ export class MoneyRewardPhase extends BattlePhase {
 
     this.scene.addMoney(moneyAmount.value);
 
-    const userLocale = navigator.language || 'en-US';
+    const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
     const message = i18next.t("battle:moneyWon", { moneyAmount: formattedMoneyAmount });
 
