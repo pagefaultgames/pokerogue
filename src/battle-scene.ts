@@ -97,7 +97,8 @@ export default class BattleScene extends SceneBase {
 	public showLevelUpStats: boolean = true;
 	public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
 	public enableRetries: boolean = false;
-	public candyUpgradeIconsMode: integer = 0;
+	public candyUpgradeNotification: integer = 0;
+	public candyUpgradeDisplay: integer = 0;
 	public uiTheme: UiTheme = UiTheme.DEFAULT;
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;

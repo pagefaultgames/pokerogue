@@ -693,7 +693,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             icon.setTint(0x808080);
         });
       }
-
+      
       this.starterSelectCallback = args[0] as StarterSelectCallback;
 
       this.starterSelectContainer.setVisible(true);
@@ -961,7 +961,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         return this.scene.reset(true);
                     });
                     // If the setting is not set to 0, update the candy upgrade icon
-                    if (this.scene.candyUpgradeIconsMode !== 0) {
+                    if (this.scene.candyUpgradeNotification !== 0) {
                       this.updateCandyUpgradeIcon(this.cursor);
                     }
                     ui.setMode(Mode.STARTER_SELECT);
@@ -989,7 +989,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         return this.scene.reset(true);
                     });
                     // If the setting is set to 2, update the candy upgrade icon
-                    if (this.scene.candyUpgradeIconsMode === 2) {
+                    if (this.scene.candyUpgradeNotification === 2) {
                       this.updateCandyUpgradeIcon(this.cursor);
                     }
                     this.updateStarterValueLabel(this.cursor);
@@ -1283,6 +1283,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
+        // 'Candy Icon' mode
+        if (this.scene.candyUpgradeDisplay == 0) {
+          // kill the animation if it's running
+
           if (!starterColors[speciesId]) {
             // Default to white if no colors are found
             starterColors[speciesId] = [ 'ffffff', 'ffffff' ];
@@ -1293,12 +1297,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.candyUpgradeOverlayIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
           
           // 'Off' mode
-          if (this.scene.candyUpgradeIconsMode == 0) { 
+          if (this.scene.candyUpgradeNotification == 0) { 
             this.candyUpgradeIcon[s].setVisible(false);
             this.candyUpgradeOverlayIcon[s].setVisible(false);
 
             // 'Only Passive Unlocks' mode
-          } else if (this.scene.candyUpgradeIconsMode == 1) { 
+          } else if (this.scene.candyUpgradeNotification == 1) { 
             this.candyUpgradeIcon[s].setVisible(
               slotVisible && (
                 this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
@@ -1306,7 +1310,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
 
             // 'On' mode
-          } else if (this.scene.candyUpgradeIconsMode == 2) { 
+          } else if (this.scene.candyUpgradeNotification == 2) { 
             this.candyUpgradeIcon[s].setVisible(
               slotVisible && (
                 (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
@@ -1314,7 +1318,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction] && 
                 this.scene.gameData.starterData[speciesId].valueReduction < 2)));
               this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
-          } 
+          }
+        } else if (this.scene.candyUpgradeDisplay == 1) {
+          // animate the pokemon icon. receive the pokemon icon
+        }
       }
     } else {
       changed = super.setCursor(cursor);
@@ -1802,7 +1809,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateCandyUpgradeIcon(cursor: integer): void {
     const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
 
-    switch (this.scene.candyUpgradeIconsMode) {
+    switch (this.scene.candyUpgradeNotification) {
       // 'Off' mode
       case 0: 
           return;
