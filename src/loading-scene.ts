@@ -198,7 +198,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("types", "");
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
-    
+
     this.loadAtlas("egg", "egg");
     this.loadAtlas("egg_crack", "egg");
     this.loadAtlas("egg_icons", "egg");
@@ -350,7 +350,7 @@ export class LoadingScene extends SceneBase {
     this.load.on("fileprogress", file => {
       assetText.setText(`Loading asset: ${file.key}`);
     });
-    
+
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
 
     if (!mobile) {

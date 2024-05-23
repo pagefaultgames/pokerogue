@@ -77,8 +77,8 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  * if count is not provided, it will default to 1
  * @example Modifier Override [{name: "EXP_SHARE", count: 2}]
  * @example Held Item Override [{name: "LUCKY_EGG"}]
- * 
- * Some items are generated based on a sub-type (i.e. berries), to override those: 
+ *
+ * Some items are generated based on a sub-type (i.e. berries), to override those:
  * @example [{name: "BERRY", count: 5, type: BerryType.SITRUS}]
  * types are listed in interface below
  * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
@@ -92,8 +92,8 @@ interface ModifierOverride {
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType
 }
-export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = []; 
-export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = []; 
+export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
+export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
+export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];

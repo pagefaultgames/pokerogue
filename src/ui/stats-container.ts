@@ -66,7 +66,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
       this.statsIvsCache = ivChartData.slice(0);
-      
+
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
         let label = ivs[i].toString();
         if (this.showDiff && originalIvs) {

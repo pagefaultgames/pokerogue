@@ -14,7 +14,7 @@ import i18next from "i18next";
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
   protected lastLevel: integer;
-  
+
   private evolution: SpeciesFormEvolution;
 
   protected evolutionContainer: Phaser.GameObjects.Container;
@@ -117,7 +117,7 @@ export class EvolutionPhase extends Phase {
   doEvolution(): void {
     const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
     const preName = this.pokemon.name;
-    
+
     this.scene.ui.showText(i18next.t("menu:evolving", { pokemonName: preName }), null, () => {
       this.pokemon.cry();
 
@@ -211,7 +211,7 @@ export class EvolutionPhase extends Phase {
                           }, null, true);
                           return;
                         }
-                        
+
                         this.scene.playSound("sparkle");
                         this.pokemonEvoSprite.setVisible(true);
                         this.doCircleInward();
@@ -222,7 +222,7 @@ export class EvolutionPhase extends Phase {
                             const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
                             for (const lm of levelMoves) {
                               this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));
-                            }  
+                            }
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
                             this.scene.playSound("shine");
@@ -252,7 +252,7 @@ export class EvolutionPhase extends Phase {
                                           this.pokemon.cry();
                                           this.scene.time.delayedCall(1250, () => {
                                             this.scene.playSoundWithoutBgm("evolution_fanfare");
-                                            
+
                                             evolvedPokemon.destroy();
                                             this.scene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: preName, evolvedPokemonName: this.pokemon.name }), null, () => this.end(), null, true, Utils.fixedInt(4000));
                                             this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
@@ -280,7 +280,7 @@ export class EvolutionPhase extends Phase {
 
   doSpiralUpward() {
     let f = 0;
-      
+
     this.scene.tweens.addCounter({
       repeat: 64,
       duration: Utils.getFrameMs(1),
@@ -299,7 +299,7 @@ export class EvolutionPhase extends Phase {
 
   doArcDownward() {
     let f = 0;
-      
+
     this.scene.tweens.addCounter({
       repeat: 96,
       duration: Utils.getFrameMs(1),
@@ -350,7 +350,7 @@ export class EvolutionPhase extends Phase {
 
   doCircleInward() {
     let f = 0;
-      
+
     this.scene.tweens.addCounter({
       repeat: 48,
       duration: Utils.getFrameMs(1),
@@ -371,7 +371,7 @@ export class EvolutionPhase extends Phase {
 
   doSpray() {
     let f = 0;
-      
+
     this.scene.tweens.addCounter({
       repeat: 48,
       duration: Utils.getFrameMs(1),
