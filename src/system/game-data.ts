@@ -1084,6 +1084,7 @@ export class GameData {
             if (!valid) {
               return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
             }
+            this.scene.ui.revertMode();
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
