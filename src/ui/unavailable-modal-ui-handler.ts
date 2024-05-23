@@ -9,9 +9,14 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectInterval: number;
   private reconnectCallback: () => void;
 
+  private readonly minTime = 5000;
+  private readonly maxTime = 60000;
+
+  private readonly randVarianceTime = 10000;
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
-    this.reconnectInterval = 5000;
+    this.reconnectInterval = this.minTime;
   }
 
   getModalTitle(): string {
@@ -48,20 +53,20 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
       if (response[0] || [200, 400].includes(response[1])) {
         clearInterval(this.reconnectTimer);
         this.reconnectTimer = null;
-        this.reconnectInterval = 5000;
+        this.reconnectInterval = this.minTime;
         this.scene.playSound("pb_bounce_1");
         this.reconnectCallback();
       } else {
         clearInterval(this.reconnectTimer);
         this.reconnectInterval *= 2;
-        if (this.reconnectInterval > 60000) {
-          this.reconnectInterval = 60000; // 1 minute maximum delay.
+        if (this.reconnectInterval > this.maxTime) {
+          this.reconnectInterval = this.maxTime; // Set a max delay so it isn't infinite
         }
         this.reconnectTimer = 
           setTimeout(
             () => this.tryReconnect(), 
-            // Adds a random factor between 0 and 10 seconds to avoid pendulum effect during long total breakdown
-            this.reconnectInterval + (Math.random() * 10000));
+            // Adds a random factor to avoid pendulum effect during long total breakdown
+            this.reconnectInterval + (Math.random() * this.randVarianceTime));
       }
     });
   }
