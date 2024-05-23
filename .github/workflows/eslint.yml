@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node.js  # Step to set up Node.js environment
         uses: actions/setup-node@v1  # Use the setup-node action version 1
         with:
-          node-version: 12  # Specify Node.js version 12
+          node-version: 20  # Specify Node.js version 12
 
       - name: Install Node.js dependencies  # Step to install Node.js dependencies
         run: npm ci  # Use 'npm ci' to install dependencies
