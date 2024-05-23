@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Healing Charm", description: "Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives)" },
     "CANDY_JAR": { name: "Candy Jar", description: "Increases the number of levels added by Rare Candy items by 1" },
 
-    "BERRY_POUCH": { name: "Berry Pouch", description: "Adds a 25% chance that a used berry will not be consumed" },
+    "BERRY_POUCH": { name: "Berry Pouch", description: "Adds a 33% chance that a used berry will not be consumed" },
 
     "FOCUS_BAND": { name: "Focus Band", description: "Adds a 10% chance to survive with 1 HP after being damaged enough to faint" },
 
