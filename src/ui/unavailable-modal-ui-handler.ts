@@ -6,10 +6,17 @@ import { updateUserInfo } from "#app/account";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectTimer: number;
+  private reconnectInterval: number;
   private reconnectCallback: () => void;
+
+  private readonly minTime = 5000;
+  private readonly maxTime = 60000;
+
+  private readonly randVarianceTime = 10000;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
+    this.reconnectInterval = this.minTime;
   }
 
   getModalTitle(): string {
@@ -41,6 +48,29 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
     this.modalContainer.add(label);
   }
 
+  tryReconnect(): void {
+    updateUserInfo().then(response => {
+      if (response[0] || [200, 400].includes(response[1])) {
+        clearInterval(this.reconnectTimer);
+        this.reconnectTimer = null;
+        this.reconnectInterval = this.minTime;
+        this.scene.playSound("pb_bounce_1");
+        this.reconnectCallback();
+      } else {
+        clearInterval(this.reconnectTimer);
+        this.reconnectInterval *= 2;
+        if (this.reconnectInterval > this.maxTime) {
+          this.reconnectInterval = this.maxTime; // Set a max delay so it isn't infinite
+        }
+        this.reconnectTimer = 
+          setTimeout(
+            () => this.tryReconnect(), 
+            // Adds a random factor to avoid pendulum effect during long total breakdown
+            this.reconnectInterval + (Math.random() * this.randVarianceTime));
+      }
+    });
+  }
+
   show(args: any[]): boolean {
     if (args.length >= 1 && args[0] instanceof Function) {
       const config: ModalConfig = {
@@ -49,16 +79,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
       this.reconnectCallback = args[0];
 
-      this.reconnectTimer = setInterval(() => {
-        updateUserInfo().then(response => {
-          if (response[0] || [200, 400].includes(response[1])) {
-            clearInterval(this.reconnectTimer);
-            this.reconnectTimer = null;
-            this.scene.playSound("pb_bounce_1");
-            this.reconnectCallback();
-          }
-        });
-      }, 5000);
+      this.reconnectTimer = setInterval(() => this.tryReconnect(), this.reconnectInterval);
 
       return super.show([ config ]);
     }
