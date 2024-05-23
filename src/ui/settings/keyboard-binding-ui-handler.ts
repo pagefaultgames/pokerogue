@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
 import {Mode} from "../ui";
-import { getIconWithSettingName, getKeyWithKeycode} from "#app/configs/configHandler";
+import { getKeyWithKeycode} from "#app/configs/configHandler";
 import {Device} from "#app/enums/devices";
 import {addTextObject, TextStyle} from "#app/ui/text";
 
@@ -59,7 +59,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
       return;
     }
     this.buttonPressed = key;
-    const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
+    // const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
     this.onInputDown(buttonIcon, null, "keyboard");
   }
 

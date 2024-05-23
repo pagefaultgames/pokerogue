@@ -4,9 +4,8 @@ import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, a
 import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
-import stringify, { Element } from "json-stable-stringify";
+import { Element } from "json-stable-stringify";
 import { Moves } from "./enums/moves";
-import { getTypeRgb } from "./type";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -841,8 +840,7 @@ export abstract class BattleAnim {
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
               const spriteSource = isUser ? userSprite : targetSprite;
               if ((isUser ? u : t) === sprites.length) {
-                let sprite: Phaser.GameObjects.Sprite;
-                sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
+                const sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
                 [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
                 sprite.setPipelineData("spriteKey", (isUser ? user : target).getBattleSpriteKey());
                 sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
@@ -1209,6 +1207,8 @@ export async function populateAnims() {
     }
   }
 
+  // used in commented code
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const animReplacer = (k, v) => {
     if (k === "id" && !v) {
       return undefined;
@@ -1226,9 +1226,10 @@ export async function populateAnims() {
   const animFrameProps = [ "x", "y", "zoomX", "zoomY", "angle", "mirror", "visible", "blendType", "target", "graphicFrame", "opacity", "color", "tone", "flash", "locked", "priority", "focus" ];
   const propSets = [ animConfigProps, animFrameProps ];
 
+  // used in commented code
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const animComparator = (a: Element, b: Element) => {
     let props: string[];
-    const p = 0;
     for (let p = 0; p < propSets.length; p++) {
       props = propSets[p];
       const ai = props.indexOf(a.key);

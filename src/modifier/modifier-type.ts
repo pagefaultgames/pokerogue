@@ -1519,13 +1519,13 @@ let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
 let dailyStarterModifierPoolThresholds = {};
-let ignoredDailyStarterPoolIndexes = {};
+let ignoredDailyStarterPoolIndexes = {}; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 let enemyModifierPoolThresholds = {};
-let enemyIgnoredPoolIndexes = {};
+let enemyIgnoredPoolIndexes = {}; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 let enemyBuffModifierPoolThresholds = {};
-let enemyBuffIgnoredPoolIndexes = {};
+let enemyBuffIgnoredPoolIndexes = {}; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool {
   let pool: ModifierPool;

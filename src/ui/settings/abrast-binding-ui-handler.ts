@@ -4,7 +4,6 @@ import {Mode} from "../ui";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
-import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 /**
  * Abstract class for handling UI elements related to button bindings.

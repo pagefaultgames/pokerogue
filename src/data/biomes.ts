@@ -7802,6 +7802,8 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     //outputPools();
   });
 
+  // used in a commented code
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function outputPools() {
     const pokemonOutput = {};
     const trainerOutput = {};

@@ -20,7 +20,7 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   if (!shiftCount) {
     shiftCount = 0;
   }
-  
+
   let newStr = "";
 
   for (let i = 0; i < str.length; i++) {
@@ -146,7 +146,7 @@ export function getPlayTimeString(totalSeconds: integer): string {
 }
 
 export function binToDec(input: string): integer {
-  const place: integer[] = []; 
+  const place: integer[] = [];
   const binary: string[] = [];
   
   let decimalNum = 0;
@@ -197,6 +197,12 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
     break;
   case 3:
     suffix = "B";
+    break;
+  case 4:
+    suffix = "T";
+    break;
+  case 5:
+    suffix = "q";
     break;
   default:
     return "?";
@@ -319,7 +325,7 @@ export function fixedInt(value: integer): integer {
 export function rgbToHsv(r: integer, g: integer, b: integer) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
-  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
+  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c));
   return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v];
 }
 
@@ -395,3 +401,4 @@ export function reverseValueToKeySetting(input) {
   // Join the capitalized words with underscores and return the result
   return capitalizedWords.join("_");
 }
+

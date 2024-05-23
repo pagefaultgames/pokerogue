@@ -1,8 +1,8 @@
 import Phaser from "phaser";
-import UI, { Mode } from "./ui/ui";
+import UI from "./ui/ui";
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from "./data/pokemon-species";
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from "./data/pokemon-species";
 import * as Utils from "./utils";
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
@@ -12,7 +12,6 @@ import { initGameSpeed } from "./system/game-speed";
 import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from "./field/arena";
 import { GameData, PlayerGender } from "./system/game-data";
-import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
@@ -20,7 +19,6 @@ import { initMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from "./data/ability";
-import { Abilities } from "./data/enums/abilities";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
 import { GameMode, GameModes, gameModes } from "./game-mode";
@@ -674,7 +672,7 @@ export default class BattleScene extends SceneBase {
     const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
     	icon.setFrame(pokemon.getIconId(true));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
-    if (icon.frame.name != pokemon.getIconId(true)) {
+    if (icon.frame.name !== pokemon.getIconId(true)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
       const temp = pokemon.shiny;
       pokemon.shiny = false;
@@ -959,7 +957,7 @@ export default class BattleScene extends SceneBase {
       const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
       this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
       this.trySpreadPokerus();
-      if (!isNewBiome && (newWaveIndex % 10) == 5) {
+      if (!isNewBiome && (newWaveIndex % 10) === 5) {
         this.arena.updatePoolsForTimeOfDay();
       }
       if (resetArenaState) {
@@ -1895,9 +1893,8 @@ export default class BattleScene extends SceneBase {
         }
         const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
         let pokemonModifierChance = modifierChance;
-        if (this.currentBattle.battleType === BattleType.TRAINER) {
-          pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i));
-        }
+        if (this.currentBattle.battleType === BattleType.TRAINER)
+          pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
         let count = 0;
         for (let c = 0; c < chances; c++) {
           if (!Utils.randSeedInt(modifierChance)) {

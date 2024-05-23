@@ -91,7 +91,7 @@ export class MenuManip {
 
   whenWeDelete(settingName?: string) {
     this.settingName = SettingInterface[settingName] || this.settingName;
-    const key = getKeyWithSettingName(this.config, this.settingName);
+    // const key = getKeyWithSettingName(this.config, this.settingName);
     deleteBind(this.config, this.settingName);
     // expect(this.config.custom[key]).toEqual(-1);
     return this;

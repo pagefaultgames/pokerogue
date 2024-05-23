@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { TextStyle, getTextColor } from "./text";
-import UI, { Mode } from "./ui";
+import { Mode } from "./ui";
 import {Button} from "../enums/buttons";
 
 export default abstract class UiHandler {

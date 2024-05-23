@@ -244,10 +244,9 @@ export abstract class PokemonSpeciesForm {
 
     const baseSpriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
     
-    let variantSet: VariantSet;
     let config = variantData;
     `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => config ? config = config[p] : null);
-    variantSet = config as VariantSet;
+    const variantSet = config as VariantSet;
 
     return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ""}`;
   }
@@ -416,10 +415,9 @@ export abstract class PokemonSpeciesForm {
         if (useExpSprite) {
           spritePath = `exp/${spritePath}`;
         }
-        let variantSet: VariantSet;
         let config = variantData;
         spritePath.split("/").map(p => config ? config = config[p] : null);
-        variantSet = config as VariantSet;
+        const variantSet = config as VariantSet;
         if (variantSet && variantSet[variant] === 1) {
           const populateVariantColors = (key: string): Promise<void> => {
             return new Promise(resolve => {

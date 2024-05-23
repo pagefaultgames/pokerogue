@@ -1,5 +1,3 @@
-import { Type } from "./type";
-import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
@@ -103,7 +101,6 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 
   // 86400000 is the number of miliseconds in one day
   const timeDate = new Date(timestamp);
-  const dayDate = new Date(Date.UTC(timeDate.getUTCFullYear(), timeDate.getUTCMonth(), timeDate.getUTCDate()));
   const dayTimestamp = timeDate.getTime(); // Timestamp of current week
   const offset = Math.floor(Math.floor(dayTimestamp / 86400000) / legendarySpecies.length); // Cycle number
   const index = Math.floor(dayTimestamp / 86400000) % legendarySpecies.length; // Index within cycle

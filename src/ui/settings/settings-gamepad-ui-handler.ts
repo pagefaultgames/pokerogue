@@ -15,7 +15,6 @@ import {InterfaceConfig} from "#app/inputs-controller";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {Device} from "#app/enums/devices";
 import {truncateString} from "#app/utils";
-import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings-keyboard";
 
 /**
  * Class representing the settings UI handler for gamepads.

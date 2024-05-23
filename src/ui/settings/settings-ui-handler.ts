@@ -242,8 +242,7 @@ export default class SettingsUiHandler extends UiHandler {
         break;
       case Button.DOWN:
         if (cursor < this.optionValueLabels.length - 1) {
-          if (this.cursor < this.rowsToDisplay - 1) // if the visual cursor is in the frame of 0 to 8
-          {
+          if (this.cursor < this.rowsToDisplay - 1) {// if the visual cursor is in the frame of 0 to 8
             success = this.setCursor(this.cursor + 1);
           } else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay) {
             success = this.setScrollCursor(this.scrollCursor + 1);
@@ -258,8 +257,7 @@ export default class SettingsUiHandler extends UiHandler {
         }
         break;
       case Button.LEFT:
-        if (this.optionCursors[cursor]) // Moves the option cursor left, if possible.
-        {
+        if (this.optionCursors[cursor]) {// Moves the option cursor left, if possible.
           success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
         }
         break;

@@ -364,7 +364,7 @@ export class InputsController {
   refreshGamepads(): void {
     // Sometimes, gamepads are undefined. For some reason.
     this.gamepads = this.scene.input.gamepad.gamepads.filter(function (el) {
-      return el != null;
+      return el !== null;
     });
 
     for (const [index, thisGamepad] of this.gamepads.entries()) {

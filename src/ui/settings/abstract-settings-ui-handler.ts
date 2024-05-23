@@ -5,8 +5,7 @@ import {InterfaceConfig} from "../../inputs-controller";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
-import {getIconWithSettingName, getKeyWithSettingName} from "#app/configs/configHandler";
-import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings-keyboard";
+import {getIconWithSettingName} from "#app/configs/configHandler";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -462,8 +461,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
           if (cursor) { // If not at the top, move the cursor up.
             if (this.cursor) {
               success = this.setCursor(this.cursor - 1);
-            } else // If at the top of the visible items, scroll up.
-            {
+            } else {// If at the top of the visible items, scroll up.
               success = this.setScrollCursor(this.scrollCursor - 1);
             }
           } else {

@@ -31,7 +31,6 @@ import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
-import {MappingLayout} from "#app/inputs-controller";
 import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
@@ -444,7 +443,7 @@ export class GameData {
             if (achvs.hasOwnProperty(a)) {
               this.achvUnlocks[a] = systemData.achvUnlocks[a];
             }
-          } 
+          }
         }
 
         if (systemData.voucherUnlocks) {
@@ -564,7 +563,6 @@ export class GameData {
       }
     });
 
-
     localStorage.setItem("settings", JSON.stringify(settings));
 
     return true;
@@ -580,8 +578,7 @@ export class GameData {
   public saveMappingConfigs(deviceName: string, config): boolean {
     const key = deviceName.toLowerCase();  // Convert the gamepad name to lowercase to use as a key
     let mappingConfigs: object = {};  // Initialize an empty object to hold the mapping configurations
-    if (localStorage.hasOwnProperty("mappingConfigs"))  // Check if 'mappingConfigs' exists in localStorage
-    {
+    if (localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
       mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));
     }  // Parse the existing 'mappingConfigs' from localStorage
     if (!mappingConfigs[key]) {
@@ -603,15 +600,13 @@ export class GameData {
    * for the corresponding gamepad or device key. The method then returns `true` to indicate success.
    */
   public loadMappingConfigs(): boolean {
-    if (!localStorage.hasOwnProperty("mappingConfigs"))  // Check if 'mappingConfigs' exists in localStorage
-    {
+    if (!localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
       return false;
     }  // If 'mappingConfigs' does not exist, return false
 
     const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));  // Parse the existing 'mappingConfigs' from localStorage
 
-    for (const key of Object.keys(mappingConfigs))  // Iterate over the keys of the mapping configurations
-    {
+    for (const key of Object.keys(mappingConfigs)) {// Iterate over the keys of the mapping configurations
       this.scene.inputController.injectConfig(key, mappingConfigs[key]);
     }  // Inject each configuration into the input controller for the corresponding key
 
@@ -619,8 +614,7 @@ export class GameData {
   }
 
   public resetMappingToFactory(): boolean {
-    if (!localStorage.hasOwnProperty("mappingConfigs"))  // Check if 'mappingConfigs' exists in localStorage
-    {
+    if (!localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
       return false;
     }  // If 'mappingConfigs' does not exist, return false
     localStorage.removeItem("mappingConfigs");
@@ -650,8 +644,7 @@ export class GameData {
     setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
 
     Object.keys(settingGamepadDefaults).forEach(s => {  // Iterate over the default gamepad settings
-      if (s === setting)  // If the current setting matches, update its value
-      {
+      if (s === setting) {// If the current setting matches, update its value
         settingsGamepad[s] = valueIndex;
       }
     });
@@ -684,8 +677,7 @@ export class GameData {
     setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
 
     Object.keys(settingKeyboardDefaults).forEach(s => {  // Iterate over the default keyboard settings
-      if (s === setting)  // If the current setting matches, update its value
-      {
+      if (s === setting) {// If the current setting matches, update its value
         settingsKeyboard[s] = valueIndex;
       }
     });
@@ -774,7 +766,7 @@ export class GameData {
       score: scene.score,
       waveIndex: scene.currentBattle.waveIndex,
       battleType: scene.currentBattle.battleType,
-      trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
+      trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime()
     } as SessionSaveData;
@@ -968,7 +960,7 @@ export class GameData {
       const seed = sessionData.seed;
       let daily: string[] = [];
 
-      if (sessionData.gameMode == GameModes.DAILY) {
+      if (sessionData.gameMode === GameModes.DAILY) {
         if (localStorage.hasOwnProperty("daily")) {
           daily = JSON.parse(atob(localStorage.getItem("daily")));
           if (daily.includes(seed)) {
@@ -1052,8 +1044,7 @@ export class GameData {
           v = [];
         }
         for (const md of v) {
-          if(md?.className === "ExpBalanceModifier") // Temporarily limit EXP Balance until it gets reworked
-          {
+          if(md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
           ret.push(new PersistentModifierData(md, player));
@@ -1174,7 +1165,7 @@ export class GameData {
     if (saveFile) {
       saveFile.remove();
     }
-  
+
     saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";

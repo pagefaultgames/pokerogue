@@ -8,8 +8,7 @@ import { EnemyPokemon } from "./pokemon";
 import * as Utils from "../utils";
 import { PersistentModifier } from "../modifier/modifier";
 import { trainerNamePools } from "../data/trainer-names";
-import { ArenaTagType } from "#app/data/enums/arena-tag-type";
-import { ArenaTag, ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
 
@@ -331,7 +330,6 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const partyMemberScores = nonFaintedPartyMembers.map(p => {
       const playerField = this.scene.getPlayerField();
       let score = 0;
-      let ret: [integer, integer];
       for (const playerPokemon of playerField) {
         score += p.getMatchupScore(playerPokemon);
         if (playerPokemon.species.legendary) {
@@ -342,8 +340,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       if (forSwitch && !p.isOnField()) {
         this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
       }
-      ret = [ party.indexOf(p), score ];
-      return ret;
+      return [ party.indexOf(p), score ];
     });
 
     return partyMemberScores;

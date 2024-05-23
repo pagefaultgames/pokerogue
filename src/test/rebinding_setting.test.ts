@@ -1,4 +1,4 @@
-import {afterEach, beforeEach, describe, expect, it} from "vitest";
+import {beforeEach, describe, expect, it} from "vitest";
 import cfg_keyboard_azerty from "#app/test/cfg_keyboard.example";
 import {SettingInterface} from "#app/test/cfg_keyboard.example";
 import {Button} from "#app/enums/buttons";

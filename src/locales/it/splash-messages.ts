@@ -18,7 +18,7 @@ export const splashMessages: SimpleTranslationEntries = {
   "magnificent": "Magnifico!",
   "mubstitute": "Mubstitute!",
   "thatsCrazy": "È Pazzesco!",
-  "oranceJuice": "Succo d\'Arancia!",
+  "oranceJuice": "Succo d'Arancia!",
   "questionableBalancing": "Bilanciamento Discutibile!",
   "coolShaders": "Shader fantastici!",
   "aiFree": "Senza Intelligenza Artificiale!",

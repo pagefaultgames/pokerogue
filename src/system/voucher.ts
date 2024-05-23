@@ -1,6 +1,5 @@
 import BattleScene from "../battle-scene";
 import { TrainerType } from "../data/enums/trainer-type";
-import { ModifierTier } from "../modifier/modifier-tier";
 import { Achv, AchvTier, achvs } from "./achv";
 import i18next from "../plugins/i18n";
 
