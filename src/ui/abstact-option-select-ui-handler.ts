@@ -167,8 +167,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         else
           return false;
       }
-      const option = this.config.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
-      if (option.handler()) {
+      const option = this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
+      if (option?.handler()) {
         if (!option.keepOpen)
           this.clear();
         playSound = !option.overrideSound;
