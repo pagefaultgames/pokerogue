@@ -42,6 +42,12 @@ export interface Starter {
   pokerus: boolean;
 }
 
+enum StatsMode{
+  NONE,
+  BASE,
+  IV,
+}
+
 interface LanguageSetting {
   starterInfoTextSize: string,
   instructionTextSize: string,
@@ -160,10 +166,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonFormText: Phaser.GameObjects.Text;
 
   private genMode: boolean;
-  private statsMode: boolean;
+  private statsMode: StatsMode = StatsMode.NONE;
   private dexAttrCursor: bigint = 0n;
   private abilityCursor: integer = -1;
   private natureCursor: integer = -1;
+  private baseStats: integer[] = null;
+  private formsBaseStats: integer[][] = [];
   private genCursor: integer = 0;
   private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
@@ -725,8 +733,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         error = true;
       }
     } else if (button === Button.CANCEL) {
-      if (this.statsMode) {
-        this.toggleStatsMode(false);
+      if (this.statsMode != StatsMode.NONE) {
+        this.toggleStatsMode(StatsMode.NONE);
         success = true;
       } else if (this.starterCursors.length) {
         this.popStarter();
@@ -837,9 +845,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               overrideSound: true
             },
             {
+              label: i18next.t("starterSelectUiHandler:toggleBase"),
+              handler: () => {
+                this.toggleStatsMode(StatsMode.BASE);
+                ui.setMode(Mode.STARTER_SELECT);
+                return true;
+              }
+            },
+            {
               label: i18next.t("starterSelectUiHandler:toggleIVs"),
               handler: () => {
-                this.toggleStatsMode();
+                this.toggleStatsMode(StatsMode.IV);
                 ui.setMode(Mode.STARTER_SELECT);
                 return true;
               }
@@ -907,6 +923,47 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           }
           const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
+		  if(this.canCycleNature){
+            const showNatureOptions = () => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
+				  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: natures.map((n: Nature, i: number) => {
+                      const option: OptionSelectItem = {
+						label: getNatureName(n, true, true, true, this.scene.uiTheme),
+                        handler: () => {
+						  starterData.nature = n as unknown as integer;
+                          this.clearText();
+                          ui.setMode(Mode.STARTER_SELECT);
+						  this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
+                          return true;
+						}
+					  };
+                      return option;
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
+                      handler: () => {
+                        this.clearText();
+                        ui.setMode(Mode.STARTER_SELECT);
+                        return true;
+                      }
+                    }),
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+                });
+              });
+            };
+		    options.push({
+              label: i18next.t("starterSelectUiHandler:manageNature"),
+              handler: () => {
+                showNatureOptions();
+                return true;
+              }
+            });
+		  };
+		  
           const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) {
@@ -1354,14 +1411,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
+	this.baseStats = species?.baseStats;
+	this.formsBaseStats = species?.forms.map(f => f.baseStats) || [];
 
-    if (this.statsMode) {
+    if (this.statsMode != StatsMode.NONE) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
         this.statsContainer.setVisible(true);
         this.showStats();
       } else {
         this.statsContainer.setVisible(false);
-        this.statsContainer.updateIvs(null);
+		switch(this.statsMode){
+			case StatsMode.IV:
+				this.statsContainer.updateIvs(null);
+				break;
+			case StatsMode.Base:
+				console.log(this.lastSpecies)
+				this.statsContainer.updateBase(null);
+				break;
+			default:
+				break;
+		}
       }
     }
 
@@ -1559,6 +1628,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
       const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
+      if (this.scene.gameData.starterData[species.speciesId].nature !== undefined) {
+        this.natureCursor = natureIndex = this.scene.gameData.starterData[species.speciesId].nature;
+      }
       if (!dexEntry.caughtAttr) {
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, forSeen, !forSeen));
         const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -1618,7 +1690,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonSprite.setPipelineData("shiny", shiny);
           this.pokemonSprite.setPipelineData("variant", variant);
           this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
-          this.pokemonSprite.setVisible(!this.statsMode);
+          this.pokemonSprite.setVisible(this.statsMode == StatsMode.NONE);
         });
 
         (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite)
@@ -1869,20 +1941,22 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  toggleStatsMode(on?: boolean): void {
-    if (on === undefined) {
-      on = !this.statsMode;
-    }
-    if (on) {
-      this.showStats();
-      this.statsMode = true;
-      this.pokemonSprite.setVisible(false);
-    } else {
-      this.statsMode = false;
-      this.statsContainer.setVisible(false);
-      this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
-      this.statsContainer.updateIvs(null);
-    }
+  toggleStatsMode(mode?: StatsMode): void {
+	mode |= StatsMode.NONE;
+	this.statsMode = mode;
+	switch(mode){
+		case StatsMode.BASE:
+		case StatsMode.IV:
+			this.showStats();
+			this.pokemonSprite.setVisible(false);
+			break;
+		case StatsMode.NONE:
+		default:
+			this.statsContainer.setVisible(false);
+			this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
+			this.statsContainer.updateIvs(null);
+			break;
+	  }
   }
 
   showStats(): void {
@@ -1892,7 +1966,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.statsContainer.setVisible(true);
 
-    this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
+	switch(this.statsMode){
+		case StatsMode.BASE:
+			this.statsContainer.updateBase(this.baseStats, this.formsBaseStats);
+			break;
+		case StatsMode.IV:
+			this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
+			break;
+		default:
+			break;
+	}
   }
 
   clearText() {
@@ -1910,8 +1993,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.popStarter();
     }
 
-    if (this.statsMode) {
-      this.toggleStatsMode(false);
+    if (this.statsMode != StatsMode.NONE) {
+      this.toggleStatsMode(StatsMode.NONE);
     }
   }
 
