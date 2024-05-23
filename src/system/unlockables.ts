@@ -8,11 +8,11 @@ export enum Unlockables {
 
 export function getUnlockableName(unlockable: Unlockables) {
   switch (unlockable) {
-    case Unlockables.ENDLESS_MODE:
-      return `${gameModes[GameModes.ENDLESS].getName()} Mode`;
-    case Unlockables.MINI_BLACK_HOLE:
-      return 'Mini Black Hole';
-    case Unlockables.SPLICED_ENDLESS_MODE:
-      return `${gameModes[GameModes.SPLICED_ENDLESS].getName()} Mode`;
+  case Unlockables.ENDLESS_MODE:
+    return `${gameModes[GameModes.ENDLESS].getName()} Mode`;
+  case Unlockables.MINI_BLACK_HOLE:
+    return "Mini Black Hole";
+  case Unlockables.SPLICED_ENDLESS_MODE:
+    return `${gameModes[GameModes.SPLICED_ENDLESS].getName()} Mode`;
   }
 }

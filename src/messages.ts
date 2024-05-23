@@ -8,12 +8,12 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
 export function getPokemonPrefix(pokemon: Pokemon): string {
   let prefix: string;
   switch (pokemon.scene.currentBattle.battleSpec) {
-    case BattleSpec.DEFAULT:
-      prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? 'Foe ' : 'Wild ' : '';
-      break;
-    case BattleSpec.FINAL_BOSS:
-      prefix = !pokemon.isPlayer() ? 'Foe ' : '';
-      break;
+  case BattleSpec.DEFAULT:
+    prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe " : "Wild " : "";
+    break;
+  case BattleSpec.FINAL_BOSS:
+    prefix = !pokemon.isPlayer() ? "Foe " : "";
+    break;
   }
   return prefix;
 }
