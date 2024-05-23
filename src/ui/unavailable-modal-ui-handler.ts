@@ -49,10 +49,9 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
         clearInterval(this.reconnectTimer);
         this.reconnectTimer = null;
         this.reconnectInterval = 5000;
-        this.scene.playSound('pb_bounce_1');
+        this.scene.playSound("pb_bounce_1");
         this.reconnectCallback();
-      }
-      else {
+      } else {
         clearInterval(this.reconnectTimer);
         this.reconnectInterval *= 2;
         if (this.reconnectInterval > 60000) {
