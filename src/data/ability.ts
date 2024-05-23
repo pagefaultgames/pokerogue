@@ -13,7 +13,7 @@ import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, Stat
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
@@ -23,6 +23,7 @@ import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
 import { PokeballType, getPokeballName } from "./pokeball";
+import { BerryModifierType } from "#app/modifier/modifier-type";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -127,7 +128,7 @@ export abstract class AbAttr {
     return null;
   }
 
-  getCondition(): AbAttrCondition {
+  getCondition(): AbAttrCondition | null {
     return this.extraCondition || null;
   }
 
@@ -2228,6 +2229,72 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   }
 }
 
+/**
+ * After the turn ends, try to create an extra item
+ */
+export class PostTurnLootAbAttr extends PostTurnAbAttr {
+  /**
+   * @param itemType - The type of item to create
+   * @param procChance - Chance to create an item
+   * @see {@linkcode applyPostTurn()}
+   */
+  constructor(
+    /** Extend itemType to add more options */
+    private itemType: "EATEN_BERRIES" | "HELD_BERRIES",
+    private procChance: (pokemon: Pokemon) => number
+  ) {
+    super();
+  }
+
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    const pass = Phaser.Math.RND.realInRange(0, 1);
+    // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
+    if (Math.max(Math.min(this.procChance(pokemon), 1), 0) < pass) {
+      return false;
+    }
+
+    if (this.itemType === "EATEN_BERRIES") {
+      return this.createEatenBerry(pokemon);
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Create a new berry chosen randomly from the berries the pokemon ate this battle
+   * @param pokemon The pokemon with this ability
+   * @returns whether a new berry was created
+   */
+  createEatenBerry(pokemon: Pokemon): boolean {
+    const berriesEaten = pokemon.battleData.berriesEaten;
+
+    if (!berriesEaten.length) {
+      return false;
+    }
+
+    const randomIdx = Utils.randSeedInt(berriesEaten.length);
+    const chosenBerryType = berriesEaten[randomIdx]
+    const chosenBerry = new BerryModifierType(chosenBerryType);
+    berriesEaten.splice(randomIdx) // Remove berry from memory
+
+    const berryModifier = pokemon.scene.findModifier(
+      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType,
+      pokemon.isPlayer()
+    ) as BerryModifier | undefined;
+
+    if (!berryModifier) {
+      pokemon.scene.addModifier(new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1));
+    } else {
+      berryModifier.stackCount++;
+    }
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` harvested one ${chosenBerry.name}!`));
+    pokemon.scene.updateModifiers(pokemon.isPlayer());
+
+    return true;
+  }
+}
+
 export class MoodyAbAttr extends PostTurnAbAttr {
   constructor() {
     super(true);
@@ -3418,7 +3485,13 @@ export function initAbilities() {
     new Ability(Abilities.FLARE_BOOST, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, 5)
-      .unimplemented(),
+      .attr(
+        PostTurnLootAbAttr, 
+        "EATEN_BERRIES", 
+        /** Rate is doubled when under sun {@link https://dex.pokemonshowdown.com/abilities/harvest} */
+        (pokemon) => 0.5 * (getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)(pokemon) ? 2 : 1)
+      )
+      .partial(),
     new Ability(Abilities.TELEPATHY, 5)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon.getAlly() === attacker && move.getMove() instanceof AttackMove)
       .ignorable(),
