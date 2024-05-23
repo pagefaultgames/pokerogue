@@ -1,11 +1,11 @@
-import Phaser, {Time} from 'phaser';
-import * as Utils from './utils';
-import {initTouchControls} from './touch-controls';
-import pad_generic from './configs/pad_generic';
-import pad_unlicensedSNES from './configs/pad_unlicensedSNES';
-import pad_xbox360 from './configs/pad_xbox360';
-import pad_dualshock from './configs/pad_dualshock';
-import {Button} from './enums/buttons';
+import Phaser, {Time} from "phaser";
+import * as Utils from "./utils";
+import {initTouchControls} from "./touch-controls";
+import pad_generic from "./configs/pad_generic";
+import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
+import pad_xbox360 from "./configs/pad_xbox360";
+import pad_dualshock from "./configs/pad_dualshock";
+import {Button} from "./enums/buttons";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -101,8 +101,8 @@ export class InputsController {
       this.loseFocus();
     });
 
-    if (typeof this.scene.input.gamepad !== 'undefined') {
-      this.scene.input.gamepad.on('connected', function (thisGamepad) {
+    if (typeof this.scene.input.gamepad !== "undefined") {
+      this.scene.input.gamepad.on("connected", function (thisGamepad) {
         this.refreshGamepads();
         this.setupGamepad(thisGamepad);
       }, this);
@@ -112,12 +112,12 @@ export class InputsController {
       if (this.scene.input.gamepad.total) {
         this.refreshGamepads();
         for (const thisGamepad of this.gamepads) {
-          this.scene.input.gamepad.emit('connected', thisGamepad);
+          this.scene.input.gamepad.emit("connected", thisGamepad);
         }
       }
 
-      this.scene.input.gamepad.on('down', this.gamepadButtonDown, this);
-      this.scene.input.gamepad.on('up', this.gamepadButtonUp, this);
+      this.scene.input.gamepad.on("down", this.gamepadButtonDown, this);
+      this.scene.input.gamepad.on("up", this.gamepadButtonUp, this);
     }
 
     // Keyboard
@@ -173,13 +173,13 @@ export class InputsController {
                 this.interactions[b].isPressed
       ) {
         // Prevents repeating button interactions when gamepad support is disabled.
-        if (!this.gamepadSupport && this.interactions[b].source === 'gamepad') {
+        if (!this.gamepadSupport && this.interactions[b].source === "gamepad") {
           // Deletes the last interaction for a button if gamepad is disabled.
           this.delLastProcessedMovementTime(b);
           return;
         }
         // Emits an event for the button press.
-        this.events.emit('input_down', {
+        this.events.emit("input_down", {
           controller_type: this.interactions[b].source,
           button: b,
         });
@@ -201,7 +201,7 @@ export class InputsController {
   setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
     const gamepadID = thisGamepad.id.toLowerCase();
     const mappedPad = this.mapGamepad(gamepadID);
-    this.player['mapping'] = mappedPad.gamepadMapping;
+    this.player["mapping"] = mappedPad.gamepadMapping;
   }
 
   /**
@@ -280,11 +280,11 @@ export class InputsController {
     const actionMapping = this.getActionGamepadMapping();
     const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
     if (buttonDown !== undefined) {
-      this.events.emit('input_down', {
-        controller_type: 'gamepad',
+      this.events.emit("input_down", {
+        controller_type: "gamepad",
         button: buttonDown,
       });
-      this.setLastProcessedMovementTime(buttonDown, 'gamepad');
+      this.setLastProcessedMovementTime(buttonDown, "gamepad");
     }
   }
 
@@ -308,8 +308,8 @@ export class InputsController {
     const actionMapping = this.getActionGamepadMapping();
     const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
     if (buttonUp !== undefined) {
-      this.events.emit('input_up', {
-        controller_type: 'gamepad',
+      this.events.emit("input_up", {
+        controller_type: "gamepad",
         button: buttonUp,
       });
       this.delLastProcessedMovementTime(buttonUp);
@@ -392,16 +392,16 @@ export class InputsController {
   listenInputKeyboard(): void {
     this.buttonKeys.forEach((row, index) => {
       for (const key of row) {
-        key.on('down', () => {
-          this.events.emit('input_down', {
-            controller_type: 'keyboard',
+        key.on("down", () => {
+          this.events.emit("input_down", {
+            controller_type: "keyboard",
             button: index,
           });
-          this.setLastProcessedMovementTime(index, 'keyboard');
+          this.setLastProcessedMovementTime(index, "keyboard");
         });
-        key.on('up', () => {
-          this.events.emit('input_up', {
-            controller_type: 'keyboard',
+        key.on("up", () => {
+          this.events.emit("input_up", {
+            controller_type: "keyboard",
             button: index,
           });
           this.delLastProcessedMovementTime(index);
@@ -426,11 +426,11 @@ export class InputsController {
   mapGamepad(id: string): GamepadConfig {
     id = id.toLowerCase();
 
-    if (id.includes('081f') && id.includes('e401')) {
+    if (id.includes("081f") && id.includes("e401")) {
       return pad_unlicensedSNES;
-    } else if (id.includes('xbox') && id.includes('360')) {
+    } else if (id.includes("xbox") && id.includes("360")) {
       return pad_xbox360;
-    } else if (id.includes('054c')) {
+    } else if (id.includes("054c")) {
       return pad_dualshock;
     }
 
@@ -466,7 +466,7 @@ export class InputsController {
      *
      * Additionally, this method locks the button (by calling `setButtonLock`) to prevent it from being re-processed until it is released, ensuring that each press is handled distinctly.
      */
-  setLastProcessedMovementTime(button: Button, source: String = 'keyboard'): void {
+  setLastProcessedMovementTime(button: Button, source: String = "keyboard"): void {
     if (!this.interactions.hasOwnProperty(button)) {
       return;
     }

@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from '#app/plugins/i18n';
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const voucher: SimpleTranslationEntries = {
   "vouchers": "Gutschein",

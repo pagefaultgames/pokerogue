@@ -1,7 +1,7 @@
-import BBCodeText from 'phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText';
-import BattleScene from '../battle-scene';
-import { Stat, getStatName } from '../data/pokemon-stat';
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from './text';
+import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import BattleScene from "../battle-scene";
+import { Stat, getStatName } from "../data/pokemon-stat";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
@@ -53,7 +53,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, '0', TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
       this.ivStatValueTexts[i].setOrigin(0.5);
 
       this.add(statLabel);
@@ -73,7 +73,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
           if (originalIvs[i] < ivs[i]) {
             label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, (this.scene as BattleScene).uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, (this.scene as BattleScene).uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
           } else {
-            label += ' (-)';
+            label += " (-)";
           }
         }
         t.setText(`[shadow]${label}[/shadow]`);
@@ -83,7 +83,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         from: 0,
         to: 1,
         duration: 1000,
-        ease: 'Cubic.easeOut',
+        ease: "Cubic.easeOut",
         onUpdate: (tween: Phaser.Tweens.Tween) => {
           const progress = tween.getValue();
           const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));

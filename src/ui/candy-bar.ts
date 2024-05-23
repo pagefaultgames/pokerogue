@@ -1,8 +1,8 @@
-import BattleScene, { starterColors } from '../battle-scene';
-import { TextStyle, addTextObject } from './text';
-import { argbFromRgba } from '@material/material-color-utilities';
-import * as Utils from '../utils';
-import { Species } from '#app/data/enums/species';
+import BattleScene, { starterColors } from "../battle-scene";
+import { TextStyle, addTextObject } from "./text";
+import { argbFromRgba } from "@material/material-color-utilities";
+import * as Utils from "../utils";
+import { Species } from "#app/data/enums/species";
 
 export default class CandyBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
@@ -21,24 +21,24 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, 'party_exp_bar', null, 8, 18, 21, 5, 6, 4);
+    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", null, 8, 18, 21, 5, 6, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.candyIcon = this.scene.add.sprite(14, 0, 'items', 'candy');
+    this.candyIcon = this.scene.add.sprite(14, 0, "items", "candy");
     this.candyIcon.setOrigin(0.5, 0);
     this.candyIcon.setScale(0.5);
 
     this.add(this.candyIcon);
 
-    this.candyOverlayIcon = this.scene.add.sprite(14, 0, 'items', 'candy_overlay');
+    this.candyOverlayIcon = this.scene.add.sprite(14, 0, "items", "candy_overlay");
     this.candyOverlayIcon.setOrigin(0.5, 0);
     this.candyOverlayIcon.setScale(0.5);
 
     this.add(this.candyOverlayIcon);
 
-    this.countText = addTextObject(this.scene, 22, 4, '', TextStyle.BATTLE_INFO);
+    this.countText = addTextObject(this.scene, 22, 4, "", TextStyle.BATTLE_INFO);
     this.countText.setOrigin(0, 0);
     this.add(this.countText);
 
@@ -71,13 +71,13 @@ export default class CandyBar extends Phaser.GameObjects.Container {
         this.tween.stop();
       }
 
-      (this.scene as BattleScene).playSound('shing');
+      (this.scene as BattleScene).playSound("shing");
 
       this.tween = this.scene.tweens.add({
         targets: this,
         x: (this.scene.game.canvas.width / 6) - (this.bg.width - 5),
         duration: 500,
-        ease: 'Sine.easeOut',
+        ease: "Sine.easeOut",
         onComplete: () => {
           this.tween = null;
           this.resetAutoHideTimer();
@@ -108,7 +108,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
         targets: this,
         x: (this.scene.game.canvas.width / 6),
         duration: 500,
-        ease: 'Sine.easeIn',
+        ease: "Sine.easeIn",
         onComplete: () => {
           this.tween = null;
           this.shown = false;

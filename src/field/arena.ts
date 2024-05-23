@@ -1,24 +1,24 @@
-import BattleScene from '../battle-scene';
-import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from '../data/biomes';
-import { Biome } from '../data/enums/biome';
-import * as Utils from '../utils';
-import PokemonSpecies, { getPokemonSpecies } from '../data/pokemon-species';
-import { Species } from '../data/enums/species';
-import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from '../data/weather';
-import { CommonAnimPhase, WeatherEffectPhase } from '../phases';
-import { CommonAnim } from '../data/battle-anims';
-import { Type } from '../data/type';
-import Move from '../data/move';
-import { ArenaTag, ArenaTagSide, getArenaTag } from '../data/arena-tag';
-import { ArenaTagType } from '../data/enums/arena-tag-type';
-import { TrainerType } from '../data/enums/trainer-type';
-import { BattlerIndex } from '../battle';
-import { Moves } from '../data/enums/moves';
-import { TimeOfDay } from '../data/enums/time-of-day';
-import { Terrain, TerrainType } from '../data/terrain';
-import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from '../data/ability';
-import Pokemon from './pokemon';
-import * as Overrides from '../overrides';
+import BattleScene from "../battle-scene";
+import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
+import { Biome } from "../data/enums/biome";
+import * as Utils from "../utils";
+import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
+import { Species } from "../data/enums/species";
+import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
+import { CommonAnimPhase, WeatherEffectPhase } from "../phases";
+import { CommonAnim } from "../data/battle-anims";
+import { Type } from "../data/type";
+import Move from "../data/move";
+import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
+import { ArenaTagType } from "../data/enums/arena-tag-type";
+import { TrainerType } from "../data/enums/trainer-type";
+import { BattlerIndex } from "../battle";
+import { Moves } from "../data/enums/moves";
+import { TimeOfDay } from "../data/enums/time-of-day";
+import { Terrain, TerrainType } from "../data/terrain";
+import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
+import Pokemon from "./pokemon";
+import * as Overrides from "../overrides";
 
 export class Arena {
   public scene: BattleScene;
@@ -89,7 +89,7 @@ export class Arena {
     } else {
       const entry = tierPool[Utils.randSeedInt(tierPool.length)];
       let species: Species;
-      if (typeof entry === 'number') {
+      if (typeof entry === "number") {
         species = entry as Species;
       } else {
         const levelThresholds = Object.keys(entry);
@@ -128,13 +128,13 @@ export class Arena {
     }
 
     if (regen && (attempt || 0) < 10) {
-      console.log('Incompatible level: regenerating...');
+      console.log("Incompatible level: regenerating...");
       return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
     }
 
     const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss, this.scene.gameMode);
     if (newSpeciesId !== ret.speciesId) {
-      console.log('Replaced', Species[ret.speciesId], 'with', Species[newSpeciesId]);
+      console.log("Replaced", Species[ret.speciesId], "with", Species[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);
     }
     return ret;
@@ -311,7 +311,7 @@ export class Arena {
     }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
-      pokemon.findAndRemoveTags(t => 'weatherTypes' in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
+      pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
       applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
     });
     
@@ -337,7 +337,7 @@ export class Arena {
     }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
-      pokemon.findAndRemoveTags(t => 'terrainTypes' in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
+      pokemon.findAndRemoveTags(t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
       applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
     });
     
@@ -498,7 +498,7 @@ export class Arena {
   }
 
   applyTagsForSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide, ...args: any[]): void {
-    let tags = typeof tagType === 'string'
+    let tags = typeof tagType === "string"
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
     if (side !== ArenaTagSide.BOTH) {
@@ -530,7 +530,7 @@ export class Arena {
   }
 
   getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
-    return typeof(tagType) === 'string'
+    return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
   }
@@ -704,12 +704,12 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.addFieldSprite(0, 0, 'plains_a', null, 1);
+    this.base = scene.addFieldSprite(0, 0, "plains_a", null, 1);
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.addFieldSprite(0, 0, 'plains_b', null, 1);
+        const ret = scene.addFieldSprite(0, 0, "plains_b", null, 1);
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;
@@ -719,13 +719,13 @@ export class ArenaBase extends Phaser.GameObjects.Container {
   setBiome(biome: Biome, propValue?: integer): void {
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
-    const baseKey = `${biomeKey}_${this.player ? 'a' : 'b'}`;
+    const baseKey = `${biomeKey}_${this.player ? "a" : "b"}`;
     
     if (biome !== this.biome) {
       this.base.setTexture(baseKey);
 
       if (this.base.texture.frameTotal > 1) {
-        const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: '.png', start: 1, end: this.base.texture.frameTotal - 1 });
+        const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
         this.scene.anims.create({
           key: baseKey,
           frames: baseFrameNames,
@@ -746,11 +746,11 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           ? hasProps ? Utils.randSeedInt(8) : 0
           : propValue;
         this.props.forEach((prop, p) => {
-          const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`;
+          const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ""}`;
           prop.setTexture(propKey);
 
           if (hasProps && prop.texture.frameTotal > 1) {
-            const propFrameNames = this.scene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: '.png', start: 1, end: prop.texture.frameTotal - 1 });
+            const propFrameNames = this.scene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
             this.scene.anims.create({
               key: propKey,
               frames: propFrameNames,

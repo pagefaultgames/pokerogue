@@ -1,6 +1,6 @@
-import BattleScene from '../battle-scene';
-import { TrainerType } from '../data/enums/trainer-type';
-import Trainer, { TrainerVariant } from '../field/trainer';
+import BattleScene from "../battle-scene";
+import { TrainerType } from "../data/enums/trainer-type";
+import Trainer, { TrainerVariant } from "../field/trainer";
 
 export default class TrainerData {
   public trainerType: TrainerType;
@@ -12,7 +12,7 @@ export default class TrainerData {
   constructor(source: Trainer | any) {
     const sourceTrainer = source instanceof Trainer ? source as Trainer : null;
     this.trainerType = sourceTrainer ? sourceTrainer.config.trainerType : source.trainerType;
-    this.variant = source.hasOwnProperty('variant') ? source.variant : source.female ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
+    this.variant = source.hasOwnProperty("variant") ? source.variant : source.female ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
     this.partyTemplateIndex = source.partyMemberTemplateIndex;
     this.name = source.name;
     this.partnerName = source.partnerName;

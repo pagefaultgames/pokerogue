@@ -1,11 +1,11 @@
-import BattleScene from '../battle-scene';
-import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from '../system/voucher';
-import MessageUiHandler from './message-ui-handler';
-import { TextStyle, addTextObject } from './text';
-import { Mode } from './ui';
-import { addWindow } from './ui-theme';
-import {Button} from '../enums/buttons';
-import i18next from '../plugins/i18n';
+import BattleScene from "../battle-scene";
+import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from "../system/voucher";
+import MessageUiHandler from "./message-ui-handler";
+import { TextStyle, addTextObject } from "./text";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
+import {Button} from "../enums/buttons";
+import i18next from "../plugins/i18n";
 
 const itemRows = 4;
 const itemCols = 17;
@@ -41,7 +41,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, i18next.t('voucher:vouchers'), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("voucher:vouchers"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
@@ -56,7 +56,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
       const x = (a % itemCols) * 18;
       const y = Math.floor(a / itemCols) * 18;
 
-      const icon = this.scene.add.sprite(x, y, 'items', 'unknown');
+      const icon = this.scene.add.sprite(x, y, "items", "unknown");
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
 
@@ -67,21 +67,21 @@ export default class VouchersUiHandler extends MessageUiHandler {
     const titleBg = addWindow(this.scene, 0, headerBg.height + this.voucherIconsBg.height, 220, 24);
     titleBg.setOrigin(0, 0);
 
-    this.titleText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW);
+    this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
     this.titleText.setOrigin(0, 0);
     this.titleText.setPositionRelative(titleBg, 8, 4);
 
     const unlockBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 98, 24);
     unlockBg.setOrigin(0, 0);
 
-    this.unlockText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW);
+    this.unlockText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
     this.unlockText.setOrigin(0, 0);
     this.unlockText.setPositionRelative(unlockBg, 8, 4);
 
     const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
     descriptionBg.setOrigin(0, 0);
 
-    const descriptionText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW, { maxLines: 2 });
+    const descriptionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, { maxLines: 2 });
     descriptionText.setWordWrapWidth(1870);
     descriptionText.setOrigin(0, 0);
     descriptionText.setPositionRelative(descriptionBg, 8, 4);
@@ -128,7 +128,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.titleText.setText(getVoucherTypeName(voucher.voucherType));
     this.showText(voucher.description);
-    this.unlockText.setText(unlocked ? new Date(voucherUnlocks[voucher.id]).toLocaleDateString() : i18next.t('voucher:locked'));
+    this.unlockText.setText(unlocked ? new Date(voucherUnlocks[voucher.id]).toLocaleDateString() : i18next.t("voucher:locked"));
   }
 
   processInput(button: Button): boolean {
@@ -192,7 +192,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
     let updateVoucher = ret;
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight', null, 16, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight", null, 16, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.voucherIconsContainer.add(this.cursorObj);
       updateVoucher = true;

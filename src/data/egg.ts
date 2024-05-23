@@ -1,8 +1,8 @@
-import BattleScene from '../battle-scene';
-import { Species } from './enums/species';
-import { getPokemonSpecies, speciesStarters } from './pokemon-species';
-import { EggTier } from './enums/egg-type';
-import i18next from '../plugins/i18n';
+import BattleScene from "../battle-scene";
+import { Species } from "./enums/species";
+import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
+import { EggTier } from "./enums/egg-type";
+import i18next from "../plugins/i18n";
 
 export const EGG_SEED = 1073741824;
 
@@ -33,7 +33,7 @@ export class Egg {
 
   getKey(): string {
     if (this.isManaphyEgg()) {
-      return 'manaphy';
+      return "manaphy";
     }
     return this.tier.toString();
   }
@@ -53,41 +53,41 @@ export function getEggTierDefaultHatchWaves(tier: EggTier): integer {
 
 export function getEggDescriptor(egg: Egg): string {
   if (egg.isManaphyEgg()) {
-    return 'Manaphy';
+    return "Manaphy";
   }
   switch (egg.tier) {
   case EggTier.GREAT:
-    return i18next.t('egg:greatTier');
+    return i18next.t("egg:greatTier");
   case EggTier.ULTRA:
-    return i18next.t('egg:ultraTier');
+    return i18next.t("egg:ultraTier");
   case EggTier.MASTER:
-    return i18next.t('egg:masterTier');
+    return i18next.t("egg:masterTier");
   default:
-    return i18next.t('egg:defaultTier');
+    return i18next.t("egg:defaultTier");
   }
 }
 
 export function getEggHatchWavesMessage(hatchWaves: integer): string {
   if (hatchWaves <= 5) {
-    return i18next.t('egg:hatchWavesMessageSoon');
+    return i18next.t("egg:hatchWavesMessageSoon");
   }
   if (hatchWaves <= 15) {
-    return i18next.t('egg:hatchWavesMessageClose');
+    return i18next.t("egg:hatchWavesMessageClose");
   }
   if (hatchWaves <= 50) {
-    return i18next.t('egg:hatchWavesMessageNotClose');
+    return i18next.t("egg:hatchWavesMessageNotClose");
   }
-  return i18next.t('egg:hatchWavesMessageLongTime');
+  return i18next.t("egg:hatchWavesMessageLongTime");
 }
 
 export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string {
   switch (egg.gachaType) {
   case GachaType.LEGENDARY:
-    return `${i18next.t('egg:gachaTypeLegendary')} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
+    return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
   case GachaType.MOVE:
-    return i18next.t('egg:gachaTypeMove');
+    return i18next.t("egg:gachaTypeMove");
   case GachaType.SHINY:
-    return i18next.t('egg:gachaTypeShiny');
+    return i18next.t("egg:gachaTypeShiny");
   }
 }
 

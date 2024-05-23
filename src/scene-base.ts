@@ -6,7 +6,7 @@ export class SceneBase extends Phaser.Scene {
   }
 
   getCachedUrl(url: string): string {
-    const manifest = this.game['manifest'];
+    const manifest = this.game["manifest"];
     if (manifest) {
       const timestamp = manifest[`/${url}`];
       if (timestamp) {
@@ -21,9 +21,9 @@ export class SceneBase extends Phaser.Scene {
       filename = `${key}.png`;
     }
     this.load.image(key, this.getCachedUrl(`images/${folder}/${filename}`));
-    if (folder.startsWith('ui')) {
+    if (folder.startsWith("ui")) {
       legacyCompatibleImages.push(key);
-      folder = folder.replace('ui', 'ui/legacy');
+      folder = folder.replace("ui", "ui/legacy");
       this.load.image(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`));
     }
   }
@@ -33,9 +33,9 @@ export class SceneBase extends Phaser.Scene {
       filename = `${key}.png`;
     }
     this.load.spritesheet(key, this.getCachedUrl(`images/${folder}/${filename}`), { frameWidth: size, frameHeight: size });
-    if (folder.startsWith('ui')) {
+    if (folder.startsWith("ui")) {
       legacyCompatibleImages.push(key);
-      folder = folder.replace('ui', 'ui/legacy');
+      folder = folder.replace("ui", "ui/legacy");
       this.load.spritesheet(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`), { frameWidth: size, frameHeight: size });
     }
   }
@@ -45,12 +45,12 @@ export class SceneBase extends Phaser.Scene {
       filenameRoot = key;
     }
     if (folder) {
-      folder += '/';
+      folder += "/";
     }
     this.load.atlas(key, this.getCachedUrl(`images/${folder}${filenameRoot}.png`), this.getCachedUrl(`images/${folder}/${filenameRoot}.json`));
-    if (folder.startsWith('ui')) {
+    if (folder.startsWith("ui")) {
       legacyCompatibleImages.push(key);
-      folder = folder.replace('ui', 'ui/legacy');
+      folder = folder.replace("ui", "ui/legacy");
       this.load.atlas(`${key}_legacy`, this.getCachedUrl(`images/${folder}${filenameRoot}.png`), this.getCachedUrl(`images/${folder}/${filenameRoot}.json`));
     }
   }
@@ -60,9 +60,9 @@ export class SceneBase extends Phaser.Scene {
       filenames = `${key}.wav`;
     }
     if (!folder) {
-      folder = '';
+      folder = "";
     } else {
-      folder += '/';
+      folder += "/";
     }
     if (!Array.isArray(filenames)) {
       filenames = [ filenames ];

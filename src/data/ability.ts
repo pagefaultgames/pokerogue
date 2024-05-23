@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -20,9 +20,7 @@ import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
-import Battle from "#app/battle.js";
-import { ability } from "#app/locales/en/ability.js";
-import { PokeballType, getPokeballName } from "./pokeball";
+import { getPokeballName } from "./pokeball";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 
 export class Ability implements Localizable {
@@ -40,7 +38,7 @@ export class Ability implements Localizable {
   constructor(id: Abilities, generation: integer) {
     this.id = id;
 
-    this.nameAppend = '';
+    this.nameAppend = "";
     this.generation = generation;
     this.attrs = [];
     this.conditions = [];
@@ -49,10 +47,10 @@ export class Ability implements Localizable {
   }
 
   localize(): void {
-    const i18nKey = Abilities[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as string;
+    const i18nKey = Abilities[this.id].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as string;
 
-    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`) as string}${this.nameAppend}` : '';
-    this.description = this.id ? i18next.t(`ability:${i18nKey}.description`) as string : '';
+    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`) as string}${this.nameAppend}` : "";
+    this.description = this.id ? i18next.t(`ability:${i18nKey}.description`) as string : "";
   }
 
   getAttrs(attrType: { new(...args: any[]): AbAttr }): AbAttr[] {
@@ -95,12 +93,12 @@ export class Ability implements Localizable {
   }
 
   partial(): this {
-    this.nameAppend += ' (P)';
+    this.nameAppend += " (P)";
     return this;
   }
 
   unimplemented(): this {
-    this.nameAppend += ' (N)';
+    this.nameAppend += " (N)";
     return this;
   }
 }
@@ -146,7 +144,7 @@ export class BlockRecoilDamageAttr extends AbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
-    return i18next.t('abilityTriggers:blockRecoilDamage', {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
+    return i18next.t("abilityTriggers:blockRecoilDamage", {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
   }
 }
 
@@ -195,7 +193,7 @@ export class PostBattleInitStatChangeAbAttr extends PostBattleInitAbAttr {
   constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean) {
     super();
 
-    this.stats = typeof(stats) === 'number'
+    this.stats = typeof(stats) === "number"
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
@@ -467,7 +465,7 @@ export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
       }
       pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
       pokemon.turnData.damageTaken += recoilDamage;
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s disguise was busted!'));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s disguise was busted!"));
       return true;
     }
 
@@ -566,7 +564,7 @@ export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
 export class ReverseDrainAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (!!move.getMove().getAttrs(HitHealAttr).length || !!move.getMove().getAttrs(StrengthSapHealAttr).length ) {
-      pokemon.scene.queueMessage(getPokemonMessage(attacker, ' sucked up the liquid ooze!'));
+      pokemon.scene.queueMessage(getPokemonMessage(attacker, " sucked up the liquid ooze!"));
       return true;
     }
     return false;
@@ -852,7 +850,7 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, ' swapped\nabilities with its target!');
+    return getPokemonMessage(pokemon, " swapped\nabilities with its target!");
   }
 }
 
@@ -1285,7 +1283,7 @@ class PostVictoryStatChangeAbAttr extends PostVictoryAbAttr {
   }
 
   applyPostVictory(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    const stat = typeof this.stat === 'function'
+    const stat = typeof this.stat === "function"
       ? this.stat(pokemon)
       : this.stat;
     pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], this.levels));
@@ -1332,7 +1330,7 @@ export class PostKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
   }
 
   applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
-    const stat = typeof this.stat === 'function'
+    const stat = typeof this.stat === "function"
       ? this.stat(pokemon)
       : this.stat;
     pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], this.levels));
@@ -1489,7 +1487,7 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, intimidate?: boolean) {
     super(false);
 
-    this.stats = typeof(stats) === 'number'
+    this.stats = typeof(stats) === "number"
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
@@ -1561,7 +1559,7 @@ export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
         target.summonData.battleStats[s] = 0;
       }
 
-      target.scene.queueMessage(getPokemonMessage(target, '\'s stat changes\nwere removed!'));
+      target.scene.queueMessage(getPokemonMessage(target, "'s stat changes\nwere removed!"));
 
       return true;
     }
@@ -1705,7 +1703,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
     pokemon.summonData.types = target.getTypes();
     
-    pokemon.scene.playSound('PRSFX- Transform');
+    pokemon.scene.playSound("PRSFX- Transform");
 
     pokemon.loadAssets(false).then(() => pokemon.playAnim());
 
@@ -1775,7 +1773,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : "stats"}!`);
   }
 }
 
@@ -1804,7 +1802,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : 'status problems'}!`);
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : "status problems"}!`);
   }
 }
 
@@ -2052,7 +2050,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     let maxPowerSeen = 0;
-    let maxMove = '';
+    let maxMove = "";
     let movePower = 0;
     for (const opponent of pokemon.getOpponents()) {
       for (const move of opponent.moveset) {
@@ -2074,7 +2072,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
         }
       }
     }
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was forewarned about ' + maxMove + '!'));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " was forewarned about " + maxMove + "!"));
     return true;
   }
 }
@@ -2086,7 +2084,7 @@ export class FriskAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     for (const opponent of pokemon.getOpponents()) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' frisked ' + opponent.name + '\'s ' + opponent.getAbility().name + '!'));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " frisked " + opponent.name + "'s " + opponent.getAbility().name + "!"));
     }
     return true;
   }
@@ -2299,9 +2297,9 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     }
 
     const randomIdx = Utils.randSeedInt(berriesEaten.length);
-    const chosenBerryType = berriesEaten[randomIdx]
+    const chosenBerryType = berriesEaten[randomIdx];
     const chosenBerry = new BerryModifierType(chosenBerryType);
-    berriesEaten.splice(randomIdx) // Remove berry from memory
+    berriesEaten.splice(randomIdx); // Remove berry from memory
 
     const berryModifier = pokemon.scene.findModifier(
       (m) => m instanceof BerryModifier && m.berryType === chosenBerryType,
@@ -2415,7 +2413,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     for(const opp of pokemon.getOpponents()) {
       if(opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
-        pokemon.scene.queueMessage(i18next.t('abilityTriggers:badDreams', {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
+        pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
         hadEffect = true;
       }
     
@@ -3262,7 +3260,7 @@ export function initAbilities() {
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SANDSTORM),
     new Ability(Abilities.PRESSURE, 3)
       .attr(IncreasePpAbAttr)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is exerting its Pressure!')),
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is exerting its Pressure!")),
     new Ability(Abilities.THICK_FAT, 3)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.ICE, 0.5)
@@ -3341,7 +3339,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonUnnamedMessageAbAttr, 'The effects of the weather disappeared.'),
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), BattleStatMultiplierAbAttr, BattleStat.EVA, 2)
       .ignorable(),
@@ -3421,7 +3419,7 @@ export function initAbilities() {
     new Ability(Abilities.KLUTZ, 4)
       .unimplemented(),
     new Ability(Abilities.MOLD_BREAKER, 4)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' breaks the mold!'))
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " breaks the mold!"))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
       .attr(BonusCritAbAttr)
@@ -3430,7 +3428,7 @@ export function initAbilities() {
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),
     new Ability(Abilities.ANTICIPATION, 4)
-      .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' shuddered!')),
+      .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " shuddered!")),
     new Ability(Abilities.FOREWARN, 4)
       .attr(ForewarnAbAttr),
     new Ability(Abilities.UNAWARE, 4)
@@ -3601,10 +3599,10 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.1)
       .partial(),
     new Ability(Abilities.TURBOBLAZE, 5)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a blazing aura!'))
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a blazing aura!"))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.TERAVOLT, 5)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a bursting aura!'))
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a bursting aura!"))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, 6)
       .ignorable()
@@ -3660,10 +3658,10 @@ export function initAbilities() {
     new Ability(Abilities.PARENTAL_BOND, 6)
       .unimplemented(),
     new Ability(Abilities.DARK_AURA, 6)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a Dark Aura!'))
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a Dark Aura!"))
       .attr(FieldMoveTypePowerBoostAbAttr, Type.DARK, 4 / 3),
     new Ability(Abilities.FAIRY_AURA, 6)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a Fairy Aura!'))
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a Fairy Aura!"))
       .attr(FieldMoveTypePowerBoostAbAttr, Type.FAIRY, 4 / 3),
     new Ability(Abilities.AURA_BREAK, 6)
       .ignorable()
@@ -3749,9 +3747,9 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.POWER_CONSTRUCT, 7) // TODO: 10% Power Construct Zygarde isn't accounted for yet. If changed, update Zygarde's getSpeciesFormIndex entry accordingly
-      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 2)
-      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 2)
-      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === 'complete' ? 4 : 2)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
+      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
+      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
@@ -3900,7 +3898,7 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, '\'s Neutralizing Gas filled the area!'))
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, "'s Neutralizing Gas filled the area!"))
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)

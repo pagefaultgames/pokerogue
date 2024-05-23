@@ -1,37 +1,37 @@
-import BattleScene, { PokeballCounts, bypassLogin } from '../battle-scene';
-import Pokemon, { EnemyPokemon, PlayerPokemon } from '../field/pokemon';
-import { pokemonEvolutions, pokemonPrevolutions } from '../data/pokemon-evolutions';
-import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from '../data/pokemon-species';
-import { Species, defaultStarterSpecies } from '../data/enums/species';
-import * as Utils from '../utils';
-import * as Overrides from '../overrides';
-import PokemonData from './pokemon-data';
-import PersistentModifierData from './modifier-data';
-import ArenaData from './arena-data';
-import { Unlockables } from './unlockables';
-import { GameModes, gameModes } from '../game-mode';
-import { BattleType } from '../battle';
-import TrainerData from './trainer-data';
-import { trainerConfigs } from '../data/trainer-config';
-import { Setting, setSetting, settingDefaults } from './settings';
-import { achvs } from './achv';
-import EggData from './egg-data';
-import { Egg } from '../data/egg';
-import { VoucherType, vouchers } from './voucher';
-import { AES, enc } from 'crypto-js';
-import { Mode } from '../ui/ui';
-import { clientSessionId, loggedInUser, updateUserInfo } from '../account';
-import { Nature } from '../data/nature';
-import { GameStats } from './game-stats';
-import { Tutorial } from '../tutorial';
-import { Moves } from '../data/enums/moves';
-import { speciesEggMoves } from '../data/egg-moves';
-import { allMoves } from '../data/move';
-import { TrainerVariant } from '../field/trainer';
-import { OutdatedPhase, ReloadSessionPhase } from '#app/phases';
-import { Variant, variantData } from '#app/data/variant';
+import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
+import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
+import { Species, defaultStarterSpecies } from "../data/enums/species";
+import * as Utils from "../utils";
+import * as Overrides from "../overrides";
+import PokemonData from "./pokemon-data";
+import PersistentModifierData from "./modifier-data";
+import ArenaData from "./arena-data";
+import { Unlockables } from "./unlockables";
+import { GameModes, gameModes } from "../game-mode";
+import { BattleType } from "../battle";
+import TrainerData from "./trainer-data";
+import { trainerConfigs } from "../data/trainer-config";
+import { Setting, setSetting, settingDefaults } from "./settings";
+import { achvs } from "./achv";
+import EggData from "./egg-data";
+import { Egg } from "../data/egg";
+import { VoucherType, vouchers } from "./voucher";
+import { AES, enc } from "crypto-js";
+import { Mode } from "../ui/ui";
+import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
+import { Nature } from "../data/nature";
+import { GameStats } from "./game-stats";
+import { Tutorial } from "../tutorial";
+import { Moves } from "../data/enums/moves";
+import { speciesEggMoves } from "../data/egg-moves";
+import { allMoves } from "../data/move";
+import { TrainerVariant } from "../field/trainer";
+import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
+import { Variant, variantData } from "#app/data/variant";
 
-const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
+const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
 export enum GameDataType {
   SYSTEM,
@@ -54,17 +54,17 @@ export enum Passive {
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
   case GameDataType.SYSTEM:
-    return 'data';
+    return "data";
   case GameDataType.SESSION:
-    let ret = 'sessionData';
+    let ret = "sessionData";
     if (slotId) {
       ret += slotId;
     }
     return ret;
   case GameDataType.SETTINGS:
-    return 'settings';
+    return "settings";
   case GameDataType.TUTORIALS:
-    return 'tutorials';
+    return "tutorials";
   }
 }
 
@@ -199,21 +199,21 @@ export interface TutorialFlags {
 }
 
 const systemShortKeys = {
-  seenAttr: '$sa',
-  caughtAttr: '$ca',
-  natureAttr: '$na',
-  seenCount: '$s' ,
-  caughtCount: '$c',
-  hatchedCount: '$hc',
-  ivs: '$i',
-  moveset: '$m',
-  eggMoves: '$em',
-  candyCount: '$x',
-  friendship: '$f',
-  abilityAttr: '$a',
-  passiveAttr: '$pa',
-  valueReduction: '$vr',
-  classicWinCount: '$wc'
+  seenAttr: "$sa",
+  caughtAttr: "$ca",
+  natureAttr: "$na",
+  seenCount: "$s" ,
+  caughtCount: "$c",
+  hatchedCount: "$hc",
+  ivs: "$i",
+  moveset: "$m",
+  eggMoves: "$em",
+  candyCount: "$x",
+  friendship: "$f",
+  abilityAttr: "$a",
+  passiveAttr: "$pa",
+  valueReduction: "$vr",
+  classicWinCount: "$wc"
 };
 
 export class GameData {
@@ -288,7 +288,7 @@ export class GameData {
       const data = this.getSystemSaveData();
 
       const maxIntAttrValue = Math.pow(2, 31);
-      const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
+      const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
       localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
 
@@ -298,10 +298,10 @@ export class GameData {
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
-              if (error.startsWith('client version out of date')) {
+              if (error.startsWith("client version out of date")) {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-              } else if (error.startsWith('session out of date')) {
+              } else if (error.startsWith("session out of date")) {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
@@ -320,7 +320,7 @@ export class GameData {
 
   public loadSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      console.log('Client Session:', clientSessionId);
+      console.log("Client Session:", clientSessionId);
 
       if (bypassLogin && !localStorage.getItem(`data_${loggedInUser.username}`)) {
         return resolve(false);
@@ -330,12 +330,12 @@ export class GameData {
         Utils.apiFetch(`savedata/system?clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(response => {
-            if (!response.length || response[0] !== '{') {
-              if (response.startsWith('sql: no rows in result set')) {
-                this.scene.queueMessage('Save data could not be found. If this is a new account, you can safely ignore this message.', null, true);
+            if (!response.length || response[0] !== "{") {
+              if (response.startsWith("sql: no rows in result set")) {
+                this.scene.queueMessage("Save data could not be found. If this is a new account, you can safely ignore this message.", null, true);
                 return resolve(true);
-              } else if (response.indexOf('Too many connections') > -1) {
-                this.scene.queueMessage('Too many people are trying to connect and the server is overloaded. Please try again later.', null, true);
+              } else if (response.indexOf("Too many connections") > -1) {
+                this.scene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
               console.error(response);
@@ -359,7 +359,7 @@ export class GameData {
         if (cachedSystemDataStr) {
           const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
           if (cachedSystemData.timestamp > systemData.timestamp) {
-            console.debug('Use cached system');
+            console.debug("Use cached system");
             systemData = cachedSystemData;
             systemDataStr = cachedSystemDataStr;
           } else {
@@ -389,15 +389,15 @@ export class GameData {
         if (initStarterData) {
           this.initStarterData();
 
-          if (systemData['starterMoveData']) {
-            const starterMoveData = systemData['starterMoveData'];
+          if (systemData["starterMoveData"]) {
+            const starterMoveData = systemData["starterMoveData"];
             for (const s of Object.keys(starterMoveData)) {
               this.starterData[s].moveset = starterMoveData[s];
             }
           }
 
-          if (systemData['starterEggMoveData']) {
-            const starterEggMoveData = systemData['starterEggMoveData'];
+          if (systemData["starterEggMoveData"]) {
+            const starterEggMoveData = systemData["starterEggMoveData"];
             for (const s of Object.keys(starterEggMoveData)) {
               this.starterData[s].eggMoves = starterEggMoveData[s];
             }
@@ -405,7 +405,7 @@ export class GameData {
 
           this.migrateStarterAbilities(systemData, this.starterData);
         } else {
-          if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion)) {
+          if ([ "1.0.0", "1.0.1" ].includes(systemData.gameVersion)) {
             this.migrateStarterAbilities(systemData);
           }
           //this.fixVariantData(systemData);
@@ -486,9 +486,9 @@ export class GameData {
 
   private parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
-      if (k === 'gameStats') {
+      if (k === "gameStats") {
         return new GameStats(v);
-      } else if (k === 'eggs') {
+      } else if (k === "eggs") {
         const ret: EggData[] = [];
         if (v === null) {
           v = [];
@@ -499,19 +499,19 @@ export class GameData {
         return ret;
       }
 
-      return k.endsWith('Attr') && ![ 'natureAttr', 'abilityAttr', 'passiveAttr' ].includes(k) ? BigInt(v) : v;
+      return k.endsWith("Attr") && ![ "natureAttr", "abilityAttr", "passiveAttr" ].includes(k) ? BigInt(v) : v;
     }) as SystemSaveData;
   }
 
   private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
     if (!shorten) {
       // Account for past key oversight
-      dataStr = dataStr.replace(/\$pAttr/g, '$pa');
+      dataStr = dataStr.replace(/\$pAttr/g, "$pa");
     }
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
     for (const k in fromKeys) {
-      dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace('$', '\\$')}`, 'g'), toKeys[k]);
+      dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace("$", "\\$")}`, "g"), toKeys[k]);
     }
 
     return dataStr;
@@ -522,7 +522,7 @@ export class GameData {
       return true;
     }
 
-    const response = await Utils.apiPost('savedata/system/verify', JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
+    const response = await Utils.apiPost("savedata/system/verify", JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
       .then(response => response.json());
 
     if (!response.valid) {
@@ -541,14 +541,14 @@ export class GameData {
     }
     localStorage.removeItem(`data_${loggedInUser.username}`);
     for (let s = 0; s < 5; s++) {
-      localStorage.removeItem(`sessionData${s ? s : ''}_${loggedInUser.username}`);
+      localStorage.removeItem(`sessionData${s ? s : ""}_${loggedInUser.username}`);
     }
   }
 
   public saveSetting(setting: Setting, valueIndex: integer): boolean {
     let settings: object = {};
-    if (localStorage.hasOwnProperty('settings')) {
-      settings = JSON.parse(localStorage.getItem('settings'));
+    if (localStorage.hasOwnProperty("settings")) {
+      settings = JSON.parse(localStorage.getItem("settings"));
     }
 
     setSetting(this.scene, setting as Setting, valueIndex);
@@ -559,7 +559,7 @@ export class GameData {
       }
     });
 
-    localStorage.setItem('settings', JSON.stringify(settings));
+    localStorage.setItem("settings", JSON.stringify(settings));
 
     return true;
   }
@@ -567,11 +567,11 @@ export class GameData {
   private loadSettings(): boolean {
     Object.values(Setting).map(setting => setting as Setting).forEach(setting => setSetting(this.scene, setting, settingDefaults[setting]));
 
-    if (!localStorage.hasOwnProperty('settings')) {
+    if (!localStorage.hasOwnProperty("settings")) {
       return false;
     }
 
-    const settings = JSON.parse(localStorage.getItem('settings'));
+    const settings = JSON.parse(localStorage.getItem("settings"));
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting as Setting, settings[setting]);
@@ -580,8 +580,8 @@ export class GameData {
 
   public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
     let tutorials: object = {};
-    if (localStorage.hasOwnProperty('tutorials')) {
-      tutorials = JSON.parse(localStorage.getItem('tutorials'));
+    if (localStorage.hasOwnProperty("tutorials")) {
+      tutorials = JSON.parse(localStorage.getItem("tutorials"));
     }
 
     Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
@@ -593,7 +593,7 @@ export class GameData {
       }
     });
 
-    localStorage.setItem('tutorials', JSON.stringify(tutorials));
+    localStorage.setItem("tutorials", JSON.stringify(tutorials));
 
     return true;
   }
@@ -602,11 +602,11 @@ export class GameData {
     const ret: TutorialFlags = {};
     Object.values(Tutorial).map(tutorial => tutorial as Tutorial).forEach(tutorial => ret[Tutorial[tutorial]] = false);
 
-    if (!localStorage.hasOwnProperty('tutorials')) {
+    if (!localStorage.hasOwnProperty("tutorials")) {
       return ret;
     }
 
-    const tutorials = JSON.parse(localStorage.getItem('tutorials'));
+    const tutorials = JSON.parse(localStorage.getItem("tutorials"));
 
     for (const tutorial of Object.keys(tutorials)) {
       ret[tutorial] = tutorials[tutorial];
@@ -651,21 +651,21 @@ export class GameData {
         }
       };
 
-      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`)) {
+      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
         Utils.apiFetch(`savedata/session?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(async response => {
-            if (!response.length || response[0] !== '{') {
+            if (!response.length || response[0] !== "{") {
               console.error(response);
               return resolve(null);
             }
 
-            localStorage.setItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`, encrypt(response, bypassLogin));
+            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`, encrypt(response, bypassLogin));
 
             await handleSessionData(response);
           });
       } else {
-        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`);
+        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
         if (sessionData) {
           await handleSessionData(decrypt(sessionData, bypassLogin));
         } else {
@@ -686,7 +686,7 @@ export class GameData {
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
 
-          console.log('Seed:', scene.seed);
+          console.log("Seed:", scene.seed);
 
           scene.sessionPlayTime = sessionData.playTime || 0;
           scene.lastSavePlayTime = 0;
@@ -743,7 +743,7 @@ export class GameData {
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
-          const modifiersModule = await import('../modifier/modifier');
+          const modifiersModule = await import("../modifier/modifier");
 
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
@@ -785,7 +785,7 @@ export class GameData {
   deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ''}_${loggedInUser.username}`);
+        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
         return resolve(true);
       }
 
@@ -796,13 +796,13 @@ export class GameData {
         Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ''}_${loggedInUser.username}`);
+            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
             resolve(true);
           }
           return response.text();
         }).then(error => {
           if (error) {
-            if (error.startsWith('session out of date')) {
+            if (error.startsWith("session out of date")) {
               this.scene.clearPhaseQueue();
               this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
             }
@@ -825,18 +825,18 @@ export class GameData {
       let daily: string[] = [];
 
       if (sessionData.gameMode === GameModes.DAILY) {
-        if (localStorage.hasOwnProperty('daily')) {
-          daily = JSON.parse(atob(localStorage.getItem('daily')));
+        if (localStorage.hasOwnProperty("daily")) {
+          daily = JSON.parse(atob(localStorage.getItem("daily")));
           if (daily.includes(seed)) {
             return resolve(false);
           } else {
             daily.push(seed);
-            localStorage.setItem('daily', btoa(JSON.stringify(daily)));
+            localStorage.setItem("daily", btoa(JSON.stringify(daily)));
             return resolve(true);
           }
         } else {
           daily.push(seed);
-          localStorage.setItem('daily', btoa(JSON.stringify(daily)));
+          localStorage.setItem("daily", btoa(JSON.stringify(daily)));
           return resolve(true);
         }
       } else {
@@ -848,7 +848,7 @@ export class GameData {
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`);
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
         return resolve([true, true]);
       }
 
@@ -860,14 +860,14 @@ export class GameData {
         Utils.apiPost(`savedata/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ''}_${loggedInUser.username}`);
+            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
           }
           return response.json();
         }).then(jsonResponse => {
           if (!jsonResponse.error) {
             return resolve([true, jsonResponse.success as boolean]);
           }
-          if (jsonResponse && jsonResponse.error.startsWith('session out of date')) {
+          if (jsonResponse && jsonResponse.error.startsWith("session out of date")) {
             this.scene.clearPhaseQueue();
             this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
           }
@@ -886,7 +886,7 @@ export class GameData {
         const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
       }*/
 
-      if (k === 'party' || k === 'enemyParty') {
+      if (k === "party" || k === "enemyParty") {
         const ret: PokemonData[] = [];
         if (v === null) {
           v = [];
@@ -897,18 +897,18 @@ export class GameData {
         return ret;
       }
 
-      if (k === 'trainer') {
+      if (k === "trainer") {
         return v ? new TrainerData(v) : null;
       }
 
-      if (k === 'modifiers' || k === 'enemyModifiers') {
-        const player = k === 'modifiers';
+      if (k === "modifiers" || k === "enemyModifiers") {
+        const player = k === "modifiers";
         const ret: PersistentModifierData[] = [];
         if (v === null) {
           v = [];
         }
         for (const md of v) {
-          if(md?.className === 'ExpBalanceModifier') { // Temporarily limit EXP Balance until it gets reworked
+          if(md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
           ret.push(new PersistentModifierData(md, player));
@@ -916,7 +916,7 @@ export class GameData {
         return ret;
       }
 
-      if (k === 'arena') {
+      if (k === "arena") {
         return new ArenaData(v);
       }
 
@@ -933,7 +933,7 @@ export class GameData {
         if (sync) {
           this.scene.ui.savingIcon.show();
         }
-        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
+        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
 
         const maxIntAttrValue = Math.pow(2, 31);
         const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData();
@@ -945,14 +945,14 @@ export class GameData {
           clientSessionId: clientSessionId
         };
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
+        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
 
-        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ''}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
+        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
-        console.debug('Session data saved');
+        console.debug("Session data saved");
 
         if (!bypassLogin && sync) {
-          Utils.apiPost('savedata/updateall', JSON.stringify(request, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
+          Utils.apiPost("savedata/updateall", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
             .then(response => response.text())
             .then(error => {
               if (sync) {
@@ -960,10 +960,10 @@ export class GameData {
                 this.scene.ui.savingIcon.hide();
               }
               if (error) {
-                if (error.startsWith('client version out of date')) {
+                if (error.startsWith("client version out of date")) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith('session out of date')) {
+                } else if (error.startsWith("session out of date")) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
@@ -992,18 +992,18 @@ export class GameData {
           break;
         }
         const encryptedData = AES.encrypt(dataStr, saveKey);
-        const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
-        const link = document.createElement('a');
+        const blob = new Blob([ encryptedData.toString() ], {type: "text/json"});
+        const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
         link.download = `${dataKey}.prsv`;
         link.click();
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? 'system' : 'session'}?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, true)
+        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
           .then(response => response.text())
           .then(response => {
-            if (!response.length || response[0] !== '{') {
+            if (!response.length || response[0] !== "{") {
               console.error(response);
               resolve(false);
               return;
@@ -1025,17 +1025,17 @@ export class GameData {
   public importData(dataType: GameDataType, slotId: integer = 0): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser.username}`;
 
-    let saveFile: any = document.getElementById('saveFile');
+    let saveFile: any = document.getElementById("saveFile");
     if (saveFile) {
       saveFile.remove();
     }
   
-    saveFile = document.createElement('input');
-    saveFile.id = 'saveFile';
-    saveFile.type = 'file';
-    saveFile.accept = '.prsv';
-    saveFile.style.display = 'none';
-    saveFile.addEventListener('change',
+    saveFile = document.createElement("input");
+    saveFile.id = "saveFile";
+    saveFile.type = "file";
+    saveFile.accept = ".prsv";
+    saveFile.style.display = "none";
+    saveFile.addEventListener("change",
       e => {
         const reader = new FileReader();
 
@@ -1066,16 +1066,16 @@ export class GameData {
             let dataName: string;
             switch (dataType) {
             case GameDataType.SYSTEM:
-              dataName = 'save';
+              dataName = "save";
               break;
             case GameDataType.SESSION:
-              dataName = 'session';
+              dataName = "session";
               break;
             case GameDataType.SETTINGS:
-              dataName = 'settings';
+              dataName = "settings";
               break;
             case GameDataType.TUTORIALS:
-              dataName = 'tutorials';
+              dataName = "tutorials";
               break;
             }
 
@@ -1093,7 +1093,7 @@ export class GameData {
                     if (!success) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
                     }
-                    Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, dataStr, undefined, true)
+                    Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, dataStr, undefined, true)
                       .then(response => response.text())
                       .then(error => {
                         if (error) {
@@ -1141,7 +1141,7 @@ export class GameData {
       for (let s = 0; s < defaultStarterSpecies.length; s++) {
         defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
       }
-    }, 0, 'default');
+    }, 0, "default");
 
     for (let ds = 0; ds < defaultStarterSpecies.length; ds++) {
       const entry = data[defaultStarterSpecies[ds]] as DexEntry;
@@ -1267,7 +1267,7 @@ export class GameData {
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
-        this.scene.playSound('level_up_fanfare');
+        this.scene.playSound("level_up_fanfare");
         this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
       } else {
         checkPrevolution();
@@ -1333,8 +1333,8 @@ export class GameData {
 
       this.starterData[speciesId].eggMoves |= value;
 
-      this.scene.playSound('level_up_fanfare');
-      this.scene.ui.showText(`${eggMoveIndex === 3 ? 'Rare ' : ''}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
+      this.scene.playSound("level_up_fanfare");
+      this.scene.ui.showText(`${eggMoveIndex === 3 ? "Rare " : ""}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
     });
   }
 
@@ -1477,10 +1477,10 @@ export class GameData {
   consolidateDexData(dexData: DexData): void {
     for (const k of Object.keys(dexData)) {
       const entry = dexData[k] as DexEntry;
-      if (!entry.hasOwnProperty('hatchedCount')) {
+      if (!entry.hasOwnProperty("hatchedCount")) {
         entry.hatchedCount = 0;
       }
-      if (!entry.hasOwnProperty('natureAttr') || (entry.caughtAttr && !entry.natureAttr)) {
+      if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
         entry.natureAttr = this.defaultDexData[k].natureAttr || Math.pow(2, Utils.randInt(25, 1));
       }
     }

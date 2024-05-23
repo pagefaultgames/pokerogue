@@ -1,64 +1,64 @@
-import Phaser from 'phaser';
-import UI  from './ui/ui';
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
-import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
-import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from './modifier/modifier';
-import { PokeballType } from './data/pokeball';
-import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
-import { Phase } from './phase';
-import { initGameSpeed } from './system/game-speed';
-import { Biome } from './data/enums/biome';
-import { Arena, ArenaBase } from './field/arena';
-import { GameData, PlayerGender } from './system/game-data';
-import { TextStyle, addTextObject } from './ui/text';
-import { Moves } from './data/enums/moves';
-import { allMoves } from './data/move';
-import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
-import AbilityBar from './ui/ability-bar';
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
-import { allAbilities } from './data/ability';
-import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
-import { GameMode, GameModes, gameModes } from './game-mode';
-import FieldSpritePipeline from './pipelines/field-sprite';
-import SpritePipeline from './pipelines/sprite';
-import PartyExpBar from './ui/party-exp-bar';
-import { TrainerSlot, trainerConfigs } from './data/trainer-config';
-import Trainer, { TrainerVariant } from './field/trainer';
-import TrainerData from './system/trainer-data';
-import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
-import { pokemonPrevolutions } from './data/pokemon-evolutions';
-import PokeballTray from './ui/pokeball-tray';
-import { Species } from './data/enums/species';
-import InvertPostFX from './pipelines/invert';
-import { Achv, ModifierAchv, MoneyAchv, achvs } from './system/achv';
-import { Voucher, vouchers } from './system/voucher';
-import { Gender } from './data/gender';
-import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
-import { addUiThemeOverrides } from './ui/ui-theme';
-import PokemonData from './system/pokemon-data';
-import { Nature } from './data/nature';
-import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
-import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
-import { BattleSpec } from './enums/battle-spec';
-import { getTypeRgb } from './data/type';
-import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler';
-import CharSprite from './ui/char-sprite';
-import DamageNumberHandler from './field/damage-number-handler';
-import PokemonInfoContainer from './ui/pokemon-info-container';
-import { biomeDepths, getBiomeName } from './data/biomes';
-import { UiTheme } from './enums/ui-theme';
-import { SceneBase } from './scene-base';
-import CandyBar from './ui/candy-bar';
-import { Variant, variantData } from './data/variant';
-import { Localizable } from './plugins/i18n';
-import * as Overrides from './overrides';
-import {InputsController} from './inputs-controller';
-import {UiInputs} from './ui-inputs';
+import Phaser from "phaser";
+import UI  from "./ui/ui";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
+import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from "./data/pokemon-species";
+import * as Utils from "./utils";
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
+import { PokeballType } from "./data/pokeball";
+import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
+import { Phase } from "./phase";
+import { initGameSpeed } from "./system/game-speed";
+import { Biome } from "./data/enums/biome";
+import { Arena, ArenaBase } from "./field/arena";
+import { GameData, PlayerGender } from "./system/game-data";
+import { TextStyle, addTextObject } from "./ui/text";
+import { Moves } from "./data/enums/moves";
+import { allMoves } from "./data/move";
+import { initMoves } from "./data/move";
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
+import AbilityBar from "./ui/ability-bar";
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from "./data/ability";
+import { allAbilities } from "./data/ability";
+import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
+import { GameMode, GameModes, gameModes } from "./game-mode";
+import FieldSpritePipeline from "./pipelines/field-sprite";
+import SpritePipeline from "./pipelines/sprite";
+import PartyExpBar from "./ui/party-exp-bar";
+import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
+import Trainer, { TrainerVariant } from "./field/trainer";
+import TrainerData from "./system/trainer-data";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import PokeballTray from "./ui/pokeball-tray";
+import { Species } from "./data/enums/species";
+import InvertPostFX from "./pipelines/invert";
+import { Achv, ModifierAchv, MoneyAchv, achvs } from "./system/achv";
+import { Voucher, vouchers } from "./system/voucher";
+import { Gender } from "./data/gender";
+import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
+import { addUiThemeOverrides } from "./ui/ui-theme";
+import PokemonData from "./system/pokemon-data";
+import { Nature } from "./data/nature";
+import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
+import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
+import { BattleSpec } from "./enums/battle-spec";
+import { getTypeRgb } from "./data/type";
+import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
+import CharSprite from "./ui/char-sprite";
+import DamageNumberHandler from "./field/damage-number-handler";
+import PokemonInfoContainer from "./ui/pokemon-info-container";
+import { biomeDepths, getBiomeName } from "./data/biomes";
+import { UiTheme } from "./enums/ui-theme";
+import { SceneBase } from "./scene-base";
+import CandyBar from "./ui/candy-bar";
+import { Variant, variantData } from "./data/variant";
+import { Localizable } from "./plugins/i18n";
+import * as Overrides from "./overrides";
+import {InputsController} from "./inputs-controller";
+import {UiInputs} from "./ui-inputs";
 
-export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === '1';
+export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
@@ -90,7 +90,7 @@ export default class BattleScene extends SceneBase {
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public showLevelUpStats: boolean = true;
-  public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === '1';
+  public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
@@ -182,11 +182,11 @@ export default class BattleScene extends SceneBase {
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngCounter: integer = 0;
-  public rngSeedOverride: string = '';
+  public rngSeedOverride: string = "";
   public rngOffset: integer = 0;
 
   constructor() {
-    super('battle');
+    super("battle");
 
     initSpecies();
     initMoves();
@@ -203,14 +203,14 @@ export default class BattleScene extends SceneBase {
     if (experimental === undefined) {
       experimental = this.experimentalSprites;
     }
-    const variant = atlasPath.includes('variant/') || /_[0-3]$/.test(atlasPath);
+    const variant = atlasPath.includes("variant/") || /_[0-3]$/.test(atlasPath);
     if (experimental) {
       experimental = this.hasExpSprite(key);
     }
     if (variant) {
-      atlasPath = atlasPath.replace('variant/', '');
+      atlasPath = atlasPath.replace("variant/", "");
     }
-    this.load.atlas(key, `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.json`);
+    this.load.atlas(key, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,  `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`);
   }
 
   async preload() {
@@ -219,7 +219,7 @@ export default class BattleScene extends SceneBase {
       const originalRealInRange = Phaser.Math.RND.realInRange;
       Phaser.Math.RND.realInRange = function (min: number, max: number): number {
         const ret = originalRealInRange.apply(this, [ min, max ]);
-        const args = [ 'RNG', ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+        const args = [ "RNG", ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
         args.push(`seed: ${scene.rngSeedOverride || scene.waveSeed || scene.seed}`);
         if (scene.rngOffset) {
           args.push(`offset: ${scene.rngOffset}`);
@@ -246,10 +246,10 @@ export default class BattleScene extends SceneBase {
     this.load.setBaseURL();
 
     this.spritePipeline = new SpritePipeline(this.game);
-    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add('Sprite', this.spritePipeline);
+    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("Sprite", this.spritePipeline);
 
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
-    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add('FieldSprite', this.fieldSpritePipeline);
+    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
     this.time.delayedCall(20, () => this.launchBattle());
   }
@@ -260,8 +260,8 @@ export default class BattleScene extends SceneBase {
   }
 
   launchBattle() {
-    this.arenaBg = this.add.sprite(0, 0, 'plains_bg');
-    this.arenaBgTransition = this.add.sprite(0, 0, 'plains_bg');
+    this.arenaBg = this.add.sprite(0, 0, "plains_bg");
+    this.arenaBgTransition = this.add.sprite(0, 0, "plains_bg");
 
     [ this.arenaBgTransition, this.arenaBg ].forEach(a => {
       a.setPipeline(this.fieldSpritePipeline);
@@ -285,13 +285,13 @@ export default class BattleScene extends SceneBase {
       x: 0,
       y: 0,
       scale: 6,
-      key: 'loading_bg',
+      key: "loading_bg",
       origin: { x: 0, y: 0 }
     }, true);
 
     transition.transit({
-      mode: 'blinds',
-      ease: 'Cubic.easeInOut',
+      mode: "blinds",
+      ease: "Cubic.easeInOut",
       duration: 1250,
       oncomplete: () => transition.destroy()
     });
@@ -352,20 +352,20 @@ export default class BattleScene extends SceneBase {
     this.waveCountText.setOrigin(1, 0);
     this.fieldUI.add(this.waveCountText);
 
-    this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.MONEY);
+    this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setOrigin(1, 0);
     this.fieldUI.add(this.moneyText);
 
-    this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.PARTY, { fontSize: '54px' });
+    this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.scoreText.setOrigin(1, 0);
     this.fieldUI.add(this.scoreText);
 
-    this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.PARTY, { fontSize: '54px' });
+    this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.luckText.setOrigin(1, 0);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
-    this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, 'Luck:', TextStyle.PARTY, { fontSize: '54px' });
+    this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
     this.luckLabelText.setOrigin(1, 0);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
@@ -402,7 +402,7 @@ export default class BattleScene extends SceneBase {
       field.add(a);
     });
 
-    const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
+    const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
     trainer.setOrigin(0.5, 1);
 
     field.add(trainer);
@@ -410,16 +410,16 @@ export default class BattleScene extends SceneBase {
     this.trainer = trainer;
 
     this.anims.create({
-      key: 'prompt',
-      frames: this.anims.generateFrameNumbers('prompt', { start: 1, end: 4 }),
+      key: "prompt",
+      frames: this.anims.generateFrameNumbers("prompt", { start: 1, end: 4 }),
       frameRate: 6,
       repeat: -1,
       showOnStart: true
     });
 
     this.anims.create({
-      key: 'tera_sparkle',
-      frames: this.anims.generateFrameNumbers('tera_sparkle', { start: 0, end: 12 }),
+      key: "tera_sparkle",
+      frames: this.anims.generateFrameNumbers("tera_sparkle", { start: 0, end: 12 }),
       frameRate: 18,
       repeat: 0,
       showOnStart: true,
@@ -487,7 +487,7 @@ export default class BattleScene extends SceneBase {
     if (expSpriteKeys.length) {
       return;
     }
-    this.cachedFetch('./exp-sprites.json').then(res => res.json()).then(keys => {
+    this.cachedFetch("./exp-sprites.json").then(res => res.json()).then(keys => {
       if (Array.isArray(keys)) {
         expSpriteKeys.push(...keys);
       }
@@ -497,11 +497,11 @@ export default class BattleScene extends SceneBase {
 
   async initVariantData(): Promise<void> {
     Object.keys(variantData).forEach(key => delete variantData[key]);
-    await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json())
+    await this.cachedFetch("./images/pokemon/variant/_masterlist.json").then(res => res.json())
       .then(v => {
         Object.keys(v).forEach(k => variantData[k] = v[k]);
         if (this.experimentalSprites) {
-          const expVariantData = variantData['exp'];
+          const expVariantData = variantData["exp"];
           const traverseVariantData = (keys: string[]) => {
             let variantTree = variantData;
             let expTree = expVariantData;
@@ -510,7 +510,7 @@ export default class BattleScene extends SceneBase {
                 variantTree = variantTree[k];
                 expTree = expTree[k];
               } else if (variantTree.hasOwnProperty(k) && expTree.hasOwnProperty(k)) {
-                if ([ 'back', 'female' ].includes(k)) {
+                if ([ "back", "female" ].includes(k)) {
                   traverseVariantData(keys.concat(k));
                 } else {
                   variantTree[k] = expTree[k];
@@ -525,9 +525,9 @@ export default class BattleScene extends SceneBase {
   }
 
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
-    const manifest = this.game['manifest'];
+    const manifest = this.game["manifest"];
     if (manifest) {
-      const timestamp = manifest[`/${url.replace('./', '')}`];
+      const timestamp = manifest[`/${url.replace("./", "")}`];
       if (timestamp) {
         url += `?t=${timestamp}`;
       }
@@ -541,7 +541,7 @@ export default class BattleScene extends SceneBase {
         return resolve();
       }
 
-      this.cachedFetch('./starter-colors.json').then(res => res.json()).then(sc => {
+      this.cachedFetch("./starter-colors.json").then(res => res.json()).then(sc => {
         starterColors = {};
         Object.keys(sc).forEach(key => {
           starterColors[key] = sc[key];
@@ -578,13 +578,13 @@ export default class BattleScene extends SceneBase {
     const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
     let k = keyMatch[4];
     if (keyMatch[2]) {
-      k += 's';
+      k += "s";
     }
     if (keyMatch[1]) {
-      k += 'b';
+      k += "b";
     }
     if (keyMatch[3]) {
-      k += 'f';
+      k += "f";
     }
     if (keyMatch[5]) {
       k += keyMatch[5];
@@ -762,7 +762,7 @@ export default class BattleScene extends SceneBase {
     this.gameMode = gameModes[GameModes.CLASSIC];
 		
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
-    console.log('Seed:', this.seed);
+    console.log("Seed:", this.seed);
 
     this.disableMenu = false;
 
@@ -815,7 +815,7 @@ export default class BattleScene extends SceneBase {
 
     this.arena.init();
 
-    this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
+    this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
     this.trainer.setPosition(406, 186);
     this.trainer.setVisible(true);
 		
@@ -826,7 +826,7 @@ export default class BattleScene extends SceneBase {
         ...allSpecies,
         ...allMoves,
         ...allAbilities,
-        ...Utils.getEnumValues(ModifierPoolType).map(mpt => getModifierPoolForType(mpt)).map(mp => Object.values(mp).flat().map(mt => mt.modifierType).filter(mt => 'localize' in mt).map(lpb => lpb as unknown as Localizable)).flat()
+        ...Utils.getEnumValues(ModifierPoolType).map(mpt => getModifierPoolForType(mpt)).map(mp => Object.values(mp).flat().map(mt => mt.modifierType).filter(mt => "localize" in mt).map(lpb => lpb as unknown as Localizable)).flat()
       ];
       for (const item of localizable) {
         item.localize();
@@ -842,12 +842,12 @@ export default class BattleScene extends SceneBase {
         targets: [ this.uiContainer ],
         alpha: 0,
         duration: 250,
-        ease: 'Sine.easeInOut',
+        ease: "Sine.easeInOut",
         onComplete: () => {
           this.clearPhaseQueue();
 
           this.children.removeAll(true);
-          this.game.domContainer.innerHTML = '';
+          this.game.domContainer.innerHTML = "";
           this.launchBattle();
         }
       });
@@ -1026,7 +1026,7 @@ export default class BattleScene extends SceneBase {
         x: (defaultWidth - scaledWidth) / 2,
         y: defaultHeight - scaledHeight,
         duration: !instant ? Utils.fixedInt(Math.abs(this.field.scale - scale) * 200) : 0,
-        ease: 'Sine.easeInOut',
+        ease: "Sine.easeInOut",
         onComplete: () => resolve()
       });
     });
@@ -1173,7 +1173,7 @@ export default class BattleScene extends SceneBase {
     const wave = waveIndex || this.currentBattle?.waveIndex || 0;
     this.waveSeed = Utils.shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([ this.waveSeed ]);
-    console.log('Wave Seed:', this.waveSeed, wave);
+    console.log("Wave Seed:", this.waveSeed, wave);
     this.rngCounter = 0;
   }
 
@@ -1188,7 +1188,7 @@ export default class BattleScene extends SceneBase {
     Phaser.Math.RND.sow([ Utils.shiftCharCodes(seedOverride || this.seed, offset) ]);
     this.rngCounter = 0;
     this.rngOffset = offset;
-    this.rngSeedOverride = seedOverride || '';
+    this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
     this.rngCounter = tempRngCounter;
@@ -1200,7 +1200,7 @@ export default class BattleScene extends SceneBase {
     const ret = this.add.sprite(x, y, texture, frame);
     ret.setPipeline(this.fieldSpritePipeline);
     if (terrainColorRatio) {
-      ret.pipelineData['terrainColorRatio'] = terrainColorRatio;
+      ret.pipelineData["terrainColorRatio"] = terrainColorRatio;
     }
 
     return ret;
@@ -1223,7 +1223,7 @@ export default class BattleScene extends SceneBase {
       this.tweens.add({
         targets: this.fieldOverlay,
         alpha: 0.5,
-        ease: 'Sine.easeOut',
+        ease: "Sine.easeOut",
         duration: duration,
         onComplete: () => resolve()
       });
@@ -1236,7 +1236,7 @@ export default class BattleScene extends SceneBase {
         targets: this.fieldOverlay,
         alpha: 0,
         duration: duration,
-        ease: 'Cubic.easeIn',
+        ease: "Cubic.easeIn",
         onComplete: () => resolve()
       });
     });
@@ -1245,15 +1245,15 @@ export default class BattleScene extends SceneBase {
   updateWaveCountText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     this.waveCountText.setText(this.currentBattle.waveIndex.toString());
-    this.waveCountText.setColor(!isBoss ? '#404040' : '#f89890');
-    this.waveCountText.setShadowColor(!isBoss ? '#ded6b5' : '#984038');
+    this.waveCountText.setColor(!isBoss ? "#404040" : "#f89890");
+    this.waveCountText.setShadowColor(!isBoss ? "#ded6b5" : "#984038");
     this.waveCountText.setVisible(true);
   }
 
-	updateMoneyText(): void {
-		this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
-		this.moneyText.setVisible(true);
-	}
+  updateMoneyText(): void {
+    this.moneyText.setText(`₽${this.money.toLocaleString("en-US")}`);
+    this.moneyText.setVisible(true);
+  }
 
   updateScoreText(): void {
     this.scoreText.setText(`Score: ${this.score.toString()}`);
@@ -1404,7 +1404,7 @@ export default class BattleScene extends SceneBase {
         volume: this.masterVolume * this.bgmVolume
       });
       if (loopPoint) {
-        this.bgm.on('looped', () => this.bgm.play({ seek: loopPoint }));
+        this.bgm.on("looped", () => this.bgm.play({ seek: loopPoint }));
       }
     };
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -1465,19 +1465,19 @@ export default class BattleScene extends SceneBase {
 
   playSound(sound: string | AnySound, config?: object): AnySound {
     if (config) {
-      if (config.hasOwnProperty('volume')) {
-        config['volume'] *= this.masterVolume * this.seVolume;
+      if (config.hasOwnProperty("volume")) {
+        config["volume"] *= this.masterVolume * this.seVolume;
       } else {
-        config['volume'] = this.masterVolume * this.seVolume;
+        config["volume"] = this.masterVolume * this.seVolume;
       }
     } else {
       config = { volume: this.masterVolume * this.seVolume };
     }
     // PRSFX sounds are mixed too loud
-    if ((typeof sound === 'string' ? sound : sound.key).startsWith('PRSFX- ')) {
-      config['volume'] *= 0.5;
+    if ((typeof sound === "string" ? sound : sound.key).startsWith("PRSFX- ")) {
+      config["volume"] *= 0.5;
     }
-    if (typeof sound === 'string') {
+    if (typeof sound === "string") {
       this.sound.play(sound, config);
       return this.sound.get(sound) as AnySound;
     } else {
@@ -1505,55 +1505,55 @@ export default class BattleScene extends SceneBase {
 
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
-    case 'battle_kanto_champion':
+    case "battle_kanto_champion":
       return 13.950;
-    case 'battle_johto_champion':
+    case "battle_johto_champion":
       return 23.498;
-    case 'battle_hoenn_champion':
+    case "battle_hoenn_champion":
       return 11.328;
-    case 'battle_sinnoh_champion':
+    case "battle_sinnoh_champion":
       return 12.235;
-    case 'battle_champion_alder':
+    case "battle_champion_alder":
       return 27.653;
-    case 'battle_champion_iris':
+    case "battle_champion_iris":
       return 10.145;
-    case 'battle_elite':
+    case "battle_elite":
       return 17.730;
-    case 'battle_final_encounter':
+    case "battle_final_encounter":
       return 19.159;
-    case 'battle_final':
+    case "battle_final":
       return 16.453;
-    case 'battle_kanto_gym':
+    case "battle_kanto_gym":
       return 13.857;
-    case 'battle_johto_gym':
+    case "battle_johto_gym":
       return 12.911;
-    case 'battle_hoenn_gym':
+    case "battle_hoenn_gym":
       return 12.379;
-    case 'battle_sinnoh_gym':
+    case "battle_sinnoh_gym":
       return 13.122;
-    case 'battle_unova_gym':
+    case "battle_unova_gym":
       return 19.145;
-    case 'battle_legendary_regis': //B2W2 Legendary Titan Battle
+    case "battle_legendary_regis": //B2W2 Legendary Titan Battle
       return 49.500;
-    case 'battle_legendary_unova': //BW Unova Legendary Battle
+    case "battle_legendary_unova": //BW Unova Legendary Battle
       return 13.855;
-    case 'battle_legendary_kyurem': //BW Kyurem Battle
+    case "battle_legendary_kyurem": //BW Kyurem Battle
       return 18.314;
-    case 'battle_legendary_res_zek': //BW Reshiram & Zekrom Battle
+    case "battle_legendary_res_zek": //BW Reshiram & Zekrom Battle
       return 18.329;
-    case 'battle_rival':
+    case "battle_rival":
       return 13.689;
-    case 'battle_rival_2':
+    case "battle_rival_2":
       return 17.714;
-    case 'battle_rival_3':
+    case "battle_rival_3":
       return 17.586;
-    case 'battle_trainer':
+    case "battle_trainer":
       return 13.686;
-    case 'battle_wild':
+    case "battle_wild":
       return 12.703;
-    case 'battle_wild_strong':
+    case "battle_wild_strong":
       return 13.940;
-    case 'end_summit':
+    case "end_summit":
       return 30.025;
     }
 
@@ -1564,7 +1564,7 @@ export default class BattleScene extends SceneBase {
     if (invert) {
       this.cameras.main.setPostPipeline(InvertPostFX);
     } else {
-      this.cameras.main.removePostPipeline('InvertPostFX');
+      this.cameras.main.removePostPipeline("InvertPostFX");
     }
   }
 
@@ -2035,7 +2035,7 @@ export default class BattleScene extends SceneBase {
     const appliedModifiers: PersistentModifier[] = [];
     for (const modifier of modifiers) {
       if (modifier.apply(args)) {
-        console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');
+        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
         appliedModifiers.push(modifier);
       }
     }
@@ -2047,7 +2047,7 @@ export default class BattleScene extends SceneBase {
     const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     for (const modifier of modifiers) {
       if (modifier.apply(args)) {
-        console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');
+        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
         return modifier;
       }
     }
@@ -2113,8 +2113,8 @@ export default class BattleScene extends SceneBase {
   updateGameInfo(): void {
     const gameInfo = {
       playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
-      gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
-      biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
+      gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
+      biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
       wave: this.currentBattle?.waveIndex || 0,
       party: this.party ? this.party.map(p => {
         return { name: p.name, level: p.level };

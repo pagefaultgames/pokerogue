@@ -8,7 +8,7 @@
         // General rules that apply to all files
         "eqeqeq": ["error", "always"], // Enforces the use of === and !== instead of == and !=
         "indent": ["error", 2], // Enforces a 2-space indentation
-        "quotes": ["error", "single"], // Enforces the use of single quotes for strings
+        "quotes": ["error", "double"], // Enforces the use of double quotes for strings
         "no-var": "error", // Disallows the use of var, enforcing let or const instead
         "prefer-const": "error", // Prefers the use of const for variables that are never reassigned
         "no-undef": "off", // Disables the rule that disallows the use of undeclared variables (TypeScript handles this)

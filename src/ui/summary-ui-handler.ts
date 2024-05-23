@@ -1,26 +1,26 @@
-import BattleScene, { starterColors } from '../battle-scene';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import * as Utils from '../utils';
-import { PlayerPokemon } from '../field/pokemon';
-import { getStarterValueFriendshipCap, speciesStarters } from '../data/pokemon-species';
-import { argbFromRgba } from '@material/material-color-utilities';
-import { Type, getTypeRgb } from '../data/type';
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from './text';
-import Move, { MoveCategory } from '../data/move';
-import { getPokeballAtlasKey } from '../data/pokeball';
-import { getGenderColor, getGenderSymbol } from '../data/gender';
-import { getLevelRelExp, getLevelTotalExp } from '../data/exp';
-import { Stat, getStatName } from '../data/pokemon-stat';
-import { PokemonHeldItemModifier } from '../modifier/modifier';
-import { StatusEffect } from '../data/status-effect';
-import { getBiomeName } from '../data/biomes';
-import { Nature, getNatureStatMultiplier } from '../data/nature';
-import { loggedInUser } from '../account';
-import { PlayerGender } from '../system/game-data';
-import { Variant, getVariantTint } from '#app/data/variant';
-import {Button} from '../enums/buttons';
-import { Ability } from '../data/ability.js';
+import BattleScene, { starterColors } from "../battle-scene";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import * as Utils from "../utils";
+import { PlayerPokemon } from "../field/pokemon";
+import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
+import { argbFromRgba } from "@material/material-color-utilities";
+import { Type, getTypeRgb } from "../data/type";
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
+import Move, { MoveCategory } from "../data/move";
+import { getPokeballAtlasKey } from "../data/pokeball";
+import { getGenderColor, getGenderSymbol } from "../data/gender";
+import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
+import { Stat, getStatName } from "../data/pokemon-stat";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { StatusEffect } from "../data/status-effect";
+import { getBiomeName } from "../data/biomes";
+import { Nature, getNatureStatMultiplier } from "../data/nature";
+import { loggedInUser } from "../account";
+import { PlayerGender } from "../system/game-data";
+import { Variant, getVariantTint } from "#app/data/variant";
+import {Button} from "../enums/buttons";
+import { Ability } from "../data/ability.js";
 
 enum Page {
   PROFILE,
@@ -111,105 +111,105 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.setVisible(false);
     ui.add(this.summaryContainer);
 
-    const summaryBg = this.scene.add.image(0, 0, 'summary_bg');
+    const summaryBg = this.scene.add.image(0, 0, "summary_bg");
     summaryBg.setOrigin(0, 1);
     this.summaryContainer.add(summaryBg);
 
-    this.tabSprite = this.scene.add.sprite(134, (-summaryBg.displayHeight) + 16, 'summary_tabs_1');
+    this.tabSprite = this.scene.add.sprite(134, (-summaryBg.displayHeight) + 16, "summary_tabs_1");
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
-    const summaryLabel = addTextObject(this.scene, 4, -165, 'Pokémon Info', TextStyle.SUMMARY);
+    const summaryLabel = addTextObject(this.scene, 4, -165, "Pokémon Info", TextStyle.SUMMARY);
     summaryLabel.setOrigin(0, 1);
     this.summaryContainer.add(summaryLabel);
 
-    this.shinyOverlay = this.scene.add.image(6, -54, 'summary_overlay_shiny');
+    this.shinyOverlay = this.scene.add.image(6, -54, "summary_overlay_shiny");
     this.shinyOverlay.setOrigin(0, 1);
     this.shinyOverlay.setVisible(false);
     this.summaryContainer.add(this.shinyOverlay);
 
-    this.numberText = addTextObject(this.scene, 17, -149, '0000', TextStyle.SUMMARY);
+    this.numberText = addTextObject(this.scene, 17, -149, "0000", TextStyle.SUMMARY);
     this.numberText.setOrigin(0, 1);
     this.summaryContainer.add(this.numberText);
 
-    this.pokemonSprite = this.scene.initPokemonSprite(this.scene.add.sprite(56, -106, 'pkmn__sub'), null, false, true);
+    this.pokemonSprite = this.scene.initPokemonSprite(this.scene.add.sprite(56, -106, "pkmn__sub"), null, false, true);
     this.summaryContainer.add(this.pokemonSprite);
 
-    this.nameText = addTextObject(this.scene, 6, -54, '', TextStyle.SUMMARY);
+    this.nameText = addTextObject(this.scene, 6, -54, "", TextStyle.SUMMARY);
     this.nameText.setOrigin(0, 0);
     this.summaryContainer.add(this.nameText);
 
-    this.splicedIcon = this.scene.add.sprite(0, -54, 'icon_spliced');
+    this.splicedIcon = this.scene.add.sprite(0, -54, "icon_spliced");
     this.splicedIcon.setVisible(false);
     this.splicedIcon.setOrigin(0, 0);
     this.splicedIcon.setScale(0.75);
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.splicedIcon);
     
-    this.shinyIcon = this.scene.add.image(0, -54, 'shiny_star');
+    this.shinyIcon = this.scene.add.image(0, -54, "shiny_star");
     this.shinyIcon.setVisible(false);
     this.shinyIcon.setOrigin(0, 0);
     this.shinyIcon.setScale(0.75);
     this.shinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.shinyIcon);
 
-    this.fusionShinyIcon = this.scene.add.image(0, 0, 'shiny_star_2');
+    this.fusionShinyIcon = this.scene.add.image(0, 0, "shiny_star_2");
     this.fusionShinyIcon.setVisible(false);
     this.fusionShinyIcon.setOrigin(0, 0);
     this.fusionShinyIcon.setScale(0.75);
     this.summaryContainer.add(this.fusionShinyIcon);
 
-    this.pokeball = this.scene.add.sprite(6, -19, 'pb');
+    this.pokeball = this.scene.add.sprite(6, -19, "pb");
     this.pokeball.setOrigin(0, 1);
     this.summaryContainer.add(this.pokeball);
 
-    this.candyIcon = this.scene.add.sprite(13, -140, 'candy');
+    this.candyIcon = this.scene.add.sprite(13, -140, "candy");
     this.candyIcon.setScale(0.8);
     this.summaryContainer.add(this.candyIcon);
 
-    this.candyOverlay = this.scene.add.sprite(13, -140, 'candy_overlay');
+    this.candyOverlay = this.scene.add.sprite(13, -140, "candy_overlay");
     this.candyOverlay.setScale(0.8);
     this.summaryContainer.add(this.candyOverlay);
 
-    this.candyShadow = this.scene.add.sprite(13, -140, 'candy');
+    this.candyShadow = this.scene.add.sprite(13, -140, "candy");
     this.candyShadow.setTint(0x000000);
     this.candyShadow.setAlpha(0.50);
     this.candyShadow.setScale(0.8);
     this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.candyShadow);
 
-    this.candyCountText = addTextObject(this.scene, 20, -146, 'x0', TextStyle.WINDOW_ALT, { fontSize: '76px' });
+    this.candyCountText = addTextObject(this.scene, 20, -146, "x0", TextStyle.WINDOW_ALT, { fontSize: "76px" });
     this.candyCountText.setOrigin(0, 0);
     this.summaryContainer.add(this.candyCountText);
 
-    this.championRibbon = this.scene.add.image(88, -146, 'champion_ribbon');
+    this.championRibbon = this.scene.add.image(88, -146, "champion_ribbon");
     this.championRibbon.setOrigin(0, 0);
     //this.championRibbon.setScale(0.8);
     this.championRibbon.setScale(1.25);
     this.summaryContainer.add(this.championRibbon);
     this.championRibbon.setVisible(false);
 
-    this.levelText = addTextObject(this.scene, 36, -17, '', TextStyle.SUMMARY_ALT);
+    this.levelText = addTextObject(this.scene, 36, -17, "", TextStyle.SUMMARY_ALT);
     this.levelText.setOrigin(0, 1);
     this.summaryContainer.add(this.levelText);
 
-    this.genderText = addTextObject(this.scene, 96, -17, '', TextStyle.SUMMARY);
+    this.genderText = addTextObject(this.scene, 96, -17, "", TextStyle.SUMMARY);
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
 
     this.statusContainer = this.scene.add.container(-106, -16);
 
-    const statusBg = this.scene.add.image(0, 0, 'summary_status');
+    const statusBg = this.scene.add.image(0, 0, "summary_status");
     statusBg.setOrigin(0, 0);
 
     this.statusContainer.add(statusBg);
     
-    const statusLabel = addTextObject(this.scene, 3, 0, 'Status', TextStyle.SUMMARY);
+    const statusLabel = addTextObject(this.scene, 3, 0, "Status", TextStyle.SUMMARY);
     statusLabel.setOrigin(0, 0);
 
     this.statusContainer.add(statusLabel);
 
-    this.status = this.scene.add.sprite(91, 4, 'statuses');
+    this.status = this.scene.add.sprite(91, 4, "statuses");
     this.status.setOrigin(0.5, 0);
 
     this.statusContainer.add(this.status);
@@ -220,25 +220,25 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.summaryContainer.add(this.moveEffectContainer);
 
-    const moveEffectBg = this.scene.add.image(0, 0, 'summary_moves_effect');
+    const moveEffectBg = this.scene.add.image(0, 0, "summary_moves_effect");
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
 
-    const moveEffectLabels = addTextObject(this.scene, 8, 12, 'Power\nAccuracy\nCategory', TextStyle.SUMMARY);
+    const moveEffectLabels = addTextObject(this.scene, 8, 12, "Power\nAccuracy\nCategory", TextStyle.SUMMARY);
     moveEffectLabels.setLineSpacing(9);
     moveEffectLabels.setOrigin(0, 0);
 
     this.moveEffectContainer.add(moveEffectLabels);
 
-    this.movePowerText = addTextObject(this.scene, 99, 27, '0', TextStyle.WINDOW_ALT);
+    this.movePowerText = addTextObject(this.scene, 99, 27, "0", TextStyle.WINDOW_ALT);
     this.movePowerText.setOrigin(1, 1);
     this.moveEffectContainer.add(this.movePowerText);
 
-    this.moveAccuracyText = addTextObject(this.scene, 99, 43, '0', TextStyle.WINDOW_ALT);
+    this.moveAccuracyText = addTextObject(this.scene, 99, 43, "0", TextStyle.WINDOW_ALT);
     this.moveAccuracyText.setOrigin(1, 1);
     this.moveEffectContainer.add(this.moveAccuracyText);
 
-    this.moveCategoryIcon = this.scene.add.sprite(99, 57, 'categories');
+    this.moveCategoryIcon = this.scene.add.sprite(99, 57, "categories");
     this.moveCategoryIcon.setOrigin(1, 1);
     this.moveEffectContainer.add(this.moveCategoryIcon);
 
@@ -285,15 +285,15 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
-    this.pokemonSprite.setPipelineData('teraColor', getTypeRgb(this.pokemon.getTeraType()));
-    this.pokemonSprite.setPipelineData('ignoreTimeTint', true);
-    this.pokemonSprite.setPipelineData('spriteKey', this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData('shiny', this.pokemon.shiny);
-    this.pokemonSprite.setPipelineData('variant', this.pokemon.variant);
-    [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
+    this.pokemonSprite.setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()));
+    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
+    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
+    this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
+    this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
+    [ "spriteColors", "fusionSpriteColors" ].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon.summonData?.speciesForm) {
-        k += 'Base';
+        k += "Base";
       }
       this.pokemonSprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
     });
@@ -306,8 +306,8 @@ export default class SummaryUiHandler extends UiHandler {
     this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + 2, 3);
     this.splicedIcon.setVisible(isFusion);
     if (this.splicedIcon.visible) {
-      this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${this.pokemon.species.getName(this.pokemon.formIndex)}/${this.pokemon.fusionSpecies.getName(this.pokemon.fusionFormIndex)}`, true));
-      this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+      this.splicedIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${this.pokemon.species.getName(this.pokemon.formIndex)}/${this.pokemon.fusionSpecies.getName(this.pokemon.fusionFormIndex)}`, true));
+      this.splicedIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
     if(this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
@@ -325,8 +325,8 @@ export default class SummaryUiHandler extends UiHandler {
     const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
     if (this.candyShadow.visible) {
-      this.candyShadow.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${currentFriendship}/${friendshipCap}`, true));
-      this.candyShadow.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+      this.candyShadow.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${currentFriendship}/${friendshipCap}`, true));
+      this.candyShadow.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
     this.candyCountText.setText(`x${this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`);
@@ -337,15 +337,15 @@ export default class SummaryUiHandler extends UiHandler {
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
     
     this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1, 3);
-    this.shinyIcon.setTexture(`shiny_star${doubleShiny ? '_1' : ''}`);
+    this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
     this.shinyIcon.setVisible(this.pokemon.isShiny());
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
       const shinyDescriptor = doubleShiny || baseVariant ?
-        `${baseVariant === 2 ? 'Epic' : baseVariant === 1 ? 'Rare' : 'Common'}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? 'Epic' : this.pokemon.fusionVariant === 1 ? 'Rare' : 'Common'}` : ''}`
-        : '';
-      this.shinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ''}`, true));
-      this.shinyIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+        `${baseVariant === 2 ? "Epic" : baseVariant === 1 ? "Rare" : "Common"}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? "Epic" : this.pokemon.fusionVariant === 1 ? "Rare" : "Common"}` : ""}`
+        : "";
+      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
+      this.shinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
@@ -380,7 +380,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     if (this.pokemon.status || this.pokemon.pokerus) {
       this.showStatus(!fromSummary);
-      this.status.setFrame(this.pokemon.status ? StatusEffect[this.pokemon.status.effect].toLowerCase() : 'pokerus');
+      this.status.setFrame(this.pokemon.status ? StatusEffect[this.pokemon.status.effect].toLowerCase() : "pokerus");
     } else {
       this.hideStatus(!fromSummary);
     }
@@ -538,15 +538,15 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (selectedMove) {
         this.moveDescriptionText.setY(84);
-        this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : '---');
-        this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : '---');
+        this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : "---");
+        this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : "---");
         this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
         this.showMoveEffect();
       } else {
         this.hideMoveEffect();
       }
 
-      this.moveDescriptionText.setText(selectedMove?.effect || '');
+      this.moveDescriptionText.setText(selectedMove?.effect || "");
       const moveDescriptionLineCount = Math.floor(this.moveDescriptionText.displayHeight / 14.83);
 
       if (this.descriptionScrollTween) {
@@ -566,7 +566,7 @@ export default class SummaryUiHandler extends UiHandler {
       }
 
       if (!this.moveCursorObj) {
-        this.moveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'highlight');
+        this.moveCursorObj = this.scene.add.sprite(-2, 0, "summary_moves_cursor", "highlight");
         this.moveCursorObj.setOrigin(0, 1);
         this.movesContainer.add(this.moveCursorObj);
       }
@@ -592,7 +592,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
       if (this.selectedMoveIndex > -1) {
         if (!this.selectedMoveCursorObj) {
-          this.selectedMoveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'select');
+          this.selectedMoveCursorObj = this.scene.add.sprite(-2, 0, "summary_moves_cursor", "select");
           this.selectedMoveCursorObj.setOrigin(0, 1);
           this.movesContainer.add(this.selectedMoveCursorObj);
           this.movesContainer.moveBelow(this.selectedMoveCursorObj, this.moveCursorObj);
@@ -620,7 +620,7 @@ export default class SummaryUiHandler extends UiHandler {
           }
           this.scene.tweens.add({
             targets: this.summaryPageTransitionContainer,
-            x: forward ? '-=214' : '+=214',
+            x: forward ? "-=214" : "+=214",
             duration: 250,
             onComplete: () => {
               if (forward){
@@ -674,11 +674,11 @@ export default class SummaryUiHandler extends UiHandler {
       const profileContainer = this.scene.add.container(0, -pageBg.height);
       pageContainer.add(profileContainer);
 
-      const trainerLabel = addTextObject(this.scene, 7, 12, 'OT/', TextStyle.SUMMARY_ALT);
+      const trainerLabel = addTextObject(this.scene, 7, 12, "OT/", TextStyle.SUMMARY_ALT);
       trainerLabel.setOrigin(0, 0);
       profileContainer.add(trainerLabel);
 
-      const trainerText = addTextObject(this.scene, 25, 12, loggedInUser?.username || 'Unknown',
+      const trainerText = addTextObject(this.scene, 25, 12, loggedInUser?.username || "Unknown",
         this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
       trainerText.setOrigin(0, 0);
       profileContainer.add(trainerText);
@@ -687,15 +687,15 @@ export default class SummaryUiHandler extends UiHandler {
       trainerIdText.setOrigin(0, 0);
       profileContainer.add(trainerIdText);
 
-      const typeLabel = addTextObject(this.scene, 7, 28, 'Type/', TextStyle.WINDOW_ALT);
+      const typeLabel = addTextObject(this.scene, 7, 28, "Type/", TextStyle.WINDOW_ALT);
       typeLabel.setOrigin(0, 0);
       profileContainer.add(typeLabel);
 
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
         const xCoord = 39 + 34 * index;
         const typeIcon = !tera
-          ? this.scene.add.sprite(xCoord, 42, 'types', Type[type].toLowerCase())
-          : this.scene.add.sprite(xCoord, 42, 'type_tera');
+          ? this.scene.add.sprite(xCoord, 42, "types", Type[type].toLowerCase())
+          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
           typeIcon.setScale(0.5);
           const typeRgb = getTypeRgb(type);
@@ -715,7 +715,7 @@ export default class SummaryUiHandler extends UiHandler {
       }
 
       if (this.pokemon.getLuck()) {
-        const luckLabelText = addTextObject(this.scene, 141, 28, 'Luck:', TextStyle.SUMMARY_ALT);
+        const luckLabelText = addTextObject(this.scene, 141, 28, "Luck:", TextStyle.SUMMARY_ALT);
         luckLabelText.setOrigin(0, 0);
         profileContainer.add(luckLabelText);
           
@@ -726,7 +726,7 @@ export default class SummaryUiHandler extends UiHandler {
       }
 
       this.abilityContainer = {
-        labelImage: this.scene.add.image(0, 0, 'summary_profile_ability'),
+        labelImage: this.scene.add.image(0, 0, "summary_profile_ability"),
         ability: this.pokemon.getAbility(true), 
         nameText: null, 
         descriptionText: null};
@@ -735,14 +735,14 @@ export default class SummaryUiHandler extends UiHandler {
       // Only add to the array and set up displaying a passive if it's unlocked
       if (this.pokemon.hasPassive()) {
         this.passiveContainer = {
-          labelImage: this.scene.add.image(0, 0, 'summary_profile_passive'),
+          labelImage: this.scene.add.image(0, 0, "summary_profile_passive"),
           ability: this.pokemon.getPassiveAbility(), 
           nameText: null, 
           descriptionText: null};          
         allAbilityInfo.push(this.passiveContainer);
 
         // Sets up the pixel button prompt image
-        this.abilityPrompt = this.scene.add.image(0, 0, !this.scene.gamepadSupport ? 'summary_profile_prompt_z' : 'summary_profile_prompt_a');
+        this.abilityPrompt = this.scene.add.image(0, 0, !this.scene.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
         this.abilityPrompt.setPosition(8, 43);
         this.abilityPrompt.setVisible(true);
         this.abilityPrompt.setOrigin(0, 0);
@@ -794,7 +794,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.passiveContainer?.nameText.setVisible(false);
       this.passiveContainer?.descriptionText.setVisible(false);
 
-      const memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.getNature()]), TextStyle.SUMMARY_RED)}${getBBCodeFrag(' nature,', TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW_ALT)}`;
+      const memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.getNature()]), TextStyle.SUMMARY_RED)}${getBBCodeFrag(" nature,", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? "apparently " : ""}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(",", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag(".", TextStyle.WINDOW_ALT)}`;
        
       const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW_ALT);
       memoText.setOrigin(0, 0);
@@ -809,7 +809,7 @@ export default class SummaryUiHandler extends UiHandler {
       stats.forEach((stat, s) => {
         const statName = stat !== Stat.HP
           ? getStatName(stat)
-          : 'HP';
+          : "HP";
         const rowIndex = s % 3;
         const colIndex = Math.floor(s / 3);
 
@@ -838,18 +838,18 @@ export default class SummaryUiHandler extends UiHandler {
         statsContainer.add(icon);
           
         icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-        icon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(item.type.name, item.type.getDescription(this.scene), true));
-        icon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+        icon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(item.type.name, item.type.getDescription(this.scene), true));
+        icon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
       });
 
       const relLvExp = getLevelRelExp(this.pokemon.level + 1, this.pokemon.species.growthRate);
       const expRatio = this.pokemon.level < this.scene.getMaxExpLevel() ? this.pokemon.levelExp / relLvExp : 0;
 
-      const expLabel = addTextObject(this.scene, 6, 112, 'EXP. Points', TextStyle.SUMMARY);
+      const expLabel = addTextObject(this.scene, 6, 112, "EXP. Points", TextStyle.SUMMARY);
       expLabel.setOrigin(0, 0);
       statsContainer.add(expLabel);
 
-      const nextLvExpLabel = addTextObject(this.scene, 6, 128, 'Next Lv.', TextStyle.SUMMARY);
+      const nextLvExpLabel = addTextObject(this.scene, 6, 128, "Next Lv.", TextStyle.SUMMARY);
       nextLvExpLabel.setOrigin(0, 0);
       statsContainer.add(nextLvExpLabel);
 
@@ -864,7 +864,7 @@ export default class SummaryUiHandler extends UiHandler {
       nextLvExpText.setOrigin(1, 0);
       statsContainer.add(nextLvExpText);
 
-      const expOverlay = this.scene.add.image(140, 145, 'summary_stats_overlay_exp');
+      const expOverlay = this.scene.add.image(140, 145, "summary_stats_overlay_exp");
       expOverlay.setOrigin(0, 0);
       statsContainer.add(expOverlay);
 
@@ -886,26 +886,26 @@ export default class SummaryUiHandler extends UiHandler {
       this.extraMoveRowContainer.setVisible(false);
       this.movesContainer.add(this.extraMoveRowContainer);
 
-      const extraRowOverlay = this.scene.add.image(-2, 1, 'summary_moves_overlay_row');
+      const extraRowOverlay = this.scene.add.image(-2, 1, "summary_moves_overlay_row");
       extraRowOverlay.setOrigin(0, 1);
       this.extraMoveRowContainer.add(extraRowOverlay);
 
-      const extraRowText = addTextObject(this.scene, 35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? this.newMove.name : 'Cancel',
+      const extraRowText = addTextObject(this.scene, 35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? this.newMove.name : "Cancel",
         this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY);
       extraRowText.setOrigin(0, 1);
       this.extraMoveRowContainer.add(extraRowText);
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, 'types', Type[this.newMove.type].toLowerCase());
+        const newMoveTypeIcon = this.scene.add.sprite(0, 0, "types", Type[this.newMove.type].toLowerCase());
         newMoveTypeIcon.setOrigin(0, 1);
         this.extraMoveRowContainer.add(newMoveTypeIcon);
 
-        const ppOverlay = this.scene.add.image(163, -1, 'summary_moves_overlay_pp');
+        const ppOverlay = this.scene.add.image(163, -1, "summary_moves_overlay_pp");
         ppOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppOverlay);
 
-        const pp = Utils.padInt(this.newMove.pp, 2, '  ');
+        const pp = Utils.padInt(this.newMove.pp, 2, "  ");
         const ppText = addTextObject(this.scene, 173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
         ppText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppText);
@@ -920,32 +920,32 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveRowsContainer.add(moveRowContainer);
 
         if (move) {
-          const typeIcon = this.scene.add.sprite(0, 0, 'types', Type[move.getMove().type].toLowerCase());
+          const typeIcon = this.scene.add.sprite(0, 0, "types", Type[move.getMove().type].toLowerCase());
           typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
         }
 
-        const moveText = addTextObject(this.scene, 35, 0, move ? move.getName() : '-', TextStyle.SUMMARY);
+        const moveText = addTextObject(this.scene, 35, 0, move ? move.getName() : "-", TextStyle.SUMMARY);
         moveText.setOrigin(0, 1);
         moveRowContainer.add(moveText);
 
-        const ppOverlay = this.scene.add.image(163, -1, 'summary_moves_overlay_pp');
+        const ppOverlay = this.scene.add.image(163, -1, "summary_moves_overlay_pp");
         ppOverlay.setOrigin(0, 1);
         moveRowContainer.add(ppOverlay);
 
-        const ppText = addTextObject(this.scene, 173, 1, '--/--', TextStyle.WINDOW);
+        const ppText = addTextObject(this.scene, 173, 1, "--/--", TextStyle.WINDOW);
         ppText.setOrigin(0, 1);
 
         if (move) {
           const maxPP = move.getMovePp();
           const pp = maxPP - move.ppUsed;
-          ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
+          ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
         }
 
         moveRowContainer.add(ppText);
       }
 
-      this.moveDescriptionText = addTextObject(this.scene, 2, 84, '', TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 } });
+      this.moveDescriptionText = addTextObject(this.scene, 2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 } });
       this.movesContainer.add(this.moveDescriptionText);
 
       const moveDescriptionTextMaskRect = this.scene.make.graphics({});
@@ -970,7 +970,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.statusContainer,
       x: 0,
       duration: instant ? 0 : 250,
-      ease: 'Sine.easeOut'
+      ease: "Sine.easeOut"
     });
   }
 
@@ -983,7 +983,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.statusContainer,
       x: -106,
       duration: instant ? 0 : 250,
-      ease: 'Sine.easeIn'
+      ease: "Sine.easeIn"
     });
   }
 
@@ -1016,7 +1016,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.moveSelect = false;
     this.extraMoveRowContainer.setVisible(false);
-    this.moveDescriptionText.setText('');
+    this.moveDescriptionText.setText("");
     
     this.destroyBlinkCursor();
     this.hideMoveEffect();
@@ -1046,7 +1046,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.moveEffectContainer,
       x: 6,
       duration: instant ? 0 : 250,
-      ease: 'Sine.easeOut'
+      ease: "Sine.easeOut"
     });
   }
 
@@ -1059,7 +1059,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.moveEffectContainer,
       x: 106,
       duration: instant ? 0 : 250,
-      ease: 'Sine.easeIn'
+      ease: "Sine.easeIn"
     });
   }
 

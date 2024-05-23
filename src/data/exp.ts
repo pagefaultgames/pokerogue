@@ -62,16 +62,16 @@ export function getLevelRelExp(level: integer, growthRate: GrowthRate): number {
 export function getGrowthRateColor(growthRate: GrowthRate, shadow?: boolean) {
   switch (growthRate) {
   case GrowthRate.ERRATIC:
-    return !shadow ? '#f85888' : '#906060';
+    return !shadow ? "#f85888" : "#906060";
   case GrowthRate.FAST:
-    return !shadow ? '#f8d030' : '#b8a038';
+    return !shadow ? "#f8d030" : "#b8a038";
   case GrowthRate.MEDIUM_FAST:
-    return !shadow ? '#78c850' : '#588040';
+    return !shadow ? "#78c850" : "#588040";
   case GrowthRate.MEDIUM_SLOW:
-    return !shadow ? '#6890f0' : '#807870';
+    return !shadow ? "#6890f0" : "#807870";
   case GrowthRate.SLOW:
-    return !shadow ? '#f08030' : '#c03028';
+    return !shadow ? "#f08030" : "#c03028";
   case GrowthRate.FLUCTUATING:
-    return !shadow ? '#a040a0' : '#483850';
+    return !shadow ? "#a040a0" : "#483850";
   }
 }

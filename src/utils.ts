@@ -1,12 +1,12 @@
-export const MissingTextureKey = '__MISSING';
+export const MissingTextureKey = "__MISSING";
 
 export function toReadableString(str: string): string {
-  return str.replace(/\_/g, ' ').split(' ').map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`).join(' ');
+  return str.replace(/\_/g, " ").split(" ").map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`).join(" ");
 }
 
 export function randomString(length: integer, seeded: boolean = false) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
   
   for (let i = 0; i < length; i++) {
     const randomIndex = seeded ? randSeedInt(characters.length) : Math.floor(Math.random() * characters.length);
@@ -21,7 +21,7 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
     shiftCount = 0;
   }
   
-  let newStr = '';
+  let newStr = "";
 
   for (let i = 0; i < str.length; i++) {
     const charCode = str.charCodeAt(i);
@@ -58,7 +58,7 @@ export function randSeedGauss(stdev: number, mean: number = 0): number {
 
 export function padInt(value: integer, length: integer, padWith?: string): string {
   if (!padWith) {
-    padWith = '0';
+    padWith = "0";
   }
   let valueStr = value.toString();
   while (valueStr.length < length) {
@@ -113,7 +113,7 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = 'Sine.easeIn'): T {
+export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T {
   if (!items.length) {
     return null;
   }
@@ -142,7 +142,7 @@ export function getPlayTimeString(totalSeconds: integer): string {
   const minutes = `${Math.floor(totalSeconds % secondsInHour / 60)}`;
   const seconds = `${Math.floor(totalSeconds % 60)}`;
 
-  return `${days.padStart(2, '0')}:${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+  return `${days.padStart(2, "0")}:${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
 }
 
 export function binToDec(input: string): integer {
@@ -161,7 +161,7 @@ export function binToDec(input: string): integer {
 }
 
 export function decToBin(input: integer): string {
-  let bin = '';
+  let bin = "";
   let intNum = input;
   while (intNum > 0) {
     bin = intNum % 2 ? `1${bin}` : `0${bin}`;
@@ -187,32 +187,32 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
     return count.toString();
   }
   const ret = count.toString();
-  let suffix = '';
+  let suffix = "";
   switch (Math.ceil(ret.length / 3) - 1) {
-    case 1:
-      suffix = 'K';
-      break;
-    case 2:
-      suffix = 'M';
-      break;
-    case 3:
-      suffix = 'B';
-      break;
-    case 4:
-      suffix = 'T';
-      break;
-    case 5:
-      suffix = 'q';
-      break;
-    default:
-      return '?';
+  case 1:
+    suffix = "K";
+    break;
+  case 2:
+    suffix = "M";
+    break;
+  case 3:
+    suffix = "B";
+    break;
+  case 4:
+    suffix = "T";
+    break;
+  case 5:
+    suffix = "q";
+    break;
+  default:
+    return "?";
   }
   const digits = ((ret.length + 2) % 3) + 1;
   let decimalNumber = ret.slice(digits, digits + 2);
-  while (decimalNumber.endsWith('0')) {
+  while (decimalNumber.endsWith("0")) {
     decimalNumber = decimalNumber.slice(0, -1);
   }
-  return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
+  return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ""}${suffix}`;
 }
 
 export function formatStat(stat: integer, forHp: boolean = false): string {
@@ -231,10 +231,10 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
   return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
 }
 
-export const sessionIdKey = 'pokerogue_sessionId';
-export const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '';
-export const serverUrl = isLocal ? 'http://localhost:8001' : '';
-export const apiUrl = isLocal ? serverUrl : 'https://api.pokerogue.net';
+export const sessionIdKey = "pokerogue_sessionId";
+export const isLocal = window.location.hostname === "localhost" || window.location.hostname === "";
+export const serverUrl = isLocal ? "http://localhost:8001" : "";
+export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
@@ -244,17 +244,17 @@ export function setCookie(cName: string, cValue: string): void {
 
 export function getCookie(cName: string): string {
   const name = `${cName}=`;
-  const ca = document.cookie.split(';');
+  const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) === ' ') {
+    while (c.charAt(0) === " ") {
       c = c.substring(1);
     }
     if (c.indexOf(name) === 0) {
       return c.substring(name.length, c.length);
     }
   }
-  return '';
+  return "";
 }
 
 export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
@@ -263,7 +263,7 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
     if (authed) {
       const sId = getCookie(sessionIdKey);
       if (sId) {
-        request['headers'] = { 'Authorization': sId };
+        request["headers"] = { "Authorization": sId };
       }
     }
     fetch(`${apiUrl}/${path}`, request)
@@ -272,19 +272,19 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
   });
 }
 
-export function apiPost(path: string, data?: any, contentType: string = 'application/json', authed: boolean = false): Promise<Response> {
+export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
     const headers = {
-      'Accept': contentType,
-      'Content-Type': contentType,
+      "Accept": contentType,
+      "Content-Type": contentType,
     };
     if (authed) {
       const sId = getCookie(sessionIdKey);
       if (sId) {
-        headers['Authorization'] = sId;
+        headers["Authorization"] = sId;
       }
     }
-    fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
+    fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));
   });

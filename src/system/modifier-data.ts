@@ -1,6 +1,6 @@
-import BattleScene from '../battle-scene';
-import { PersistentModifier } from '../modifier/modifier';
-import { GeneratedPersistentModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from '../modifier/modifier-type';
+import BattleScene from "../battle-scene";
+import { PersistentModifier } from "../modifier/modifier";
+import { GeneratedPersistentModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from "../modifier/modifier-type";
 
 export default class ModifierData {
   private player: boolean;
@@ -18,7 +18,7 @@ export default class ModifierData {
     this.typeId = sourceModifier ? sourceModifier.type.id : source.typeId;
     this.typeGeneratorId = sourceModifier ? sourceModifier.type.generatorId : source.typeGeneratorId;
     if (sourceModifier) {
-      if ('getPregenArgs' in source.type) {
+      if ("getPregenArgs" in source.type) {
         this.typePregenArgs = (source.type as GeneratedPersistentModifierType).getPregenArgs();
       }
     } else if (source.typePregenArgs) {

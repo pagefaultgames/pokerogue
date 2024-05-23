@@ -1,11 +1,11 @@
-import { CommandPhase } from '../phases';
-import BattleScene from '../battle-scene';
-import { addTextObject, TextStyle } from './text';
-import PartyUiHandler, { PartyUiMode } from './party-ui-handler';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import i18next from '../plugins/i18n';
-import {Button} from '../enums/buttons';
+import { CommandPhase } from "../phases";
+import BattleScene from "../battle-scene";
+import { addTextObject, TextStyle } from "./text";
+import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import i18next from "../plugins/i18n";
+import {Button} from "../enums/buttons";
 
 export enum Command {
   FIGHT = 0,
@@ -28,10 +28,10 @@ export default class CommandUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
     const commands = [ 
-      i18next.t('commandUiHandler:fight'), 
-      i18next.t('commandUiHandler:ball'), 
-      i18next.t('commandUiHandler:pokemon'), 
-      i18next.t('commandUiHandler:run') 
+      i18next.t("commandUiHandler:fight"), 
+      i18next.t("commandUiHandler:ball"), 
+      i18next.t("commandUiHandler:pokemon"), 
+      i18next.t("commandUiHandler:run") 
     ];
 
     this.commandsContainer = this.scene.add.container(216, -38.7);
@@ -63,7 +63,7 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(i18next.t('commandUiHandler:actionMessage', {pokemonName: commandPhase.getPokemon().name}), 0);
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: commandPhase.getPokemon().name}), 0);
     this.setCursor(this.getCursor());
 
     return true;
@@ -154,7 +154,7 @@ export default class CommandUiHandler extends UiHandler {
     }
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, 'cursor');
+      this.cursorObj = this.scene.add.image(0, 0, "cursor");
       this.commandsContainer.add(this.cursorObj);
     }
 

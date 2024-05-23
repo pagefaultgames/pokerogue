@@ -1,11 +1,11 @@
-import { fixedBattles } from './battle';
-import BattleScene from './battle-scene';
-import { Biome } from './data/enums/biome';
-import { Species } from './data/enums/species';
-import PokemonSpecies, { allSpecies } from './data/pokemon-species';
-import { Arena } from './field/arena';
-import * as Utils from './utils';
-import * as Overrides from './overrides';
+import { fixedBattles } from "./battle";
+import BattleScene from "./battle-scene";
+import { Biome } from "./data/enums/biome";
+import { Species } from "./data/enums/species";
+import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
+import { Arena } from "./field/arena";
+import * as Utils from "./utils";
+import * as Overrides from "./overrides";
 
 export enum GameModes {
   CLASSIC,
@@ -160,53 +160,53 @@ export class GameMode implements GameModeConfig {
    */
   isWaveFinal(waveIndex: integer, modeId: GameModes = this.modeId): boolean {
     switch (modeId) {
-      case GameModes.CLASSIC:
-        return waveIndex === 200;
-      case GameModes.ENDLESS:
-      case GameModes.SPLICED_ENDLESS:
-        return !(waveIndex % 250);
-      case GameModes.DAILY:
-        return waveIndex === 50;
+    case GameModes.CLASSIC:
+      return waveIndex === 200;
+    case GameModes.ENDLESS:
+    case GameModes.SPLICED_ENDLESS:
+      return !(waveIndex % 250);
+    case GameModes.DAILY:
+      return waveIndex === 50;
     }
   }
 
-    /**
+  /**
      * Every 10 waves is a boss battle
      * @returns true if waveIndex is a multiple of 10
      */
-    isBoss(waveIndex: integer): boolean {
-      return waveIndex % 10 === 0;
-    }
+  isBoss(waveIndex: integer): boolean {
+    return waveIndex % 10 === 0;
+  }
 
-    /**
+  /**
      * Every 50 waves of an Endless mode is a boss
      * At this time it is paradox pokemon
      * @returns true if waveIndex is a multiple of 50 in Endless
      */
-    isEndlessBoss(waveIndex: integer): boolean {
-      return waveIndex % 50 &&
+  isEndlessBoss(waveIndex: integer): boolean {
+    return waveIndex % 50 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
-    }
+  }
 
-    /**
+  /**
      * Every 250 waves of an Endless mode is a minor boss
      * At this time it is Eternatus
      * @returns true if waveIndex is a multiple of 250 in Endless
      */
-    isEndlessMinorBoss(waveIndex: integer): boolean {
-      return waveIndex % 250 === 0 && 
+  isEndlessMinorBoss(waveIndex: integer): boolean {
+    return waveIndex % 250 === 0 && 
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
-    }
+  }
 
-    /**
+  /**
      * Every 1000 waves of an Endless mode is a major boss
      * At this time it is Eternamax Eternatus
      * @returns true if waveIndex is a multiple of 1000 in Endless
      */
-    isEndlessMajorBoss(waveIndex: integer): boolean {
-      return waveIndex % 1000 === 0 && 
+  isEndlessMajorBoss(waveIndex: integer): boolean {
+    return waveIndex % 1000 === 0 && 
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
-    }
+  }
 
 
   getClearScoreBonus(): integer {
@@ -232,13 +232,13 @@ export class GameMode implements GameModeConfig {
   getName(): string {
     switch (this.modeId) {
     case GameModes.CLASSIC:
-      return 'Classic';
+      return "Classic";
     case GameModes.ENDLESS:
-      return 'Endless';
+      return "Endless";
     case GameModes.SPLICED_ENDLESS:
-      return 'Endless (Spliced)';
+      return "Endless (Spliced)";
     case GameModes.DAILY:
-      return 'Daily Run';
+      return "Daily Run";
     }
   }
 }

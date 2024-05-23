@@ -1,4 +1,4 @@
-import { Game } from 'phaser';
+import { Game } from "phaser";
 
 const fragShader = `
 precision mediump float;
@@ -17,10 +17,10 @@ export default class InvertPostFX extends Phaser.Renderer.WebGL.Pipelines.PostFX
   constructor (game: Game) {
     super({
       game,
-      name: 'InvertPostFX',
+      name: "InvertPostFX",
       fragShader,
       uniforms: [
-        'uMainSampler'
+        "uMainSampler"
       ]
     } as Phaser.Types.Renderer.WebGL.WebGLPipelineConfig);
   }

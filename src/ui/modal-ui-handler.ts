@@ -1,9 +1,9 @@
-import BattleScene from '../battle-scene';
-import { TextStyle, addTextObject } from './text';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import { WindowVariant, addWindow } from './ui-theme';
-import {Button} from '../enums/buttons';
+import BattleScene from "../battle-scene";
+import { TextStyle, addTextObject } from "./text";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import { WindowVariant, addWindow } from "./ui-theme";
+import {Button} from "../enums/buttons";
 
 export interface ModalConfig {
   buttonActions: Function[];
@@ -48,7 +48,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     this.modalContainer.add(this.modalBg);
 
-    this.titleText = addTextObject(this.scene, 0, 4, '', TextStyle.SETTINGS_LABEL);
+    this.titleText = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
     this.titleText.setOrigin(0.5, 0);
 
     this.modalContainer.add(this.titleText);
@@ -81,7 +81,7 @@ export abstract class ModalUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && 'buttonActions' in args[0]) {
+    if (args.length >= 1 && "buttonActions" in args[0]) {
       super.show(args);
 
       const config = args[0] as ModalConfig;
@@ -94,7 +94,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
         if (a < this.buttonBgs.length) {
-          this.buttonBgs[a].on('pointerdown', (_) => config.buttonActions[a]());
+          this.buttonBgs[a].on("pointerdown", (_) => config.buttonActions[a]());
         }
       }
 
@@ -133,6 +133,6 @@ export abstract class ModalUiHandler extends UiHandler {
     super.clear();
     this.modalContainer.setVisible(false);
 
-    this.buttonBgs.map(bg => bg.off('pointerdown'));
+    this.buttonBgs.map(bg => bg.off("pointerdown"));
   }
 }

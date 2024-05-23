@@ -1,16 +1,16 @@
-import { FormModalUiHandler } from './form-modal-ui-handler';
-import { ModalConfig } from './modal-ui-handler';
-import * as Utils from '../utils';
-import { Mode } from './ui';
-import i18next from '../plugins/i18n';
+import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { ModalConfig } from "./modal-ui-handler";
+import * as Utils from "../utils";
+import { Mode } from "./ui";
+import i18next from "../plugins/i18n";
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
-    return i18next.t('menu:login');
+    return i18next.t("menu:login");
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ i18next.t('menu:username'), i18next.t('menu:password') ];
+    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -22,23 +22,23 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t('menu:login'), i18next.t('menu:register') ];
+    return [ i18next.t("menu:login"), i18next.t("menu:register") ];
   }
 
   getReadableErrorMessage(error: string): string {
-    const colonIndex = error?.indexOf(':');
+    const colonIndex = error?.indexOf(":");
     if (colonIndex > 0) {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case 'invalid username':
-      return i18next.t('menu:invalidLoginUsername');
-    case 'invalid password':
-      return i18next.t('menu:invalidLoginPassword');
-    case 'account doesn\'t exist':
-      return i18next.t('menu:accountNonExistent');
-    case 'password doesn\'t match':
-      return i18next.t('menu:unmatchingPassword');
+    case "invalid username":
+      return i18next.t("menu:invalidLoginUsername");
+    case "invalid password":
+      return i18next.t("menu:invalidLoginPassword");
+    case "account doesn't exist":
+      return i18next.t("menu:accountNonExistent");
+    case "password doesn't match":
+      return i18next.t("menu:unmatchingPassword");
     }
 
     return super.getReadableErrorMessage(error);
@@ -59,9 +59,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text) {
-          return onFail(i18next.t('menu:emptyUsername'));
+          return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost('account/login', `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
+        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
           .then(response => {
             if (!response.ok) {
               return response.text();
@@ -69,7 +69,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
             return response.json();
           })
           .then(response => {
-            if (response.hasOwnProperty('token')) {
+            if (response.hasOwnProperty("token")) {
               Utils.setCookie(Utils.sessionIdKey, response.token);
               originalLoginAction();
             } else {

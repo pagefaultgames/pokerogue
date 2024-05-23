@@ -1,15 +1,15 @@
-import BattleScene from '../battle-scene';
-import { gameModes } from '../game-mode';
-import { SessionSaveData } from '../system/game-data';
-import { TextStyle, addTextObject } from './text';
-import { Mode } from './ui';
-import { addWindow } from './ui-theme';
-import * as Utils from '../utils';
-import PokemonData from '../system/pokemon-data';
-import { PokemonHeldItemModifier } from '../modifier/modifier';
-import MessageUiHandler from './message-ui-handler';
-import i18next from 'i18next';
-import {Button} from '../enums/buttons';
+import BattleScene from "../battle-scene";
+import { gameModes } from "../game-mode";
+import { SessionSaveData } from "../system/game-data";
+import { TextStyle, addTextObject } from "./text";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
+import * as Utils from "../utils";
+import PokemonData from "../system/pokemon-data";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
+import MessageUiHandler from "./message-ui-handler";
+import i18next from "i18next";
+import {Button} from "../enums/buttons";
 
 const sessionSlotCount = 5;
 
@@ -65,7 +65,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectMessageBox.setOrigin(0, 1);
     this.saveSlotSelectMessageBoxContainer.add(this.saveSlotSelectMessageBox);
 
-    this.message = addTextObject(this.scene, 8, 8, '', TextStyle.WINDOW, { maxLines: 2 });
+    this.message = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     this.message.setOrigin(0, 0);
     this.saveSlotSelectMessageBoxContainer.add(this.message);
 
@@ -118,7 +118,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
               originalCallback(cursor);
             };
             if (this.sessionSlots[cursor].hasData) {
-              ui.showText('Overwrite the data in the selected slot?', null, () => {
+              ui.showText("Overwrite the data in the selected slot?", null, () => {
                 ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
                   ui.revertMode();
                   ui.showText(null, 0);
@@ -179,7 +179,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
-    if (text?.indexOf('\n') === -1) {
+    if (text?.indexOf("\n") === -1) {
       this.saveSlotSelectMessageBox.setSize(318, 28);
       this.message.setY(-22);
     } else {
@@ -194,7 +194,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
     
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight_thick', null, 296, 44, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", null, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
@@ -213,7 +213,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
         duration: Utils.fixedInt(325),
-        ease: 'Sine.easeInOut'
+        ease: "Sine.easeInOut"
       });
     }
 
@@ -258,7 +258,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
     this.add(slotWindow);
 
-    this.loadingLabel = addTextObject(this.scene, 152, 26, 'Loading…', TextStyle.WINDOW);
+    this.loadingLabel = addTextObject(this.scene, 152, 26, "Loading…", TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);
     this.add(this.loadingLabel);
   }
@@ -266,7 +266,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
 
-    const gameModeLabel = addTextObject(this.scene, 8, 5, `${gameModes[data.gameMode]?.getName() || 'Unknown'} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+    const gameModeLabel = addTextObject(this.scene, 8, 5, `${gameModes[data.gameMode]?.getName() || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
     const timestampLabel = addTextObject(this.scene, 8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
@@ -283,9 +283,9 @@ class SessionSlot extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: '54px', color: '#f8f8f8' });
+      const text = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);
-      text.setStroke('#424242', 14);
+      text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
 
       iconContainer.add(icon);
@@ -298,7 +298,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
-    const modifiersModule = await import('../modifier/modifier');
+    const modifiersModule = await import("../modifier/modifier");
 
     const modifierIconsContainer = this.scene.add.container(148, 30);
     modifierIconsContainer.setScale(0.5);
@@ -324,7 +324,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       this.scene.gameData.getSession(this.slotId).then(async sessionData => {
         if (!sessionData) {
           this.hasData = false;
-          this.loadingLabel.setText(i18next.t('menu:empty'));
+          this.loadingLabel.setText(i18next.t("menu:empty"));
           resolve(false);
           return;
         }

@@ -1,8 +1,8 @@
-import BattleScene from '../battle-scene';
-import { EggHatchPhase } from '../egg-hatch-phase';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import {Button} from '../enums/buttons';
+import BattleScene from "../battle-scene";
+import { EggHatchPhase } from "../egg-hatch-phase";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import {Button} from "../enums/buttons";
 
 export default class EggHatchSceneHandler extends UiHandler {
   public eggHatchContainer: Phaser.GameObjects.Container;
@@ -15,9 +15,9 @@ export default class EggHatchSceneHandler extends UiHandler {
     this.eggHatchContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.scene.fieldUI.add(this.eggHatchContainer);
 
-    const eggLightraysAnimFrames = this.scene.anims.generateFrameNames('egg_lightrays', { start: 0, end: 3 });
+    const eggLightraysAnimFrames = this.scene.anims.generateFrameNames("egg_lightrays", { start: 0, end: 3 });
     this.scene.anims.create({
-      key: 'egg_lightrays',
+      key: "egg_lightrays",
       frames: eggLightraysAnimFrames,
       frameRate: 32
     });

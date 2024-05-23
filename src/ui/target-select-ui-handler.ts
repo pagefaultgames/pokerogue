@@ -1,11 +1,11 @@
-import { BattlerIndex } from '../battle';
-import BattleScene from '../battle-scene';
-import { Moves } from '../data/enums/moves';
-import { Mode } from './ui';
-import UiHandler from './ui-handler';
-import * as Utils from '../utils';
-import { getMoveTargets } from '../data/move';
-import {Button} from '../enums/buttons';
+import { BattlerIndex } from "../battle";
+import BattleScene from "../battle-scene";
+import { Moves } from "../data/enums/moves";
+import { Mode } from "./ui";
+import UiHandler from "./ui-handler";
+import * as Utils from "../utils";
+import { getMoveTargets } from "../data/move";
+import {Button} from "../enums/buttons";
 
 export type TargetSelectCallback = (cursor: integer) => void;
 
@@ -107,7 +107,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       alpha: 0,
       loop: -1,
       duration: Utils.fixedInt(250),
-      ease: 'Sine.easeIn',
+      ease: "Sine.easeIn",
       yoyo: true,
       onUpdate: t => {
         if (target) {
