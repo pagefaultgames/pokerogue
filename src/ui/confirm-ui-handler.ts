@@ -59,8 +59,9 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   }
 
   processInput(button: Button): boolean {
-    if (button === Button.CANCEL && this.blockInput)
+    if (button === Button.CANCEL && this.blockInput) {
       this.unblockInput();
+    }
 
     return super.processInput(button);
   }
@@ -68,8 +69,9 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   setCursor(cursor: integer): boolean {
     const ret = super.setCursor(cursor);
 
-    if (ret && this.switchCheck)
+    if (ret && this.switchCheck) {
       this.switchCheckCursor = this.cursor;
+    }
 
     return ret;
   }
