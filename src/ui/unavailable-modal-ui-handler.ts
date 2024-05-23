@@ -57,7 +57,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
         if (this.reconnectInterval > 60000) {
           this.reconnectInterval = 60000; // 1 minute maximum delay.
         }
-        this.reconnectTimer = setTimeout(this.tryReconnect, this.reconnectInterval);
+        this.reconnectTimer = setTimeout(() => this.tryReconnect(), this.reconnectInterval);
       }
     });
   }
@@ -70,16 +70,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
       this.reconnectCallback = args[0];
 
-      this.reconnectTimer = setInterval(() => {
-        updateUserInfo().then(response => {
-          if (response[0] || [200, 400].includes(response[1])) {
-            clearInterval(this.reconnectTimer);
-            this.reconnectTimer = null;
-            this.scene.playSound("pb_bounce_1");
-            this.reconnectCallback();
-          }
-        });
-      }, 5000);
+      this.reconnectTimer = setInterval(() => this.tryReconnect(), this.reconnectInterval);
 
       return super.show([ config ]);
     }
