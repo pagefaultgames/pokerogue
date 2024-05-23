@@ -57,6 +57,7 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { MoneyFormat } from "./enums/money-format";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -92,6 +93,7 @@ export default class BattleScene extends SceneBase {
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
+  public moneyFormat: MoneyFormat = MoneyFormat.NORMAL;
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
@@ -1250,9 +1252,16 @@ export default class BattleScene extends SceneBase {
     this.waveCountText.setVisible(true);
   }
 
-  updateMoneyText(): void {
-    this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
-    this.moneyText.setVisible(true);
+  updateMoneyText(forceVisible: boolean = true): void {
+    if (this.money === undefined) {
+      return;
+    }
+    const formattedMoney =
+			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatLargeNumber(this.money, 1000) : this.money.toLocaleString("en-US");
+    this.moneyText.setText(`₽${formattedMoney}`);
+    if (forceVisible) {
+      this.moneyText.setVisible(true);
+    }
   }
 
   updateScoreText(): void {
