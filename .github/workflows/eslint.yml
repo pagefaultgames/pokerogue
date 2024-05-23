@@ -29,5 +29,3 @@ jobs:
 
       - name: eslint  # Step to run linters
         uses: icrawl/action-eslint@v1
-        with:
-          custom-glob: apps
