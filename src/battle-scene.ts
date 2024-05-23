@@ -78,7 +78,7 @@ export interface PokeballCounts {
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
 export default class BattleScene extends SceneBase {
-	/**
+/**
   public rexUI: UIPlugin;
   public inputController: InputsController;
   public uiInputs: UiInputs;
@@ -98,7 +98,7 @@ export default class BattleScene extends SceneBase {
   public experimentalSprites: boolean = false;
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
-  /** 
+  /**
 	 * Defines the experience gain display mode.
 	 *
 	 * @remarks
