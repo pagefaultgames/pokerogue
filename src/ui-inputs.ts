@@ -7,9 +7,8 @@ import {Setting, settingOptions} from "./system/settings";
 import SettingsUiHandler from "./ui/settings-ui-handler";
 import {Button} from "./enums/buttons";
 
-export interface ActionKeys
-{
-[key in Button]: () => void;
+export interface ActionKeys {
+    [key in Button]: () => void;
 }
 
 export class UiInputs {
