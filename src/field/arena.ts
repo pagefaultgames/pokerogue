@@ -64,13 +64,27 @@ export class Arena {
     }
   }
 
-  randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
+  randomSpecies(waveIndex: integer, level: integer, attempt?: integer, luckValue?: integer): PokemonSpecies {
     const overrideSpecies = this.scene.gameMode.getOverrideSpecies(waveIndex);
     if (overrideSpecies)
       return overrideSpecies;
     const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
-    const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
+      let tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
+      if (typeof luckValue !== 'undefined') { //if party passed
+        if (luckValue < 6) {
+          //Do nothing at low luck values
+        } else if (luckValue < 10) {
+          tierValue = Math.floor(tierValue * 5.5 / luckValue); 
+        } else {
+          tierValue = Math.floor(tierValue * 5.5 / luckValue);
+          if (isBoss && tierValue >= 20) { //the modifiers to tierValue in this section are arbitrary
+            tierValue += 6; //Slight bump to common rarity bosses to make sure they stay more common than rares
+          } else if (!isBoss && tierValue >= 32) {
+            tierValue += 62; //Slight bump to common rarity enemies to make sure they appear more frequently than uncommons
+          }
+        }
+      }
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
