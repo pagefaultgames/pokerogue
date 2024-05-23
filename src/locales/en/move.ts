@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   "zippyZap": {
     name: "Zippy Zap",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and results in a critical hit."
+    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
   },
   "splishySplash": {
     name: "Splishy Splash",

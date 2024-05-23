@@ -1,9 +1,8 @@
-import { Type } from "./type";
-import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import { EggTier } from "./enums/egg-type";
+import i18next from "../plugins/i18n";
 
 export const EGG_SEED = 1073741824;
 
@@ -33,57 +32,62 @@ export class Egg {
   }
 
   getKey(): string {
-    if (this.isManaphyEgg())
-      return 'manaphy';
+    if (this.isManaphyEgg()) {
+      return "manaphy";
+    }
     return this.tier.toString();
   }
 }
 
 export function getEggTierDefaultHatchWaves(tier: EggTier): integer {
   switch (tier) {
-    case EggTier.COMMON:
-      return 10;
-    case EggTier.GREAT:
-      return 25;
-    case EggTier.ULTRA:
-      return 50;
+  case EggTier.COMMON:
+    return 10;
+  case EggTier.GREAT:
+    return 25;
+  case EggTier.ULTRA:
+    return 50;
   }
   return 100;
 }
 
 export function getEggDescriptor(egg: Egg): string {
-  if (egg.isManaphyEgg())
-    return 'Manaphy';
+  if (egg.isManaphyEgg()) {
+    return "Manaphy";
+  }
   switch (egg.tier) {
-    case EggTier.GREAT:
-      return 'Rare';
-    case EggTier.ULTRA:
-      return 'Epic';
-    case EggTier.MASTER:
-      return 'Legendary';
-    default:
-      return 'Common';
+  case EggTier.GREAT:
+    return i18next.t("egg:greatTier");
+  case EggTier.ULTRA:
+    return i18next.t("egg:ultraTier");
+  case EggTier.MASTER:
+    return i18next.t("egg:masterTier");
+  default:
+    return i18next.t("egg:defaultTier");
   }
 }
 
 export function getEggHatchWavesMessage(hatchWaves: integer): string {
-  if (hatchWaves <= 5)
-    return 'Sounds can be heard coming from inside! It will hatch soon!';
-  if (hatchWaves <= 15)
-    return 'It appears to move occasionally. It may be close to hatching.';
-  if (hatchWaves <= 50)
-    return 'What will hatch from this? It doesn\'t seem close to hatching.';
-  return 'It looks like this Egg will take a long time to hatch.';
+  if (hatchWaves <= 5) {
+    return i18next.t("egg:hatchWavesMessageSoon");
+  }
+  if (hatchWaves <= 15) {
+    return i18next.t("egg:hatchWavesMessageClose");
+  }
+  if (hatchWaves <= 50) {
+    return i18next.t("egg:hatchWavesMessageNotClose");
+  }
+  return i18next.t("egg:hatchWavesMessageLongTime");
 }
 
 export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string {
   switch (egg.gachaType) {
-    case GachaType.LEGENDARY:
-      return `Legendary Rate Up (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
-    case GachaType.MOVE:
-      return 'Rare Egg Move Rate Up';
-    case GachaType.SHINY:
-      return 'Shiny Rate Up';
+  case GachaType.LEGENDARY:
+    return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
+  case GachaType.MOVE:
+    return i18next.t("egg:gachaTypeMove");
+  case GachaType.SHINY:
+    return i18next.t("egg:gachaTypeShiny");
   }
 }
 
@@ -95,9 +99,15 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 
   let ret: Species;
 
+  // 86400000 is the number of miliseconds in one day
+  const timeDate = new Date(timestamp);
+  const dayTimestamp = timeDate.getTime(); // Timestamp of current week
+  const offset = Math.floor(Math.floor(dayTimestamp / 86400000) / legendarySpecies.length); // Cycle number
+  const index = Math.floor(dayTimestamp / 86400000) % legendarySpecies.length; // Index within cycle
+
   scene.executeWithSeedOffset(() => {
-    ret = Utils.randSeedItem(legendarySpecies);
-  }, Utils.getSunday(new Date(timestamp)).getTime(), EGG_SEED.toString());
+    ret = Phaser.Math.RND.shuffle(legendarySpecies)[index];
+  }, offset, EGG_SEED.toString());
 
   return ret;
 }

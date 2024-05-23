@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "666-polar_3.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 136,
+				"h": 136
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0002.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 1,
+						"w": 45,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0004.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 1,
+						"w": 45,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 45,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					}
+				},
+				{
+					"filename": "0003.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 45,
+						"y": 68,
+						"w": 67,
+						"h": 68
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:a3b0453f2d03b9c62472f57a438298a4:81a5a3455ae0c378bdb1dbe3c3323463:eb7086e98f867c6592e4b161835da18b$"
+	}
+}
