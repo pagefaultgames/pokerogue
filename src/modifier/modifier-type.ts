@@ -1592,7 +1592,6 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
   const tierStackCount = tier === ModifierTier.ULTRA ? 5 : tier === ModifierTier.GREAT ? 3 : 1;
   const retryCount = 50;
   let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
-  if (candidate != null) {
     let r = 0;
     let matchingModifier: Modifiers.PersistentModifier;
     while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate.type.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1))
@@ -1602,9 +1601,6 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
     modifier.stackCount = tierStackCount;
   
     return modifier;
-    } else {
-    return null;
-    }
   
 }
 
