@@ -33,6 +33,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
   private ownedIcon: Phaser.GameObjects.Sprite;
+  private ribbonIcon: Phaser.GameObjects.Sprite;
   private teraIcon: Phaser.GameObjects.Sprite;
   private shinyIcon: Phaser.GameObjects.Sprite;
   private fusionShinyIcon: Phaser.GameObjects.Sprite;
@@ -93,6 +94,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.ownedIcon.setOrigin(0, 0);
       this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
       this.add(this.ownedIcon);
+
+      this.ribbonIcon = this.scene.add.sprite(0, 0, 'champion_ribbon');
+      this.ribbonIcon.setVisible(false);
+      this.ribbonIcon.setOrigin(0, 0);
+      this.ribbonIcon.setPositionRelative(this.nameText, 10, 11.75);
+      this.add(this.ribbonIcon);
     }
 
     this.teraIcon = this.scene.add.sprite(0, 0, 'icon_tera');
@@ -262,6 +269,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
       const opponentPokemonDexAttr = pokemon.getDexAttr();
 
+      const starterEntry = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()];
+      this.ribbonIcon.setVisible(starterEntry.classicWinCount >= 1);
+
       // Check if Player owns all genders and forms of the Pokemon
       const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr); 
 
@@ -366,7 +376,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (boss !== this.boss) {
       this.boss = boss;
       
-      [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.ownedIcon, this.statusIndicator, this.levelContainer, this.statValuesContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
+      [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.ownedIcon, this.ribbonIcon, this.statusIndicator, this.levelContainer, this.statValuesContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? '_boss' : ''}`);
@@ -447,6 +457,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         
         if (!this.player && this.ownedIcon.visible)
           this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
+
+        if (!this.player && this.ribbonIcon.visible)
+          this.ribbonIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
       }
 
       const types = pokemon.getTypes(true);
