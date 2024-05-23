@@ -30,7 +30,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   private pageCount: integer;
   private page: integer;
   private category: ScoreboardCategory;
-  
+
   private _isUpdating: boolean;
 
   constructor(scene: BattleScene, x: number, y: number) {
@@ -165,13 +165,13 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
   /**
    * Updates the scoreboard rankings based on the selected category and page.
-   * 
+   *
    * If the update process is already ongoing, the method exits early. Otherwise, it begins the update process by clearing
    * the current rankings and showing a loading label. If the category changes, the page is reset to 1.
-   * 
+   *
    * The method fetches the total page count if necessary, followed by fetching the rankings for the specified category
    * and page. It updates the UI with the fetched rankings or shows an appropriate message if no rankings are found.
-   * 
+   *
    * @param {ScoreboardCategory} [category=this.category] - The category to fetch rankings for. Defaults to the current category.
    * @param {number} [page=this.page] - The page number to fetch. Defaults to the current page.
   */
@@ -209,7 +209,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
         }).finally(() => {
           this.isUpdating = false;
         });
-    }).catch(err => { 
+    }).catch(err => {
       console.error("Failed to load daily rankings:\n", err);
     });
   }

@@ -22,7 +22,7 @@ import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
 
-export const enConfig = {    
+export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,

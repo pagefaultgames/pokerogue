@@ -96,7 +96,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
         pokemon.resetStatus();
         pokemon.updateInfo();
-      } 
+      }
       if (pokemon.getTag(BattlerTagType.CONFUSED)) {
         pokemon.lapseTag(BattlerTagType.CONFUSED);
       }

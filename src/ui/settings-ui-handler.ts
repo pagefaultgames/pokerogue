@@ -34,7 +34,7 @@ export default class SettingsUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
     this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -106,7 +106,7 @@ export default class SettingsUiHandler extends UiHandler {
 
   show(args: any[]): boolean {
     super.show(args);
-    
+
     const settings: object = localStorage.hasOwnProperty("settings") ? JSON.parse(localStorage.getItem("settings")) : {};
 
     Object.keys(settingDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingDefaults[setting]));
@@ -278,7 +278,7 @@ export default class SettingsUiHandler extends UiHandler {
     if (this.reloadRequired) {
       this.reloadRequired = false;
       this.scene.reset(true, false, true);
-    } 
+    }
   }
 
   eraseCursor() {
