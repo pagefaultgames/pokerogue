@@ -13,7 +13,7 @@ import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
-// import { splashMessages } from "./splash-messages";
+import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
@@ -21,7 +21,7 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
-
+import {dialogue, battleSpecDialogue, miscDialogue} from "./dialogue";
 
 export const zhCnConfig = {
     ability: ability,
@@ -39,7 +39,7 @@ export const zhCnConfig = {
     pokeball: pokeball,
     pokemon: pokemon,
     pokemonInfo: pokemonInfo,
-    // splashMessages: splashMessages,
+    splashMessages: splashMessages,
     starterSelectUiHandler: starterSelectUiHandler,
     titles: titles,
     trainerClasses: trainerClasses,
@@ -49,4 +49,7 @@ export const zhCnConfig = {
     battleMessageUiHandler: battleMessageUiHandler,
     berry: berry,
     voucher: voucher,
+    dialogue: dialogue,
+    battleSpecDialogue: battleSpecDialogue,
+    miscDialogue: miscDialogue,
 }
