@@ -20,6 +20,46 @@ import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChang
 import Pokemon from "./pokemon";
 import * as Overrides from '../overrides';
 
+/** 
+ * Container class for `onWeatherChanged` events 
+ * @extends Event
+*/
+export class WeatherChangedEvent extends Event {
+  /** The {@linkcode WeatherType} being overridden */
+	public oldWeatherType: WeatherType;
+	/** The {@linkcode WeatherType} being set */
+	public newWeatherType: WeatherType;
+	/** The total duration of the new {@linkcode Weather} */
+	public duration: number;
+	constructor(oldWeatherType: WeatherType,newWeatherType: WeatherType, duration: number) {
+		super('onWeatherChanged');
+
+    this.oldWeatherType = oldWeatherType;
+		this.newWeatherType = newWeatherType;
+
+		this.duration = duration;
+	}
+}
+/** 
+ * Container class for `onTerrainChanged` events 
+ * @extends Event
+*/
+export class TerrainChangedEvent extends Event {
+  /** The {@linkcode TerrainType} being overridden */
+  public oldTerrainType: TerrainType;
+	/** The {@linkcode TerrainType} being set */
+	public newTerrainType: TerrainType;
+	/** The total duration of the new {@linkcode Terrain} */
+	public duration: number;
+	constructor(oldTerraintType: TerrainType, newTerrainType: TerrainType, duration: number) {
+		super('onTerrainChanged');
+
+    this.oldTerrainType = oldTerraintType;
+		this.newTerrainType = newTerrainType;
+
+		this.duration = duration;
+	}
+}
 export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
@@ -33,6 +73,8 @@ export class Arena {
 
   private pokemonPool: PokemonPools;
   private trainerPool: BiomeTierTrainerPools;
+
+  public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor(scene: BattleScene, biome: Biome, bgm: string) {
     this.scene = scene;
@@ -295,6 +337,7 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
+    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
     
     if (this.weather) {
       this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
@@ -320,6 +363,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
     
     if (this.terrain) {
       if (!ignoreAnim)

@@ -94,6 +94,24 @@ export class MoveUsedEvent extends Event {
 		this.ppUsed = ppUsed;
 	}
 }
+export class TurnInitEvent extends Event {
+	constructor() {
+		super('onTurnInit');
+	}
+}
+export class TurnEndEvent extends Event {
+	public turnCount: number;
+	constructor(turnCount: number) {
+		super('onTurnEnd');
+
+		this.turnCount = turnCount;
+	}
+}
+export class NewArenaEvent extends Event {
+	constructor() {
+		super('onNewArena');
+	}
+}
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
 	public inputController: InputsController;
@@ -966,6 +984,7 @@ export default class BattleScene extends SceneBase {
 
 	newArena(biome: Biome): Arena {
 		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
+		this.eventTarget.dispatchEvent(new NewArenaEvent());
 
 		this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
 
