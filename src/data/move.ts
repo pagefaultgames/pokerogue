@@ -5650,7 +5650,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),
     new SelfStatusMove(Moves.FOLLOW_ME, Type.NORMAL, -1, 20, -1, 2, 3)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true, true)
+      .partial(),
     new StatusMove(Moves.NATURE_POWER, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(NaturePowerAttr)
       .ignoresVirtual(),
@@ -5663,7 +5664,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, Type.PSYCHIC, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .target(MoveTarget.NEAR_OTHER)
+      .partial(),
     new StatusMove(Moves.ROLE_PLAY, Type.PSYCHIC, -1, 10, -1, 0, 3)
       .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, Type.NORMAL, -1, 10, -1, 0, 3)
@@ -6215,8 +6217,9 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, 2, true)
       .partial(),
     new SelfStatusMove(Moves.RAGE_POWDER, Type.BUG, -1, 20, -1, 2, 5)
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true, true)
       .powderMove()
-      .unimplemented(),
+      .partial(),
     new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
       .unimplemented(),
@@ -6516,7 +6519,8 @@ export function initMoves() {
       .attr(TerrainChangeAttr, TerrainType.MISTY)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.ELECTRIFY, Type.ELECTRIC, -1, 20, -1, 0, 6)
-      .unimplemented(),
+      .target(MoveTarget.NEAR_OTHER)
+      .partial(),
     new AttackMove(Moves.PLAY_ROUGH, Type.FAIRY, MoveCategory.PHYSICAL, 90, 90, 10, 10, 0, 6)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.FAIRY_WIND, Type.FAIRY, MoveCategory.SPECIAL, 40, 100, 30, -1, 0, 6)
@@ -6774,7 +6778,9 @@ export function initMoves() {
     new AttackMove(Moves.LEAFAGE, Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 7)
       .makesContact(false),
     new StatusMove(Moves.SPOTLIGHT, Type.NORMAL, -1, 15, -1, 3, 7)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, false)
+      .target(MoveTarget.NEAR_OTHER)
+      .partial(),
     new StatusMove(Moves.TOXIC_THREAD, Type.POISON, 100, 20, 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
