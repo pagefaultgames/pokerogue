@@ -418,6 +418,68 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.FIREBREATHER]: [
+    {
+      encounter: [
+        "My flames shall devour you!",
+        "I'm seriously upset by your cold confusion!",
+        "I'm going to put on my fire-breathing shows!"
+      ],
+      victory: [
+        "If we only had it warmer.",
+        "I flamed out.",
+        "Ow! I scorched the tip of my nose!"
+
+      ]
+    }
+  ],
+  [TrainerType.PRISONER]: [
+    {
+      encounter: [
+        "If you win, you bail me outta here."
+      ],
+      victory: [
+        "I guess I'll have to stay another 10 years..."
+      ]
+    }
+  ],
+  [TrainerType.SAILOR]: [
+    {
+      encounter: [
+        "Yo ho ho! Sing with me! The chantey of the sea!"
+      ],
+      victory: [
+        "I stopped singing along!"
+      ]
+    }
+  ],
+[TrainerType.CAMPER]: [
+    {
+      encounter: [
+        "My girlfriend is the best trainer ever!",
+        "It's a beautiful victorious day outside!",
+	"Another victory for my camping streak!"
+      ],
+      victory: [
+        "Ow! Wait for my girlfriend to see!",
+        "Why did you have to ruin this day?",
+        "My first defeat on my camping streak..."
+      ]
+    },
+    //PICKNICKER
+    {
+      encounter: [
+        "My boyfriend is the best trainer ever!",
+        "It's a beautiful victorious day outside!",
+	"Another victory for my camping streak!"
+      ],
+      victory: [
+        "Ow! Wait for my boyfriend to see!",
+        "Why did you have to ruin this day?",
+        "My first defeat on my camping streak..."
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "My expertise on Rock-type Pokémon will take you down! Come on!",
