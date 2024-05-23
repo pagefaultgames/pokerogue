@@ -7305,6 +7305,29 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
     ]
     ],
+    [ TrainerType.CAMPER, [
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON ],
+      [ Biome.GRASS, BiomePoolTier.COMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ]
+    ]
+    ],
+    [ TrainerType.FIREBREATHER, [
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
+    ],
+    [ TrainerType.SAILOR, [
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.BEACH, BiomePoolTier.RARE ],
+      [ Biome.ISLAND, BiomePoolTier.COMMON ]
+    ]
+    ],
+    [ TrainerType.PRISONER, [
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.RARE ]
+    ]
+    ],
+
     [ TrainerType.BROCK, [
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
