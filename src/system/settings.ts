@@ -50,22 +50,22 @@ export const settingOptions: SettingOptions = {
   [Setting.Damage_Numbers]: ["Off", "Simple", "Fancy"],
   [Setting.UI_Theme]: ["Default", "Legacy"],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
-  [Setting.Tutorials]: ['Off', 'On'],
-  [Setting.Enable_Retries]: ['Off', 'On'],
-  [Setting.Candy_Upgrade_Notification]: ['Off', 'Passives Only', 'On'],
-  [Setting.Candy_Upgrade_Display]: ['Candy Icon', 'Animation'],
-  [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
-  [Setting.Move_Animations]: ['Off', 'On'],
-  [Setting.Show_Stats_on_Level_Up]: ['Off', 'On'],
-  [Setting.EXP_Gains_Speed]: ['Normal', 'Fast', 'Faster', 'Skip'],
-  [Setting.EXP_Party_Display]: ['Normal', 'Level Up Notification', 'Skip'],
-  [Setting.HP_Bar_Speed]: ['Normal', 'Fast', 'Faster', 'Instant'],
-  [Setting.Fusion_Palette_Swaps]: ['Off', 'On'],
-  [Setting.Player_Gender]: ['Boy', 'Girl'],
-  [Setting.Gamepad_Support]: ['Auto', 'Disabled'],
-  [Setting.Swap_A_and_B]: ['Enabled', 'Disabled'],
-  [Setting.Touch_Controls]: ['Auto', 'Disabled'],
-  [Setting.Vibration]: ['Auto', 'Disabled']
+  [Setting.Tutorials]: ["Off", "On"],
+  [Setting.Enable_Retries]: ["Off", "On"],
+  [Setting.Candy_Upgrade_Notification]: ["Off", "Passives Only", "On"],
+  [Setting.Candy_Upgrade_Display]: ["Candy Icon", "Animation"],
+  [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
+  [Setting.Move_Animations]: ["Off", "On"],
+  [Setting.Show_Stats_on_Level_Up]: ["Off", "On"],
+  [Setting.EXP_Gains_Speed]: ["Normal", "Fast", "Faster", "Skip"],
+  [Setting.EXP_Party_Display]: ["Normal", "Level Up Notification", "Skip"],
+  [Setting.HP_Bar_Speed]: ["Normal", "Fast", "Faster", "Instant"],
+  [Setting.Fusion_Palette_Swaps]: ["Off", "On"],
+  [Setting.Player_Gender]: ["Boy", "Girl"],
+  [Setting.Gamepad_Support]: ["Auto", "Disabled"],
+  [Setting.Swap_A_and_B]: ["Enabled", "Disabled"],
+  [Setting.Touch_Controls]: ["Auto", "Disabled"],
+  [Setting.Vibration]: ["Auto", "Disabled"]
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -129,11 +129,11 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
   case Setting.Enable_Retries:
     scene.enableRetries = settingOptions[setting][value] === "On";
     break;
-   case Setting.Candy_Upgrade_Notification:
+  case Setting.Candy_Upgrade_Notification:
     scene.candyUpgradeNotification = value;
-      break;
-    case Setting.Candy_Upgrade_Display:
-      scene.candyUpgradeDisplay = value;
+    break;
+  case Setting.Candy_Upgrade_Display:
+    scene.candyUpgradeDisplay = value;
     break;
   case Setting.Sprite_Set:
     scene.experimentalSprites = !!value;
