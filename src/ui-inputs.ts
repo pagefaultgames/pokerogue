@@ -74,8 +74,8 @@ export class UiInputs {
   }
 
   getActionsKeyUp(): ActionKeys {
-    const actions = {}
-    actions[Button.STATS] = () => this.buttonStats(false)
+    const actions = {};
+    actions[Button.STATS] = () => this.buttonStats(false);
     return actions;
   }
 
