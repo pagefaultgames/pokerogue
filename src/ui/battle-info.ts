@@ -14,7 +14,7 @@ const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, Batt
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;
-  
+
   private player: boolean;
   private mini: boolean;
   private boss: boolean;
