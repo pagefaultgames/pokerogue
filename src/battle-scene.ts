@@ -82,19 +82,19 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
  * @extends Event
 */
 export class MoveUsedEvent extends Event {
-	/** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
-	public userId: number;
-	/** The {@linkcode Move} used */
-	public move: Move;
-	/** The amount of PP used on the {@linkcode Move} this turn */
-	public ppUsed: number;
-	constructor(userId: number, move: Move, ppUsed: number) {
-		super('onMoveUsed');
+  /** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
+  public userId: number;
+  /** The {@linkcode Move} used */
+  public move: Move;
+  /** The amount of PP used on the {@linkcode Move} this turn */
+  public ppUsed: number;
+  constructor(userId: number, move: Move, ppUsed: number) {
+    super("onMoveUsed");
 
-		this.userId = userId;
-		this.move = move;
-		this.ppUsed = ppUsed;
-	}
+    this.userId = userId;
+    this.move = move;
+    this.ppUsed = ppUsed;
+  }
 }
 export default class BattleScene extends SceneBase {
   public rexUI: UIPlugin;
@@ -204,13 +204,13 @@ export default class BattleScene extends SceneBase {
   public rngSeedOverride: string = "";
   public rngOffset: integer = 0;
 
-	/** 
-	 * Allows subscribers to listen for events
-	 * 
-	 * Current Events:
-	 * - `onMoveUsed` {@linkcode MoveUsedEvent}
-	 */
-	public readonly eventTarget: EventTarget = new EventTarget();
+  /** 
+   * Allows subscribers to listen for events
+   * 
+   * Current Events:
+   * - `onMoveUsed` {@linkcode MoveUsedEvent}
+   */
+  public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor() {
     super("battle");
