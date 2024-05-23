@@ -1,9 +1,9 @@
-import { default as Pokemon } from '../field/pokemon';
+import { default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
-import * as Utils from '../utils';
-import BattleScene, { MoveUsedEvent } from '#app/battle-scene.js';
-import { UiTheme } from '#app/enums/ui-theme.js';
-import Move from '#app/data/move.js';
+import * as Utils from "../utils";
+import BattleScene, { MoveUsedEvent } from "#app/battle-scene.js";
+import { UiTheme } from "#app/enums/ui-theme.js";
+import Move from "#app/data/move.js";
 
 interface MoveInfo {
   move: Move,
@@ -56,7 +56,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutParent.setAlpha(0);
     this.add(this.flyoutParent);
 
-    this.flyoutBox = this.scene.add.sprite(0, 0, `pbinfo_enemy_boss_stats`);
+    this.flyoutBox = this.scene.add.sprite(0, 0, "pbinfo_enemy_boss_stats");
     this.flyoutBox.setOrigin(0, 0);
     
     this.flyoutParent.add(this.flyoutBox);
@@ -68,10 +68,10 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       this.flyoutText[i] = addTextObject(
         this.scene, 
         (this.flyoutWidth / 4) + (this.flyoutWidth / 2) * (i % 2), 
-        (this.flyoutHeight / 4) + (this.flyoutHeight / 2) * (i < 2 ? 0 : 1), `???`, TextStyle.BATTLE_INFO);
+        (this.flyoutHeight / 4) + (this.flyoutHeight / 2) * (i < 2 ? 0 : 1), "???", TextStyle.BATTLE_INFO);
       this.flyoutText[i].setFontSize(45);
       this.flyoutText[i].setLineSpacing(-10);
-      this.flyoutText[i].setAlign('center');
+      this.flyoutText[i].setAlign("center");
       this.flyoutText[i].setOrigin();
     }
 
@@ -96,12 +96,13 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.name = `Flyout ${this.pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
 
-    this.battleScene.eventTarget.addEventListener('onMoveUsed', (e) => this.updateInfo(e));
+    this.battleScene.eventTarget.addEventListener("onMoveUsed", (e) => this.updateInfo(e));
   }
 
   setMini(mini: boolean): void {
-    if (this.mini === mini)
+    if (this.mini === mini) {
       return;
+    }
 
     this.mini = mini;
   }
@@ -111,8 +112,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       const flyoutText = this.flyoutText[i];
       const moveInfo = this.moveInfo[i];
       
-      if (!moveInfo)
+      if (!moveInfo) {
         continue;
+      }
 
       const currentPp = Math.max(moveInfo.maxPp - moveInfo.ppUsed, 0);
       flyoutText.text = `${moveInfo.move.name}  ${currentPp}/${moveInfo.maxPp}`;
@@ -121,14 +123,16 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   updateInfo(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.userIndex !== this.pokemon?.id)
+    if (!moveUsedEvent || moveUsedEvent.userIndex !== this.pokemon?.id) {
       return;
+    }
 
-    const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id)
-    if (foundInfo)
+    const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id);
+    if (foundInfo) {
       foundInfo.ppUsed += moveUsedEvent.ppUsed;
-    else
-      this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed})
+    } else {
+      this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
+    }
 
     this.setText();
   }
@@ -138,7 +142,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
       duration: Utils.fixedInt(125),
-      ease: 'Sine.easeInOut',
+      ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });
   }
