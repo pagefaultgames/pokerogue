@@ -1,14 +1,14 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import { deConfig } from '#app/locales/de/config.js';
-import { enConfig } from '#app/locales/en/config.js';
-import { esConfig } from '#app/locales/es/config.js';
-import { frConfig } from '#app/locales/fr/config.js';
-import { itConfig } from '#app/locales/it/config.js';
-import { ptBrConfig } from '#app/locales/pt_BR/config.js';
-import { zhCnConfig } from '#app/locales/zh_CN/config.js';
-import { zhTWConfig } from '#app/locales/zh_TW/config.js';
+import { deConfig } from "#app/locales/de/config.js";
+import { enConfig } from "#app/locales/en/config.js";
+import { esConfig } from "#app/locales/es/config.js";
+import { frConfig } from "#app/locales/fr/config.js";
+import { itConfig } from "#app/locales/it/config.js";
+import { ptBrConfig } from "#app/locales/pt_BR/config.js";
+import { zhCnConfig } from "#app/locales/zh_CN/config.js";
+import { zhTWConfig } from "#app/locales/zh_TW/config.js";
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -97,8 +97,8 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     nonExplicitSupportedLngs: true,
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh', 'pt'],
+    fallbackLng: "en",
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt"],
     debug: true,
     interpolation: {
       escapeValue: false,
