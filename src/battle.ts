@@ -117,7 +117,29 @@ export default class Battle {
       return ret + levelOffset;
     }
 
-    let levelOffset = 0;
+    private initBattleSpec(): void {
+        let spec = BattleSpec.DEFAULT;
+        if (this.gameMode.isWaveFinal(this.waveIndex) && this.gameMode.isClassic)
+            spec = BattleSpec.FINAL_BOSS;
+        this.battleSpec = spec;
+    }
+
+    private getLevelForWave(): integer {
+        let levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
+        let baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
+        const bossMultiplier = 1.2;
+
+        if (this.gameMode.isBoss(this.waveIndex)) {
+            const ret = Math.floor(baseLevel * bossMultiplier);
+            if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250))
+                return Math.ceil(ret / 25) * 25;
+            let levelOffset = 0;
+            if (!this.gameMode.isWaveFinal(this.waveIndex))
+                levelOffset = Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(levelWaveIndex / 10));
+            return ret + levelOffset;
+        }
+
+        let levelOffset = 0;
         
     const deviation = 10 / levelWaveIndex;
     levelOffset = Math.abs(this.randSeedGaussForLevel(deviation));

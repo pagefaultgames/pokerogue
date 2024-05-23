@@ -1250,10 +1250,10 @@ export default class BattleScene extends SceneBase {
     this.waveCountText.setVisible(true);
   }
 
-  updateMoneyText(): void {
-    this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
-    this.moneyText.setVisible(true);
-  }
+	updateMoneyText(): void {
+		this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
+		this.moneyText.setVisible(true);
+	}
 
   updateScoreText(): void {
     this.scoreText.setText(`Score: ${this.score.toString()}`);

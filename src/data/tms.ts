@@ -63413,6 +63413,8 @@ export const tmSpecies: TmSpecies = {
     Species.LEAVANNY,
     Species.PETILIL,
     Species.LILLIGANT,
+    Species.SCRAGGY,
+    Species.SCRAFTY,
     Species.DUCKLETT,
     Species.SWANNA,
     Species.DEERLING,

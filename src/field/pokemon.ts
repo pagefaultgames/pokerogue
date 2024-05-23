@@ -1227,13 +1227,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
-      if (!this.hasTrainer()) {
-        if (new Date() < new Date(Date.UTC(2024, 4, 22, 0))) {
-          shinyThreshold.value *= 3;
-        }
+      if (!this.hasTrainer())
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-      }
-    } else {
+    } else
       shinyThreshold.value = thresholdOverride;
     }
 
@@ -1774,6 +1770,78 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               result = HitResult.NOT_VERY_EFFECTIVE;
             }
           }
+
+          if (!fixedDamage.value) {
+            if (!source.isPlayer())
+              this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
+            if (!this.isPlayer())
+              this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+          }
+
+          applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
+
+          if (power.value === 0) {
+            damage.value = 0;
+          }
+
+          console.log('damage', damage.value, move.name, power.value, sourceAtk, targetDef);
+
+          const oneHitKo = result === HitResult.ONE_HIT_KO;
+          if (damage.value) {
+            if (this.getHpRatio() === 1)
+              applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, battlerMove, cancelled, damage);
+            else if (!this.isPlayer() && damage.value >= this.hp)
+              this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
+
+            /**
+             * We explicitly require to ignore the faint phase here, as we want to show the messages
+             * about the critical hit and the super effective/not very effective messages before the faint phase.
+             */
+            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, true);
+            this.turnData.damageTaken += damage.value;
+            if (isCritical)
+              this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
+            if (source.isPlayer()) {
+              this.scene.validateAchvs(DamageAchv, damage);
+              if (damage.value > this.scene.gameData.gameStats.highestDamage)
+                this.scene.gameData.gameStats.highestDamage = damage.value;
+            }
+            source.turnData.damageDealt += damage.value;
+            source.turnData.currDamageDealt = damage.value;
+            this.battleData.hitCount++;
+            const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
+            this.turnData.attacksReceived.unshift(attackResult);
+            if (source.isPlayer() && !this.isPlayer())
+              this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
+          }
+
+          if (source.turnData.hitsLeft === 1) {
+            switch (result) {
+              case HitResult.SUPER_EFFECTIVE:
+                this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
+                break;
+              case HitResult.NOT_VERY_EFFECTIVE:
+                this.scene.queueMessage(i18next.t('battle:hitResultNotVeryEffective'));
+                break;
+              case HitResult.NO_EFFECT:
+                this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
+                break;
+              case HitResult.IMMUNE:
+                this.scene.queueMessage(`${this.name} is unaffected!`);
+                break;
+              case HitResult.ONE_HIT_KO:
+                this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
+                break;
+            }
+          }
+
+          if (this.isFainted()) {
+            this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
+            this.resetSummonData();
+          }
+
+          if (damage)
+            this.scene.clearPhaseQueueSplice();
         }
 
         if (!fixedDamage.value) {
@@ -1866,8 +1934,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
-  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
-    if (this.isFainted()) {
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
+    if (this.isFainted())
       return 0;
     }
     const surviveDamage = new Utils.BooleanHolder(false);
@@ -1889,7 +1957,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     damage = Math.min(damage, this.hp);
 
     this.hp = this.hp - damage;
-    if (this.isFainted()) {
+    if (this.isFainted() && !ignoreFaintPhase) {
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
@@ -1897,10 +1965,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return damage;
   }
 
-  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
-    damage = this.damage(damage, ignoreSegments, preventEndure);
+    damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
     return damage;
@@ -3307,10 +3375,30 @@ export class EnemyPokemon extends Pokemon {
           let moveScore = moveScores[m];
           const targetScores: integer[] = [];
 
-          for (const mt of moveTargets[move.id]) {
-            // Prevent a target score from being calculated when the target is whoever attacks the user
-            if (mt === BattlerIndex.ATTACKER) {
-              break;
+            for (let mt of moveTargets[move.id]) {
+              // Prevent a target score from being calculated when the target is whoever attacks the user
+              if (mt === BattlerIndex.ATTACKER)
+                break;
+
+              const target = this.scene.getField()[mt];
+              let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
+              if ((move.name.endsWith(' (N)') || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND].includes(move.id))
+                targetScore = -20;
+              else if (move instanceof AttackMove) {
+                const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
+                if (target.isPlayer() !== this.isPlayer()) {
+                  targetScore *= effectiveness;
+                  if (this.isOfType(moveType))
+                    targetScore *= 1.5;
+                } else if (effectiveness) {
+                  targetScore /= effectiveness;
+                  if (this.isOfType(moveType))
+                    targetScore /= 1.5;
+                }
+                if (!targetScore)
+                  targetScore = -20;
+              }
+              targetScores.push(targetScore);
             }
 
             const target = this.scene.getField()[mt];
@@ -3462,8 +3550,8 @@ export class EnemyPokemon extends Pokemon {
     return 0;
   }
 
-  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
-    if (this.isFainted()) {
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
+    if (this.isFainted())
       return 0;
     }
 
@@ -3500,7 +3588,7 @@ export class EnemyPokemon extends Pokemon {
       }
     }
 
-    const ret = super.damage(damage, ignoreSegments, preventEndure);
+    let ret = super.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
 
     if (this.isBoss()) {
       if (ignoreSegments) {
