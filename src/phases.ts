@@ -4292,7 +4292,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
               this.scene.playSound("level_up_fanfare");
               this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: pokemon.name, moveName: move.name }), null, () => {
                 this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
-                if (this.isFromTMDrop) this.scene.gameData.setTMMoveUnlocked(this.moveId);
+                if (this.isFromTMDrop) {
+                  this.scene.gameData.setTMMoveUnlocked(this.moveId);
+                }
                 this.end();
               }, messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
             });

@@ -1220,8 +1220,9 @@ export class GameData {
   }
 
   setTMNoUnlocked(tmNo: integer): void {
-    if(!this.isTmNoUnlocked(tmNo))
+    if(!this.isTmNoUnlocked(tmNo)) {
       this.tmFlags[tmNo/32] |= Math.pow(2,tmNo%32);
+    }
   }
 
   setTMMoveUnlocked(moveId: integer): void {
