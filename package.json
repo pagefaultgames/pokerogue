@@ -10,7 +10,8 @@
 		"preview": "vite preview",
 		"test": "vitest run",
 		"test:cov": "vitest run --coverage",
-		"test:watch": "vitest watch --coverage"
+		"test:watch": "vitest watch --coverage",
+		"eslint": "eslint --fix ."
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
@@ -23,6 +24,7 @@
 		"eslint-plugin-import": "^2.29.1",
 		"jsdom": "^24.0.0",
 		"json-beautify": "^1.1.1",
+		"lefthook": "^1.6.12",
 		"phaser3spectorjs": "^0.0.8",
 		"pokenode-ts": "^1.20.0",
 		"typescript": "^5.4.5",

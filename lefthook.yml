@@ -1,0 +1,6 @@
+pre-commit:
+  parallel: true
+  commands:
+    linter:
+      glob: 'src/**/*.{js,jsx,ts,tsx}'
+      run: npx eslint --fix {staged_files}
