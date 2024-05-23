@@ -174,6 +174,8 @@ declare module 'i18next' {
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
       dialogue: DialogueTranslationEntries;
+      battleSpecDialogue: SimpleTranslationEntries;
+      miscDialogue: SimpleTranslationEntries;
     };
   }
 }
