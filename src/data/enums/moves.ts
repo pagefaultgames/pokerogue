@@ -1735,7 +1735,7 @@ export enum Moves {
   G_MAX_ONE_BLOW,
   G_MAX_RAPID_FLOW,*/
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Tera_Blast_(move) | Source} */
-  // TERA_BLAST,
+  TERA_BLAST,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Silk_Trap_(move) | Source} */
   SILK_TRAP,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Axe_Kick_(move) | Source} */

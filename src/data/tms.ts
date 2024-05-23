@@ -62027,7 +62027,6 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_DUGTRIO,
     Species.ALOLA_MAROWAK,
   ],
-  /* Unused
   [Moves.TERA_BLAST]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
@@ -63059,7 +63058,6 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  End Unused */
   [Moves.ICE_SPINNER]: [
     Species.JIGGLYPUFF,
     Species.WIGGLYTUFF,
@@ -64477,7 +64475,7 @@ export const tmPoolTiers: TmPoolTiers = {
     [Moves.TRIPLE_AXEL]: ModifierTier.COMMON,
     [Moves.DUAL_WINGBEAT]: ModifierTier.COMMON,
     [Moves.SCORCHING_SANDS]: ModifierTier.GREAT,
-    // [Moves.TERA_BLAST]: ModifierTier.GREAT,
+    [Moves.TERA_BLAST]: ModifierTier.GREAT,
     [Moves.ICE_SPINNER]: ModifierTier.GREAT,
     [Moves.SNOWSCAPE]: ModifierTier.COMMON,
     [Moves.POUNCE]: ModifierTier.COMMON,
