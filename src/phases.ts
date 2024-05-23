@@ -2076,6 +2076,8 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
 
+    this.scene.pushPhase(new BerryPhase(this.scene));
+
     if (this.scene.arena.weather)
       this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
 
@@ -2084,7 +2086,6 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, o));
     }
 
-    this.scene.pushPhase(new BerryPhase(this.scene));
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
     this.end();
