@@ -29,26 +29,26 @@ import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
 import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr } from "../data/ability";
 import { Abilities } from "#app/data/enums/abilities";
-import PokemonData from '../system/pokemon-data';
-import { BattlerIndex } from '../battle';
+import PokemonData from "../system/pokemon-data";
+import { BattlerIndex } from "../battle";
 import { BattleSpec } from "../enums/battle-spec";
-import { Mode } from '../ui/ui';
-import PartyUiHandler, { PartyOption, PartyUiMode } from '../ui/party-ui-handler';
-import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
-import { LevelMoves } from '../data/pokemon-level-moves';
-import { DamageAchv, achvs } from '../system/achv';
-import { DexAttr, StarterDataEntry, StarterMoveset } from '../system/game-data';
-import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
-import { Nature, getNatureStatMultiplier } from '../data/nature';
-import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
-import { TerrainType } from '../data/terrain';
-import { TrainerSlot } from '../data/trainer-config';
-import * as Overrides from '../overrides';
-import { BerryType } from '../data/berry';
-import i18next from '../plugins/i18n';
-import { speciesEggMoves } from '../data/egg-moves';
-import { ModifierTier } from '../modifier/modifier-tier';
-import { GameModes} from '../game-mode';
+import { Mode } from "../ui/ui";
+import PartyUiHandler, { PartyOption, PartyUiMode } from "../ui/party-ui-handler";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { LevelMoves } from "../data/pokemon-level-moves";
+import { DamageAchv, achvs } from "../system/achv";
+import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
+import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
+import { Nature, getNatureStatMultiplier } from "../data/nature";
+import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
+import { TerrainType } from "../data/terrain";
+import { TrainerSlot } from "../data/trainer-config";
+import * as Overrides from "../overrides";
+import { BerryType } from "../data/berry";
+import i18next from "../plugins/i18n";
+import { speciesEggMoves } from "../data/egg-moves";
+import { ModifierTier } from "../modifier/modifier-tier";
+import { GameModes} from "../game-mode";
 
 export enum FieldPosition {
   CENTER,
@@ -1225,7 +1225,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * 
    * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID
    * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits
-   * The XOR of E and F are then compared to the thresholdOverride to see whether or not to generate a shiny
+   * The XOR of E and F are then compared to the thresholdOverride (default case 32) to see whether or not to generate a shiny
    * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
