@@ -1311,8 +1311,12 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       });
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
+      const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);	
+      const pokemonName = this.getPokemon().name;	
+      const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
+
       this.scene.pbTrayEnemy.hide();
-      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER)} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
+      this.scene.ui.showText(message, null, () => this.summon());
     }
   }
 
@@ -2187,7 +2191,9 @@ export class BerryPhase extends FieldPhase {
     super.start();
 
     this.executeForAll((pokemon) => {
-      const hasUsableBerry = !!this.scene.findModifier((m) => m instanceof BerryModifier && m.shouldApply([pokemon]), pokemon.isPlayer());
+      const hasUsableBerry = !!this.scene.findModifier((m) => {
+        return m instanceof BerryModifier && m.shouldApply([pokemon]);	
+      }, pokemon.isPlayer());
 
       if (hasUsableBerry) {
         const cancelled = new Utils.BooleanHolder(false);
