@@ -179,33 +179,42 @@ abstract class ConditionalProtectTag extends ArenaTag {
 
 class QuickGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.QUICK_GUARD, Moves.QUICK_GUARD, sourceId, side, (priority: integer) : boolean => {
-      return priority > 0;
-    });
+    super(ArenaTagType.QUICK_GUARD, Moves.QUICK_GUARD, sourceId, side,
+      (priority: integer) : boolean => {
+        return priority > 0;
+      }
+    );
   }
 }
 
 class WideGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side, (moveTarget: MoveTarget) : boolean => { 
-      switch(moveTarget) {
-        case MoveTarget.ALL:
-        case MoveTarget.ALL_ENEMIES:
-        case MoveTarget.ALL_NEAR_ENEMIES:
-        case MoveTarget.ALL_OTHERS:
-        case MoveTarget.ALL_NEAR_OTHERS:
-          return true;
-        default:
-          return false;
-      }})
+    super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side, 
+      (moveTarget: MoveTarget) : boolean => { 
+        switch(moveTarget) {
+          case MoveTarget.ALL_ENEMIES:
+          case MoveTarget.ALL_NEAR_ENEMIES:
+          case MoveTarget.ALL_OTHERS:
+          case MoveTarget.ALL_NEAR_OTHERS:
+            return true;
+        }
+        return false;
+      }
+    );
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block}
+ * Condition: The incoming move is a Physical or Special attack move.
+ */
 class MatBlockTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side, (moveCategory: MoveCategory) : boolean => {
-      return moveCategory !== MoveCategory.STATUS;
-    })
+    super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side, 
+      (moveCategory: MoveCategory) : boolean => {
+        return moveCategory !== MoveCategory.STATUS;
+      }
+    );
   }
 
   onAdd(arena: Arena) {
@@ -214,11 +223,21 @@ class MatBlockTag extends ConditionalProtectTag {
   }
 }
 
+/** 
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield}
+ * Condition: The incoming move is a Status move that is not a hazard and does 
+ * not target all Pokemon or sides of the field
+*/
 class CraftyShieldTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side, (moveCategory: MoveCategory) : boolean => {
-      return moveCategory === MoveCategory.STATUS;
-    })
+    super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side, 
+      (moveCategory: MoveCategory, moveTarget: MoveTarget) : boolean => {
+        return moveCategory === MoveCategory.STATUS
+          && moveTarget !== MoveTarget.ENEMY_SIDE 
+          && moveTarget !== MoveTarget.BOTH_SIDES
+          && moveTarget !== MoveTarget.ALL;
+      }
+    );
   }
 }
 
