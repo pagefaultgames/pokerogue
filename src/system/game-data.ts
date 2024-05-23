@@ -30,6 +30,7 @@ import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
+import { tmPoolTiers } from "#app/data/tms.js";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -93,6 +94,7 @@ interface SystemSaveData {
   voucherCounts: VoucherCounts;
   eggs: EggData[];
   gameVersion: string;
+  tmFlags: integer[];
   timestamp: integer;
 }
 
@@ -194,6 +196,20 @@ export interface StarterData {
   [key: integer]: StarterDataEntry
 }
 
+// export interface TMFlags {
+//   tm_1_32: integer;
+//   tm_33_64: integer;
+//   tm_65_96: integer;
+//   tm_97_128: integer;
+//   tm_129_160: integer;
+//   tm_161_192: integer;
+//   tm_193_224: integer;
+//   tm_225_256: integer;
+//   tm_257_288: integer;
+//   tm_289_320: integer;
+//   tm_321_352: integer;
+// }
+
 export interface TutorialFlags {
   [key: string]: boolean
 }
@@ -235,6 +251,8 @@ export class GameData {
 
   public achvUnlocks: AchvUnlocks;
 
+  public tmFlags: integer[];
+
   public voucherUnlocks: VoucherUnlocks;
   public voucherCounts: VoucherCounts;
   public eggs: Egg[];
@@ -252,6 +270,7 @@ export class GameData {
       [Unlockables.SPLICED_ENDLESS_MODE]: false
     };
     this.achvUnlocks = {};
+    this.tmFlags = [0,0,0,0,0,0,0,0,0,0];
     this.voucherUnlocks = {};
     this.voucherCounts = {
       [VoucherType.REGULAR]: 0,
@@ -274,6 +293,7 @@ export class GameData {
       gameStats: this.gameStats,
       unlocks: this.unlocks,
       achvUnlocks: this.achvUnlocks,
+      tmFlags: this.tmFlags,
       voucherUnlocks: this.voucherUnlocks,
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
@@ -433,6 +453,10 @@ export class GameData {
             }
           }
         }
+
+        this.tmFlags = systemData.tmFlags
+          ? systemData.tmFlags
+          : [0,0,0,0,0,0,0,0,0,0];
 
         if (systemData.achvUnlocks) {
           for (const a of Object.keys(systemData.achvUnlocks)) {
@@ -1177,6 +1201,31 @@ export class GameData {
     }
 
     this.starterData = starterData;
+  }
+
+  public getTMNoForMoveId(moveId: integer): integer {
+    return Object.keys(tmPoolTiers).indexOf(moveId.toString());
+  }
+
+  public getMoveIdForTMNo(tmno: integer): integer {
+    return Object.keys(tmPoolTiers).hasOwnProperty(tmno)? +Object.keys(tmPoolTiers): -1;
+  }
+
+  isTmNoUnlocked(tmNo: integer): boolean {
+    return !!(this.tmFlags.hasOwnProperty(tmNo/32) && this.tmFlags[tmNo/32] & Math.pow(2,tmNo%32));
+  }
+
+  isTmMoveUnlocked(moveId: integer): boolean {
+    return this.isTmMoveUnlocked(this.getTMNoForMoveId(moveId));
+  }
+
+  setTMNoUnlocked(tmNo: integer): void {
+    if(!this.isTmNoUnlocked(tmNo))
+      this.tmFlags[tmNo/32] |= Math.pow(2,tmNo%32);
+  }
+
+  setTMMoveUnlocked(moveId: integer): void {
+    this.setTMNoUnlocked(this.getTMNoForMoveId(moveId));
   }
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true, trainer: boolean = false): void {

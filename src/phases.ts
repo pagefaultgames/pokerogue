@@ -4254,11 +4254,13 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
+  private isFromTMDrop: boolean;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, isFromTMDrop?: boolean) {
     super(scene, partyMemberIndex);
 
     this.moveId = moveId;
+    this.isFromTMDrop=isFromTMDrop;
   }
 
   start() {
@@ -4290,6 +4292,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
               this.scene.playSound("level_up_fanfare");
               this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: pokemon.name, moveName: move.name }), null, () => {
                 this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+                if (this.isFromTMDrop) this.scene.gameData.setTMMoveUnlocked(this.moveId);
                 this.end();
               }, messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
             });
