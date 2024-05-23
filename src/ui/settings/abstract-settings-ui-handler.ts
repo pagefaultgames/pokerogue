@@ -34,6 +34,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
   private rowsToDisplay: number;
+  private settingIndex: integer;
 
   protected title: string;
   protected settings: Array<Setting>;
@@ -95,7 +96,10 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       .forEach((setting, s) => {
         let settingName = setting.label;
         if (setting?.requireReload) {
-          settingName += " (Requires Reload)";
+          // Skip SettingKeys.Touch_Controls if device is mobile or has no touch screen capabilities
+          if (!(setting.key === SettingKeys.Touch_Controls && (!hasTouchscreen() || isMobile()))) {
+            settingName += " (Requires Reload)";
+          }
         }
 
         this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
@@ -302,6 +306,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
    * @returns `true` if the option cursor was set successfully.
    */
   setOptionCursor(settingIndex: integer, cursor: integer, save?: boolean): boolean {
+    this.settingIndex = settingIndex;
     const setting = this.settings[settingIndex];
 
     if (setting.key === SettingKeys.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
@@ -324,7 +329,11 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     if (save) {
       this.scene.gameData.saveSetting(setting.key, cursor);
       if (this.reloadSettings.includes(setting)) {
-        this.reloadRequired = true;
+        if (setting.key === SettingKeys.Touch_Controls && (!hasTouchscreen() || isMobile())) {
+          this.reloadRequired = false;
+        } else {
+          this.reloadRequired = true;
+        }
       }
     }
 
@@ -370,10 +379,16 @@ export default class AbstractSettingsUiHandler extends UiHandler {
    * Clear the UI elements and state.
    */
   clear() {
+    const setting = this.settings[this.settingIndex];
+
     super.clear();
     this.settingsContainer.setVisible(false);
     this.eraseCursor();
     if (this.reloadRequired) {
+      if (setting.key === SettingKeys.Touch_Controls) {
+        const event = new CustomEvent("touchControlsChange");
+        return window.dispatchEvent(event);
+      }
       this.reloadRequired = false;
       this.scene.reset(true, false, true);
     }

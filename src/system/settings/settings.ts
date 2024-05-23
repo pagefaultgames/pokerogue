@@ -244,7 +244,8 @@ export const Setting: Array<Setting> = [
     label: "Touch Controls",
     options: AUTO_DISABLED,
     default: 0,
-    type: SettingType.GENERAL
+    type: SettingType.GENERAL,
+    requireReload: true
   },
   {
     key: SettingKeys.Vibration,

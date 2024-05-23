@@ -7,6 +7,8 @@ import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
+import { isMobile, hasTouchscreen } from "./touch-controls";
+import { SettingKeys, Setting } from "./system/settings/settings";
 
 
 // Catch global errors and display them in an alert so users can report the issue.
@@ -25,13 +27,45 @@ window.addEventListener("unhandledrejection", (event) => {
   //alert(errorString);
 });
 
+// Reinitialize game with the updated config.scale.autoCenter when 'touchControlsChange' event is dispatched
+window.addEventListener("touchControlsChange", () => {
+  config.scale.autoCenter = shouldCenterWindow() ? Phaser.Scale.CENTER_BOTH : Phaser.Scale.NO_CENTER;
+  reinitializeGame();
+});
+
+/**
+ * Determines if the game window should be centered based on the current device and settings.
+ *
+ * This function checks several conditions to decide whether the game window should be centered:
+ * 1. Checks if the device is not a mobile device.
+ * 2. Checks if the device is in landscape orientation.
+ * 3. Checks if the device has a touchscreen.
+ * 4. Checks if touch controls is explicitly enabled in the settings.
+ *
+ * @returns {boolean} - Returns true if the window should be centered, false otherwise.
+ */
+const shouldCenterWindow = (): boolean => {
+  const touchControlsOptions = Setting.find(s => s.key === SettingKeys.Touch_Controls).options;
+  console.log(touchControlsOptions)
+  const settings = localStorage.hasOwnProperty("settings") ? JSON.parse(localStorage.getItem("settings")) : null;
+
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+  const isTouchControlsEnabled: boolean | null = settings ? touchControlsOptions[settings[SettingKeys.Touch_Controls]] !== "Disabled" : null;
+
+  if (isLandscape && !isMobile() && (!hasTouchscreen() || (hasTouchscreen() && (typeof isTouchControlsEnabled === "boolean" && !isTouchControlsEnabled)))) {
+    return true;
+  }
+  return false;
+};
+
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.WEBGL,
   parent: "app",
   scale: {
     width: 1920,
     height: 1080,
-    mode: Phaser.Scale.FIT
+    mode: Phaser.Scale.FIT,
+    autoCenter: shouldCenterWindow() ? Phaser.Scale.CENTER_BOTH : Phaser.Scale.NO_CENTER
   },
   plugins: {
     global: [{
@@ -151,11 +185,23 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 
 document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
 
-let game;
+let game: Phaser.Game;
 
 const startGame = () => {
   game = new Phaser.Game(config);
   game.sound.pauseOnBlur = false;
+};
+
+/**
+ * Reinitializes the game by destroying the current instance and starting a new one.
+ * @function reinitializeGame
+ * @returns {void}
+ */
+const reinitializeGame = (): void => {
+  if (game) {
+    game.destroy(true, false);
+    startGame();
+  }
 };
 
 fetch("/manifest.json")
