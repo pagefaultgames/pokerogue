@@ -7,12 +7,12 @@ export function toReadableString(str: string): string {
 export function randomString(length: integer, seeded: boolean = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
-  
+
   for (let i = 0; i < length; i++) {
     const randomIndex = seeded ? randSeedInt(characters.length) : Math.floor(Math.random() * characters.length);
     result += characters[randomIndex];
   }
-  
+
   return result;
 }
 
@@ -20,7 +20,7 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   if (!shiftCount) {
     shiftCount = 0;
   }
-  
+
   let newStr = "";
 
   for (let i = 0; i < str.length; i++) {
@@ -146,11 +146,11 @@ export function getPlayTimeString(totalSeconds: integer): string {
 }
 
 export function binToDec(input: string): integer {
-  const place: integer[] = []; 
+  const place: integer[] = [];
   const binary: string[] = [];
-  
+
   let decimalNum = 0;
-  
+
   for (let i = 0; i < input.length; i++) {
     binary.push(input[i]);
     place.push(Math.pow(2, i));
@@ -325,7 +325,7 @@ export function fixedInt(value: integer): integer {
 export function rgbToHsv(r: integer, g: integer, b: integer) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
-  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
+  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c));
   return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v];
 }
 

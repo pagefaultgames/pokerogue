@@ -22,7 +22,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultSuperEffective": "效果拔群！",
   "hitResultNotVeryEffective": "收效甚微…",
   "hitResultNoEffect": "对 {{pokemonName}} 没有效果！！",
-  "hitResultOneHitKO": "一击必杀！", 
+  "hitResultOneHitKO": "一击必杀！",
   "attackFailed": "但是失败了！",
   "attackHitsCount": "击中 {{count}} 次！",
   "expGain": "{{pokemonName}} 获得了 {{exp}} 经验值！",

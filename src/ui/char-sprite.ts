@@ -56,7 +56,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
           resolve();
         }
       });
-    
+
       this.setVisible(this.scene.textures.get(key).key !== Utils.MissingTextureKey);
       this.shown = true;
 

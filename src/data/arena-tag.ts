@@ -72,7 +72,7 @@ export class MistTag extends ArenaTag {
     (args[0] as Utils.BooleanHolder).value = true;
 
     arena.scene.queueMessage("The mist prevented\nthe lowering of stats!");
-    
+
     return true;
   }
 }
@@ -161,7 +161,7 @@ class WishTag extends ArenaTag {
     this.triggerMessage = getPokemonMessage(user, "'s wish\ncame true!");
     this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
   }
-  
+
   onRemove(arena: Arena): void {
     const target = arena.scene.getField()[this.battlerIndex];
     if (target?.isActive(true)) {
@@ -299,7 +299,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
 
   onAdd(arena: Arena): void {
     super.onAdd(arena);
-    
+
     const source = arena.scene.getPokemonById(this.sourceId);
     arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
   }
@@ -322,7 +322,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
         const toxic = this.layers > 1;
         if (pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, 0, `the ${this.getMoveName()}`)) {
           return true;
-        }      
+        }
       }
     }
 
@@ -410,7 +410,7 @@ class StealthRockTag extends ArenaTrapTag {
     if (cancelled.value) {
       return false;
     }
-    
+
     const damageHpRatio = this.getDamageHpRatio(pokemon);
 
     if (damageHpRatio) {
