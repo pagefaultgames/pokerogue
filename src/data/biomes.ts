@@ -3921,7 +3921,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ Species.PIPLUP, Type.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.RARE ]
-    ] 
+    ]
     ],
     [ Species.PRINPLUP, Type.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.RARE ]
@@ -7157,7 +7157,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       [ Biome.JUNGLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ TrainerType.BAKER, [ 
+    [ TrainerType.BAKER, [
       [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
     ]
     ],
@@ -7166,7 +7166,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ] ],
     [ TrainerType.BIKER, [
       [ Biome.SLUM, BiomePoolTier.COMMON ]
-    ] 
+    ]
     ],
     [ TrainerType.BLACK_BELT, [
       [ Biome.DOJO, BiomePoolTier.COMMON ],
@@ -7257,7 +7257,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.RICH_KID, [] ],
     [ TrainerType.ROUGHNECK, [
       [ Biome.SLUM, BiomePoolTier.COMMON ]
-    ] 
+    ]
     ],
     [ TrainerType.SCIENTIST, [
       [ Biome.DESERT, BiomePoolTier.COMMON ],
@@ -7265,7 +7265,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ]
     ],
     [ TrainerType.SMASHER, [] ],
-    [ TrainerType.SNOW_WORKER, [ 
+    [ TrainerType.SNOW_WORKER, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
     ]
@@ -7273,7 +7273,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.STRIKER, [] ],
     [ TrainerType.SCHOOL_KID, [
       [ Biome.GRASS, BiomePoolTier.COMMON ]
-    ] 
+    ]
     ],
     [ TrainerType.SWIMMER, [
       [ Biome.SEA, BiomePoolTier.COMMON ]
@@ -7285,7 +7285,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ TrainerType.VETERAN, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON ]
-    ] 
+    ]
     ],
     [ TrainerType.WAITER, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
@@ -7700,7 +7700,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       const speciesEvolutions: SpeciesFormEvolution[] = pokemonEvolutions.hasOwnProperty(speciesId)
         ? pokemonEvolutions[speciesId]
         : [];
-      
+
       if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length) {
         uncatchableSpecies.push(speciesId);
       }

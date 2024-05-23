@@ -24,7 +24,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.achvsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
     this.achvsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -40,7 +40,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.achvIconsBg.setOrigin(0, 0);
 
     this.achvIconsContainer = this.scene.add.container(6, headerBg.height + 6);
-    
+
     this.achvIcons = [];
 
     for (let a = 0; a < Object.keys(achvs).length; a++) {

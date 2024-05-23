@@ -87,7 +87,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private transferMode: boolean;
   private transferOptionCursor: integer;
   private transferCursor: integer;
-  
+
   private lastCursor: integer = 0;
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback;
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
@@ -158,7 +158,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partyMessageBox = partyMessageBox;
 
     const partyMessageText = addTextObject(this.scene, 8, 10, defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
-    
+
     partyMessageText.setOrigin(0, 0);
     partyMessageBoxContainer.add(partyMessageText);
 
@@ -403,7 +403,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             ui.playSelect();
           }
         }
-        
+
         return true;
       }
 
@@ -463,10 +463,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
     }
   }
-  
+
   setCursor(cursor: integer): boolean {
     let changed: boolean;
-    
+
     if (this.optionsMode) {
       changed = this.optionsCursor !== cursor;
       let isScroll = false;
@@ -544,7 +544,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.cursor === 6) {
       return;
     }
-    
+
     this.optionsMode = true;
 
     let optionsMessage = "Do what with this Pokémon?";
@@ -880,7 +880,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotIndex = slotIndex;
     this.pokemon = pokemon;
     this.iconAnimHandler = iconAnimHandler;
-    
+
     this.setup(partyUiMode, tmMoveId);
   }
 
@@ -989,7 +989,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         fusionShinyStar.setOrigin(0, 0);
         fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
         fusionShinyStar.setTint(getVariantTint(this.pokemon.fusionVariant));
-  
+
         slotInfoContainer.add(fusionShinyStar);
       }
     }

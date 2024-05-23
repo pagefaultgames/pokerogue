@@ -54,7 +54,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
@@ -159,7 +159,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         ui.playError();
         return false;
       }
-      
+
       success = true;
       if (button === Button.CANCEL) {
         if (this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {

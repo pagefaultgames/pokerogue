@@ -20,8 +20,8 @@ import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChang
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
 
-/** 
- * Container class for `onWeatherChanged` events 
+/**
+ * Container class for `onWeatherChanged` events
  * @extends Event
 */
 export class WeatherChangedEvent extends Event {
@@ -40,8 +40,8 @@ export class WeatherChangedEvent extends Event {
     this.duration = duration;
   }
 }
-/** 
- * Container class for `onTerrainChanged` events 
+/**
+ * Container class for `onTerrainChanged` events
  * @extends Event
 */
 export class TerrainChangedEvent extends Event {
@@ -148,7 +148,7 @@ export class Arena {
           }
         }
       }
-      
+
       ret = getPokemonSpecies(species);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
@@ -334,7 +334,7 @@ export class Arena {
     if (Overrides.WEATHER_OVERRIDE) {
       return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     }
-    
+
     if (this.weather?.weatherType === (weather || undefined)) {
       return false;
     }
@@ -343,7 +343,7 @@ export class Arena {
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
-    
+
     if (this.weather) {
       this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -357,7 +357,7 @@ export class Arena {
       pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
       applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
     });
-    
+
     return true;
   }
 
@@ -370,7 +370,7 @@ export class Arena {
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
     this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
-    
+
     if (this.terrain) {
       if (!ignoreAnim) {
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
@@ -384,7 +384,7 @@ export class Arena {
       pokemon.findAndRemoveTags(t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
       applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
     });
-    
+
     return true;
   }
 
@@ -550,7 +550,7 @@ export class Arena {
     }
     tags.forEach(t => t.apply(this, args));
   }
-  
+
   applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
@@ -612,8 +612,8 @@ export class Arena {
     }
     return !!tag;
   }
-  
-  
+
+
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);
@@ -764,7 +764,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
     const baseKey = `${biomeKey}_${this.player ? "a" : "b"}`;
-    
+
     if (biome !== this.biome) {
       this.base.setTexture(baseKey);
 
