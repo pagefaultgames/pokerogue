@@ -2768,6 +2768,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleInfo?.destroy();
     super.destroy();
   }
+
+  getBattleInfo(): BattleInfo {
+    return this.battleInfo;
+  }
 }
 
 export default interface Pokemon {

@@ -12,6 +12,8 @@ import { BattleStat } from "#app/data/battle-stat";
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
+  private baseY: number;
+
   private player: boolean;
   private mini: boolean;
   private boss: boolean;
@@ -57,6 +59,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
+    this.baseY = y;
     this.player = player;
     this.mini = !player;
     this.boss = false;
@@ -417,6 +420,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.x += 10 * (offset === this.player ? 1 : -1);
     this.y += 27 * (offset ? 1 : -1);
+    this.baseY = this.y;
   }
 
   updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
@@ -654,6 +658,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     battleStatOrder.map((s, i) => {
       this.statNumbers[i].setFrame(battleStats[s].toString());
     });
+  }
+
+  getBaseY(): number {
+    return this.baseY;
+  }
+
+  resetY(): void {
+    this.y = this.baseY;
   }
 }
 
