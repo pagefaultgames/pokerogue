@@ -7,7 +7,7 @@ import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "../enums/buttons";
-import i18next from '../plugins/i18n';
+import i18next from "../plugins/i18n";
 
 interface DisplayStat {
   label_key?: string;
@@ -297,7 +297,7 @@ export default class GameStatsUiHandler extends UiHandler {
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
       const value = stat.sourceFunc(this.scene.gameData);
-      this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : '???');
+      this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???");
       this.statValues[s].setText(value);
     });
     if (statKeys.length < 18) {
