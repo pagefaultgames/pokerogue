@@ -436,7 +436,7 @@ export const trainerTypeDialogue = {
   [TrainerType.PRISONER]: [
     {
       encounter: [
-        "If you win, you bail me outta here."
+        "If I win, you bail me outta here."
       ],
       victory: [
         "I guess I'll have to stay another 10 years..."
