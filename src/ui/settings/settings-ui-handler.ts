@@ -55,48 +55,48 @@ export default class SettingsUiHandler extends UiHandler {
     const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - headerBg.height, (this.scene.game.canvas.width / 6) - 2, 22);
     actionsBg.setOrigin(0, 0);
 
-    const iconPreviousTab = this.scene.add.sprite(0, 0, 'keyboard');
+    const iconPreviousTab = this.scene.add.sprite(0, 0, "keyboard");
     iconPreviousTab.setScale(.1);
     iconPreviousTab.setOrigin(0, -0.1);
     iconPreviousTab.setPositionRelative(headerBg, 8, 4);
-    this.navigationIcons['BUTTON_CYCLE_FORM'] = iconPreviousTab;
+    this.navigationIcons["BUTTON_CYCLE_FORM"] = iconPreviousTab;
 
-    const iconNextTab = this.scene.add.sprite(0, 0, 'keyboard');
+    const iconNextTab = this.scene.add.sprite(0, 0, "keyboard");
     iconNextTab.setScale(.1);
     iconNextTab.setOrigin(0, -0.1);
     iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
-    this.navigationIcons['BUTTON_CYCLE_SHINY'] = iconNextTab;
+    this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
-    const iconAction = this.scene.add.sprite(0, 0, 'keyboard');
+    const iconAction = this.scene.add.sprite(0, 0, "keyboard");
     iconAction.setScale(.1);
     iconAction.setOrigin(0, -0.1);
     iconAction.setPositionRelative(actionsBg, headerBg.width - 20, 4);
-    this.navigationIcons['BUTTON_ACTION'] = iconAction;
+    this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(this.scene, 0, 0, 'Action', TextStyle.SETTINGS_LABEL);
+    const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0);
     actionText.setPositionRelative(iconAction, 0, 2);
     actionText.setPositionRelative(iconAction, -actionText.width/6, -(actionText.height/6)/2 - 6);
 
-    const iconCancel = this.scene.add.sprite(0, 0, 'keyboard');
+    const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
     iconCancel.setScale(.1);
     iconCancel.setOrigin(0, -0.1);
     iconCancel.setPositionRelative(actionsBg, headerBg.width - 100, 4);
-    this.navigationIcons['BUTTON_CANCEL'] = iconCancel;
+    this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(this.scene, 0, 0, 'Cancel', TextStyle.SETTINGS_LABEL);
+    const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6, -(cancelText.height/6)/2 - 6);
 
-    const headerText = addTextObject(this.scene, 0, 0, 'General', TextStyle.SETTINGS_SELECTED);
+    const headerText = addTextObject(this.scene, 0, 0, "General", TextStyle.SETTINGS_SELECTED);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8 + iconPreviousTab.width/6 - 4, 4);
 
-    const gamepadText = addTextObject(this.scene, 0, 0, 'Gamepad', TextStyle.SETTINGS_LABEL);
+    const gamepadText = addTextObject(this.scene, 0, 0, "Gamepad", TextStyle.SETTINGS_LABEL);
     gamepadText.setOrigin(0, 0);
     gamepadText.setPositionRelative(headerBg, 50 + iconPreviousTab.width/6 - 4, 4);
 
-    const keyboardText = addTextObject(this.scene, 0, 0, 'Keyboard', TextStyle.SETTINGS_LABEL);
+    const keyboardText = addTextObject(this.scene, 0, 0, "Keyboard", TextStyle.SETTINGS_LABEL);
     keyboardText.setOrigin(0, 0);
     keyboardText.setPositionRelative(headerBg, 97 + iconPreviousTab.width/6 - 4, 4);
 
@@ -106,9 +106,10 @@ export default class SettingsUiHandler extends UiHandler {
     this.optionValueLabels = [];
 
     Object.keys(Setting).forEach((setting, s) => {
-      let settingName = setting.replace(/\_/g, ' ');
-      if (reloadSettings.includes(Setting[setting]))
-        settingName += ' (Requires Reload)';
+      let settingName = setting.replace(/\_/g, " ");
+      if (reloadSettings.includes(Setting[setting])) {
+        settingName += " (Requires Reload)";
+      }
 
       this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
       this.settingLabels[s].setOrigin(0, 0);
@@ -133,7 +134,7 @@ export default class SettingsUiHandler extends UiHandler {
 
       let xOffset = 0;
 
-      for (let value of this.optionValueLabels[s]) {
+      for (const value of this.optionValueLabels[s]) {
         value.setPositionRelative(this.settingLabels[s], labelWidth + xOffset, 0);
         xOffset += value.width / 6 + optionSpacing;
       }
@@ -148,12 +149,12 @@ export default class SettingsUiHandler extends UiHandler {
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(actionsBg);
     this.settingsContainer.add(this.optionsContainer);
-    this.settingsContainer.add(iconNextTab)
-    this.settingsContainer.add(iconAction)
-    this.settingsContainer.add(iconCancel)
-    this.settingsContainer.add(iconPreviousTab)
-    this.settingsContainer.add(actionText)
-    this.settingsContainer.add(cancelText)
+    this.settingsContainer.add(iconNextTab);
+    this.settingsContainer.add(iconAction);
+    this.settingsContainer.add(iconCancel);
+    this.settingsContainer.add(iconPreviousTab);
+    this.settingsContainer.add(actionText);
+    this.settingsContainer.add(cancelText);
 
     ui.add(this.settingsContainer);
 
@@ -165,11 +166,11 @@ export default class SettingsUiHandler extends UiHandler {
 
   updateBindings(): void {
     for (const settingName of Object.keys(this.navigationIcons)) {
-      if (settingName === 'BUTTON_HOME') {
-          this.navigationIcons[settingName].setTexture("keyboard");
-          this.navigationIcons[settingName].setFrame("T_Home_Key_Dark.png");
-          this.navigationIcons[settingName].alpha = 1;
-          continue
+      if (settingName === "BUTTON_HOME") {
+        this.navigationIcons[settingName].setTexture("keyboard");
+        this.navigationIcons[settingName].setFrame("T_Home_Key_Dark.png");
+        this.navigationIcons[settingName].alpha = 1;
+        continue;
       }
       const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
       if (icon) {
@@ -177,8 +178,9 @@ export default class SettingsUiHandler extends UiHandler {
         this.navigationIcons[settingName].setTexture(type);
         this.navigationIcons[settingName].setFrame(icon);
         this.navigationIcons[settingName].alpha = 1;
-      } else
+      } else {
         this.navigationIcons[settingName].alpha = 0;
+      }
     }
   }
 
@@ -186,7 +188,7 @@ export default class SettingsUiHandler extends UiHandler {
     super.show(args);
     this.updateBindings();
 
-    const settings: object = localStorage.hasOwnProperty('settings') ? JSON.parse(localStorage.getItem('settings')) : {};
+    const settings: object = localStorage.hasOwnProperty("settings") ? JSON.parse(localStorage.getItem("settings")) : {};
 
     Object.keys(settingDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingDefaults[setting]));
 
@@ -222,59 +224,66 @@ export default class SettingsUiHandler extends UiHandler {
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
-        case Button.UP:
-          if (cursor) {
-            if (this.cursor)
-              success = this.setCursor(this.cursor - 1);
-            else
-              success = this.setScrollCursor(this.scrollCursor - 1);
+      case Button.UP:
+        if (cursor) {
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
           } else {
-              // When at the top of the menu and pressing UP, move to the bottommost item.
-              // First, set the cursor to the last visible element, preparing for the scroll to the end.
-              const successA = this.setCursor(this.rowsToDisplay - 1);
-              // Then, adjust the scroll to display the bottommost elements of the menu.
-              const successB = this.setScrollCursor(this.optionValueLabels.length - this.rowsToDisplay);
-              success = successA && successB; // success is just there to play the little validation sound effect
+            success = this.setScrollCursor(this.scrollCursor - 1);
           }
-          break;
-        case Button.DOWN:
-          if (cursor < this.optionValueLabels.length - 1) {
-            if (this.cursor < this.rowsToDisplay - 1) // if the visual cursor is in the frame of 0 to 8
-              success = this.setCursor(this.cursor + 1);
-            else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay)
-              success = this.setScrollCursor(this.scrollCursor + 1);
-          } else {
-              // When at the bottom of the menu and pressing DOWN, move to the topmost item.
-              // First, set the cursor to the first visible element, resetting the scroll to the top.
-              const successA = this.setCursor(0);
-              // Then, reset the scroll to start from the first element of the menu.
-              const successB = this.setScrollCursor(0);
-              success = successA && successB; // Indicates a successful cursor and scroll adjustment.
+        } else {
+          // When at the top of the menu and pressing UP, move to the bottommost item.
+          // First, set the cursor to the last visible element, preparing for the scroll to the end.
+          const successA = this.setCursor(this.rowsToDisplay - 1);
+          // Then, adjust the scroll to display the bottommost elements of the menu.
+          const successB = this.setScrollCursor(this.optionValueLabels.length - this.rowsToDisplay);
+          success = successA && successB; // success is just there to play the little validation sound effect
+        }
+        break;
+      case Button.DOWN:
+        if (cursor < this.optionValueLabels.length - 1) {
+          if (this.cursor < this.rowsToDisplay - 1) // if the visual cursor is in the frame of 0 to 8
+          {
+            success = this.setCursor(this.cursor + 1);
+          } else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay) {
+            success = this.setScrollCursor(this.scrollCursor + 1);
           }
-          break;
-        case Button.LEFT:
-          if (this.optionCursors[cursor]) // Moves the option cursor left, if possible.
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
-          break;
-        case Button.RIGHT:
-          // Moves the option cursor right, if possible.
-          if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
-          break;
-        case Button.CYCLE_FORM: // to the left
-          this.scene.ui.setMode(Mode.SETTINGS_KEYBOARD)
-            success = true;
-          break;
-        case Button.CYCLE_SHINY: // to the right
-          this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD)
-          success = true;
-          break;
+        } else {
+          // When at the bottom of the menu and pressing DOWN, move to the topmost item.
+          // First, set the cursor to the first visible element, resetting the scroll to the top.
+          const successA = this.setCursor(0);
+          // Then, reset the scroll to start from the first element of the menu.
+          const successB = this.setScrollCursor(0);
+          success = successA && successB; // Indicates a successful cursor and scroll adjustment.
+        }
+        break;
+      case Button.LEFT:
+        if (this.optionCursors[cursor]) // Moves the option cursor left, if possible.
+        {
+          success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+        }
+        break;
+      case Button.RIGHT:
+        // Moves the option cursor right, if possible.
+        if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
+          success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+        }
+        break;
+      case Button.CYCLE_FORM: // to the left
+        this.scene.ui.setMode(Mode.SETTINGS_KEYBOARD);
+        success = true;
+        break;
+      case Button.CYCLE_SHINY: // to the right
+        this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD);
+        success = true;
+        break;
       }
     }
 
     // Plays a select sound effect if an action was successfully processed.
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -283,7 +292,7 @@ export default class SettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'summary_moves_cursor', null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }
@@ -314,11 +323,12 @@ export default class SettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
-      this.scene.gameData.saveSetting(setting, cursor)
+      this.scene.gameData.saveSetting(setting, cursor);
       if (reloadSettings.includes(setting)) {
         this.reloadRequired = true;
-        if (setting === Setting.Language)
+        if (setting === Setting.Language) {
           this.reloadI18n = true;
+        }
       }
     }
 
@@ -326,8 +336,9 @@ export default class SettingsUiHandler extends UiHandler {
   }
 
   setScrollCursor(scrollCursor: integer): boolean {
-    if (scrollCursor === this.scrollCursor)
+    if (scrollCursor === this.scrollCursor) {
       return false;
+    }
 
     this.scrollCursor = scrollCursor;
 
@@ -344,8 +355,9 @@ export default class SettingsUiHandler extends UiHandler {
     for (let s = 0; s < this.settingLabels.length; s++) {
       const visible = s >= this.scrollCursor && s < this.scrollCursor + this.rowsToDisplay;
       this.settingLabels[s].setVisible(visible);
-      for (let option of this.optionValueLabels[s])
+      for (const option of this.optionValueLabels[s]) {
         option.setVisible(visible);
+      }
     }
   }
 
@@ -360,8 +372,9 @@ export default class SettingsUiHandler extends UiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

@@ -38,8 +38,9 @@ export default abstract class UiHandler {
 
   setCursor(cursor: integer): boolean {
     const changed = this.cursor !== cursor;
-    if (changed)
+    if (changed) {
       this.cursor = cursor;
+    }
 
     return changed;
   }

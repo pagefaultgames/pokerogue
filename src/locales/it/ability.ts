@@ -711,7 +711,7 @@ export const ability: AbilityTranslationEntries = {
   },
   megaLauncher: {
     name: "Megalancio",
-    description: 'Potenzia le mosse "pulsar", Forzasfera e Ondasana.',
+    description: "Potenzia le mosse \"pulsar\", Forzasfera e Ondasana.",
   },
   grassPelt: {
     name: "Peloderba",
