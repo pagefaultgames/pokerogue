@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (含复活)" },
     "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级提升1级" },
 
-    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有25%的几率不会消耗树果" },
+    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有33%的几率不会消耗树果" },
 
     "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷入濒死状态" },
 
