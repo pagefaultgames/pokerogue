@@ -2,47 +2,47 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
-    name: "Sitrus Berry",
-    effect: "Restores 25% HP if HP is below 50%",
+    name: "Baccacedro",
+    effect: "Restituisce il 25% dei PS se i PS sono sotto il 50%",
   },
   "LUM": {
-    name: "Lum Berry",
-    effect: "Cures any non-volatile status condition and confusion",
+    name: "Baccaprugna",
+    effect: "Se tenuta da un Pokémon risolve qualsiasi problema di stato",
   },
   "ENIGMA": {
-    name: "Enigma Berry",
-    effect: "Restores 25% HP if hit by a super effective move",
+    name: "Baccaenigma",
+    effect: "Restituisce il 25% dei PS se viene colpito da una mossa superefficace",
   },
   "LIECHI": {
-    name: "Liechi Berry",
-    effect: "Raises Attack if HP is below 25%",
+    name: "Baccalici",
+    effect: "Aumenta l'Attacco se i PS sono sotto il 25%",
   },
   "GANLON": {
-    name: "Ganlon Berry",
-    effect: "Raises Defense if HP is below 25%",
+    name: "Baccalongan",
+    effect: "Aumenta la Difesa se i PS sono sotto il 25%",
   },
   "PETAYA": {
-    name: "Petaya Berry",
-    effect: "Raises Sp. Atk if HP is below 25%",
+    name: "Baccapitaya",
+    effect: "Aumenta l'Attacco Speciale se i PS sono sotto il 25%",
   },
   "APICOT": {
-    name: "Apicot Berry",
-    effect: "Raises Sp. Def if HP is below 25%",
+    name: "Baccacocca",
+    effect: "Aumenta la Difesa Speciale se i PS sono sotto il 25%",
   },
   "SALAC": {
-    name: "Salac Berry",
-    effect: "Raises Speed if HP is below 25%",
+    name: "Baccasalak",
+    effect: "Aumenta la Velocità se i PS sono sotto il 25%",
   },
   "LANSAT": {
-    name: "Lansat Berry",
-    effect: "Raises critical hit ratio if HP is below 25%",
+    name: "Baccalangsa",
+    effect: "Aumenta la probabilità di Colpo Critico se i PS sono sotto il 25%",
   },
   "STARF": {
-    name: "Starf Berry",
-    effect: "Sharply raises a random stat if HP is below 25%",
+    name: "Baccambola",
+    effect: "Aumenta drasticamente una statistica casuale se i PS sono sotto il 25%",
   },
   "LEPPA": {
-    name: "Leppa Berry",
-    effect: "Restores 10 PP to a move if its PP reaches 0",
+    name: "Baccamela",
+    effect: "Ripristina 10 PP a una mossa se i suoi PP raggiungono lo 0",
   },
 } as const;
