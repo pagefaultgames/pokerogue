@@ -3,3 +3,5 @@ build/*
 coverage/*
 public/*
 .github/*
+node_modules/*
+.vscode/*
