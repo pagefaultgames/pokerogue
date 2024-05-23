@@ -5,7 +5,7 @@ export enum GrowthRate {
   MEDIUM_SLOW,
   SLOW,
   FLUCTUATING
-};
+}
 
 const expLevels = [
   [ 0, 15, 52, 122, 237, 406, 637, 942, 1326, 1800, 2369, 3041, 3822, 4719, 5737, 6881, 8155, 9564, 11111, 12800, 14632, 16610, 18737, 21012, 23437, 26012, 28737, 31610, 34632, 37800, 41111, 44564, 48155, 51881, 55737, 59719, 63822, 68041, 72369, 76800, 81326, 85942, 90637, 95406, 100237, 105122, 110052, 115015, 120001, 125000, 131324, 137795, 144410, 151165, 158056, 165079, 172229, 179503, 186894, 194400, 202013, 209728, 217540, 225443, 233431, 241496, 249633, 257834, 267406, 276458, 286328, 296358, 305767, 316074, 326531, 336255, 346965, 357812, 367807, 378880, 390077, 400293, 411686, 423190, 433572, 445239, 457001, 467489, 479378, 491346, 501878, 513934, 526049, 536557, 548720, 560922, 571333, 583539, 591882, 600000 ],
@@ -19,36 +19,38 @@ const expLevels = [
 export function getLevelTotalExp(level: integer, growthRate: GrowthRate): integer {
   if (level < 100) {
     const levelExp = expLevels[growthRate][level - 1];
-    if (growthRate !== GrowthRate.MEDIUM_FAST)
+    if (growthRate !== GrowthRate.MEDIUM_FAST) {
       return Math.floor(levelExp * 0.325 + getLevelTotalExp(level, GrowthRate.MEDIUM_FAST) * 0.675);
+    }
     return levelExp;
   }
 
   let ret: integer;
 
   switch (growthRate) {
-    case GrowthRate.ERRATIC:
-      ret = (Math.pow(level, 4) + (Math.pow(level, 3) * 2000)) / 3500;
-      break;
-    case GrowthRate.FAST:
-      ret = Math.pow(level, 3) * 4 / 5;
-      break;
-    case GrowthRate.MEDIUM_FAST:
-      ret = Math.pow(level, 3);
-      break;
-    case GrowthRate.MEDIUM_SLOW:
-      ret = (Math.pow(level, 3) * 6 / 5) - (15 * Math.pow(level, 2)) + (100 * level) - 140;
-      break;
-    case GrowthRate.SLOW:
-      ret = Math.pow(level, 3) * 5 / 4;
-      break;
-    case GrowthRate.FLUCTUATING:
-      ret = (Math.pow(level, 3) * ((level / 2) + 8)) * 4 / (100 + level);
-      break;
+  case GrowthRate.ERRATIC:
+    ret = (Math.pow(level, 4) + (Math.pow(level, 3) * 2000)) / 3500;
+    break;
+  case GrowthRate.FAST:
+    ret = Math.pow(level, 3) * 4 / 5;
+    break;
+  case GrowthRate.MEDIUM_FAST:
+    ret = Math.pow(level, 3);
+    break;
+  case GrowthRate.MEDIUM_SLOW:
+    ret = (Math.pow(level, 3) * 6 / 5) - (15 * Math.pow(level, 2)) + (100 * level) - 140;
+    break;
+  case GrowthRate.SLOW:
+    ret = Math.pow(level, 3) * 5 / 4;
+    break;
+  case GrowthRate.FLUCTUATING:
+    ret = (Math.pow(level, 3) * ((level / 2) + 8)) * 4 / (100 + level);
+    break;
   }
 
-  if (growthRate !== GrowthRate.MEDIUM_FAST)
+  if (growthRate !== GrowthRate.MEDIUM_FAST) {
     return Math.floor(ret * 0.325 + getLevelTotalExp(level, GrowthRate.MEDIUM_FAST) * 0.675);
+  }
 
   return Math.floor(ret);
 }
@@ -59,17 +61,17 @@ export function getLevelRelExp(level: integer, growthRate: GrowthRate): number {
 
 export function getGrowthRateColor(growthRate: GrowthRate, shadow?: boolean) {
   switch (growthRate) {
-    case GrowthRate.ERRATIC:
-      return !shadow ? '#f85888' : '#906060';
-    case GrowthRate.FAST:
-      return !shadow ? '#f8d030' : '#b8a038';
-    case GrowthRate.MEDIUM_FAST:
-      return !shadow ? '#78c850' : '#588040';
-    case GrowthRate.MEDIUM_SLOW:
-      return !shadow ? '#6890f0' : '#807870';
-    case GrowthRate.SLOW:
-      return !shadow ? '#f08030' : '#c03028';
-    case GrowthRate.FLUCTUATING:
-      return !shadow ? '#a040a0' : '#483850';
+  case GrowthRate.ERRATIC:
+    return !shadow ? "#f85888" : "#906060";
+  case GrowthRate.FAST:
+    return !shadow ? "#f8d030" : "#b8a038";
+  case GrowthRate.MEDIUM_FAST:
+    return !shadow ? "#78c850" : "#588040";
+  case GrowthRate.MEDIUM_SLOW:
+    return !shadow ? "#6890f0" : "#807870";
+  case GrowthRate.SLOW:
+    return !shadow ? "#f08030" : "#c03028";
+  case GrowthRate.FLUCTUATING:
+    return !shadow ? "#a040a0" : "#483850";
   }
 }
