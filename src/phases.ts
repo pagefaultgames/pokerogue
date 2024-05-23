@@ -2465,7 +2465,11 @@ export class MovePhase extends BattlePhase {
     if (this.move.getMove().getAttrs(ChargeAttr).length) {
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER){
-        this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+        this.scene.queueMessage(i18next.t('battle:useMove', { 
+          pokemonPrefix: getPokemonPrefix(this.pokemon), 
+          pokemonName: this.pokemon.name, 
+          moveName: this.move.getName() 
+        }), 500);
         return;
       }
     }
@@ -2473,7 +2477,11 @@ export class MovePhase extends BattlePhase {
     if (this.pokemon.getTag(BattlerTagType.RECHARGING || BattlerTagType.INTERRUPTED))
       return;
     
-    this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+    this.scene.queueMessage(i18next.t('battle:useMove', { 
+      pokemonPrefix: getPokemonPrefix(this.pokemon), 
+      pokemonName: this.pokemon.name, 
+      moveName: this.move.getName() 
+    }), 500);
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents().find(() => true), this.move.getMove());
   }
 
