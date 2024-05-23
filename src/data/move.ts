@@ -3626,6 +3626,11 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Generic class for removing arena tags
+ * @param tagTypes: The types of tags that can be removed
+ * @param selfSideTarget: Is the user removing tags from its own side?
+ */
 export class RemoveArenaTagsAttr extends MoveEffectAttr {
   public tagTypes: ArenaTagType[];
   public selfSideTarget: boolean;

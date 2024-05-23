@@ -149,6 +149,11 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
 
 type ProtectConditionFunc = (...args: any[]) => boolean;
 
+/**
+ * Abstract class to implement conditional team protection
+ * applies protection based on the attributes of incoming moves
+ * @param protectConditionFunc: The function determining if an incoming move is negated
+ */
 abstract class ConditionalProtectTag extends ArenaTag {
   protected protectConditionFunc: ProtectConditionFunc;
 
@@ -162,9 +167,23 @@ abstract class ConditionalProtectTag extends ArenaTag {
     arena.scene.queueMessage(`${super.getMoveName()} protected${this.side === ArenaTagSide.PLAYER ? ' your' : this.side === ArenaTagSide.ENEMY ? ' the\nopposing' : ''} team!`)
   }
 
+  // Removes default message for effect removal
   onRemove(arena: Arena): void { }
   
+  /**
+   * apply(): Checks incoming moves against the condition function
+   * and protects the target if conditions are met
+   * @param arena The arena containing this tag
+   * @param args[0] (Utils.BooleanHolder) Signals if the move is cancelled
+   * @param args[1] (Pokemon) The intended target of the move
+   * @param args[2...] (any[]) The parameters to the condition function
+   * @returns 
+   */
   apply(arena: Arena, args: any[]): boolean {
+    if ((args[0] as Utils.BooleanHolder).value) {
+      return false;
+    }
+
     const target = args[1] as Pokemon;
     if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
          && this.protectConditionFunc(...args.slice(2))) {
@@ -177,6 +196,10 @@ abstract class ConditionalProtectTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Guard_(move) Quick Guard}
+ * Condition: The incoming move has increased priority.
+ */
 class QuickGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.QUICK_GUARD, Moves.QUICK_GUARD, sourceId, side,
@@ -187,6 +210,11 @@ class QuickGuardTag extends ConditionalProtectTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard}
+ * Condition: The incoming move can target multiple Pokemon. The move's source
+ * can be an ally or enemy.
+ */
 class WideGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side, 
@@ -219,14 +247,14 @@ class MatBlockTag extends ConditionalProtectTag {
 
   onAdd(arena: Arena) {
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(getPokemonMessage(source, ' intends to flip up a mat and\nblock incoming attacks!'));
+    arena.scene.queueMessage(getPokemonMessage(source, ' intends to flip up a mat\nand block incoming attacks!'));
   }
 }
 
 /** 
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield}
- * Condition: The incoming move is a Status move that is not a hazard and does 
- * not target all Pokemon or sides of the field
+ * Condition: The incoming move is a Status move, is not a hazard, and does 
+ * not target all Pokemon or sides of the field.
 */
 class CraftyShieldTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
