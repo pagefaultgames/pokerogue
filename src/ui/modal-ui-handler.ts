@@ -48,7 +48,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     this.modalContainer.add(this.modalBg);
 
-    this.titleText = addTextObject(this.scene, 0, 4, '', TextStyle.SETTINGS_LABEL);
+    this.titleText = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
     this.titleText.setOrigin(0.5, 0);
 
     this.modalContainer.add(this.titleText);
@@ -59,7 +59,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     const buttonTopMargin = this.getButtonTopMargin();
 
-    for (let label of buttonLabels) {
+    for (const label of buttonLabels) {
       const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
       buttonLabel.setOrigin(0.5, 0.5);
 
@@ -81,7 +81,7 @@ export abstract class ModalUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && 'buttonActions' in args[0]) {
+    if (args.length >= 1 && "buttonActions" in args[0]) {
       super.show(args);
 
       const config = args[0] as ModalConfig;
@@ -93,8 +93,9 @@ export abstract class ModalUiHandler extends UiHandler {
       this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
-        if (a < this.buttonBgs.length)
-          this.buttonBgs[a].on('pointerdown', (_) => config.buttonActions[a]());
+        if (a < this.buttonBgs.length) {
+          this.buttonBgs[a].on("pointerdown", (_) => config.buttonActions[a]());
+        }
       }
 
       return true;
@@ -132,6 +133,6 @@ export abstract class ModalUiHandler extends UiHandler {
     super.clear();
     this.modalContainer.setVisible(false);
 
-    this.buttonBgs.map(bg => bg.off('pointerdown'));
+    this.buttonBgs.map(bg => bg.off("pointerdown"));
   }
 }
