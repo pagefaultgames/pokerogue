@@ -1445,6 +1445,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
+  /**
+   * Does damage calculations on a pokemon given a move
+   * @param source {@linkcode Pokemon} that is being hit
+   * @param battlerMove {@linkcode PokemonMove} the move
+   * @returns a HitResult enum: eg: SUPER_EFFECTIVE, ONE_HIT_KO, NO_EFFECT
+   */
   apply(source: Pokemon, battlerMove: PokemonMove): HitResult {
     let result: HitResult;
     const move = battlerMove.getMove();
@@ -1733,6 +1739,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
+  /**
+   * called by damageAndUpdate()
+   * @param damage integer 
+   * @param ignoreSegments boolean, not currently used
+   * @param preventEndure  used to update damage if endure or sturdy
+   * @param ignoreFaintPhase  flag on wheter to add FaintPhase if pokemon after applying damage faints
+   * @returns integer representing damage
+   */
   damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted())
       return 0;
@@ -1767,6 +1781,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return damage;
   }
 
+  /**
+   * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * @param damage integer - passed to damage()
+   * @param result an enum if it's super effective, not very, etc.
+   * @param critical boolean if move is a critical hit
+   * @param ignoreSegments boolean, passed to damage() and not used currently
+   * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
+   * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
+   * @returns integer of damage done
+   */
   damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
