@@ -1134,6 +1134,12 @@ export class PostAttackAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Has a chance to steal the target's held item after a successful attack
+ * @extends PostAttackAbAttr
+ * @param {integer} chance The chance out of 100 for this ability to proc after a successful attack
+ * @see {@linkcode applyPostAttack}
+ */
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   private chance: integer;
 
@@ -1143,6 +1149,15 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     this.chance = chance;
   }
 
+  /**
+   * Steals the held item if the chance is met
+   * @param {Pokemon} pokemon Pokemon that has this ability 
+   * @param {boolean} passive N/A
+   * @param {Pokemon} defender target which may have its item stolen 
+   * @param {PokemonMove} move N/A
+   * @param {HitResult} hitResult whether the move was successful
+   * @param {any[]} args N/A
+   */
   applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (hitResult < HitResult.NO_EFFECT) {
@@ -1161,6 +1176,11 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     });
   }
 
+  /**
+   * Gets the target's held items
+   * @param {Pokemon} target Pokemon to steal from 
+   * @returns {PokemonHeldItemModifier[]} List of items held by target
+   */
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
     return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
@@ -1222,6 +1242,13 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
   }
 }
 
+/**
+ * Has a chance to steal the attackers's held item after a successful attack meeting a certain condition
+ * @extends PostDefendAbAttr
+ * @param {integer} chance The chance out of 100 for this ability to proc after a successful attack
+ * @param {PokemonDefendCondition} condition condition that must be met regarding the target, attacker or move to trigger the ability
+ * @see {@linkcode applyPostDefend}
+ */
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private chance: integer; //Proc chance out of 100
@@ -1232,7 +1259,16 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     this.condition = condition;
     this.chance = chance;
   }
-
+  
+  /**
+   * Steals the held item if the chance is met
+   * @param {Pokemon} pokemon Pokemon that has this ability 
+   * @param {boolean} passive N/A
+   * @param {Pokemon} attacker attacker which may have its item stolen 
+   * @param {PokemonMove} move the move the attacker used
+   * @param {HitResult} hitResult whether the move was successful
+   * @param {any[]} args N/A
+   */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move.getMove()))) {
@@ -1251,6 +1287,11 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     });
   }
 
+  /**
+   * Gets the target's held items
+   * @param {Pokemon} target Pokemon to steal from 
+   * @returns {PokemonHeldItemModifier[]} List of items held by target
+   */
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
     return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
