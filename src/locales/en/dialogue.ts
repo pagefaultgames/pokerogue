@@ -1601,418 +1601,606 @@ export const dialogue: DialogueTranslationEntries = {
                 1: "What's the matter? This isn't all, is it?"
             }
         },
-        "nemona": {
-            "encounter": {
-                1: "Yesss! I'm so psyched! Time for us to let loose!"
-            },
-            "victory": {
-                1: "Well, that stinks, but I still had fun! I'll getcha next time!"
-            },
-            "defeat": {
-                1: "Well, that was a great battle! Fruitful for sure."
-            }
+    },
+    "nemona": {
+        "encounter": {
+            1: "Yesss! I'm so psyched! Time for us to let loose!"
         },
-        "leon": {
-            "encounter": {
-                1: "We're gonna have an absolutely champion time!"
-            },
-            "victory": {
-                1: `My time as Champion is over… 
+        "victory": {
+            1: "Well, that stinks, but I still had fun! I'll getcha next time!"
+        },
+        "defeat": {
+            1: "Well, that was a great battle! Fruitful for sure."
+        }
+    },
+    "leon": {
+        "encounter": {
+            1: "We're gonna have an absolutely champion time!"
+        },
+        "victory": {
+            1: `My time as Champion is over… 
                 $But what a champion time it's been! 
                 $Thank you for the greatest battle I've ever had!`,
-            },
-            "defeat": {
-                1: "An absolute champion time, that was!"
-            }
         },
-        "whitney": {
-            "encounter": {
-                1: "Hey! Don't you think Pokémon are, like, super cute?"
-            },
-            "victory": {
-                1: "Waaah! Waaah! You're so mean!"
-            },
-            "defeat": {
-                1: "And that's that!"
-            }
+        "defeat": {
+            1: "An absolute champion time, that was!"
+        }
+    },
+    "whitney": {
+        "encounter": {
+            1: "Hey! Don't you think Pokémon are, like, super cute?"
         },
-        "chuck": {
-            "encounter": {
-                1: "Hah! You want to challenge me? Are you brave or just ignorant?"
-            },
-            "victory": {
-                1: "You're strong! Would you please make me your apprentice?"
-            },
-            "defeat": {
-                1: "There. Do you realize how much more powerful I am than you?"
-            }
+        "victory": {
+            1: "Waaah! Waaah! You're so mean!"
         },
-        "katy": {
-            "encounter": {
-                1: "Don't let your guard down unless you would like to find yourself knocked off your feet!"
-            },
-            "victory": {
-                1: "All of my sweet little Pokémon dropped like flies!"
-            },
-            "defeat": {
-                1: "Eat up, my cute little Vivillon!"
-            }
+        "defeat": {
+            1: "And that's that!"
+        }
+    },
+    "chuck": {
+        "encounter": {
+            1: "Hah! You want to challenge me? Are you brave or just ignorant?"
         },
-        "pryce": {
-            "encounter": {
-                1: "Youth alone does not ensure victory! Experience is what counts."
-            },
-            "victory": {
-                1: "Outstanding! That was perfect. Try not to forget what you feel now."
-            },
-            "defeat": {
-                1: "Just as I envisioned."
-            }
+        "victory": {
+            1: "You're strong! Would you please make me your apprentice?"
         },
-        "clair": {
-            "encounter": {
-                1: "Do you know who I am? And you still dare to challenge me?"
-            },
-            "victory": {
-                1: "I wonder how far you can get with your skill level. This should be fascinating."
-            },
-            "defeat": {
-                1: "That's that."
-            }
+        "defeat": {
+            1: "There. Do you realize how much more powerful I am than you?"
+        }
+    },
+    "katy": {
+        "encounter": {
+            1: "Don't let your guard down unless you would like to find yourself knocked off your feet!"
         },
-        "maylene": {
-            "encounter": {
-                1: `I've come to challenge you now, and I won't hold anything back. 
+        "victory": {
+            1: "All of my sweet little Pokémon dropped like flies!"
+        },
+        "defeat": {
+            1: "Eat up, my cute little Vivillon!"
+        }
+    },
+    "pryce": {
+        "encounter": {
+            1: "Youth alone does not ensure victory! Experience is what counts."
+        },
+        "victory": {
+            1: "Outstanding! That was perfect. Try not to forget what you feel now."
+        },
+        "defeat": {
+            1: "Just as I envisioned."
+        }
+    },
+    "clair": {
+        "encounter": {
+            1: "Do you know who I am? And you still dare to challenge me?"
+        },
+        "victory": {
+            1: "I wonder how far you can get with your skill level. This should be fascinating."
+        },
+        "defeat": {
+            1: "That's that."
+        }
+    },
+    "maylene": {
+        "encounter": {
+            1: `I've come to challenge you now, and I won't hold anything back. 
                     $Please prepare yourself for battle!`,
-            },
-            "victory": {
-                1: "I admit defeat…"
-            },
-            "defeat": {
-                1: "That was awesome."
-            }
         },
-        "fantina": {
-            "encounter": {
-                1: `You shall challenge me, yes? But I shall win. 
+        "victory": {
+            1: "I admit defeat…"
+        },
+        "defeat": {
+            1: "That was awesome."
+        }
+    },
+    "fantina": {
+        "encounter": {
+            1: `You shall challenge me, yes? But I shall win. 
                     $That is what the Gym Leader of Hearthome does, non?`,
-            },
-            "victory": {
-                1: "You are so fantastically strong. I know why I have lost."
-            },
-            "defeat": {
-                1: "I am so, so, very happy!"
-            }
         },
-        "byron": {
-            "encounter": {
-                1: `Trainer! You're young, just like my son, Roark. 
+        "victory": {
+            1: "You are so fantastically strong. I know why I have lost."
+        },
+        "defeat": {
+            1: "I am so, so, very happy!"
+        }
+    },
+    "byron": {
+        "encounter": {
+            1: `Trainer! You're young, just like my son, Roark. 
                     $With more young Trainers taking charge, the future of Pokémon is bright! 
                     $So, as a wall for young people, I'll take your challenge!`,
-            },
-            "victory": {
-                1: "Hmm! My sturdy Pokémon--defeated!"
-            },
-            "defeat": {
-                1: "Gwahahaha! How were my sturdy Pokémon?!"
-            }
         },
-        "olympia": {
-            "encounter": {
-                1: "An ancient custom deciding one's destiny. The battle begins!"
-            },
-            "victory": {
-                1: "Create your own path. Let nothing get in your way. Your fate, your future."
-            },
-            "defeat": {
-                1: "Our path is clear now."
-            }
+        "victory": {
+            1: "Hmm! My sturdy Pokémon--defeated!"
         },
-        "volkner": {
-            "encounter": {
-                1:  `Since you've come this far, you must be quite strong…
+        "defeat": {
+            1: "Gwahahaha! How were my sturdy Pokémon?!"
+        }
+    },
+    "olympia": {
+        "encounter": {
+            1: "An ancient custom deciding one's destiny. The battle begins!"
+        },
+        "victory": {
+            1: "Create your own path. Let nothing get in your way. Your fate, your future."
+        },
+        "defeat": {
+            1: "Our path is clear now."
+        }
+    },
+    "volkner": {
+        "encounter": {
+            1: `Since you've come this far, you must be quite strong…
                     $I hope you're the Trainer who'll make me remember how fun it is to battle!`,
-            },
-            "victory": {
-                1: `You've got me beat…
+        },
+        "victory": {
+            1: `You've got me beat…
                     $Your desire and the noble way your Pokémon battled for you… 
                     $I even felt thrilled during our match. That was a very good battle.`,
-            },
-            "defeat": {
-                1:  `It was not shocking at all… 
+        },
+        "defeat": {
+            1: `It was not shocking at all… 
                     $That is not what I wanted!`,
-            }
-        },
-        "burgh": {
-            "encounter": {
-                1:  `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it. 
+        }
+    },
+    "burgh": {
+        "encounter": {
+            1: `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it. 
                     $OK! I can hear my battle muse loud and clear. Let's get straight to it!`,
-                2: `Of course, I'm really proud of all of my Pokémon! 
+            2: `Of course, I'm really proud of all of my Pokémon! 
                     $Well now… Let's get right to it!`
-            },
-            "victory": {
-                1: "Is it over? Has my muse abandoned me?",
-                2: "Hmm… It's over! You're incredible!"
-            },
-            "defeat": {
-                1: "Wow… It's beautiful somehow, isn't it…",
-                2: `Sometimes I hear people say something was an ugly win. 
+        },
+        "victory": {
+            1: "Is it over? Has my muse abandoned me?",
+            2: "Hmm… It's over! You're incredible!"
+        },
+        "defeat": {
+            1: "Wow… It's beautiful somehow, isn't it…",
+            2: `Sometimes I hear people say something was an ugly win. 
                     $I think if you're trying your best, any win is beautiful.`
-            }
-        },
-        "elesa": {
-            "encounter": {
-                1: `C'est fini! When I'm certain of that, I feel an electric jolt run through my body! 
+        }
+    },
+    "elesa": {
+        "encounter": {
+            1: `C'est fini! When I'm certain of that, I feel an electric jolt run through my body! 
                     $I want to feel the sensation, so now my beloved Pokémon are going to make your head spin!`,
-            },
-            "victory": {
-                1: "I meant to make your head spin, but you shocked me instead."
-            },
-            "defeat": {
-                1: "That was unsatisfying somehow… Will you give it your all next time?"
-            }
         },
-        "skyla": {
-            "encounter": {
-                1:  `It's finally time for a showdown! That means the Pokémon battle that decides who's at the top, right? 
+        "victory": {
+            1: "I meant to make your head spin, but you shocked me instead."
+        },
+        "defeat": {
+            1: "That was unsatisfying somehow… Will you give it your all next time?"
+        }
+    },
+    "skyla": {
+        "encounter": {
+            1: `It's finally time for a showdown! That means the Pokémon battle that decides who's at the top, right? 
                     $I love being on the summit! 'Cause you can see forever and ever from high places! 
                     $So, how about you and I have some fun?`,
-            },
-            "victory": {
-                1: "Being your opponent in battle is a new source of strength to me. Thank you!"
-            },
-            "defeat": {
-                1: "Win or lose, you always gain something from a battle, right?"
-            }
         },
-        "brycen": {
-            "encounter": {
-                1: `There is also strength in being with other people and Pokémon. 
+        "victory": {
+            1: "Being your opponent in battle is a new source of strength to me. Thank you!"
+        },
+        "defeat": {
+            1: "Win or lose, you always gain something from a battle, right?"
+        }
+    },
+    "brycen": {
+        "encounter": {
+            1: `There is also strength in being with other people and Pokémon. 
                     $Receiving their support makes you stronger. I'll show you this power!`,
-            },
-            "victory": {
-                1: "The wonderful combination of you and your Pokémon! What a beautiful friendship!"
-            },
-            "defeat": {
-                1: "Extreme conditions really test you and train you!"
-            }
         },
-        "drayden": {
-            "encounter": {
-                1:  `What I want to find is a young Trainer who can show me a bright future. 
+        "victory": {
+            1: "The wonderful combination of you and your Pokémon! What a beautiful friendship!"
+        },
+        "defeat": {
+            1: "Extreme conditions really test you and train you!"
+        }
+    },
+    "drayden": {
+        "encounter": {
+            1: `What I want to find is a young Trainer who can show me a bright future. 
                     $Let's battle with everything we have: your skill, my experience, and the love we've raised our Pokémon with!`,
-            },
-            "victory": {
-                1: "This intense feeling that floods me after a defeat… I don't know how to describe it."
-            },
-            "defeat": {
-                1: "Harrumph! I know your ability is greater than that!"
-            }
         },
-        "grant": {
-            "encounter": {
-                1: `There is only one thing I wish for. 
+        "victory": {
+            1: "This intense feeling that floods me after a defeat… I don't know how to describe it."
+        },
+        "defeat": {
+            1: "Harrumph! I know your ability is greater than that!"
+        }
+    },
+    "grant": {
+        "encounter": {
+            1: `There is only one thing I wish for. 
                     $That by surpassing one another, we find a way to even greater heights.`,
-            },
-            "victory": {
-                1: "You are a wall that I am unable to surmount!"
-            },
-            "defeat": {
-                1:  `Do not give up. 
+        },
+        "victory": {
+            1: "You are a wall that I am unable to surmount!"
+        },
+        "defeat": {
+            1: `Do not give up. 
                     $That is all there really is to it. 
                     $The most important lessons in life are simple.`,
-            }
+        }
+    },
+    "korrina": {
+        "encounter": {
+            1: "Time for Lady Korrina's big appearance!"
         },
-        "korrina": {
-            "encounter": {
-                1: "Time for Lady Korrina's big appearance!"
-            },
-            "victory": {
-                1: "It's your very being that allows your Pokémon to evolve!"
-            },
-            "defeat": {
-                1: "What an explosive battle!"
-            }
+        "victory": {
+            1: "It's your very being that allows your Pokémon to evolve!"
         },
-        "clemont": {
-            "encounter": {
-                1: "Oh! I'm glad that we got to meet!"
-            },
-            "victory": {
-                1: "Your passion for battle inspires me!"
-            },
-            "defeat": {
-                1: "Looks like my Trainer-Grow-Stronger Machine, Mach 2 is really working!"
-            }
+        "defeat": {
+            1: "What an explosive battle!"
+        }
+    },
+    "clemont": {
+        "encounter": {
+            1: "Oh! I'm glad that we got to meet!"
         },
-        "valerie": {
-            "encounter": {
-                1:  `Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. 
+        "victory": {
+            1: "Your passion for battle inspires me!"
+        },
+        "defeat": {
+            1: "Looks like my Trainer-Grow-Stronger Machine, Mach 2 is really working!"
+        }
+    },
+    "valerie": {
+        "encounter": {
+            1: `Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. 
                     $Then I suppose you have earned yourself the right to a battle, as a reward for your efforts. 
                     $The elusive Fairy may appear frail as the breeze and delicate as a bloom, but it is strong.`,
-            },
-            "victory": {
-                1: "I hope that you will find things worth smiling about tomorrow…"
-            },
-            "defeat": {
-                1: "Oh goodness, what a pity…"
-            }
         },
-        "wulfric": {
-            "encounter": {
-                1:  `You know what? We all talk big about what you learn from battling and bonds and all that…
+        "victory": {
+            1: "I hope that you will find things worth smiling about tomorrow…"
+        },
+        "defeat": {
+            1: "Oh goodness, what a pity…"
+        }
+    },
+    "wulfric": {
+        "encounter": {
+            1: `You know what? We all talk big about what you learn from battling and bonds and all that…
                     $But really, I just do it 'cause it's fun. 
                     $Who cares about the grandstanding? Let's get to battling!`,
-            },
-            "victory": {
-                1: "Outstanding! I'm tough as an iceberg, but you smashed me through and through!"
-            },
-            "defeat": {
-                1: "Tussle with me and this is what happens!"
-            }
         },
-        "kabu": {
-            "encounter": {
-                1: `Every Trainer and Pokémon trains hard in pursuit of victory. 
+        "victory": {
+            1: "Outstanding! I'm tough as an iceberg, but you smashed me through and through!"
+        },
+        "defeat": {
+            1: "Tussle with me and this is what happens!"
+        }
+    },
+    "kabu": {
+        "encounter": {
+            1: `Every Trainer and Pokémon trains hard in pursuit of victory. 
                     $But that means your opponent is also working hard to win. 
                     $In the end, the match is decided by which side is able to unleash their true potential.`,
-            },
-            "victory": {
-                1: "I'm glad I could battle you today!"
-            },
-            "defeat": {
-                1: "That's a great way for me to feel my own growth!"
-            }
         },
-        "bea": {
-            "encounter": {
-                1:  `Do you have an unshakable spirit that won't be moved, no matter how you are attacked? 
+        "victory": {
+            1: "I'm glad I could battle you today!"
+        },
+        "defeat": {
+            1: "That's a great way for me to feel my own growth!"
+        }
+    },
+    "bea": {
+        "encounter": {
+            1: `Do you have an unshakable spirit that won't be moved, no matter how you are attacked? 
                     $I think I'll just test that out, shall I?`,
-            },
-            "victory": {
-                1: "I felt the fighting spirit of your Pokémon as you led them in battle."
-            },
-            "defeat": {
-                1: "That was the best sort of match anyone could ever hope for."
-            }
         },
-        "opal": {
-            "encounter": {
-                1: "Let me have a look at how you and your partner Pokémon behave!"
-            },
-            "victory": {
-                1: "Your pink is still lacking, but you're an excellent Trainer with excellent Pokémon."
-            },
-            "defeat": {
-                1: "Too bad for you, I guess."
-            }
+        "victory": {
+            1: "I felt the fighting spirit of your Pokémon as you led them in battle."
         },
-        "bede": {
-            "encounter": {
-                1: "I suppose I should prove beyond doubt just how pathetic you are and how strong I am."
-            },
-            "victory": {
-                1: "I see… Well, that's fine. I wasn't really trying all that hard anyway."
-            },
-            "defeat": {
-                1: "Not a bad job, I suppose."
-            }
+        "defeat": {
+            1: "That was the best sort of match anyone could ever hope for."
+        }
+    },
+    "opal": {
+        "encounter": {
+            1: "Let me have a look at how you and your partner Pokémon behave!"
         },
-        "gordie": {
-            "encounter": {
-                1: "So, let's get this over with."
-            },
-            "victory": {
-                1: "I just want to climb into a hole… Well, I guess it'd be more like falling from here."
-            },
-            "defeat": {
-                1: "Battle like you always do, victory will follow!"
-            }
+        "victory": {
+            1: "Your pink is still lacking, but you're an excellent Trainer with excellent Pokémon."
         },
-        "marnie": {
-            "encounter": {
-                1:  `The truth is, when all's said and done… I really just wanna become Champion for myself! 
+        "defeat": {
+            1: "Too bad for you, I guess."
+        }
+    },
+    "bede": {
+        "encounter": {
+            1: "I suppose I should prove beyond doubt just how pathetic you are and how strong I am."
+        },
+        "victory": {
+            1: "I see… Well, that's fine. I wasn't really trying all that hard anyway."
+        },
+        "defeat": {
+            1: "Not a bad job, I suppose."
+        }
+    },
+    "gordie": {
+        "encounter": {
+            1: "So, let's get this over with."
+        },
+        "victory": {
+            1: "I just want to climb into a hole… Well, I guess it'd be more like falling from here."
+        },
+        "defeat": {
+            1: "Battle like you always do, victory will follow!"
+        }
+    },
+    "marnie": {
+        "encounter": {
+            1: `The truth is, when all's said and done… I really just wanna become Champion for myself! 
                     $So don't take it personal when I kick your butt!`,
-            },
-            "victory": {
-                1: "OK, so I lost… But I got to see a lot of the good points of you and your Pokémon!"
-            },
-            "defeat": {
-                1: "Hope you enjoyed our battle tactics."
-            }
         },
-        "raihan": {
-            "encounter": {
-                1: "I'm going to defeat the Champion, win the whole tournament, and prove to the world just how strong the great Raihan really is!"
-            },
-            "victory": {
-                1:  `I look this good even when I lose. 
+        "victory": {
+            1: "OK, so I lost… But I got to see a lot of the good points of you and your Pokémon!"
+        },
+        "defeat": {
+            1: "Hope you enjoyed our battle tactics."
+        }
+    },
+    "raihan": {
+        "encounter": {
+            1: "I'm going to defeat the Champion, win the whole tournament, and prove to the world just how strong the great Raihan really is!"
+        },
+        "victory": {
+            1: `I look this good even when I lose. 
                     $It's a real curse. 
                     $Guess it's time for another selfie!`,
-            },
-            "defeat": {
-                1: "Let's take a selfie to remember this."
-            }
         },
-        "brassius": {
-            "encounter": {
-                1: "I assume you are ready? Let our collaborative work of art begin!"
-            },
-            "victory": {
-                1: "Ahhh…vant-garde!"
-            },
-            "defeat": {
-                1: "I will begin on a new piece at once!"
-            }
+        "defeat": {
+            1: "Let's take a selfie to remember this."
+        }
+    },
+    "brassius": {
+        "encounter": {
+            1: "I assume you are ready? Let our collaborative work of art begin!"
         },
-        "iono": {
-            "encounter": {
-                1: `How're ya feelin' about this battle?
+        "victory": {
+            1: "Ahhh…vant-garde!"
+        },
+        "defeat": {
+            1: "I will begin on a new piece at once!"
+        }
+    },
+    "iono": {
+        "encounter": {
+            1: `How're ya feelin' about this battle?
                     $...
                     $Let's get this show on the road! How strong is our challenger? 
                     $I 'unno! Let's find out together!`,
-            },
-            "victory": {
-                1: "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
-            },
-            "defeat": {
-                1: "Your eyeballs are MINE!"
-            }
         },
-        "larry": {
-            "encounter": {
-                1: "When all's said and done, simplicity is strongest."
-            },
-            "victory": {
-                1: "A serving of defeat, huh?"
-            },
-            "defeat": {
-                1: "I'll call it a day."
-            }
+        "victory": {
+            1: "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
         },
-        "ryme": {
-            "encounter": {
-                1: "Come on, baby! Rattle me down to the bone!"
-            },
-            "victory": {
-                1: "You're cool, my friend—you move my SOUL!"
-            },
-            "defeat": {
-                1: "Later, baby!"
-            }
-        },
-        "grusha": {
-            "encounter": {
-                1: "All I need to do is make sure the power of my Pokémon chills you to the bone!"
-            },
-            "victory": {
-                1: "Your burning passion… I kinda like it, to be honest."
-            },
-            "defeat": {
-                1: "Things didn't heat up for you."
-            }
+        "defeat": {
+            1: "Your eyeballs are MINE!"
         }
+    },
+    "larry": {
+        "encounter": {
+            1: "When all's said and done, simplicity is strongest."
+        },
+        "victory": {
+            1: "A serving of defeat, huh?"
+        },
+        "defeat": {
+            1: "I'll call it a day."
+        }
+    },
+    "ryme": {
+        "encounter": {
+            1: "Come on, baby! Rattle me down to the bone!"
+        },
+        "victory": {
+            1: "You're cool, my friend—you move my SOUL!"
+        },
+        "defeat": {
+            1: "Later, baby!"
+        }
+    },
+    "grusha": {
+        "encounter": {
+            1: "All I need to do is make sure the power of my Pokémon chills you to the bone!"
+        },
+        "victory": {
+            1: "Your burning passion… I kinda like it, to be honest."
+        },
+        "defeat": {
+            1: "Things didn't heat up for you."
+        }
+    },
+    "rival": {
+        "encounter": {
+            1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
+                    $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
+                    $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
+                    $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
+        },
+        "victory": {
+            1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
+                   $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
+                   $By the way, the professor asked me to give you these items. They look pretty cool.
+                   $@c{serious_smile_fists}Good luck out there!`
+        },
+    },
+    "rival_female": {
+        "encounter": {
+            1: `@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?
+                    $@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…
+                    $@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!
+                    $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
+        },
+        "victory": {
+            1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
+                    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
+                    $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
+                    $@c{smile_wave}Do your best like always! I believe in you!`
+        },
+    },
+    "rival_2": {
+        "encounter": {
+            1: `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
+                $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
+                $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
+                $I've been doing a lot of my own training so I'll definitely put up a fight this time.
+                $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
+        },
+        "victory": {
+            1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
+                $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
+                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
+                $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
+                $@c{smile}Anyway, take care!`
+        },
+    },
+    "rival_2_female": {
+        "encounter": {
+            1: `@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!
+                $@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.
+                $@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.
+                $@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.
+                $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
+        },
+        "victory": {
+            1: `@c{neutral}I… wasn't supposed to lose that time…
+                $@c{smile}Aw well. That just means I'll have to train even harder for next time!
+                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
+                $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
+                $@c{smile_wave}Keep at it!`
+        },
+        "defeat": {
+            1: `It's OK to lose sometimes…`
+        }
+    },
+    "rival_3": {
+        "encounter": {
+            1: `@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.
+                $@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.
+                $@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.
+                $@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
+                $@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?
+                $@c{serious_mopen_fists}If so, prove it to me.`
+        },
+        "victory": {
+            1: `@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?`
+        },
+    },
+    "rival_3_female": {
+        "encounter": {
+            1: `@c{smile_wave}Long time no see! Still haven't lost, huh.\n@c{angry}You're starting to get on my nerves. @c{smile_wave_wink}Just kidding!
+                $@c{smile_ehalf}But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.
+                $@c{smile_eclosed}I support you in your dream and everything, but the reality is you're going to lose sooner or later.
+                $@c{smile}And when you do, I'll be there for you like always.\n@c{angry_mopen}Now, let me show you how strong I've become!`
+        },
+        "victory": {
+            1: `@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…`
 
+        },
+        "defeat": {
+            1: `You gave it your best, now let's go home.`
+        }
+    },
+    "rival_4": {
+        "encounter": {
+            1: `@c{neutral}Hey.
+                $I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.
+                $@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.
+                $@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
+                $@c{serious_mopen_fists}None of that matters anymore, not until I win.
+                $@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.
+                $@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.
+                $@c{serious_mopen_fists}Prepare yourself.`
+        },
+        "victory": {
+            1: `@c{neutral}What…@d{64} What are you?`
+        },
+    },
+    "rival_4_female": {
+        "encounter": {
+            1: `@c{neutral}It's me! You didn't forget about me again… did you?
+                $@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
+                $@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
+                $@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
+                $@c{neutral}In fact, I… hardly recognize myself.
+                $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
+                $And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.
+                $@c{angry_mopen}Prepare yourself.`
+        },
+        "victory": {
+            1: `@c{neutral}What…@d{64} What are you?`
 
-    }
+        },
+        "defeat": {
+            1: `$@c{smile}You should be proud of how far you made it.`
+        }
+    },
+    "rival_5": {
+        "encounter": {
+            1: `@c{neutral}…`
+        },
+        "victory": {
+            1: `@c{neutral}…`
+        },
+    },
+    "rival_5_female": {
+        "encounter": {
+            1: `@c{neutral}…`
+        },
+        "victory": {
+            1: `@c{neutral}…`
+
+        },
+        "defeat": {
+            1: `$@c{smile_ehalf}…`
+        }
+    },
+    "rival_6": {
+        "encounter": {
+            1: `@c{smile_eclosed}We meet again.
+                $@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
+                $@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.
+                $@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.
+                $@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
+                $@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
+                $@c{serious_mhalf_fists}You feel the same, don't you?
+                $@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
+                $Those times we cherished together that seem so recent are nothing but a distant memory.
+                $@c{neutral_eclosed}Who can say whether they were ever even real in the first place.
+                $@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
+                $@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.
+                $@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance.`
+        },
+        "victory": {
+            1: `@c{smile_eclosed}It looks like my work is done here.
+                $I want you to promise me one thing.\n@c{smile}After you heal the world, please come home.`
+        },
+    },
+    "rival_6_female": {
+        "encounter": {
+            1: `@c{smile_ehalf}So it's just us again.
+                $@c{smile_eclosed}You know, I keep going around and around in my head…
+                $@c{smile_ehalf}There's something to all this, why everything seems so strange now…
+                $@c{smile}You have your dream, and I have this ambition in me…
+                $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
+                $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
+                $@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
+                $It's something about this strange and dreadful place… Everything seems so clear…
+                $This… is all the world's known for a long time now.
+                $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
+                $@c{smile_ehalf}Were they even real? They seem so far away now…
+                $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
+                $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
+                $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
+        },
+        "victory": {
+            1: `@c{smile_ehalf}I… I think I fulfilled my purpose…
+                $@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.
+                $@c{smile_ehalf}…Thank you.`
+
+        },
+    },
 };

@@ -65,7 +65,7 @@ export interface DialogueTranslationEntry {
 export interface DialogueTranslationCategory {
   encounter: DialogueTranslationEntry;
   victory: DialogueTranslationEntry;
-    defeat: DialogueTranslationEntry;
+  defeat?: DialogueTranslationEntry;
 }
 
 export interface DialogueTranslationTrainerClass {
