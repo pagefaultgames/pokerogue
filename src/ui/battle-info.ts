@@ -8,7 +8,6 @@ import BattleScene from "../battle-scene";
 import { Type, getTypeRgb } from "../data/type";
 import { getVariantTint } from "#app/data/variant";
 import { BattleStat } from "#app/data/battle-stat";
-import { StarterDataEntry } from '#app/system/game-data';
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -96,7 +95,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
       this.add(this.ownedIcon);
 
-      this.championRibbon = this.scene.add.sprite(0, 0, 'champion_ribbon');
+      this.championRibbon = this.scene.add.sprite(0, 0, "champion_ribbon");
       this.championRibbon.setVisible(false);
       this.championRibbon.setOrigin(0, 0);
       this.championRibbon.setPositionRelative(this.nameText, 11.75, 11.75);
@@ -270,7 +269,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (!this.player) {
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
-
       const opponentPokemonDexAttr = pokemon.getDexAttr();
       if (pokemon.scene.gameMode.isClassic) {
         if(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 && pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
