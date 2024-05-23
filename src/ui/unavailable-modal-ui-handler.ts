@@ -9,10 +9,10 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectInterval: number;
   private reconnectCallback: () => void;
 
-  private readonly minTime = 5000;
-  private readonly maxTime = 60000;
+  private readonly minTime = 1000 * 5;
+  private readonly maxTime = 1000 * 60 * 5;
 
-  private readonly randVarianceTime = 10000;
+  private readonly randVarianceTime = 1000 * 10;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
