@@ -2,13 +2,13 @@ import {SimpleTranslationEntries} from "#app/plugins/i18n";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
-    "elite_four": "Elite Four",
-    "gym_leader": "Gym Leader",
-    "gym_leader_female": "Gym Leader",
-    "champion": "Champion",
-    "rival": "Rival",
-    "professor": "Professor",
-    "frontier_brain": "Frontier Brain",
+    "elite_four": "Superquattro",
+    "gym_leader": "Capopalestra",
+    "gym_leader_female": "Capopalestra",
+    "champion": "Campione",
+    "rival": "Rivale",
+    "professor": "Professore",
+    "frontier_brain": "Asso Lotta",
     // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -68,8 +68,9 @@ export const trainerClasses: SimpleTranslationEntries = {
     "officer": "Officer",
     "parasol_lady": "Parasol Lady",
     "pilot": "Pilot",
-    "pokefan": "Poké Fan",
-    "pokefan_family": "Poké Fan Family",
+    "pokéfan": "Poké Fan",
+    "pokéfan_female": "Poké Fan",
+    "pokéfan_family": "Poké Fan Family",
     "preschooler": "Preschooler",
     "preschooler_female": "Preschooler",
     "preschoolers": "Preschoolers",
@@ -77,6 +78,7 @@ export const trainerClasses: SimpleTranslationEntries = {
     "psychic_female": "Psychic",
     "psychics": "Psychics",
     "pokémon_ranger": "Pokémon Ranger",
+    "pokémon_ranger_female": "Pokémon Ranger",
     "pokémon_rangers": "Pokémon Ranger",
     "ranger": "Ranger",
     "restaurant_staff": "Restaurant Staff",
@@ -219,7 +221,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "kahili": "Kahili",
     "rika": "Rika",
     "poppy": "Poppy",
-    "larry_elite": "Larry", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "hassel": "Hassel",
     "crispin": "Crispin",
     "amarys": "Amarys",
@@ -227,7 +228,6 @@ export const trainerNames: SimpleTranslationEntries = {
     "drayton": "Drayton",
     "blue": "Blue",
     "red": "Red",
-    "lance_champion": "Lance", // Does this really need to be an extra entry? (it is in trainer-type.ts so I added it here)
     "steven": "Steven",
     "wallace": "Wallace",
     "cynthia": "Cynthia",

@@ -55,7 +55,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Erhöht die {{tempBattleStatName}} aller Teammitglieder für 5 Kämpfe um eine Stufe",
     },
     "AttackTypeBoosterModifierType": {
-      description: "Erhöht die Stärke aller {{moveType}}attacken eines Pokémon um 20%",
+      description: "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%",
     },
     "PokemonLevelIncrementModifierType": {
       description: "Erhöht das Level eines Pokémon um 1",
@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Heilungspin", description: "Erhöht die Effektivität von Heilungsattacken sowie Heilitems um 10% (Beleber ausgenommen)" },
     "CANDY_JAR": { name: "Bonbonglas", description: "Erhöht die Anzahl der Level die ein Sonderbonbon erhöht um 1" },
 
-    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 25% Chance hinzu, dass Beeren nicht verbraucht werden" },
+    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 33% Chance hinzu, dass Beeren nicht verbraucht werden" },
 
     "FOCUS_BAND": { name: "Fokusband", description: "Fügt eine 10% Chance hinzu, dass Angriffe die zur Kampfunfähigkeit führen mit 1 KP überlebt werden" },
 

@@ -11,6 +11,7 @@ import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { MoneyAchv } from "./system/achv";
+import { PokeballType } from "./data/pokeball";
 
 export enum BattleType {
     WILD,
@@ -61,6 +62,7 @@ export default class Battle {
     public battleSeed: string;
     private battleSeedState: string;
     public moneyScattered: number;
+    public lastUsedPokeball: PokeballType;
 
     private rngCounter: integer = 0;
 
@@ -86,14 +88,13 @@ export default class Battle {
         this.battleSeed = Utils.randomString(16, true);
         this.battleSeedState = null;
         this.moneyScattered = 0;
+        this.lastUsedPokeball = null;
     }
 
     private initBattleSpec(): void {
         let spec = BattleSpec.DEFAULT;
-        if (this.gameMode.isClassic) {
-            if (this.waveIndex === 200)
-                spec = BattleSpec.FINAL_BOSS;
-        }
+        if (this.gameMode.isWaveFinal(this.waveIndex) && this.gameMode.isClassic)
+            spec = BattleSpec.FINAL_BOSS;
         this.battleSpec = spec;
     }
 
@@ -102,7 +103,7 @@ export default class Battle {
         let baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
         const bossMultiplier = 1.2;
 
-        if (!(this.waveIndex % 10)) {
+        if (this.gameMode.isBoss(this.waveIndex)) {
             const ret = Math.floor(baseLevel * bossMultiplier);
             if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250))
                 return Math.ceil(ret / 25) * 25;

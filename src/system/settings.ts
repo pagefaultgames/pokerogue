@@ -178,11 +178,17 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
             scene.ui.revertMode();
             (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Object.values(Setting).indexOf(Setting.Language), 0, true);
           };
-          const changeLocaleHandler = (locale: string) => {
-            i18next.changeLanguage(locale);
-            localStorage.setItem('prLang', locale);
-            cancelHandler();
-            scene.reset(true, false, true);
+          const changeLocaleHandler = (locale: string): boolean => {
+            try {
+              i18next.changeLanguage(locale);
+              localStorage.setItem('prLang', locale);
+              cancelHandler();
+              scene.reset(true, false, true);
+              return true;
+            } catch (error) {
+              console.error('Error changing locale:', error);
+              return false;
+            }
           };
           scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
             options: [
@@ -213,6 +219,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
               {
                 label: '简体中文',
                 handler: () => changeLocaleHandler('zh_CN')
+              },
+              {
+                label: '繁體中文',
+                handler: () => changeLocaleHandler('zh_TW')
               },
               {
                 label: 'Cancel',

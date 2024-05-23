@@ -8,6 +8,8 @@ import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
 import { ptBrConfig } from '#app/locales/pt_BR/config.js';
 import { zhCnConfig } from '#app/locales/zh_CN/config.js';
+import { zhTWConfig } from '#app/locales/zh_TW/config.js';
+
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -93,8 +95,9 @@ export function initI18n(): void {
 
   i18next.use(LanguageDetector).init({
     lng: lang,
+    nonExplicitSupportedLngs: true,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh_CN','pt_BR'],
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh', 'pt'],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -120,6 +123,9 @@ export function initI18n(): void {
       },
       zh_CN: {
         ...zhCnConfig
+      }, 
+      zh_TW: {
+        ...zhTWConfig
       }
     },
   });
@@ -153,6 +159,7 @@ declare module 'i18next' {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
+	  voucher: SimpleTranslationEntries;
     };
   }
 }
