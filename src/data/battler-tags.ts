@@ -346,7 +346,8 @@ export class SeedTag extends BattlerTag {
           pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
 
           const damage = pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 8), 1));
-          const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr);
+          // If target dies from the damage, user will be healed unless canApply is set to false
+          const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
           pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(),
             !reverseDrain ? damage : damage * -1,
             !reverseDrain ? getPokemonMessage(pokemon, "'s health is\nsapped by Leech Seed!") : getPokemonMessage(source, "'s Leech Seed\nsucked up the liquid ooze!"),
@@ -1432,4 +1433,3 @@ export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
   tag.loadTag(source);
   return tag;
 }
-
