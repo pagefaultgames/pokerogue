@@ -2933,60 +2933,60 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
       const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
-        case 1: // Fist Plate / Fighting Memory
-          type.value = Type.FIGHTING;
-          break;
-        case 2: // Sky Plate / Flying Memory
-          type.value = Type.FLYING;
-          break;
-        case 3: // Toxic Plate / Poison Memory
-          type.value = Type.POISON;
-          break;
-        case 4: // Earth Plate / Ground Memory
-          type.value = Type.GROUND;
-          break;
-        case 5: // Stone Plate / Rock Memory
-          type.value = Type.ROCK;
-          break;
-        case 6: // Insect Plate / Bug Memory
-          type.value = Type.BUG;
-          break;
-        case 7: // Spooky Plate / Ghost Memory
-          type.value = Type.GHOST;
-          break;
-        case 8: // Iron Plate / Steel Memory
-          type.value = Type.STEEL;
-          break;
-        case 9: // Flame Plate / Fire Memory
-          type.value = Type.FIRE;
-          break;
-        case 10: // Splash Plate / Water Memory
-          type.value = Type.WATER;
-          break;
-        case 11: // Meadow Plate / Grass Memory
-          type.value = Type.GRASS;
-          break;
-        case 12: // Zap Plate / Electric Memory
-          type.value = Type.ELECTRIC;
-          break;
-        case 13: // Mind Plate / Psychic Memory
-          type.value = Type.PSYCHIC;
-          break;
-        case 14: // Icicle Plate / Ice Memory
-          type.value = Type.ICE;
-          break;
-        case 15: // Draco Plate / Dragon Memory
-          type.value = Type.DRAGON;
-          break;
-        case 16: // Dread Plate / Dark Memory
-          type.value = Type.DARK;
-          break;
-        case 17: // Pixie Plate / Fairy Memory
-          type.value = Type.FAIRY;
-          break;
-        default:
-          type.value = Type.NORMAL;
-          break;
+      case 1: // Fist Plate / Fighting Memory
+        type.value = Type.FIGHTING;
+        break;
+      case 2: // Sky Plate / Flying Memory
+        type.value = Type.FLYING;
+        break;
+      case 3: // Toxic Plate / Poison Memory
+        type.value = Type.POISON;
+        break;
+      case 4: // Earth Plate / Ground Memory
+        type.value = Type.GROUND;
+        break;
+      case 5: // Stone Plate / Rock Memory
+        type.value = Type.ROCK;
+        break;
+      case 6: // Insect Plate / Bug Memory
+        type.value = Type.BUG;
+        break;
+      case 7: // Spooky Plate / Ghost Memory
+        type.value = Type.GHOST;
+        break;
+      case 8: // Iron Plate / Steel Memory
+        type.value = Type.STEEL;
+        break;
+      case 9: // Flame Plate / Fire Memory
+        type.value = Type.FIRE;
+        break;
+      case 10: // Splash Plate / Water Memory
+        type.value = Type.WATER;
+        break;
+      case 11: // Meadow Plate / Grass Memory
+        type.value = Type.GRASS;
+        break;
+      case 12: // Zap Plate / Electric Memory
+        type.value = Type.ELECTRIC;
+        break;
+      case 13: // Mind Plate / Psychic Memory
+        type.value = Type.PSYCHIC;
+        break;
+      case 14: // Icicle Plate / Ice Memory
+        type.value = Type.ICE;
+        break;
+      case 15: // Draco Plate / Dragon Memory
+        type.value = Type.DRAGON;
+        break;
+      case 16: // Dread Plate / Dark Memory
+        type.value = Type.DARK;
+        break;
+      case 17: // Pixie Plate / Fairy Memory
+        type.value = Type.FAIRY;
+        break;
+      default:
+        type.value = Type.NORMAL;
+        break;
       }
       return true;
     }
