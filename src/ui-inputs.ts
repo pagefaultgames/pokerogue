@@ -8,8 +8,12 @@ import SettingsUiHandler from "./ui/settings-ui-handler";
 import {Button} from "./enums/buttons";
 
 export interface ActionKeys {
-    [key in Button]: () => void
+    [key in Button]: () => void;
 }
+
+function foo();
+  console.log("foo");
+
 
 export class UiInputs {
   private scene: Phaser.Scene;
@@ -20,6 +24,7 @@ export class UiInputs {
     this.scene = scene;
     this.inputsController = inputsController;
     this.init();
+    foo()
   }
 
   init(): void {
