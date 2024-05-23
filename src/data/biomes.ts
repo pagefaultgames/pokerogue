@@ -1627,7 +1627,7 @@ export const biomePokemonPools: BiomePokemonPools = {
 export const biomeTrainerPools: BiomeTrainerPools = {
   [Biome.TOWN]: {
     [BiomePoolTier.COMMON]: [ TrainerType.YOUNGSTER ],
-    [BiomePoolTier.UNCOMMON]: [],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.CAMPER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -1637,7 +1637,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.PLAINS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.TWINS ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.TWINS, TrainerType.CAMPER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.CYCLIST ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1648,7 +1648,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.GRASS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.SCHOOL_KID ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.SCHOOL_KID, TrainerType.CAMPER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1659,7 +1659,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.TALL_GRASS]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.CAMPER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER, TrainerType.RANGER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1672,7 +1672,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   [Biome.METROPOLIS]: {
     [BiomePoolTier.COMMON]: [ TrainerType.CLERK, TrainerType.CYCLIST, TrainerType.OFFICER, TrainerType.WAITER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.BREEDER, TrainerType.DEPOT_AGENT, TrainerType.GUITARIST ],
-    [BiomePoolTier.RARE]: [ TrainerType.ARTIST ],
+    [BiomePoolTier.RARE]: [ TrainerType.ARTIST, TrainerType.PRISONER ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
     [BiomePoolTier.BOSS]: [ TrainerType.WHITNEY, TrainerType.NORMAN, TrainerType.IONO, TrainerType.LARRY ],
@@ -1693,7 +1693,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [Biome.SEA]: {
     [BiomePoolTier.COMMON]: [ TrainerType.SWIMMER ],
-    [BiomePoolTier.UNCOMMON]: [],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.SAILOR ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -1716,7 +1716,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   [Biome.BEACH]: {
     [BiomePoolTier.COMMON]: [ TrainerType.FISHERMAN, TrainerType.PARASOL_LADY ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER ],
-    [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
+    [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT, TrainerType.SAILOR ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
     [BiomePoolTier.BOSS]: [ TrainerType.MISTY, TrainerType.KOFU ],
@@ -1824,7 +1824,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.VOLCANO]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.FIREBREATHER ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1957,7 +1957,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [Biome.SLUM]: {
     [BiomePoolTier.COMMON]: [ TrainerType.BIKER, TrainerType.OFFICER, TrainerType.ROUGHNECK ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.BAKER ],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.BAKER, TrainerType.PRISONER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -1978,7 +1978,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.ISLAND]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.SAILOR ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
