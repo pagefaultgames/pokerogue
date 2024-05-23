@@ -47,7 +47,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(this.scene, -4, -2, 'Transfer', TextStyle.PARTY);
+    const transferButtonText = addTextObject(this.scene, -4, -2, "Transfer", TextStyle.PARTY);
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
@@ -55,11 +55,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(this.scene, -4, -2, 'Reroll', TextStyle.PARTY);
+    const rerollButtonText = addTextObject(this.scene, -4, -2, "Reroll", TextStyle.PARTY);
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
 
-    this.rerollCostText = addTextObject(this.scene, 0, 0, '', TextStyle.MONEY);
+    this.rerollCostText = addTextObject(this.scene, 0, 0, "", TextStyle.MONEY);
     this.rerollCostText.setOrigin(0, 0);
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
@@ -68,15 +68,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
-    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, 'Lock Rarities', TextStyle.PARTY);
+    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, "Lock Rarities", TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
     this.IvScannerToggleContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 80, -64);
     this.IvScannerToggleContainer.setVisible(false);
-    ui.add(this.IvScannerToggleContainer)
+    ui.add(this.IvScannerToggleContainer);
 
-    this.IvScannerToggleText = addTextObject(this.scene, -4, -2, 'Toggle IV Scanner', TextStyle.PARTY);
+    this.IvScannerToggleText = addTextObject(this.scene, -4, -2, "Toggle IV Scanner", TextStyle.PARTY);
     this.IvScannerToggleText.setOrigin(0, 0);
     this.IvScannerToggleContainer.add(this.IvScannerToggleText);
   }
@@ -90,8 +90,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       return false;
     }
 
-    if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function))
+    if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function)) {
       return false;
+    }
 
     super.show(args);
 
@@ -147,8 +148,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.scene.add.existing(option);
       this.modifierContainer.add(option);
 
-      if (row >= this.shopOptionsRows.length)
+      if (row >= this.shopOptionsRows.length) {
         this.shopOptionsRows.push([]);
+      }
       this.shopOptionsRows[row].push(option);
     }
 
@@ -160,7 +162,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     let i = 0;
     
     this.scene.tweens.addCounter({
-      ease: 'Sine.easeIn',
+      ease: "Sine.easeIn",
       duration: 1250,
       onUpdate: t => {
         const value = t.getValue();
@@ -174,8 +176,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     });
 
     this.scene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
-      for (let shopOption of this.shopOptionsRows.flat())
+      for (const shopOption of this.shopOptionsRows.flat()) {
         shopOption.show(0, 0);
+      }
     });
 
     this.scene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
@@ -218,8 +221,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   processInput(button: Button): boolean {
     const ui = this.getUi();
 
-    if (!this.awaitingActionInput)
+    if (!this.awaitingActionInput) {
       return false;
+    }
 
     let success = false;
 
@@ -246,55 +250,60 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
     } else {
       switch (button) {
-        case Button.UP:
-          if (this.rowCursor < this.shopOptionsRows.length + 1 && this.rowCursor > -1)
-            success = this.setRowCursor(this.rowCursor + 1);
-          else if (this.rowCursor === -1 && this.cursor === 1 && !this.transferButtonContainer.visible)
-            success = this.setRowCursor(1) && this.setCursor(this.shopOptionsRows[0].length-1)
-          else if (this.rowCursor === -1 && this.cursor === 0 && this.rerollButtonContainer.visible)
-            success = this.setRowCursor(this.rowCursor + 1)
-          else if (this.rowCursor === -1 && this.cursor === 1 && this.transferButtonContainer)
-            success = this.setRowCursor(this.rowCursor + 1)
-          break;
-        case Button.DOWN:
-          if (this.rowCursor > 0)
-            success = this.setRowCursor(this.rowCursor - 1);
-          else if (!this.rowCursor && this.cursor === 0 && this.lockRarityButtonContainer.visible)
-            success = this.setRowCursor(this.rowCursor - 1);
-          else if (!this.rowCursor && this.cursor === 1 && this.IvScannerToggleContainer.visible)
-            success = (this.setRowCursor(this.rowCursor - 1) && this.setCursor(1));
-          break;
-        case Button.LEFT:
-          if (this.rowCursor > 0 && this.cursor > 0) 
-            success = this.setCursor(this.cursor - 1);
-          else if (this.rowCursor === 1 && this.rerollButtonContainer.visible)
-            success = this.setRowCursor(this.rowCursor - 1);
-          else if (this.rowCursor === 0 && this.rerollButtonContainer.visible && this.cursor === 1)
-            success = this.setCursor(this.cursor - 1)
-          else if (this.rowCursor === -1 && this.lockRarityButtonContainer.visible && this.cursor === 1)
-            success = this.setCursor(this.cursor - 1)
-          else if (this.rowCursor === -1 && !this.lockRarityButtonContainer.visible && this.rerollButtonContainer.visible && this.cursor === 1)
-            success = (this.setRowCursor(this.rowCursor + 1) && this.setCursor(0))
-          break;
-        case Button.RIGHT:
-          if (this.cursor < this.getRowItems(this.rowCursor) - 1)
-            success = this.setCursor(this.cursor + 1);
-          else if (this.rowCursor === 1 && this.transferButtonContainer.visible)
-            success = (this.setRowCursor(0) && this.setCursor(1));
-          else if (this.rowCursor === 1 && this.IvScannerToggleContainer.visible)
-            success = (this.setRowCursor(-1) && this.setCursor(1))
-          else if (!this.rowCursor && !this.transferButtonContainer.visible && this.IvScannerToggleContainer.visible)
-            success = (this.setRowCursor(-1) && this.setCursor(1));
-          else if (this.rowCursor === -1 && !this.IvScannerToggleContainer.visible && this.transferButtonContainer.visible)
-            success = (this.setRowCursor(0) && this.setCursor(1));
-          else if (this.rowCursor === -1 && this.IvScannerToggleContainer.visible && this.cursor === 0)
-            success = this.setCursor(this.cursor + 1)
-          break;
+      case Button.UP:
+        if (this.rowCursor < this.shopOptionsRows.length + 1 && this.rowCursor > -1) {
+          success = this.setRowCursor(this.rowCursor + 1);
+        } else if (this.rowCursor === -1 && this.cursor === 1 && !this.transferButtonContainer.visible) {
+          success = this.setRowCursor(1) && this.setCursor(this.shopOptionsRows[0].length-1);
+        } else if (this.rowCursor === -1 && this.cursor === 0 && this.rerollButtonContainer.visible) {
+          success = this.setRowCursor(this.rowCursor + 1);
+        } else if (this.rowCursor === -1 && this.cursor === 1 && this.transferButtonContainer) {
+          success = this.setRowCursor(this.rowCursor + 1);
+        }
+        break;
+      case Button.DOWN:
+        if (this.rowCursor > 0) {
+          success = this.setRowCursor(this.rowCursor - 1);
+        } else if (!this.rowCursor && this.cursor === 0 && this.lockRarityButtonContainer.visible) {
+          success = this.setRowCursor(this.rowCursor - 1);
+        } else if (!this.rowCursor && this.cursor === 1 && this.IvScannerToggleContainer.visible) {
+          success = (this.setRowCursor(this.rowCursor - 1) && this.setCursor(1));
+        }
+        break;
+      case Button.LEFT:
+        if (this.rowCursor > 0 && this.cursor > 0) {
+          success = this.setCursor(this.cursor - 1);
+        } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
+          success = this.setRowCursor(this.rowCursor - 1);
+        } else if (this.rowCursor === 0 && this.rerollButtonContainer.visible && this.cursor === 1) {
+          success = this.setCursor(this.cursor - 1);
+        } else if (this.rowCursor === -1 && this.lockRarityButtonContainer.visible && this.cursor === 1) {
+          success = this.setCursor(this.cursor - 1);
+        } else if (this.rowCursor === -1 && !this.lockRarityButtonContainer.visible && this.rerollButtonContainer.visible && this.cursor === 1) {
+          success = (this.setRowCursor(this.rowCursor + 1) && this.setCursor(0));
+        }
+        break;
+      case Button.RIGHT:
+        if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
+          success = this.setCursor(this.cursor + 1);
+        } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
+          success = (this.setRowCursor(0) && this.setCursor(1));
+        } else if (this.rowCursor === 1 && this.IvScannerToggleContainer.visible) {
+          success = (this.setRowCursor(-1) && this.setCursor(1));
+        } else if (!this.rowCursor && !this.transferButtonContainer.visible && this.IvScannerToggleContainer.visible) {
+          success = (this.setRowCursor(-1) && this.setCursor(1));
+        } else if (this.rowCursor === -1 && !this.IvScannerToggleContainer.visible && this.transferButtonContainer.visible) {
+          success = (this.setRowCursor(0) && this.setCursor(1));
+        } else if (this.rowCursor === -1 && this.IvScannerToggleContainer.visible && this.cursor === 0) {
+          success = this.setCursor(this.cursor + 1);
+        }
+        break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -304,7 +313,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, 'cursor');
+      this.cursorObj = this.scene.add.image(0, 0, "cursor");
       this.modifierContainer.add(this.cursorObj);
     }
 
@@ -313,24 +322,25 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.cursorObj.setScale(this.rowCursor === 1 ? 2 : this.rowCursor >= 2 ? 1.5 : 1);
 
     if (this.rowCursor > 0) {
-      let sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
-      if (this.rowCursor < 2)
+      const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
+      if (this.rowCursor < 2) {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
-      else
+      } else {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
+      }
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (!cursor && !this.rowCursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
-      ui.showText('Spend money to reroll your item options.');
+      ui.showText("Spend money to reroll your item options.");
     } else if (!this.rowCursor && cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, this.IvScannerToggleContainer ? -72 : -60);
-      ui.showText('Transfer a held item from one Pokémon to another.');
+      ui.showText("Transfer a held item from one Pokémon to another.");
     } else if (!cursor && this.rowCursor === -1){
       this.cursorObj.setPosition(6, -60);
-      ui.showText('Lock item rarities on reroll (affects reroll cost).');
+      ui.showText("Lock item rarities on reroll (affects reroll cost).");
     } else if (cursor === 1 && this.rowCursor === -1){
       this.cursorObj.setPositionRelative(this.IvScannerToggleContainer, -10, 4);
-      ui.showText('Toggle whether to receive the IV Scanner prompt at battle start.');
+      ui.showText("Toggle whether to receive the IV Scanner prompt at battle start.");
     }
 
     return ret;
@@ -343,13 +353,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.rowCursor = rowCursor;
       let newCursor = Math.round(this.cursor / Math.max(this.getRowItems(lastRowCursor) - 1, 1) * (this.getRowItems(rowCursor) - 1));
       if (!rowCursor && lastRowCursor > rowCursor) {
-        if (this.cursor < this.getRowItems(1)/2)
+        if (this.cursor < this.getRowItems(1)/2) {
           newCursor = 0;
-        else if (this.transferButtonContainer.visible)
+        } else if (this.transferButtonContainer.visible) {
           newCursor = 1;
-        else if (this.IvScannerToggleContainer.visible){
-          newCursor = 1
-          this.rowCursor = this.rowCursor - 1}
+        } else if (this.IvScannerToggleContainer.visible){
+          newCursor = 1;
+          this.rowCursor = this.rowCursor - 1;
+        }
       }
       this.cursor = -1;
       this.setCursor(newCursor);
@@ -361,14 +372,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   private getRowItems(rowCursor: integer): integer {
     switch (rowCursor) {
-      case -1:
-        return this.IvScannerToggleContainer.visible||this.lockRarityButtonContainer.visible ? 1 : this.IvScannerToggleContainer.visible && this.lockRarityButtonContainer.visible ? 2 : 0
-      case 0:
-        return this.transferButtonContainer.visible ? 2 : 1;
-      case 1:
-        return this.options.length;
-      default:
-        return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
+    case -1:
+      return this.IvScannerToggleContainer.visible||this.lockRarityButtonContainer.visible ? 1 : this.IvScannerToggleContainer.visible && this.lockRarityButtonContainer.visible ? 2 : 0;
+    case 0:
+      return this.transferButtonContainer.visible ? 2 : 1;
+    case 1:
+      return this.options.length;
+    default:
+      return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
     }
   }
 
@@ -378,8 +389,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   updateCostText(): void {
     const shopOptions = this.shopOptionsRows.flat();
-    for (let shopOption of shopOptions)
+    for (const shopOption of shopOptions) {
       shopOption.updateCostText();
+    }
 
     this.updateRerollCostText();
   }
@@ -387,7 +399,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   updateRerollCostText(): void {
     const canReroll = this.scene.money >= this.rerollCost;
 
-    this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString('en-US')}`);
+    this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString("en-US")}`);
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -423,7 +435,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       targets: options,
       scale: 0.01,
       duration: 250,
-      ease: 'Cubic.easeIn',
+      ease: "Cubic.easeIn",
       onComplete: () => options.forEach(o => o.destroy())
     });
     
@@ -433,12 +445,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           targets: container,
           alpha: 0,
           duration: 250,
-          ease: 'Cubic.easeIn',
+          ease: "Cubic.easeIn",
           onComplete: () => {
-            if (!this.options.length)
+            if (!this.options.length) {
               container.setVisible(false);
-            else
+            } else {
               container.setAlpha(1);
+            }
           }
         });
       }
@@ -446,8 +459,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }
@@ -473,7 +487,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   setup() {
     if (!this.modifierTypeOption.cost) {
       const getPb = (): Phaser.GameObjects.Sprite => {
-        const pb = this.scene.add.sprite(0, -182, 'pb', this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount));
+        const pb = this.scene.add.sprite(0, -182, "pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount));
         pb.setScale(2);
         return pb;
       };
@@ -492,7 +506,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = this.scene.add.sprite(0, 0, 'items', this.modifierTypeOption.type.iconImage);
+      const item = this.scene.add.sprite(0, 0, "items", this.modifierTypeOption.type.iconImage);
       return item;
     };
 
@@ -505,14 +519,14 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.itemContainer.add(this.itemTint);
     }
 
-    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: 'center' });
+    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: "center" });
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
     this.itemText.setTint(getModifierTierTextTint(this.modifierTypeOption.type.tier));
     this.add(this.itemText);
 
     if (this.modifierTypeOption.cost) {
-      this.itemCostText = addTextObject(this.scene, 0, 45, '', TextStyle.MONEY, { align: 'center' });
+      this.itemCostText = addTextObject(this.scene, 0, 45, "", TextStyle.MONEY, { align: "center" });
     
       this.itemCostText.setOrigin(0.5, 0);
       this.itemCostText.setAlpha(0);
@@ -528,7 +542,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         targets: this.pb,
         y: 0,
         duration: 1250,
-        ease: 'Bounce.Out'
+        ease: "Bounce.Out"
       });
 
       let lastValue = 1;
@@ -539,16 +553,18 @@ class ModifierOption extends Phaser.GameObjects.Container {
         from: 1,
         to: 0,
         duration: 1250,
-        ease: 'Bounce.Out',
+        ease: "Bounce.Out",
         onUpdate: t => {
-          if (!this.scene)
+          if (!this.scene) {
             return;
+          }
           const value = t.getValue();
           if (!bounce && value > lastValue) {
-            (this.scene as BattleScene).playSound('pb_bounce_1', { volume: 1 / ++bounceCount });
+            (this.scene as BattleScene).playSound("pb_bounce_1", { volume: 1 / ++bounceCount });
             bounce = true;
-          } else if (bounce && value < lastValue)
+          } else if (bounce && value < lastValue) {
             bounce = false;
+          }
           lastValue = value;
         }
       });
@@ -556,7 +572,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
         const upgradeIndex = u;
         this.scene.time.delayedCall(remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)), () => {
-          (this.scene as BattleScene).playSound('upgrade', { rate: 1 + 0.25 * upgradeIndex });
+          (this.scene as BattleScene).playSound("upgrade", { rate: 1 + 0.25 * upgradeIndex });
           this.pbTint.setPosition(this.pb.x, this.pb.y);
           this.pbTint.setTintFill(0xFFFFFF);
           this.pbTint.setAlpha(0);
@@ -565,14 +581,14 @@ class ModifierOption extends Phaser.GameObjects.Container {
             targets: this.pbTint,
             alpha: 1,
             duration: 1000,
-            ease: 'Sine.easeIn',
+            ease: "Sine.easeIn",
             onComplete: () => {
-              this.pb.setTexture('pb', this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)));
+              this.pb.setTexture("pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)));
               this.scene.tweens.add({
                 targets: this.pbTint,
                 alpha: 0,
                 duration: 750,
-                ease: 'Sine.easeOut',
+                ease: "Sine.easeOut",
                 onComplete: () => {
                   this.pbTint.setVisible(false);
                 }
@@ -584,18 +600,19 @@ class ModifierOption extends Phaser.GameObjects.Container {
     }
 
     this.scene.time.delayedCall(remainingDuration + 2000, () => {
-      if (!this.scene)
+      if (!this.scene) {
         return;
+      }
 
       if (!this.modifierTypeOption.cost) {
-        this.pb.setTexture('pb', `${this.getPbAtlasKey(0)}_open`);
-        (this.scene as BattleScene).playSound('pb_rel');
+        this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
+        (this.scene as BattleScene).playSound("pb_rel");
         
         this.scene.tweens.add({
           targets: this.pb,
           duration: 500,
           delay: 250,
-          ease: 'Sine.easeIn',
+          ease: "Sine.easeIn",
           alpha: 0,
           onComplete: () => this.pb.destroy()
         });
@@ -604,7 +621,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.scene.tweens.add({
         targets: this.itemContainer,
         duration: 500,
-        ease: 'Elastic.Out',
+        ease: "Elastic.Out",
         scale: 2,
         alpha: 1
       });
@@ -613,7 +630,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           targets: this.itemTint,
           alpha: 0,
           duration: 500,
-          ease: 'Sine.easeIn',
+          ease: "Sine.easeIn",
           onComplete: () => this.itemTint.destroy()
         });
       }
@@ -622,7 +639,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         duration: 500,
         alpha: 1,
         y: 25,
-        ease: 'Cubic.easeInOut'
+        ease: "Cubic.easeInOut"
       });
       if (this.itemCostText) {
         this.scene.tweens.add({
@@ -630,7 +647,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           duration: 500,
           alpha: 1,
           y: 35,
-          ease: 'Cubic.easeInOut'
+          ease: "Cubic.easeInOut"
         });
       }
     });
@@ -644,7 +661,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     const scene = this.scene as BattleScene;
     const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString('en-US')}`);
+    this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString("en-US")}`);
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }
