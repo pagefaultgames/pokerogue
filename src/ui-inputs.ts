@@ -11,10 +11,6 @@ export interface ActionKeys {
     [key in Button]: () => void;
 }
 
-function foo();
-  console.log("foo");
-
-
 export class UiInputs {
   private scene: Phaser.Scene;
   private events: Phaser.Events;
@@ -24,7 +20,6 @@ export class UiInputs {
     this.scene = scene;
     this.inputsController = inputsController;
     this.init();
-    foo()
   }
 
   init(): void {
@@ -79,8 +74,8 @@ export class UiInputs {
   }
 
   getActionsKeyUp(): ActionKeys {
-    const actions = {};
-    actions[Button.STATS] = () => this.buttonStats(false);
+    const actions = {}
+    actions[Button.STATS] = () => this.buttonStats(false)
     return actions;
   }
 
