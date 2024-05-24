@@ -2118,7 +2118,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
-
     const delay = Math.max(this.scene.sound.get(key).totalDuration * 50, 25);
 
     let frameProgress = 0;

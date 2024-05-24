@@ -2744,7 +2744,7 @@ export class MoveEffectPhase extends PokemonPhase {
         const postTarget = applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
           user, null, this.move.getMove());
 
-        if (applyAttrs.length)  { // If there is a pending asynchronous move effect, do this after
+        if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
           applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
         } else { // Otherwise, push a new asynchronous move effect
           applyAttrs.push(postTarget);
