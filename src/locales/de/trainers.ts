@@ -249,4 +249,8 @@ export const trainerNames: SimpleTranslationEntries = {
   "red_blue_double": "Rot & Blau",
   "tate_liza_double": "Ben & Svenja",
   "liza_tate_double": "Svenja & Ben",
+  "steven_wallace_double": "Troy & Wassili",
+  "wallace_steven_double": "Wassili & Troy",
+  "alder_iris_double": "Lauro & Lilia",
+  "iris_alder_double": "Lilia & Lauro",
 } as const;
