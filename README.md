@@ -4,17 +4,20 @@ PokéRogue is a browser based Pokémon fangame heavily inspired by the roguelite
 
 # Contributing
 ## 🛠️ Development
-If you have the motivation and experience with Typescript/Javascript (or are willing to learn) please feel free to fork the repository and make pull requests with contributions. If you don't know what to work on but want to help, reference the below **To-Do** section or the **#vote** channel in the discord. 
+If you have the motivation and experience with Typescript/Javascript (or are willing to learn) please feel free to fork the repository and make pull requests with contributions. If you don't know what to work on but want to help, reference the below **To-Do** section or the **#feature-vote** channel in the discord. 
 
 ### 💻 Environment Setup
 #### Prerequisites
-- node: 18.3.0
+- node: 20.13.1
 - npm: [how to install](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
 #### Running Locally
 1. Clone the repo and in the root directory run `npm install`
     - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
 2. Run `npm run start:dev` to locally run the project in `localhost:8000`
+
+#### Linting
+We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script. 
 
 ### ❔ FAQ 
 
@@ -46,7 +49,6 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
   - Pokémon Black/White 2
   - Firel (Custom Metropolis and Laboratory biome music)
   - Lmz (Custom Jungle biome music)
-  - edifette (Title screen music)
 
 ### 🎵 Sound Effects
   - Pokémon Emerald
@@ -75,7 +77,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
 ### 🎨 Trainer Portraits
   - pkmn_realidea (Paid Commissions)
 
-### 🎨 Pokemon Sprites
+### 🎨 Pokemon Sprites and Animation
   - GAMEFREAK (Pokémon Black/White 2)
   - Smogon Sprite Project (Various Artists)
   - Skyflyer
@@ -101,6 +103,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
   - bizcoeindoloro
   - mangalos810
   - Involuntary-Twitch
+  - selstar
 
 ### 🎨 Move Animations
   - Pokémon Reborn
