@@ -1062,10 +1062,11 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
       }
       pokemon.hp = Math.min(pokemon.hp + Math.max(Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), 1), pokemon.getMaxHp());
       return true;
-    }
+      }
     return false;
+    }
   }
-};
+}
 
 export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
   constructor(type: ModifierType, pokemonId: integer) {
