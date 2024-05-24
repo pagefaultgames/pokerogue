@@ -21,7 +21,7 @@ export default class BallUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.pokeballSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 115, -49);
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);

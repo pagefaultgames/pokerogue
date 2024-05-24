@@ -16,6 +16,7 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   private targets: BattlerIndex[];
   private targetFlashTween: Phaser.Tweens.Tween;
+  private targetBattleInfoMoveTween: Phaser.Tweens.Tween;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.TARGET_SELECT);
@@ -116,6 +117,25 @@ export default class TargetSelectUiHandler extends UiHandler {
       }
     });
 
+    if (this.targetBattleInfoMoveTween) {
+      this.targetBattleInfoMoveTween.stop();
+      const lastTarget = this.scene.getField()[lastCursor];
+      if (lastTarget) {
+        lastTarget.getBattleInfo().resetY();
+      }
+    }
+
+    const targetBattleInfo = target.getBattleInfo();
+
+    this.targetBattleInfoMoveTween = this.scene.tweens.add({
+      targets: [ targetBattleInfo ],
+      y: { start: targetBattleInfo.getBaseY(), to: targetBattleInfo.getBaseY() + 1 },
+      loop: -1,
+      duration: Utils.fixedInt(250),
+      ease: "Linear",
+      yoyo: true
+    });
+
     return ret;
   }
 
@@ -127,6 +147,15 @@ export default class TargetSelectUiHandler extends UiHandler {
     }
     if (target) {
       target.setAlpha(1);
+    }
+
+    const targetBattleInfo = target.getBattleInfo();
+    if (this.targetBattleInfoMoveTween) {
+      this.targetBattleInfoMoveTween.stop();
+      this.targetBattleInfoMoveTween = null;
+    }
+    if (targetBattleInfo) {
+      targetBattleInfo.resetY();
     }
   }
 

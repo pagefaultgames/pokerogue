@@ -581,7 +581,7 @@ function parseEggMoves(content: string): void {
   const speciesNames = Utils.getEnumKeys(Species);
   const speciesValues = Utils.getEnumValues(Species);
   const lines = content.split(/\n/g);
-  
+
   lines.forEach((line, l) => {
     const cols = line.split(",").slice(0, 5);
     const moveNames = allMoves.map(m => m.name.replace(/ \([A-Z]\)$/, "").toLowerCase());
@@ -608,9 +608,11 @@ function parseEggMoves(content: string): void {
   console.log(output);
 }
 
-const eggMovesStr = "";
-if (eggMovesStr) {
-  setTimeout(() => {
-    parseEggMoves(eggMovesStr);
-  }, 1000);
+export function initEggMoves() {
+  const eggMovesStr = "";
+  if (eggMovesStr) {
+    setTimeout(() => {
+      parseEggMoves(eggMovesStr);
+    }, 1000);
+  }
 }

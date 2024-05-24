@@ -55,7 +55,7 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
   show(_args: any[]): boolean {
     super.show(_args);
-    
+
     this.scene.ui.bringToTop(this.evolutionContainer);
     this.scene.ui.bringToTop(this.messageBg);
     this.scene.ui.bringToTop(this.messageContainer);
@@ -97,4 +97,4 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     this.messageContainer.setVisible(false);
     this.messageBg.setVisible(false);
   }
-}  
+}

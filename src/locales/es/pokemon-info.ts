@@ -37,5 +37,5 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "DARK": "Siniestro",
     "FAIRY": "Hada",
     "STELLAR": "Astral",
-  },    
+  },
 } as const;
