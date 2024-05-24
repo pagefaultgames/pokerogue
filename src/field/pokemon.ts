@@ -1194,7 +1194,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       let weight = levelMove[0];
       if (weight === 0) // Evo Moves
         weight = 50;
-      if (weight === 1 && allMoves[levelMove[1]].power >= 80) // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight
+      if (weight === 1 && (allMoves[levelMove[1]].power >= 80 || (allMoves[levelMove[1]].power && allMoves[levelMove[1]].priority >= 1) || (!!allMoves[levelMove[1]].findAttr(attr => attr instanceof MultiHitAttr) && allMoves[levelMove[1]].power >= 20))) // Assume level 1 moves with 80+ BP, priority, or multi hit are "move reminder" moves and bump their weight
         weight = 40;
       if (allMoves[levelMove[1]].name.endsWith(' (N)'))
         weight /= 100; // Unimplemented level up moves are possible to generate, but 1% of their normal chance.
@@ -1266,10 +1266,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Weight towards higher power moves, by reducing the power of moves below the highest power.
     // Caps max power at 90 to avoid something like hyper beam ruining the stats.
     // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
-    // Account for technician boost and priority
+    // Account for technician boost and multi hit (assume at least 2 hits), compensate for power based weighting on priority moves
     const hasTechnician = this.hasAbility(Abilities.TECHNICIAN);
-    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power * (hasTechnician && allMoves[m[0]].power <= 60 ? 1.5 : 1) * (allMoves[m[0]].priority > 1 ? 1.5 : 1), v), 40), 90);
-    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
+    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
+    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower * (hasTechnician && allMoves[m[0]].power <= 60 ? 1.5 : 1) * (allMoves[m[0]].priority >= 1? 1.5 : 1) * (!!allMoves[m[0]].findAttr(attr => attr instanceof MultiHitAttr) ? 2: 1), 1), 0.5))]);
 
     // Weight damaging moves against the lower stat
     const worseCategory: MoveCategory = this.stats[Stat.ATK] > this.stats[Stat.SPATK] ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
