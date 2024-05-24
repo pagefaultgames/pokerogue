@@ -268,7 +268,7 @@ export class DestinyBondTag extends BattlerTag {
    * Lapses either before the user's move and does nothing
    * or after receiving fatal damage. When the damage is fatal,
    * the attacking Pokemon is taken down as well, unless it's a boss.
-   * 
+   *
    * @param {Pokemon} pokemon Pokemon that is attacking the Destiny Bond user.
    * @param {BattlerTagLapseType} lapseType CUSTOM or PRE_MOVE
    * @returns false if the tag source fainted or one turn has passed since the application
@@ -283,17 +283,17 @@ export class DestinyBondTag extends BattlerTag {
     }
 
     if (source.getAlly() === pokemon) {
-        return false;
+      return false;
     }
 
-    const targetMessage = getPokemonMessage(pokemon, '');
+    const targetMessage = getPokemonMessage(pokemon, "");
 
     if (pokemon.isBossImmune()) {
       pokemon.scene.queueMessage(`${targetMessage} is unaffected\nby the effects of Destiny Bond.`);
       return false;
     }
 
-    pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`)
+    pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`);
     pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
     return false;
   }

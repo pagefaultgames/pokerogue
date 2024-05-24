@@ -4706,7 +4706,7 @@ export class MoneyAttr extends MoveEffectAttr {
 
 /**
  * Applies {@linkcode BattlerTagType.DESTINY_BOND} to the user.
- * 
+ *
  * @extends MoveEffectAttr
  */
 export class DestinyBondAttr extends MoveEffectAttr {
@@ -4723,7 +4723,7 @@ export class DestinyBondAttr extends MoveEffectAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.queueMessage(`${getPokemonMessage(user, ' is trying\nto take its foe down with it!')}`);
+    user.scene.queueMessage(`${getPokemonMessage(user, " is trying\nto take its foe down with it!")}`);
     user.addTag(BattlerTagType.DESTINY_BOND, undefined, move.id, user.id);
     return true;
   }
