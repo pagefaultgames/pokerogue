@@ -2525,15 +2525,15 @@ export class MovePhase extends BattlePhase {
           this.showFailedText(failedText);
         }
       }
-// Checks if Dancer ability is triggered
+      // Checks if Dancer ability is triggered
       if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
         // Pokemon with Dancer can be on either side of the battle so we check in both cases
         this.scene.getPlayerField().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
-        })
+        });
         this.scene.getEnemyParty().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
-        })
+        });
       }
       this.end();
     };

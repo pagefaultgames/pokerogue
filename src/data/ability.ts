@@ -22,6 +22,7 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import { getPokeballName } from "./pokeball";
 import { BerryModifierType } from "#app/modifier/modifier-type";
+import {BattlerIndex} from "#app/battle";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2489,9 +2490,9 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
  * @extends AbAttr
  */
 export class PostMoveUsedAbAttr extends AbAttr {
-    applyPostMoveUsed(pokemon: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
-        return false;
-    }
+  applyPostMoveUsed(pokemon: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
 }
 
 /**
@@ -2517,9 +2518,8 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, target, move, true));
-      }
-      // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-      else if (move.getMove() instanceof SelfStatusMove) {
+      } else if (move.getMove() instanceof SelfStatusMove) {
+        // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move, true));
       }
     }
@@ -2534,8 +2534,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @param targets {@linkcode BattlerIndex} Targets of the dancing move
    */
   getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]) : BattlerIndex[] {
-    if (dancer.isPlayer())
+    if (dancer.isPlayer()) {
       return source.isPlayer() ? targets : [source.getBattlerIndex()];
+    }
     return source.isPlayer() ? [source.getBattlerIndex()] : targets;
   }
 }
