@@ -2448,6 +2448,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   resetTurnData(): void {
     this.turnData = new PokemonTurnData();
+    this.moveset.map((move) => move.finalType = null);
   }
 
   getExpValue(): integer {
@@ -2778,6 +2779,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getBattleInfo(): BattleInfo {
     return this.battleInfo;
+  }
+
+  /**
+   * Gets the final type of a move with variable type or affected by abilities that change it
+   * @param move The move being checked
+   * @param update If empty or false, it won't calculate the type if it has been checked before
+   * @returns The type of the move after applying all modifiers
+   */
+  getRealMoveType(move: PokemonMove, update: boolean = false): Type {
+    if (move.finalType && !update) {
+      return move.finalType;
+    }
+    const moveType = new Utils.IntegerHolder(move.getMove().type);
+
+    applyMoveAttrs(VariableMoveTypeAttr, this, null, move.getMove(), moveType);
+    applyAbAttrs(VariableMoveTypeAbAttr, this, null, moveType, new Utils.NumberHolder(1));
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, this, null, move, moveType, new Utils.NumberHolder(1));
+
+    move.finalType = moveType.value;
+
+    return moveType.value;
   }
 }
 
@@ -3732,6 +3754,7 @@ export class PokemonMove {
   public ppUsed: integer;
   public ppUp: integer;
   public virtual: boolean;
+  public finalType: Type;
 
   constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
     this.moveId = moveId;

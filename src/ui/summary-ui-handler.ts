@@ -2,7 +2,7 @@ import BattleScene, { starterColors } from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { PlayerPokemon } from "../field/pokemon";
+import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Type, getTypeRgb } from "../data/type";
@@ -897,7 +897,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, "types", Type[this.newMove.type].toLowerCase());
+        const newMoveTypeIcon = this.scene.add.sprite(0, 0, "types", Type[this.pokemon.getRealMoveType(new PokemonMove(this.newMove.id))].toLowerCase());
         newMoveTypeIcon.setOrigin(0, 1);
         this.extraMoveRowContainer.add(newMoveTypeIcon);
 
@@ -920,7 +920,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveRowsContainer.add(moveRowContainer);
 
         if (move) {
-          const typeIcon = this.scene.add.sprite(0, 0, "types", Type[move.getMove().type].toLowerCase());
+          const typeIcon = this.scene.add.sprite(0, 0, "types", Type[this.pokemon.getRealMoveType(move)].toLowerCase());
           typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
         }

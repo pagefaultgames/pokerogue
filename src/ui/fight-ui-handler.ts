@@ -162,13 +162,14 @@ export default class FightUiHandler extends UiHandler {
       ui.add(this.cursorObj);
     }
 
-    const moveset = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getMoveset();
+    const pokemon = (this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    const moveset = pokemon.getMoveset();
 
     const hasMove = cursor < moveset.length;
 
     if (hasMove) {
       const pokemonMove = moveset[cursor];
-      this.typeIcon.setTexture("types", Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
+      this.typeIcon.setTexture("types", Type[pokemon.getRealMoveType(pokemonMove)].toLowerCase()).setScale(0.8);
       this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
       const power = pokemonMove.getMove().power;
