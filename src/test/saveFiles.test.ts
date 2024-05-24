@@ -1,25 +1,66 @@
 /* eslint-disable */
-import {describe} from "vitest";
+import {describe, it, vi, expect, beforeAll} from "vitest";
 import fs from "fs";
-import parseSessionData from "#app/system/misc/parseSessionData";
-import {GameData, GameDataType} from "#app/system/game-data";
+import { AES, enc } from "crypto-js";
+import {GameData} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
-import GameWrapper from "#app/test/wrappers/gameWrapper";
-import {LoginPhase} from "#app/phases";
+import GameWrapper from "#app/test/essentials/gameWrapper";
+import {Species} from "#app/data/enums/species";
+import {Moves} from "#app/data/enums/moves";
+import {Modifier} from "#app/modifier/modifier";
+import ModifierData from "#app/system/modifier-data";
+const saveKey = "x0i2O7WRiANTqPmZ";
+describe("Session import/export", () => {
+  let game, scene, gameData, sessionData;
+  beforeAll(() => {
+    game = new GameWrapper();
+    scene = new BattleScene();
+    game.scene.add("battle-scene", scene);
+    gameData= new GameData(scene);
 
+    const cookiesStr = fs.readFileSync("./src/test/data/sessionData.prsv", {encoding: "utf8", flag: "r"});
+    let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
+    sessionData = gameData.parseSessionData(dataStr);
+  })
 
-describe("Check integrity of save files", () => {
-  const game = new GameWrapper();
-  const scene = new BattleScene();
-  game.scene.add("battle-scene", scene);
+  it('check if session data is valid', () => {
+    const valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+    expect(valid).toBe(true);
+  });
 
-  const mode = scene.ui.getMode();
+  it('check first pokemon in the party', () => {
+    expect(sessionData.party.length).toBe(6);
+    expect(sessionData.party[0].level).toBe(1269);
+    expect(sessionData.party[0].species).toBe(Species.GARGANACL);
+    expect(sessionData.party[0].hp).toBe(4007);
+    expect(sessionData.party[0].moveset[0].moveId).toBe(Moves.SALT_CURE);
+    expect(sessionData.party[0].fusionSpecies).toBe(Species.DRAGAPULT);
+  });
 
-  const gameData= new GameData(scene);
-  const loginPhase = new LoginPhase(scene);
-  loginPhase.start();
-  scene.gameData.importData(GameDataType.SESSION, 0);
-  const sessionDataStr = fs.readFileSync("./src/test/data/sessionData.json", {encoding: "utf8", flag: "r"});
-  const sessionData = parseSessionData(sessionDataStr);
-  const test = gameData.loadSession(scene, 0, sessionData);
+  it('check opponent pokemon', () => {
+    const data = sessionData;
+    expect(sessionData.enemyParty[0].species).toBe(Species.DIGGERSBY);
+    expect(sessionData.enemyParty[0].level).toBe(1324);
+  });
+
+  it('check player modifiers', () => {
+    expect(sessionData.modifiers[0].typeId).toBe("EXP_CHARM");
+    expect(sessionData.modifiers[0].stackCount).toBe(60);
+  });
 });
+
+// describe("Check integrity of save files", () => {
+//   const game = new GameWrapper();
+//   const scene = new BattleScene();
+//   game.scene.add("battle-scene", scene);
+//
+//   const mode = scene.ui.getMode();
+//
+//   const gameData= new GameData(scene);
+//   const loginPhase = new LoginPhase(scene);
+//   loginPhase.start();
+//   scene.gameData.importData(GameDataType.SESSION, 0);
+//   // const sessionDataStr = fs.readFileSync("./src/test/data/sessionData.json", {encoding: "utf8", flag: "r"});
+//   // const sessionData = parseSessionData(sessionDataStr);
+//   // const test = gameData.loadSession(scene, 0, sessionData);
+// });
