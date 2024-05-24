@@ -446,7 +446,7 @@ export const trainerTypeDialogue = {
   [TrainerType.SAILOR]: [
     {
       encounter: [
-        "Yo ho ho! Sing with me! The chantey of the sea!"
+        "Yo ho ho! Sing with me! The shanty of the sea!"
       ],
       victory: [
         "I stopped singing along!"
