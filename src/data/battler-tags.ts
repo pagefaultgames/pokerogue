@@ -1159,10 +1159,10 @@ export class MagnetRisenTag extends TypeImmuneTag {
 /**
  * Tag that makes the target drop all of it type immunities
  * and all accuracy checks ignore its evasiveness stat.
- * 
+ *
  * Applied by moves: {@linkcode Moves.ODOR_SLEUTH},
- * {@linkcode Moves.MIRACLE_EYE} and {@linkcode Moves.FORESIGHT}. 
- * 
+ * {@linkcode Moves.MIRACLE_EYE} and {@linkcode Moves.FORESIGHT}.
+ *
  * @extends BattlerTag
  * @see {@linkcode ignoreImmunity}
  */
@@ -1190,7 +1190,7 @@ export class ExposedTag extends BattlerTag {
    */
   ignoreImmunity(types: Type[], moveType: Type): boolean {
     return types.includes(this.immuneType)
-              && getTypeDamageMultiplier(moveType, this.immuneType) == 0;
+              && getTypeDamageMultiplier(moveType, this.immuneType) === 0;
   }
 }
 
