@@ -93,8 +93,9 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       if (pokemon.battleData) {
         pokemon.battleData.berriesEaten.push(berryType);
       }
-      if (pokemon.status)
+      if (pokemon.status) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
+      }
       pokemon.resetStatus(true, true)
       pokemon.updateInfo();
     };
