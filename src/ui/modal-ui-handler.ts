@@ -39,7 +39,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.modalContainer = this.scene.add.container(0, 0);
 
     this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -48,7 +48,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     this.modalContainer.add(this.modalBg);
 
-    this.titleText = addTextObject(this.scene, 0, 4, '', TextStyle.SETTINGS_LABEL);
+    this.titleText = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
     this.titleText.setOrigin(0.5, 0);
 
     this.modalContainer.add(this.titleText);
@@ -59,7 +59,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     const buttonTopMargin = this.getButtonTopMargin();
 
-    for (let label of buttonLabels) {
+    for (const label of buttonLabels) {
       const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
       buttonLabel.setOrigin(0.5, 0.5);
 
@@ -81,7 +81,7 @@ export abstract class ModalUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && 'buttonActions' in args[0]) {
+    if (args.length >= 1 && "buttonActions" in args[0]) {
       super.show(args);
 
       const config = args[0] as ModalConfig;
@@ -93,8 +93,9 @@ export abstract class ModalUiHandler extends UiHandler {
       this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
-        if (a < this.buttonBgs.length)
-          this.buttonBgs[a].on('pointerdown', (_) => config.buttonActions[a]());
+        if (a < this.buttonBgs.length) {
+          this.buttonBgs[a].on("pointerdown", (_) => config.buttonActions[a]());
+        }
       }
 
       return true;
@@ -105,7 +106,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
   updateContainer(config?: ModalConfig): void {
     const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin(config);
-    
+
     const [ width, height ] = [ this.getWidth(config), this.getHeight(config) ];
     this.modalContainer.setPosition((((this.scene.game.canvas.width / 6) - (width + (marginRight - marginLeft))) / 2), (((-this.scene.game.canvas.height / 6) - (height + (marginBottom - marginTop))) / 2));
 
@@ -132,6 +133,6 @@ export abstract class ModalUiHandler extends UiHandler {
     super.clear();
     this.modalContainer.setVisible(false);
 
-    this.buttonBgs.map(bg => bg.off('pointerdown'));
+    this.buttonBgs.map(bg => bg.off("pointerdown"));
   }
 }
