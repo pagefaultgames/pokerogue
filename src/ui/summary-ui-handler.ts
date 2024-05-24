@@ -310,7 +310,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.splicedIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
-    if(this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
+    if (this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
       this.championRibbon.setVisible(true);
     } else {
       this.championRibbon.setVisible(false);
@@ -450,7 +450,7 @@ export default class SummaryUiHandler extends UiHandler {
         case Button.LEFT:
           this.moveSelect = false;
           this.setCursor(Page.STATS);
-          if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
+          if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
             this.hideMoveEffect();
             this.destroyBlinkCursor();
             success = true;
@@ -623,7 +623,7 @@ export default class SummaryUiHandler extends UiHandler {
             x: forward ? "-=214" : "+=214",
             duration: 250,
             onComplete: () => {
-              if (forward){
+              if (forward) {
                 this.populatePageContainer(this.summaryPageContainer);
                 if (this.cursor===Page.MOVES) {
                   this.moveCursorObj = null;
@@ -1022,7 +1022,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.hideMoveEffect();
   }
 
-  destroyBlinkCursor(){
+  destroyBlinkCursor() {
     if (this.moveCursorBlinkTimer) {
       this.moveCursorBlinkTimer.destroy();
       this.moveCursorBlinkTimer = null;
