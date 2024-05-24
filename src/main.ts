@@ -37,8 +37,8 @@ window.addEventListener("touchControlsChange", () => {
  * Determines if the game window should be centered based on the current device and settings.
  *
  * This function checks several conditions to decide whether the game window should be centered:
- * 1. Checks if the device is not a mobile device.
- * 2. Checks if the device is in landscape orientation.
+ * 1. Checks if the device is in landscape orientation.
+ * 2. Checks if the device is not a mobile device.
  * 3. Checks if the device has a touchscreen.
  * 4. Checks if touch controls is explicitly enabled in the settings.
  *
