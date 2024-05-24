@@ -903,7 +903,7 @@ export class GameData {
           v = [];
         }
         for (const md of v) {
-          if(md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
+          if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
           ret.push(new PersistentModifierData(md, player));
