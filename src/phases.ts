@@ -2156,21 +2156,13 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
       case Command.RUN:
-        let runningPokemon = pokemon;
-        if (this.scene.currentBattle.double) {
-          const playerActivePokemon = field.filter(pokemon => pokemon.isPlayer() && pokemon.isActive());
-          // if only one pokemon is alive, use that one
-          if (playerActivePokemon.length > 1) {
-            // find which active pokemon has faster speed
-            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
-            // check if either active pokemon has the ability "Run Away"
-            const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
-            runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
-          }
+        const isSwitch = turnCommand.command === Command.POKEMON;
+        if (isSwitch) {
+          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
+        } else {
+          this.scene.unshiftPhase(new AttemptRunPhase(this.scene, pokemon.getFieldIndex()));
         }
-        this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
         break;
       }
     }
