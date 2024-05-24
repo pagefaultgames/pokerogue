@@ -86,6 +86,10 @@ export enum MoveFlags {
   WIND_MOVE         = 1 << 14,
   TRIAGE_MOVE       = 1 << 15,
   IGNORE_ABILITIES  = 1 << 16,
+  /**
+   * Enables all hits of a multi-hit move to be accuracy checked individually
+   */
+  CHECK_ALL_HITS   = 1 << 17,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -330,6 +334,11 @@ export default class Move implements Localizable {
 
   ignoresAbilities(ignoresAbilities?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
+    return this;
+  }
+
+  checkAllHits(checkAllHits?: boolean): this {
+    this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
     return this;
   }
 
@@ -1273,10 +1282,6 @@ export class MultiHitAttr extends MoveAttr {
       break;
     case MultiHitType._3:
       hitTimes = 3;
-      break;
-    case MultiHitType._3_INCR:
-      hitTimes = 3;
-      // TODO: Add power increase for every hit
       break;
     case MultiHitType._1_TO_10:
       {
@@ -2729,6 +2734,33 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
       return true;
     }
     return false;
+  }
+}
+
+/**
+ * Attribute used for multi-hit moves that increase power in increments of the
+ * move's base power for each hit, namely Triple Kick and Triple Axel.
+ * @extends VariablePowerAttr
+ * @see {@linkcode apply}
+ */
+export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
+
+  /**
+   * Increases power of move in increments of the base power for the amount of times
+   * the move hit
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target {@linkcode Pokemon} that the move was used on
+   * @param move {@linkcode Move} with this attribute
+   * @param args [0] {@linkcode Utils.NumberHolder} for final calculated power of move
+   * @returns true if attribute application succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+    const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
+
+    power.value = move.power * (1 + hitsTotal);
+
+    return true;
   }
 }
 
@@ -5332,12 +5364,9 @@ export function initMoves() {
       .attr(SketchAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
-      .attr(MultiHitAttr, MultiHitType._3_INCR)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
-        user.turnData.hitsLeft = 1;
-        return true;
-      })
-      .partial(),
+      .attr(MultiHitAttr, MultiHitType._3)
+      .attr(MultiHitPowerIncrementAttr)
+      .checkAllHits(),
     new AttackMove(Moves.THIEF, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
       .attr(StealHeldItemChanceAttr, 0.3),
     new StatusMove(Moves.SPIDER_WEB, Type.BUG, -1, 10, -1, 0, 2)
@@ -7182,12 +7211,9 @@ export function initMoves() {
     new AttackMove(Moves.FLIP_TURN, Type.WATER, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 8)
       .attr(ForceSwitchOutAttr, true, false),
     new AttackMove(Moves.TRIPLE_AXEL, Type.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 8)
-      .attr(MultiHitAttr, MultiHitType._3_INCR)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
-        user.turnData.hitsLeft = 1;
-        return true;
-      })
-      .partial(),
+      .attr(MultiHitAttr, MultiHitType._3)
+      .attr(MultiHitPowerIncrementAttr)
+      .checkAllHits(),
     new AttackMove(Moves.DUAL_WINGBEAT, Type.FLYING, MoveCategory.PHYSICAL, 40, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.SCORCHING_SANDS, Type.GROUND, MoveCategory.SPECIAL, 70, 100, 10, 30, 0, 8)
@@ -7432,7 +7458,7 @@ export function initMoves() {
     new AttackMove(Moves.POPULATION_BOMB, Type.NORMAL, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._1_TO_10)
       .slicingMove()
-      .partial(),
+      .checkAllHits(),
     new AttackMove(Moves.ICE_SPINNER, Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)

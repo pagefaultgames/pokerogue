@@ -2777,8 +2777,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const user = this.getUserPokemon();
 
-    // Hit check only calculated on first hit for multi-hit moves
-    if (user.turnData.hitsLeft < user.turnData.hitCount) {
+    // Hit check only calculated on first hit for multi-hit moves unless flag is set to check all hits
+    if (user.turnData.hitsLeft < user.turnData.hitCount && !this.move.getMove().hasFlag(MoveFlags.CHECK_ALL_HITS)) {
       return true;
     }
 
