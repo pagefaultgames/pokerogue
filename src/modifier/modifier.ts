@@ -1042,7 +1042,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 
     return false;
   }
-}
+};
 
 export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
   constructor(type: ModifierType, pokemonId: integer) {
