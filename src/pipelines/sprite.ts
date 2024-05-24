@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { variantColorCache, variantData } from '#app/data/variant';
+import { variantColorCache } from "#app/data/variant";
 import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";
 import FieldSpritePipeline from "./field-sprite";
@@ -313,161 +313,162 @@ void main()
 `;
 
 export default class SpritePipeline extends FieldSpritePipeline {
-    private _tone: number[];
+  private _tone: number[];
 
-    constructor(game: Phaser.Game) {
-        super(game, {
-            game: game,
-            name: 'sprite',
-            fragShader: spriteFragShader,
-            vertShader: spriteVertShader
-        });
+  constructor(game: Phaser.Game) {
+    super(game, {
+      game: game,
+      name: "sprite",
+      fragShader: spriteFragShader,
+      vertShader: spriteVertShader
+    });
 
-        this._tone = [ 0, 0, 0, 0 ];
+    this._tone = [ 0, 0, 0, 0 ];
+  }
+
+  onPreRender(): void {
+    super.onPreRender();
+
+    this.set1f("teraTime", 0);
+    this.set3fv("teraColor", [ 0, 0, 0 ]);
+    this.set1i("hasShadow", 0);
+    this.set1i("yCenter", 0);
+    this.set2f("relPosition", 0, 0);
+    this.set2f("texFrameUv", 0, 0);
+    this.set2f("size", 0, 0);
+    this.set2f("texSize", 0, 0);
+    this.set1f("yOffset", 0);
+    this.set4fv("tone", this._tone);
+  }
+
+  onBind(gameObject: Phaser.GameObjects.GameObject): void {
+    super.onBind(gameObject);
+
+    const sprite = (gameObject as Phaser.GameObjects.Sprite);
+
+    const data = sprite.pipelineData;
+    const tone = data["tone"] as number[];
+    const teraColor = data["teraColor"] as integer[] ?? [ 0, 0, 0 ];
+    const hasShadow = data["hasShadow"] as boolean;
+    const ignoreFieldPos = data["ignoreFieldPos"] as boolean;
+    const ignoreOverride = data["ignoreOverride"] as boolean;
+
+    const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+    const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
+    const position = isEntityObj
+      ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
+      : [ sprite.x, sprite.y ];
+    if (field) {
+      position[0] += field.x / field.scale;
+      position[1] += field.y / field.scale;
     }
-
-    onPreRender(): void {
-        super.onPreRender();
-
-        this.set1f('teraTime', 0);
-        this.set3fv('teraColor', [ 0, 0, 0 ]);
-        this.set1i('hasShadow', 0);
-        this.set1i('yCenter', 0);
-        this.set2f('relPosition', 0, 0);
-        this.set2f('texFrameUv', 0, 0);
-        this.set2f('size', 0, 0);
-        this.set2f('texSize', 0, 0);
-        this.set1f('yOffset', 0);
-        this.set4fv('tone', this._tone);
+    position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x + (!ignoreFieldPos ? (sprite.x - field.x) : 0);
+    if (sprite.originY === 0.5) {
+      position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1) + (!ignoreFieldPos ? (sprite.y - field.y) : 0);
     }
+    this.set1f("teraTime", (this.game.getTime() % 500000) / 500000);
+    this.set3fv("teraColor", teraColor.map(c => c / 255));
+    this.set1i("hasShadow", hasShadow ? 1 : 0);
+    this.set1i("yCenter", sprite.originY === 0.5 ? 1 : 0);
+    this.set1f("fieldScale", field?.scale || 1);
+    this.set2f("relPosition", position[0], position[1]);
+    this.set2f("texFrameUv", sprite.frame.u0, sprite.frame.v0);
+    this.set2f("size", sprite.frame.width, sprite.height);
+    this.set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height);
+    this.set1f("yOffset", sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
+    this.set4fv("tone", tone);
+    this.bindTexture(this.game.textures.get("tera").source[0].glTexture, 1);
 
-    onBind(gameObject: Phaser.GameObjects.GameObject): void {
-        super.onBind(gameObject);
+    if ((gameObject.scene as BattleScene).fusionPaletteSwaps) {
+      const spriteColors = ((ignoreOverride && data["spriteColorsBase"]) || data["spriteColors"] || []) as number[][];
+      const fusionSpriteColors = ((ignoreOverride && data["fusionSpriteColorsBase"]) || data["fusionSpriteColors"] || []) as number[][];
 
-        const sprite = (gameObject as Phaser.GameObjects.Sprite);
+      const emptyColors = [ 0, 0, 0, 0 ];
+      const flatSpriteColors: integer[] = [];
+      const flatFusionSpriteColors: integer[] = [];
+      for (let c = 0; c < 32; c++) {
+        flatSpriteColors.splice(flatSpriteColors.length, 0, ...(c < spriteColors.length ? spriteColors[c] : emptyColors));
+        flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, ...(c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors));
+      }
 
-        const data = sprite.pipelineData;
-        const tone = data['tone'] as number[];
-        const teraColor = data['teraColor'] as integer[] ?? [ 0, 0, 0 ];
-        const hasShadow = data['hasShadow'] as boolean;
-        const ignoreFieldPos = data['ignoreFieldPos'] as boolean;
-        const ignoreOverride = data['ignoreOverride'] as boolean;
+      this.set4iv("spriteColors", flatSpriteColors.flat());
+      this.set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
+    }
+  }
 
-        const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
-        const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
-        const position = isEntityObj
-            ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
-            : [ sprite.x, sprite.y ];
-        if (field) {
-            position[0] += field.x / field.scale;
-            position[1] += field.y / field.scale;
+  onBatch(gameObject: Phaser.GameObjects.GameObject): void {
+    if (gameObject) {
+      const sprite = (gameObject as Phaser.GameObjects.Sprite);
+      const data = sprite.pipelineData;
+
+      const variant: integer = data.hasOwnProperty("variant")
+        ? data["variant"]
+        : sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.variant
+          : 0;
+      let variantColors;
+
+      const emptyColors = [ 0, 0, 0, 0 ];
+      const flatBaseColors: integer[] = [];
+      const flatVariantColors: number[] = [];
+
+      if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data["shiny"])
+                && (variantColors = variantColorCache[sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.getSprite().texture.key : data["spriteKey"]]) && variantColors.hasOwnProperty(variant)) {
+        const baseColors = Object.keys(variantColors[variant]);
+        for (let c = 0; c < 32; c++) {
+          if (c < baseColors.length) {
+            const baseColor = Array.from(Object.values(Utils.rgbHexToRgba(baseColors[c])));
+            const variantColor = Array.from(Object.values(Utils.rgbHexToRgba(variantColors[variant][baseColors[c]])));
+            flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor);
+            flatVariantColors.splice(flatVariantColors.length, 0, ...variantColor.map(c => c / 255.0));
+          } else {
+            flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
+            flatVariantColors.splice(flatVariantColors.length, 0, ...emptyColors);
+          }
         }
-        position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x + (!ignoreFieldPos ? (sprite.x - field.x) : 0);
-        if (sprite.originY === 0.5)
-            position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1) + (!ignoreFieldPos ? (sprite.y - field.y) : 0);
-        this.set1f('teraTime', (this.game.getTime() % 500000) / 500000);
-        this.set3fv('teraColor', teraColor.map(c => c / 255));
-        this.set1i('hasShadow', hasShadow ? 1 : 0);
-        this.set1i('yCenter', sprite.originY === 0.5 ? 1 : 0);
-        this.set1f('fieldScale', field?.scale || 1);
-        this.set2f('relPosition', position[0], position[1]);
-        this.set2f('texFrameUv', sprite.frame.u0, sprite.frame.v0);
-        this.set2f('size', sprite.frame.width, sprite.height);
-        this.set2f('texSize', sprite.texture.source[0].width, sprite.texture.source[0].height);
-        this.set1f('yOffset', sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
-        this.set4fv('tone', tone);
-        this.bindTexture(this.game.textures.get('tera').source[0].glTexture, 1);
-        
-        if ((gameObject.scene as BattleScene).fusionPaletteSwaps) {
-            const spriteColors = ((ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || []) as number[][];
-            const fusionSpriteColors = ((ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || []) as number[][];
-
-            const emptyColors = [ 0, 0, 0, 0 ];
-            const flatSpriteColors: integer[] = [];
-            const flatFusionSpriteColors: integer[] = [];
-            for (let c = 0; c < 32; c++) {
-                flatSpriteColors.splice(flatSpriteColors.length, 0, ...(c < spriteColors.length ? spriteColors[c] : emptyColors));
-                flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, ...(c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors));
-            }
-
-            this.set4iv(`spriteColors`, flatSpriteColors.flat());
-            this.set4iv(`fusionSpriteColors`, flatFusionSpriteColors.flat());
+      } else {
+        for (let c = 0; c < 32; c++) {
+          flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
+          flatVariantColors.splice(flatVariantColors.length, 0, ...emptyColors);
         }
+      }
+
+      this.set4iv("baseVariantColors", flatBaseColors.flat());
+      this.set4fv("variantColors", flatVariantColors.flat());
     }
 
-    onBatch(gameObject: Phaser.GameObjects.GameObject): void {
-        if (gameObject) {
-            const sprite = (gameObject as Phaser.GameObjects.Sprite);
-            const data = sprite.pipelineData;
+    super.onBatch(gameObject);
+  }
 
-            const variant: integer = data.hasOwnProperty('variant')
-                ? data['variant']
-                : sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.variant
-                : 0;
-            let variantColors;
+  batchQuad(gameObject: Phaser.GameObjects.GameObject, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number,
+    u0: number, v0: number, u1: number, v1: number, tintTL: number, tintTR: number, tintBL: number, tintBR: number, tintEffect: number | boolean,
+    texture?: Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper, unit?: number): boolean {
+    const sprite = gameObject as Phaser.GameObjects.Sprite;
 
-            const emptyColors = [ 0, 0, 0, 0 ];
-            const flatBaseColors: integer[] = [];
-            const flatVariantColors: number[] = [];
+    this.set1f("vCutoff", v1);
 
-            if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data['shiny'])
-                && (variantColors = variantColorCache[sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.getSprite().texture.key : data['spriteKey']]) && variantColors.hasOwnProperty(variant)) {
-                const baseColors = Object.keys(variantColors[variant]);
-                for (let c = 0; c < 32; c++) {
-                    if (c < baseColors.length) {
-                        const baseColor = Array.from(Object.values(Utils.rgbHexToRgba(baseColors[c])));
-                        const variantColor = Array.from(Object.values(Utils.rgbHexToRgba(variantColors[variant][baseColors[c]])));
-                        flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor);
-                        flatVariantColors.splice(flatVariantColors.length, 0, ...variantColor.map(c => c / 255.0));
-                    } else {
-                        flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
-                        flatVariantColors.splice(flatVariantColors.length, 0, ...emptyColors);
-                    }
-                }
-            } else {
-                for (let c = 0; c < 32; c++) {
-                    flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
-                    flatVariantColors.splice(flatVariantColors.length, 0, ...emptyColors);
-                }
-            }
-
-            this.set4iv('baseVariantColors', flatBaseColors.flat());
-            this.set4fv('variantColors', flatVariantColors.flat());
-        }
-
-        super.onBatch(gameObject);
+    const hasShadow = sprite.pipelineData["hasShadow"] as boolean;
+    if (hasShadow) {
+      const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+      const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
+      const fieldScaleRatio = field.scale / 6;
+      const baseY = (isEntityObj
+        ? sprite.parentContainer.y
+        : sprite.y + sprite.height) * 6 / fieldScaleRatio;
+      const bottomPadding = Math.ceil(sprite.height * 0.05) * 6 / fieldScaleRatio;
+      const yDelta = (baseY - y1) / field.scale;
+      y2 = y1 = baseY + bottomPadding;
+      const pixelHeight = (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
+      v1 += (yDelta + bottomPadding / field.scale) * pixelHeight;
     }
 
-    batchQuad(gameObject: Phaser.GameObjects.GameObject, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number,
-        u0: number, v0: number, u1: number, v1: number, tintTL: number, tintTR: number, tintBL: number, tintBR: number, tintEffect: number | boolean,
-        texture?: Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper, unit?: number): boolean {
-        const sprite = gameObject as Phaser.GameObjects.Sprite;
+    return super.batchQuad(gameObject, x0, y0, x1, y1, x2, y2, x3, y3, u0, v0, u1, v1, tintTL, tintTR, tintBL, tintBR, tintEffect, texture, unit);
+  }
 
-        this.set1f('vCutoff', v1);
+  get tone(): number[] {
+    return this._tone;
+  }
 
-        const hasShadow = sprite.pipelineData['hasShadow'] as boolean;
-        if (hasShadow) {
-            const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
-            const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
-            const fieldScaleRatio = field.scale / 6;
-            const baseY = (isEntityObj
-                ? sprite.parentContainer.y
-                : sprite.y + sprite.height) * 6 / fieldScaleRatio;
-            const bottomPadding = Math.ceil(sprite.height * 0.05) * 6 / fieldScaleRatio;
-            const yDelta = (baseY - y1) / field.scale;
-            y2 = y1 = baseY + bottomPadding;
-            const pixelHeight = (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
-            v1 += (yDelta + bottomPadding / field.scale) * pixelHeight;
-        }
-        
-        return super.batchQuad(gameObject, x0, y0, x1, y1, x2, y2, x3, y3, u0, v0, u1, v1, tintTL, tintTR, tintBL, tintBR, tintEffect, texture, unit);
-    }
-
-    get tone(): number[] {
-        return this._tone;
-    }
-
-    set tone(value: number[]) {
-        this._tone = value;
-    }
+  set tone(value: number[]) {
+    this._tone = value;
+  }
 }

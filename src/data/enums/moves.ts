@@ -1872,4 +1872,4 @@ export enum Moves {
   UPPER_HAND,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malignant_Chain_(move) | Source} */
   MALIGNANT_CHAIN,
-};
+}
