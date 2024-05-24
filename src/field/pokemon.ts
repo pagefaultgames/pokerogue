@@ -1597,7 +1597,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // 2nd argument is for MoveTypeChangePowerMultiplierAbAttr
     applyAbAttrs(VariableMoveTypeAbAttr, source, null, variableType, typeChangeMovePowerMultiplier);
     applyPreAttackAbAttrs(MoveTypeChangeAttr, source, this, battlerMove, variableType, typeChangeMovePowerMultiplier);
+
     const type = variableType.value as Type;
+    battlerMove.finalType = type;
     const types = this.getTypes(true, true);
 
     const cancelled = new Utils.BooleanHolder(false);
