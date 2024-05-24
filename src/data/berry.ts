@@ -1,13 +1,12 @@
 import { PokemonHealPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
-import { getBattleStatName } from "./battle-stat";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
-import i18next from '../plugins/i18n';
+import i18next from "../plugins/i18n";
 
 export enum BerryType {
   SITRUS,
@@ -35,41 +34,41 @@ export type BerryPredicate = (pokemon: Pokemon) => boolean;
 
 export function getBerryPredicate(berryType: BerryType): BerryPredicate {
   switch (berryType) {
-    case BerryType.SITRUS:
-      return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.5;
-    case BerryType.LUM:
-      return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
-    case BerryType.ENIGMA:
-      return (pokemon: Pokemon) => !!pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length;
-    case BerryType.LIECHI:
-    case BerryType.GANLON:
-    case BerryType.PETAYA:
-    case BerryType.APICOT:
-     case BerryType.SALAC:
-      return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
-        const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
-        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
-        return pokemon.getHpRatio() < threshold.value && pokemon.summonData.battleStats[battleStat] < 6;
-      };
-    case BerryType.LANSAT:
-      return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
-        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
-        return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
-      };
-    case BerryType.STARF:
-      return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
-        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
-        return pokemon.getHpRatio() < 0.25;
-      };
-    case BerryType.LEPPA:
-      return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
-        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
-        return !!pokemon.getMoveset().find(m => !m.getPpRatio());
-      };
+  case BerryType.SITRUS:
+    return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.5;
+  case BerryType.LUM:
+    return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
+  case BerryType.ENIGMA:
+    return (pokemon: Pokemon) => !!pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length;
+  case BerryType.LIECHI:
+  case BerryType.GANLON:
+  case BerryType.PETAYA:
+  case BerryType.APICOT:
+  case BerryType.SALAC:
+    return (pokemon: Pokemon) => {
+      const threshold = new Utils.NumberHolder(0.25);
+      const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      return pokemon.getHpRatio() < threshold.value && pokemon.summonData.battleStats[battleStat] < 6;
+    };
+  case BerryType.LANSAT:
+    return (pokemon: Pokemon) => {
+      const threshold = new Utils.NumberHolder(0.25);
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
+    };
+  case BerryType.STARF:
+    return (pokemon: Pokemon) => {
+      const threshold = new Utils.NumberHolder(0.25);
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      return pokemon.getHpRatio() < 0.25;
+    };
+  case BerryType.LEPPA:
+    return (pokemon: Pokemon) => {
+      const threshold = new Utils.NumberHolder(0.25);
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      return !!pokemon.getMoveset().find(m => !m.getPpRatio());
+    };
   }
 }
 
