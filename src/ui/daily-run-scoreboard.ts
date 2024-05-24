@@ -30,7 +30,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   private pageCount: integer;
   private page: integer;
   private category: ScoreboardCategory;
-  
+
   private _isUpdating: boolean;
 
   constructor(scene: BattleScene, x: number, y: number) {
@@ -62,7 +62,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     const titleWindow = addWindow(this.scene, 0, 0, 114, 18, false, false, null, null, WindowVariant.THIN);
     this.add(titleWindow);
 
-    this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, i18next.t('menu:loading'), TextStyle.WINDOW, { fontSize: '64px' });
+    this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, i18next.t("menu:loading"), TextStyle.WINDOW, { fontSize: "64px" });
     this.titleLabel.setOrigin(0.5, 0.5);
     this.add(this.titleLabel);
 
@@ -72,52 +72,54 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.rankingsContainer = this.scene.add.container(6, 21);
     this.add(this.rankingsContainer);
 
-    this.loadingLabel = addTextObject(this.scene, window.displayWidth / 2, window.displayHeight / 2 + 16, '', TextStyle.WINDOW);
+    this.loadingLabel = addTextObject(this.scene, window.displayWidth / 2, window.displayHeight / 2 + 16, "", TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);
     this.loadingLabel.setVisible(false);
 
-    this.prevCategoryButton = this.scene.add.sprite(4, 4, 'cursor_reverse');
+    this.prevCategoryButton = this.scene.add.sprite(4, 4, "cursor_reverse");
     this.prevCategoryButton.setOrigin(0, 0);
     this.add(this.prevCategoryButton);
 
     this.prevCategoryButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
-    this.prevCategoryButton.on('pointerup', () => {
+    this.prevCategoryButton.on("pointerup", () => {
       this.update(this.category ? this.category - 1 : Utils.getEnumKeys(ScoreboardCategory).length - 1);
     });
 
-    this.nextCategoryButton = this.scene.add.sprite(window.displayWidth - 4, 4, 'cursor');
+    this.nextCategoryButton = this.scene.add.sprite(window.displayWidth - 4, 4, "cursor");
     this.nextCategoryButton.setOrigin(1, 0);
     this.add(this.nextCategoryButton);
 
     this.nextCategoryButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
-    this.nextCategoryButton.on('pointerup', () => {
+    this.nextCategoryButton.on("pointerup", () => {
       this.update(this.category < Utils.getEnumKeys(ScoreboardCategory).length - 1 ? this.category + 1 : 0);
     });
 
-    this.prevPageButton = this.scene.add.sprite(window.displayWidth / 2 - 16, titleWindow.displayHeight + window.displayHeight - 15, 'cursor_reverse');
+    this.prevPageButton = this.scene.add.sprite(window.displayWidth / 2 - 16, titleWindow.displayHeight + window.displayHeight - 15, "cursor_reverse");
     this.prevPageButton.setOrigin(0, 0);
     this.prevPageButton.setAlpha(0.5);
     this.add(this.prevPageButton);
 
     this.prevPageButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
-    this.prevPageButton.on('pointerup', () => {
-      if (this.page > 1)
+    this.prevPageButton.on("pointerup", () => {
+      if (this.page > 1) {
         this.update(undefined, this.page > 1 ? this.page - 1 : this.pageCount);
+      }
     });
 
-    this.pageNumberLabel = addTextObject(this.scene, window.displayWidth / 2, titleWindow.displayHeight + window.displayHeight - 16, '1', TextStyle.WINDOW, { fontSize: '64px' });
+    this.pageNumberLabel = addTextObject(this.scene, window.displayWidth / 2, titleWindow.displayHeight + window.displayHeight - 16, "1", TextStyle.WINDOW, { fontSize: "64px" });
     this.pageNumberLabel.setOrigin(0.5, 0);
     this.add(this.pageNumberLabel);
 
-    this.nextPageButton = this.scene.add.sprite(window.displayWidth / 2 + 16, titleWindow.displayHeight + window.displayHeight - 15, 'cursor');
+    this.nextPageButton = this.scene.add.sprite(window.displayWidth / 2 + 16, titleWindow.displayHeight + window.displayHeight - 15, "cursor");
     this.nextPageButton.setOrigin(1, 0);
     this.nextPageButton.setAlpha(0.5);
     this.add(this.nextPageButton);
 
     this.nextPageButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
-    this.nextPageButton.on('pointerup', () => {
-      if (this.page < this.pageCount)
+    this.nextPageButton.on("pointerup", () => {
+      if (this.page < this.pageCount) {
         this.update(undefined, this.page < this.pageCount ? this.page + 1 : 0);
+      }
     });
 
     this.add(this.loadingLabel);
@@ -130,29 +132,29 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     const getEntry = (rank: string, username: string, score: string, wave: string) => {
       const entryContainer = this.scene.add.container(0, 0);
 
-      const rankLabel = addTextObject(this.scene, 0, 0, rank, TextStyle.WINDOW, { fontSize: '54px' });
+      const rankLabel = addTextObject(this.scene, 0, 0, rank, TextStyle.WINDOW, { fontSize: "54px" });
       entryContainer.add(rankLabel);
 
-      const usernameLabel = addTextObject(this.scene, 12, 0, username, TextStyle.WINDOW, { fontSize: '54px' });
+      const usernameLabel = addTextObject(this.scene, 12, 0, username, TextStyle.WINDOW, { fontSize: "54px" });
       entryContainer.add(usernameLabel);
 
-      const scoreLabel = addTextObject(this.scene, 84, 0, score, TextStyle.WINDOW, { fontSize: '54px' });
+      const scoreLabel = addTextObject(this.scene, 84, 0, score, TextStyle.WINDOW, { fontSize: "54px" });
       entryContainer.add(scoreLabel);
 
       switch (this.category) {
-        case ScoreboardCategory.DAILY:
-          const waveLabel = addTextObject(this.scene, 68, 0, wave, TextStyle.WINDOW, { fontSize: '54px' });
-          entryContainer.add(waveLabel);
-          break;
-        case ScoreboardCategory.WEEKLY:
-          scoreLabel.x -= 16;
-          break;
+      case ScoreboardCategory.DAILY:
+        const waveLabel = addTextObject(this.scene, 68, 0, wave, TextStyle.WINDOW, { fontSize: "54px" });
+        entryContainer.add(waveLabel);
+        break;
+      case ScoreboardCategory.WEEKLY:
+        scoreLabel.x -= 16;
+        break;
       }
 
       return entryContainer;
     };
 
-    this.rankingsContainer.add(getEntry('#', 'Username', 'Score', 'Wave'));
+    this.rankingsContainer.add(getEntry("#", "Username", "Score", "Wave"));
 
     rankings.forEach((r: RankingEntry, i: integer) => {
       const entryContainer = getEntry(r.rank.toString(), r.username, r.score.toString(), r.wave.toString());
@@ -163,13 +165,13 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
   /**
    * Updates the scoreboard rankings based on the selected category and page.
-   * 
+   *
    * If the update process is already ongoing, the method exits early. Otherwise, it begins the update process by clearing
    * the current rankings and showing a loading label. If the category changes, the page is reset to 1.
-   * 
+   *
    * The method fetches the total page count if necessary, followed by fetching the rankings for the specified category
    * and page. It updates the UI with the fetched rankings or shows an appropriate message if no rankings are found.
-   * 
+   *
    * @param {ScoreboardCategory} [category=this.category] - The category to fetch rankings for. Defaults to the current category.
    * @param {number} [page=this.page] - The page number to fetch. Defaults to the current page.
   */
@@ -181,11 +183,12 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.isUpdating = true;
     this.rankingsContainer.removeAll(true);
 
-    this.loadingLabel.setText(i18next.t('menu:loading'));
+    this.loadingLabel.setText(i18next.t("menu:loading"));
     this.loadingLabel.setVisible(true);
 
-    if (category !== this.category)
+    if (category !== this.category) {
       this.page = page = 1;
+    }
 
     Utils.executeIf(category !== this.category || this.pageCount === undefined,
       () => Utils.apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
@@ -200,14 +203,15 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
           if (jsonResponse) {
             this.loadingLabel.setVisible(false);
             this.updateRankings(jsonResponse);
-          } else
-            this.loadingLabel.setText(i18next.t('menu:noRankings'));
+          } else {
+            this.loadingLabel.setText(i18next.t("menu:noRankings"));
+          }
         }).finally(() => {
           this.isUpdating = false;
         });
-    }).catch(err => { 
-      console.error("Failed to load daily rankings:\n", err)
-    })
+    }).catch(err => {
+      console.error("Failed to load daily rankings:\n", err);
+    });
   }
 
   /**
@@ -235,4 +239,4 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
 export interface DailyRunScoreboard {
   scene: BattleScene
-};
+}

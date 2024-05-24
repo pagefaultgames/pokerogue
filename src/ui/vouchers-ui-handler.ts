@@ -5,7 +5,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
-import i18next from '../plugins/i18n';
+import i18next from "../plugins/i18n";
 
 const itemRows = 4;
 const itemCols = 17;
@@ -26,14 +26,14 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
-    
+
     this.itemsTotal = Object.keys(vouchers).length;
     this.scrollCursor = 0;
   }
 
   setup() {
     const ui = this.getUi();
-    
+
     this.vouchersContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
     this.vouchersContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -49,14 +49,14 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.voucherIconsBg.setOrigin(0, 0);
 
     this.voucherIconsContainer = this.scene.add.container(6, headerBg.height + 6);
-    
+
     this.voucherIcons = [];
 
     for (let a = 0; a < itemRows * itemCols; a++) {
       const x = (a % itemCols) * 18;
       const y = Math.floor(a / itemCols) * 18;
 
-      const icon = this.scene.add.sprite(x, y, 'items', 'unknown');
+      const icon = this.scene.add.sprite(x, y, "items", "unknown");
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
 
@@ -67,21 +67,21 @@ export default class VouchersUiHandler extends MessageUiHandler {
     const titleBg = addWindow(this.scene, 0, headerBg.height + this.voucherIconsBg.height, 220, 24);
     titleBg.setOrigin(0, 0);
 
-    this.titleText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW);
+    this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
     this.titleText.setOrigin(0, 0);
     this.titleText.setPositionRelative(titleBg, 8, 4);
 
     const unlockBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 98, 24);
     unlockBg.setOrigin(0, 0);
 
-    this.unlockText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW);
+    this.unlockText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
     this.unlockText.setOrigin(0, 0);
     this.unlockText.setPositionRelative(unlockBg, 8, 4);
 
     const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
     descriptionBg.setOrigin(0, 0);
 
-    const descriptionText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW, { maxLines: 2 });
+    const descriptionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, { maxLines: 2 });
     descriptionText.setWordWrapWidth(1870);
     descriptionText.setOrigin(0, 0);
     descriptionText.setPositionRelative(descriptionBg, 8, 4);
@@ -143,49 +143,56 @@ export default class VouchersUiHandler extends MessageUiHandler {
       const rowIndex = Math.floor(this.cursor / itemCols);
       const itemOffset = (this.scrollCursor * itemCols);
       switch (button) {
-        case Button.UP:
-          if (this.cursor < itemCols) {
-            if (this.scrollCursor)
-              success = this.setScrollCursor(this.scrollCursor - 1);
-          } else
-            success = this.setCursor(this.cursor - itemCols);
-          break;
-        case Button.DOWN:
-          const canMoveDown = (this.cursor + itemOffset) + itemCols < this.itemsTotal;
-          if (rowIndex >= itemRows - 1) {
-            if (this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows && canMoveDown)
-              success = this.setScrollCursor(this.scrollCursor + 1);
-          } else if (canMoveDown)
-            success = this.setCursor(this.cursor + itemCols);
-          break;
-        case Button.LEFT:
-          if (!this.cursor && this.scrollCursor)
-            success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (itemCols - 1));
-          else if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
-          break;
-        case Button.RIGHT:
-          if (this.cursor + 1 === itemRows * itemCols && this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows) {
-            success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (itemCols - 1));
-          } else if (this.cursor + itemOffset < Object.keys(vouchers).length - 1)
-            success = this.setCursor(this.cursor + 1);
-          break;
+      case Button.UP:
+        if (this.cursor < itemCols) {
+          if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1);
+          }
+        } else {
+          success = this.setCursor(this.cursor - itemCols);
+        }
+        break;
+      case Button.DOWN:
+        const canMoveDown = (this.cursor + itemOffset) + itemCols < this.itemsTotal;
+        if (rowIndex >= itemRows - 1) {
+          if (this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows && canMoveDown) {
+            success = this.setScrollCursor(this.scrollCursor + 1);
+          }
+        } else if (canMoveDown) {
+          success = this.setCursor(this.cursor + itemCols);
+        }
+        break;
+      case Button.LEFT:
+        if (!this.cursor && this.scrollCursor) {
+          success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (itemCols - 1));
+        } else if (this.cursor) {
+          success = this.setCursor(this.cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (this.cursor + 1 === itemRows * itemCols && this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows) {
+          success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (itemCols - 1));
+        } else if (this.cursor + itemOffset < Object.keys(vouchers).length - 1) {
+          success = this.setCursor(this.cursor + 1);
+        }
+        break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
 
   setCursor(cursor: integer): boolean {
-    let ret = super.setCursor(cursor);
+    const ret = super.setCursor(cursor);
 
     let updateVoucher = ret;
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight', null, 16, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight", null, 16, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.voucherIconsContainer.add(this.cursorObj);
       updateVoucher = true;
@@ -193,15 +200,17 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.cursorObj.setPositionRelative(this.voucherIcons[this.cursor], 0, 0);
 
-    if (updateVoucher)
+    if (updateVoucher) {
       this.showVoucher(vouchers[Object.keys(vouchers)[cursor + this.scrollCursor * itemCols]]);
+    }
 
     return ret;
   }
 
   setScrollCursor(scrollCursor: integer): boolean {
-    if (scrollCursor === this.scrollCursor)
+    if (scrollCursor === this.scrollCursor) {
       return false;
+    }
 
     this.scrollCursor = scrollCursor;
 
@@ -226,14 +235,16 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
       icon.setFrame(getVoucherTypeIcon(voucher.voucherType));
       icon.setVisible(true);
-      if (!unlocked)
+      if (!unlocked) {
         icon.setTintFill(0);
-      else
+      } else {
         icon.clearTint();
+      }
     });
 
-    if (voucherRange.length < this.voucherIcons.length)
+    if (voucherRange.length < this.voucherIcons.length) {
       this.voucherIcons.slice(voucherRange.length).map(i => i.setVisible(false));
+    }
   }
 
   clear() {
@@ -243,8 +254,9 @@ export default class VouchersUiHandler extends MessageUiHandler {
   }
 
   eraseCursor() {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }
