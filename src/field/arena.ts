@@ -19,47 +19,9 @@ import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
+import { TagChangedEvent, WeatherChangedEvent } from "./arena-events";
+import { TerrainChangedEvent } from "./arena-events";
 
-/**
- * Container class for `onWeatherChanged` events
- * @extends Event
-*/
-export class WeatherChangedEvent extends Event {
-  /** The {@linkcode WeatherType} being overridden */
-  public oldWeatherType: WeatherType;
-  /** The {@linkcode WeatherType} being set */
-  public newWeatherType: WeatherType;
-  /** The total duration of the new {@linkcode Weather} */
-  public duration: number;
-  constructor(oldWeatherType: WeatherType,newWeatherType: WeatherType, duration: number) {
-    super("onWeatherChanged");
-
-    this.oldWeatherType = oldWeatherType;
-    this.newWeatherType = newWeatherType;
-
-    this.duration = duration;
-  }
-}
-/**
- * Container class for `onTerrainChanged` events
- * @extends Event
-*/
-export class TerrainChangedEvent extends Event {
-  /** The {@linkcode TerrainType} being overridden */
-  public oldTerrainType: TerrainType;
-  /** The {@linkcode TerrainType} being set */
-  public newTerrainType: TerrainType;
-  /** The total duration of the new {@linkcode Terrain} */
-  public duration: number;
-  constructor(oldTerraintType: TerrainType, newTerrainType: TerrainType, duration: number) {
-    super("onTerrainChanged");
-
-    this.oldTerrainType = oldTerraintType;
-    this.newTerrainType = newTerrainType;
-
-    this.duration = duration;
-  }
-}
 export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
@@ -548,7 +510,10 @@ export class Arena {
     if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
-    tags.forEach(t => t.apply(this, args));
+    tags.forEach(
+      t => {
+        t.apply(this, args);
+      });
   }
 
   applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
@@ -565,6 +530,8 @@ export class Arena {
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
     this.tags.push(newTag);
     newTag.onAdd(this);
+
+    this.eventTarget.dispatchEvent(new TagChangedEvent(newTag.tagType, newTag.side, newTag.turnCount));
 
     return true;
   }

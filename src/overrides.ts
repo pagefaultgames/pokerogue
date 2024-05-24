@@ -24,8 +24,8 @@ import { PokeballType } from "./data/pokeball";
 // a specific seed (default: a random string of 24 characters)
 export const SEED_OVERRIDE: string = "";
 export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
-export const STARTING_WAVE_OVERRIDE: integer = 0;
+export const DOUBLE_BATTLE_OVERRIDE: boolean = true;
+export const STARTING_WAVE_OVERRIDE: integer = 101;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
@@ -47,7 +47,7 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 // forms can be found in pokemon-species.ts
 export const STARTER_FORM_OVERRIDE: integer = 0;
 // default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 0;
+export const STARTING_LEVEL_OVERRIDE: integer = 1000;
 /**
  * SPECIES OVERRIDE
  * will only apply to the first starter in your party or each enemy pokemon
@@ -57,7 +57,7 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const MOVESET_OVERRIDE: Array<Moves> = [Moves.STEALTH_ROCK, Moves.TAILWIND, Moves.HEADBUTT, Moves.MIST];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -68,7 +68,7 @@ export const VARIANT_OVERRIDE: Variant = 0;
 export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+export const OPP_MOVESET_OVERRIDE: Array<Moves> = [Moves.RAIN_DANCE, Moves.PSYCHIC_TERRAIN, Moves.SPIKES, Moves.TOXIC_SPIKES];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 

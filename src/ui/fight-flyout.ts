@@ -5,7 +5,7 @@ import { ArenaTagSide } from "#app/data/arena-tag.js";
 import { WeatherType } from "#app/data/weather.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { addWindow } from "./ui-theme";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena.js";
+import { ArenaEventType, TagChangedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
 
 interface FieldEffectInfo {
   type: string;
@@ -56,7 +56,7 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
     this.flyoutWindow = addWindow(this.scene as BattleScene, 0, 0, this.flyoutWidth, this.flyoutHeight);
     this.flyoutContainer.add(this.flyoutWindow);
 
-    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 8, 7, "Player Effects", TextStyle.SUMMARY_BLUE);
+    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 8, 7, "Player Field", TextStyle.SUMMARY_BLUE);
     this.flyoutTextHeaderPlayer.setFontSize(54);
     this.flyoutTextHeaderPlayer.setAlign("left");
     this.flyoutTextHeaderPlayer.setOrigin(0, 0);
@@ -70,7 +70,7 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutTextHeaderField);
 
-    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 8, 7, "Enemy Effects", TextStyle.SUMMARY_RED);
+    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 8, 7, "Enemy Field", TextStyle.SUMMARY_RED);
     this.flyoutTextHeaderEnemy.setFontSize(54);
     this.flyoutTextHeaderEnemy.setAlign("right");
     this.flyoutTextHeaderEnemy.setOrigin(1, 0);
@@ -128,6 +128,14 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
     textObject.text += tags;
   }
 
+  private onNewArena(event: Event) {
+    this.fieldEffectInfo.length = 0;
+
+    this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, (e) => this.onFieldEffectChanged(e));
+    this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, (e) => this.onFieldEffectChanged(e));
+    this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_CHANGED, (e) => this.onFieldEffectChanged(e));
+  }
+
   updateFieldText() {
     this.flyoutTextField.text = "";
 
@@ -139,23 +147,16 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
     }
   }
 
-  onNewArena(event: Event) {
-    this.fieldEffectInfo.length = 0;
-
-    this.battleScene.arena.eventTarget.addEventListener("onWeatherChanged", (e) => this.onFieldEffectChanged(e));
-    this.battleScene.arena.eventTarget.addEventListener("onTerrainChanged", (e) => this.onFieldEffectChanged(e));
-  }
-
-  onFieldEffectChanged(event: Event) {
+  private onFieldEffectChanged(event: Event) {
     const fieldEffectChangedEvent = event as WeatherChangedEvent | TerrainChangedEvent;
     if (!fieldEffectChangedEvent) {
       return;
     }
 
     const oldType =
-    fieldEffectChangedEvent instanceof WeatherChangedEvent
-      ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
-      : TerrainType[fieldEffectChangedEvent.oldTerrainType];
+      fieldEffectChangedEvent instanceof WeatherChangedEvent
+        ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
+        : TerrainType[fieldEffectChangedEvent.oldTerrainType];
     const newInfo = {
       type:
         fieldEffectChangedEvent instanceof WeatherChangedEvent
@@ -166,7 +167,9 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
 
     const foundIndex = this.fieldEffectInfo.findIndex(info => [newInfo.type, oldType].includes(info.type));
     if (foundIndex === -1) {
-      this.fieldEffectInfo.push(newInfo);
+      if (newInfo.type !== undefined) {
+        this.fieldEffectInfo.push(newInfo);
+      }
     } else if (!newInfo.type) {
       this.fieldEffectInfo.splice(foundIndex, 1);
     } else {
@@ -176,7 +179,16 @@ export default class FightFlyout extends Phaser.GameObjects.Container {
     this.updateFieldText();
   }
 
-  onTurnEnd(event: Event) {
+  private onTagChanged(event: Event) {
+    const tagChangedEvent = event as TagChangedEvent;
+    if (!tagChangedEvent) {
+      return;
+    }
+
+
+  }
+
+  private onTurnEnd(event: Event) {
     const turnEndEvent = event as TurnEndEvent;
     if (!turnEndEvent) {
       return;
