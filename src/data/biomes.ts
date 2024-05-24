@@ -21,7 +21,7 @@ export function getBiomeName(biome: Biome | -1) {
   case Biome.SPACE:
     return "Stratosphere";
   case Biome.END:
-    return "Final Destination";
+    return "???";
   default:
     return Utils.toReadableString(Biome[biome]);
   }
