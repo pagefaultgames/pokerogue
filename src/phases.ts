@@ -2161,9 +2161,7 @@ export class TurnStartPhase extends FieldPhase {
         if (this.scene.currentBattle.double) {
           const playerActivePokemon = field.filter(pokemon => pokemon.isPlayer() && pokemon.isActive());
           // if only one pokemon is alive, use that one
-          if (playerActivePokemon.length < 2) {
-            runningPokemon = playerActivePokemon[0];
-          } else {
+          if (playerActivePokemon.length > 1) {
             // find which active pokemon has faster speed
             const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
             // check if either active pokemon has the ability "Run Away"
