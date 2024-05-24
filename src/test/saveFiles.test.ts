@@ -15,8 +15,8 @@ describe("Session import/export", () => {
   beforeAll(() => {
     game = new GameWrapper();
     scene = new BattleScene();
-    game.scene.add("battle-scene", scene);
-    gameData= new GameData(scene);
+    game.scene.add("battle", scene);
+    gameData = new GameData(scene);
 
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData.prsv", {encoding: "utf8", flag: "r"});
     let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
@@ -47,20 +47,9 @@ describe("Session import/export", () => {
     expect(sessionData.modifiers[0].typeId).toBe("EXP_CHARM");
     expect(sessionData.modifiers[0].stackCount).toBe(60);
   });
+
+  it('start a login phase to create a new session', () => {
+    // scene.launchBattle();
+  });
 });
 
-// describe("Check integrity of save files", () => {
-//   const game = new GameWrapper();
-//   const scene = new BattleScene();
-//   game.scene.add("battle-scene", scene);
-//
-//   const mode = scene.ui.getMode();
-//
-//   const gameData= new GameData(scene);
-//   const loginPhase = new LoginPhase(scene);
-//   loginPhase.start();
-//   scene.gameData.importData(GameDataType.SESSION, 0);
-//   // const sessionDataStr = fs.readFileSync("./src/test/data/sessionData.json", {encoding: "utf8", flag: "r"});
-//   // const sessionData = parseSessionData(sessionDataStr);
-//   // const test = gameData.loadSession(scene, 0, sessionData);
-// });
