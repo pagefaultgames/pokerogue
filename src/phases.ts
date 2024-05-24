@@ -2446,7 +2446,7 @@ export class MovePhase extends BattlePhase {
 
     targets.forEach(
       p => p.findTags(t => t instanceof AuraTag)
-            .forEach(t => p.lapseTag(t.tagType))
+        .forEach(t => p.lapseTag(t.tagType))
     );
 
     const doMove = () => {

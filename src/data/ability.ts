@@ -2922,7 +2922,7 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
  * Base class for aura effects. Aura effects apply tags
  * to a list of targets and keeps reapplying them as long
  * as the aura source is active.
- * 
+ *
  * @extends AbAttr
  */
 export class AuraAbAttr extends AbAttr {
@@ -2932,11 +2932,11 @@ export class AuraAbAttr extends AbAttr {
     super();
     this.targetFunc = targetFunc;
   }
- }
+}
 
 /**
  * Damage reduction aura triggered by {@linkcode Abilities.FRIEND_GUARD}.
- * 
+ *
  * @extends AuraAbAttr
  * @see {@linkcode apply}
  */
@@ -2949,7 +2949,7 @@ export class FriendGuardAbAttr extends AuraAbAttr {
    * Applies {@linkcode BattlerTagType.FRIEND_GUARD} to ally pokemon.
    * @param {Pokemon} pokemon that is the source of the aura effect.
    * @param {boolean} passive N/A
-   * @param {Utils.BooleanHolder} cancelled N/A 
+   * @param {Utils.BooleanHolder} cancelled N/A
    * @param args N/A
    * @returns true
    */

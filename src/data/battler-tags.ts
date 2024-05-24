@@ -1309,7 +1309,7 @@ export class CursedTag extends BattlerTag {
  * Base class for aura tag effects. Lapse is triggered
  * at the start of move phase. Tag is active as long
  * as the its source is active.
- * 
+ *
  * @extends BattlerTag
  * @see {@linkcode lapse}
  */
@@ -1331,7 +1331,7 @@ export abstract class AuraTag extends BattlerTag {
 
 /**
  * Tag that reduces received damage. Applied during pre-defend.
- * 
+ *
  * @extends AuraTag
  */
 export class ReceivedMoveDamageMultiplierTag extends AuraTag {
