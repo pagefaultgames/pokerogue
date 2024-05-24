@@ -139,10 +139,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "Iperpozione" },
     "MAX_POTION": { name: "Pozione Max" },
     "FULL_RESTORE": { name: "Ricarica Totale" },
-    
+
     "REVIVE": { name: "Revitalizzante" },
     "MAX_REVIVE": { name: "Revitalizzante Max" },
-    
+
     "FULL_HEAL": { name: "Cura Totale" },
 
     "SACRED_ASH": { name: "Cenere Magica" },
@@ -187,18 +187,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "Monetamuleto", description: "Aumenta le ricompense in denaro del 20%" },
     "GOLDEN_PUNCH": { name: "Pugno Dorato", description: "Garantisce il 50% dei danni inflitti come denaro" },
     "COIN_CASE": { name: "	Salvadanaio", description: "Dopo ogni 10° battaglia, riceverete il 10% del vostro denaro in interessi" },
-    
+
     "LOCK_CAPSULE": { name: "Capsula Scrigno", description: "Permette di bloccare le rarità degli oggetti quando si fa un reroll degli oggetti" },
 
     "GRIP_CLAW": { name: "Presartigli" },
     "WIDE_LENS": { name: "Grandelente" },
-    
+
     "MULTI_LENS": { name: "Multilente" },
 
     "HEALING_CHARM": { name: "Curamuleto", description: "Aumenta del 10% l'efficacia delle mosse e degli oggetti che ripristinano i PS (escluse le rianimazioni)" },
     "CANDY_JAR": { name: "Barattolo di caramelle", description: "Aumenta di 1 il numero di livelli aggiunti dalle Caramelle Rare" },
 
-    "BERRY_POUCH": { name: "Porta Bacche", description: "Aggiunge il 25% di possibilità che una bacca usata non venga consumata" },
+    "BERRY_POUCH": { name: "Porta Bacche", description: "Aggiunge il 33% di possibilità che una bacca usata non venga consumata" },
 
     "FOCUS_BAND": { name: "Bandana", description: "Chi ce l'ha ottiene il 10% di possibilità aggiuntivo di evitare un potenziale KO e rimanere con un solo PS" },
 
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "Aspropomo",
     "STRAWBERRY_SWEET": "Bonbonfragola",
     "UNREMARKABLE_TEACUP": "Tazza dozzinale",
-  
+
     "CHIPPED_POT": "Teiera crepata",
     "BLACK_AUGURITE": "Augite nera",
     "GALARICA_CUFF": "Fascia Galarnoce",
