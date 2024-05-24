@@ -205,7 +205,7 @@ export class Arena {
     case Biome.PLAINS:
     case Biome.METROPOLIS:
       return Type.NORMAL;
-    case Biome.GRASS:
+    case Biome.GRASSY_FIELD:
     case Biome.TALL_GRASS:
       return Type.GRASS;
     case Biome.FOREST:
@@ -246,7 +246,7 @@ export class Arena {
     case Biome.FACTORY:
     case Biome.LABORATORY:
       return Type.STEEL;
-    case Biome.RUINS:
+    case Biome.ANCIENT_RUINS:
     case Biome.SPACE:
       return Type.PSYCHIC;
     case Biome.WASTELAND:
@@ -380,7 +380,7 @@ export class Arena {
     case Biome.CONSTRUCTION_SITE:
       return 4;
     case Biome.PLAINS:
-    case Biome.GRASS:
+    case Biome.GRASSY_FIELD:
     case Biome.LAKE:
     case Biome.CAVE:
       return 6;
@@ -399,7 +399,7 @@ export class Arena {
       return 8;
     case Biome.ICE_CAVE:
     case Biome.VOLCANO:
-    case Biome.RUINS:
+    case Biome.ANCIENT_RUINS:
     case Biome.WASTELAND:
     case Biome.JUNGLE:
     case Biome.FAIRY_CAVE:
@@ -587,7 +587,7 @@ export class Arena {
       return 7.288;
     case Biome.PLAINS:
       return 7.693;
-    case Biome.GRASS:
+    case Biome.GRASSY_FIELD:
       return 1.995;
     case Biome.TALL_GRASS:
       return 9.608;
@@ -627,7 +627,7 @@ export class Arena {
       return 6.205;
     case Biome.FACTORY:
       return 4.985;
-    case Biome.RUINS:
+    case Biome.ANCIENT_RUINS:
       return 2.270;
     case Biome.WASTELAND:
       return 6.336;
@@ -675,7 +675,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
   case Biome.VOLCANO:
   case Biome.GRAVEYARD:
   case Biome.FACTORY:
-  case Biome.RUINS:
+  case Biome.ANCIENT_RUINS:
   case Biome.WASTELAND:
   case Biome.ABYSS:
   case Biome.CONSTRUCTION_SITE:
