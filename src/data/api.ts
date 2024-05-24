@@ -236,7 +236,7 @@ export async function printPokemon() {
     let generationIndex = 0;
 
     if (!region) {
-      while (++generationIndex < 9 && dexId > generationDexNumbers[generationIndex]){}
+      while (++generationIndex < 9 && dexId > generationDexNumbers[generationIndex]) {}
     } else {
       generationIndex = regionalForms.indexOf(region.toLowerCase()) + 6;
     }

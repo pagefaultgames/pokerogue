@@ -254,7 +254,7 @@ export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.hp === pokemon.getMaxHp() &&
         pokemon.getMaxHp() > 1 && //Checks if pokemon has wonder_guard (which forces 1hp)
-        (args[0] as Utils.NumberHolder).value >= pokemon.hp){ //Damage >= hp
+        (args[0] as Utils.NumberHolder).value >= pokemon.hp) { //Damage >= hp
       return pokemon.addTag(BattlerTagType.STURDY, 1);
     }
 
@@ -580,11 +580,11 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
     applyMoveAttrs(IncrementMovePriorityAttr,attacker,null,move.getMove(),attackPriority);
     applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move.getMove(), attackPriority);
 
-    if(move.getMove().moveTarget===MoveTarget.USER) {
+    if (move.getMove().moveTarget===MoveTarget.USER) {
       return false;
     }
 
-    if(attackPriority.value > 0 && !move.getMove().isMultiTarget()) {
+    if (attackPriority.value > 0 && !move.getMove().isMultiTarget()) {
       cancelled.value = true;
       return true;
     }
@@ -1036,7 +1036,7 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
   private newType: Type;
   private powerMultiplier: number;
 
-  constructor(matchType: Type, newType: Type, powerMultiplier: number){
+  constructor(matchType: Type, newType: Type, powerMultiplier: number) {
     super(true);
     this.matchType = matchType;
     this.newType = newType;
@@ -1067,7 +1067,7 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
   private powerMultiplier: number;
   private condition: PokemonAttackCondition;
 
-  constructor(newType: Type, powerMultiplier: number, condition: PokemonAttackCondition){
+  constructor(newType: Type, powerMultiplier: number, condition: PokemonAttackCondition) {
     super(true);
     this.newType = newType;
     this.powerMultiplier = powerMultiplier;
@@ -1096,7 +1096,7 @@ export class DamageBoostAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
   private condition: PokemonAttackCondition;
 
-  constructor(damageMultiplier: number, condition: PokemonAttackCondition){
+  constructor(damageMultiplier: number, condition: PokemonAttackCondition) {
     super(true);
     this.damageMultiplier = damageMultiplier;
     this.condition = condition;
@@ -1941,7 +1941,7 @@ export class MultCritAbAttr extends AbAttr {
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const critMult = args[0] as Utils.NumberHolder;
-    if (critMult.value > 1){
+    if (critMult.value > 1) {
       critMult.value *= this.multAmount;
       return true;
     }
@@ -1973,7 +1973,7 @@ export class ConditionalCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const target = (args[1] as Pokemon);
     const move = (args[2] as Move);
-    if(!this.condition(pokemon,target,move)) {
+    if (!this.condition(pokemon,target,move)) {
       return false;
     }
 
@@ -2491,8 +2491,8 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
-    for(const opp of pokemon.getOpponents()) {
-      if(opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
+    for (const opp of pokemon.getOpponents()) {
+      if (opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
         hadEffect = true;
@@ -2521,7 +2521,7 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
-    if(lastUsed !== null && pokemon.isPlayer) {
+    if (lastUsed !== null && pokemon.isPlayer) {
       pokemon.scene.pokeballCounts[lastUsed]++;
       pokemon.scene.currentBattle.lastUsedPokeball = null;
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` found a\n${getPokeballName(lastUsed)}!`));
@@ -2656,7 +2656,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
    * @returns if enemy Pokemon is trapped or not
    */
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
-    if (otherPokemon.getTypes().includes(Type.GHOST)){
+    if (otherPokemon.getTypes().includes(Type.GHOST)) {
       trapped.value = false;
       return false;
     }
