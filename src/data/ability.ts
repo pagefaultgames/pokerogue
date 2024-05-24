@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, OverrideMoveEffectAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -966,7 +966,9 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
     const type = (args[0] as Utils.IntegerHolder);
     if (type.value === this.matchType) {
       type.value = this.newType;
-      (args[1] as Utils.NumberHolder).value *= this.powerMultiplier;
+      if (args[1] && args[1] instanceof Utils.NumberHolder) {
+        args[1].value *= this.powerMultiplier;
+      }
       return true;
     }
 
@@ -982,23 +984,64 @@ export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
 }
 
 export class MoveTypeChangeAttr extends PreAttackAbAttr {
-  private newType: Type;
-  private powerMultiplier: number;
-  private condition: PokemonAttackCondition;
-
-  constructor(newType: Type, powerMultiplier: number, condition: PokemonAttackCondition) {
+  constructor(
+    private newType: Type,
+    private powerMultiplier: number,
+    private condition?: (move: Move) => boolean
+  ) {
     super(true);
-    this.newType = newType;
-    this.powerMultiplier = powerMultiplier;
-    this.condition = condition;
   }
 
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
-    if (this.condition(pokemon, defender, move.getMove())) {
+    if (this.condition && this.condition(move.getMove())) {
       const type = (args[0] as Utils.IntegerHolder);
       type.value = this.newType;
-      (args[1] as Utils.NumberHolder).value *= this.powerMultiplier;
+
+      if (args[1] && args[1] instanceof Utils.NumberHolder) {
+        args[1].value *= this.powerMultiplier;
+      }
       return true;
+    }
+
+    return false;
+  }
+}
+
+/** Ability attribute for changing a pokemon's type before using a move */
+export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    if (
+      // If the user Terastallizes, the effect will be nullified.
+      !pokemon.isTerastallized() &&
+      // Only activates once per switch in.
+      !pokemon.battleSummonData.hasChangedType &&
+      // When using a move that calls another move (such as Nature Power), the type of the called move will be considered.
+      !move.getMove().attrs.find((m) => m instanceof OverrideMoveEffectAttr)
+    ) {
+      const moveType = new Utils.IntegerHolder(move.getMove().type);
+
+      // Moves like Weather Ball ignore effects of abilities like Normalize and Refrigerate
+      if (move.getMove().attrs.some(attr => attr instanceof VariableMoveTypeAttr)) {
+        // Moves that have variable types
+        applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, move.getMove(), moveType);
+      } else {
+        // Abilities that change move types
+        applyAbAttrs(VariableMoveTypeAbAttr, pokemon, null, moveType);
+        applyPreAttackAbAttrs(MoveTypeChangeAttr, pokemon, null, move, moveType);
+      }
+
+      if (pokemon.getTypes().some((t) => t !== moveType.value)) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed into the ${Type[moveType.value]} type!`));
+        pokemon.battleSummonData.hasChangedType = true;
+        pokemon.summonData.types = [moveType.value];
+        pokemon.updateInfo();
+
+        return true;
+      }
     }
 
     return false;
@@ -3395,8 +3438,9 @@ export function initAbilities() {
       .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, 4)
-      .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL &&
-            move.id !== Moves.NATURAL_GIFT && move.id !== Moves.JUDGMENT && move.id !== Moves.TECHNO_BLAST),
+      .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (move) => {
+        return ![Moves.HIDDEN_POWER, Moves.WEATHER_BALL, Moves.NATURAL_GIFT, Moves.JUDGMENT, Moves.TECHNO_BLAST].includes(move.id);
+      }),
     new Ability(Abilities.SNIPER, 4)
       .attr(MultCritAbAttr, 1.5),
     new Ability(Abilities.MAGIC_GUARD, 4)
@@ -3613,7 +3657,7 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .unimplemented(),
+      .attr(PokemonTypeChangeAbAttr),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -3711,7 +3755,7 @@ export function initAbilities() {
     new Ability(Abilities.LONG_REACH, 7)
       .attr(IgnoreContactAbAttr),
     new Ability(Abilities.LIQUID_VOICE, 7)
-      .attr(MoveTypeChangeAttr, Type.WATER, 1, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED)),
+      .attr(MoveTypeChangeAttr, Type.WATER, 1, (move) => move.hasFlag(MoveFlags.SOUND_BASED)),
     new Ability(Abilities.TRIAGE, 7)
       .attr(IncrementMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
     new Ability(Abilities.GALVANIZE, 7)
@@ -3837,7 +3881,7 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true)
       .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
-      .unimplemented(),
+      .attr(PokemonTypeChangeAbAttr),
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),

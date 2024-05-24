@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -2572,6 +2572,10 @@ export class MovePhase extends BattlePhase {
   }
 
   getEffectPhase(): MoveEffectPhase {
+    // Trigger pokemon type change before playing the move animation
+    if (this.pokemon.hasAbilityWithAttr(PokemonTypeChangeAbAttr)) {
+      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move);
+    }
     return new MoveEffectPhase(this.scene, this.pokemon.getBattlerIndex(), this.targets, this.move);
   }
 
