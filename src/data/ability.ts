@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, OverrideMoveEffectAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -3660,7 +3660,7 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && move.id !== Moves.NATURE_POWER) // should not trigger if user is already the same type as move or if the used move is struggle or nature power (since nature power queues another move instead of replaces the existing one)
+      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.attrs.some(attr => attr instanceof OverrideMoveEffectAttr)) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since nature power queues another move instead of replaces the existing one)
       .condition(getOncePerSwitchInCondition(Abilities.PROTEAN)),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
@@ -3885,7 +3885,7 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true)
       .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
-      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && move.id !== Moves.NATURE_POWER) // should not trigger if user is already the same type as move or if the used move is struggle or nature power (since nature power queues another move instead of replaces the existing one)
+      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.attrs.some(attr => attr instanceof OverrideMoveEffectAttr)) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since nature power queues another move instead of replaces the existing one)
       .condition(getOncePerSwitchInCondition(Abilities.LIBERO)),
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
