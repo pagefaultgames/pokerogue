@@ -17,6 +17,7 @@ import {initPokemonForms} from "#app/data/pokemon-forms";
 import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
+import {initTrainerTypeDialogue} from "#app/data/dialogue";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -298,6 +299,7 @@ export class LoadingScene extends SceneBase {
     initBiomes();
     initEggMoves();
     initPokemonForms();
+    initTrainerTypeDialogue();
     initSpecies();
     initMoves();
     initAbilities();
