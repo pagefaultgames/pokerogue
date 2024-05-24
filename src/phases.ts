@@ -1646,7 +1646,7 @@ export class CheckSwitchPhase extends BattlePhase {
     super.start();
 
     const pokemon = this.scene.getPlayerField()[this.fieldIndex];
-    
+
     this.scene.getParty().forEach((pokemon) => {
       pokemon.updateNameColor();
     });

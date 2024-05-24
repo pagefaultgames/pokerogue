@@ -1072,7 +1072,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
-    if (move.getMove().category === MoveCategory.STATUS) return undefined;
+    if (move.getMove().category === MoveCategory.STATUS) {
+      return undefined;
+    }
+
     return this.getAttackMoveEffectiveness(source, move);
   }
 
@@ -1560,16 +1563,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   updateNameColor() {
     const nameColor = this.getNameColor();
-    if (nameColor === undefined) return;
+    if (nameColor === undefined) {
+      return;
+    }
 
     this.battleInfo.updateNameColor(nameColor);
   }
 
   getNameColor(): string | undefined {
     const typeHints = this.scene.typeHints;
-    if (typeHints !== 2) return undefined;
+    if (typeHints !== 2) {
+      return undefined;
+    }
+
     const opponents = this.getOpponents();
-    if (opponents.length <= 0) return undefined;
+    if (opponents.length <= 0) {
+      return undefined;
+    }
 
     const opponentTypeEffectivenessList = opponents.map((opponent) => {
       return opponent.getTypes().map((type) => {
@@ -1606,7 +1616,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.effectivenessContainer.setVisible(false);
       return;
     }
-    
+
     this.effectivenessText.setText(effectiveness);
     this.effectivenessWindow.width = 10 + this.effectivenessText.displayWidth;
     this.effectivenessContainer.setVisible(true);

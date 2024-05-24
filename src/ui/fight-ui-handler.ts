@@ -181,7 +181,7 @@ export default class FightUiHandler extends UiHandler {
       this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
-      
+
       pokemon.getOpponents().forEach((opponent) => {
         opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
       });
@@ -203,7 +203,9 @@ export default class FightUiHandler extends UiHandler {
 
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
     const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove);
-    if (effectiveness === undefined) return undefined;
+    if (effectiveness === undefined) {
+      return undefined;
+    }
 
     return `${effectiveness}x`;
   }
@@ -226,10 +228,14 @@ export default class FightUiHandler extends UiHandler {
   }
 
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string {
-    if (this.scene.typeHints === 0) return "white";
+    if (this.scene.typeHints === 0) {
+      return "white";
+    }
 
     const opponents = pokemon.getOpponents();
-    if (opponents.length <= 0) return "white";
+    if (opponents.length <= 0) {
+      return "white";
+    }
 
     const moveColors = opponents.map((opponent) => {
       return opponent.getMoveEffectiveness(pokemon, pokemonMove);
@@ -256,7 +262,7 @@ export default class FightUiHandler extends UiHandler {
 
   clearMoves() {
     this.movesContainer.removeAll(true);
-    
+
     const opponents = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
     opponents.forEach((opponent) => {
       opponent.updateEffectiveness(undefined);
