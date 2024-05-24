@@ -33,7 +33,7 @@ export const weather: SimpleTranslationEntries = {
   "heavyRainStartMessage": "Une pluie battante s’abat soudainement !",
   "heavyRainLapseMessage": "La pluie battante continue.",
   "heavyRainClearMessage": "La pluie battante s’est arrêtée…",
-    
+
   "harshSunStartMessage": "Les rayons du soleil s’intensifient !",
   "harshSunLapseMessage": "Les rayons du soleil sont brulants !",
   "harshSunClearMessage": "Les rayons du soleil s’affaiblissent !",

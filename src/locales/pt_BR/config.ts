@@ -22,7 +22,7 @@ import { berry } from "./berry";
 import { voucher } from "./voucher";
 
 
-export const ptBrConfig = {    
+export const ptBrConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,

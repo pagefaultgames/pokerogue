@@ -12,6 +12,8 @@ import { BattleStat } from "#app/data/battle-stat";
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
+  private baseY: number;
+
   private player: boolean;
   private mini: boolean;
   private boss: boolean;
@@ -47,7 +49,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private type2Icon: Phaser.GameObjects.Sprite;
   private type3Icon: Phaser.GameObjects.Sprite;
   private expBar: Phaser.GameObjects.Image;
-  
+
   public expMaskRect: Phaser.GameObjects.Graphics;
 
   private statsContainer: Phaser.GameObjects.Container;
@@ -57,6 +59,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
+    this.baseY = y;
     this.player = player;
     this.mini = !player;
     this.boss = false;
@@ -265,7 +268,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const opponentPokemonDexAttr = pokemon.getDexAttr();
 
       // Check if Player owns all genders and forms of the Pokemon
-      const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr); 
+      const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr);
 
       /**
        * If the opposing Pokemon only has 1 normal ability and is using the hidden ability it should have the same behavior
@@ -374,7 +377,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     if (boss !== this.boss) {
       this.boss = boss;
-      
+
       [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.ownedIcon, this.statusIndicator, this.levelContainer, this.statValuesContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
@@ -382,7 +385,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.box.setTexture(this.getTextureName());
       this.statsBox.setTexture(`${this.getTextureName()}_stats`);
     }
-    
+
     this.bossSegments = boss ? pokemon.bossSegments : 0;
     this.updateBossSegmentDividers(pokemon);
   }
@@ -407,16 +410,17 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
     }
   }
-  
+
   setOffset(offset: boolean): void {
     if (this.offset === offset) {
       return;
     }
-    
+
     this.offset = offset;
 
     this.x += 10 * (offset === this.player ? 1 : -1);
     this.y += 27 * (offset ? 1 : -1);
+    this.baseY = this.y;
   }
 
   updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
@@ -431,7 +435,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.updateNameText(pokemon);
         this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
       }
-      
+
       const teraType = pokemon.getTeraType();
       const teraTypeUpdated = this.lastTeraType !== teraType;
 
@@ -457,7 +461,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
         }
         this.statusIndicator.setVisible(!!this.lastStatus);
-        
+
         if (!this.player && this.ownedIcon.visible) {
           this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
         }
@@ -539,7 +543,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         ? pokemon.summonData.battleStats
         : battleStatOrder.map(() => 0);
       const battleStatsStr = battleStats.join("");
-        
+
       if (this.lastBattleStats !== battleStatsStr) {
         this.updateBattleStats(battleStats);
         this.lastBattleStats = battleStatsStr;
@@ -654,6 +658,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     battleStatOrder.map((s, i) => {
       this.statNumbers[i].setFrame(battleStats[s].toString());
     });
+  }
+
+  getBaseY(): number {
+    return this.baseY;
+  }
+
+  resetY(): void {
+    this.y = this.baseY;
   }
 }
 

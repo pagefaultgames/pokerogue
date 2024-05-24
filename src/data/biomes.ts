@@ -7157,7 +7157,7 @@ export function initBiomes() {
       [ Biome.JUNGLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ TrainerType.BAKER, [ 
+    [ TrainerType.BAKER, [
       [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
     ]
     ],
@@ -7265,7 +7265,7 @@ export function initBiomes() {
     ]
     ],
     [ TrainerType.SMASHER, [] ],
-    [ TrainerType.SNOW_WORKER, [ 
+    [ TrainerType.SNOW_WORKER, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
     ]

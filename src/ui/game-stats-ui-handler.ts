@@ -102,7 +102,7 @@ export default class GameStatsUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
     this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -156,9 +156,9 @@ export default class GameStatsUiHandler extends UiHandler {
     super.show(args);
 
     this.setCursor(0);
-    
+
     this.updateStats();
-    
+
     this.gameStatsContainer.setVisible(true);
 
     this.getUi().moveTo(this.gameStatsContainer, this.getUi().length - 1);
