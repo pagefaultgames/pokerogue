@@ -115,3 +115,29 @@ function bindKey(node, key, buttonMap) {
     }
   });
 }
+
+/**
+ * {@link https://stackoverflow.com/a/39778831/4622620|Source}
+ *
+ * Prevent zoom on specified element
+ * @param {HTMLElement} element
+ */
+function preventElementZoom(element) {
+  element.addEventListener("touchstart", (event) => {
+    const t2 = event.timeStamp;
+    const t1 = event.currentTarget.dataset.lastTouch || t2;
+    const dt = t2 - t1;
+    const fingers = event.touches.length;
+    event.currentTarget.dataset.lastTouch = t2;
+
+    if (!dt || dt > 500 || fingers > 1) {
+      return;
+    } // not double-tap
+
+    event.preventDefault();
+    event.target.click();
+  });
+}
+
+const dPadCenterRect = document.querySelector("#dpadCenter");
+preventElementZoom(dPadCenterRect);
