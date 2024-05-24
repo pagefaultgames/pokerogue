@@ -950,6 +950,40 @@ export class VariableMoveTypeAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Before an attack, changes the type of the pokemon using said attack to the type of the move being used
+ * @extends PreAttackAbAttr
+ * @see {@link Abilities.PROTEAN} {@link Abilities.LIBERO}
+ */
+export class UserTypeChangeToMoveTypeAbAttr extends PreAttackAbAttr {
+  private condition: PokemonAttackCondition;
+
+  constructor(condition: PokemonAttackCondition) {
+    super(true);
+    this.condition = condition;
+  }
+
+  /**
+   * 
+   * @param pokemon 
+   * @param passive 
+   * @param defender 
+   * @param move 
+   * @param {Type} args the types to change to.
+   * @returns 
+   */
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: Type[]): boolean | Promise<boolean> {
+    if (this.condition(pokemon, defender, move.getMove())) {
+      pokemon.summonData.ability = pokemon.getAbility().id;
+      pokemon.summonData.types = args;
+      pokemon.updateInfo();
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr {
   private matchType: Type;
   private newType: Type;
@@ -2040,6 +2074,19 @@ function getAnticipationCondition(): AbAttrCondition {
 function getOncePerBattleCondition(ability: Abilities): AbAttrCondition {
   return (pokemon: Pokemon) => {
     return !pokemon.battleData?.abilitiesApplied.includes(ability);
+  };
+}
+
+/**
+ * Creates an ability condition that causes the ability to fail if that ability
+ * has already been used by that pokemon this switch in. Once switched out for
+ * any reason, this will allow the ability to trigger again.
+ * @param {Abilities} ability The ability to check if it's already been applied
+ * @returns {AbAttrCondition} The condition 
+ */
+function getOncePerSwitchInCondition(ability: Abilities): AbAttrCondition {
+  return (pokemon: Pokemon) => {
+    return pokemon.summonData?.ability !== ability;
   };
 }
 
@@ -3613,7 +3660,8 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .unimplemented(),
+      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && move.id !== Moves.NATURE_POWER) // should not trigger if user is already the same type as move or if the used move is struggle or nature power (since nature power queues another move instead of replaces the existing one)
+      .condition(getOncePerSwitchInCondition(Abilities.PROTEAN)),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -3837,7 +3885,8 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true)
       .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
-      .unimplemented(),
+      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && move.id !== Moves.NATURE_POWER) // should not trigger if user is already the same type as move or if the used move is struggle or nature power (since nature power queues another move instead of replaces the existing one)
+      .condition(getOncePerSwitchInCondition(Abilities.LIBERO)),
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
