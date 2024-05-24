@@ -58,7 +58,8 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
       } else {
         this.reconnectDuration = Math.min(this.reconnectDuration * 2, this.maxTime); // Set a max delay so it isn't infinite
         this.reconnectTimer =
-          setTimeout(this.tryReconnect,
+          setTimeout(
+            () => this.tryReconnect(),
             // Adds a random factor to avoid pendulum effect during long total breakdown
             this.reconnectDuration + (Math.random() * this.randVarianceTime));
       }
@@ -73,7 +74,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
       this.reconnectCallback = args[0];
       this.reconnectDuration = this.minTime;
-      this.reconnectTimer = setTimeout(this.tryReconnect, this.reconnectDuration);
+      this.reconnectTimer = setTimeout(() => this.tryReconnect(), this.reconnectDuration);
 
       return super.show([ config ]);
     }
