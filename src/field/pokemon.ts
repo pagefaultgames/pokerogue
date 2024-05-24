@@ -3677,11 +3677,6 @@ export class PokemonBattleSummonData {
   public turnCount: integer = 1;
   /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
-  /**
-   * Whether the pokemon has already changed it's type since entering the battle
-   * @see {@linkcode Abilities.PROTEAN} and {@linkcode Abilities.LIBERO}
-   */
-  public hasChangedType: boolean = false;
 }
 
 export class PokemonTurnData {

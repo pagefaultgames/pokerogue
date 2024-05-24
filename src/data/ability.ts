@@ -1017,8 +1017,6 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
     if (
       // If the user Terastallizes, the effect will be nullified.
       !pokemon.isTerastallized() &&
-      // Only activates once per switch in.
-      !pokemon.battleSummonData.hasChangedType &&
       // When using a move that calls another move (such as Nature Power), the type of the called move will be considered.
       !move.getMove().attrs.find((m) => m instanceof OverrideMoveEffectAttr)
     ) {
@@ -1036,7 +1034,6 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 
       if (pokemon.getTypes().some((t) => t !== moveType.value)) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed into the ${Type[moveType.value]} type!`));
-        pokemon.battleSummonData.hasChangedType = true;
         pokemon.summonData.types = [moveType.value];
         pokemon.updateInfo();
 
