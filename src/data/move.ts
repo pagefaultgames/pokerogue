@@ -4215,7 +4215,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
         case Biome.PLAINS:
           moveId = Moves.SILVER_WIND;
           break;
-        case Biome.GRASSY_FIELD:
+        case Biome.GRASS:
           moveId = Moves.GRASS_KNOT;
           break;
         case Biome.TALL_GRASS:
@@ -4278,7 +4278,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
         case Biome.GRAVEYARD:
           moveId = Moves.SHADOW_BALL;
           break;
-        case Biome.ANCIENT_RUINS:
+        case Biome.RUINS:
           moveId = Moves.ANCIENT_POWER;
           break;
         case Biome.TEMPLE:

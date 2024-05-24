@@ -2,7 +2,7 @@
 export enum Biome {
   TOWN,
   PLAINS,
-  GRASSY_FIELD,
+  GRASS,
   TALL_GRASS,
   METROPOLIS,
   FOREST,
@@ -22,7 +22,7 @@ export enum Biome {
   GRAVEYARD,
   DOJO,
   FACTORY,
-  ANCIENT_RUINS,
+  RUINS,
   WASTELAND,
   ABYSS,
   SPACE,

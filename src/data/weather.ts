@@ -255,7 +255,7 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
   let weatherPool: WeatherPoolEntry[] = [];
   const hasSun = arena.getTimeOfDay() < 2;
   switch (arena.biomeType) {
-  case Biome.GRASSY_FIELD:
+  case Biome.GRASS:
     weatherPool = [
       { weatherType: WeatherType.NONE, weight: 7 }
     ];
