@@ -23,7 +23,7 @@ import { berry } from "./berry";
 import { voucher } from "./voucher";
 import {dialogue, battleSpecDialogue, miscDialogue} from "./dialogue";
 
-export const enConfig = {    
+export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,

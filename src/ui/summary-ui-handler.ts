@@ -38,11 +38,11 @@ interface abilityContainer {
   /** An image displaying the summary label */
   labelImage: Phaser.GameObjects.Image,
   /** The ability object */
-  ability: Ability, 
+  ability: Ability,
   /** The text object displaying the name of the ability */
   nameText: Phaser.GameObjects.Text,
-  /** The text object displaying the description of the ability */ 
-  descriptionText: Phaser.GameObjects.Text,  
+  /** The text object displaying the description of the ability */
+  descriptionText: Phaser.GameObjects.Text,
 }
 
 export default class SummaryUiHandler extends UiHandler {
@@ -145,7 +145,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.splicedIcon.setScale(0.75);
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.splicedIcon);
-    
+
     this.shinyIcon = this.scene.add.image(0, -54, "shiny_star");
     this.shinyIcon.setVisible(false);
     this.shinyIcon.setOrigin(0, 0);
@@ -203,7 +203,7 @@ export default class SummaryUiHandler extends UiHandler {
     statusBg.setOrigin(0, 0);
 
     this.statusContainer.add(statusBg);
-    
+
     const statusLabel = addTextObject(this.scene, 3, 0, "Status", TextStyle.SUMMARY);
     statusLabel.setOrigin(0, 0);
 
@@ -310,7 +310,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.splicedIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
-    if(this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
+    if (this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
       this.championRibbon.setVisible(true);
     } else {
       this.championRibbon.setVisible(false);
@@ -335,7 +335,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
-    
+
     this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1, 3);
     this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
     this.shinyIcon.setVisible(this.pokemon.isShiny());
@@ -412,7 +412,7 @@ export default class SummaryUiHandler extends UiHandler {
                 const tempMove = this.pokemon.moveset[this.selectedMoveIndex];
                 this.pokemon.moveset[this.selectedMoveIndex] = this.pokemon.moveset[this.moveCursor];
                 this.pokemon.moveset[this.moveCursor] = tempMove;
-                
+
                 const selectedMoveRow = this.moveRowsContainer.getAt(this.selectedMoveIndex) as Phaser.GameObjects.Container;
                 const switchMoveRow = this.moveRowsContainer.getAt(this.moveCursor) as Phaser.GameObjects.Container;
 
@@ -449,8 +449,8 @@ export default class SummaryUiHandler extends UiHandler {
           break;
         case Button.LEFT:
           this.moveSelect = false;
-          this.setCursor(Page.STATS);        
-          if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
+          this.setCursor(Page.STATS);
+          if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
             this.hideMoveEffect();
             this.destroyBlinkCursor();
             success = true;
@@ -469,7 +469,7 @@ export default class SummaryUiHandler extends UiHandler {
           success = true;
         } else if (this.cursor === Page.PROFILE && this.pokemon.hasPassive()) {
           // if we're on the PROFILE page and this pokemon has a passive unlocked..
-          // Since abilities are displayed by default, all we need to do is toggle visibility on all elements to show passives 
+          // Since abilities are displayed by default, all we need to do is toggle visibility on all elements to show passives
           this.abilityContainer.nameText.setVisible(!this.abilityContainer.descriptionText.visible);
           this.abilityContainer.descriptionText.setVisible(!this.abilityContainer.descriptionText.visible);
           this.abilityContainer.labelImage.setVisible(!this.abilityContainer.labelImage.visible);
@@ -530,7 +530,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   setCursor(cursor: integer, overrideChanged: boolean = false): boolean {
     let changed: boolean = overrideChanged || this.moveCursor !== cursor;
-    
+
     if (this.moveSelect) {
       this.moveCursor = cursor;
 
@@ -623,10 +623,10 @@ export default class SummaryUiHandler extends UiHandler {
             x: forward ? "-=214" : "+=214",
             duration: 250,
             onComplete: () => {
-              if (forward){
-                this.populatePageContainer(this.summaryPageContainer); 
+              if (forward) {
+                this.populatePageContainer(this.summaryPageContainer);
                 if (this.cursor===Page.MOVES) {
-                  this.moveCursorObj = null; 
+                  this.moveCursorObj = null;
                   this.showMoveSelect();
                   this.showMoveEffect();
                 }
@@ -668,7 +668,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.descriptionScrollTween.remove();
       this.descriptionScrollTween = null;
     }
-    
+
     switch (page) {
     case Page.PROFILE:
       const profileContainer = this.scene.add.container(0, -pageBg.height);
@@ -718,7 +718,7 @@ export default class SummaryUiHandler extends UiHandler {
         const luckLabelText = addTextObject(this.scene, 141, 28, "Luck:", TextStyle.SUMMARY_ALT);
         luckLabelText.setOrigin(0, 0);
         profileContainer.add(luckLabelText);
-          
+
         const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
         luckText.setOrigin(0, 0);
         luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
@@ -727,18 +727,18 @@ export default class SummaryUiHandler extends UiHandler {
 
       this.abilityContainer = {
         labelImage: this.scene.add.image(0, 0, "summary_profile_ability"),
-        ability: this.pokemon.getAbility(true), 
-        nameText: null, 
+        ability: this.pokemon.getAbility(true),
+        nameText: null,
         descriptionText: null};
-        
+
       const allAbilityInfo = [this.abilityContainer]; // Creates an array to iterate through
       // Only add to the array and set up displaying a passive if it's unlocked
       if (this.pokemon.hasPassive()) {
         this.passiveContainer = {
           labelImage: this.scene.add.image(0, 0, "summary_profile_passive"),
-          ability: this.pokemon.getPassiveAbility(), 
-          nameText: null, 
-          descriptionText: null};          
+          ability: this.pokemon.getPassiveAbility(),
+          nameText: null,
+          descriptionText: null};
         allAbilityInfo.push(this.passiveContainer);
 
         // Sets up the pixel button prompt image
@@ -749,7 +749,7 @@ export default class SummaryUiHandler extends UiHandler {
         profileContainer.add(this.abilityPrompt);
       }
 
-      allAbilityInfo.forEach(abilityInfo => {          
+      allAbilityInfo.forEach(abilityInfo => {
         abilityInfo.labelImage.setPosition(17, 43);
         abilityInfo.labelImage.setVisible(true);
         abilityInfo.labelImage.setOrigin(0, 0);
@@ -795,7 +795,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.passiveContainer?.descriptionText.setVisible(false);
 
       const memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.getNature()]), TextStyle.SUMMARY_RED)}${getBBCodeFrag(" nature,", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? "apparently " : ""}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(",", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag(".", TextStyle.WINDOW_ALT)}`;
-       
+
       const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW_ALT);
       memoText.setOrigin(0, 0);
       profileContainer.add(memoText);
@@ -830,13 +830,13 @@ export default class SummaryUiHandler extends UiHandler {
 
       const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[];
-        
+
       itemModifiers.forEach((item, i) => {
         const icon = item.getIcon(this.scene, true);
 
         icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
         statsContainer.add(icon);
-          
+
         icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
         icon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(item.type.name, item.type.getDescription(this.scene), true));
         icon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
@@ -1017,12 +1017,12 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = false;
     this.extraMoveRowContainer.setVisible(false);
     this.moveDescriptionText.setText("");
-    
+
     this.destroyBlinkCursor();
     this.hideMoveEffect();
   }
 
-  destroyBlinkCursor(){
+  destroyBlinkCursor() {
     if (this.moveCursorBlinkTimer) {
       this.moveCursorBlinkTimer.destroy();
       this.moveCursorBlinkTimer = null;

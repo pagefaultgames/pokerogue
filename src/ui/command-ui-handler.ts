@@ -27,11 +27,11 @@ export default class CommandUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    const commands = [ 
-      i18next.t("commandUiHandler:fight"), 
-      i18next.t("commandUiHandler:ball"), 
-      i18next.t("commandUiHandler:pokemon"), 
-      i18next.t("commandUiHandler:run") 
+    const commands = [
+      i18next.t("commandUiHandler:fight"),
+      i18next.t("commandUiHandler:ball"),
+      i18next.t("commandUiHandler:pokemon"),
+      i18next.t("commandUiHandler:run")
     ];
 
     this.commandsContainer = this.scene.add.container(216, -38.7);
@@ -77,7 +77,7 @@ export default class CommandUiHandler extends UiHandler {
     const cursor = this.getCursor();
 
     if (button === Button.CANCEL || button === Button.ACTION) {
-      
+
       if (button === Button.ACTION) {
         switch (cursor) {
         // Fight

@@ -33,7 +33,7 @@ export const weather: SimpleTranslationEntries = {
   "heavyRainStartMessage": "開始下起了暴雨!",
   "heavyRainLapseMessage": "暴雨勢頭不減。",
   "heavyRainClearMessage": "暴雨停了。",
-    
+
   "harshSunStartMessage": "日照變得非常強了！",
   "harshSunLapseMessage": "強日照勢頭不減。",
   "harshSunClearMessage": "日照復原了。",
