@@ -251,13 +251,15 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.statsContainer = this.scene.add.container(0, 0);
 
+
     new Array(18).fill(null).map((_, s) => {
-      const statLabel = addTextObject(this.scene, 8 + (s % 2 === 1 ? statsBgWidth : 0), 28 + Math.floor(s / 2) * 16, "", TextStyle.SETTINGS_LABEL);
+
+      const statLabel = addTextObject(this.scene, 8 + (s % 2 === 1 ? statsBgWidth : 0), 28 + Math.floor(s / 2) * 16, "", TextStyle.STATS_LABEL);
       statLabel.setOrigin(0, 0);
       this.statsContainer.add(statLabel);
       this.statLabels.push(statLabel);
 
-      const statValue = addTextObject(this.scene, (statsBgWidth * ((s % 2) + 1)) - 8, statLabel.y, "", TextStyle.WINDOW);
+      const statValue = addTextObject(this.scene, (statsBgWidth * ((s % 2) + 1)) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
       statValue.setOrigin(1, 0);
       this.statsContainer.add(statValue);
       this.statValues.push(statValue);
