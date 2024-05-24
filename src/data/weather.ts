@@ -216,34 +216,34 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
 export function getTerrainStartMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return "Mist swirled around the battlefield!";
+    return "Mist swirled around the battlefield! a modif";
   case TerrainType.ELECTRIC:
-    return "An electric current ran across the battlefield!";
+    return "An electric current ran across the battlefield! a modif";
   case TerrainType.GRASSY:
-    return "Grass grew to cover the battlefield!";
+    return "Grass grew to cover the battlefield! a modif";
   case TerrainType.PSYCHIC:
-    return "The battlefield got weird!";
+    return "The battlefield got weird! a modif";
   }
 }
 
 export function getTerrainClearMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return "The mist disappeared from the battlefield.";
+    return "The mist disappeared from the battlefield. a modif";
   case TerrainType.ELECTRIC:
-    return "The electricity disappeared from the battlefield.";
+    return "The electricity disappeared from the battlefield. a modif";
   case TerrainType.GRASSY:
-    return "The grass disappeared from the battlefield.";
+    return "The grass disappeared from the battlefield. a modif";
   case TerrainType.PSYCHIC:
-    return "The weirdness disappeared from the battlefield!";
+    return "The weirdness disappeared from the battlefield! a modif";
   }
 }
 
 export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
   if (terrainType === TerrainType.MISTY) {
-    return getPokemonMessage(pokemon, " surrounds itself with a protective mist!");
+    return getPokemonMessage(pokemon, " surrounds itself with a protective mist! a modif");
   }
-  return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain!`);
+  return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain! a modif`);
 }
 
 interface WeatherPoolEntry {

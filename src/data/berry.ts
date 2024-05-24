@@ -85,7 +85,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-        hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
+        hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP! a modif`), true));
     };
   case BerryType.LUM:
     return (pokemon: Pokemon) => {
@@ -139,7 +139,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio()) ? pokemon.getMoveset().find(m => !m.getPpRatio()) : pokemon.getMoveset().find(m => m.getPpRatio() < 1);
       if (ppRestoreMove !== undefined) {
         ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}!`));
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}! a modif`));
       }
     };
   }

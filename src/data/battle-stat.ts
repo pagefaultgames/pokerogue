@@ -34,30 +34,30 @@ export function getBattleStatLevelChangeDescription(levels: integer, up: boolean
   if (up) {
     switch (levels) {
     case 1:
-      return "rose";
+      return "rose a modif";
     case 2:
-      return "sharply rose";
+      return "sharply rose a modif";
     case 3:
     case 4:
     case 5:
     case 6:
-      return "rose drastically";
+      return "rose drastically a modif";
     default:
-      return "won't go any higher";
+      return "won't go any higher a modif";
     }
   } else {
     switch (levels) {
     case 1:
-      return "fell";
+      return "fell a modif";
     case 2:
-      return "harshly fell";
+      return "harshly fell a modif";
     case 3:
     case 4:
     case 5:
     case 6:
-      return "severely fell";
+      return "severely fell a modif";
     default:
-      return "won't go any lower";
+      return "won't go any lower a modif";
     }
   }
 }

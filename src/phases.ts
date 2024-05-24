@@ -2199,7 +2199,7 @@ export class BerryPhase extends FieldPhase {
         pokemon.getOpponents().map((opp) => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
         if (cancelled.value) {
-          pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is too\nnervous to eat berries!"));
+          pokemon.scene.queueMessage(i18next.t("phases:berryNervous", { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}` }));
         } else {
           this.scene.unshiftPhase(new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM));
 
@@ -2244,7 +2244,7 @@ export class TurnEndPhase extends FieldPhase {
 
       if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
         this.scene.unshiftPhase(new PokemonHealPhase(this.scene, pokemon.getBattlerIndex(),
-          Math.max(pokemon.getMaxHp() >> 4, 1), getPokemonMessage(pokemon, "'s HP was restored."), true));
+          Math.max(pokemon.getMaxHp() >> 4, 1), i18next.t("phases:restoredHp", {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}` }), true));
       }
 
       if (!pokemon.isPlayer()) {
@@ -2389,7 +2389,7 @@ export class MovePhase extends BattlePhase {
 
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId) {
-        this.scene.queueMessage(`${this.move.getName()} is disabled!`);
+        this.scene.queueMessage(i18next.t("phases:moveDisabled", { moveName: this.move.getName() }));
       }
       return this.end();
     }
@@ -2579,7 +2579,7 @@ export class MovePhase extends BattlePhase {
     if (this.move.getMove().getAttrs(ChargeAttr).length) {
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER) {
-        this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+        this.scene.queueMessage(i18next.t("phases:moveUsed", {pokemonName: getPokemonMessage(this.pokemon,""), moveName: this.move.getName()}), 500);
         return;
       }
     }
@@ -2588,7 +2588,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+    this.scene.queueMessage(i18next.t("phases:moveUsed", {pokemonName: getPokemonMessage(this.pokemon,""), moveName: this.move.getName()}), 500);
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents().find(() => true), this.move.getMove());
   }
 
@@ -2656,7 +2656,7 @@ export class MoveEffectPhase extends PokemonPhase {
         user.turnData.hitCount = 1;
         user.turnData.hitsLeft = 1;
         if (activeTargets.length) {
-          this.scene.queueMessage(getPokemonMessage(user, "'s\nattack missed!"));
+          this.scene.queueMessage(i18next.t("battle:attackFailed", { pokemonName: getPokemonMessage(user,"") }));
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
         } else {
@@ -2674,7 +2674,7 @@ export class MoveEffectPhase extends PokemonPhase {
           if (!targetHitChecks[target.getBattlerIndex()]) {
             user.turnData.hitCount = 1;
             user.turnData.hitsLeft = 1;
-            this.scene.queueMessage(getPokemonMessage(user, "'s\nattack missed!"));
+            this.scene.queueMessage(i18next.t("battle:attackFailed", { pokemonName: getPokemonMessage(user,"") }));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
             }
@@ -3431,7 +3431,7 @@ export class FaintPhase extends PokemonPhase {
   doFaint(): void {
     const pokemon = this.getPokemon();
 
-    this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);
+    this.scene.queueMessage(i18next.t("phases:fainted", { pokemonName: getPokemonMessage(pokemon,"") }), null, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
@@ -3771,7 +3771,7 @@ export class ModifierRewardPhase extends BattlePhase {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound("item_fanfare");
-        this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => resolve(), null, true);
+        this.scene.ui.showText(i18next.t("phases:rewards", {rewardsName: newModifier.type.name}), null, () => resolve(), null, true);
       });
     });
   }
@@ -3789,7 +3789,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.fadeIn(250).then(() => {
-          this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
+          this.scene.ui.showText(i18next.t("phases:rewards", {rewardsName: newModifier.type.name}), null, () => {
             this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
             resolve();
           }, null, true, 1500);
@@ -3814,7 +3814,7 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+        this.scene.ui.showText(i18next.t("phases:gamemodeReward", { name: this.species.name, gamemodeName: this.scene.gameMode.getName(), rewardsName: newModifier.type.name}), null, () => {
           resolve();
         }, null, true, 1500);
       });
@@ -3838,7 +3838,7 @@ export class GameOverPhase extends BattlePhase {
     if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
-      this.scene.ui.showText("Would you like to retry from the start of the battle?", null, () => {
+      this.scene.ui.showText(i18next.t("phases:retry"), null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
           this.scene.ui.fadeOut(1250).then(() => {
             this.scene.reset();
@@ -4026,7 +4026,7 @@ export class UnlockPhase extends Phase {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.playSound("level_up_fanfare");
       this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+      this.scene.ui.showText(i18next.t("phases:unlocked", { unlockableName: getUnlockableName(this.unlockable) }), null, () => {
         this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
         this.end();
       }, null, true, 1500);
@@ -4420,7 +4420,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       pokemon.resetStatus();
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage) {
-      this.message = getPokemonMessage(pokemon, "'s\nHP is full!");
+      this.message = i18next.t( "phases:fullHp", {pokemonName: getPokemonMessage(pokemon,"")});
     }
 
     if (this.message) {
