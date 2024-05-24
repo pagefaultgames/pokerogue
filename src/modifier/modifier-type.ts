@@ -1671,7 +1671,8 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
       new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), 0, baseCost * 2.5)
     ],
     [
-      new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)
+      new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25),
+      new ModifierTypeOption(modifierTypes.MEMORY_MUSHROOM(), 0, baseCost * 1.5)
     ],
     [
       new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)
