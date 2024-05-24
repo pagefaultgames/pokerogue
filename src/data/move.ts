@@ -6,7 +6,7 @@ import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { StatusEffect, getStatusEffectHealText } from "./status-effect";
+import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
@@ -6788,10 +6788,9 @@ export function initMoves() {
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
     new StatusMove(Moves.PURIFY, Type.POISON, -1, 20, -1, 0, 7)
       .condition(
-        (user: Pokemon, target: Pokemon, move: Move) => 
-          [StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN].includes(user.status?.effect))
+        (user: Pokemon, target: Pokemon, move: Move) => isNonVolatileStatusEffect(user.status?.effect))
       .attr(HealAttr, 0.5)
-      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
+      .attr(HealStatusEffectAttr, true, ...getNonVolatileStatusEffects())
       .triageMove(),
     new AttackMove(Moves.REVELATION_DANCE, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .danceMove()
