@@ -176,3 +176,14 @@ input:-internal-autofill-selected {
   -webkit-background-clip: text;
   background-clip: text;
 }
+#banner {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Ensures the banner is on top of other elements */
+}

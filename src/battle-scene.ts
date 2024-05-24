@@ -57,43 +57,9 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
-import { ping } from "./account";
 
 export class LoginBypass {
   public static bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
-}
-
-export class DisasterRecover {
-  private readonly minTime = 1000 * 5;
-  private readonly maxTime = 1000 * 60 * 5;
-  private readonly randVarianceTime = 1 * 10;
-  private reconnectTimer: number;
-  private reconnectInterval: number = this.minTime;
-  private scene: BattleScene;
-  constructor(scene: BattleScene) {
-    this.scene = scene;
-  }
-  startInterval() {
-    this.reconnectTimer = setInterval(() => this.tryReconnect(), this.reconnectInterval);
-  }
-
-  tryReconnect(): void {
-    ping().then(response => {
-      if (response) {
-        clearInterval(this.reconnectTimer);
-        this.scene.gameData.saveAll(this.scene, true, true, false, false);
-        window.location.reload();
-      } else {
-        clearInterval(this.reconnectTimer);
-        this.reconnectInterval = Math.min(this.reconnectInterval * 2, this.maxTime); // Set a max delay so it isn't infinite
-        this.reconnectTimer =
-          setTimeout(
-            () => this.tryReconnect(),
-            // Adds a random factor to avoid pendulum effect during long total breakdown
-            this.reconnectInterval + (Math.random() * this.randVarianceTime));
-      }
-    });
-  }
 }
 
 const DEBUG_RNG = false;

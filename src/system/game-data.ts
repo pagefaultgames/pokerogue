@@ -623,9 +623,9 @@ export class GameData {
       pokeballCounts: scene.pokeballCounts,
       money: scene.money,
       score: scene.score,
-      waveIndex: scene.currentBattle.waveIndex,
-      battleType: scene.currentBattle.battleType,
-      trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
+      waveIndex: scene.currentBattle?.waveIndex,
+      battleType: scene.currentBattle?.battleType,
+      trainer: scene.currentBattle?.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle?.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime()
     } as SessionSaveData;
@@ -921,7 +921,7 @@ export class GameData {
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
+      Utils.executeIf(!skipVerification, () => updateUserInfo(scene)).then(success => {
         if (success !== null && !success) {
           return resolve(false);
         }

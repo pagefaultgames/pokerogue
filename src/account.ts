@@ -1,5 +1,6 @@
-import BattleScene, {DisasterRecover, LoginBypass} from "./battle-scene";
+import BattleScene, {LoginBypass} from "./battle-scene";
 import * as Utils from "./utils";
+import disasterRecoveryInstance from "#app/disasterRecover";
 
 export interface UserInfo {
   username: string;
@@ -33,12 +34,14 @@ export function updateUserInfo(scene?: BattleScene): Promise<[boolean, integer]>
       });
       return resolve([ true, 200 ]);
     }
-    const handleServerUnreachable = () => {
+    const handleServerUnreachable = (isDown: boolean = false) => {
       for (const key in localStorage) {
         if (key.startsWith("data_") && !key.toLowerCase().includes("guest")) {
-          loggedInUser = { username: key.substring(5), lastSessionSlot: -1};
-          LoginBypass.bypassLogin = true;
-          new DisasterRecover(scene).startInterval();
+          disasterRecoveryInstance.setScene(scene);
+          if (isDown) {
+            loggedInUser = { username: key.substring(5), lastSessionSlot: -1};
+            disasterRecoveryInstance.startInterval();
+          }
           return loggedInUser;
         }
       }
@@ -51,9 +54,10 @@ export function updateUserInfo(scene?: BattleScene): Promise<[boolean, integer]>
       return response.json();
     }).then(jsonResponse => {
       loggedInUser = jsonResponse;
+      handleServerUnreachable(true);
       resolve([ true, 200 ]);
     }).catch(err => {
-      handleServerUnreachable();
+      handleServerUnreachable(true);
       // console.log("error");
       // console.log(err);
       resolve([ false, 500 ]);
