@@ -139,10 +139,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "Hiper Poção" },
     "MAX_POTION": { name: "Poção Máxima" },
     "FULL_RESTORE": { name: "Restaurador" },
-    
+
     "REVIVE": { name: "Reanimador" },
     "MAX_REVIVE": { name: "Reanimador Máximo" },
-    
+
     "FULL_HEAL": { name: "Cura Total" },
 
     "SACRED_ASH": { name: "Cinza Sagrada" },
@@ -187,18 +187,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "Moeda Amuleto", description: "Aumenta a recompensa de dinheiro em 50%" },
     "GOLDEN_PUNCH": { name: "Soco Dourado", description: "Concede 50% do dano causado em dinheiro" },
     "COIN_CASE": { name: "Moedeira", description: "Após cada 10ª batalha, recebe 10% de seu dinheiro em juros" },
-    
+
     "LOCK_CAPSULE": { name: "Cápsula de Travamento", description: "Permite que você trave raridades de itens ao rolar novamente" },
 
     "GRIP_CLAW": { name: "Garra-Aperto" },
     "WIDE_LENS": { name: "Lente Ampla" },
-    
+
     "MULTI_LENS": { name: "Multi Lentes" },
 
     "HEALING_CHARM": { name: "Amuleto de Cura", description: "Aumenta a eficácia dos movimentos e itens que restauram PS em 10% (exceto Reanimador)" },
     "CANDY_JAR": { name: "Pote de Doces", description: "Aumenta o número de níveis adicionados pelo Doce Raro em 1" },
 
-    "BERRY_POUCH": { name: "Bolsa de Berries", description: "Adiciona uma chance de 25% de que uma berry usada não seja consumida" },
+    "BERRY_POUCH": { name: "Bolsa de Berries", description: "Adiciona uma chance de 33% de que uma berry usada não seja consumida" },
 
     "FOCUS_BAND": { name: "Bandana", description: "Adiciona uma chance de 10% de sobreviver com 1 PS após ser danificado o suficiente para desmaiar" },
 
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "Maçã Azeda",
     "STRAWBERRY_SWEET": "Doce de Morango",
     "UNREMARKABLE_TEACUP": "Xícara Comum",
-  
+
     "CHIPPED_POT": "Pote Lascado",
     "BLACK_AUGURITE": "Mineral Negro",
     "GALARICA_CUFF": "Bracelete de Galar",
