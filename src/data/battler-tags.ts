@@ -430,20 +430,20 @@ export class DisableTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon) {
-      return pokemon.summonData.prevMove !== undefined;
+    return pokemon.summonData.prevMove !== undefined;
   }
-    
+
   onAdd(pokemon: Pokemon) {
     this.disabledMove = pokemon.summonData.prevMove;
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s ' + allMoves[this.disabledMove].name + ' was disabled!'));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s " + allMoves[this.disabledMove].name + " was disabled!"));
   }
-    
+
   onRemove(pokemon: Pokemon) {
-    pokemon.scene.queueMessage(i18next.t('battle:notDisabled', { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[this.disabledMove].name }));
+    pokemon.scene.queueMessage(i18next.t("battle:notDisabled", { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[this.disabledMove].name }));
   }
-  
+
   getDescriptor(): string {
-    return 'disable';
+    return "disable";
   }
 }
 
@@ -451,7 +451,7 @@ export class EncoreTag extends BattlerTag {
   public moveId: Moves;
 
   constructor(sourceId: integer) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
+    super(BattlerTagType.ENCORE, BattlerTagLapseType.TURN_END, 4, Moves.ENCORE, sourceId);
   }
 
   /**
@@ -532,7 +532,7 @@ export class TormentTag extends BattlerTag {
   }
 
   onAdd(pokemon: Pokemon) {
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was subjected to torment!'));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " was subjected to torment!"));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType) {
@@ -541,7 +541,7 @@ export class TormentTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return 'torment';
+    return "torment";
   }
 }
 
@@ -553,11 +553,11 @@ export class TauntTag extends BattlerTag {
   }
 
   onAdd(pokemon: Pokemon) {
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fell for the taunt!'));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " fell for the taunt!"));
   }
 
   onRemove(pokemon: Pokemon): void {
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' shook off the taunt!'));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " shook off the taunt!"));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType) {
@@ -567,7 +567,7 @@ export class TauntTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return 'taunt';
+    return "taunt";
   }
 }
 
