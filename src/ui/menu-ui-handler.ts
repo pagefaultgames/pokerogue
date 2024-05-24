@@ -1,4 +1,4 @@
-import BattleScene, { bypassLogin } from "../battle-scene";
+import BattleScene, { LoginBypass } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
@@ -46,7 +46,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
-    this.ignoredMenuOptions = !bypassLogin
+    this.ignoredMenuOptions = !LoginBypass.bypassLogin
       ? [ ]
       : [ MenuOptions.LOG_OUT ];
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));

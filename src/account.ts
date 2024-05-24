@@ -1,4 +1,4 @@
-import { bypassLogin } from "./battle-scene";
+import { LoginBypass } from "./battle-scene";
 import * as Utils from "./utils";
 
 export interface UserInfo {
@@ -11,7 +11,7 @@ export const clientSessionId = Utils.randomString(32);
 
 export function updateUserInfo(): Promise<[boolean, integer]> {
   return new Promise<[boolean, integer]>(resolve => {
-    if (bypassLogin) {
+    if (LoginBypass.bypassLogin) {
       loggedInUser = { username: "Guest", lastSessionSlot: -1 };
       let lastSessionSlot = -1;
       for (let s = 0; s < 5; s++) {
@@ -35,16 +35,39 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
     }
     Utils.apiFetch("account/info", true).then(response => {
       if (!response.ok) {
-        resolve([ false, response.status ]);
-        return;
+        for(const key in localStorage) {
+          if (key.startsWith("data_")) {
+            loggedInUser = { username: key.substring(5), lastSessionSlot: -1};
+            LoginBypass.bypassLogin = true;
+            LoginBypass.startInterval();
+            return loggedInUser;
+          }
+        }
+        resolve([ false, 500]);
       }
       return response.json();
     }).then(jsonResponse => {
       loggedInUser = jsonResponse;
       resolve([ true, 200 ]);
     }).catch(err => {
-      console.error(err);
+      console.log("error");
+      console.log(err);
       resolve([ false, 500 ]);
+    });
+  });
+}
+
+export function ping() : Promise<boolean> {
+  return new Promise<boolean>(resolve => {
+    Utils.apiFetch("account/info", true).then(response => {
+      console.log("ping");
+      if (!response.ok) {
+        resolve(false);
+      }
+      resolve(true);
+    }).catch(err => {
+      console.error(err);
+      resolve(false);
     });
   });
 }

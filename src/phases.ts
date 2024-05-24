@@ -1,4 +1,4 @@
-import BattleScene, { bypassLogin } from "./battle-scene";
+import BattleScene, { LoginBypass } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
 import { Moves } from "./data/enums/moves";
@@ -78,7 +78,7 @@ export class LoginPhase extends Phase {
     const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
     this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-    Utils.executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
+    Utils.executeIf(LoginBypass.bypassLogin || hasSession, updateUserInfo).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;
       if (!success) {
@@ -121,7 +121,7 @@ export class LoginPhase extends Phase {
         return null;
       } else {
         this.scene.gameData.loadSystem().then(success => {
-          if (success || bypassLogin) {
+          if (success || LoginBypass.bypassLogin) {
             this.end();
           } else {
             this.scene.ui.setMode(Mode.MESSAGE);
