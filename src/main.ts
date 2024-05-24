@@ -29,7 +29,7 @@ window.addEventListener("unhandledrejection", (event) => {
 
 // Reinitialize game with the updated config.scale.autoCenter when 'touchControlsChange' event is dispatched
 window.addEventListener("touchControlsChange", () => {
-  config.scale.autoCenter = shouldCenterWindow() ? Phaser.Scale.CENTER_BOTH : Phaser.Scale.NO_CENTER;
+  config.scale.autoCenter = shouldCenterWindow() ? Phaser.Scale.CENTER_VERTICALLY : Phaser.Scale.NO_CENTER;
   reinitializeGame();
 });
 
@@ -65,7 +65,7 @@ const config: Phaser.Types.Core.GameConfig = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.FIT,
-    autoCenter: shouldCenterWindow() ? Phaser.Scale.CENTER_BOTH : Phaser.Scale.NO_CENTER
+    autoCenter: shouldCenterWindow() ? Phaser.Scale.CENTER_VERTICALLY : Phaser.Scale.NO_CENTER
   },
   plugins: {
     global: [{
