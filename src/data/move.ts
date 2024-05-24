@@ -3675,7 +3675,7 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 
   /**
-   * Applies {@linkcode IgnoreTypeImmunityTag} to the target.
+   * Applies {@linkcode ExposedTag} to the target.
    * @param user {@linkcode Pokemon} using this move 
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
