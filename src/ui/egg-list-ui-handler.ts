@@ -158,7 +158,7 @@ export default class EggListUiHandler extends MessageUiHandler {
         break;
       }
     }
-  
+
     if (success) {
       ui.playSelect();
     } else if (error) {

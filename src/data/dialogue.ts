@@ -946,7 +946,7 @@ export const trainerTypeDialogue = {
     ],
     victory: [
       "I wanted to win…but I lost!",
-      "I lost…'cause I couldn't win!"      
+      "I lost…'cause I couldn't win!"
     ],
     defeat: [
       "Hey, wait a sec. Did I just win? I think I just won! Talk about satisfying!",
@@ -957,10 +957,10 @@ export const trainerTypeDialogue = {
     encounter: [
       `I want to be the one to help a certain person. That being the case, I cannot afford to lose.
       $… Our battle starts now.`,
-      
+
     ],
     victory: [
-      "I am… not enough, I see.",      
+      "I am… not enough, I see.",
     ],
     defeat: [
       "Victory belongs to me. Well fought.",
@@ -971,7 +971,7 @@ export const trainerTypeDialogue = {
       "I'll be facing you with my usual party as a member of the Elite Four.",
     ],
     victory: [
-      "That was a great battle!",      
+      "That was a great battle!",
     ],
     defeat: [
       "Let's give your Pokémon a nice round of applause for their efforts!",
@@ -983,7 +983,7 @@ export const trainerTypeDialogue = {
       $I don't get why everyone doesn't just sit all the time. Standing up's tiring work!`,
     ],
     victory: [
-      "Guess I should've expected that!",      
+      "Guess I should've expected that!",
     ],
     defeat: [
       "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?",
@@ -995,7 +995,7 @@ export const trainerTypeDialogue = {
       $Their strength is a sign o' my strength as a gardener and a Gym Leader! Yeh sure yer up to facing all that?`,
     ],
     victory: [
-      "Yeh believe in yer Pokémon… And they believe in yeh, too… It was a fine battle, sprout.",      
+      "Yeh believe in yer Pokémon… And they believe in yeh, too… It was a fine battle, sprout.",
     ],
     defeat: [
       "Hohoho… Indeed. Frail little blades o' grass'll break through even concrete.",
@@ -1011,7 +1011,7 @@ export const trainerTypeDialogue = {
     victory: [
       "You and your Pokémon have shown me a whole new depth of field! Fantastic! Just fantastic!",
       `The world you see through a lens, and the world you see with a Pokémon by your side…
-      $The same world can look entirely different depending on your view.`      
+      $The same world can look entirely different depending on your view.`
     ],
     defeat: [
       "The photo from the moment of my victory will be a really winner, all right!",
@@ -1028,7 +1028,7 @@ export const trainerTypeDialogue = {
     victory: [
       "I must say, I'm warmed up to you! I might even admire you a little.",
       `Wow! You're great! You've earned my respect! 
-      $I think your focus and will bowled us over totally. `      
+      $I think your focus and will bowled us over totally. `
     ],
     defeat: [
       "I sensed your will to win, but I don't lose!",
@@ -2073,7 +2073,7 @@ export const trainerTypeDialogue = {
     defeat: [
       "Things didn't heat up for you.",
     ]
-  },  
+  },
   [TrainerType.RIVAL]: [
     {
       encounter: [

@@ -276,7 +276,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    
+
     // The position should be set per language
     const starterInfoXPos = textSettings?.starterInfoXPos || 31;
     const starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
@@ -1392,7 +1392,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
-        if(i18next.exists("growth:" + growthAux)){
+        if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t("growth:"+ growthAux as any);
         }
         this.pokemonGrowthRateText.setText(growthReadable);
@@ -1684,12 +1684,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length) {
           this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
         }
-        
+
         // Remove duplicate moves
         this.starterMoveset = this.starterMoveset.filter(
           (move, i) => {
             return this.starterMoveset.indexOf(move) === i;
-          }) as StarterMoveset;        
+          }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
 

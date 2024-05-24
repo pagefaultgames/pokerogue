@@ -378,7 +378,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
     this.set1f("yOffset", sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
     this.set4fv("tone", tone);
     this.bindTexture(this.game.textures.get("tera").source[0].glTexture, 1);
-        
+
     if ((gameObject.scene as BattleScene).fusionPaletteSwaps) {
       const spriteColors = ((ignoreOverride && data["spriteColorsBase"]) || data["spriteColors"] || []) as number[][];
       const fusionSpriteColors = ((ignoreOverride && data["fusionSpriteColorsBase"]) || data["fusionSpriteColors"] || []) as number[][];
@@ -460,7 +460,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
       const pixelHeight = (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
       v1 += (yDelta + bottomPadding / field.scale) * pixelHeight;
     }
-        
+
     return super.batchQuad(gameObject, x0, y0, x1, y1, x2, y2, x3, y3, u0, v0, u1, v1, tintTL, tintTR, tintBL, tintBR, tintEffect, texture, unit);
   }
 
