@@ -151,8 +151,8 @@ export default class BattleScene extends SceneBase {
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
-  private lineOneText: Phaser.GameObjects.Text;
-  private waveCountText: Phaser.GameObjects.Text;
+  /** Combined Biome and Wave count text */
+  private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
   private scoreText: Phaser.GameObjects.Text;
   private luckLabelText: Phaser.GameObjects.Text;
@@ -351,9 +351,9 @@ export default class BattleScene extends SceneBase {
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
-    this.lineOneText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
-    this.lineOneText.setOrigin(1, 0);
-    this.fieldUI.add(this.lineOneText);
+    this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.biomeWaveText.setOrigin(1, 0);
+    this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setOrigin(1, 0);
@@ -481,7 +481,7 @@ export default class BattleScene extends SceneBase {
       }
     });
 
-    this.updateLineOneText();
+    this.updateBiomeWaveText();
     this.updateMoneyText();
     this.updateScoreText();
   }
@@ -795,8 +795,8 @@ export default class BattleScene extends SceneBase {
 
     this.currentBattle = null;
 
-    this.lineOneText.setText(startingWave.toString());
-    this.lineOneText.setVisible(false);
+    this.biomeWaveText.setText(startingWave.toString());
+    this.biomeWaveText.setVisible(false);
 
     this.updateMoneyText();
     this.moneyText.setVisible(false);
@@ -1245,13 +1245,13 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  updateLineOneText(): void {
+  updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
-    this.lineOneText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
-    this.lineOneText.setColor(!isBoss ? "#404040" : "#f89890");
-    this.lineOneText.setShadowColor(!isBoss ? "#ded6b5" : "#984038");
-    this.lineOneText.setVisible(true);
+    this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
+    this.biomeWaveText.setColor(!isBoss ? "#404040" : "#f89890");
+    this.biomeWaveText.setShadowColor(!isBoss ? "#ded6b5" : "#984038");
+    this.biomeWaveText.setVisible(true);
   }
 
   updateMoneyText(): void {
@@ -1299,8 +1299,8 @@ export default class BattleScene extends SceneBase {
 
   updateUIPositions(): void {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
-    this.lineOneText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
-    this.moneyText.setY(this.lineOneText.y + 10);
+    this.biomeWaveText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
+    this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
     [ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
     const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
