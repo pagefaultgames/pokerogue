@@ -964,13 +964,13 @@ export class UserTypeChangeToMoveTypeAbAttr extends PreAttackAbAttr {
   }
 
   /**
-   * 
-   * @param pokemon 
-   * @param passive 
-   * @param defender 
-   * @param move 
+   *
+   * @param pokemon
+   * @param passive
+   * @param defender
+   * @param move
    * @param {Type} args the types to change to.
-   * @returns 
+   * @returns
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: Type[]): boolean | Promise<boolean> {
     if (this.condition(pokemon, defender, move.getMove())) {
@@ -2082,7 +2082,7 @@ function getOncePerBattleCondition(ability: Abilities): AbAttrCondition {
  * has already been used by that pokemon this switch in. Once switched out for
  * any reason, this will allow the ability to trigger again.
  * @param {Abilities} ability The ability to check if it's already been applied
- * @returns {AbAttrCondition} The condition 
+ * @returns {AbAttrCondition} The condition
  */
 function getOncePerSwitchInCondition(ability: Abilities): AbAttrCondition {
   return (pokemon: Pokemon) => {
@@ -3160,7 +3160,7 @@ export function applyPostFaintAbAttrs(attrType: { new(...args: any[]): PostFaint
  * Utility function to apply {@link UserTypeChangeToMoveTypeAbAttr} for certain edge cases:
  *    if defender uses protect-like move
  *    if user misses
- * Also applies {@link VariableMoveTypeAttr} to activate for the correct type when moves that call other moves (ex: {@link Moves.NATURE_POWER}) and moves that change type (ex: {@link Moves.HIDDEN_POWER}) 
+ * Also applies {@link VariableMoveTypeAttr} to activate for the correct type when moves that call other moves (ex: {@link Moves.NATURE_POWER}) and moves that change type (ex: {@link Moves.HIDDEN_POWER})
  * @param {Pokemon} user the pokemon that used the move
  * @param {PokemonMove} move the move used
  */
