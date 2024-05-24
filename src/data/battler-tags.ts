@@ -32,15 +32,13 @@ export class BattlerTag {
   public turnCount: integer;
   public sourceMove: Moves;
   public sourceId?: integer;
-  public ignoreTurnCount: boolean;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId?: integer, ignoreTurnCount: boolean = false) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId?: integer) {
     this.tagType = tagType;
     this.lapseType = lapseType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
-    this.ignoreTurnCount = ignoreTurnCount;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -54,7 +52,7 @@ export class BattlerTag {
   onOverlap(pokemon: Pokemon): void { }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    return this.ignoreTurnCount || (--this.turnCount > 0);
+    return --this.turnCount > 0;
   }
 
   getDescriptor(): string {
@@ -1167,7 +1165,7 @@ export class MagnetRisenTag extends TypeImmuneTag {
  */
 export class ImprisonTag extends BattlerTag {
   constructor(sourceMove: Integer) {
-    super(BattlerTagType.IMPRISON, BattlerTagLapseType.CUSTOM, 0, sourceMove, undefined, true);
+    super(BattlerTagType.IMPRISON, BattlerTagLapseType.CUSTOM, Number.MAX_SAFE_INTEGER, sourceMove);
   }
 
   /**
@@ -1188,6 +1186,17 @@ export class ImprisonTag extends BattlerTag {
     super.onOverlap(pokemon);
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready imprisoning!'));
+  }
+  
+  /**
+   * This status only lapses on a faint.
+   * @param pokemon The pokemon that has fainted.
+   * @param lapseType The type of lapse occuring. For imprison, we only care about the FAINT type.
+   * @returns True if the {@linkcode lapseType} is for a faint, the imprisoning status should be removed.
+   * @remarks This isn't strictly necessary since the tag is always removed on a new summon, but it's added for completeness.
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    return lapseType === BattlerTagLapseType.FAINT;
   }
 
   getDescriptor(): string {
