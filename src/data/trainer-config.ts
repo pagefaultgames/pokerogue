@@ -173,10 +173,12 @@ export interface PartyMemberFuncs {
 
 export class TrainerConfig {
   public trainerType: TrainerType;
+  public trainerTypeDouble: TrainerType;
   public name: string;
   public nameFemale: string;
   public nameDouble: string;
   public title: string;
+  public titleDouble: string;
   public hasGenders: boolean = false;
   public hasDouble: boolean = false;
   public hasCharSprite: boolean = false;
@@ -228,6 +230,10 @@ export class TrainerConfig {
     let ret = this.getKey();
     if (this.hasGenders) {
       ret += `_${female ? "f" : "m"}`;
+    }
+    // If a special double trainer class was set, set it as the sprite key
+    if (this.trainerTypeDouble && female) {
+      ret = TrainerType[this.trainerTypeDouble].toString().toLowerCase();
     }
     return ret;
   }
@@ -328,6 +334,26 @@ export class TrainerConfig {
     if (doubleEncounterBgm) {
       this.doubleEncounterBgm = typeof doubleEncounterBgm === "number" ? TrainerType[doubleEncounterBgm].toString().replace(/\_/g, " ").toLowerCase() : doubleEncounterBgm;
     }
+    return this;
+  }
+
+  setDoubleTrainerType(trainerTypeDouble: TrainerType): TrainerConfig {
+    this.trainerTypeDouble = trainerTypeDouble;
+    return this;
+  }
+
+  setDoubleTitle(titleDouble: string): TrainerConfig {
+    // First check if i18n is initialized
+    if (!getIsInitialized()) {
+      initI18n();
+    }
+
+    // Make the title lowercase and replace spaces with underscores
+    titleDouble = titleDouble.toLowerCase().replace(/\s/g, "_");
+
+    // Get the title from the i18n file
+    this.titleDouble = i18next.t(`titles:${titleDouble}`);
+
     return this;
   }
 
@@ -558,6 +584,7 @@ export class TrainerConfig {
 
     // Set the title to "champion". (this is the key in the i18n file)
     this.setTitle("champion");
+
 
     // Configure various properties for the Champion.
     this.setMoneyMultiplier(10);
@@ -880,8 +907,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader([ Species.SLUGMA, Species.TORKOAL, Species.NUMEL ], Type.FIRE).setBattleBgm("battle_hoenn_gym"),
   [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader([ Species.SLAKOTH, Species.SPINDA, Species.CHANSEY, Species.KANGASKHAN ], Type.NORMAL).setBattleBgm("battle_hoenn_gym"),
   [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader([ Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY ], Type.FLYING).setBattleBgm("battle_hoenn_gym"),
-  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader([ Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE ], Type.PSYCHIC).setBattleBgm("battle_hoenn_gym"),
-  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader([ Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR ], Type.PSYCHIC).setBattleBgm("battle_hoenn_gym"),
+  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader([ Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE ], Type.PSYCHIC).setBattleBgm("battle_hoenn_gym").setHasDouble("tate_liza_double").setDoubleTrainerType(TrainerType.LIZA).setDoubleTitle("gym_leader_double"),
+  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader([ Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR ], Type.PSYCHIC).setBattleBgm("battle_hoenn_gym").setHasDouble("liza_tate_double").setDoubleTrainerType(TrainerType.TATE).setDoubleTitle("gym_leader_double"),
   [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader([ Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.RELICANTH ], Type.WATER).setBattleBgm("battle_hoenn_gym"),
   [TrainerType.ROARK]: new TrainerConfig(++t).initForGymLeader([ Species.CRANIDOS, Species.LARVITAR, Species.GEODUDE ], Type.ROCK).setBattleBgm("battle_sinnoh_gym"),
   [TrainerType.GARDENIA]: new TrainerConfig(++t).initForGymLeader([ Species.ROSELIA, Species.TANGELA, Species.TURTWIG ], Type.GRASS).setBattleBgm("battle_sinnoh_gym"),
@@ -970,8 +997,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LACEY]: new TrainerConfig(++t).initForEliteFour([ Species.EXCADRILL, Species.PRIMARINA, Species.ALCREMIE, Species.GALAR_SLOWBRO ], Type.FAIRY),
   [TrainerType.DRAYTON]: new TrainerConfig(++t).initForEliteFour([ Species.DRAGONITE, Species.ARCHALUDON, Species.FLYGON, Species.SCEPTILE ], Type.DRAGON),
 
-  [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion([ Species.GYARADOS, Species.MEWTWO, Species.ARCANINE, Species.ALAKAZAM, Species.PIDGEOT ]).setBattleBgm("battle_kanto_champion"),
-  [TrainerType.RED]: new TrainerConfig(++t).initForChampion([ Species.CHARIZARD, [ Species.LUGIA, Species.HO_OH ], Species.SNORLAX, Species.RAICHU, Species.ESPEON ]).setBattleBgm("battle_johto_champion"),
+  [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion([ Species.GYARADOS, Species.MEWTWO, Species.ARCANINE, Species.ALAKAZAM, Species.PIDGEOT ]).setBattleBgm("battle_kanto_champion").setHasDouble("blue_red_double").setDoubleTrainerType(TrainerType.RED).setDoubleTitle("champion_double"),
+  [TrainerType.RED]: new TrainerConfig(++t).initForChampion([ Species.CHARIZARD, [ Species.LUGIA, Species.HO_OH ], Species.SNORLAX, Species.RAICHU, Species.ESPEON ]).setBattleBgm("battle_johto_champion").setHasDouble("red_blue_double").setDoubleTrainerType(TrainerType.BLUE).setDoubleTitle("champion_double"),
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion([ Species.DRAGONITE, Species.ZYGARDE, Species.AERODACTYL, Species.KINGDRA, Species.ALOLA_EXEGGUTOR ]).setBattleBgm("battle_johto_champion"),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion([ Species.METAGROSS, [ Species.DIALGA, Species.PALKIA ], Species.SKARMORY, Species.AGGRON, Species.CARBINK ]).setBattleBgm("battle_hoenn_champion"),
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion([ Species.MILOTIC, Species.KYOGRE, Species.WHISCASH, Species.WALREIN, Species.LUDICOLO ]).setBattleBgm("battle_hoenn_champion"),
