@@ -178,7 +178,7 @@ export class FlinchedTag extends BattlerTag {
 }
 
 export class InterruptedTag extends BattlerTag {
-  constructor(sourceMove: Moves){
+  constructor(sourceMove: Moves) {
     super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);
   }
 
@@ -585,7 +585,7 @@ export class MinimizeTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     //If a pokemon dynamaxes they lose minimized status
-    if(pokemon.isMax()){
+    if (pokemon.isMax()) {
       return false;
     }
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);

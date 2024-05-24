@@ -1051,6 +1051,6 @@ export const trainerConfigs: TrainerConfigs = {
     }),
 };
 
-(function () {
+export function initTrainerTypeDialogue() {
   initTrainerTypeDialogue();
-})();
+}
