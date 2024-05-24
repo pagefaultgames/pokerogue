@@ -23,22 +23,22 @@ describe("utils", () => {
   describe("padInt", () => {
     it("should return a string", () => {
       const result = padInt(1, 10);
-      expect(typeof result).toBe('string');
+      expect(typeof result).toBe("string");
     });
 
     it("should return a padded result with default padWith", () => {
       const result = padInt(1, 3);
-      expect(result).toBe('001');
+      expect(result).toBe("001");
     });
 
     it("should return a padded result using a custom padWith", () => {
-      const result = padInt(1, 10, 'yes')
-      expect(result).toBe('yesyesyes1');
+      const result = padInt(1, 10, "yes");
+      expect(result).toBe("yesyesyes1");
     });
 
     it("should return inputted value when zero length is entered", () => {
       const result = padInt(1, 0);
-      expect(result).toBe('1')
-    })
+      expect(result).toBe("1");
+    });
   });
 });

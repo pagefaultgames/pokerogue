@@ -2,7 +2,7 @@ import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
-// import { egg } from "./egg";
+import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
@@ -24,29 +24,29 @@ import { voucher } from "./voucher";
 
 
 export const zhCnConfig = {
-    ability: ability,
-    abilityTriggers: abilityTriggers,
-    battle: battle,
-    commandUiHandler: commandUiHandler,
-    // egg: egg,
-    fightUiHandler: fightUiHandler,
-    growth: growth,
-    menu: menu,
-    menuUiHandler: menuUiHandler,
-    modifierType: modifierType,
-    move: move,
-    nature: nature,
-    pokeball: pokeball,
-    pokemon: pokemon,
-    pokemonInfo: pokemonInfo,
-    // splashMessages: splashMessages,
-    starterSelectUiHandler: starterSelectUiHandler,
-    titles: titles,
-    trainerClasses: trainerClasses,
-    trainerNames: trainerNames,
-    tutorial: tutorial,
-    weather: weather,
-    battleMessageUiHandler: battleMessageUiHandler,
-    berry: berry,
-    voucher: voucher,
-}
+  ability: ability,
+  abilityTriggers: abilityTriggers,
+  battle: battle,
+  commandUiHandler: commandUiHandler,
+  egg: egg,
+  fightUiHandler: fightUiHandler,
+  growth: growth,
+  menu: menu,
+  menuUiHandler: menuUiHandler,
+  modifierType: modifierType,
+  move: move,
+  nature: nature,
+  pokeball: pokeball,
+  pokemon: pokemon,
+  pokemonInfo: pokemonInfo,
+  // splashMessages: splashMessages,
+  starterSelectUiHandler: starterSelectUiHandler,
+  titles: titles,
+  trainerClasses: trainerClasses,
+  trainerNames: trainerNames,
+  tutorial: tutorial,
+  weather: weather,
+  battleMessageUiHandler: battleMessageUiHandler,
+  berry: berry,
+  voucher: voucher,
+};
