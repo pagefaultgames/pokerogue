@@ -334,7 +334,7 @@ export class GameData {
                 this.scene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
-              if(!loggedInUser){
+              if (!loggedInUser) {
                 return resolve(false);
               }
             }
@@ -777,14 +777,14 @@ export class GameData {
     });
   }
 
-  deleteSession(slotId: integer): Promise<boolean> {
+  deleteSession(slotId: integer, scene?: BattleScene): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (LoginBypass.bypassLogin) {
         localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
         return resolve(true);
       }
 
-      updateUserInfo().then(success => {
+      updateUserInfo(scene).then(success => {
         if (success !== null && !success) {
           return resolve(false);
         }
@@ -847,7 +847,7 @@ export class GameData {
         return resolve([true, true]);
       }
 
-      updateUserInfo().then(success => {
+      updateUserInfo(scene).then(success => {
         if (success !== null && !success) {
           return resolve([false, false]);
         }
@@ -945,7 +945,6 @@ export class GameData {
         localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData)));
 
         console.debug("Session data saved");
-
         if (!LoginBypass.bypassLogin && sync) {
           Utils.apiPost("savedata/updateall", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
             .then(response => response.text())
@@ -1017,7 +1016,7 @@ export class GameData {
     });
   }
 
-  public importData(dataType: GameDataType, slotId: integer = 0): void {
+  public importData(dataType: GameDataType, slotId: integer = 0, scene:BattleScene): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser.username}`;
 
     let saveFile: any = document.getElementById("saveFile");
@@ -1085,7 +1084,7 @@ export class GameData {
                 localStorage.setItem(dataKey, encrypt(dataStr, LoginBypass.bypassLogin));
 
                 if (!LoginBypass.bypassLogin && dataType < GameDataType.SETTINGS) {
-                  updateUserInfo().then(success => {
+                  updateUserInfo(scene).then(success => {
                     if (!success) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
                     }

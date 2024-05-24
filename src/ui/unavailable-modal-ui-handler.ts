@@ -49,7 +49,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
   }
 
   tryReconnect(): void {
-    updateUserInfo().then(response => {
+    updateUserInfo(this.scene).then(response => {
       if (response[0] || [200, 400].includes(response[1])) {
         clearInterval(this.reconnectTimer);
         this.reconnectTimer = null;

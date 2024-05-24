@@ -64,8 +64,8 @@ export class LoginBypass {
 }
 
 export class DisasterRecover {
-  private readonly minTime = 10 * 5;
-  private readonly maxTime = 10 * 60 * 5;
+  private readonly minTime = 1000 * 5;
+  private readonly maxTime = 1000 * 60 * 5;
   private readonly randVarianceTime = 1 * 10;
   private reconnectTimer: number;
   private reconnectInterval: number = this.minTime;

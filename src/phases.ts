@@ -1,4 +1,4 @@
-import BattleScene, { LoginBypass } from "./battle-scene";
+import BattleScene, {LoginBypass} from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
 import { Moves } from "./data/enums/moves";
@@ -78,10 +78,10 @@ export class LoginPhase extends Phase {
     const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
     this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-    Utils.executeIf(LoginBypass.bypassLogin || hasSession, updateUserInfo).then(response => {
+    Utils.executeIf(LoginBypass.bypassLogin || hasSession, () => updateUserInfo(this.scene)).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;
-      if (!success) {
+      if (!success && !LoginBypass.bypassLogin) {
         if (!statusCode || statusCode === 400) {
           if (this.showText) {
             this.scene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
@@ -90,7 +90,7 @@ export class LoginPhase extends Phase {
           this.scene.playSound("menu_open");
 
           const loadData = () => {
-            updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
+            updateUserInfo(this.scene).then(() => this.scene.gameData.loadSystem().then(() => this.end()));
           };
 
           this.scene.ui.setMode(Mode.LOGIN_FORM, {
@@ -104,7 +104,7 @@ export class LoginPhase extends Phase {
                   buttonActions: [
                     () => {
                       this.scene.ui.playSelect();
-                      updateUserInfo().then(() => this.end());
+                      updateUserInfo(this.scene).then(() => this.end());
                     }, () => {
                       this.scene.unshiftPhase(new LoginPhase(this.scene, false));
                       this.end();
