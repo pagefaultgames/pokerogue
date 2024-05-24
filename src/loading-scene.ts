@@ -9,6 +9,15 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
+import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
+import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
+import {initBiomes} from "#app/data/biomes";
+import {initEggMoves} from "#app/data/egg-moves";
+import {initPokemonForms} from "#app/data/pokemon-forms";
+import {initSpecies} from "#app/data/pokemon-species";
+import {initMoves} from "#app/data/move";
+import {initAbilities} from "#app/data/ability";
+import {initTrainerTypeDialogue} from "#app/data/dialogue";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -284,6 +293,16 @@ export class LoadingScene extends SceneBase {
     this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
 
     this.loadLoadingScreen();
+
+    initStatsKeys();
+    initPokemonPrevolutions();
+    initBiomes();
+    initEggMoves();
+    initPokemonForms();
+    initTrainerTypeDialogue();
+    initSpecies();
+    initMoves();
+    initAbilities();
   }
 
   loadLoadingScreen() {
