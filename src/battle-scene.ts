@@ -481,7 +481,7 @@ export default class BattleScene extends SceneBase {
       }
     });
 
-    this.updateLineOneText();
+    this.updateBiomeWaveText();
     this.updateMoneyText();
     this.updateScoreText();
   }
@@ -1245,7 +1245,7 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  updateLineOneText(): void {
+  updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
     this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
