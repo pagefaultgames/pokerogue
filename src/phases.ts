@@ -3286,13 +3286,12 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedPartyMembers = this.scene.getParty().filter(p => !p.isFainted());
-      const nonFaintedPartyMemberCount = nonFaintedPartyMembers.length;
-      if (!nonFaintedPartyMemberCount)
+      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+      if (!availablePartyMembers.length)
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedPartyMembers[0].isActive(true)))
+      else if (availablePartyMembers.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !availablePartyMembers[0].isActive(true)))
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
-      if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double)
+      if (availablePartyMembers.length === 1 && this.scene.currentBattle.double)
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
@@ -3883,9 +3882,10 @@ export class SwitchPhase extends BattlePhase {
 
   start() {
     super.start();
+    const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
 
     // Skip modal switch if impossible
-    if (this.isModal && !this.scene.getParty().filter(p => !p.isFainted() && !p.isActive(true)).length)
+    if (this.isModal && (!availablePartyMembers.filter(p => !p.isActive(true)).length || (!this.scene.currentBattle.started && availablePartyMembers.length == 1)))
       return super.end();
 
     // Check if there is any space still in field
@@ -3893,7 +3893,7 @@ export class SwitchPhase extends BattlePhase {
       return super.end();
 
     // Override field index to 0 in case of double battle where 2/3 remaining party members fainted at once
-    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? this.fieldIndex : 0;
+    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || availablePartyMembers.length > 1 ? this.fieldIndex : 0;
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6)
