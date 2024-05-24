@@ -10,7 +10,6 @@ import PokemonSpecies, {PokemonSpeciesFilter, getPokemonSpecies} from "./pokemon
 import {Species} from "./enums/species";
 import {tmSpecies} from "./tms";
 import {Type} from "./type";
-import {initTrainerTypeDialogue} from "./dialogue";
 import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
 import {PartyMemberStrength} from "./enums/party-member-strength";
@@ -1050,7 +1049,3 @@ export const trainerConfigs: TrainerConfigs = {
       return [ modifierTypes.TERA_SHARD().generateType(null, [ starter.species.type1 ]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier ];
     }),
 };
-
-(function () {
-  initTrainerTypeDialogue();
-})();

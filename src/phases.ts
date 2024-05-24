@@ -61,6 +61,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
+import { MoveUsedEvent } from "./battle-scene-events";
 
 
 export class LoginPhase extends Phase {
@@ -2156,13 +2157,21 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
       case Command.RUN:
-        const isSwitch = turnCommand.command === Command.POKEMON;
-        if (isSwitch) {
-          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
-        } else {
-          this.scene.unshiftPhase(new AttemptRunPhase(this.scene, pokemon.getFieldIndex()));
+        let runningPokemon = pokemon;
+        if (this.scene.currentBattle.double) {
+          const playerActivePokemon = field.filter(pokemon => pokemon.isPlayer() && pokemon.isActive());
+          // if only one pokemon is alive, use that one
+          if (playerActivePokemon.length > 1) {
+            // find which active pokemon has faster speed
+            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
+            // check if either active pokemon has the ability "Run Away"
+            const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
+            runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
+          }
         }
+        this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
         break;
       }
     }
@@ -2468,7 +2477,7 @@ export class MovePhase extends BattlePhase {
       if (this.cancelled || this.failed) {
         if (this.failed) {
           this.move.usePp(ppUsed); // Only use PP if the move failed
-          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove(), ppUsed));
+          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
         }
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
@@ -2501,7 +2510,7 @@ export class MovePhase extends BattlePhase {
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) { // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
-        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove(), ppUsed));
+        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length) {
