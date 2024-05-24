@@ -21,7 +21,7 @@ export default abstract class AwaitableUiHandler extends UiHandler {
       this.awaitingActionInput = false;
       return true;
     }
-    
+
     return false;
   }
 }

@@ -174,7 +174,7 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
     populateTrainerNamePromises.push(new Promise<void>(resolve => {
       const trainerType = t;
       trainerTypeNames[trainerType] = [];
-      
+
       const config = trainerNameConfigs[t] as TrainerNameConfig;
       const trainerNames = new Set<string>();
       const femaleTrainerNames = new Set<string>();

@@ -69,7 +69,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 
   const splitNameA = speciesAName.split(/ /g);
   const splitNameB = speciesBName.split(/ /g);
-  
+
   const fragAMatch = fragAPattern.exec(speciesAName);
   const fragBMatch = fragBPattern.exec(speciesBName);
 
@@ -243,7 +243,7 @@ export abstract class PokemonSpeciesForm {
     const showGenderDiffs = this.genderDiffs && female && ![ SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX ].find(k => formSpriteKey === k);
 
     const baseSpriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
-    
+
     let config = variantData;
     `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => config ? config = config[p] : null);
     const variantSet = config as VariantSet;
@@ -274,7 +274,7 @@ export abstract class PokemonSpeciesForm {
     if (shiny && !isVariant) {
       ret += "s";
     }
-    
+
     switch (this.speciesId) {
     case Species.HIPPOPOTAS:
     case Species.HIPPOWDON:
@@ -479,7 +479,7 @@ export abstract class PokemonSpeciesForm {
     for (let i = 0; i < pixelData.length; i += 4) {
       if (pixelData[i + 3]) {
         const pixel = pixelData.slice(i, i + 4);
-        const [ r, g, b, a ] = pixel; 
+        const [ r, g, b, a ] = pixel;
         if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
           spriteColors.push([ r, g, b, a ]);
         }
@@ -494,12 +494,12 @@ export abstract class PokemonSpeciesForm {
       }
       pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
     }
-    
+
     let paletteColors: Map<number, number>;
 
     const originalRandom = Math.random;
     Math.random = () => Phaser.Math.RND.realInRange(0, 1);
-    
+
     scene.executeWithSeedOffset(() => {
       paletteColors = QuantizerCelebi.quantize(pixelColors, 2);
     }, 0, "This result should not vary");
@@ -541,7 +541,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     this.genderDiffs = genderDiffs;
     this.canChangeForm = !!canChangeForm;
     this.forms = forms;
-    
+
     this.localize();
 
     forms.forEach((form, f) => {
@@ -632,10 +632,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
 
       let evolutionChance: number;
-      
+
       const evolutionSpecies = getPokemonSpecies(ev.speciesId);
       const isRegionalEvolution = !this.isRegional() && evolutionSpecies.isRegional();
-      
+
       if (!forTrainer && isRegionalEvolution) {
         evolutionChance = 0;
       } else {
@@ -645,7 +645,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
           } else {
             const maxLevelDiff = this.getStrengthLevelDiff(strength);
             const minChance: number = 0.875 - 0.125 * strength;
-            
+
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
           }
         } else {
@@ -671,7 +671,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
         totalWeight += evolutionChance;
 
         evolutionPool.set(totalWeight, ev.speciesId);
-        
+
         if ((1 - evolutionChance) < noEvolutionChance) {
           noEvolutionChance = 1 - evolutionChance;
         }
@@ -681,7 +681,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (noEvolutionChance === 1 || Phaser.Math.RND.realInRange(0, 1) < noEvolutionChance) {
       return this.speciesId;
     }
-      
+
     const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight);
 
     for (const weight of evolutionPool.keys()) {

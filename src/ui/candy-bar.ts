@@ -84,7 +84,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
           resolve();
         }
       });
-    
+
       this.setVisible(true);
       this.shown = true;
     });
