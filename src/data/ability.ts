@@ -20,8 +20,6 @@ import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
-import Battle from "#app/battle.js";
-import { ability } from "#app/locales/en/ability.js";
 import { getPokeballName } from "./pokeball";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 
@@ -1571,8 +1569,8 @@ export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
 }
 
 /**
- * Download raises either the Attack stat or Special Attack stat by one stage depending on the foe's currently lowest defensive stat: 
- * it will raise Attack if the foe's current Defense is lower than its current Special Defense stat; 
+ * Download raises either the Attack stat or Special Attack stat by one stage depending on the foe's currently lowest defensive stat:
+ * it will raise Attack if the foe's current Defense is lower than its current Special Defense stat;
  * otherwise, it will raise Special Attack.
  * @extends PostSummonAbAttr
  * @see {applyPostSummon}
@@ -1581,10 +1579,10 @@ export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: integer;
   private enemySpDef: integer;
   private stats: BattleStat[];
-  
+
   // TODO: Implement the Substitute feature(s) once move is implemented.
   /**
-   * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account 
+   * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account
    * vitamins and items, so it needs to use the BattleStat and the stat alone.
    * @param {Pokemon} pokemon Pokemon that is using the move, as well as seeing the opposing pokemon.
    * @param {boolean} passive N/A
@@ -1595,11 +1593,12 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     this.enemyDef = 0;
     this.enemySpDef = 0;
 
-    if (pokemon.getOpponents()[0].summonData !== undefined)
-      for (let opponent of pokemon.getOpponents()) {
+    if (pokemon.getOpponents()[0].summonData !== undefined) {
+      for (const opponent of pokemon.getOpponents()) {
         this.enemyDef += opponent.getBattleStat(Stat.DEF);
         this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
       }
+    }
     if (this.enemyDef < this.enemySpDef) {
       this.stats = [BattleStat.ATK];
     } else {
