@@ -5,9 +5,9 @@ export const tutorial: SimpleTranslationEntries = {
     $This game is not monetized and we claim no ownership of Pokémon nor of the copyrighted assets used.
     $The game is a work in progress, but fully playable.\nFor bug reports, please use the Discord community.
     $If the game runs slowly, please ensure 'Hardware Acceleration' is turned on in your browser settings.`,
-    
+
   "accessMenu": "To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.",
-    
+
   "menu": `From this menu you can access the settings.
     $From the settings you can change game speed, window style, and other options.
     $There are also various other features here, so be sure to check them all!`,

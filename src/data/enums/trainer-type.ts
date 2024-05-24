@@ -1,7 +1,7 @@
 
 export enum TrainerType {
   UNKNOWN,
-  
+
   ACE_TRAINER,
   ARTIST,
   BACKERS,

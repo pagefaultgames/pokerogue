@@ -124,7 +124,7 @@ export function initI18n(): void {
       },
       zh_CN: {
         ...zhCnConfig
-      }, 
+      },
       zh_TW: {
         ...zhTWConfig
       }
