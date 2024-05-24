@@ -185,11 +185,11 @@ export default class BattleScene extends SceneBase {
   public rngOffset: integer = 0;
 
   /**
-	 * Allows subscribers to listen for events
-	 *
-	 * Current Events:
-	 * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
-	 */
+   * Allows subscribers to listen for events
+   *
+   * Current Events:
+   * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
+   */
   public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor() {
