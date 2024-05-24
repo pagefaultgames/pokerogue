@@ -12,7 +12,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   private showDiff: boolean;
   private statsIvsCache: integer[];
   private ivChart: Phaser.GameObjects.Polygon;
-  private tmpCharts: Phaser.GameObjects.Polygon[] = [];
+  private subCharts: Phaser.GameObjects.Polygon[] = [];
   private ivStatValueTexts: BBCodeText[];
 
   constructor(scene: BattleScene, x: number, y: number, showDiff?: boolean) {
@@ -80,8 +80,9 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         t.setText(`[shadow]${label}[/shadow]`);
       });
 
-      this.ivChart.setFillStyle(0x98d8a0, 0.75);
-      this.tmpCharts.map(c => {
+      this.ivChart.setFillStyle(0x98d8a0, 0.75); // Updates color of diagram, in case it was changed by updateBase()
+      this.subCharts.map(c => {
+        // Disable all subCharts, currently used for base-stats for forms.
         if (c.parentContainer) {
           c.parentContainer.remove(c);
         }
@@ -104,39 +105,25 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     }
   }
 
-  updateBase(base: integer[], forms: integer[][]): void {
+  // function to update base-stat-diagram; code based on updateIvs()
+  updateBase(base: integer[]): void {
     if (base) {
-      const ivChartData = new Array(6).fill(null).map((_, i) => [ (base[ivChartStatIndexes[i]] / 200) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (base[ivChartStatIndexes[i]] / 200) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
-      const lastIvChartData = this.statsIvsCache || defaultIvChartData;
-      const formsChartData = forms.map(f => new Array(6).fill(null).map((_, i) => [ (f[ivChartStatIndexes[i]] / 200) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (f[ivChartStatIndexes[i]] / 200) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat()).reverse();
-      this.statsIvsCache = ivChartData.slice(0);
-      
+      // Prepare data for insertion into chart.
+
+      const scale = 200;
+	  // Currently a scale of 200 is chosen.
+	  // This will cause exceptional base stat values to exceed the chart, but offer slightly more details for low base values
+      const baseChartData = new Array(6).fill(null).map((_, i) => [ (base[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (base[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
+      const lastBaseChartData = this.statsIvsCache || defaultIvChartData;
+      this.statsIvsCache = baseChartData.slice(0);
+
+	  // display base state values
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
         const label = base[i].toString();
         t.setText(`[shadow]${label}[/shadow]`);
       });
-      
-      this.ivChart.setFillStyle(0xFF0000, 0.75);
-      
-      const fcount = formsChartData?.length || 0;
-      this.remove(this.ivChart);
-      for(let x = this.tmpCharts.length; x < fcount; x++){
-        const tmp = this.scene.add.polygon(this.ivChart.x, this.ivChart.y, defaultIvChartData, 0, 0.5);
-        tmp.setOrigin(0, 0);
-        this.tmpCharts.push(tmp);
-      }
-      this.tmpCharts.forEach((c : Phaser.GameObjects.Polygon, i : integer) => {
-        if (i < fcount) {
-          c.setFillStyle(Math.floor(255 * (i) / (fcount - 1)), 0.2);
-          c.setTo(lastIvChartData);
-          this.add(c);
-        } else {
-          if (c.parentContainer) {
-            this.remove(c);
-          }
-        }
-      });
-      this.add(this.ivChart); // readd to adjust z-index
+
+      this.ivChart.setFillStyle(0xFF0000, 0.75); // Updates color of diagram, in case it was changed by updateIvs()
 
       this.scene.tweens.addCounter({
         from: 0,
@@ -145,11 +132,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         ease: "Cubic.easeOut",
         onUpdate: (tween: Phaser.Tweens.Tween) => {
           const progress = tween.getValue();
-          const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));
-          formsChartData.forEach((data, i) => {
-            const fid = data.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));
-            this.tmpCharts[i].setTo(fid);
-          });
+          const interpolatedData = baseChartData.map((v: number, i: integer) => v * progress + (lastBaseChartData[i] * (1 - progress)));
           this.ivChart.setTo(interpolatedData);
         }
       });

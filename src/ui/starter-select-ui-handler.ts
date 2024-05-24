@@ -171,7 +171,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private abilityCursor: integer = -1;
   private natureCursor: integer = -1;
   private baseStats: integer[] = null;
-  private formsBaseStats: integer[][] = [];
   private genCursor: integer = 0;
   private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
@@ -923,47 +922,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           }
           const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
-          if(this.canCycleNature){
-            const showNatureOptions = () => {
-              ui.setMode(Mode.STARTER_SELECT).then(() => {
-                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
-                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                    options: natures.map((n: Nature, i: number) => {
-                      const option: OptionSelectItem = {
-                        label: getNatureName(n, true, true, true, this.scene.uiTheme),
-                        handler: () => {
-                          starterData.nature = n as unknown as integer;
-                          this.clearText();
-                          ui.setMode(Mode.STARTER_SELECT);
-                          this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
-                          return true;
-                        }
-                      };
-                      return option;
-                    }).concat({
-                      label: i18next.t("menu:cancel"),
-                      handler: () => {
-                        this.clearText();
-                        ui.setMode(Mode.STARTER_SELECT);
-                        return true;
-                      }
-                    }),
-                    maxOptions: 8,
-                    yOffset: 19
-                  });
-                });
-              });
-            };
-            options.push({
-              label: i18next.t("starterSelectUiHandler:manageNature"),
-              handler: () => {
-                showNatureOptions();
-                return true;
-              }
-            });
-          }
-          
           const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) {
@@ -1412,15 +1370,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
     this.baseStats = species?.baseStats;
-    this.formsBaseStats = species?.forms.map(f => f.baseStats) || [];
 
     if (this.statsMode !== StatsMode.NONE) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
         this.statsContainer.setVisible(true);
         this.showStats();
       } else {
+        // Call to clear the stats container as the current mon isn't caught.
         this.statsContainer.setVisible(false);
-        switch(this.statsMode){
+        switch (this.statsMode) {
         case StatsMode.IV:
           this.statsContainer.updateIvs(null);
           break;
@@ -1627,9 +1585,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
       const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
-      if (this.scene.gameData.starterData[species.speciesId].nature !== undefined) {
-        this.natureCursor = natureIndex = this.scene.gameData.starterData[species.speciesId].nature;
-      }
       if (!dexEntry.caughtAttr) {
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, forSeen, !forSeen));
         const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -1941,12 +1896,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   toggleStatsMode(mode?: StatsMode): void {
+    // toggles the stats-chart
+    // no parameter/null/false = no stats
     mode |= StatsMode.NONE;
     this.statsMode = mode;
-    switch(mode){
+    switch (mode) {
     case StatsMode.BASE:
     case StatsMode.IV:
-      this.showStats();
+      this.showStats(); // exact behavior for each of the modes has been implemented in thsi sub-function
       this.pokemonSprite.setVisible(false);
       break;
     case StatsMode.NONE:
@@ -1965,9 +1922,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.statsContainer.setVisible(true);
 
-    switch(this.statsMode){
+    switch (this.statsMode) {
     case StatsMode.BASE:
-      this.statsContainer.updateBase(this.baseStats, this.formsBaseStats);
+      this.statsContainer.updateBase(this.baseStats);
       break;
     case StatsMode.IV:
       this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
