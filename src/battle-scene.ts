@@ -77,8 +77,8 @@ export interface PokeballCounts {
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
-/** 
- * Container class for `onMoveUsed` events 
+/**
+ * Container class for `onMoveUsed` events
  * @extends Event
 */
 export class MoveUsedEvent extends Event {
@@ -204,9 +204,9 @@ export default class BattleScene extends SceneBase {
   public rngSeedOverride: string = "";
   public rngOffset: integer = 0;
 
-  /** 
+  /**
    * Allows subscribers to listen for events
-   * 
+   *
    * Current Events:
    * - `onMoveUsed` {@linkcode MoveUsedEvent}
    */
