@@ -139,10 +139,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "Hyper Potion" },
     "MAX_POTION": { name: "Potion Max" },
     "FULL_RESTORE": { name: "Guérison" },
-    
+
     "REVIVE": { name: "Rappel" },
     "MAX_REVIVE": { name: "Rappel Max" },
-    
+
     "FULL_HEAL": { name: "Total Soin" },
 
     "SACRED_ASH": { name: "Cendres Sacrées" },
@@ -187,18 +187,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "Pièce Rune", description: "Augmente de 20% les gains d’argent" },
     "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent" },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts" },
-    
+
     "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés" },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
-    
+
     "MULTI_LENS": { name: "Multi Loupe" },
 
     "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
     "CANDY_JAR": { name: "Jarre de Bonbons", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
-    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consommée" },
+    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 33% de chances qu’une Baie utilisée ne soit pas consommée" },
 
     "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
 
@@ -214,7 +214,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
     "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
 
-	"IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de deux IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
+    "IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de deux IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
 
     "DNA_SPLICERS": { name: "Pointeau ADN" },
 
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "Pomme Acidulée",
     "STRAWBERRY_SWEET": "Fraise en Sucre",
     "UNREMARKABLE_TEACUP": "Bol Médiocre",
-  
+
     "CHIPPED_POT": "Théière Ébréchée",
     "BLACK_AUGURITE": "Obsidienne",
     "GALARICA_CUFF": "Bracelet Galanoa",
