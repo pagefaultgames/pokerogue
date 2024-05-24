@@ -139,10 +139,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "Hyper Potion" },
     "MAX_POTION": { name: "Max Potion" },
     "FULL_RESTORE": { name: "Full Restore" },
-    
+
     "REVIVE": { name: "Revive" },
     "MAX_REVIVE": { name: "Max Revive" },
-    
+
     "FULL_HEAL": { name: "Full Heal" },
 
     "SACRED_ASH": { name: "Sacred Ash" },
@@ -187,18 +187,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "Amulet Coin", description: "Increases money rewards by 20%" },
     "GOLDEN_PUNCH": { name: "Golden Punch", description: "Grants 50% of damage inflicted as money" },
     "COIN_CASE": { name: "Coin Case", description: "After every 10th battle, receive 10% of your money in interest" },
-    
+
     "LOCK_CAPSULE": { name: "Lock Capsule", description: "Allows you to lock item rarities when rerolling items" },
 
     "GRIP_CLAW": { name: "Grip Claw" },
     "WIDE_LENS": { name: "Wide Lens" },
-    
+
     "MULTI_LENS": { name: "Multi Lens" },
 
     "HEALING_CHARM": { name: "Healing Charm", description: "Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives)" },
     "CANDY_JAR": { name: "Candy Jar", description: "Increases the number of levels added by Rare Candy items by 1" },
 
-    "BERRY_POUCH": { name: "Berry Pouch", description: "Adds a 25% chance that a used berry will not be consumed" },
+    "BERRY_POUCH": { name: "Berry Pouch", description: "Adds a 33% chance that a used berry will not be consumed" },
 
     "FOCUS_BAND": { name: "Focus Band", description: "Adds a 10% chance to survive with 1 HP after being damaged enough to faint" },
 
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "Tart Apple",
     "STRAWBERRY_SWEET": "Strawberry Sweet",
     "UNREMARKABLE_TEACUP": "Unremarkable Teacup",
-  
+
     "CHIPPED_POT": "Chipped Pot",
     "BLACK_AUGURITE": "Black Augurite",
     "GALARICA_CUFF": "Galarica Cuff",
