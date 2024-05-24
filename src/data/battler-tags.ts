@@ -1157,7 +1157,8 @@ export class MagnetRisenTag extends TypeImmuneTag {
 }
 
 /**
- * Tag that makes the target drop all of it type immunities.
+ * Tag that makes the target drop all of it type immunities
+ * and all accuracy checks ignore its evasiveness stat.
  * 
  * Applied by moves: {@linkcode Moves.ODOR_SLEUTH},
  * {@linkcode Moves.MIRACLE_EYE} and {@linkcode Moves.FORESIGHT}. 
@@ -1165,7 +1166,7 @@ export class MagnetRisenTag extends TypeImmuneTag {
  * @extends BattlerTag
  * @see {@linkcode ignoreImmunity}
  */
-export class IgnoreTypeImmunityTag extends BattlerTag {
+export class ExposedTag extends BattlerTag {
   private immuneType: Type;
 
   constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type) {
@@ -1454,9 +1455,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
   case BattlerTagType.IGNORE_GHOST:
-    return new IgnoreTypeImmunityTag(tagType, sourceMove, Type.GHOST);
+    return new ExposedTag(tagType, sourceMove, Type.GHOST);
   case BattlerTagType.IGNORE_DARK:
-    return new IgnoreTypeImmunityTag(tagType, sourceMove, Type.DARK);
+    return new ExposedTag(tagType, sourceMove, Type.DARK);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

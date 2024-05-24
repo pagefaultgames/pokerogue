@@ -3663,8 +3663,8 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 
 /**
  * Drops the target's immunity to types it is immune to
- * and resets its evasiveness ie. Odor Sleuth, Miracle Eye,
- * Foresight.
+ * and makes its evasiveness be ignored during accuracy
+ * checks ie. Odor Sleuth, Miracle Eye, Foresight.
  * 
  * @extends AddBattlerTagAttr
  * @see {@linkcode apply}
@@ -3675,8 +3675,7 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 
   /**
-   * Resets the target's evasiveness and applies the
-   * {@linkcode IgnoreTypeImmunityTag}
+   * Applies {@linkcode IgnoreTypeImmunityTag} to the target.
    * @param user {@linkcode Pokemon} using this move 
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
@@ -3686,9 +3685,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
-
-    target.summonData.battleStats[BattleStat.EVA] = 0;
-    target.updateInfo();
 
     target.scene.queueMessage(`${getPokemonMessage(user, " identified\n")}${getPokemonMessage(target, "!")}`);
 
