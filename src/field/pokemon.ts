@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, DisableTag, EncoreTag, HelpingHandTag, HighestStatBoostTag, TauntTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, DisableTag, EncoreTag, HealBlockTag, HelpingHandTag, HighestStatBoostTag, TauntTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from "../data/enums/species";
 import { WeatherType } from "../data/weather";
@@ -3735,15 +3735,19 @@ export class PokemonMove {
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     const isMoveDisabled = this.moveId && pokemon.findTag(t => t instanceof DisableTag) && (pokemon.findTag(t => t instanceof DisableTag) as DisableTag).disabledMove === this.moveId;
-    
+
     // for taunt: check valid move, pokemon is taunted, and move is status
     const isMoveDisabledTaunt = this.moveId && pokemon.findTag(t => t instanceof TauntTag) && this.getMove().category === MoveCategory.STATUS;
 
     // for torment: check valid move, pokemon is tormented, pokemon has moved this summon, and selected move is the same as previous move
     const isMoveDisabledTorment = this.moveId && pokemon.summonData.tormented && pokemon.summonData.prevMove === this.moveId;
-    
-    if (isMoveDisabled || isMoveDisabledTaunt || isMoveDisabledTorment)
+
+    // for heal block: check valid move, pokemon is blocked from healing, move is a healing move (all marked for triage ability)
+    const isMoveDisabledHealBlock = this.moveId && pokemon.findTag(t => t instanceof HealBlockTag) && this.getMove().hasFlag(MoveFlags.TRIAGE_MOVE);
+
+    if (isMoveDisabled || isMoveDisabledTaunt || isMoveDisabledTorment || isMoveDisabledHealBlock) {
       return false;
+    }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
   }
 

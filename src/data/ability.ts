@@ -3605,6 +3605,7 @@ export function initAbilities() {
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.TORMENT)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.TAUNT)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.ENCORE)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.HEAL_BLOCK)
       .ignorable()
       .partial(),
     new Ability(Abilities.FLOWER_VEIL, 6)

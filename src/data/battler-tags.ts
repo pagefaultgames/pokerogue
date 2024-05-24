@@ -571,6 +571,24 @@ export class TauntTag extends BattlerTag {
   }
 }
 
+export class HealBlockTag extends BattlerTag {
+  constructor(turnCount: integer, sourceMove: Moves) {
+    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+  }
+
+  onAdd(pokemon: Pokemon) {
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " was prevented from healing!"));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s Heal Block wore off!"));
+  }
+
+  getDescriptor(): string {
+    return "heal block";
+  }
+}
+
 export class HelpingHandTag extends BattlerTag {
   constructor(sourceId: integer) {
     super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, Moves.HELPING_HAND, sourceId);
@@ -1408,6 +1426,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new TormentTag();
   case BattlerTagType.TAUNT:
     return new TauntTag();
+  case BattlerTagType.HEAL_BLOCK:
+    return new HealBlockTag(turnCount, sourceMove);
   case BattlerTagType.HELPING_HAND:
     return new HelpingHandTag(sourceId);
   case BattlerTagType.INGRAIN:

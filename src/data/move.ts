@@ -3379,46 +3379,47 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
   getTagTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     switch (this.tagType) {
-      case BattlerTagType.RECHARGING:
-      case BattlerTagType.PERISH_SONG:
-        return -16;
-      case BattlerTagType.FLINCHED:
-      case BattlerTagType.CONFUSED:
-      case BattlerTagType.INFATUATED:
-      case BattlerTagType.NIGHTMARE:
-      case BattlerTagType.DROWSY:
-      case BattlerTagType.NO_CRIT:
-          return -5;
-      case BattlerTagType.SEEDED:
-      case BattlerTagType.SALT_CURED:
-      case BattlerTagType.CURSED:
-      case BattlerTagType.FRENZY:
-      case BattlerTagType.TRAPPED:
-      case BattlerTagType.BIND:
-      case BattlerTagType.WRAP:
-      case BattlerTagType.FIRE_SPIN:
-      case BattlerTagType.WHIRLPOOL:
-      case BattlerTagType.CLAMP:
-      case BattlerTagType.SAND_TOMB:
-      case BattlerTagType.MAGMA_STORM:
-      case BattlerTagType.SNAP_TRAP:
-      case BattlerTagType.THUNDER_CAGE:
-      case BattlerTagType.INFESTATION:
-        return -3;
-      case BattlerTagType.ENCORE:
-      case BattlerTagType.DISABLE:
-      case BattlerTagType.TORMENT:
-      case BattlerTagType.TAUNT:
-        return -2;
-      case BattlerTagType.INGRAIN:
-      case BattlerTagType.IGNORE_ACCURACY:
-      case BattlerTagType.AQUA_RING:
-        return 3;
-      case BattlerTagType.PROTECTED:
-      case BattlerTagType.FLYING:
-      case BattlerTagType.CRIT_BOOST:
-      case BattlerTagType.ALWAYS_CRIT:
-        return 5;
+    case BattlerTagType.RECHARGING:
+    case BattlerTagType.PERISH_SONG:
+      return -16;
+    case BattlerTagType.FLINCHED:
+    case BattlerTagType.CONFUSED:
+    case BattlerTagType.INFATUATED:
+    case BattlerTagType.NIGHTMARE:
+    case BattlerTagType.DROWSY:
+    case BattlerTagType.NO_CRIT:
+      return -5;
+    case BattlerTagType.SEEDED:
+    case BattlerTagType.SALT_CURED:
+    case BattlerTagType.CURSED:
+    case BattlerTagType.FRENZY:
+    case BattlerTagType.TRAPPED:
+    case BattlerTagType.BIND:
+    case BattlerTagType.WRAP:
+    case BattlerTagType.FIRE_SPIN:
+    case BattlerTagType.WHIRLPOOL:
+    case BattlerTagType.CLAMP:
+    case BattlerTagType.SAND_TOMB:
+    case BattlerTagType.MAGMA_STORM:
+    case BattlerTagType.SNAP_TRAP:
+    case BattlerTagType.THUNDER_CAGE:
+    case BattlerTagType.INFESTATION:
+      return -3;
+    case BattlerTagType.ENCORE:
+    case BattlerTagType.DISABLE:
+    case BattlerTagType.TORMENT:
+    case BattlerTagType.TAUNT:
+    case BattlerTagType.HEAL_BLOCK:
+      return -2;
+    case BattlerTagType.INGRAIN:
+    case BattlerTagType.IGNORE_ACCURACY:
+    case BattlerTagType.AQUA_RING:
+      return 3;
+    case BattlerTagType.PROTECTED:
+    case BattlerTagType.FLYING:
+    case BattlerTagType.CRIT_BOOST:
+    case BattlerTagType.ALWAYS_CRIT:
+      return 5;
     }
   }
 
@@ -5546,8 +5547,7 @@ export function initMoves() {
     new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.TORMENT)
       .condition((user, target, move) => (!target.summonData.tormented && (target.findTag(t => t instanceof TormentTag) === undefined)))
-      .condition(failOnMaxCondition)
-      .partial(),
+      .condition(failOnMaxCondition),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)
       .attr(ConfuseAttr),
@@ -5577,8 +5577,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, false),
     new StatusMove(Moves.TAUNT, Type.DARK, 100, 20, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.TAUNT)
-      .condition((user, target, move) => (target.findTag(t => t instanceof TauntTag) === undefined))
-      .partial(),
+      .condition((user, target, move) => (target.findTag(t => t instanceof TauntTag) === undefined)),
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),
@@ -5871,7 +5870,8 @@ export function initMoves() {
       .attr(LessPPMorePowerAttr),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, true, 5, 5)
+      .partial(),
     new AttackMove(Moves.WRING_OUT, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr)
       .makesContact(),
@@ -7568,6 +7568,7 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(Moves.PSYCHIC_NOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, 0, 9)
       .soundBased()
+      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, true, 2, 2)
       .partial(),
     new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
