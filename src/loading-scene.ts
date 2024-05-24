@@ -9,7 +9,6 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
-import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
 import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
 import {initBiomes} from "#app/data/biomes";
 import {initEggMoves} from "#app/data/egg-moves";
@@ -294,7 +293,6 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
     initEggMoves();
