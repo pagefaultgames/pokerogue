@@ -298,22 +298,22 @@ export class BooleanHolder {
   }
 }
 
-export class NumberHolder {
-  public value: number;
+export class NumberHolder<T = number> {
+  public value: T;
 
-  constructor(value: number) {
+  constructor(value: T) {
     this.value = value;
   }
 }
 
-export class IntegerHolder extends NumberHolder {
-  constructor(value: integer) {
+export class IntegerHolder<T = integer> extends NumberHolder<T> {
+  constructor(value: T) {
     super(value);
   }
 }
 
-export class FixedInt extends IntegerHolder {
-  constructor(value: integer) {
+export class FixedInt<T = integer> extends IntegerHolder<T> {
+  constructor(value: T) {
     super(value);
   }
 }
