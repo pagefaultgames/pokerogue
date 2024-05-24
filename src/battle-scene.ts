@@ -151,6 +151,7 @@ export default class BattleScene extends SceneBase {
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
+  private lineOneText: Phaser.GameObjects.Text;
   private waveCountText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
   private scoreText: Phaser.GameObjects.Text;
@@ -183,6 +184,14 @@ export default class BattleScene extends SceneBase {
   public rngCounter: integer = 0;
   public rngSeedOverride: string = "";
   public rngOffset: integer = 0;
+
+  /**
+   * Allows subscribers to listen for events
+   *
+   * Current Events:
+   * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
+   */
+  public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor() {
     super("battle");
@@ -342,9 +351,9 @@ export default class BattleScene extends SceneBase {
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
-    this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
-    this.waveCountText.setOrigin(1, 0);
-    this.fieldUI.add(this.waveCountText);
+    this.lineOneText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.lineOneText.setOrigin(1, 0);
+    this.fieldUI.add(this.lineOneText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setOrigin(1, 0);
@@ -472,7 +481,7 @@ export default class BattleScene extends SceneBase {
       }
     });
 
-    this.updateWaveCountText();
+    this.updateLineOneText();
     this.updateMoneyText();
     this.updateScoreText();
   }
@@ -786,8 +795,8 @@ export default class BattleScene extends SceneBase {
 
     this.currentBattle = null;
 
-    this.waveCountText.setText(startingWave.toString());
-    this.waveCountText.setVisible(false);
+    this.lineOneText.setText(startingWave.toString());
+    this.lineOneText.setVisible(false);
 
     this.updateMoneyText();
     this.moneyText.setVisible(false);
@@ -1236,12 +1245,13 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  updateWaveCountText(): void {
+  updateLineOneText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
-    this.waveCountText.setText(this.currentBattle.waveIndex.toString());
-    this.waveCountText.setColor(!isBoss ? "#404040" : "#f89890");
-    this.waveCountText.setShadowColor(!isBoss ? "#ded6b5" : "#984038");
-    this.waveCountText.setVisible(true);
+    const biomeString: string = getBiomeName(this.arena.biomeType);
+    this.lineOneText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
+    this.lineOneText.setColor(!isBoss ? "#404040" : "#f89890");
+    this.lineOneText.setShadowColor(!isBoss ? "#ded6b5" : "#984038");
+    this.lineOneText.setVisible(true);
   }
 
   updateMoneyText(): void {
@@ -1289,8 +1299,8 @@ export default class BattleScene extends SceneBase {
 
   updateUIPositions(): void {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
-    this.waveCountText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
-    this.moneyText.setY(this.waveCountText.y + 10);
+    this.lineOneText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
+    this.moneyText.setY(this.lineOneText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
     [ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
     const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
