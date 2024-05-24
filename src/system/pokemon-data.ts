@@ -11,7 +11,7 @@ import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/
 import { TrainerSlot } from "../data/trainer-config";
 import { Moves } from "../data/enums/moves";
 import { Variant } from "#app/data/variant";
-import { loadBattlerTag } from '../data/battler-tags';
+import { loadBattlerTag } from "../data/battler-tags";
 
 export default class PokemonData {
   public id: integer;
@@ -66,11 +66,13 @@ export default class PokemonData {
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
-    if (!forHistory)
+    if (!forHistory) {
       this.levelExp = source.levelExp;
+    }
     this.gender = source.gender;
-    if (!forHistory)
+    if (!forHistory) {
       this.hp = source.hp;
+    }
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
@@ -79,8 +81,9 @@ export default class PokemonData {
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
-    if (!forHistory)
+    if (!forHistory) {
       this.pauseEvolutions = !!source.pauseEvolutions;
+    }
     this.pokerus = !!source.pokerus;
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
@@ -91,15 +94,17 @@ export default class PokemonData {
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
 
-    if (!forHistory)
+    if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+    }
 
     if (sourcePokemon) {
       this.moveset = sourcePokemon.moveset;
       if (!forHistory) {
         this.status = sourcePokemon.status;
-        if (this.player)
+        if (this.player) {
           this.summonData = sourcePokemon.summonData;
+        }
       }
     } else {
       this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
@@ -120,11 +125,12 @@ export default class PokemonData {
         this.summonData.ability = source.summonData.ability;
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
         this.summonData.types = source.summonData.types;
-        
-        if (source.summonData.tags)
+
+        if (source.summonData.tags) {
           this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
-        else
+        } else {
           this.summonData.tags = [];
+        }
       }
     }
   }
@@ -134,8 +140,9 @@ export default class PokemonData {
     const ret: Pokemon = this.player
       ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this)
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
-    if (this.summonData)
+    if (this.summonData) {
       ret.primeSummonData(this.summonData);
+    }
     return ret;
   }
 }
