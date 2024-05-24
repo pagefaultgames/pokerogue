@@ -7,7 +7,7 @@ export const titles: SimpleTranslationEntries = {
   "gym_leader_female": "Arenaleiterin",
   "gym_leader_double": "Arenaleiter-Duo",
   "champion": "Champion",
-  "champion_double": "Champions-Duo",
+  "champion_double": "Champion-Duo",
   "rival": "Rivale",
   "professor": "Professor",
   "frontier_brain": "Kampfkoryphäen",

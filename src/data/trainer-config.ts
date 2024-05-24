@@ -10,7 +10,7 @@ import PokemonSpecies, {PokemonSpeciesFilter, getPokemonSpecies} from "./pokemon
 import {Species} from "./enums/species";
 import {tmSpecies} from "./tms";
 import {Type} from "./type";
-import {initTrainerTypeDialogue} from "./dialogue";
+import {doubleBattleDialogue, initTrainerTypeDialogue} from "./dialogue";
 import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
 import {PartyMemberStrength} from "./enums/party-member-strength";
@@ -328,6 +328,12 @@ export class TrainerConfig {
     return this;
   }
 
+  /**
+     * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
+     * @param nameDouble - The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
+     * @param doubleEncounterBgm - The encounter BGM for the double trainer, which can be a TrainerType or a string.
+     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     */
   setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
     this.hasDouble = true;
     this.nameDouble = nameDouble;
@@ -337,11 +343,35 @@ export class TrainerConfig {
     return this;
   }
 
+  /**
+     * Sets the trainer type for double battles.
+     * @param trainerTypeDouble - The TrainerType of the partner in a double battle.
+     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     */
   setDoubleTrainerType(trainerTypeDouble: TrainerType): TrainerConfig {
     this.trainerTypeDouble = trainerTypeDouble;
+    this.setDoubleMessages(this.nameDouble);
     return this;
   }
 
+  /**
+     * Sets the encounter and victory messages for double trainers.
+     * @param nameDouble - The name of the pair (e.g. "red_blue_double").
+     */
+  setDoubleMessages(nameDouble: string) {
+    // Check if there is double battle dialogue for this trainer
+    if (doubleBattleDialogue[nameDouble]) {
+      // Set encounter and victory messages for double trainers
+      this.doubleEncounterMessages = doubleBattleDialogue[nameDouble].encounter;
+      this.doubleVictoryMessages = doubleBattleDialogue[nameDouble].victory;
+    }
+  }
+
+  /**
+     * Sets the title for double trainers
+     * @param titleDouble - the key for the title in the i18n file. (e.g., "champion_double").
+     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     */
   setDoubleTitle(titleDouble: string): TrainerConfig {
     // First check if i18n is initialized
     if (!getIsInitialized()) {
