@@ -26,7 +26,7 @@ export const SEED_OVERRIDE: string = "";
 export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
 export const STARTING_WAVE_OVERRIDE: integer = 0;
-export const STARTING_BIOME_OVERRIDE: Biome = Biome.GRASSY_FIELD;
+export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
