@@ -107,7 +107,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   };
 
   public static FilterFainted = (pokemon: PlayerPokemon) => {
-    if(!pokemon.isFainted()) {
+    if (!pokemon.isFainted()) {
       return `${pokemon.name} still has energy\nto battle!`;
     }
     return null;
@@ -717,7 +717,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         case PartyOption.MOVE_3:
         case PartyOption.MOVE_4:
           const move = pokemon.moveset[option - PartyOption.MOVE_1];
-          if(this.showMovePp) {
+          if (this.showMovePp) {
             const maxPP = move.getMovePp();
             const currPP = maxPP - move.ppUsed;
             optionName = `${move.getName()} ${currPP}/${maxPP}`;

@@ -27,7 +27,8 @@
           "skipBlankLines": false, // Enforces the rule even on blank lines
           "ignoreComments": false // Enforces the rule on lines containing comments
         }],
-        "space-before-blocks": ["error", "always"] // Enforces a space before blocks
+        "space-before-blocks": ["error", "always"], // Enforces a space before blocks
+        "keyword-spacing": ["error", { "before": true, "after": true }] // Enforces spacing before and after keywords
       }
     }
   ]

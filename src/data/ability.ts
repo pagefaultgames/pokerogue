@@ -499,11 +499,11 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
     applyMoveAttrs(IncrementMovePriorityAttr,attacker,null,move.getMove(),attackPriority);
     applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move.getMove(), attackPriority);
 
-    if(move.getMove().moveTarget===MoveTarget.USER) {
+    if (move.getMove().moveTarget===MoveTarget.USER) {
       return false;
     }
 
-    if(attackPriority.value > 0 && !move.getMove().isMultiTarget()) {
+    if (attackPriority.value > 0 && !move.getMove().isMultiTarget()) {
       cancelled.value = true;
       return true;
     }
@@ -1892,7 +1892,7 @@ export class ConditionalCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const target = (args[1] as Pokemon);
     const move = (args[2] as Move);
-    if(!this.condition(pokemon,target,move)) {
+    if (!this.condition(pokemon,target,move)) {
       return false;
     }
 
@@ -2410,8 +2410,8 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
-    for(const opp of pokemon.getOpponents()) {
-      if(opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
+    for (const opp of pokemon.getOpponents()) {
+      if (opp.status !== undefined && opp.status.effect === StatusEffect.SLEEP) {
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
         hadEffect = true;
@@ -2440,7 +2440,7 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
-    if(lastUsed !== null && pokemon.isPlayer) {
+    if (lastUsed !== null && pokemon.isPlayer) {
       pokemon.scene.pokeballCounts[lastUsed]++;
       pokemon.scene.currentBattle.lastUsedPokeball = null;
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` found a\n${getPokeballName(lastUsed)}!`));

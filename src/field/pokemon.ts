@@ -549,7 +549,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     try {
       sprite.play(key);
       tintSprite.play(key);
-    } catch(error: unknown) {
+    } catch (error: unknown) {
       console.error(`Couldn't play animation for '${key}'!\nIs the image for this Pokemon missing?\n`, error);
 
       return false;
@@ -1717,7 +1717,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (!isTypeImmune) {
           damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
-            if(!move.getAttrs(BypassBurnDamageReductionAttr).length) {
+            if (!move.getAttrs(BypassBurnDamageReductionAttr).length) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
               applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled);
               if (!burnDamageReductionCancelled.value) {
@@ -1878,7 +1878,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const surviveDamage = new Utils.BooleanHolder(false);
 
     if (!preventEndure && this.hp - damage <= 0) {
-      if(this.hp >= 1 && this.getTag(BattlerTagType.ENDURING)) {
+      if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURING)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING);
       } else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.STURDY);
@@ -2920,9 +2920,9 @@ export class PlayerPokemon extends Pokemon {
   revivalBlessing(): Promise<void> {
     return new Promise(resolve => {
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, this.getFieldIndex(), (slotIndex:integer, option: PartyOption) => {
-        if(slotIndex >= 0 && slotIndex<6) {
+        if (slotIndex >= 0 && slotIndex<6) {
           const pokemon = this.scene.getParty()[slotIndex];
-          if(!pokemon || !pokemon.isFainted()) {
+          if (!pokemon || !pokemon.isFainted()) {
             resolve();
           }
 
@@ -2931,13 +2931,13 @@ export class PlayerPokemon extends Pokemon {
           pokemon.heal(Math.min(Math.max(Math.ceil(Math.floor(0.5 * pokemon.getMaxHp())), 1), pokemon.getMaxHp()));
           this.scene.queueMessage(`${pokemon.name} was revived!`,0,true);
 
-          if(this.scene.currentBattle.double && this.scene.getParty().length > 1) {
+          if (this.scene.currentBattle.double && this.scene.getParty().length > 1) {
             const allyPokemon = this.getAlly();
-            if(slotIndex<=1) {
+            if (slotIndex<=1) {
               // Revived ally pokemon
               this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), slotIndex, false, false, true));
               this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-            } else if(allyPokemon.isFainted()) {
+            } else if (allyPokemon.isFainted()) {
               // Revived party pokemon, and ally pokemon is fainted
               this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, allyPokemon.getFieldIndex(), slotIndex, false, false, true));
               this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
