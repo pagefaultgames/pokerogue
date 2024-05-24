@@ -3675,7 +3675,8 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
       .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.attrs.some(attr => attr instanceof OverrideMoveEffectAttr)) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since nature power queues another move instead of replaces the existing one)
-      .condition(getOncePerSwitchInCondition(Abilities.PROTEAN)),
+      .condition(getOncePerSwitchInCondition(Abilities.PROTEAN))
+      .partial(), // does not activate if user uses Roar or Whirlwind and fails
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -3900,7 +3901,8 @@ export function initAbilities() {
       .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
       .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.attrs.some(attr => attr instanceof OverrideMoveEffectAttr)) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since nature power queues another move instead of replaces the existing one)
-      .condition(getOncePerSwitchInCondition(Abilities.LIBERO)),
+      .condition(getOncePerSwitchInCondition(Abilities.LIBERO))
+      .partial(), // does not activate if user uses Roar or Whirlwind and fails
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
