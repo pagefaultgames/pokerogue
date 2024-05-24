@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, OverrideMoveEffectAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, OverrideMoveEffectAttr, VariableMoveTypeAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -3154,6 +3154,20 @@ export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBatt
 export function applyPostFaintAbAttrs(attrType: { new(...args: any[]): PostFaintAbAttr },
   pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostFaintAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostFaint(pokemon, passive, attacker, move, hitResult, args), args);
+}
+
+/**
+ * Utility function to apply {@link UserTypeChangeToMoveTypeAbAttr} for certain edge cases:
+ *    if defender uses protect-like move
+ *    if user misses
+ * Also applies {@link VariableMoveTypeAttr} to activate for the correct type when moves that call other moves (ex: {@link Moves.NATURE_POWER}) and moves that change type (ex: {@link Moves.HIDDEN_POWER}) 
+ * @param {Pokemon} user the pokemon that used the move
+ * @param {PokemonMove} move the move used
+ */
+export function applyUserTypeChangeToMoveTypeAbAttr(user: Pokemon, move: PokemonMove) {
+  const variableType = new Utils.IntegerHolder(move.getMove().type);
+  applyMoveAttrs(VariableMoveTypeAttr, user, null, move.getMove(), variableType);
+  applyPreAttackAbAttrs(UserTypeChangeToMoveTypeAbAttr, user, null, move, variableType.value);
 }
 
 function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
