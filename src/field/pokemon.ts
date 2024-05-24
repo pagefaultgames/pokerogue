@@ -1330,10 +1330,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         break;
       }
       let weight = levelMove[0];
-      if (weight === 0){ // Evo Moves
+      if (weight === 0) { // Evo Moves
         weight = 50;
       }
-      if (weight === 1 && allMoves[levelMove[1]].power >= 80){ // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight
+      if (weight === 1 && allMoves[levelMove[1]].power >= 80) { // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight
         weight = 40;
       }
       if (allMoves[levelMove[1]].name.endsWith(" (N)")) {
@@ -1379,7 +1379,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
         const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
-        if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()){ // No rare egg moves before e4
+        if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()) { // No rare egg moves before e4
           movePool.push([moveId, 30]);
         }
         if (this.fusionSpecies) {
@@ -1390,14 +1390,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
           }
           const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
-          if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()){// No rare egg moves before e4
+          if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()) {// No rare egg moves before e4
             movePool.push([moveId, 30]);
           }
         }
       }
     }
 
-    if (this.isBoss()){ // Bosses never get self ko moves
+    if (this.isBoss()) { // Bosses never get self ko moves
       movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttr).length);
     }
     movePool = movePool.filter(m => !allMoves[m[0]].getAttrs(SacrificialAttrOnHit).length);
@@ -2072,7 +2072,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
-      if (this.abilityIndex >= abilityCount){// Shouldn't happen
+      if (this.abilityIndex >= abilityCount) {// Shouldn't happen
         this.abilityIndex = abilityCount - 1;
       }
       this.scene.gameData.setPokemonSeen(this, false);
@@ -2992,12 +2992,12 @@ export class PlayerPokemon extends Pokemon {
       this.generateName();
       if (!isFusion) {
         const abilityCount = this.getSpeciesForm().getAbilityCount();
-        if (this.abilityIndex >= abilityCount){ // Shouldn't happen
+        if (this.abilityIndex >= abilityCount) { // Shouldn't happen
           this.abilityIndex = abilityCount - 1;
         }
       } else {
         const abilityCount = this.getFusionSpeciesForm().getAbilityCount();
-        if (this.fusionAbilityIndex >= abilityCount){// Shouldn't happen
+        if (this.fusionAbilityIndex >= abilityCount) {// Shouldn't happen
           this.fusionAbilityIndex = abilityCount - 1;
         }
       }

@@ -923,7 +923,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     const cancelled = new Utils.BooleanHolder(false);
     // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
-    if (!cancelled.value){
+    if (!cancelled.value) {
       user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
       user.scene.queueMessage(getPokemonMessage(user, " cut its own HP to power up its move!")); // Queue recoil message
     }
@@ -1054,7 +1054,7 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
   /** The {@linkcode WeatherType} this move ignores */
   public weather: WeatherType;
 
-  constructor(weather: WeatherType){
+  constructor(weather: WeatherType) {
     super();
     this.weather = weather;
   }
@@ -1555,7 +1555,7 @@ export class EatBerryAttr extends MoveEffectAttr {
     const preserve = new Utils.BooleanHolder(false);
     target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
 
-    if (!preserve.value){ // remove the eaten berry if not preserved
+    if (!preserve.value) { // remove the eaten berry if not preserved
       if (!--this.chosenBerry.stackCount) {
         target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
       }
@@ -2713,7 +2713,7 @@ export class PresentPowerAttr extends VariablePowerAttr {
 
 export class KnockOffPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if(target.getHeldItems().length > 0){
+    if(target.getHeldItems().length > 0) {
       (args[0] as Utils.NumberHolder).value *= 1.5;
       return true;
     }
@@ -2744,7 +2744,7 @@ export class VariableAtkAttr extends MoveAttr {
 }
 
 export class TargetAtkUserAtkAttr extends VariableAtkAttr {
-  constructor(){
+  constructor() {
     super();
   }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2831,7 +2831,7 @@ export class MinimizeAccuracyAttr extends VariableAccuracyAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.getTag(BattlerTagType.MINIMIZED)){
+    if (target.getTag(BattlerTagType.MINIMIZED)) {
       const accuracy = args[0] as Utils.NumberHolder;
       accuracy.value = -1;
 
@@ -3746,7 +3746,7 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
       return false;
     }
 
-    if(this.targetBothSides){
+    if(this.targetBothSides) {
       user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
@@ -3782,7 +3782,7 @@ export class RemoveScreensAttr extends MoveEffectAttr {
       return false;
     }
 
-    if(this.targetBothSides){
+    if(this.targetBothSides) {
       user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.PLAYER);
@@ -3842,7 +3842,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           const allyPokemon = user.getAlly();
           if(slotIndex<=1) {
             user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, pokemon.getFieldIndex(), slotIndex, false, false, false));
-          } else if(allyPokemon.isFainted()){
+          } else if(allyPokemon.isFainted()) {
             user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, allyPokemon.getFieldIndex(), slotIndex, false, false,false));
           }
         }
@@ -4804,7 +4804,7 @@ export class FirstMoveCondition extends MoveCondition {
 export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
-    if (!user.getTypes().some(type => target.getTypes().includes(type))){
+    if (!user.getTypes().some(type => target.getTypes().includes(type))) {
       multiplier.value = 0;
       return true;
     }

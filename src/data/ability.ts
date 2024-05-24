@@ -254,7 +254,7 @@ export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.hp === pokemon.getMaxHp() &&
         pokemon.getMaxHp() > 1 && //Checks if pokemon has wonder_guard (which forces 1hp)
-        (args[0] as Utils.NumberHolder).value >= pokemon.hp){ //Damage >= hp
+        (args[0] as Utils.NumberHolder).value >= pokemon.hp) { //Damage >= hp
       return pokemon.addTag(BattlerTagType.STURDY, 1);
     }
 
@@ -955,7 +955,7 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
   private newType: Type;
   private powerMultiplier: number;
 
-  constructor(matchType: Type, newType: Type, powerMultiplier: number){
+  constructor(matchType: Type, newType: Type, powerMultiplier: number) {
     super(true);
     this.matchType = matchType;
     this.newType = newType;
@@ -986,7 +986,7 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
   private powerMultiplier: number;
   private condition: PokemonAttackCondition;
 
-  constructor(newType: Type, powerMultiplier: number, condition: PokemonAttackCondition){
+  constructor(newType: Type, powerMultiplier: number, condition: PokemonAttackCondition) {
     super(true);
     this.newType = newType;
     this.powerMultiplier = powerMultiplier;
@@ -1015,7 +1015,7 @@ export class DamageBoostAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
   private condition: PokemonAttackCondition;
 
-  constructor(damageMultiplier: number, condition: PokemonAttackCondition){
+  constructor(damageMultiplier: number, condition: PokemonAttackCondition) {
     super(true);
     this.damageMultiplier = damageMultiplier;
     this.condition = condition;
@@ -1860,7 +1860,7 @@ export class MultCritAbAttr extends AbAttr {
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const critMult = args[0] as Utils.NumberHolder;
-    if (critMult.value > 1){
+    if (critMult.value > 1) {
       critMult.value *= this.multAmount;
       return true;
     }
@@ -2575,7 +2575,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
    * @returns if enemy Pokemon is trapped or not
    */
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
-    if (otherPokemon.getTypes().includes(Type.GHOST)){
+    if (otherPokemon.getTypes().includes(Type.GHOST)) {
       trapped.value = false;
       return false;
     }

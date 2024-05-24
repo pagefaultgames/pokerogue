@@ -423,13 +423,13 @@ export default class PartyUiHandler extends MessageUiHandler {
         }
         break;
       case Button.RIGHT:
-        if (slotCount === battlerCount){
+        if (slotCount === battlerCount) {
           success = this.setCursor(6);
           break;
-        } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1){
+        } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1) {
           success = this.setCursor(2);
           break;
-        } else if (slotCount > battlerCount && this.cursor < battlerCount){
+        } else if (slotCount > battlerCount && this.cursor < battlerCount) {
           success = this.setCursor(this.lastCursor < 6 ? this.lastCursor ||  battlerCount : battlerCount);
           break;
         }
