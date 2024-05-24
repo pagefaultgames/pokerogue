@@ -13,7 +13,7 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 
 export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private readonly infoWindowWidth = 104;
-  
+
   private pokemonGenderLabelText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
@@ -159,7 +159,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
         this.pokemonShinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
       }
-  
+
       this.pokemonFusionShinyIcon.setPosition(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y);
       this.pokemonFusionShinyIcon.setVisible(doubleShiny);
       if (isFusion) {
@@ -245,7 +245,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           (this.scene as BattleScene).ui.hideTooltip();
           resolve();
         }
-      });  
+      });
 
       this.shown = false;
     });

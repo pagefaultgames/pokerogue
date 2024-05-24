@@ -37,7 +37,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       this.pokemonIcon = (this.scene as BattleScene).addPokemonIcon(pokemon, -8, 15, 0, 0.5);
       this.pokemonIcon.setScale(0.5);
-      
+
       this.add(this.pokemonIcon);
 
       // if we want to only display the level in the small frame
@@ -70,7 +70,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
           resolve();
         }
       });
-    
+
       this.setVisible(true);
       this.shown = true;
     });

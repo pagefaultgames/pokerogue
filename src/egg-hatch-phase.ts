@@ -291,7 +291,7 @@ export class EggHatchPhase extends Phase {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
         this.scene.playSoundWithoutBgm("evolution_fanfare");
-        
+
         this.scene.ui.showText(`${this.pokemon.name} hatched from the egg!`, null, () => {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
           this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
@@ -374,7 +374,7 @@ export class EggHatchPhase extends Phase {
 
       if (this.egg.isManaphyEgg()) {
         const rand = Utils.randSeedInt(8);
-  
+
         speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;
       } else if (this.egg.tier === EggTier.MASTER
         && this.egg.gachaType === GachaType.LEGENDARY) {
@@ -451,14 +451,14 @@ export class EggHatchPhase extends Phase {
       for (let s = 0; s < ret.ivs.length; s++) {
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
       }
-      
+
       const baseChance = this.egg.gachaType === GachaType.MOVE ? 3 : 6;
       this.eggMoveIndex = Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))
         ? Utils.randSeedInt(3)
         : 3;
 
     }, this.egg.id, EGG_SEED.toString());
-    
+
     return ret;
   }
 }

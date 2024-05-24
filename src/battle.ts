@@ -89,7 +89,7 @@ export default class Battle {
     this.moneyScattered = 0;
     this.lastUsedPokeball = null;
   }
-  
+
   private initBattleSpec(): void {
     let spec = BattleSpec.DEFAULT;
     if (this.gameMode.isWaveFinal(this.waveIndex) && this.gameMode.isClassic) {
@@ -116,14 +116,14 @@ export default class Battle {
     }
 
     let levelOffset = 0;
-        
+
     const deviation = 10 / levelWaveIndex;
     levelOffset = Math.abs(this.randSeedGaussForLevel(deviation));
 
     return Math.max(Math.round(baseLevel + levelOffset), 1);
   }
 
-  randSeedGaussForLevel(value: number): number { 
+  randSeedGaussForLevel(value: number): number {
     let rand = 0;
     for (let i = value; i > 0; i--) {
       rand += Phaser.Math.RND.realInRange(0, 1);
@@ -162,7 +162,7 @@ export default class Battle {
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
     scene.addMoney(moneyAmount.value);
-        
+
     scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString("en-US")}!`, null, true);
 
     scene.currentBattle.moneyScattered = 0;

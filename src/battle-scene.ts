@@ -191,7 +191,7 @@ export default class BattleScene extends SceneBase {
     initSpecies();
     initMoves();
     initAbilities();
-		
+
     this.phaseQueue = [];
     this.phaseQueuePrepend = [];
     this.phaseQueuePrependSpliceIndex = -1;
@@ -553,17 +553,17 @@ export default class BattleScene extends SceneBase {
 					const species = getPokemonSpecies(parseInt(s));
 					loadPokemonAssets.push(species.loadAssets(this, false, 0, false));
 				}
-	
+
 				Promise.all(loadPokemonAssets).then(() => {
 					const starterCandyColors = {};
 					const rgbaToHexFunc = (r, g, b) => [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
-		
+
 					for (let s of Object.keys(speciesStarters)) {
 						const species = getPokemonSpecies(parseInt(s));
-						
+
 						starterCandyColors[species.speciesId] = species.generateCandyColors(this).map(c => rgbaToHexFunc(c[0], c[1], c[2]));
 					}
-		
+
 					console.log(JSON.stringify(starterCandyColors));
 
 					resolve();
@@ -669,7 +669,7 @@ export default class BattleScene extends SceneBase {
 
   addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
-		
+
     const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
     	icon.setFrame(pokemon.getIconId(true));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
@@ -695,7 +695,7 @@ export default class BattleScene extends SceneBase {
       const originalFrame = icon.frame;
 
       const iconHeight = (icon.frame.cutHeight <= fusionIcon.frame.cutHeight ? Math.ceil : Math.floor)((icon.frame.cutHeight + fusionIcon.frame.cutHeight) / 4);
-			
+
       // Inefficient, but for some reason didn't work with only the unique properties as part of the name
       const iconFrameId = `${icon.frame.name}f${fusionIcon.frame.name}`;
 
@@ -760,7 +760,7 @@ export default class BattleScene extends SceneBase {
     }
 
     this.gameMode = gameModes[GameModes.CLASSIC];
-		
+
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
 
@@ -789,7 +789,7 @@ export default class BattleScene extends SceneBase {
     for (const p of this.getEnemyParty()) {
       p.destroy();
     }
-			
+
     this.currentBattle = null;
 
     this.waveCountText.setText(startingWave.toString());
@@ -818,7 +818,7 @@ export default class BattleScene extends SceneBase {
     this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
     this.trainer.setPosition(406, 186);
     this.trainer.setVisible(true);
-		
+
     this.updateGameInfo();
 
     if (reloadI18n) {
@@ -865,7 +865,7 @@ export default class BattleScene extends SceneBase {
     this.resetSeed(newWaveIndex);
 
     const playerField = this.getPlayerField();
-		
+
     if (this.gameMode.hasFixedBattles && fixedBattles.hasOwnProperty(newWaveIndex) && trainerData === undefined) {
       battleConfig = fixedBattles[newWaveIndex];
       newDouble = battleConfig.double;
@@ -986,7 +986,7 @@ export default class BattleScene extends SceneBase {
         }
       }
     }
-		
+
     return this.currentBattle;
   }
 
@@ -1157,7 +1157,7 @@ export default class BattleScene extends SceneBase {
       if (!pokemon.pokerus || infectedIndexes.indexOf(p) > -1) {
         return;
       }
-			
+
       this.executeWithSeedOffset(() => {
         if (p) {
           spread(p, -1);
@@ -1251,7 +1251,7 @@ export default class BattleScene extends SceneBase {
   }
 
   updateMoneyText(): void {
-    this.moneyText.setText(`₽${this.money.toLocaleString("en-US")}`);
+    this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
     this.moneyText.setVisible(true);
   }
 
@@ -1622,7 +1622,7 @@ export default class BattleScene extends SceneBase {
     this.currentPhase = this.phaseQueue.shift();
     this.currentPhase.start();
   }
-	
+
   overridePhase(phase: Phase): boolean {
     if (this.standbyPhase) {
       return false;
@@ -1721,7 +1721,7 @@ export default class BattleScene extends SceneBase {
           this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
           return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(success => resolve(success));
         }
-				
+
         for (const rm of modifiersToRemove) {
           this.removeModifier(rm);
         }
@@ -1750,7 +1750,7 @@ export default class BattleScene extends SceneBase {
             } else if (modifier instanceof FusePokemonModifier) {
               args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
             }
-							
+
             if (modifier.shouldApply(args)) {
               const result = modifier.apply(args);
               if (result instanceof Promise) {
@@ -1760,7 +1760,7 @@ export default class BattleScene extends SceneBase {
               }
             }
           }
-					
+
           return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
         } else {
           const args = [ this ];
@@ -2109,7 +2109,7 @@ export default class BattleScene extends SceneBase {
 
     return false;
   }
-	
+
   updateGameInfo(): void {
     const gameInfo = {
       playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
