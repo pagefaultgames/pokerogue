@@ -729,7 +729,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ]
 };
 
-{
+export function initPokemonForms() {
   const formChangeKeys = Object.keys(pokemonFormChanges);
   formChangeKeys.forEach(pk => {
     const formChanges = pokemonFormChanges[pk];
