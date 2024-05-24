@@ -278,14 +278,13 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
 
 export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
-      ((pokemon: PlayerPokemon) => {
+    super(localeKey, iconImage, ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id))),
+      (pokemon: PlayerPokemon) => {
         if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED)))
           return PartyUiHandler.NoEffectMessage;
-        }
+        };
         return null;
-      }));
-  }
+      }
 
   getDescription(scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.PokemonStatusHealModifierType.description");
