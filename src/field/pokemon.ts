@@ -3659,7 +3659,7 @@ export class PokemonSummonData {
   public fusionGender: Gender;
   public stats: integer[];
   public moveset: PokemonMove[];
-  public types: Type[];
+  public types: Type[] = null;
 }
 
 export class PokemonBattleData {

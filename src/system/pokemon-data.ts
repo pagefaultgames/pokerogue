@@ -121,6 +121,7 @@ export default class PokemonData {
         this.summonData.disabledMove = source.summonData.disabledMove;
         this.summonData.disabledTurns = source.summonData.disabledTurns;
         this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
+        this.summonData.abilitiesApplied = source.summonData.abilitiesApplied;
 
         this.summonData.ability = source.summonData.ability;
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
