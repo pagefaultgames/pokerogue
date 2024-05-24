@@ -219,7 +219,7 @@ export default class UI extends Phaser.GameObjects.Container {
       return false;
     }
 
-    if([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
+    if ([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
       this.handlers[Mode.FIGHT]?.processStats(pressed);
       return true;
     }
