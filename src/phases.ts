@@ -1802,7 +1802,7 @@ export class CommandPhase extends FieldPhase {
         console.log(moveTargets, playerPokemon.name);
         if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
           turnCommand.move.targets = moveTargets.targets;
-        } else if(playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
+        } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
           turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
         } else {
           this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
@@ -1902,7 +1902,7 @@ export class CommandPhase extends FieldPhase {
             this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
           }
         } else if (trapTag) {
-          if(trapTag.sourceMove === Moves.INGRAIN && this.scene.getPokemonById(trapTag.sourceId).isOfType(Type.GHOST)) {
+          if (trapTag.sourceMove === Moves.INGRAIN && this.scene.getPokemonById(trapTag.sourceId).isOfType(Type.GHOST)) {
             success = true;
             this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
@@ -2578,7 +2578,7 @@ export class MovePhase extends BattlePhase {
   showMoveText(): void {
     if (this.move.getMove().getAttrs(ChargeAttr).length) {
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
-      if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER){
+      if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER) {
         this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
         return;
       }

@@ -1392,7 +1392,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
-        if(i18next.exists("growth:" + growthAux)){
+        if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t("growth:"+ growthAux as any);
         }
         this.pokemonGrowthRateText.setText(growthReadable);
