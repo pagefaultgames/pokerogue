@@ -2573,9 +2573,7 @@ export class MovePhase extends BattlePhase {
 
   getEffectPhase(): MoveEffectPhase {
     // Trigger pokemon type change before playing the move animation
-    if (this.pokemon.hasAbilityWithAttr(PokemonTypeChangeAbAttr)) {
-      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move);
-    }
+    applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move);
     return new MoveEffectPhase(this.scene, this.pokemon.getBattlerIndex(), this.targets, this.move);
   }
 
