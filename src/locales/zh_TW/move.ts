@@ -1511,8 +1511,8 @@ export const move: MoveTranslationEntries = {
     name: "暗襲要害",
     effect: "抓住瞬間的空隙切斬對手。\n容易擊中要害",
   },
-  aquaTail: { 
-    name: "水流尾", effect: "如驚濤駭浪般揮動大尾巴攻\n擊對手" 
+  aquaTail: {
+    name: "水流尾", effect: "如驚濤駭浪般揮動大尾巴攻\n擊對手"
   },
   seedBomb: {
     name: "種子炸彈",
@@ -1538,8 +1538,8 @@ export const move: MoveTranslationEntries = {
     name: "龍之俯衝",
     effect: "釋放出駭人的殺氣，一邊威\n懾一邊撞擊對手。有時會使\n對手畏縮",
   },
-  powerGem: { 
-    name: "力量寶石", effect: "發射如寶石般閃耀的光芒攻\n擊對手" 
+  powerGem: {
+    name: "力量寶石", effect: "發射如寶石般閃耀的光芒攻\n擊對手"
   },
   drainPunch: {
     name: "吸取拳",
@@ -1853,8 +1853,8 @@ export const move: MoveTranslationEntries = {
     name: "電球",
     effect: "用電氣團撞向對手。自己比\n對手速度越快，威力越大",
   },
-  soak: { 
-    name: "浸水", effect: "將大量的水潑向對手，從而\n使其變成水屬性" 
+  soak: {
+    name: "浸水", effect: "將大量的水潑向對手，從而\n使其變成水屬性"
   },
   flameCharge: {
     name: "蓄能焰襲",
@@ -1948,8 +1948,8 @@ export const move: MoveTranslationEntries = {
     name: "燒淨",
     effect: "用火焰攻擊對手。對手攜帶\n樹果等時，會燒掉，使其不\n能使用",
   },
-  quash: { 
-    name: "延後", effect: "壓制對手，從而將其行動順\n序放到最後" 
+  quash: {
+    name: "延後", effect: "壓制對手，從而將其行動順\n序放到最後"
   },
   acrobatics: {
     name: "雜技",
@@ -2007,8 +2007,8 @@ export const move: MoveTranslationEntries = {
     name: "龍尾",
     effect: "彈飛對手，強制拉後備寶可\n夢上場。如果對手爲野生寶\n可夢，戰鬥將直接結束",
   },
-  workUp: { 
-    name: "自我激勵", effect: "激勵自己，從而提高攻擊和\n特攻" 
+  workUp: {
+    name: "自我激勵", effect: "激勵自己，從而提高攻擊和\n特攻"
   },
   electroweb: {
     name: "電網",
@@ -2238,8 +2238,8 @@ export const move: MoveTranslationEntries = {
     name: "嬉鬧",
     effect: "與對手嬉鬧並攻擊。有時會\n降低對手的攻擊",
   },
-  fairyWind: { 
-    name: "妖精之風", effect: "颳起妖精之風，吹向對手進\n行攻擊" 
+  fairyWind: {
+    name: "妖精之風", effect: "颳起妖精之風，吹向對手進\n行攻擊"
   },
   moonblast: {
     name: "月亮之力",

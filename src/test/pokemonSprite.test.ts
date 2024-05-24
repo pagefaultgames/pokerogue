@@ -79,7 +79,7 @@ describe("check if every variant's sprite are correctly set", () => {
           }
         } else if (!mlist.hasOwnProperty(name)) {
           errors.push(`named - missing key ${name} in masterlist for ${trimmedFilePath}`);
-        }else {
+        } else {
           const raw = fs.readFileSync(filePath, {encoding: "utf8", flag: "r"});
           const data = JSON.parse(raw);
           for (const key of Object.keys(data)) {
