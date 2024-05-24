@@ -15,6 +15,7 @@ import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import { pokemonEvolutions } from "../data/pokemon-evolutions";
 import { Type } from "../data/type";
 import { Button } from "../enums/buttons";
 import { GameModes, gameModes } from "../game-mode";
@@ -846,8 +847,75 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             {
               label: i18next.t("starterSelectUiHandler:toggleBase"),
               handler: () => {
+                // menu code for "Toggle Base-Values"-Button
                 this.toggleStatsMode(StatsMode.BASE);
-                ui.setMode(Mode.STARTER_SELECT);
+
+                // generate options
+                const options = [];
+                const genOption = (name : String, base : integer[]) => {
+                  const option: OptionSelectItem = {
+                    label: name,
+                    handler: () => {
+                      return false;
+                    },
+                    onHover: () => {
+                      // switch base stats on hover for a smother ui usage
+                      this.statsContainer.updateBase(base);
+                    }
+                  };
+                  return option;
+                };
+                // species handler, will be called recursively for evos
+                const handleSpecies = (s: PokemonSpecies) => {
+                  options.push(genOption(s.getName(), s.baseStats));
+                  s.forms.forEach((f, i) => {
+                    if (f instanceof PokemonSpecies) {
+                      handleSpecies(f as PokemonSpecies);
+                    } else {
+                      if (!f.baseStats.every((v, i) => v === s.baseStats[i])) {
+                        // Add options for various forms, however skip any forms with the same baseStats as the base form.
+                        options.push(genOption(s.getName(i), f.baseStats));
+                      }
+                    }
+                  });
+                  (pokemonEvolutions[s.speciesId] || []).forEach(evo => {
+                    const evoSpec = getPokemonSpecies(evo.speciesId);
+                    handleSpecies(evoSpec);
+                  });
+                };
+                handleSpecies(this.lastSpecies);
+
+
+                // show sub menu
+                ui.setMode(Mode.STARTER_SELECT).then(() => {
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: options.concat({
+                      label: i18next.t("starterSelectUiHandler:toggleBase"),
+                      handler: () => {
+                        // close and show the sprite again
+                        this.toggleStatsMode(StatsMode.NONE);
+                        ui.setMode(Mode.STARTER_SELECT);
+                        return true;
+                      },
+                      onHover: () => {
+                        //this.statsContainer.updateBase([0, 0, 0, 0, 0, 0]); // resetting the graph doesn't quite look right so i kept the last shown one as is, if someone has a better idea, feel free to change this behavior
+                      }
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
+                      handler: () => {
+                        // close but keep showing the default base stats for the current selection, depending on the cursor position
+                        ui.setMode(Mode.STARTER_SELECT);
+                        return true;
+                      },
+                      onHover: () => {
+                        this.statsContainer.updateBase(this.lastSpecies.baseStats);
+                      }
+                    }),
+                    maxOptions: 8,
+                    yOffset: 47,
+                    supportHover: true,
+                  });
+                });
                 return true;
               }
             },

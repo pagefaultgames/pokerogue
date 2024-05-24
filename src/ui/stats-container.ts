@@ -12,7 +12,6 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   private showDiff: boolean;
   private statsIvsCache: integer[];
   private ivChart: Phaser.GameObjects.Polygon;
-  private subCharts: Phaser.GameObjects.Polygon[] = [];
   private ivStatValueTexts: BBCodeText[];
 
   constructor(scene: BattleScene, x: number, y: number, showDiff?: boolean) {
@@ -62,9 +61,18 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     });
   }
 
+  updateBase(base: integer[]): void {
+    this.updateValues(base, 200, 0xFF0000);
+  }
+
   updateIvs(ivs: integer[], originalIvs?: integer[]): void {
+    this.updateValues(ivs, 31, 0x98d8a0, originalIvs);
+  }
+
+  //
+  updateValues(ivs: integer[], scale : integer, color : integer, originalIvs?: integer[]): void {
     if (ivs) {
-      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
+      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
       this.statsIvsCache = ivChartData.slice(0);
 
@@ -80,13 +88,14 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         t.setText(`[shadow]${label}[/shadow]`);
       });
 
-      this.ivChart.setFillStyle(0x98d8a0, 0.75); // Updates color of diagram, in case it was changed by updateBase()
-      this.subCharts.map(c => {
-        // Disable all subCharts, currently used for base-stats for forms.
-        if (c.parentContainer) {
-          c.parentContainer.remove(c);
-        }
-      });
+      const oldColor = this.ivChart.fillColor;
+      let interpolateColor = null;
+      if (oldColor !== color) {
+        interpolateColor = [
+          Phaser.Display.Color.IntegerToColor(oldColor),
+          Phaser.Display.Color.IntegerToColor(color)
+        ];
+      }
 
       this.scene.tweens.addCounter({
         from: 0,
@@ -96,43 +105,13 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         onUpdate: (tween: Phaser.Tweens.Tween) => {
           const progress = tween.getValue();
           const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));
-          this.ivChart.setTo(interpolatedData);
-        }
-      });
-    } else {
-      this.statsIvsCache = defaultIvChartData;
-      this.ivChart.setTo(defaultIvChartData);
-    }
-  }
-
-  // function to update base-stat-diagram; code based on updateIvs()
-  updateBase(base: integer[]): void {
-    if (base) {
-      // Prepare data for insertion into chart.
-
-      const scale = 200;
-	  // Currently a scale of 200 is chosen.
-	  // This will cause exceptional base stat values to exceed the chart, but offer slightly more details for low base values
-      const baseChartData = new Array(6).fill(null).map((_, i) => [ (base[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (base[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
-      const lastBaseChartData = this.statsIvsCache || defaultIvChartData;
-      this.statsIvsCache = baseChartData.slice(0);
-
-	  // display base state values
-      this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
-        const label = base[i].toString();
-        t.setText(`[shadow]${label}[/shadow]`);
-      });
-
-      this.ivChart.setFillStyle(0xFF0000, 0.75); // Updates color of diagram, in case it was changed by updateIvs()
-
-      this.scene.tweens.addCounter({
-        from: 0,
-        to: 1,
-        duration: 1000,
-        ease: "Cubic.easeOut",
-        onUpdate: (tween: Phaser.Tweens.Tween) => {
-          const progress = tween.getValue();
-          const interpolatedData = baseChartData.map((v: number, i: integer) => v * progress + (lastBaseChartData[i] * (1 - progress)));
+          if (interpolateColor) {
+            this.ivChart.setFillStyle(
+              Phaser.Display.Color.ValueToColor(
+                Phaser.Display.Color.Interpolate.ColorWithColor(interpolateColor[0], interpolateColor[1], 1, progress)
+              ).color,
+              0.75);
+          }
           this.ivChart.setTo(interpolatedData);
         }
       });
