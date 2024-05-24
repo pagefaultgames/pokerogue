@@ -974,7 +974,6 @@ export class UserTypeChangeToMoveTypeAbAttr extends PreAttackAbAttr {
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: Type[]): boolean | Promise<boolean> {
     if (this.condition(pokemon, defender, move.getMove())) {
-      pokemon.summonData.ability = pokemon.getAbility().id;
       pokemon.summonData.types = args;
       pokemon.updateInfo();
       return true;
@@ -2086,7 +2085,7 @@ function getOncePerBattleCondition(ability: Abilities): AbAttrCondition {
  */
 function getOncePerSwitchInCondition(ability: Abilities): AbAttrCondition {
   return (pokemon: Pokemon) => {
-    return pokemon.summonData?.ability !== ability;
+    return !pokemon.summonData?.abilitiesApplied.includes(ability);
   };
 }
 
@@ -3000,6 +2999,9 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
       }
       pokemon.scene.setPhaseQueueSplice();
       const onApplySuccess = () => {
+        if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
+          pokemon.summonData.abilitiesApplied.push(ability.id);
+        }
         if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
           pokemon.battleData.abilitiesApplied.push(ability.id);
         }
