@@ -1186,7 +1186,7 @@ export default class BattleScene extends SceneBase {
 	updateLineOneText(): void {
 		const isBoss = !(this.currentBattle.waveIndex % 10);
 		const biomeString: string = getBiomeName(this.arena.biomeType);
-		this.lineOneText.setText( this.currentBattle.waveIndex.toString() + " - " + biomeString);
+		this.lineOneText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
 		this.lineOneText.setColor(!isBoss ? '#404040' : '#f89890');
 		this.lineOneText.setShadowColor(!isBoss ? '#ded6b5' : '#984038');
 		this.lineOneText.setVisible(true);
