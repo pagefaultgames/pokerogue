@@ -88,7 +88,7 @@ const displayStats: DisplayStats = {
   },
   highestMoney: {
     label_key: "highestMoney",
-    sourceFunc: gameData => gameData.gameStats.highestMoney.toString(),
+    sourceFunc: gameData => Utils.formatFancyLargeNumber(gameData.gameStats.highestMoney, 3),
   },
   highestDamage: {
     label_key: "highestDamage",

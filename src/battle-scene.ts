@@ -1260,7 +1260,7 @@ export default class BattleScene extends SceneBase {
   }
 
   updateMoneyText(): void {
-    this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
+    this.moneyText.setText(`₽${Utils.formatFancyLargeNumber(this.money, 3)}`);
     this.moneyText.setVisible(true);
   }
 
