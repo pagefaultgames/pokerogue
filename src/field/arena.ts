@@ -456,9 +456,6 @@ export class Arena {
   }
 
   overrideTint(): [integer, integer, integer] {
-    if (!Overrides.ARENA_TINT_OVERRIDE) {
-      return;
-    }
     switch(Overrides.ARENA_TINT_OVERRIDE) {
     case TimeOfDay.DUSK:
       return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
@@ -475,7 +472,7 @@ export class Arena {
   }
 
   getDayTint(): [integer, integer, integer] {
-    if (Overrides.ARENA_TINT_OVERRIDE) {
+    if (Overrides.ARENA_TINT_OVERRIDE !== null) {
       return this.overrideTint();
     }
     switch (this.biomeType) {
