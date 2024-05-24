@@ -4357,7 +4357,7 @@
 					}
 				},
 				{
-					"filename": "172-spiky",
+					"filename": "172",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4462,7 +4462,7 @@
 					}
 				},
 				{
-					"filename": "172",
+					"filename": "172-spiky",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4714,7 +4714,7 @@
 					}
 				},
 				{
-					"filename": "172s-spiky",
+					"filename": "172s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4777,7 +4777,7 @@
 					}
 				},
 				{
-					"filename": "172s",
+					"filename": "172s-spiky",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5643,6 +5643,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:24c0e043b77bb41bcd335b45d511469e:5ea4e40521f9e8df97120dca6c6a75d4:c4863c5093a921f7cedf2f07c8e4b312$"
+		"smartupdate": "$TexturePacker:SmartUpdate:fb65cd7da07b1ca17dcf790954979dcb:904e2f46add51b0142753f21661bb455:c4863c5093a921f7cedf2f07c8e4b312$"
 	}
 }

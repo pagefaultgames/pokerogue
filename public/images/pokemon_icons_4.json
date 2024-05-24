@@ -1543,7 +1543,7 @@
 					}
 				},
 				{
-					"filename": "450-f",
+					"filename": "450",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2740,7 +2740,7 @@
 					}
 				},
 				{
-					"filename": "450",
+					"filename": "450-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2929,7 +2929,7 @@
 					}
 				},
 				{
-					"filename": "450s-f",
+					"filename": "450s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -3223,7 +3223,7 @@
 					}
 				},
 				{
-					"filename": "450s",
+					"filename": "450s-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4126,7 +4126,7 @@
 					}
 				},
 				{
-					"filename": "449-f",
+					"filename": "449",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4147,7 +4147,7 @@
 					}
 				},
 				{
-					"filename": "449",
+					"filename": "449-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4168,7 +4168,7 @@
 					}
 				},
 				{
-					"filename": "449s-f",
+					"filename": "449s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4189,7 +4189,7 @@
 					}
 				},
 				{
-					"filename": "449s",
+					"filename": "449s-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6273,6 +6273,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:c8b7fe5b84bc591ac349dae2767d66e9:6ab53090843a95b6c6920a4ca340d9e7:3f74c54ad2b3085ce7282c3466535f4a$"
+		"smartupdate": "$TexturePacker:SmartUpdate:9e39a5435d1f76d9631d9b71ab5b9c94:568b2cb64a14edb2784dab148de2e1d5:3f74c54ad2b3085ce7282c3466535f4a$"
 	}
 }
