@@ -2632,6 +2632,7 @@ export class MoveEffectPhase extends PokemonPhase {
     applyMoveAttrs(OverrideMoveEffectAttr, user, this.getTarget(), this.move.getMove(), overridden, this.move.virtual).then(() => {
 
       if (overridden.value) {
+        applyUserTypeChangeToMoveTypeAbAttr(user, this.move);
         return this.end();
       }
       

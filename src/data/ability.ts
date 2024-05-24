@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, OverrideMoveEffectAttr, VariableMoveTypeAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -969,7 +969,7 @@ export class UserTypeChangeToMoveTypeAbAttr extends PreAttackAbAttr {
    * @param passive
    * @param defender
    * @param move
-   * @param {Type} args the types to change to.
+   * @param {Type[]} args the types to change to.
    * @returns
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: Type[]): boolean | Promise<boolean> {
@@ -3676,7 +3676,7 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.attrs.some(attr => attr instanceof OverrideMoveEffectAttr)) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since nature power queues another move instead of replaces the existing one)
+      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.callsAnotherMove()) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since they queue another move instead of replacing the current one)
       .condition(getOncePerSwitchInCondition(Abilities.PROTEAN))
       .partial(), // does not activate if user uses Roar or Whirlwind and fails
     new Ability(Abilities.FUR_COAT, 6)
@@ -3902,7 +3902,7 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true)
       .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
-      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.attrs.some(attr => attr instanceof OverrideMoveEffectAttr)) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since nature power queues another move instead of replaces the existing one)
+      .attr(UserTypeChangeToMoveTypeAbAttr, (user, target, move) => (move.type !== user.getTypes()[0] || user.getTypes().length > 1) && move.id !== Moves.STRUGGLE && !move.callsAnotherMove()) // should not trigger if user is already the same type as move or if the used move is struggle or a move that calls another move like nature power (since they queue another move instead of replacing the current one)
       .condition(getOncePerSwitchInCondition(Abilities.LIBERO))
       .partial(), // does not activate if user uses Roar or Whirlwind and fails
     new Ability(Abilities.BALL_FETCH, 8)

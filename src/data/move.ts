@@ -215,6 +215,18 @@ export default class Move implements Localizable {
     return false;
   }
 
+  /**
+   * Utility/Helper function used to determine if this move calls another move
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
+   * @returns {boolean} whether or not this move calls another move
+   */
+  callsAnotherMove(): boolean {
+    return this.attrs.some(attr => attr instanceof RandomMovesetMoveAttr)
+      || this.attrs.some(attr => attr instanceof RandomMoveAttr)
+      || this.attrs.some(attr => attr instanceof NaturePowerAttr)
+      || this.attrs.some(attr => attr instanceof CopyMoveAttr);
+  }
+
   condition(condition: MoveCondition | MoveConditionFunc): this {
     if (typeof condition === "function") {
       condition = new MoveCondition(condition as MoveConditionFunc);
