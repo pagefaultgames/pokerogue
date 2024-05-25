@@ -10,15 +10,19 @@ import {Moves} from "#app/data/enums/moves";
 import {LoginPhase, TitlePhase} from "#app/phases";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
 import {blobToString} from "#app/test/essentials/utils";
+import * as Utils from "#app/utils";
+import {loggedInUser, setLoggedInUser} from "#app/account";
 const saveKey = "x0i2O7WRiANTqPmZ";
 describe("Session import/export", () => {
-  let game, scene, gameData, sessionData, loggedInUser;
+  let game, scene, gameData, sessionData;
   beforeAll(() => {
     game = new GameWrapper();
-    loggedInUser = {username: "Greenlamp"};
+    setLoggedInUser("Greenlamp", 1);
     scene = new BattleScene();
     game.scene.add("battle", scene);
     gameData = new GameData(scene);
+
+    Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
     Object.defineProperty(window, "localStorage", {
       value: mockLocalStorage(),
@@ -59,7 +63,6 @@ describe("Session import/export", () => {
     let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
     sessionData = gameData.parseSessionData(dataStr);
     const dataName = "session";
-    const loggedInUser = {username: "Greenlamp"};
     const dataKey = `${getDataTypeKey(GameDataType.SESSION, 1)}_${loggedInUser.username}`;
     localStorage.setItem(dataKey, encrypt(dataStr, false));
   })
@@ -83,14 +86,14 @@ describe("Session import/export", () => {
     });
   })
 
-  it('start a login phase to create a new session', () => {
+  it('select some starter', () => {
     scene.launchBattle();
     scene.pushPhase(new LoginPhase(scene));
     scene.pushPhase(new TitlePhase(scene));
-    const queue = scene.nextCommandPhaseQueue;
-    const queue2 = scene.phaseQueue;
     scene.shiftPhase();
-    scene.gameData.saveAll(scene, true, true, true, true).then(() => scene.reset(true));
+    scene.shiftPhase();
+    console.log('phase:', scene.getCurrentPhase());
+
   });
 });
 
