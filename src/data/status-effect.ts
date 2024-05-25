@@ -180,7 +180,7 @@ export function getRandomStatus(statusA: Status, statusB: Status): Status {
  * Gets all non volatile status effects
  * @returns A list containing all non volatile status effects
  */
-export function getNonVolatileStatusEffects():Array<StatusEffect>{
+export function getNonVolatileStatusEffects():Array<StatusEffect> {
   return [
     StatusEffect.POISON,
     StatusEffect.TOXIC,
@@ -196,6 +196,6 @@ export function getNonVolatileStatusEffects():Array<StatusEffect>{
  * Non-volatile status condition is a status that remains after being switched out.
  * @param status The status to check
  */
-export function isNonVolatileStatusEffect(status: StatusEffect): boolean{
+export function isNonVolatileStatusEffect(status: StatusEffect): boolean {
   return getNonVolatileStatusEffects().includes(status);
 }
