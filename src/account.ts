@@ -1,4 +1,4 @@
-import BattleScene, {LoginBypass} from "./battle-scene";
+import {LoginBypass} from "./battle-scene";
 import * as Utils from "./utils";
 import disasterRecoveryInstance from "#app/disasterRecover";
 
@@ -10,9 +10,9 @@ export interface UserInfo {
 export let loggedInUser: UserInfo = null;
 export const clientSessionId = Utils.randomString(32);
 
-export function updateUserInfo(scene?: BattleScene): Promise<[boolean, integer]> {
+export function updateUserInfo(): Promise<[boolean, integer]> {
   return new Promise<[boolean, integer]>(resolve => {
-    if (LoginBypass.bypassLogin) {
+    if (LoginBypass.bypassLogin && !LoginBypass.isDisasterMode) {
       loggedInUser = { username: "Guest", lastSessionSlot: -1 };
       let lastSessionSlot = -1;
       for (let s = 0; s < 5; s++) {
@@ -34,32 +34,36 @@ export function updateUserInfo(scene?: BattleScene): Promise<[boolean, integer]>
       });
       return resolve([ true, 200 ]);
     }
-    const handleServerUnreachable = (isDown: boolean = false) => {
+    const handleServerUnreachable = () => {
       for (const key in localStorage) {
         if (key.startsWith("data_") && !key.toLowerCase().includes("guest")) {
-          disasterRecoveryInstance.setScene(scene);
-          if (isDown) {
-            loggedInUser = { username: key.substring(5), lastSessionSlot: -1};
-            disasterRecoveryInstance.startInterval();
+          let lastSession;
+          for (let s = 0; s < 5; s++) {
+            if (localStorage.getItem(`sessionData${s ? s : ""}_${key.substring(5)}`)) {
+              lastSession = s;
+              break;
+            }
           }
+          loggedInUser = { username: key.substring(5), lastSessionSlot: lastSession};
+          disasterRecoveryInstance.startInterval();
           return loggedInUser;
         }
       }
     };
     Utils.apiFetch("account/info", true).then(response => {
       if (!response.ok) {
-        handleServerUnreachable();
-        resolve([ false, 500]);
+        const loggedInUser = handleServerUnreachable();
+        if (!loggedInUser) {
+          resolve([ false, 500]);
+        }
+        resolve([ true, 200]);
       }
       return response.json();
     }).then(jsonResponse => {
       loggedInUser = jsonResponse;
-      handleServerUnreachable(true);
       resolve([ true, 200 ]);
     }).catch(err => {
-      handleServerUnreachable(true);
-      // console.log("error");
-      // console.log(err);
+      handleServerUnreachable();
       resolve([ false, 500 ]);
     });
   });
@@ -68,7 +72,6 @@ export function updateUserInfo(scene?: BattleScene): Promise<[boolean, integer]>
 export function ping() : Promise<boolean> {
   return new Promise<boolean>(resolve => {
     Utils.apiFetch("account/info", true).then(response => {
-      console.log("ping");
       if (!response.ok) {
         resolve(false);
       }

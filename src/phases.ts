@@ -78,7 +78,7 @@ export class LoginPhase extends Phase {
     const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
     this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-    Utils.executeIf(LoginBypass.bypassLogin || hasSession, () => updateUserInfo(this.scene)).then(response => {
+    Utils.executeIf(LoginBypass.bypassLogin || hasSession, updateUserInfo).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;
       if (!success && !LoginBypass.bypassLogin) {
@@ -90,7 +90,7 @@ export class LoginPhase extends Phase {
           this.scene.playSound("menu_open");
 
           const loadData = () => {
-            updateUserInfo(this.scene).then(() => this.scene.gameData.loadSystem().then(() => this.end()));
+            updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
           };
 
           this.scene.ui.setMode(Mode.LOGIN_FORM, {
@@ -104,7 +104,7 @@ export class LoginPhase extends Phase {
                   buttonActions: [
                     () => {
                       this.scene.ui.playSelect();
-                      updateUserInfo(this.scene).then(() => this.end());
+                      updateUserInfo().then(() => this.end());
                     }, () => {
                       this.scene.unshiftPhase(new LoginPhase(this.scene, false));
                       this.end();

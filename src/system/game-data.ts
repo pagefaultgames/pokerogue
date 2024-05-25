@@ -30,6 +30,7 @@ import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
+import disasterRecoveryInstance from "#app/disasterRecover.js";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -286,7 +287,7 @@ export class GameData {
       const maxIntAttrValue = Math.pow(2, 31);
       const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-      localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, LoginBypass.bypassLogin));
+      localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData));
 
       if (!LoginBypass.bypassLogin) {
         Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}&clientSessionId=${clientSessionId}`, systemData, undefined, true)
@@ -342,7 +343,7 @@ export class GameData {
             this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : null).then(resolve);
           });
       } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), LoginBypass.bypassLogin)).then(resolve);
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser.username}`))).then(resolve);
       }
     });
   }
@@ -365,7 +366,7 @@ export class GameData {
 
         console.debug(systemData);
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, LoginBypass.bypassLogin));
+        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr));
 
         /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
 
@@ -518,9 +519,14 @@ export class GameData {
       return true;
     }
     const response = await Utils.apiPost("savedata/system/verify", JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
-      .then(response => response.json());
-
-    if (!response.valid) {
+      .then(response => response.json())
+      .catch(err => {
+        disasterRecoveryInstance.startInterval();
+        this.scene.clearPhaseQueue();
+        this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+        return false;
+      });
+    if (response && !response.valid) {
       this.scene.clearPhaseQueue();
       this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(response.systemData)));
       this.clearLocalData();
@@ -655,14 +661,14 @@ export class GameData {
               return resolve(null);
             }
 
-            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`, encrypt(response, LoginBypass.bypassLogin));
+            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`, encrypt(response));
 
             await handleSessionData(response);
           });
       } else {
         const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
         if (sessionData) {
-          await handleSessionData(decrypt(sessionData, LoginBypass.bypassLogin));
+          await handleSessionData(decrypt(sessionData));
         } else {
           return resolve(null);
         }
@@ -784,7 +790,7 @@ export class GameData {
         return resolve(true);
       }
 
-      updateUserInfo(scene).then(success => {
+      updateUserInfo().then(success => {
         if (success !== null && !success) {
           return resolve(false);
         }
@@ -847,7 +853,7 @@ export class GameData {
         return resolve([true, true]);
       }
 
-      updateUserInfo(scene).then(success => {
+      updateUserInfo().then(success => {
         if (success !== null && !success) {
           return resolve([false, false]);
         }
@@ -921,7 +927,7 @@ export class GameData {
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      Utils.executeIf(!skipVerification, () => updateUserInfo(scene)).then(success => {
+      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success) {
           return resolve(false);
         }
@@ -1009,14 +1015,14 @@ export class GameData {
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
-          handleData(decrypt(data, LoginBypass.bypassLogin));
+          handleData(decrypt(data));
         }
         resolve(!!data);
       }
     });
   }
 
-  public importData(dataType: GameDataType, slotId: integer = 0, scene:BattleScene): void {
+  public importData(dataType: GameDataType, slotId: integer = 0): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser.username}`;
 
     let saveFile: any = document.getElementById("saveFile");
@@ -1081,10 +1087,10 @@ export class GameData {
             this.scene.ui.revertMode();
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, LoginBypass.bypassLogin));
+                localStorage.setItem(dataKey, encrypt(dataStr));
 
                 if (!LoginBypass.bypassLogin && dataType < GameDataType.SETTINGS) {
-                  updateUserInfo(scene).then(success => {
+                  updateUserInfo().then(success => {
                     if (!success) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
                     }

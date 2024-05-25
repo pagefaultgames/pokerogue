@@ -1,12 +1,11 @@
 import { ping } from "./account";
-import BattleScene, {LoginBypass} from "./battle-scene";
+import {LoginBypass} from "./battle-scene";
 
 
 let instance;
 const properties = {
   reconnectTimer: null,
   reconnectInterval: 1000 * 5,
-  scene: null,
   banner: null,
   minTime: 1000 * 5,
   maxTime: 1000 * 60 * 5,
@@ -20,10 +19,6 @@ class DisasterRecover {
     }
     instance = this;
   }
-
-  setScene(scene: BattleScene) {
-    this.setProperties("scene", scene);
-  }
   setProperties(key, value) {
     properties[key] = value;
   }
@@ -35,6 +30,7 @@ class DisasterRecover {
     banner.id = "offline-banner";
     banner.textContent  = "You are currently playing offline";
     banner.style.display = "block";
+    banner.style.position = "absolute";
     this.setProperties("banner", banner);
 
     document.body.insertBefore(banner, document.body.firstChild);
@@ -49,6 +45,7 @@ class DisasterRecover {
   }
   startInterval() {
     LoginBypass.bypassLogin = true;
+    LoginBypass.isDisasterMode = true;
     this.deleteOfflineBanner();
     this.createOfflineBanner();
     const reconnectInterval = this.getProperties("reconnectInterval");
@@ -64,7 +61,6 @@ class DisasterRecover {
     ping().then(response => {
       let reconnectInterval = this.getProperties("reconnectInterval");
       let reconnectTimer = this.getProperties("reconnectTimer");
-      const scene = this.getProperties("scene");
       const maxTime = this.getProperties("maxTime");
       const randVarianceTime = this.getProperties("randVarianceTime");
 
@@ -73,10 +69,9 @@ class DisasterRecover {
           clearInterval(reconnectTimer);
           this.setProperties("reconnectTimer", null);
         }
-        if (scene) {
-          scene.gameData.saveAll(scene, true, true, false, false);
-          this.setProperties("scene", scene);
-        }
+        console.log("Reconnected");
+        LoginBypass.bypassLogin = false;
+        LoginBypass.isDisasterMode = false;
         this.deleteOfflineBanner();
         // window.location.reload();
       } else {

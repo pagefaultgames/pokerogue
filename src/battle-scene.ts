@@ -60,6 +60,7 @@ import {UiInputs} from "./ui-inputs";
 
 export class LoginBypass {
   public static bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
+  public static isDisasterMode = false;
 }
 
 const DEBUG_RNG = false;
