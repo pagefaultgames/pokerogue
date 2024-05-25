@@ -61,16 +61,20 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(bg);
 
     const hatchFrameNames = this.scene.anims.generateFrameNames("gacha_hatch", { suffix: ".png", start: 1, end: 4 });
-    this.scene.anims.create({
-      key: "open",
-      frames: hatchFrameNames,
-      frameRate: 12
-    });
-    this.scene.anims.create({
-      key: "close",
-      frames: hatchFrameNames.reverse(),
-      frameRate: 12
-    });
+    if (!(this.scene.anims.exists("open"))) {
+      this.scene.anims.create({
+        key: "open",
+        frames: hatchFrameNames,
+        frameRate: 12
+      });
+    }
+    if (!(this.scene.anims.exists("close"))) {
+      this.scene.anims.create({
+        key: "close",
+        frames: hatchFrameNames.reverse(),
+        frameRate: 12
+      });
+    }
 
     Utils.getEnumValues(GachaType).forEach((gachaType, g) => {
       const gachaTypeKey = GachaType[gachaType].toString().toLowerCase();

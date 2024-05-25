@@ -29,7 +29,7 @@ export const menu: SimpleTranslationEntries = {
   "confirmPassword": "Confirm Password",
   "registrationAgeWarning": "By registering, you confirm you are of 13 years of age or older.",
   "backToLogin": "Back to Login",
-  "failedToLoadSaveData": "Failed to load save data. Please reload the page.\nIf this continues, please contact the administrator.",
+  "failedToLoadSaveData": "Failed to load save data. Please reload the page.\nIf this persists, please check #announcements in Discord.",
   "sessionSuccess": "Session loaded successfully.",
   "failedToLoadSession": "Your session data could not be loaded.\nIt may be corrupted.",
   "boyOrGirl": "Are you a boy or a girl?",

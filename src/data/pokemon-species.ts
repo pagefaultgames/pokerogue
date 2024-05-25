@@ -149,6 +149,13 @@ export abstract class PokemonSpeciesForm {
     this.genderDiffs = genderDiffs;
   }
 
+  /**
+   * Method to get the root species id of a Pokemon.
+   * Magmortar.getRootSpeciesId(true) => Magmar
+   * Magmortar.getRootSpeciesId(false) => Magby
+   * @param forStarter boolean to get the nonbaby form of a starter
+   * @returns The species
+   */
   getRootSpeciesId(forStarter: boolean = false): Species {
     let ret = this.speciesId;
     while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret))) {
@@ -404,12 +411,14 @@ export abstract class PokemonSpeciesForm {
         console.warn = () => {};
         const frameNames = scene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
         console.warn = originalWarn;
-        scene.anims.create({
-          key: this.getSpriteKey(female, formIndex, shiny, variant),
-          frames: frameNames,
-          frameRate: 12,
-          repeat: -1
-        });
+        if (!(scene.anims.exists(spriteKey))) {
+          scene.anims.create({
+            key: this.getSpriteKey(female, formIndex, shiny, variant),
+            frames: frameNames,
+            frameRate: 12,
+            repeat: -1
+          });
+        }
         let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
         const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
         if (useExpSprite) {
