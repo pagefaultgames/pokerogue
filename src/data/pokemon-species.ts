@@ -1,21 +1,21 @@
 import { Abilities } from "./enums/abilities";
-import BattleScene, { AnySound } from '../battle-scene';
-import { Variant, variantColorCache } from './variant';
-import { variantData } from './variant';
-import { GrowthRate } from './exp';
-import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
-import { Species } from './enums/species';
-import { Type } from './type';
-import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
-import { uncatchableSpecies } from './biomes';
-import * as Utils from '../utils';
-import { StarterMoveset } from '../system/game-data';
-import { speciesEggMoves } from './egg-moves';
+import BattleScene, { AnySound } from "../battle-scene";
+import { Variant, variantColorCache } from "./variant";
+import { variantData } from "./variant";
+import { GrowthRate } from "./exp";
+import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { Species } from "./enums/species";
+import { Type } from "./type";
+import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
+import { uncatchableSpecies } from "./biomes";
+import * as Utils from "../utils";
+import { StarterMoveset } from "../system/game-data";
+import { speciesEggMoves } from "./egg-moves";
 import { PartyMemberStrength } from "./enums/party-member-strength";
-import { GameMode } from '../game-mode';
+import { GameMode } from "../game-mode";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
-import { VariantSet } from './variant';
-import i18next, { Localizable } from '../plugins/i18n';
+import { VariantSet } from "./variant";
+import i18next, { Localizable } from "../plugins/i18n";
 import { Stat } from "./pokemon-stat";
 
 export enum Region {
@@ -27,17 +27,24 @@ export enum Region {
 }
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
-  if (species >= 2000)
+  // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
+  if (Array.isArray(species)) {
+    // Pick a random species from the list
+    species = species[Math.floor(Math.random() * species.length)];
+  }
+  if (species >= 2000) {
     return allSpecies.find(s => s.speciesId === species);
+  }
   return allSpecies[species - 1];
 }
 
 export function getPokemonSpeciesForm(species: Species, formIndex: integer): PokemonSpeciesForm {
-  let retSpecies: PokemonSpecies = species >= 2000
+  const retSpecies: PokemonSpecies = species >= 2000
     ? allSpecies.find(s => s.speciesId === species)
     : allSpecies[species - 1];
-  if (formIndex < retSpecies.forms?.length)
+  if (formIndex < retSpecies.forms?.length) {
     return retSpecies.forms[formIndex];
+  }
   return retSpecies;
 }
 
@@ -46,26 +53,30 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\'])(.*?)$/i;
 
   const [ speciesAPrefixMatch, speciesBPrefixMatch ] = [ speciesAName, speciesBName ].map(n => /^(?:[^ ]+) /.exec(n));
-  const [ speciesAPrefix, speciesBPrefix ] = [ speciesAPrefixMatch, speciesBPrefixMatch ].map(m => m ? m[0] : '');
+  const [ speciesAPrefix, speciesBPrefix ] = [ speciesAPrefixMatch, speciesBPrefixMatch ].map(m => m ? m[0] : "");
 
-  if (speciesAPrefix)
+  if (speciesAPrefix) {
     speciesAName = speciesAName.slice(speciesAPrefix.length);
-  if (speciesBPrefix)
+  }
+  if (speciesBPrefix) {
     speciesBName = speciesBName.slice(speciesBPrefix.length);
+  }
 
   const [ speciesASuffixMatch, speciesBSuffixMatch ] = [ speciesAName, speciesBName ].map(n => / (?:[^ ]+)$/.exec(n));
-  const [ speciesASuffix, speciesBSuffix ] = [ speciesASuffixMatch, speciesBSuffixMatch ].map(m => m ? m[0] : '');
+  const [ speciesASuffix, speciesBSuffix ] = [ speciesASuffixMatch, speciesBSuffixMatch ].map(m => m ? m[0] : "");
 
-  if (speciesASuffix)
+  if (speciesASuffix) {
     speciesAName = speciesAName.slice(0, -speciesASuffix.length);
-  if (speciesBSuffix)
+  }
+  if (speciesBSuffix) {
     speciesBName = speciesBName.slice(0, -speciesBSuffix.length);
+  }
 
   const splitNameA = speciesAName.split(/ /g);
   const splitNameB = speciesBName.split(/ /g);
-  
-  let fragAMatch = fragAPattern.exec(speciesAName);
-  let fragBMatch = fragBPattern.exec(speciesBName);
+
+  const fragAMatch = fragAPattern.exec(speciesAName);
+  const fragBMatch = fragBPattern.exec(speciesBName);
 
   let fragA: string;
   let fragB: string;
@@ -78,23 +89,27 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
     if (fragBMatch) {
       const lastCharA = fragA.slice(fragA.length - 1);
       const prevCharB = fragBMatch[1].slice(fragBMatch.length - 1);
-      fragB = (/[\-']/.test(prevCharB) ? prevCharB : '') + fragBMatch[2] || prevCharB;
+      fragB = (/[\-']/.test(prevCharB) ? prevCharB : "") + fragBMatch[2] || prevCharB;
       if (lastCharA === fragB[0]) {
-        if (/[aiu]/.test(lastCharA))
+        if (/[aiu]/.test(lastCharA)) {
           fragB = fragB.slice(1);
-        else {
+        } else {
           const newCharMatch = new RegExp(`[^${lastCharA}]`).exec(fragB);
-          if (newCharMatch?.index > 0)
+          if (newCharMatch?.index > 0) {
             fragB = fragB.slice(newCharMatch.index);
+          }
         }
       }
-    } else
+    } else {
       fragB = speciesBName;
-  } else
+    }
+  } else {
     fragB = splitNameB[splitNameB.length - 1];
+  }
 
-  if (splitNameA.length > 1)
-    fragA = `${splitNameA.slice(0, splitNameA.length - 1).join(' ')} ${fragA}`;
+  if (splitNameA.length > 1) {
+    fragA = `${splitNameA.slice(0, splitNameA.length - 1).join(" ")} ${fragA}`;
+  }
 
   fragB = `${fragB.slice(0, 1).toLowerCase()}${fragB.slice(1)}`;
 
@@ -124,25 +139,33 @@ export abstract class PokemonSpeciesForm {
   constructor(type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
     catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs: boolean) {
-      this.type1 = type1;
-      this.type2 = type2;
-      this.height = height;
-      this.weight = weight;
-      this.ability1 = ability1;
-      this.ability2 = ability2;
-      this.abilityHidden = abilityHidden;
-      this.baseTotal = baseTotal;
-      this.baseStats = [ baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd ];
-      this.catchRate = catchRate;
-      this.baseFriendship = baseFriendship;
-      this.baseExp = baseExp;
-      this.genderDiffs = genderDiffs;
+    this.type1 = type1;
+    this.type2 = type2;
+    this.height = height;
+    this.weight = weight;
+    this.ability1 = ability1;
+    this.ability2 = ability2;
+    this.abilityHidden = abilityHidden;
+    this.baseTotal = baseTotal;
+    this.baseStats = [ baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd ];
+    this.catchRate = catchRate;
+    this.baseFriendship = baseFriendship;
+    this.baseExp = baseExp;
+    this.genderDiffs = genderDiffs;
   }
 
+  /**
+   * Method to get the root species id of a Pokemon.
+   * Magmortar.getRootSpeciesId(true) => Magmar
+   * Magmortar.getRootSpeciesId(false) => Magby
+   * @param forStarter boolean to get the nonbaby form of a starter
+   * @returns The species
+   */
   getRootSpeciesId(forStarter: boolean = false): Species {
     let ret = this.speciesId;
-    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret)))
+    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret))) {
       ret = pokemonPrevolutions[ret];
+    }
     return ret;
   }
 
@@ -159,8 +182,9 @@ export abstract class PokemonSpeciesForm {
   }
 
   getLevelMoves(): LevelMoves {
-    if (pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex))
+    if (pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)) {
       return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex].slice(0);
+    }
     return pokemonSpeciesLevelMoves[this.speciesId].slice(0);
   }
 
@@ -186,8 +210,8 @@ export abstract class PokemonSpeciesForm {
 
   isRareRegional(): boolean {
     switch (this.getRegion()) {
-      case Region.HISUI:
-        return true;
+    case Region.HISUI:
+      return true;
     }
 
     return false;
@@ -199,44 +223,44 @@ export abstract class PokemonSpeciesForm {
    * @returns The species' base stat amount.
    */
   getBaseStat(stat: Stat): integer {
-    return this.baseStats[stat]
+    return this.baseStats[stat];
   }
 
   getBaseExp(): integer {
     let ret = this.baseExp;
     switch (this.getFormSpriteKey()) {
-      case SpeciesFormKey.MEGA:
-      case SpeciesFormKey.MEGA_X:
-      case SpeciesFormKey.MEGA_Y:
-      case SpeciesFormKey.PRIMAL:
-      case SpeciesFormKey.GIGANTAMAX:
-      case SpeciesFormKey.ETERNAMAX:
-        ret *= 1.5;
-        break;
+    case SpeciesFormKey.MEGA:
+    case SpeciesFormKey.MEGA_X:
+    case SpeciesFormKey.MEGA_Y:
+    case SpeciesFormKey.PRIMAL:
+    case SpeciesFormKey.GIGANTAMAX:
+    case SpeciesFormKey.ETERNAMAX:
+      ret *= 1.5;
+      break;
     }
     return ret;
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
-    const spriteId = this.getSpriteId(female, formIndex, shiny, variant).replace(/\_{2}/g, '/');
-    return `${/_[1-3]$/.test(spriteId) ? 'variant/' : ''}${spriteId}`;
+    const spriteId = this.getSpriteId(female, formIndex, shiny, variant).replace(/\_{2}/g, "/");
+    return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
   getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer, back?: boolean): string {
-    if (formIndex === undefined || this instanceof PokemonForm)
+    if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
+    }
 
     const formSpriteKey = this.getFormSpriteKey(formIndex);
     const showGenderDiffs = this.genderDiffs && female && ![ SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX ].find(k => formSpriteKey === k);
 
-    const baseSpriteKey = `${showGenderDiffs ? 'female__' : ''}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ''}`;
-    
-    let variantSet: VariantSet;
-    let config = variantData;
-    `${back ? 'back__' : ''}${baseSpriteKey}`.split('__').map(p => config ? config = config[p] : null);
-    variantSet = config as VariantSet;
+    const baseSpriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
 
-    return `${back ? 'back__' : ''}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? 'shiny__' : ''}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ''}`;
+    let config = variantData;
+    `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => config ? config = config[p] : null);
+    const variantSet = config as VariantSet;
+
+    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ""}`;
   }
 
   getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -247,47 +271,51 @@ export abstract class PokemonSpeciesForm {
 
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
     const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
-    return `pokemon_icons_${this.generation}${isVariant ? 'v' : ''}`;
+    return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
   getIconId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
-    if (formIndex === undefined)
+    if (formIndex === undefined) {
       formIndex = this.formIndex;
+    }
 
     let ret = this.speciesId.toString();
 
     const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
 
-    if (shiny && !isVariant)
-      ret += 's';
-    
+    if (shiny && !isVariant) {
+      ret += "s";
+    }
+
     switch (this.speciesId) {
-      case Species.HIPPOPOTAS:
-      case Species.HIPPOWDON:
-      case Species.UNFEZANT:
-      case Species.FRILLISH:
-      case Species.JELLICENT:
-        ret += female ? '-f' : '';
-        break;
+    case Species.HIPPOPOTAS:
+    case Species.HIPPOWDON:
+    case Species.UNFEZANT:
+    case Species.FRILLISH:
+    case Species.JELLICENT:
+      ret += female ? "-f" : "";
+      break;
     }
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
     if (formSpriteKey) {
       switch (this.speciesId) {
-        case Species.DUDUNSPARCE:
-          break;
-        case Species.ZACIAN:
-        case Species.ZAMAZENTA:
-          if (formSpriteKey.startsWith('behemoth'))
-            formSpriteKey = 'crowned';
-        default:
-          ret += `-${formSpriteKey}`;
-          break;
+      case Species.DUDUNSPARCE:
+        break;
+      case Species.ZACIAN:
+      case Species.ZAMAZENTA:
+        if (formSpriteKey.startsWith("behemoth")) {
+          formSpriteKey = "crowned";
+        }
+      default:
+        ret += `-${formSpriteKey}`;
+        break;
       }
     }
 
-    if (isVariant)
+    if (isVariant) {
       ret += `_${variant + 1}`;
+    }
 
     return ret;
   }
@@ -296,15 +324,15 @@ export abstract class PokemonSpeciesForm {
     let speciesId = this.speciesId;
     if (this.speciesId > 2000) {
       switch (this.speciesId) {
-        case Species.GALAR_SLOWPOKE:
-          break;
-        case Species.ETERNAL_FLOETTE:
-          break;
-        case Species.BLOODMOON_URSALUNA:
-          break;
-        default:
-          speciesId = speciesId % 2000;
-          break;
+      case Species.GALAR_SLOWPOKE:
+        break;
+      case Species.ETERNAL_FLOETTE:
+        break;
+      case Species.BLOODMOON_URSALUNA:
+        break;
+      default:
+        speciesId = speciesId % 2000;
+        break;
       }
     }
     let ret = speciesId.toString();
@@ -316,41 +344,41 @@ export abstract class PokemonSpeciesForm {
       }
       const formKey = forms[formIndex || 0].formKey;
       switch (formKey) {
-        case SpeciesFormKey.MEGA:
-        case SpeciesFormKey.MEGA_X:
-        case SpeciesFormKey.MEGA_Y:
-        case SpeciesFormKey.GIGANTAMAX:
-        case SpeciesFormKey.GIGANTAMAX_SINGLE:
-        case SpeciesFormKey.GIGANTAMAX_RAPID:
-        case 'white':
-        case 'black':
-        case 'therian':
-        case 'sky':
-        case 'gorging':
-        case 'gulping':
-        case 'no-ice':
-        case 'hangry':
-        case 'crowned':
-        case 'eternamax':
-        case 'four':
-        case 'droopy':
-        case 'stretchy':
-        case 'roaming':
-        case 'complete':
-        case '10':
-        case 'super':
-        case 'unbound':
-        case 'pau':
-        case 'pompom':
-        case 'sensu':
-        case 'dusk':
-        case 'midnight':
-        case 'school':
-        case 'dawn-wings':
-        case 'dusk-mane':
-        case 'ultra':
-          ret += `-${formKey}`;
-          break;
+      case SpeciesFormKey.MEGA:
+      case SpeciesFormKey.MEGA_X:
+      case SpeciesFormKey.MEGA_Y:
+      case SpeciesFormKey.GIGANTAMAX:
+      case SpeciesFormKey.GIGANTAMAX_SINGLE:
+      case SpeciesFormKey.GIGANTAMAX_RAPID:
+      case "white":
+      case "black":
+      case "therian":
+      case "sky":
+      case "gorging":
+      case "gulping":
+      case "no-ice":
+      case "hangry":
+      case "crowned":
+      case "eternamax":
+      case "four":
+      case "droopy":
+      case "stretchy":
+      case "roaming":
+      case "complete":
+      case "10":
+      case "super":
+      case "unbound":
+      case "pau":
+      case "pompom":
+      case "sensu":
+      case "dusk":
+      case "midnight":
+      case "school":
+      case "dawn-wings":
+      case "dusk-mane":
+      case "ultra":
+        ret += `-${formKey}`;
+        break;
       }
     }
     return ret;
@@ -358,17 +386,20 @@ export abstract class PokemonSpeciesForm {
 
   validateStarterMoveset(moveset: StarterMoveset, eggMoves: integer): boolean {
     const rootSpeciesId = this.getRootSpeciesId();
-    for (let moveId of moveset) {
+    for (const moveId of moveset) {
       if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].findIndex(m => m === moveId);
-        if (eggMoveIndex > -1 && eggMoves & Math.pow(2, eggMoveIndex))
+        if (eggMoveIndex > -1 && eggMoves & Math.pow(2, eggMoveIndex)) {
           continue;
+        }
       }
       if (pokemonFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)) {
-        if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId))
+        if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId)) {
           return false;
-      } else if (!pokemonSpeciesLevelMoves[this.speciesId].find(lm => lm[0] <= 5 && lm[1] === moveId))
+        }
+      } else if (!pokemonSpeciesLevelMoves[this.speciesId].find(lm => lm[0] <= 5 && lm[1] === moveId)) {
         return false;
+      }
     }
 
     return true;
@@ -385,25 +416,28 @@ export abstract class PokemonSpeciesForm {
         console.warn = () => {};
         const frameNames = scene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
         console.warn = originalWarn;
-        scene.anims.create({
-          key: this.getSpriteKey(female, formIndex, shiny, variant),
-          frames: frameNames,
-          frameRate: 12,
-          repeat: -1
-        });
-        let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace('variant/', '').replace(/_[1-3]$/, '');
+        if (!(scene.anims.exists(spriteKey))) {
+          scene.anims.create({
+            key: this.getSpriteKey(female, formIndex, shiny, variant),
+            frames: frameNames,
+            frameRate: 12,
+            repeat: -1
+          });
+        }
+        let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
         const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
-        if (useExpSprite)
+        if (useExpSprite) {
           spritePath = `exp/${spritePath}`;
-        let variantSet: VariantSet;
+        }
         let config = variantData;
-        spritePath.split('/').map(p => config ? config = config[p] : null);
-        variantSet = config as VariantSet;
+        spritePath.split("/").map(p => config ? config = config[p] : null);
+        const variantSet = config as VariantSet;
         if (variantSet && variantSet[variant] === 1) {
           const populateVariantColors = (key: string): Promise<void> => {
             return new Promise(resolve => {
-              if (variantColorCache.hasOwnProperty(key))
+              if (variantColorCache.hasOwnProperty(key)) {
                 return resolve();
+              }
               scene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
                 variantColorCache[key] = c;
                 resolve();
@@ -416,21 +450,25 @@ export abstract class PokemonSpeciesForm {
         resolve();
       });
       if (startLoad) {
-        if (!scene.load.isLoading())
+        if (!scene.load.isLoading()) {
           scene.load.start();
-      } else
+        }
+      } else {
         resolve();
+      }
     });
   }
 
   cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
     const cryKey = this.getCryKey(this.formIndex);
     let cry = scene.sound.get(cryKey) as AnySound;
-    if (cry?.pendingRemove)
+    if (cry?.pendingRemove) {
       cry = null;
+    }
     cry = scene.playSound(cry || cryKey, soundConfig);
-    if (ignorePlay)
+    if (ignorePlay) {
       cry.stop();
+    }
     return cry;
   }
 
@@ -440,11 +478,11 @@ export abstract class PokemonSpeciesForm {
     const sourceFrame = sourceTexture.frames[sourceTexture.firstFrame];
     const sourceImage = sourceTexture.getSourceImage() as HTMLImageElement;
 
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
 
     const spriteColors: integer[][] = [];
 
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     const frame = sourceFrame;
     canvas.width = frame.width;
     canvas.height = frame.height;
@@ -455,28 +493,30 @@ export abstract class PokemonSpeciesForm {
     for (let i = 0; i < pixelData.length; i += 4) {
       if (pixelData[i + 3]) {
         const pixel = pixelData.slice(i, i + 4);
-        const [ r, g, b, a ] = pixel; 
-        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b))
+        const [ r, g, b, a ] = pixel;
+        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
           spriteColors.push([ r, g, b, a ]);
+        }
       }
     }
 
     const pixelColors = [];
     for (let i = 0; i < pixelData.length; i += 4) {
       const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
-      if (!total)
+      if (!total) {
         continue;
+      }
       pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
     }
-    
+
     let paletteColors: Map<number, number>;
 
     const originalRandom = Math.random;
     Math.random = () => Phaser.Math.RND.realInRange(0, 1);
-    
+
     scene.executeWithSeedOffset(() => {
       paletteColors = QuantizerCelebi.quantize(pixelColors, 2);
-    }, 0, 'This result should not vary');
+    }, 0, "This result should not vary");
 
     Math.random = originalRandom;
 
@@ -515,7 +555,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     this.genderDiffs = genderDiffs;
     this.canChangeForm = !!canChangeForm;
     this.forms = forms;
-    
+
     this.localize();
 
     forms.forEach((form, f) => {
@@ -529,17 +569,18 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
       switch (form.formKey) {
-        case SpeciesFormKey.MEGA:
-        case SpeciesFormKey.PRIMAL:
-        case SpeciesFormKey.ETERNAMAX:
-          return `${form.formName} ${this.name}`;
-        case SpeciesFormKey.MEGA_X:
-          return `Mega ${this.name} X`;
-        case SpeciesFormKey.MEGA_Y:
-          return `Mega ${this.name} Y`;
-        default:
-          if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1)
-            return `G-Max ${this.name}`;
+      case SpeciesFormKey.MEGA:
+      case SpeciesFormKey.PRIMAL:
+      case SpeciesFormKey.ETERNAMAX:
+        return `${form.formName} ${this.name}`;
+      case SpeciesFormKey.MEGA_X:
+        return `Mega ${this.name} X`;
+      case SpeciesFormKey.MEGA_Y:
+        return `Mega ${this.name} Y`;
+      default:
+        if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
+          return `G-Max ${this.name}`;
+        }
       }
     }
     return this.name;
@@ -559,18 +600,18 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
-      case PartyMemberStrength.WEAKEST:
-        return 60;
-      case PartyMemberStrength.WEAKER:
-        return 40;
-      case PartyMemberStrength.WEAK:
-        return 20;
-      case PartyMemberStrength.AVERAGE:
-        return 10;
-      case PartyMemberStrength.STRONG:
-        return 5;
-      default:
-        return 0;
+    case PartyMemberStrength.WEAKEST:
+      return 60;
+    case PartyMemberStrength.WEAKER:
+      return 40;
+    case PartyMemberStrength.WEAK:
+      return 20;
+    case PartyMemberStrength.AVERAGE:
+      return 10;
+    case PartyMemberStrength.STRONG:
+      return 5;
+    default:
+      return 0;
     }
   }
 
@@ -580,52 +621,56 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (prevolutionLevels.length) {
       for (let pl = prevolutionLevels.length - 1; pl >= 0; pl--) {
         const prevolutionLevel = prevolutionLevels[pl];
-        if (level < prevolutionLevel[1])
+        if (level < prevolutionLevel[1]) {
           return prevolutionLevel[0];
+        }
       }
     }
 
-    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId))
+    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId)) {
       return this.speciesId;
+    }
 
     const evolutions = pokemonEvolutions[this.speciesId];
 
-    const easeInFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn');
-    const easeOutFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut');
+    const easeInFunc = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn");
+    const easeOutFunc = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut");
 
     const evolutionPool: Map<number, Species> = new Map();
     let totalWeight = 0;
     let noEvolutionChance = 1;
 
-    for (let ev of evolutions) {
-      if (ev.level > level)
+    for (const ev of evolutions) {
+      if (ev.level > level) {
         continue;
+      }
 
       let evolutionChance: number;
-      
+
       const evolutionSpecies = getPokemonSpecies(ev.speciesId);
       const isRegionalEvolution = !this.isRegional() && evolutionSpecies.isRegional();
-      
-      if (!forTrainer && isRegionalEvolution)
+
+      if (!forTrainer && isRegionalEvolution) {
         evolutionChance = 0;
-      else {
+      } else {
         if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
-          if (strength === PartyMemberStrength.STRONGER)
+          if (strength === PartyMemberStrength.STRONGER) {
             evolutionChance = 1;
-          else {
+          } else {
             const maxLevelDiff = this.getStrengthLevelDiff(strength);
             const minChance: number = 0.875 - 0.125 * strength;
-            
+
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
           }
         } else {
-          let preferredMinLevel = Math.max((ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength), 1);
+          const preferredMinLevel = Math.max((ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength), 1);
           let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
 
           if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
             const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
-            if (prevolutionLevel > 1)
+            if (prevolutionLevel > 1) {
               evolutionLevel = prevolutionLevel;
+            }
           }
 
           evolutionChance = Math.min(0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) + 0.35 * easeOutFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
@@ -633,26 +678,30 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
 
       if (evolutionChance > 0) {
-        if (isRegionalEvolution)
+        if (isRegionalEvolution) {
           evolutionChance /= (evolutionSpecies.isRareRegional() ? 16 : 4);
+        }
 
         totalWeight += evolutionChance;
 
         evolutionPool.set(totalWeight, ev.speciesId);
-        
-        if ((1 - evolutionChance) < noEvolutionChance)
+
+        if ((1 - evolutionChance) < noEvolutionChance) {
           noEvolutionChance = 1 - evolutionChance;
+        }
       }
     }
 
-    if (noEvolutionChance === 1 || Phaser.Math.RND.realInRange(0, 1) < noEvolutionChance)
+    if (noEvolutionChance === 1 || Phaser.Math.RND.realInRange(0, 1) < noEvolutionChance) {
       return this.speciesId;
-      
+    }
+
     const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight);
 
-    for (let weight of evolutionPool.keys()) {
-      if (randValue < weight)
+    for (const weight of evolutionPool.keys()) {
+      if (randValue < weight) {
         return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength);
+      }
     }
 
     return this.speciesId;
@@ -664,14 +713,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
 
     if (pokemonEvolutions.hasOwnProperty(this.speciesId)) {
-      for (let e of pokemonEvolutions[this.speciesId]) {
+      for (const e of pokemonEvolutions[this.speciesId]) {
         const speciesId = e.speciesId;
         const level = e.level;
         evolutionLevels.push([ speciesId, level ]);
         //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
         const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
-        for (let npl of nextEvolutionLevels)
+        for (const npl of nextEvolutionLevels) {
           evolutionLevels.push(npl);
+        }
       }
     }
 
@@ -682,15 +732,16 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     const prevolutionLevels = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
-    for (let p of allEvolvingPokemon) {
-      for (let e of pokemonEvolutions[p]) {
+    for (const p of allEvolvingPokemon) {
+      for (const e of pokemonEvolutions[p]) {
         if (e.speciesId === this.speciesId && (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey)) {
           const speciesId = parseInt(p) as Species;
-          let level = e.level;
+          const level = e.level;
           prevolutionLevels.push([ speciesId, level ]);
           const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels();
-          for (let spl of subPrevolutionLevels)
+          for (const spl of subPrevolutionLevels) {
             prevolutionLevels.push(spl);
+          }
         }
       }
     }
@@ -747,7 +798,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     }
     return this.forms?.length
       ? this.forms[formIndex || 0].getFormSpriteKey()
-      : '';
+      : "";
   }
 }
 
@@ -755,6 +806,9 @@ export class PokemonForm extends PokemonSpeciesForm {
   public formName: string;
   public formKey: string;
   public formSpriteKey: string;
+
+  // This is a collection of form keys that have in-run form changes, but should still be separately selectable from the start screen
+  private starterSelectableKeys: string[] = ["10", "50", "10-pc", "50-pc", "red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 
   constructor(formName: string, formKey: string, type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
@@ -768,6 +822,10 @@ export class PokemonForm extends PokemonSpeciesForm {
 
   getFormSpriteKey(_formIndex?: integer) {
     return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
+  }
+
+  isStarterSelectable() {
+    return !this.formKey || this.starterSelectableKeys.indexOf[this.formKey] !== -1;
   }
 }
 
@@ -788,7 +846,7 @@ export enum SpeciesFormKey {
 export const allSpecies: PokemonSpecies[] = [];
 
 export function initSpecies() {
-	allSpecies.push(
+  allSpecies.push(
     new PokemonSpecies(Species.BULBASAUR, 1, false, false, false, "Seed Pokémon", Type.GRASS, Type.POISON, 0.7, 6.9, Abilities.OVERGROW, Abilities.NONE, Abilities.CHLOROPHYLL, 318, 45, 49, 49, 65, 65, 45, 45, 50, 64, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.IVYSAUR, 1, false, false, false, "Seed Pokémon", Type.GRASS, Type.POISON, 1, 13, Abilities.OVERGROW, Abilities.NONE, Abilities.CHLOROPHYLL, 405, 60, 62, 63, 80, 80, 60, 45, 50, 142, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.VENUSAUR, 1, false, false, false, "Seed Pokémon", Type.GRASS, Type.POISON, 2, 100, Abilities.OVERGROW, Abilities.NONE, Abilities.CHLOROPHYLL, 525, 80, 82, 83, 100, 100, 80, 45, 50, 263, GrowthRate.MEDIUM_SLOW, 87.5, true, true,
@@ -2634,7 +2692,7 @@ export const speciesStarters = {
   [Species.MOLTRES]: 6,
   [Species.DRATINI]: 4,
   [Species.MEWTWO]: 8,
-  [Species.MEW]: 7,
+  [Species.MEW]: 6,
 
   [Species.CHIKORITA]: 3,
   [Species.CYNDAQUIL]: 3,
@@ -2693,7 +2751,7 @@ export const speciesStarters = {
   [Species.LARVITAR]: 4,
   [Species.LUGIA]: 8,
   [Species.HO_OH]: 8,
-  [Species.CELEBI]: 7,
+  [Species.CELEBI]: 6,
 
   [Species.TREECKO]: 3,
   [Species.TORCHIC]: 3,
@@ -2765,9 +2823,9 @@ export const speciesStarters = {
   [Species.REGISTEEL]: 6,
   [Species.LATIAS]: 7,
   [Species.LATIOS]: 7,
-  [Species.KYOGRE]: 8,
-  [Species.GROUDON]: 8,
-  [Species.RAYQUAZA]: 8,
+  [Species.KYOGRE]: 9,
+  [Species.GROUDON]: 9,
+  [Species.RAYQUAZA]: 9,
   [Species.JIRACHI]: 7,
   [Species.DEOXYS]: 7,
 
@@ -2809,19 +2867,19 @@ export const speciesStarters = {
   [Species.MANTYKE]: 3,
   [Species.SNOVER]: 3,
   [Species.ROTOM]: 5,
-  [Species.UXIE]: 7,
-  [Species.MESPRIT]: 7,
-  [Species.AZELF]: 7,
+  [Species.UXIE]: 6,
+  [Species.MESPRIT]: 6,
+  [Species.AZELF]: 6,
   [Species.DIALGA]: 8,
   [Species.PALKIA]: 8,
-  [Species.HEATRAN]: 7,
-  [Species.REGIGIGAS]: 8,
+  [Species.HEATRAN]: 6,
+  [Species.REGIGIGAS]: 7,
   [Species.GIRATINA]: 8,
-  [Species.CRESSELIA]: 7,
-  [Species.PHIONE]: 5,
+  [Species.CRESSELIA]: 6,
+  [Species.PHIONE]: 4,
   [Species.MANAPHY]: 7,
-  [Species.DARKRAI]: 7,
-  [Species.SHAYMIN]: 7,
+  [Species.DARKRAI]: 6,
+  [Species.SHAYMIN]: 6,
   [Species.ARCEUS]: 9,
   [Species.VICTINI]: 7,
 
@@ -2903,9 +2961,9 @@ export const speciesStarters = {
   [Species.ZEKROM]: 8,
   [Species.LANDORUS]: 7,
   [Species.KYUREM]: 8,
-  [Species.KELDEO]: 7,
-  [Species.MELOETTA]: 7,
-  [Species.GENESECT]: 7,
+  [Species.KELDEO]: 6,
+  [Species.MELOETTA]: 6,
+  [Species.GENESECT]: 6,
 
   [Species.CHESPIN]: 3,
   [Species.FENNEKIN]: 3,
@@ -2943,7 +3001,7 @@ export const speciesStarters = {
   [Species.ZYGARDE]: 8,
   [Species.DIANCIE]: 7,
   [Species.HOOPA]: 7,
-  [Species.VOLCANION]: 7,
+  [Species.VOLCANION]: 6,
   [Species.ETERNAL_FLOETTE]: 5,
 
   [Species.ROWLET]: 3,
@@ -2971,7 +3029,7 @@ export const speciesStarters = {
   [Species.WIMPOD]: 3,
   [Species.SANDYGAST]: 3,
   [Species.PYUKUMUKU]: 3,
-  [Species.TYPE_NULL]: 6,
+  [Species.TYPE_NULL]: 5,
   [Species.MINIOR]: 5,
   [Species.KOMALA]: 5,
   [Species.TURTONATOR]: 5,
@@ -2985,21 +3043,21 @@ export const speciesStarters = {
   [Species.TAPU_LELE]: 6,
   [Species.TAPU_BULU]: 6,
   [Species.TAPU_FINI]: 6,
-  [Species.COSMOG]: 7,
-  [Species.NIHILEGO]: 7,
-  [Species.BUZZWOLE]: 7,
+  [Species.COSMOG]: 6,
+  [Species.NIHILEGO]: 6,
+  [Species.BUZZWOLE]: 6,
   [Species.PHEROMOSA]: 7,
-  [Species.XURKITREE]: 7,
-  [Species.CELESTEELA]: 7,
+  [Species.XURKITREE]: 6,
+  [Species.CELESTEELA]: 6,
   [Species.KARTANA]: 7,
-  [Species.GUZZLORD]: 7,
+  [Species.GUZZLORD]: 6,
   [Species.NECROZMA]: 8,
   [Species.MAGEARNA]: 7,
   [Species.MARSHADOW]: 7,
   [Species.POIPOLE]: 7,
-  [Species.STAKATAKA]: 7,
+  [Species.STAKATAKA]: 6,
   [Species.BLACEPHALON]: 7,
-  [Species.ZERAORA]: 7,
+  [Species.ZERAORA]: 6,
   [Species.MELTAN]: 6,
   [Species.ALOLA_RATTATA]: 2,
   [Species.ALOLA_SANDSHREW]: 4,
@@ -3046,14 +3104,14 @@ export const speciesStarters = {
   [Species.ARCTOVISH]: 5,
   [Species.DURALUDON]: 5,
   [Species.DREEPY]: 4,
-  [Species.ZACIAN]: 8,
+  [Species.ZACIAN]: 9,
   [Species.ZAMAZENTA]: 8,
   [Species.ETERNATUS]: 10,
-  [Species.KUBFU]: 7,
-  [Species.ZARUDE]: 7,
+  [Species.KUBFU]: 6,
+  [Species.ZARUDE]: 6,
   [Species.REGIELEKI]: 6,
   [Species.REGIDRAGO]: 6,
-  [Species.GLASTRIER]: 7,
+  [Species.GLASTRIER]: 6,
   [Species.SPECTRIER]: 7,
   [Species.CALYREX]: 8,
   [Species.GALAR_MEOWTH]: 4,
@@ -3127,27 +3185,27 @@ export const speciesStarters = {
   [Species.IRON_THORNS]: 6,
   [Species.FRIGIBAX]: 4,
   [Species.GIMMIGHOUL]: 5,
-  [Species.WO_CHIEN]: 7,
+  [Species.WO_CHIEN]: 6,
   [Species.CHIEN_PAO]: 7,
-  [Species.TING_LU]: 7,
+  [Species.TING_LU]: 6,
   [Species.CHI_YU]: 7,
   [Species.ROARING_MOON]: 6,
   [Species.IRON_VALIANT]: 6,
-  [Species.KORAIDON]: 8,
-  [Species.MIRAIDON]: 8,
-  [Species.WALKING_WAKE]: 7,
-  [Species.IRON_LEAVES]: 7,
+  [Species.KORAIDON]: 9,
+  [Species.MIRAIDON]: 9,
+  [Species.WALKING_WAKE]: 6,
+  [Species.IRON_LEAVES]: 6,
   [Species.POLTCHAGEIST]: 4,
-  [Species.OKIDOGI]: 7,
-  [Species.MUNKIDORI]: 7,
-  [Species.FEZANDIPITI]: 7,
-  [Species.OGERPON]: 8,
+  [Species.OKIDOGI]: 6,
+  [Species.MUNKIDORI]: 6,
+  [Species.FEZANDIPITI]: 6,
+  [Species.OGERPON]: 7,
   [Species.GOUGING_FIRE]: 7,
-  [Species.RAGING_BOLT]: 7,
+  [Species.RAGING_BOLT]: 6,
   [Species.IRON_BOULDER]: 7,
-  [Species.IRON_CROWN]: 7,
+  [Species.IRON_CROWN]: 6,
   [Species.TERAPAGOS]: 8,
-  [Species.PECHARUNT]: 7,
+  [Species.PECHARUNT]: 6,
   [Species.PALDEA_TAUROS]: 5,
   [Species.PALDEA_WOOPER]: 3,
   [Species.BLOODMOON_URSALUNA]: 7,
@@ -3168,25 +3226,25 @@ export const noStarterFormKeys: string[] = [
 
 export function getStarterValueFriendshipCap(value: integer): integer {
   switch (value) {
-    case 1:
-      return 20;
-    case 2:
-      return 40;
-    case 3:
-      return 60;
-    case 4:
-      return 100;
-    case 5:
-      return 140;
-    case 6:
-      return 200;
-    case 7:
-      return 280;
-    case 8:
-    case 9:
-      return 450;
-    default:
-      return 600;
+  case 1:
+    return 20;
+  case 2:
+    return 40;
+  case 3:
+    return 60;
+  case 4:
+    return 100;
+  case 5:
+    return 140;
+  case 6:
+    return 200;
+  case 7:
+    return 280;
+  case 8:
+  case 9:
+    return 450;
+  default:
+    return 600;
   }
 }
 
@@ -3765,7 +3823,7 @@ export const starterPassiveAbilities = {
 // TODO: Remove
 {
   //setTimeout(() => {
-    /*for (let tc of Object.keys(trainerConfigs)) {
+  /*for (let tc of Object.keys(trainerConfigs)) {
       console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(trainerConfigs[tc].speciesFilter).map(s => {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
 				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);

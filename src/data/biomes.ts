@@ -1,28 +1,27 @@
 import { Species } from "./enums/species";
-import { Type } from './type';
-import * as Utils from '../utils';
-import beautify from 'json-beautify';
+import { Type } from "./type";
+import * as Utils from "../utils";
+import beautify from "json-beautify";
 import { TrainerType } from "./enums/trainer-type";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Biome } from "./enums/biome";
-import { SpeciesFormEvolution } from "./pokemon-evolutions";
+import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
 
 export function getBiomeName(biome: Biome | -1) {
-  if (biome === -1)
-    return 'Somewhere you can\'t remember';
+  if (biome === -1) {
+    return "Somewhere you can't remember";
+  }
   switch (biome) {
-    case Biome.GRASS:
-      return 'Grassy Field';
-    case Biome.RUINS:
-      return 'Ancient Ruins';
-    case Biome.ABYSS:
-      return 'The Abyss';
-    case Biome.SPACE:
-      return 'Stratosphere';
-    case Biome.END:
-      return 'Final Destination';
-    default:
-      return Utils.toReadableString(Biome[biome]);
+  case Biome.GRASS:
+    return "Grassy Field";
+  case Biome.RUINS:
+    return "Ancient Ruins";
+  case Biome.ABYSS:
+    return "The Abyss";
+  case Biome.END:
+    return "???";
+  default:
+    return Utils.toReadableString(Biome[biome]);
   }
 }
 
@@ -56,7 +55,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.VOLCANO]: [ Biome.BEACH, [ Biome.ICE_CAVE, 4 ] ],
   [Biome.GRAVEYARD]: Biome.ABYSS,
   [Biome.DOJO]: [ Biome.PLAINS, [ Biome.TEMPLE, 3 ] ],
-  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 8 ] ],
+  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 4 ] ],
   [Biome.RUINS]: [ Biome.FOREST ],
   [Biome.WASTELAND]: Biome.BADLANDS,
   [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 3 ], [ Biome.WASTELAND, 3 ] ],
@@ -83,7 +82,7 @@ export enum BiomePoolTier {
   BOSS_RARE,
   BOSS_SUPER_RARE,
   BOSS_ULTRA_RARE
-};
+}
 
 export const uncatchableSpecies: Species[] = [];
 
@@ -199,7 +198,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.NIGHT]: [ { 1: [ Species.SHINX ], 15: [ Species.LUXIO ], 30: [ Species.LUXRAY ] } ],
       [TimeOfDay.ALL]: [ { 1: [ Species.ABRA ], 16: [ Species.KADABRA ] }, { 1: [ Species.BUNEARY ], 20: [ Species.LOPUNNY ] }, { 1: [ Species.ROOKIDEE ], 18: [ Species.CORVISQUIRE ], 38: [ Species.CORVIKNIGHT ] } ]
     },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FARFETCHD, Species.LICKITUNG, Species.CHANSEY, Species.EEVEE, Species.SNORLAX, { 1: [ Species.DUNSPARCE ], 72: [ Species.DUDUNSPARCE ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FARFETCHD, Species.LICKITUNG, Species.CHANSEY, Species.EEVEE, Species.SNORLAX, { 1: [ Species.DUNSPARCE ], 62: [ Species.DUDUNSPARCE ] } ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.DITTO, Species.LATIAS, Species.LATIOS ] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [ Species.DODRIO, Species.FURRET, Species.GUMSHOOS, Species.GREEDENT ],
@@ -267,7 +266,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAY]: [],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
-      [TimeOfDay.ALL]: [ Species.PINSIR, { 1: [ Species.CHIKORITA ], 16: [ Species.BAYLEEF ], 32: [ Species.MEGANIUM ] }, { 1: [ Species.GIRAFARIG ], 72: [ Species.FARIGIRAF ] }, Species.ZANGOOSE, Species.KECLEON, Species.TROPIUS ]
+      [TimeOfDay.ALL]: [ Species.PINSIR, { 1: [ Species.CHIKORITA ], 16: [ Species.BAYLEEF ], 32: [ Species.MEGANIUM ] }, { 1: [ Species.GIRAFARIG ], 62: [ Species.FARIGIRAF ] }, Species.ZANGOOSE, Species.KECLEON, Species.TROPIUS ]
     },
     [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.SCYTHER, Species.SHEDINJA, Species.ROTOM ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
@@ -473,8 +472,8 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.ALL]: [ { 1: [ Species.TOTODILE ], 18: [ Species.CROCONAW ], 30: [ Species.FERALIGATR ] }, { 1: [ Species.MUDKIP ], 16: [ Species.MARSHTOMP ], 36: [ Species.SWAMPERT ] } ]
     },
     [BiomePoolTier.SUPER_RARE]: {
-      [TimeOfDay.DAWN]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 90: [ Species.HISUI_GOODRA ] } ],
-      [TimeOfDay.DAY]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 90: [ Species.HISUI_GOODRA ] } ],
+      [TimeOfDay.DAWN]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 80: [ Species.HISUI_GOODRA ] } ],
+      [TimeOfDay.DAY]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 80: [ Species.HISUI_GOODRA ] } ],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
       [TimeOfDay.ALL]: [ Species.POLITOED, Species.GALAR_STUNFISK ]
@@ -2011,876 +2010,876 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   }
 };
 
-{
+export function initBiomes() {
   const pokemonBiomes = [
     [ Species.BULBASAUR, Type.GRASS, Type.POISON, [
-        [ Biome.GRASS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.IVYSAUR, Type.GRASS, Type.POISON, [
-        [ Biome.GRASS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.VENUSAUR, Type.GRASS, Type.POISON, [
-        [ Biome.GRASS, BiomePoolTier.RARE ],
-        [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.RARE ],
+      [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.CHARMANDER, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.CHARMELEON, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.CHARIZARD, Type.FIRE, Type.FLYING, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SQUIRTLE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.WARTORTLE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.BLASTOISE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.CATERPIE, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.METAPOD, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BUTTERFREE, Type.BUG, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.WEEDLE, Type.BUG, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.KAKUNA, Type.BUG, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.BEEDRILL, Type.BUG, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PIDGEY, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PIDGEOTTO, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PIDGEOT, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.RATTATA, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
-        [ Biome.SLUM, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
+      [ Biome.SLUM, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.RATICATE, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
-        [ Biome.SLUM, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
+      [ Biome.SLUM, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SPEAROW, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FEAROW, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.EKANS, Type.POISON, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ARBOK, Type.POISON, -1, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PIKACHU, Type.ELECTRIC, -1, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.RAICHU, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SANDSHREW, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.DESERT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.DESERT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SANDSLASH, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.DESERT, BiomePoolTier.COMMON ],
-        [ Biome.DESERT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.DESERT, BiomePoolTier.COMMON ],
+      [ Biome.DESERT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.NIDORAN_F, Type.POISON, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.NIDORINA, Type.POISON, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.NIDOQUEEN, Type.POISON, Type.GROUND, [
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS, TimeOfDay.DAY ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.NIDORAN_M, Type.POISON, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.NIDORINO, Type.POISON, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.NIDOKING, Type.POISON, Type.GROUND, [
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS, TimeOfDay.DAY ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.CLEFAIRY, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.SPACE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.SPACE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CLEFABLE, Type.FAIRY, -1, [
-        [ Biome.SPACE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.VULPIX, Type.FIRE, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.NINETALES, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.JIGGLYPUFF, Type.NORMAL, Type.FAIRY, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.WIGGLYTUFF, Type.NORMAL, Type.FAIRY, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ZUBAT, Type.POISON, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GOLBAT, Type.POISON, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ODDISH, Type.GRASS, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.GLOOM, Type.GRASS, Type.POISON, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.VILEPLUME, Type.GRASS, Type.POISON, [
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PARAS, Type.BUG, Type.GRASS, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PARASECT, Type.BUG, Type.GRASS, [
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.VENONAT, Type.BUG, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.VENOMOTH, Type.BUG, Type.POISON, [
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.DIGLETT, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DUGTRIO, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MEOWTH, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PERSIAN, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PSYDUCK, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAKE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.LAKE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GOLDUCK, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAKE, BiomePoolTier.COMMON ],
-        [ Biome.LAKE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
+      [ Biome.LAKE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MANKEY, Type.FIGHTING, -1, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.DOJO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.DOJO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PRIMEAPE, Type.FIGHTING, -1, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.DOJO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.DOJO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GROWLITHE, Type.FIRE, -1, [
-        [ Biome.GRASS, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ARCANINE, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.POLIWAG, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.POLIWHIRL, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.POLIWRATH, Type.WATER, Type.FIGHTING, [
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ABRA, Type.PSYCHIC, -1, [
-        [ Biome.TOWN, BiomePoolTier.RARE ],
-        [ Biome.PLAINS, BiomePoolTier.RARE ],
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.RARE ],
+      [ Biome.PLAINS, BiomePoolTier.RARE ],
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.KADABRA, Type.PSYCHIC, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE ],
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE ],
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.ALAKAZAM, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MACHOP, Type.FIGHTING, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MACHOKE, Type.FIGHTING, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MACHAMP, Type.FIGHTING, -1, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BELLSPROUT, Type.GRASS, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.WEEPINBELL, Type.GRASS, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VICTREEBEL, Type.GRASS, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TENTACOOL, Type.WATER, Type.POISON, [
-        [ Biome.SEA, BiomePoolTier.COMMON ],
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON ],
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.TENTACRUEL, Type.WATER, Type.POISON, [
-        [ Biome.SEA, BiomePoolTier.COMMON ],
-        [ Biome.SEA, BiomePoolTier.BOSS ],
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON ],
+      [ Biome.SEA, BiomePoolTier.BOSS ],
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GEODUDE, Type.ROCK, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GRAVELER, Type.ROCK, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GOLEM, Type.ROCK, Type.GROUND, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PONYTA, Type.FIRE, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.RAPIDASH, Type.FIRE, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SLOWPOKE, Type.WATER, Type.PSYCHIC, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SLOWBRO, Type.WATER, Type.PSYCHIC, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAKE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
+      [ Biome.LAKE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAGNEMITE, Type.ELECTRIC, Type.STEEL, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MAGNETON, Type.ELECTRIC, Type.STEEL, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FARFETCHD, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.DODUO, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.DODRIO, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SEEL, Type.WATER, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DEWGONG, Type.WATER, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GRIMER, Type.POISON, -1, [
-        [ Biome.SLUM, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MUK, Type.POISON, -1, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ],
-        [ Biome.SLUM, BiomePoolTier.COMMON ],
-        [ Biome.SLUM, BiomePoolTier.BOSS ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ],
+      [ Biome.SLUM, BiomePoolTier.COMMON ],
+      [ Biome.SLUM, BiomePoolTier.BOSS ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SHELLDER, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.CLOYSTER, Type.WATER, Type.ICE, [
-        [ Biome.BEACH, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.GASTLY, Type.GHOST, Type.POISON, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HAUNTER, Type.GHOST, Type.POISON, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GENGAR, Type.GHOST, Type.POISON, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ONIX, Type.ROCK, Type.GROUND, [
-        [ Biome.BADLANDS, BiomePoolTier.RARE ],
-        [ Biome.CAVE, BiomePoolTier.RARE ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.RARE ],
+      [ Biome.CAVE, BiomePoolTier.RARE ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DROWZEE, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HYPNO, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.KRABBY, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.KINGLER, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.VOLTORB, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ELECTRODE, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.EXEGGCUTE, Type.GRASS, Type.PSYCHIC, [
-        [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.EXEGGUTOR, Type.GRASS, Type.PSYCHIC, [
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CUBONE, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.MAROWAK, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS, TimeOfDay.NIGHT ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY, TimeOfDay.DUSK ] ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS, TimeOfDay.NIGHT ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY, TimeOfDay.DUSK ] ]
+    ]
     ],
     [ Species.HITMONLEE, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.HITMONCHAN, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.LICKITUNG, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.KOFFING, Type.POISON, -1, [
-        [ Biome.SLUM, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.WEEZING, Type.POISON, -1, [
-        [ Biome.SLUM, BiomePoolTier.COMMON ],
-        [ Biome.SLUM, BiomePoolTier.BOSS ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.COMMON ],
+      [ Biome.SLUM, BiomePoolTier.BOSS ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.RHYHORN, Type.GROUND, Type.ROCK, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.RHYDON, Type.GROUND, Type.ROCK, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.CHANSEY, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.MEADOW, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.MEADOW, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.TANGELA, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.KANGASKHAN, Type.NORMAL, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HORSEA, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SEADRA, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GOLDEEN, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.COMMON ],
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SEAKING, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.COMMON ],
-        [ Biome.LAKE, BiomePoolTier.BOSS ],
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
+      [ Biome.LAKE, BiomePoolTier.BOSS ],
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.STARYU, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.STARMIE, Type.WATER, Type.PSYCHIC, [
-        [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.BEACH, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.BEACH, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.MR_MIME, Type.PSYCHIC, Type.FAIRY, [
-        [ Biome.RUINS, BiomePoolTier.RARE ],
-        [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.RARE ],
+      [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SCYTHER, Type.BUG, Type.FLYING, [
-        [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.JYNX, Type.ICE, Type.PSYCHIC, [
-        [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ELECTABUZZ, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.MAGMAR, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.PINSIR, Type.BUG, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.TAUROS, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAGIKARP, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.COMMON ],
-        [ Biome.LAKE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON ],
+      [ Biome.LAKE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GYARADOS, Type.WATER, Type.FLYING, [
-        [ Biome.SEA, BiomePoolTier.COMMON ],
-        [ Biome.LAKE, BiomePoolTier.COMMON ],
-        [ Biome.LAKE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON ],
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
+      [ Biome.LAKE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.LAPRAS, Type.WATER, Type.ICE, [
-        [ Biome.SEA, BiomePoolTier.RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.DITTO, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.RARE ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.LABORATORY, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.EEVEE, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.MEADOW, BiomePoolTier.RARE ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.MEADOW, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.VAPOREON, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.JOLTEON, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.SUPER_RARE ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.SUPER_RARE ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.FLAREON, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.PORYGON, Type.NORMAL, -1, [
-        [ Biome.FACTORY, BiomePoolTier.RARE ],
-        [ Biome.SPACE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.RARE ],
+      [ Biome.SPACE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.LABORATORY, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.OMANYTE, Type.ROCK, Type.WATER, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.OMASTAR, Type.ROCK, Type.WATER, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.KABUTO, Type.ROCK, Type.WATER, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.KABUTOPS, Type.ROCK, Type.WATER, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.AERODACTYL, Type.ROCK, Type.FLYING, [
-        [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SNORLAX, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ARTICUNO, Type.ICE, Type.FLYING, [
-        [ Biome.ICE_CAVE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.ZAPDOS, Type.ELECTRIC, Type.FLYING, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.MOLTRES, Type.FIRE, Type.FLYING, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.DRATINI, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DRAGONAIR, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DRAGONITE, Type.DRAGON, Type.FLYING, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MEWTWO, Type.PSYCHIC, -1, [
-        [ Biome.LABORATORY, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.LABORATORY, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.MEW, Type.PSYCHIC, -1, [ ]
     ],
     [ Species.CHIKORITA, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.BAYLEEF, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.MEGANIUM, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.CYNDAQUIL, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.QUILAVA, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.TYPHLOSION, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.TOTODILE, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.CROCONAW, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.FERALIGATR, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.RARE ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.RARE ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SENTRET, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.FURRET, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HOOTHOOT, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.NOCTOWL, Type.NORMAL, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.LEDYBA, Type.BUG, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.DAWN ],
-        [ Biome.MEADOW, BiomePoolTier.COMMON, TimeOfDay.DAWN ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.DAWN ],
+      [ Biome.MEADOW, BiomePoolTier.COMMON, TimeOfDay.DAWN ]
+    ]
     ],
     [ Species.LEDIAN, Type.BUG, Type.FLYING, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON, TimeOfDay.DAWN ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS, TimeOfDay.DAWN ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON, TimeOfDay.DAWN ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, TimeOfDay.DAWN ]
+    ]
     ],
     [ Species.SPINARAK, Type.BUG, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
-        [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
+      [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.ARIADOS, Type.BUG, Type.POISON, [
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.CROBAT, Type.POISON, Type.FLYING, [
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CHINCHOU, Type.WATER, Type.ELECTRIC, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.SEABED, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.SEABED, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.LANTURN, Type.WATER, Type.ELECTRIC, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.SEABED, BiomePoolTier.COMMON ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.SEABED, BiomePoolTier.COMMON ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PICHU, Type.ELECTRIC, -1, [ ]
     ],
@@ -2891,308 +2890,308 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ Species.TOGEPI, Type.FAIRY, -1, [ ]
     ],
     [ Species.TOGETIC, Type.FAIRY, Type.FLYING, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.NATU, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.XATU, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.BOSS ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.RUINS, BiomePoolTier.BOSS ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MAREEP, Type.ELECTRIC, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.FLAAFFY, Type.ELECTRIC, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.AMPHAROS, Type.ELECTRIC, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.BELLOSSOM, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.MARILL, Type.WATER, Type.FAIRY, [
-        [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.AZUMARILL, Type.WATER, Type.FAIRY, [
-        [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+    ]
     ],
     [ Species.SUDOWOODO, Type.ROCK, -1, [
-        [ Biome.GRASS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.POLITOED, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HOPPIP, Type.GRASS, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SKIPLOOM, Type.GRASS, Type.FLYING, [
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.JUMPLUFF, Type.GRASS, Type.FLYING, [
-        [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.AIPOM, Type.NORMAL, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SUNKERN, Type.GRASS, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SUNFLORA, Type.GRASS, -1, [
-        [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.YANMA, Type.BUG, Type.FLYING, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.WOOPER, Type.WATER, Type.GROUND, [
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.QUAGSIRE, Type.WATER, Type.GROUND, [
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ESPEON, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.SUPER_RARE, TimeOfDay.DAY ],
-        [ Biome.RUINS, BiomePoolTier.BOSS_RARE, TimeOfDay.DAY ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.SUPER_RARE, TimeOfDay.DAY ],
+      [ Biome.RUINS, BiomePoolTier.BOSS_RARE, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.UMBREON, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.MURKROW, Type.DARK, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE, TimeOfDay.NIGHT ],
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE, TimeOfDay.NIGHT ],
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SLOWKING, Type.WATER, Type.PSYCHIC, [
-        [ Biome.LAKE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.MISDREAVUS, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.UNOWN, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.WOBBUFFET, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.RARE ],
-        [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.RARE ],
+      [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GIRAFARIG, Type.NORMAL, Type.PSYCHIC, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.PINECO, Type.BUG, -1, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.FORRETRESS, Type.BUG, Type.STEEL, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.DUNSPARCE, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.GLIGAR, Type.GROUND, Type.FLYING, [
-        [ Biome.BADLANDS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.STEELIX, Type.STEEL, Type.GROUND, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SNUBBULL, Type.FAIRY, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GRANBULL, Type.FAIRY, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.QWILFISH, Type.WATER, Type.POISON, [
-        [ Biome.SEABED, BiomePoolTier.RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SCIZOR, Type.BUG, Type.STEEL, [
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SHUCKLE, Type.BUG, Type.ROCK, [
-        [ Biome.CAVE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HERACROSS, Type.BUG, Type.FIGHTING, [
-        [ Biome.FOREST, BiomePoolTier.RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SNEASEL, Type.DARK, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TEDDIURSA, Type.NORMAL, -1, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.URSARING, Type.NORMAL, -1, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SLUGMA, Type.FIRE, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MAGCARGO, Type.FIRE, Type.ROCK, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SWINUB, Type.ICE, Type.GROUND, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PILOSWINE, Type.ICE, Type.GROUND, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CORSOLA, Type.WATER, Type.ROCK, [
-        [ Biome.SEABED, BiomePoolTier.RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.REMORAID, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.OCTILLERY, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DELIBIRD, Type.ICE, Type.FLYING, [
-        [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.MANTINE, Type.WATER, Type.FLYING, [
-        [ Biome.SEABED, BiomePoolTier.RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SKARMORY, Type.STEEL, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.HOUNDOUR, Type.DARK, Type.FIRE, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HOUNDOOM, Type.DARK, Type.FIRE, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.KINGDRA, Type.WATER, Type.DRAGON, [
-        [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.PHANPY, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.DONPHAN, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.PORYGON2, Type.NORMAL, -1, [
-        [ Biome.FACTORY, BiomePoolTier.RARE ],
-        [ Biome.SPACE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.RARE ],
+      [ Biome.SPACE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.LABORATORY, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.STANTLER, Type.NORMAL, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SMEARGLE, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.TYROGUE, Type.FIGHTING, -1, [ ]
     ],
     [ Species.HITMONTOP, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.SUPER_RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS_RARE ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.SUPER_RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS_RARE ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.SMOOCHUM, Type.ICE, Type.PSYCHIC, [ ]
     ],
@@ -3201,950 +3200,950 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ Species.MAGBY, Type.FIRE, -1, [ ]
     ],
     [ Species.MILTANK, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BLISSEY, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.RAIKOU, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.ENTEI, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.SUICUNE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.LARVITAR, Type.ROCK, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PUPITAR, Type.ROCK, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.TYRANITAR, Type.ROCK, Type.DARK, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.LUGIA, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.SEA, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.HO_OH, Type.FIRE, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.CELEBI, Type.PSYCHIC, Type.GRASS, [ ]
     ],
     [ Species.TREECKO, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.GROVYLE, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SCEPTILE, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.TORCHIC, Type.FIRE, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.COMBUSKEN, Type.FIRE, Type.FIGHTING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.BLAZIKEN, Type.FIRE, Type.FIGHTING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.MUDKIP, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.MARSHTOMP, Type.WATER, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SWAMPERT, Type.WATER, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.RARE ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.RARE ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.POOCHYENA, Type.DARK, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.MIGHTYENA, Type.DARK, -1, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ZIGZAGOON, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.LINOONE, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS ],
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS ],
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.WURMPLE, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SILCOON, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.DAY ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.BEAUTIFLY, Type.BUG, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.DAY ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.DAY ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.DAY ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.CASCOON, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.DUSTOX, Type.BUG, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.LOTAD, Type.WATER, Type.GRASS, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.LOMBRE, Type.WATER, Type.GRASS, [
-        [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.LUDICOLO, Type.WATER, Type.GRASS, [
-        [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SEEDOT, Type.GRASS, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.NUZLEAF, Type.GRASS, Type.DARK, [
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SHIFTRY, Type.GRASS, Type.DARK, [
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.TAILLOW, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SWELLOW, Type.NORMAL, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.WINGULL, Type.WATER, Type.FLYING, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.PELIPPER, Type.WATER, Type.FLYING, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.RALTS, Type.PSYCHIC, Type.FAIRY, [
-        [ Biome.TOWN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.KIRLIA, Type.PSYCHIC, Type.FAIRY, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GARDEVOIR, Type.PSYCHIC, Type.FAIRY, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SURSKIT, Type.BUG, Type.WATER, [
-        [ Biome.TOWN, BiomePoolTier.RARE ],
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.RARE ],
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.MASQUERAIN, Type.BUG, Type.FLYING, [
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAKE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
+      [ Biome.LAKE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SHROOMISH, Type.GRASS, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.BRELOOM, Type.GRASS, Type.FIGHTING, [
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SLAKOTH, Type.NORMAL, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.VIGOROTH, Type.NORMAL, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SLAKING, Type.NORMAL, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.NINCADA, Type.BUG, Type.GROUND, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.NINJASK, Type.BUG, Type.FLYING, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SHEDINJA, Type.BUG, Type.GHOST, [
-        [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.WHISMUR, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.LOUDRED, Type.NORMAL, -1, [
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.EXPLOUD, Type.NORMAL, -1, [
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAKUHITA, Type.FIGHTING, -1, [
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.DOJO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.DOJO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HARIYAMA, Type.FIGHTING, -1, [
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.DOJO, BiomePoolTier.COMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.DOJO, BiomePoolTier.COMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.AZURILL, Type.NORMAL, Type.FAIRY, [ ]
     ],
     [ Species.NOSEPASS, Type.ROCK, -1, [
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SKITTY, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.DELCATTY, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SABLEYE, Type.DARK, Type.GHOST, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAWILE, Type.STEEL, Type.FAIRY, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ARON, Type.STEEL, Type.ROCK, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.LAIRON, Type.STEEL, Type.ROCK, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.AGGRON, Type.STEEL, Type.ROCK, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MEDITITE, Type.FIGHTING, Type.PSYCHIC, [
-        [ Biome.DOJO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MEDICHAM, Type.FIGHTING, Type.PSYCHIC, [
-        [ Biome.DOJO, BiomePoolTier.COMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.COMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ELECTRIKE, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MANECTRIC, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PLUSLE, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.MINUN, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.VOLBEAT, Type.BUG, -1, [
-        [ Biome.MEADOW, BiomePoolTier.RARE, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.ILLUMISE, Type.BUG, -1, [
-        [ Biome.MEADOW, BiomePoolTier.RARE, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.ROSELIA, Type.GRASS, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GULPIN, Type.POISON, -1, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SWALOT, Type.POISON, -1, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CARVANHA, Type.WATER, Type.DARK, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SHARPEDO, Type.WATER, Type.DARK, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.WAILMER, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.WAILORD, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.NUMEL, Type.FIRE, Type.GROUND, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CAMERUPT, Type.FIRE, Type.GROUND, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TORKOAL, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SPOINK, Type.PSYCHIC, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
-        [ Biome.RUINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
+      [ Biome.RUINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GRUMPIG, Type.PSYCHIC, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SPINDA, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.TRAPINCH, Type.GROUND, -1, [
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VIBRAVA, Type.GROUND, Type.DRAGON, [
-        [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FLYGON, Type.GROUND, Type.DRAGON, [
-        [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ],
-      ]
+      [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ],
+    ]
     ],
     [ Species.CACNEA, Type.GRASS, -1, [
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.CACTURNE, Type.GRASS, Type.DARK, [
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SWABLU, Type.NORMAL, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.ALTARIA, Type.DRAGON, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.ZANGOOSE, Type.NORMAL, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SEVIPER, Type.POISON, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.LUNATONE, Type.ROCK, Type.PSYCHIC, [
-        [ Biome.SPACE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.SPACE, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.SPACE, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.SOLROCK, Type.ROCK, Type.PSYCHIC, [
-        [ Biome.SPACE, BiomePoolTier.COMMON, TimeOfDay.DAY ],
-        [ Biome.SPACE, BiomePoolTier.BOSS, TimeOfDay.DAY ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.COMMON, TimeOfDay.DAY ],
+      [ Biome.SPACE, BiomePoolTier.BOSS, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.BARBOACH, Type.WATER, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.WHISCASH, Type.WATER, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CORPHISH, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CRAWDAUNT, Type.WATER, Type.DARK, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BALTOY, Type.GROUND, Type.PSYCHIC, [
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
-      ]
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+    ]
     ],
     [ Species.CLAYDOL, Type.GROUND, Type.PSYCHIC, [
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.BOSS ],
-        [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
-      ]
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.RUINS, BiomePoolTier.BOSS ],
+      [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+    ]
     ],
     [ Species.LILEEP, Type.ROCK, Type.GRASS, [
-        [ Biome.DESERT, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.CRADILY, Type.ROCK, Type.GRASS, [
-        [ Biome.DESERT, BiomePoolTier.SUPER_RARE ],
-        [ Biome.DESERT, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.SUPER_RARE ],
+      [ Biome.DESERT, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ANORITH, Type.ROCK, Type.BUG, [
-        [ Biome.DESERT, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.ARMALDO, Type.ROCK, Type.BUG, [
-        [ Biome.DESERT, BiomePoolTier.SUPER_RARE ],
-        [ Biome.DESERT, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.SUPER_RARE ],
+      [ Biome.DESERT, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.FEEBAS, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.ULTRA_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.ULTRA_RARE ]
+    ]
     ],
     [ Species.MILOTIC, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.CASTFORM, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.KECLEON, Type.NORMAL, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SHUPPET, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BANETTE, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DUSKULL, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DUSCLOPS, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.TROPIUS, Type.GRASS, Type.FLYING, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
-        [ Biome.FOREST, BiomePoolTier.RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
+      [ Biome.FOREST, BiomePoolTier.RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CHIMECHO, Type.PSYCHIC, -1, [
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ABSOL, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.RARE ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.RARE ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.WYNAUT, Type.PSYCHIC, -1, [ ]
     ],
     [ Species.SNORUNT, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GLALIE, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SPHEAL, Type.ICE, Type.WATER, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SEALEO, Type.ICE, Type.WATER, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.WALREIN, Type.ICE, Type.WATER, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CLAMPERL, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HUNTAIL, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GOREBYSS, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.RELICANTH, Type.WATER, Type.ROCK, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.LUVDISC, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BAGON, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SHELGON, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SALAMENCE, Type.DRAGON, Type.FLYING, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BELDUM, Type.STEEL, Type.PSYCHIC, [
-        [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SPACE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SPACE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.METANG, Type.STEEL, Type.PSYCHIC, [
-        [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SPACE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SPACE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.METAGROSS, Type.STEEL, Type.PSYCHIC, [
-        [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SPACE, BiomePoolTier.RARE ],
-        [ Biome.SPACE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SPACE, BiomePoolTier.RARE ],
+      [ Biome.SPACE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.REGIROCK, Type.ROCK, -1, [
-        [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.REGICE, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.REGISTEEL, Type.STEEL, -1, [
-        [ Biome.RUINS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.RUINS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.RUINS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.LATIAS, Type.DRAGON, Type.PSYCHIC, [
-        [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.LATIOS, Type.DRAGON, Type.PSYCHIC, [
-        [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.KYOGRE, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.GROUDON, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.RAYQUAZA, Type.DRAGON, Type.FLYING, [
-        [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.JIRACHI, Type.STEEL, Type.PSYCHIC, [ ]
     ],
     [ Species.DEOXYS, Type.PSYCHIC, -1, [ ]
     ],
     [ Species.TURTWIG, Type.GRASS, -1, [
-        [ Biome.GRASS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.GROTLE, Type.GRASS, -1, [
-        [ Biome.GRASS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.TORTERRA, Type.GRASS, Type.GROUND, [
-        [ Biome.GRASS, BiomePoolTier.RARE ],
-        [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.RARE ],
+      [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.CHIMCHAR, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.MONFERNO, Type.FIRE, Type.FIGHTING, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.INFERNAPE, Type.FIRE, Type.FIGHTING, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.PIPLUP, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.RARE ]
-      ] 
+      [ Biome.SEA, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.PRINPLUP, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.EMPOLEON, Type.WATER, Type.STEEL, [
-        [ Biome.SEA, BiomePoolTier.RARE ],
-        [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.RARE ],
+      [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.STARLY, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.STARAVIA, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.STARAPTOR, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BIDOOF, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BIBAREL, Type.NORMAL, Type.WATER, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.KRICKETOT, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.KRICKETUNE, Type.BUG, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SHINX, Type.ELECTRIC, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.LUXIO, Type.ELECTRIC, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.LUXRAY, Type.ELECTRIC, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BUDEW, Type.GRASS, Type.POISON, [ ]
     ],
     [ Species.ROSERADE, Type.GRASS, Type.POISON, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CRANIDOS, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.RAMPARDOS, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SHIELDON, Type.ROCK, Type.STEEL, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.BASTIODON, Type.ROCK, Type.STEEL, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.BURMY, Type.BUG, -1, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
-        [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.WORMADAM, Type.BUG, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.FOREST, BiomePoolTier.BOSS ],
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ],
-        [ Biome.SLUM, BiomePoolTier.UNCOMMON ],
-        [ Biome.SLUM, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.FOREST, BiomePoolTier.BOSS ],
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ],
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON ],
+      [ Biome.SLUM, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MOTHIM, Type.BUG, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.COMBEE, Type.BUG, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VESPIQUEN, Type.BUG, Type.FLYING, [
-        [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.PACHIRISU, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.BUIZEL, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FLOATZEL, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.COMMON ],
-        [ Biome.SEA, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON ],
+      [ Biome.SEA, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CHERUBI, Type.GRASS, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CHERRIM, Type.GRASS, -1, [
-        [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SHELLOS, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON ],
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON ],
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GASTRODON, Type.WATER, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS ],
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS ],
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.AMBIPOM, Type.NORMAL, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DRIFLOON, Type.GHOST, Type.FLYING, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DRIFBLIM, Type.GHOST, Type.FLYING, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BUNEARY, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.LOPUNNY, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MISMAGIUS, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.HONCHKROW, Type.DARK, Type.FLYING, [
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GLAMEOW, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.PURUGLY, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CHINGLING, Type.PSYCHIC, -1, [
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.STUNKY, Type.POISON, Type.DARK, [
-        [ Biome.SLUM, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SKUNTANK, Type.POISON, Type.DARK, [
-        [ Biome.SLUM, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SLUM, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SLUM, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.BRONZOR, Type.STEEL, Type.PSYCHIC, [
-        [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
-        [ Biome.SPACE, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
+      [ Biome.SPACE, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BRONZONG, Type.STEEL, Type.PSYCHIC, [
-        [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
-        [ Biome.SPACE, BiomePoolTier.COMMON ],
-        [ Biome.SPACE, BiomePoolTier.BOSS ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
+      [ Biome.SPACE, BiomePoolTier.COMMON ],
+      [ Biome.SPACE, BiomePoolTier.BOSS ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BONSLY, Type.ROCK, -1, [ ]
     ],
@@ -4153,3050 +4152,3050 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ Species.HAPPINY, Type.NORMAL, -1, [ ]
     ],
     [ Species.CHATOT, Type.NORMAL, Type.FLYING, [
-        [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.SPIRITOMB, Type.GHOST, Type.DARK, [
-        [ Biome.GRAVEYARD, BiomePoolTier.SUPER_RARE ],
-        [ Biome.ABYSS, BiomePoolTier.RARE ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.SUPER_RARE ],
+      [ Biome.ABYSS, BiomePoolTier.RARE ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GIBLE, Type.DRAGON, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GABITE, Type.DRAGON, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GARCHOMP, Type.DRAGON, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MUNCHLAX, Type.NORMAL, -1, [ ]
     ],
     [ Species.RIOLU, Type.FIGHTING, -1, [ ]
     ],
     [ Species.LUCARIO, Type.FIGHTING, Type.STEEL, [
-        [ Biome.DOJO, BiomePoolTier.RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.HIPPOPOTAS, Type.GROUND, -1, [
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HIPPOWDON, Type.GROUND, -1, [
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SKORUPI, Type.POISON, Type.BUG, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.DESERT, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.DESERT, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+    ]
     ],
     [ Species.DRAPION, Type.POISON, Type.DARK, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.DESERT, BiomePoolTier.COMMON ],
-        [ Biome.DESERT, BiomePoolTier.BOSS ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.DESERT, BiomePoolTier.COMMON ],
+      [ Biome.DESERT, BiomePoolTier.BOSS ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+    ]
     ],
     [ Species.CROAGUNK, Type.POISON, Type.FIGHTING, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.DOJO, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.DOJO, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.TOXICROAK, Type.POISON, Type.FIGHTING, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CARNIVINE, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.FINNEON, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.LUMINEON, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
-        [ Biome.SEA, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+      [ Biome.SEA, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.MANTYKE, Type.WATER, Type.FLYING, [
-        [ Biome.SEABED, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SNOVER, Type.GRASS, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ABOMASNOW, Type.GRASS, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.WEAVILE, Type.DARK, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAGNEZONE, Type.ELECTRIC, Type.STEEL, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.LICKILICKY, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.RHYPERIOR, Type.GROUND, Type.ROCK, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TANGROWTH, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ELECTIVIRE, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAGMORTAR, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TOGEKISS, Type.FAIRY, Type.FLYING, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.YANMEGA, Type.BUG, Type.FLYING, [
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.LEAFEON, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GLACEON, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GLISCOR, Type.GROUND, Type.FLYING, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAMOSWINE, Type.ICE, Type.GROUND, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PORYGON_Z, Type.NORMAL, -1, [
-        [ Biome.SPACE, BiomePoolTier.BOSS_RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.BOSS_RARE ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GALLADE, Type.PSYCHIC, Type.FIGHTING, [
-        [ Biome.DOJO, BiomePoolTier.SUPER_RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.SUPER_RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.PROBOPASS, Type.ROCK, Type.STEEL, [
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DUSKNOIR, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.FROSLASS, Type.ICE, Type.GHOST, [
-        [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ROTOM, Type.ELECTRIC, Type.GHOST, [
-        [ Biome.LABORATORY, BiomePoolTier.SUPER_RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ],
-        [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEA, BiomePoolTier.BOSS_SUPER_RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.LABORATORY, BiomePoolTier.SUPER_RARE ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ],
+      [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEA, BiomePoolTier.BOSS_SUPER_RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ],
+      [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.UXIE, Type.PSYCHIC, -1, [
-        [ Biome.CAVE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.MESPRIT, Type.PSYCHIC, -1, [
-        [ Biome.LAKE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.AZELF, Type.PSYCHIC, -1, [
-        [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.DIALGA, Type.STEEL, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.PALKIA, Type.WATER, Type.DRAGON, [
-        [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.HEATRAN, Type.FIRE, Type.STEEL, [
-        [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.REGIGIGAS, Type.NORMAL, -1, [
-        [ Biome.TEMPLE, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.GIRATINA, Type.GHOST, Type.DRAGON, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.CRESSELIA, Type.PSYCHIC, -1, [
-        [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.PHIONE, Type.WATER, -1, [ ]
     ],
     [ Species.MANAPHY, Type.WATER, -1, [ ]
     ],
     [ Species.DARKRAI, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.SHAYMIN, Type.GRASS, -1, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.ARCEUS, Type.NORMAL, -1, [ ]
     ],
     [ Species.VICTINI, Type.PSYCHIC, Type.FIRE, [ ]
     ],
     [ Species.SNIVY, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SERVINE, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SERPERIOR, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.TEPIG, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.PIGNITE, Type.FIRE, Type.FIGHTING, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.EMBOAR, Type.FIRE, Type.FIGHTING, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.OSHAWOTT, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DEWOTT, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SAMUROTT, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.PATRAT, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SLUM, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SLUM, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.WATCHOG, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SLUM, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SLUM, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SLUM, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SLUM, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.LILLIPUP, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HERDIER, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.STOUTLAND, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PURRLOIN, Type.DARK, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.LIEPARD, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PANSAGE, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SIMISAGE, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.FOREST, BiomePoolTier.BOSS ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
+      [ Biome.FOREST, BiomePoolTier.BOSS ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.PANSEAR, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SIMISEAR, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.PANPOUR, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SIMIPOUR, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEA, BiomePoolTier.BOSS ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEA, BiomePoolTier.BOSS ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.MUNNA, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MUSHARNA, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.COMMON ],
-        [ Biome.SPACE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.COMMON ],
+      [ Biome.SPACE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PIDOVE, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TRANQUILL, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.UNFEZANT, Type.NORMAL, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BLITZLE, Type.ELECTRIC, -1, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ZEBSTRIKA, Type.ELECTRIC, -1, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ROGGENROLA, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BOLDORE, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GIGALITH, Type.ROCK, -1, [
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.WOOBAT, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SWOOBAT, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DRILBUR, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.EXCADRILL, Type.GROUND, Type.STEEL, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.AUDINO, Type.NORMAL, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.RARE ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.RARE ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TIMBURR, Type.FIGHTING, -1, [
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GURDURR, Type.FIGHTING, -1, [
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CONKELDURR, Type.FIGHTING, -1, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TYMPOLE, Type.WATER, -1, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PALPITOAD, Type.WATER, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SEISMITOAD, Type.WATER, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.THROH, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SAWK, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SEWADDLE, Type.BUG, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SWADLOON, Type.BUG, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.LEAVANNY, Type.BUG, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VENIPEDE, Type.BUG, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.WHIRLIPEDE, Type.BUG, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SCOLIPEDE, Type.BUG, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.COTTONEE, Type.GRASS, Type.FAIRY, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.WHIMSICOTT, Type.GRASS, Type.FAIRY, [
-        [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.PETILIL, Type.GRASS, -1, [
-        [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.LILLIGANT, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BASCULIN, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SANDILE, Type.GROUND, Type.DARK, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.KROKOROK, Type.GROUND, Type.DARK, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.KROOKODILE, Type.GROUND, Type.DARK, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.DARUMAKA, Type.FIRE, -1, [
-        [ Biome.DESERT, BiomePoolTier.RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DARMANITAN, Type.FIRE, -1, [
-        [ Biome.DESERT, BiomePoolTier.RARE ],
-        [ Biome.DESERT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.RARE ],
+      [ Biome.DESERT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MARACTUS, Type.GRASS, -1, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON ],
-        [ Biome.DESERT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON ],
+      [ Biome.DESERT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DWEBBLE, Type.BUG, Type.ROCK, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CRUSTLE, Type.BUG, Type.ROCK, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SCRAGGY, Type.DARK, Type.FIGHTING, [
-        [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SCRAFTY, Type.DARK, Type.FIGHTING, [
-        [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SIGILYPH, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.RUINS, BiomePoolTier.BOSS ],
-        [ Biome.SPACE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.RUINS, BiomePoolTier.BOSS ],
+      [ Biome.SPACE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.YAMASK, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.COFAGRIGUS, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TIRTOUGA, Type.WATER, Type.ROCK, [
-        [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
-        [ Biome.BEACH, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
+      [ Biome.BEACH, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.CARRACOSTA, Type.WATER, Type.ROCK, [
-        [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
-        [ Biome.BEACH, BiomePoolTier.SUPER_RARE ],
-        [ Biome.BEACH, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
+      [ Biome.BEACH, BiomePoolTier.SUPER_RARE ],
+      [ Biome.BEACH, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ARCHEN, Type.ROCK, Type.FLYING, [
-        [ Biome.RUINS, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.ARCHEOPS, Type.ROCK, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.RUINS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.RUINS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.TRUBBISH, Type.POISON, -1, [
-        [ Biome.SLUM, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GARBODOR, Type.POISON, -1, [
-        [ Biome.SLUM, BiomePoolTier.COMMON ],
-        [ Biome.SLUM, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.COMMON ],
+      [ Biome.SLUM, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ZORUA, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ZOROARK, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.RARE ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.RARE ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MINCCINO, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CINCCINO, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+    ]
     ],
     [ Species.GOTHITA, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.GOTHORITA, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.GOTHITELLE, Type.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+    ]
     ],
     [ Species.SOLOSIS, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.RARE ],
+      [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.DUOSION, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.RARE ],
+      [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.REUNICLUS, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.RARE ],
-        [ Biome.SPACE, BiomePoolTier.BOSS ],
-        [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.RARE ],
+      [ Biome.SPACE, BiomePoolTier.BOSS ],
+      [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DUCKLETT, Type.WATER, Type.FLYING, [
-        [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SWANNA, Type.WATER, Type.FLYING, [
-        [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VANILLITE, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.VANILLISH, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.VANILLUXE, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DEERLING, Type.NORMAL, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SAWSBUCK, Type.NORMAL, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.EMOLGA, Type.ELECTRIC, Type.FLYING, [
-        [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.KARRABLAST, Type.BUG, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ESCAVALIER, Type.BUG, Type.STEEL, [
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.FOONGUS, Type.GRASS, Type.POISON, [
-        [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.AMOONGUSS, Type.GRASS, Type.POISON, [
-        [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.FRILLISH, Type.WATER, Type.GHOST, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.JELLICENT, Type.WATER, Type.GHOST, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ALOMOMOLA, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.JOLTIK, Type.BUG, Type.ELECTRIC, [
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+    ]
     ],
     [ Species.GALVANTULA, Type.BUG, Type.ELECTRIC, [
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.FERROSEED, Type.GRASS, Type.STEEL, [
-        [ Biome.CAVE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.FERROTHORN, Type.GRASS, Type.STEEL, [
-        [ Biome.CAVE, BiomePoolTier.RARE ],
-        [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.RARE ],
+      [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.KLINK, Type.STEEL, -1, [
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.KLANG, Type.STEEL, -1, [
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.KLINKLANG, Type.STEEL, -1, [
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.FACTORY, BiomePoolTier.BOSS ],
-        [ Biome.LABORATORY, BiomePoolTier.COMMON ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.FACTORY, BiomePoolTier.BOSS ],
+      [ Biome.LABORATORY, BiomePoolTier.COMMON ],
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TYNAMO, Type.ELECTRIC, -1, [
-        [ Biome.SEABED, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.EELEKTRIK, Type.ELECTRIC, -1, [
-        [ Biome.SEABED, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.EELEKTROSS, Type.ELECTRIC, -1, [
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ELGYEM, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.SPACE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.SPACE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.BEHEEYEM, Type.PSYCHIC, -1, [
-        [ Biome.RUINS, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.BOSS ],
-        [ Biome.SPACE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.COMMON ],
+      [ Biome.RUINS, BiomePoolTier.BOSS ],
+      [ Biome.SPACE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.LITWICK, Type.GHOST, Type.FIRE, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.LAMPENT, Type.GHOST, Type.FIRE, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.CHANDELURE, Type.GHOST, Type.FIRE, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.AXEW, Type.DRAGON, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FRAXURE, Type.DRAGON, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HAXORUS, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CUBCHOO, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BEARTIC, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CRYOGONAL, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SHELMET, Type.BUG, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ACCELGOR, Type.BUG, -1, [
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.STUNFISK, Type.GROUND, Type.ELECTRIC, [
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MIENFOO, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.MIENSHAO, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DRUDDIGON, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GOLETT, Type.GROUND, Type.GHOST, [
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GOLURK, Type.GROUND, Type.GHOST, [
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PAWNIARD, Type.DARK, Type.STEEL, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BISHARP, Type.DARK, Type.STEEL, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BOUFFALANT, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.RUFFLET, Type.NORMAL, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BRAVIARY, Type.NORMAL, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VULLABY, Type.DARK, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.MANDIBUZZ, Type.DARK, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.HEATMOR, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DURANT, Type.BUG, Type.STEEL, [
-        [ Biome.FOREST, BiomePoolTier.SUPER_RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.SUPER_RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.DEINO, Type.DARK, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.ABYSS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.ABYSS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ZWEILOUS, Type.DARK, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.ABYSS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.ABYSS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.HYDREIGON, Type.DARK, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.ABYSS, BiomePoolTier.RARE ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.ABYSS, BiomePoolTier.RARE ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.LARVESTA, Type.BUG, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.VOLCARONA, Type.BUG, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.COBALION, Type.STEEL, Type.FIGHTING, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.TERRAKION, Type.ROCK, Type.FIGHTING, [
-        [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.VIRIZION, Type.GRASS, Type.FIGHTING, [
-        [ Biome.GRASS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.GRASS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.GRASS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.TORNADUS, Type.FLYING, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.THUNDURUS, Type.ELECTRIC, Type.FLYING, [
-        [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.RESHIRAM, Type.DRAGON, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.ZEKROM, Type.DRAGON, Type.ELECTRIC, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.LANDORUS, Type.GROUND, Type.FLYING, [
-        [ Biome.BADLANDS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.KYUREM, Type.DRAGON, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.KELDEO, Type.WATER, Type.FIGHTING, [
-        [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.MELOETTA, Type.NORMAL, Type.PSYCHIC, [
-        [ Biome.MEADOW, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.GENESECT, Type.BUG, Type.STEEL, [
-        [ Biome.FACTORY, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.FACTORY, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.FACTORY, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.CHESPIN, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.QUILLADIN, Type.GRASS, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.CHESNAUGHT, Type.GRASS, Type.FIGHTING, [
-        [ Biome.FOREST, BiomePoolTier.RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.FENNEKIN, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.BRAIXEN, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DELPHOX, Type.FIRE, Type.PSYCHIC, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.FROAKIE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.FROGADIER, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.GRENINJA, Type.WATER, Type.DARK, [
-        [ Biome.LAKE, BiomePoolTier.RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.BUNNELBY, Type.NORMAL, -1, [
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DIGGERSBY, Type.NORMAL, Type.GROUND, [
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.FLETCHLING, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.FLETCHINDER, Type.FIRE, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TALONFLAME, Type.FIRE, Type.FLYING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SCATTERBUG, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SPEWPA, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VIVILLON, Type.BUG, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.LITLEO, Type.FIRE, Type.NORMAL, [
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.PYROAR, Type.FIRE, Type.NORMAL, [
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.FLABEBE, Type.FAIRY, -1, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FLOETTE, Type.FAIRY, -1, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FLORGES, Type.FAIRY, -1, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SKIDDO, Type.GRASS, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GOGOAT, Type.GRASS, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PANCHAM, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PANGORO, Type.FIGHTING, Type.DARK, [
-        [ Biome.DOJO, BiomePoolTier.RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS_RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS_RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.FURFROU, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ESPURR, Type.PSYCHIC, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.MEOWSTIC, Type.PSYCHIC, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.HONEDGE, Type.STEEL, Type.GHOST, [
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DOUBLADE, Type.STEEL, Type.GHOST, [
-        [ Biome.TEMPLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.AEGISLASH, Type.STEEL, Type.GHOST, [
-        [ Biome.TEMPLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SPRITZEE, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.AROMATISSE, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SWIRLIX, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SLURPUFF, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.INKAY, Type.DARK, Type.PSYCHIC, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.MALAMAR, Type.DARK, Type.PSYCHIC, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.BINACLE, Type.ROCK, Type.WATER, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BARBARACLE, Type.ROCK, Type.WATER, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SKRELP, Type.POISON, Type.WATER, [
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.DRAGALGE, Type.POISON, Type.DRAGON, [
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CLAUNCHER, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.CLAWITZER, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.HELIOPTILE, Type.ELECTRIC, Type.NORMAL, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HELIOLISK, Type.ELECTRIC, Type.NORMAL, [
-        [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TYRUNT, Type.ROCK, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.TYRANTRUM, Type.ROCK, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.AMAURA, Type.ROCK, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.AURORUS, Type.ROCK, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SYLVEON, Type.FAIRY, -1, [
-        [ Biome.MEADOW, BiomePoolTier.SUPER_RARE ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.SUPER_RARE ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HAWLUCHA, Type.FIGHTING, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.DEDENNE, Type.ELECTRIC, Type.FAIRY, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CARBINK, Type.ROCK, Type.FAIRY, [
-        [ Biome.CAVE, BiomePoolTier.RARE ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.RARE ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GOOMY, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SLIGGOO, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GOODRA, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.KLEFKI, Type.STEEL, Type.FAIRY, [
-        [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
-        [ Biome.FACTORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
+      [ Biome.FACTORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PHANTUMP, Type.GHOST, Type.GRASS, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.TREVENANT, Type.GHOST, Type.GRASS, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PUMPKABOO, Type.GHOST, Type.GRASS, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GOURGEIST, Type.GHOST, Type.GRASS, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BERGMITE, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.AVALUGG, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.NOIBAT, Type.FLYING, Type.DRAGON, [
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.NOIVERN, Type.FLYING, Type.DRAGON, [
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.XERNEAS, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.YVELTAL, Type.DARK, Type.FLYING, [
-        [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.ZYGARDE, Type.DRAGON, Type.GROUND, [
-        [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.DIANCIE, Type.ROCK, Type.FAIRY, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.HOOPA, Type.PSYCHIC, Type.GHOST, [
-        [ Biome.TEMPLE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.TEMPLE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.TEMPLE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.VOLCANION, Type.FIRE, Type.WATER, [
-        [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.ROWLET, Type.GRASS, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DARTRIX, Type.GRASS, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DECIDUEYE, Type.GRASS, Type.GHOST, [
-        [ Biome.FOREST, BiomePoolTier.RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.LITTEN, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.TORRACAT, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.INCINEROAR, Type.FIRE, Type.DARK, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.POPPLIO, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.BRIONNE, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.PRIMARINA, Type.WATER, Type.FAIRY, [
-        [ Biome.SEA, BiomePoolTier.RARE ],
-        [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEA, BiomePoolTier.RARE ],
+      [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.PIKIPEK, Type.NORMAL, Type.FLYING, [
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.TRUMBEAK, Type.NORMAL, Type.FLYING, [
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.TOUCANNON, Type.NORMAL, Type.FLYING, [
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.YUNGOOS, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GUMSHOOS, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GRUBBIN, Type.BUG, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CHARJABUG, Type.BUG, Type.ELECTRIC, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.VIKAVOLT, Type.BUG, Type.ELECTRIC, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CRABRAWLER, Type.FIGHTING, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CRABOMINABLE, Type.FIGHTING, Type.ICE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ORICORIO, Type.FIRE, Type.FLYING, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CUTIEFLY, Type.BUG, Type.FAIRY, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.RIBOMBEE, Type.BUG, Type.FAIRY, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ROCKRUFF, Type.ROCK, -1, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ]
+    ]
     ],
     [ Species.LYCANROC, Type.ROCK, -1, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, TimeOfDay.DAY ],
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE, TimeOfDay.NIGHT ],
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
-        [ Biome.CAVE, BiomePoolTier.BOSS_RARE, TimeOfDay.DUSK ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, TimeOfDay.DAY ],
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE, TimeOfDay.NIGHT ],
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
+      [ Biome.CAVE, BiomePoolTier.BOSS_RARE, TimeOfDay.DUSK ]
+    ]
     ],
     [ Species.WISHIWASHI, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAKE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
+      [ Biome.LAKE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MAREANIE, Type.POISON, Type.WATER, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ],
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.TOXAPEX, Type.POISON, Type.WATER, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ],
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ],
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MUDBRAY, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MUDSDALE, Type.GROUND, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DEWPIDER, Type.WATER, Type.BUG, [
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ARAQUANID, Type.WATER, Type.BUG, [
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.FOMANTIS, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.LURANTIS, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MORELULL, Type.GRASS, Type.FAIRY, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SHIINOTIC, Type.GRASS, Type.FAIRY, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SALANDIT, Type.POISON, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SALAZZLE, Type.POISON, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.STUFFUL, Type.NORMAL, Type.FIGHTING, [
-        [ Biome.DOJO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BEWEAR, Type.NORMAL, Type.FIGHTING, [
-        [ Biome.DOJO, BiomePoolTier.COMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.COMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BOUNSWEET, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.STEENEE, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TSAREENA, Type.GRASS, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.COMFEY, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ORANGURU, Type.NORMAL, Type.PSYCHIC, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PASSIMIAN, Type.FIGHTING, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.WIMPOD, Type.BUG, Type.WATER, [
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GOLISOPOD, Type.BUG, Type.WATER, [
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SANDYGAST, Type.GHOST, Type.GROUND, [
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.PALOSSAND, Type.GHOST, Type.GROUND, [
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PYUKUMUKU, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.TYPE_NULL, Type.NORMAL, -1, [
-        [ Biome.LABORATORY, BiomePoolTier.ULTRA_RARE ]
-      ]
+      [ Biome.LABORATORY, BiomePoolTier.ULTRA_RARE ]
+    ]
     ],
     [ Species.SILVALLY, Type.NORMAL, -1, [
-        [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.MINIOR, Type.ROCK, Type.FLYING, [
-        [ Biome.SPACE, BiomePoolTier.COMMON ],
-        [ Biome.SPACE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.COMMON ],
+      [ Biome.SPACE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.KOMALA, Type.NORMAL, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TURTONATOR, Type.FIRE, Type.DRAGON, [
-        [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TOGEDEMARU, Type.ELECTRIC, Type.STEEL, [
-        [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MIMIKYU, Type.GHOST, Type.FAIRY, [
-        [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BRUXISH, Type.WATER, Type.PSYCHIC, [
-        [ Biome.ISLAND, BiomePoolTier.UNCOMMON ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.UNCOMMON ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DRAMPA, Type.NORMAL, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DHELMISE, Type.GHOST, Type.GRASS, [
-        [ Biome.SEABED, BiomePoolTier.RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.JANGMO_O, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HAKAMO_O, Type.DRAGON, Type.FIGHTING, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.KOMMO_O, Type.DRAGON, Type.FIGHTING, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TAPU_KOKO, Type.ELECTRIC, Type.FAIRY, [
-        [ Biome.TEMPLE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.TEMPLE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.TEMPLE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.TAPU_LELE, Type.PSYCHIC, Type.FAIRY, [
-        [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.TAPU_BULU, Type.GRASS, Type.FAIRY, [
-        [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.TAPU_FINI, Type.WATER, Type.FAIRY, [
-        [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.COSMOG, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ]
+    ]
     ],
     [ Species.COSMOEM, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ]
+    ]
     ],
     [ Species.SOLGALEO, Type.PSYCHIC, Type.STEEL, [
-        [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE, TimeOfDay.DAY ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE, TimeOfDay.DAY ]
+    ]
     ],
     [ Species.LUNALA, Type.PSYCHIC, Type.GHOST, [
-        [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE, TimeOfDay.NIGHT ]
+    ]
     ],
     [ Species.NIHILEGO, Type.ROCK, Type.POISON, [
-        [ Biome.SEABED, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.BUZZWOLE, Type.BUG, Type.FIGHTING, [
-        [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.PHEROMOSA, Type.BUG, Type.FIGHTING, [
-        [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.XURKITREE, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.CELESTEELA, Type.STEEL, Type.FLYING, [
-        [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.SPACE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.SPACE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.KARTANA, Type.GRASS, Type.STEEL, [
-        [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.GUZZLORD, Type.DARK, Type.DRAGON, [
-        [ Biome.SLUM, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.SLUM, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.SLUM, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.NECROZMA, Type.PSYCHIC, -1, [
-        [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.MAGEARNA, Type.STEEL, Type.FAIRY, [
-        [ Biome.FACTORY, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.FACTORY, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.FACTORY, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.MARSHADOW, Type.FIGHTING, Type.GHOST, [
-        [ Biome.GRAVEYARD, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.POIPOLE, Type.POISON, -1, [
-        [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ]
+    ]
     ],
     [ Species.NAGANADEL, Type.POISON, Type.DRAGON, [
-        [ Biome.SWAMP, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.STAKATAKA, Type.ROCK, Type.STEEL, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.BLACEPHALON, Type.FIRE, Type.GHOST, [
-        [ Biome.ISLAND, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.ZERAORA, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.MELTAN, Type.STEEL, -1, [ ]
     ],
     [ Species.MELMETAL, Type.STEEL, -1, [ ]
     ],
     [ Species.GROOKEY, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.THWACKEY, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.RILLABOOM, Type.GRASS, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SCORBUNNY, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.RABOOT, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.CINDERACE, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SOBBLE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DRIZZILE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.INTELEON, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.RARE ],
-        [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.RARE ],
+      [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SKWOVET, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GREEDENT, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ROOKIDEE, Type.FLYING, -1, [
-        [ Biome.TOWN, BiomePoolTier.RARE ],
-        [ Biome.PLAINS, BiomePoolTier.RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.RARE ],
+      [ Biome.PLAINS, BiomePoolTier.RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CORVISQUIRE, Type.FLYING, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CORVIKNIGHT, Type.FLYING, Type.STEEL, [
-        [ Biome.PLAINS, BiomePoolTier.RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BLIPBUG, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.DOTTLER, Type.BUG, Type.PSYCHIC, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ORBEETLE, Type.BUG, Type.PSYCHIC, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.NICKIT, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.THIEVUL, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GOSSIFLEUR, Type.GRASS, -1, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ELDEGOSS, Type.GRASS, -1, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.WOOLOO, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.MEADOW, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.MEADOW, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DUBWOOL, Type.NORMAL, -1, [
-        [ Biome.MEADOW, BiomePoolTier.COMMON ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.COMMON ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CHEWTLE, Type.WATER, -1, [
-        [ Biome.LAKE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DREDNAW, Type.WATER, Type.ROCK, [
-        [ Biome.LAKE, BiomePoolTier.COMMON ],
-        [ Biome.LAKE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
+      [ Biome.LAKE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.YAMPER, Type.ELECTRIC, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.BOLTUND, Type.ELECTRIC, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ROLYCOLY, Type.ROCK, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.CARKOL, Type.ROCK, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.COALOSSAL, Type.ROCK, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.COMMON ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.APPLIN, Type.GRASS, Type.DRAGON, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.FLAPPLE, Type.GRASS, Type.DRAGON, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.APPLETUN, Type.GRASS, Type.DRAGON, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SILICOBRA, Type.GROUND, -1, [
-        [ Biome.DESERT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SANDACONDA, Type.GROUND, -1, [
-        [ Biome.DESERT, BiomePoolTier.COMMON ],
-        [ Biome.DESERT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON ],
+      [ Biome.DESERT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CRAMORANT, Type.FLYING, Type.WATER, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ARROKUDA, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BARRASKEWDA, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TOXEL, Type.ELECTRIC, Type.POISON, [ ]
     ],
     [ Species.TOXTRICITY, Type.ELECTRIC, Type.POISON, [
-        [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SLUM, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SLUM, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.SIZZLIPEDE, Type.FIRE, Type.BUG, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CENTISKORCH, Type.FIRE, Type.BUG, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.CLOBBOPUS, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GRAPPLOCT, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.COMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.COMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SINISTEA, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.POLTEAGEIST, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.HATENNA, Type.PSYCHIC, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.HATTREM, Type.PSYCHIC, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.HATTERENE, Type.PSYCHIC, Type.FAIRY, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.IMPIDIMP, Type.DARK, Type.FAIRY, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MORGREM, Type.DARK, Type.FAIRY, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GRIMMSNARL, Type.DARK, Type.FAIRY, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.OBSTAGOON, Type.DARK, Type.NORMAL, [
-        [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SLUM, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SLUM, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.PERRSERKER, Type.STEEL, -1, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE, TimeOfDay.DUSK ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE, TimeOfDay.DUSK ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE, TimeOfDay.DUSK ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE, TimeOfDay.DUSK ]
+    ]
     ],
     [ Species.CURSOLA, Type.GHOST, -1, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SIRFETCHD, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.MR_RIME, Type.ICE, Type.PSYCHIC, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.RUNERIGUS, Type.GROUND, Type.GHOST, [
-        [ Biome.RUINS, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.RUINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.RUINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.MILCERY, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ALCREMIE, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.FALINKS, Type.FIGHTING, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PINCURCHIN, Type.ELECTRIC, -1, [
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.SNOM, Type.ICE, Type.BUG, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.FROSMOTH, Type.ICE, Type.BUG, [
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.STONJOURNER, Type.ROCK, -1, [
-        [ Biome.RUINS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.EISCUE, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.INDEEDEE, Type.PSYCHIC, Type.NORMAL, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.MORPEKO, Type.ELECTRIC, Type.DARK, [
-        [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.CUFANT, Type.STEEL, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.COPPERAJAH, Type.STEEL, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.DRACOZOLT, Type.ELECTRIC, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ARCTOZOLT, Type.ELECTRIC, Type.ICE, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.DRACOVISH, Type.WATER, Type.DRAGON, [
-        [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ARCTOVISH, Type.WATER, Type.ICE, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.DURALUDON, Type.STEEL, Type.DRAGON, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DREEPY, Type.DRAGON, Type.GHOST, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.DRAKLOAK, Type.DRAGON, Type.GHOST, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.DRAGAPULT, Type.DRAGON, Type.GHOST, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ZACIAN, Type.FAIRY, -1, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.ZAMAZENTA, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.ETERNATUS, Type.POISON, Type.DRAGON, [
-        [ Biome.END, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.END, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.KUBFU, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ]
+    ]
     ],
     [ Species.URSHIFU, Type.FIGHTING, Type.DARK, [
-        [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.ZARUDE, Type.DARK, Type.GRASS, [
-        [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.REGIELEKI, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.REGIDRAGO, Type.DRAGON, -1, [
-        [ Biome.WASTELAND, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.GLASTRIER, Type.ICE, -1, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.SPECTRIER, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.CALYREX, Type.PSYCHIC, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.WYRDEER, Type.NORMAL, Type.PSYCHIC, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.KLEAVOR, Type.BUG, Type.ROCK, [
-        [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.URSALUNA, Type.GROUND, Type.NORMAL, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BASCULEGION, Type.WATER, Type.GHOST, [
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.SNEASLER, Type.FIGHTING, Type.POISON, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.OVERQWIL, Type.DARK, Type.POISON, [
-        [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ENAMORUS, Type.FAIRY, Type.FLYING, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.SPRIGATITO, Type.GRASS, -1, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.FLORAGATO, Type.GRASS, -1, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.MEOWSCARADA, Type.GRASS, Type.DARK, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.FUECOCO, Type.FIRE, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.CROCALOR, Type.FIRE, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SKELEDIRGE, Type.FIRE, Type.GHOST, [
-        [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.QUAXLY, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.RARE ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.QUAXWELL, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.RARE ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.QUAQUAVAL, Type.WATER, Type.FIGHTING, [
-        [ Biome.BEACH, BiomePoolTier.RARE ],
-        [ Biome.BEACH, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.RARE ],
+      [ Biome.BEACH, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.LECHONK, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.OINKOLOGNE, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TAROUNTULA, Type.BUG, -1, [
-        [ Biome.FOREST, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SPIDOPS, Type.BUG, -1, [
-        [ Biome.FOREST, BiomePoolTier.COMMON ],
-        [ Biome.FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON ],
+      [ Biome.FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.NYMBLE, Type.BUG, -1, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
-        [ Biome.FOREST, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
+      [ Biome.FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.LOKIX, Type.BUG, Type.DARK, [
-        [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
-        [ Biome.FOREST, BiomePoolTier.COMMON ],
-        [ Biome.FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
+      [ Biome.FOREST, BiomePoolTier.COMMON ],
+      [ Biome.FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.PAWMI, Type.ELECTRIC, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PAWMO, Type.ELECTRIC, Type.FIGHTING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.PAWMOT, Type.ELECTRIC, Type.FIGHTING, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TANDEMAUS, Type.NORMAL, -1, [
-        [ Biome.TOWN, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.MAUSHOLD, Type.NORMAL, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.FIDOUGH, Type.FAIRY, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.DACHSBUN, Type.FAIRY, -1, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SMOLIV, Type.GRASS, Type.NORMAL, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.DOLLIV, Type.GRASS, Type.NORMAL, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ARBOLIVA, Type.GRASS, Type.NORMAL, [
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SQUAWKABILLY, Type.NORMAL, Type.FLYING, [
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.NACLI, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.NACLSTACK, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GARGANACL, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CHARCADET, Type.FIRE, -1, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ARMAROUGE, Type.FIRE, Type.PSYCHIC, [
-        [ Biome.VOLCANO, BiomePoolTier.RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.CERULEDGE, Type.FIRE, Type.GHOST, [
-        [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.TADBULB, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BELLIBOLT, Type.ELECTRIC, -1, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.WATTREL, Type.ELECTRIC, Type.FLYING, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.KILOWATTREL, Type.ELECTRIC, Type.FLYING, [
-        [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEA, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEA, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.MASCHIFF, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.MABOSSTIFF, Type.DARK, -1, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.SHROODLE, Type.POISON, Type.NORMAL, [
-        [ Biome.FOREST, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.GRAFAIAI, Type.POISON, Type.NORMAL, [
-        [ Biome.FOREST, BiomePoolTier.COMMON ],
-        [ Biome.FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.COMMON ],
+      [ Biome.FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.BRAMBLIN, Type.GRASS, Type.GHOST, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.BRAMBLEGHAST, Type.GRASS, Type.GHOST, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON ],
-        [ Biome.DESERT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON ],
+      [ Biome.DESERT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TOEDSCOOL, Type.GROUND, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.TOEDSCRUEL, Type.GROUND, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.KLAWF, Type.ROCK, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.CAPSAKID, Type.GRASS, -1, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.SCOVILLAIN, Type.GRASS, Type.FIRE, [
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.RELLOR, Type.BUG, -1, [
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.RABSCA, Type.BUG, Type.PSYCHIC, [
-        [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.FLITTLE, Type.PSYCHIC, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ESPATHRA, Type.PSYCHIC, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.TINKATINK, Type.FAIRY, Type.STEEL, [
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.TINKATUFF, Type.FAIRY, Type.STEEL, [
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.TINKATON, Type.FAIRY, Type.STEEL, [
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.WIGLETT, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.WUGTRIO, Type.WATER, -1, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BOMBIRDIER, Type.FLYING, Type.DARK, [
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.FINIZEN, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.PALAFIN, Type.WATER, -1, [
-        [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.VAROOM, Type.STEEL, Type.POISON, [
-        [ Biome.METROPOLIS, BiomePoolTier.RARE ],
-        [ Biome.SLUM, BiomePoolTier.RARE ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.RARE ],
+      [ Biome.SLUM, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.REVAVROOM, Type.STEEL, Type.POISON, [
-        [ Biome.METROPOLIS, BiomePoolTier.RARE ],
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE ],
-        [ Biome.SLUM, BiomePoolTier.RARE ],
-        [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.RARE ],
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE ],
+      [ Biome.SLUM, BiomePoolTier.RARE ],
+      [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.CYCLIZAR, Type.DRAGON, Type.NORMAL, [
-        [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.ORTHWORM, Type.STEEL, -1, [
-        [ Biome.DESERT, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.GLIMMET, Type.ROCK, Type.POISON, [
-        [ Biome.CAVE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.GLIMMORA, Type.ROCK, Type.POISON, [
-        [ Biome.CAVE, BiomePoolTier.RARE ],
-        [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.RARE ],
+      [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GREAVARD, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.HOUNDSTONE, Type.GHOST, -1, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.FLAMIGO, Type.FLYING, Type.FIGHTING, [
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.CETODDLE, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.CETITAN, Type.ICE, -1, [
-        [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.VELUZA, Type.WATER, Type.PSYCHIC, [
-        [ Biome.SEABED, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.DONDOZO, Type.WATER, -1, [
-        [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.TATSUGIRI, Type.DRAGON, Type.WATER, [
-        [ Biome.BEACH, BiomePoolTier.RARE ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ANNIHILAPE, Type.FIGHTING, Type.GHOST, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.DOJO, BiomePoolTier.COMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.DOJO, BiomePoolTier.COMMON ],
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.CLODSIRE, Type.POISON, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.FARIGIRAF, Type.NORMAL, Type.PSYCHIC, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.DUDUNSPARCE, Type.NORMAL, -1, [
-        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.KINGAMBIT, Type.DARK, Type.STEEL, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.COMMON ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GREAT_TUSK, Type.GROUND, Type.FIGHTING, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SCREAM_TAIL, Type.FAIRY, Type.PSYCHIC, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.BRUTE_BONNET, Type.GRASS, Type.DARK, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FLUTTER_MANE, Type.GHOST, Type.FAIRY, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SLITHER_WING, Type.BUG, Type.FIGHTING, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.SANDY_SHOCKS, Type.ELECTRIC, Type.GROUND, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.IRON_TREADS, Type.GROUND, Type.STEEL, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.IRON_BUNDLE, Type.ICE, Type.WATER, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.IRON_HANDS, Type.FIGHTING, Type.ELECTRIC, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.IRON_JUGULIS, Type.DARK, Type.FLYING, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.IRON_MOTH, Type.FIRE, Type.POISON, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.IRON_THORNS, Type.ROCK, Type.ELECTRIC, [
-        [ Biome.END, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.FRIGIBAX, Type.DRAGON, Type.ICE, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ARCTIBAX, Type.DRAGON, Type.ICE, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.BAXCALIBUR, Type.DRAGON, Type.ICE, [
-        [ Biome.WASTELAND, BiomePoolTier.RARE ],
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.RARE ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.GIMMIGHOUL, Type.GHOST, -1, [
-        [ Biome.TEMPLE, BiomePoolTier.RARE ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.GHOLDENGO, Type.STEEL, Type.GHOST, [
-        [ Biome.TEMPLE, BiomePoolTier.RARE ],
-        [ Biome.TEMPLE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.RARE ],
+      [ Biome.TEMPLE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.WO_CHIEN, Type.DARK, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.CHIEN_PAO, Type.DARK, Type.ICE, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.TING_LU, Type.DARK, Type.GROUND, [
-        [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.CHI_YU, Type.DARK, Type.FIRE, [
-        [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.ROARING_MOON, Type.DRAGON, Type.DARK, [
-        [ Biome.END, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.IRON_VALIANT, Type.FAIRY, Type.FIGHTING, [
-        [ Biome.END, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.END, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ Species.KORAIDON, Type.FIGHTING, Type.DRAGON, [
-        [ Biome.RUINS, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.MIRAIDON, Type.ELECTRIC, Type.DRAGON, [
-        [ Biome.LABORATORY, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.LABORATORY, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.WALKING_WAKE, Type.WATER, Type.DRAGON, [
-        [ Biome.END, BiomePoolTier.RARE ]
-      ]
+      [ Biome.END, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.IRON_LEAVES, Type.GRASS, Type.PSYCHIC, [
-        [ Biome.END, BiomePoolTier.RARE ]
-      ]
+      [ Biome.END, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.DIPPLIN, Type.GRASS, Type.DRAGON, [
-        [ Biome.MEADOW, BiomePoolTier.RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.POLTCHAGEIST, Type.GRASS, Type.GHOST, [
-        [ Biome.BADLANDS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.SINISTCHA, Type.GRASS, Type.GHOST, [
-        [ Biome.BADLANDS, BiomePoolTier.RARE ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.RARE ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.OKIDOGI, Type.POISON, Type.FIGHTING, [
-        [ Biome.BADLANDS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.BADLANDS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.BADLANDS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.MUNKIDORI, Type.POISON, Type.PSYCHIC, [
-        [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.FEZANDIPITI, Type.POISON, Type.FAIRY, [
-        [ Biome.RUINS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.RUINS, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.RUINS, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.OGERPON, Type.GRASS, -1, [
-        [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
+    ]
     ],
     [ Species.ARCHALUDON, Type.STEEL, Type.DRAGON, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HYDRAPPLE, Type.GRASS, Type.DRAGON, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GOUGING_FIRE, Type.FIRE, Type.DRAGON, [
-        [ Biome.END, BiomePoolTier.RARE ]
-      ]
+      [ Biome.END, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.RAGING_BOLT, Type.ELECTRIC, Type.DRAGON, [
-        [ Biome.END, BiomePoolTier.RARE ]
-      ]
+      [ Biome.END, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.IRON_BOULDER, Type.ROCK, Type.PSYCHIC, [
-        [ Biome.END, BiomePoolTier.RARE ]
-      ]
+      [ Biome.END, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.IRON_CROWN, Type.STEEL, Type.PSYCHIC, [
-        [ Biome.END, BiomePoolTier.RARE ]
-      ]
+      [ Biome.END, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.TERAPAGOS, Type.NORMAL, -1, [
-        [ Biome.CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.PECHARUNT, Type.POISON, Type.GHOST, [ ]
     ],
     [ Species.ALOLA_RATTATA, Type.DARK, Type.NORMAL, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ALOLA_RATICATE, Type.DARK, Type.NORMAL, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ALOLA_RAICHU, Type.ELECTRIC, Type.PSYCHIC, [
-        [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ALOLA_SANDSHREW, Type.ICE, Type.STEEL, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ALOLA_SANDSLASH, Type.ICE, Type.STEEL, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ALOLA_VULPIX, Type.ICE, -1, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
+    ]
     ],
     [ Species.ALOLA_NINETALES, Type.ICE, Type.FAIRY, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.ALOLA_DIGLETT, Type.GROUND, Type.STEEL, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ALOLA_DUGTRIO, Type.GROUND, Type.STEEL, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ALOLA_MEOWTH, Type.DARK, -1, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ALOLA_PERSIAN, Type.DARK, -1, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ALOLA_GEODUDE, Type.ROCK, Type.ELECTRIC, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ALOLA_GRAVELER, Type.ROCK, Type.ELECTRIC, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ALOLA_GOLEM, Type.ROCK, Type.ELECTRIC, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ALOLA_GRIMER, Type.POISON, Type.DARK, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ Species.ALOLA_MUK, Type.POISON, Type.DARK, [
-        [ Biome.ISLAND, BiomePoolTier.COMMON ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.COMMON ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ Species.ALOLA_EXEGGUTOR, Type.GRASS, Type.DRAGON, [
-        [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.ALOLA_MAROWAK, Type.FIRE, Type.GHOST, [
-        [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.ETERNAL_FLOETTE, Type.FAIRY, -1, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.RARE ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.RARE ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GALAR_MEOWTH, Type.STEEL, -1, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE, TimeOfDay.DUSK ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE, TimeOfDay.DUSK ]
+    ]
     ],
     [ Species.GALAR_PONYTA, Type.PSYCHIC, -1, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE, TimeOfDay.DAWN ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE, TimeOfDay.DAWN ]
+    ]
     ],
     [ Species.GALAR_RAPIDASH, Type.PSYCHIC, Type.FAIRY, [
-        [ Biome.JUNGLE, BiomePoolTier.RARE, TimeOfDay.DAWN ],
-        [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE, TimeOfDay.DAWN ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.RARE, TimeOfDay.DAWN ],
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE, TimeOfDay.DAWN ]
+    ]
     ],
     [ Species.GALAR_SLOWPOKE, Type.PSYCHIC, -1, [
-        [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GALAR_SLOWBRO, Type.POISON, Type.PSYCHIC, [
-        [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GALAR_FARFETCHD, Type.FIGHTING, -1, [
-        [ Biome.DOJO, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.GALAR_WEEZING, Type.POISON, Type.FAIRY, [
-        [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.GALAR_MR_MIME, Type.ICE, Type.PSYCHIC, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.GALAR_ARTICUNO, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.GALAR_ZAPDOS, Type.FIGHTING, Type.FLYING, [
-        [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.DOJO, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.GALAR_MOLTRES, Type.DARK, Type.FLYING, [
-        [ Biome.ABYSS, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.ULTRA_RARE ],
+      [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.GALAR_SLOWKING, Type.POISON, Type.PSYCHIC, [
-        [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GALAR_CORSOLA, Type.GHOST, -1, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.GALAR_ZIGZAGOON, Type.DARK, Type.NORMAL, [
-        [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.GALAR_LINOONE, Type.DARK, Type.NORMAL, [
-        [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.GALAR_DARUMAKA, Type.ICE, -1, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GALAR_DARMANITAN, Type.ICE, -1, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.GALAR_YAMASK, Type.GROUND, Type.GHOST, [
-        [ Biome.RUINS, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.GALAR_STUNFISK, Type.GROUND, Type.STEEL, [
-        [ Biome.SWAMP, BiomePoolTier.SUPER_RARE ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.SUPER_RARE ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HISUI_GROWLITHE, Type.FIRE, Type.ROCK, [
-        [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.HISUI_ARCANINE, Type.FIRE, Type.ROCK, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HISUI_VOLTORB, Type.ELECTRIC, Type.GRASS, [
-        [ Biome.POWER_PLANT, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.HISUI_ELECTRODE, Type.ELECTRIC, Type.GRASS, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HISUI_TYPHLOSION, Type.FIRE, Type.GHOST, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HISUI_QWILFISH, Type.DARK, Type.POISON, [
-        [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.HISUI_SNEASEL, Type.FIGHTING, Type.POISON, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HISUI_SAMUROTT, Type.WATER, Type.DARK, [
-        [ Biome.ABYSS, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.HISUI_LILLIGANT, Type.GRASS, Type.FIGHTING, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HISUI_ZORUA, Type.NORMAL, Type.GHOST, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.HISUI_ZOROARK, Type.NORMAL, Type.GHOST, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.HISUI_BRAVIARY, Type.PSYCHIC, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HISUI_SLIGGOO, Type.STEEL, Type.DRAGON, [
-        [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HISUI_GOODRA, Type.STEEL, Type.DRAGON, [
-        [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.HISUI_AVALUGG, Type.ICE, Type.ROCK, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ]
+    ]
     ],
     [ Species.HISUI_DECIDUEYE, Type.GRASS, Type.FIGHTING, [
-        [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
+    ]
     ],
     [ Species.PALDEA_TAUROS, Type.FIGHTING, -1, [
-        [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
-        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
+    ]
     ],
     [ Species.PALDEA_WOOPER, Type.POISON, Type.GROUND, [
-        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
+    ]
     ],
     [ Species.BLOODMOON_URSALUNA, Type.GROUND, Type.NORMAL, [
-        [ Biome.FOREST, BiomePoolTier.SUPER_RARE, TimeOfDay.NIGHT ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE, TimeOfDay.NIGHT ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.SUPER_RARE, TimeOfDay.NIGHT ],
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE, TimeOfDay.NIGHT ]
+    ]
     ]
   ];
 
   const trainerBiomes = [
     [ TrainerType.ACE_TRAINER, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.GRASS, BiomePoolTier.UNCOMMON ],
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
-        [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.ABYSS, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.GRASS, BiomePoolTier.UNCOMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
+      [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
+      [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.ABYSS, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ TrainerType.ARTIST, [
-        [ Biome.METROPOLIS, BiomePoolTier.RARE ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.RARE ]
+    ]
     ],
     [ TrainerType.BACKERS, [] ],
     [ TrainerType.BACKPACKER, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+    ]
     ],
-    [ TrainerType.BAKER, [ 
-        [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
-      ]
+    [ TrainerType.BAKER, [
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ TrainerType.BEAUTY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ] ],
     [ TrainerType.BIKER, [
-        [ Biome.SLUM, BiomePoolTier.COMMON ]
-      ] 
+      [ Biome.SLUM, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.BLACK_BELT, [
-        [ Biome.DOJO, BiomePoolTier.COMMON ],
-        [ Biome.PLAINS, BiomePoolTier.RARE ],
-        [ Biome.GRASS, BiomePoolTier.RARE ],
-        [ Biome.SWAMP, BiomePoolTier.RARE ],
-        [ Biome.BEACH, BiomePoolTier.RARE ],
-        [ Biome.LAKE, BiomePoolTier.RARE ],
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.COMMON ],
+      [ Biome.PLAINS, BiomePoolTier.RARE ],
+      [ Biome.GRASS, BiomePoolTier.RARE ],
+      [ Biome.SWAMP, BiomePoolTier.RARE ],
+      [ Biome.BEACH, BiomePoolTier.RARE ],
+      [ Biome.LAKE, BiomePoolTier.RARE ],
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ TrainerType.BREEDER, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON ],
-        [ Biome.GRASS, BiomePoolTier.COMMON ],
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
-        [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAKE, BiomePoolTier.COMMON ],
-        [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
-        [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON ],
+      [ Biome.GRASS, BiomePoolTier.COMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
+      [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ TrainerType.CLERK, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
     ] ],
     [ TrainerType.CYCLIST, [
-        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.DANCER, [] ],
     [ TrainerType.DEPOT_AGENT, [
@@ -7204,9 +7203,9 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ] ],
     [ TrainerType.DOCTOR, [] ],
     [ TrainerType.FISHERMAN, [
-        [ Biome.LAKE, BiomePoolTier.COMMON ],
-        [ Biome.BEACH, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.RICH, [] ],
     [ TrainerType.GUITARIST, [
@@ -7215,10 +7214,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ] ],
     [ TrainerType.HARLEQUIN, [] ],
     [ TrainerType.HIKER, [
-        [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
-        [ Biome.CAVE, BiomePoolTier.COMMON ],
-        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
+      [ Biome.CAVE, BiomePoolTier.COMMON ],
+      [ Biome.BADLANDS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.HOOLIGANS, [] ],
     [ TrainerType.HOOPSTER, [] ],
@@ -7229,376 +7228,376 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.MUSICIAN, [] ],
     [ TrainerType.NURSERY_AIDE, [] ],
     [ TrainerType.OFFICER, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
-        [ Biome.SLUM, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
+      [ Biome.SLUM, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.PARASOL_LADY, [
-        [ Biome.BEACH, BiomePoolTier.COMMON ],
-        [ Biome.MEADOW, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.MEADOW, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.PILOT, [] ],
     [ TrainerType.POKEFAN, [] ],
     [ TrainerType.PRESCHOOLER, [] ],
     [ TrainerType.PSYCHIC, [
-        [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
+      [ Biome.RUINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.RANGER, [
-        [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
-        [ Biome.FOREST, BiomePoolTier.COMMON ],
-        [ Biome.JUNGLE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
+      [ Biome.FOREST, BiomePoolTier.COMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.RICH_KID, [] ],
     [ TrainerType.ROUGHNECK, [
-        [ Biome.SLUM, BiomePoolTier.COMMON ]
-      ] 
+      [ Biome.SLUM, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.SCIENTIST, [
-        [ Biome.DESERT, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.COMMON ],
+      [ Biome.RUINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.SMASHER, [] ],
-    [ TrainerType.SNOW_WORKER, [ 
-        [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
-      ]
+    [ TrainerType.SNOW_WORKER, [
+      [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.STRIKER, [] ],
     [ TrainerType.SCHOOL_KID, [
-        [ Biome.GRASS, BiomePoolTier.COMMON ]
-      ] 
+      [ Biome.GRASS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.SWIMMER, [
-        [ Biome.SEA, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.SEA, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.TWINS, [
-        [ Biome.PLAINS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.VETERAN, [
-        [ Biome.WASTELAND, BiomePoolTier.COMMON ]
-      ] 
+      [ Biome.WASTELAND, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.WAITER, [
-        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.WORKER, [
-        [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
+      [ Biome.FACTORY, BiomePoolTier.COMMON ],
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.YOUNGSTER, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ]
-      ]
+      [ Biome.TOWN, BiomePoolTier.COMMON ]
+    ]
     ],
     [ TrainerType.HEX_MANIAC, [
-        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
+    ]
     ],
     [ TrainerType.BROCK, [
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.MISTY, [
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.LT_SURGE, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.ERIKA, [
-        [ Biome.GRASS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRASS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.JANINE, [
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.SABRINA, [
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.GIOVANNI, [
-        [ Biome.LABORATORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BLAINE, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.FALKNER, [
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BUGSY, [
-        [ Biome.FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.WHITNEY, [
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.MORTY, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CHUCK, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.JASMINE, [
-        [ Biome.FACTORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.PRYCE, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CLAIR, [
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.ROXANNE, [
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BRAWLY, [
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.WATTSON, [
-        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.FLANNERY, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.NORMAN, [
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.WINONA, [
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.TATE, [
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.LIZA, [
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.JUAN, [
-        [ Biome.SEABED, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEABED, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.ROARK, [
-        [ Biome.CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.GARDENIA, [
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CRASHER_WAKE, [
-        [ Biome.LAKE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.LAKE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.MAYLENE, [
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.FANTINA, [
-        [ Biome.TEMPLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TEMPLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BYRON, [
-        [ Biome.FACTORY, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FACTORY, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CANDICE, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.VOLKNER, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CILAN, [
-        [ Biome.PLAINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CHILI, [
-        [ Biome.PLAINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CRESS, [
-        [ Biome.PLAINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CHEREN, [
-        [ Biome.PLAINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.PLAINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.LENORA, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.ROXIE, [
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BURGH, [
-        [ Biome.FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.ELESA, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CLAY, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.SKYLA, [
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BRYCEN, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.DRAYDEN, [
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.MARLON, [
-        [ Biome.SEA, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SEA, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.VIOLA, [
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.GRANT, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.KORRINA, [
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.RAMOS, [
-        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.CLEMONT, [
-        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.VALERIE, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.OLYMPIA, [
-        [ Biome.SPACE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SPACE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.WULFRIC, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.MILO, [
-        [ Biome.MEADOW, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.MEADOW, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.NESSA, [
-        [ Biome.ISLAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ISLAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.KABU, [
-        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BEA, [
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DOJO, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.ALLISTER, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.OPAL, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BEDE, [
-        [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.GORDIE, [
-        [ Biome.DESERT, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.DESERT, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.MELONY, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.PIERS, [
-        [ Biome.SLUM, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.SLUM, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.MARNIE, [
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ABYSS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.RAIHAN, [
-        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.KATY, [
-        [ Biome.FOREST, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.FOREST, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.BRASSIUS, [
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.IONO, [
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.KOFU, [
-        [ Biome.BEACH, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.BEACH, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.LARRY, [
-        [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.RYME, [
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.TULIP, [
-        [ Biome.RUINS, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.RUINS, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.GRUSHA, [
-        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
-      ]
+      [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+    ]
     ],
     [ TrainerType.LORELEI, [] ],
     [ TrainerType.BRUNO, [] ],
@@ -7659,7 +7658,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])
       ? biomeLinks[biome] as (Biome | [ Biome, integer ])[]
       : [ biomeLinks[biome] as Biome ];
-    for (let linkedBiomeEntry of linkedBiomes) {
+    for (const linkedBiomeEntry of linkedBiomes) {
       const linkedBiome = !Array.isArray(linkedBiomeEntry)
         ? linkedBiomeEntry as Biome
         : linkedBiomeEntry[0];
@@ -7676,150 +7675,156 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   traverseBiome(Biome.TOWN, 0);
   biomeDepths[Biome.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: integer, value: integer) => Math.max(max, value), 0) + 1, 1 ];
 
-  import('./pokemon-evolutions').then(pe => {
-    const pokemonEvolutions = pe.pokemonEvolutions;
-    for (let biome of Utils.getEnumValues(Biome)) {
-      biomePokemonPools[biome] = {};
-      biomeTrainerPools[biome] = {};
+  for (const biome of Utils.getEnumValues(Biome)) {
+    biomePokemonPools[biome] = {};
+    biomeTrainerPools[biome] = {};
 
-      for (let tier of Utils.getEnumValues(BiomePoolTier)) {
-        biomePokemonPools[biome][tier] = {};
-        biomeTrainerPools[biome][tier] = [];
+    for (const tier of Utils.getEnumValues(BiomePoolTier)) {
+      biomePokemonPools[biome][tier] = {};
+      biomeTrainerPools[biome][tier] = [];
 
-        for (let tod of Utils.getEnumValues(TimeOfDay))
-          biomePokemonPools[biome][tier][tod] = [];
+      for (const tod of Utils.getEnumValues(TimeOfDay)) {
+        biomePokemonPools[biome][tier][tod] = [];
       }
     }
+  }
 
-    for (let pb of pokemonBiomes) {
-      const speciesId = pb[0] as Species;
-      const biomeEntries = pb[3] as (Biome | BiomePoolTier)[][];
+  for (const pb of pokemonBiomes) {
+    const speciesId = pb[0] as Species;
+    const biomeEntries = pb[3] as (Biome | BiomePoolTier)[][];
 
-      const speciesEvolutions: SpeciesFormEvolution[] = pokemonEvolutions.hasOwnProperty(speciesId)
-        ? pokemonEvolutions[speciesId]
-        : [];
-      
-      if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length)
-        uncatchableSpecies.push(speciesId);
+    const speciesEvolutions: SpeciesFormEvolution[] = pokemonEvolutions.hasOwnProperty(speciesId)
+      ? pokemonEvolutions[speciesId]
+      : [];
 
-      for (let b of biomeEntries) {
-        const biome = b[0];
-        const tier = b[1];
-        const timesOfDay = b.length > 2
-          ? Array.isArray(b[2])
-            ? b[2]
-            : [ b[2] ]
-          : [ TimeOfDay.ALL ];
-
-        for (let tod of timesOfDay) {
-          if (!biomePokemonPools.hasOwnProperty(biome) || !biomePokemonPools[biome].hasOwnProperty(tier) || !biomePokemonPools[biome][tier].hasOwnProperty(tod))
-            continue;
-
-          const biomeTierPool = biomePokemonPools[biome][tier][tod];
-
-          let treeIndex = -1;
-          let arrayIndex = 0;
-
-          for (let t = 0; t < biomeTierPool.length; t++) {
-            const existingSpeciesIds = biomeTierPool[t] as unknown as Species[];
-            for (let es = 0; es < existingSpeciesIds.length; es++) {
-              const existingSpeciesId = existingSpeciesIds[es];
-              if (pokemonEvolutions.hasOwnProperty(existingSpeciesId) && (pokemonEvolutions[existingSpeciesId] as SpeciesFormEvolution[]).find(ese => ese.speciesId === speciesId)) {
-                treeIndex = t;
-                arrayIndex = es + 1;
-                break;
-              } else if (speciesEvolutions && speciesEvolutions.find(se => se.speciesId === existingSpeciesId)) {
-                treeIndex = t;
-                arrayIndex = es;
-                break;
-              }
-            }
-            if (treeIndex > -1)
-              break;
-          }
-
-          if (treeIndex > -1)
-            (biomeTierPool[treeIndex] as unknown as Species[]).splice(arrayIndex, 0, speciesId);
-          else
-            (biomeTierPool as unknown as Species[][]).push([ speciesId ]);
-        }
-      }
+    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length) {
+      uncatchableSpecies.push(speciesId);
     }
 
-    for (let b of Object.keys(biomePokemonPools)) {
-      for (let t of Object.keys(biomePokemonPools[b])) {
-        const tier = parseInt(t) as BiomePoolTier;
-        for (let tod of Object.keys(biomePokemonPools[b][t])) {
-          const biomeTierTimePool = biomePokemonPools[b][t][tod];
-          for (let e = 0; e < biomeTierTimePool.length; e++) {
-            const entry = biomeTierTimePool[e];
-            if (entry.length === 1)
-              biomeTierTimePool[e] = entry[0];
-            else {
-              const newEntry = {
-                1: [ entry[0] ]
-              };
-              for (let s = 1; s < entry.length; s++) {
-                const speciesId = entry[s];
-                const prevolution = entry.map(s => pokemonEvolutions[s]).flat().find(e => e && e.speciesId === speciesId);
-                const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
-                if (!newEntry.hasOwnProperty(level))
-                  newEntry[level] = [ speciesId ];
-                else
-                  newEntry[level].push(speciesId);
-              }
-              biomeTierTimePool[e] = newEntry;
-            }
-          }
-        }
-      }
-    }
+    for (const b of biomeEntries) {
+      const biome = b[0];
+      const tier = b[1];
+      const timesOfDay = b.length > 2
+        ? Array.isArray(b[2])
+          ? b[2]
+          : [ b[2] ]
+        : [ TimeOfDay.ALL ];
 
-    for (let tb of trainerBiomes) {
-      const trainerType = tb[0] as TrainerType;
-      const biomeEntries = tb[1] as BiomePoolTier[][];
-
-      for (let b of biomeEntries) {
-        const biome = b[0];
-        const tier = b[1];
-
-        if (!biomeTrainerPools.hasOwnProperty(biome) || !biomeTrainerPools[biome].hasOwnProperty(tier))
+      for (const tod of timesOfDay) {
+        if (!biomePokemonPools.hasOwnProperty(biome) || !biomePokemonPools[biome].hasOwnProperty(tier) || !biomePokemonPools[biome][tier].hasOwnProperty(tod)) {
           continue;
+        }
 
-        const biomeTierPool = biomeTrainerPools[biome][tier];
-        biomeTierPool.push(trainerType);
+        const biomeTierPool = biomePokemonPools[biome][tier][tod];
+
+        let treeIndex = -1;
+        let arrayIndex = 0;
+
+        for (let t = 0; t < biomeTierPool.length; t++) {
+          const existingSpeciesIds = biomeTierPool[t] as unknown as Species[];
+          for (let es = 0; es < existingSpeciesIds.length; es++) {
+            const existingSpeciesId = existingSpeciesIds[es];
+            if (pokemonEvolutions.hasOwnProperty(existingSpeciesId) && (pokemonEvolutions[existingSpeciesId] as SpeciesFormEvolution[]).find(ese => ese.speciesId === speciesId)) {
+              treeIndex = t;
+              arrayIndex = es + 1;
+              break;
+            } else if (speciesEvolutions && speciesEvolutions.find(se => se.speciesId === existingSpeciesId)) {
+              treeIndex = t;
+              arrayIndex = es;
+              break;
+            }
+          }
+          if (treeIndex > -1) {
+            break;
+          }
+        }
+
+        if (treeIndex > -1) {
+          (biomeTierPool[treeIndex] as unknown as Species[]).splice(arrayIndex, 0, speciesId);
+        } else {
+          (biomeTierPool as unknown as Species[][]).push([ speciesId ]);
+        }
       }
     }
+  }
 
+  for (const b of Object.keys(biomePokemonPools)) {
+    for (const t of Object.keys(biomePokemonPools[b])) {
+      const tier = parseInt(t) as BiomePoolTier;
+      for (const tod of Object.keys(biomePokemonPools[b][t])) {
+        const biomeTierTimePool = biomePokemonPools[b][t][tod];
+        for (let e = 0; e < biomeTierTimePool.length; e++) {
+          const entry = biomeTierTimePool[e];
+          if (entry.length === 1) {
+            biomeTierTimePool[e] = entry[0];
+          } else {
+            const newEntry = {
+              1: [ entry[0] ]
+            };
+            for (let s = 1; s < entry.length; s++) {
+              const speciesId = entry[s];
+              const prevolution = entry.map(s => pokemonEvolutions[s]).flat().find(e => e && e.speciesId === speciesId);
+              const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
+              if (!newEntry.hasOwnProperty(level)) {
+                newEntry[level] = [ speciesId ];
+              } else {
+                newEntry[level].push(speciesId);
+              }
+            }
+            biomeTierTimePool[e] = newEntry;
+          }
+        }
+      }
+    }
+  }
+
+  for (const tb of trainerBiomes) {
+    const trainerType = tb[0] as TrainerType;
+    const biomeEntries = tb[1] as BiomePoolTier[][];
+
+    for (const b of biomeEntries) {
+      const biome = b[0];
+      const tier = b[1];
+
+      if (!biomeTrainerPools.hasOwnProperty(biome) || !biomeTrainerPools[biome].hasOwnProperty(tier)) {
+        continue;
+      }
+
+      const biomeTierPool = biomeTrainerPools[biome][tier];
+      biomeTierPool.push(trainerType);
+    }
     //outputPools();
-  });
+  }
 
+
+  // used in a commented code
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function outputPools() {
     const pokemonOutput = {};
     const trainerOutput = {};
 
-    for (let b of Object.keys(biomePokemonPools)) {
+    for (const b of Object.keys(biomePokemonPools)) {
       const biome = Biome[b];
       pokemonOutput[biome] = {};
       trainerOutput[biome] = {};
 
-      for (let t of Object.keys(biomePokemonPools[b])) {
+      for (const t of Object.keys(biomePokemonPools[b])) {
         const tier = BiomePoolTier[t];
 
         pokemonOutput[biome][tier] = {};
 
-        for (let tod of Object.keys(biomePokemonPools[b][t])) {
+        for (const tod of Object.keys(biomePokemonPools[b][t])) {
           const timeOfDay = TimeOfDay[tod];
 
           pokemonOutput[biome][tier][timeOfDay] = [];
 
-          for (let f of biomePokemonPools[b][t][tod]) {
-            if (typeof f === 'number')
+          for (const f of biomePokemonPools[b][t][tod]) {
+            if (typeof f === "number") {
               pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
-            else {
+            } else {
               const tree = {};
 
-              for (let l of Object.keys(f)) {
+              for (const l of Object.keys(f)) {
                 tree[l] = f[l].map(s => Species[s]);
               }
 
@@ -7830,18 +7835,19 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         }
       }
 
-      for (let t of Object.keys(biomeTrainerPools[b])) {
+      for (const t of Object.keys(biomeTrainerPools[b])) {
         const tier = BiomePoolTier[t];
 
         trainerOutput[biome][tier] = [];
 
-        for (let f of biomeTrainerPools[b][t])
+        for (const f of biomeTrainerPools[b][t]) {
           trainerOutput[biome][tier].push(TrainerType[f]);
+        }
       }
     }
 
-    console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, '$1Species.$2').replace(/"(\d+)": /g, '$1: ').replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, '$1[TimeOfDay.$2]').replace(/(    )"(.*?)"/g, '$1[BiomePoolTier.$2]').replace(/(  )"(.*?)"/g, '$1[Biome.$2]'));
-    console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, '$1TrainerType.$2').replace(/"(\d+)": /g, '$1: ').replace(/(    )"(.*?)"/g, '$1[BiomePoolTier.$2]').replace(/(  )"(.*?)"/g, '$1[Biome.$2]'));
+    console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+    console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
   }
 
   /*for (let pokemon of allSpecies) {
