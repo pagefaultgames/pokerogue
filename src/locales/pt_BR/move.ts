@@ -3583,7 +3583,7 @@ export const move: MoveTranslationEntries = {
   },
   "revivalBlessing": {
     name: "Revival Blessing",
-    effect: "O usuário concede uma bênção amorosa, revivendo um Pokémon da equipe que tenha desmaiado e restaurando metade do máximo de PS desse Pokémon."
+    effect: "O usuário concede uma bênção amorosa, reanimando um Pokémon da equipe que tenha desmaiado e restaurando metade do máximo de PS desse Pokémon."
   },
   "saltCure": {
     name: "Salt Cure",

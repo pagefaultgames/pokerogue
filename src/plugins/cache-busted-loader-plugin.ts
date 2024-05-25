@@ -1,30 +1,32 @@
 let manifest: object;
 
 export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
-    constructor(scene: Phaser.Scene) {
-        super(scene)
+  constructor(scene: Phaser.Scene) {
+    super(scene);
+  }
+
+  get manifest() {
+    return manifest;
+  }
+
+  set manifest(manifestObj: object) {
+    manifest = manifestObj;
+  }
+
+  addFile(file): void {
+    if (!Array.isArray(file)) {
+      file = [ file ];
     }
 
-    get manifest() {
-        return manifest;
-    }
+    file.forEach(item => {
+      if (manifest) {
+        const timestamp = manifest[`/${item.url.replace(/\/\//g, "/")}` ];
+        if (timestamp) {
+          item.url += `?t=${timestamp}`;
+        }
+      }
+    });
 
-    set manifest(manifestObj: object) {
-        manifest = manifestObj;
-    }
-
-    addFile(file): void {
-        if (!Array.isArray(file))
-            file = [ file ];
-    
-        file.forEach(item => {
-            if (manifest) {
-                const timestamp = manifest[`/${item.url.replace(/\/\//g, '/')}` ];
-                if (timestamp)
-                    item.url += `?t=${timestamp}`;
-            }
-        });
-
-        super.addFile(file);
-    }
+    super.addFile(file);
+  }
 }
