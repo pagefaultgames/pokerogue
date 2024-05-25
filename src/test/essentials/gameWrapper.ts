@@ -1,5 +1,14 @@
+/* eslint-disable */
 import fs from "fs";
 import NoAudioSound = Phaser.Sound.NoAudioSound;
+import Clock = Phaser.Time.Clock;
+import Systems = Phaser.Scenes.Systems;
+import game from "../phaser.setup";
+import TweenManager = Phaser.Tweens.TweenManager;
+import InputManager = Phaser.Input.InputManager;
+import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
+import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
+import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
   public scene: {
@@ -220,6 +229,25 @@ export default class GameWrapper {
         }),
       }
     };
+
+    // const a = game;
+    // _scene.game = game;
+    // _scene.sys.game = game;
+    // _scene.system = _scene.sys;
+    // _scene.renderer = game.renderer;
+    // _scene.anims = game.anims;
+    // _scene.cache = game.cache;
+    // _scene.plugins = game.plugins;
+    // _scene.registry = game.registry;
+    // _scene.scale = game.scale;
+    // _scene.sound = game.sound;
+    // _scene.textures = game.textures;
+    // _scene.events = game.events;
+    // _scene.sys.events = game.events;
+    // const tweens = new TweenManager(_scene);
+    // _scene.tweens = tweens;
+    // _scene.input = game.input;
+    // _scene.time = new Clock(_scene);
     this.scenes[key] = _scene;
     _scene.create();
   }
