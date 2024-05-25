@@ -35,6 +35,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
   private ownedIcon: Phaser.GameObjects.Sprite;
+  private championRibbon: Phaser.GameObjects.Sprite;
   private teraIcon: Phaser.GameObjects.Sprite;
   private shinyIcon: Phaser.GameObjects.Sprite;
   private fusionShinyIcon: Phaser.GameObjects.Sprite;
@@ -78,27 +79,39 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.setVisible(false);
 
     this.box = this.scene.add.sprite(0, 0, this.getTextureName());
+    this.box.setName("box");
     this.box.setOrigin(1, 0.5);
     this.add(this.box);
 
     this.nameText = addTextObject(this.scene, player ? -115 : -124, player ? -15.2 : -11.2, "", TextStyle.BATTLE_INFO);
+    this.nameText.setName("text_name");
     this.nameText.setOrigin(0, 0);
     this.add(this.nameText);
 
     this.genderText = addTextObject(this.scene, 0, 0, "", TextStyle.BATTLE_INFO);
+    this.genderText.setName("text_gender");
     this.genderText.setOrigin(0, 0);
     this.genderText.setPositionRelative(this.nameText, 0, 2);
     this.add(this.genderText);
 
     if (!this.player) {
       this.ownedIcon = this.scene.add.sprite(0, 0, "icon_owned");
+      this.ownedIcon.setName("icon_owned");
       this.ownedIcon.setVisible(false);
       this.ownedIcon.setOrigin(0, 0);
       this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
       this.add(this.ownedIcon);
+
+      this.championRibbon = this.scene.add.sprite(0, 0, "champion_ribbon");
+      this.championRibbon.setName("icon_champion_ribbon");
+      this.championRibbon.setVisible(false);
+      this.championRibbon.setOrigin(0, 0);
+      this.championRibbon.setPositionRelative(this.nameText, 11.75, 11.75);
+      this.add(this.championRibbon);
     }
 
     this.teraIcon = this.scene.add.sprite(0, 0, "icon_tera");
+    this.teraIcon.setName("icon_tera");
     this.teraIcon.setVisible(false);
     this.teraIcon.setOrigin(0, 0);
     this.teraIcon.setScale(0.5);
@@ -107,6 +120,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.teraIcon);
 
     this.shinyIcon = this.scene.add.sprite(0, 0, "shiny_star");
+    this.shinyIcon.setName("icon_shiny");
     this.shinyIcon.setVisible(false);
     this.shinyIcon.setOrigin(0, 0);
     this.shinyIcon.setScale(0.5);
@@ -115,6 +129,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.shinyIcon);
 
     this.fusionShinyIcon = this.scene.add.sprite(0, 0, "shiny_star_2");
+    this.fusionShinyIcon.setName("icon_fusion_shiny");
     this.fusionShinyIcon.setVisible(false);
     this.fusionShinyIcon.setOrigin(0, 0);
     this.fusionShinyIcon.setScale(0.5);
@@ -122,6 +137,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.fusionShinyIcon);
 
     this.splicedIcon = this.scene.add.sprite(0, 0, "icon_spliced");
+    this.splicedIcon.setName("icon_spliced");
     this.splicedIcon.setVisible(false);
     this.splicedIcon.setOrigin(0, 0);
     this.splicedIcon.setScale(0.5);
@@ -130,31 +146,37 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.splicedIcon);
 
     this.statusIndicator = this.scene.add.sprite(0, 0, "statuses");
+    this.statusIndicator.setName("icon_status");
     this.statusIndicator.setVisible(false);
     this.statusIndicator.setOrigin(0, 0);
     this.statusIndicator.setPositionRelative(this.nameText, 0, 11.5);
     this.add(this.statusIndicator);
 
     this.levelContainer = this.scene.add.container(player ? -41 : -50, player ? -10 : -5);
+    this.levelContainer.setName("container_level");
     this.add(this.levelContainer);
 
     const levelOverlay = this.scene.add.image(0, 0, "overlay_lv");
     this.levelContainer.add(levelOverlay);
 
     this.hpBar = this.scene.add.image(player ? -61 : -71, player ? -1 : 4.5, "overlay_hp");
+    this.hpBar.setName("hp_bar");
     this.hpBar.setOrigin(0);
     this.add(this.hpBar);
 
     this.hpBarSegmentDividers = [];
 
     this.levelNumbersContainer = this.scene.add.container(9.5, (this.scene as BattleScene).uiTheme ? 0 : -0.5);
+    this.levelNumbersContainer.setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
 
     if (this.player) {
       this.hpNumbersContainer = this.scene.add.container(-15, 10);
+      this.hpNumbersContainer.setName("container_hp");
       this.add(this.hpNumbersContainer);
 
       const expBar = this.scene.add.image(-98, 18, "overlay_exp");
+      expBar.setName("overlay_exp");
       expBar.setOrigin(0);
       this.add(expBar);
 
@@ -173,10 +195,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     this.statsContainer = this.scene.add.container(0, 0);
+    this.statsContainer.setName("container_stats");
     this.statsContainer.setAlpha(0);
     this.add(this.statsContainer);
 
     this.statsBox = this.scene.add.sprite(0, 0, `${this.getTextureName()}_stats`);
+    this.statsBox.setName("box_stats");
     this.statsBox.setOrigin(1, 0.5);
     this.statsContainer.add(this.statsBox);
 
@@ -190,25 +214,30 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const statX = i > 1 ? this.statNumbers[i - 2].x + this.statNumbers[i - 2].width + 4 : -this.statsBox.width + 8;
       const statY = -this.statsBox.height / 2 + 4 + (i < battleStatOrder.length - 1 ? (i % 2 ? 10 : 0) : 5);
       const statLabel = this.scene.add.sprite(statX, statY, "pbinfo_stat", BattleStat[s]);
+      statLabel.setName("icon_stat_label_" + i.toString());
       statLabel.setOrigin(0, 0);
       statLabels.push(statLabel);
       this.statValuesContainer.add(statLabel);
 
       const statNumber = this.scene.add.sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", "3");
+      statNumber.setName("icon_stat_number_" + i.toString());
       statNumber.setOrigin(0, 0);
       this.statNumbers.push(statNumber);
       this.statValuesContainer.add(statNumber);
     });
 
     this.type1Icon = this.scene.add.sprite(player ? -139 : -15, player ? -17 : -15.5, `pbinfo_${player ? "player" : "enemy"}_type1`);
+    this.type1Icon.setName("icon_type_1");
     this.type1Icon.setOrigin(0, 0);
     this.add(this.type1Icon);
 
     this.type2Icon = this.scene.add.sprite(player ? -139 : -15, player ? -1 : -2.5, `pbinfo_${player ? "player" : "enemy"}_type2`);
+    this.type2Icon.setName("icon_type_2");
     this.type2Icon.setOrigin(0, 0);
     this.add(this.type2Icon);
 
     this.type3Icon = this.scene.add.sprite(player ? -154 : 0, player ? -17 : -15.5, `pbinfo_${player ? "player" : "enemy"}_type`);
+    this.type3Icon.setName("icon_type_3");
     this.type3Icon.setOrigin(0, 0);
     this.add(this.type3Icon);
   }
@@ -266,6 +295,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
       const opponentPokemonDexAttr = pokemon.getDexAttr();
+      if (pokemon.scene.gameMode.isClassic) {
+        if (pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 && pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
+          this.championRibbon.setVisible(true);
+        }
+      }
 
       // Check if Player owns all genders and forms of the Pokemon
       const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr);
@@ -346,6 +380,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     if (this.player) {
       this.y -= 12 * (mini ? 1 : -1);
+      this.baseY = this.y;
     }
 
     const offsetElements = [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.statusIndicator, this.levelContainer ];
@@ -378,7 +413,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (boss !== this.boss) {
       this.boss = boss;
 
-      [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.ownedIcon, this.statusIndicator, this.levelContainer, this.statValuesContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
+      [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.ownedIcon, this.championRibbon, this.statusIndicator, this.levelContainer, this.statValuesContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
@@ -402,6 +437,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         const dividerX = (Math.round((maxHp / this.bossSegments) * s) /  maxHp) * this.hpBar.width;
         const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height - (uiTheme ? 0 : 1), pokemon.bossSegmentIndex >= s ? 0xFFFFFF : 0x404040);
         divider.setOrigin(0.5, 0);
+        divider.setName("hpBar_divider_" + s.toString());
         this.add(divider);
         this.moveBelow(divider as Phaser.GameObjects.GameObject, this.statsContainer);
 
