@@ -7,11 +7,13 @@ import BattleScene from "#app/battle-scene.js";
 import GameWrapper from "#app/test/essentials/gameWrapper";
 import {Species} from "#app/data/enums/species";
 import {Moves} from "#app/data/enums/moves";
-import {LoginPhase, TitlePhase} from "#app/phases";
+import {EncounterPhase, LoginPhase, SelectStarterPhase, TitlePhase} from "#app/phases";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
-import {blobToString} from "#app/test/essentials/utils";
+import {blobToString, generateStarter, holdOn} from "#app/test/essentials/utils";
 import * as Utils from "#app/utils";
 import {loggedInUser, setLoggedInUser} from "#app/account";
+import {GameModes} from "#app/game-mode";
+import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
 const saveKey = "x0i2O7WRiANTqPmZ";
 describe("Session import/export", () => {
   let game, scene, gameData, sessionData;
@@ -26,6 +28,9 @@ describe("Session import/export", () => {
 
     Object.defineProperty(window, "localStorage", {
       value: mockLocalStorage(),
+    });
+    Object.defineProperty(window, "console", {
+      value: mockConsoleLog(),
     });
 
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData.prsv", {encoding: "utf8", flag: "r"});
@@ -86,13 +91,28 @@ describe("Session import/export", () => {
     });
   })
 
-  it('select some starter', () => {
+  it('select new Game', () => {
     scene.launchBattle();
     scene.pushPhase(new LoginPhase(scene));
     scene.pushPhase(new TitlePhase(scene));
     scene.shiftPhase();
     scene.shiftPhase();
-    console.log('phase:', scene.getCurrentPhase());
+    const gameMode = GameModes.CLASSIC;
+    scene.pushPhase(new SelectStarterPhase(scene, gameMode));
+    holdOn(300);
+    scene.newArena(scene.gameMode.getStartingBiome(scene));
+    holdOn(300);
+    scene.pushPhase(new EncounterPhase(scene, false));
+    scene.shiftPhase();
+    let phase = scene.getCurrentPhase();
+    const starters = generateStarter(scene);
+    phase.initBattle(starters);
+    scene.newBattle();
+    scene.arena.init();
+    scene.shiftPhase();
+    scene.getCurrentPhase().doEncounter();
+    scene.getCurrentPhase().doEncounterCommon();
+    phase = scene.getCurrentPhase();
 
   });
 });

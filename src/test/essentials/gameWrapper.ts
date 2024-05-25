@@ -1,4 +1,5 @@
 import fs from "fs";
+import NoAudioSound = Phaser.Sound.NoAudioSound;
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
   public scene: {
@@ -32,6 +33,7 @@ export default class GameWrapper {
   }
 
   private addScene(key: string, _scene: any): void {
+    let text = "";
     const addMethods = {
       setPipeline: () => null,
       setScale: () => null,
@@ -52,9 +54,10 @@ export default class GameWrapper {
       setY: () => null,
       setX: () => null,
       add: () => null,
-      setText: () => null,
+      setText: (value) => text = value,
       setPosition: () => null,
       setTexture: () => null,
+      clearTint: () => null,
       stop: () => null,
       fillStyle: () => null,
       beginPath: () => null,
@@ -62,8 +65,12 @@ export default class GameWrapper {
       createGeometryMask: () => null,
       setMask: () => null,
       setPositionRelative: () => null,
+      totalDuration: () => null,
       on: () => null,
       off: () => null,
+      sendToBack: () => null,
+      moveAbove: () => null,
+      getAll: () => [],
       setAngle: () => null,
       setTint: () => null,
       setShadowOffset: () => null,
@@ -71,7 +78,12 @@ export default class GameWrapper {
       setWordWrapWidth: () => null,
       setFontSize: () => null,
       setColor: () => null,
+      setCrop: () => null,
       setShadowColor: () => null,
+      removeAll: () => null,
+      getIndex: () => 0,
+      destroy: () => null,
+      addAt: () => null,
       getBounds: () => ({ width: 0, height: 0 }),
       getAt: null,
       runWordWrap: () => (""),
@@ -82,6 +94,9 @@ export default class GameWrapper {
         }
       },
       frame: {},
+      displayWidth: text.length * 3,
+      displayHeight: text.length * 3,
+
     };
     const { setStrokeStyle, ...methodsWithoutSetStrokeStyle } = addMethods;
     const { getAt, ...methodsWithoutGetAt } = addMethods;
@@ -91,7 +106,7 @@ export default class GameWrapper {
     _scene.game = this;
     _scene.sound = {
       play: () => null,
-      get: () => null,
+      get: (key) => new NoAudioSound(undefined, key),
       getAllPlaying: () => [],
     };
     _scene.time = {
@@ -123,6 +138,7 @@ export default class GameWrapper {
       spritesheet: () => null,
       audio: () => null,
       image: () => null,
+      atlas: () => null,
     };
     _scene.anims = {
       create: () => null,
