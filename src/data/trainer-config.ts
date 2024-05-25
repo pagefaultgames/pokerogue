@@ -6,7 +6,7 @@ import {TrainerType} from "./enums/trainer-type";
 import {Moves} from "./enums/moves";
 import {PokeballType} from "./pokeball";
 import {pokemonEvolutions, pokemonPrevolutions} from "./pokemon-evolutions";
-import PokemonSpecies, {PokemonSpeciesFilter, getPokemonSpecies} from "./pokemon-species";
+import PokemonSpecies, {getPokemonSpecies, PokemonSpeciesFilter} from "./pokemon-species";
 import {Species} from "./enums/species";
 import {tmSpecies} from "./tms";
 import {Type} from "./type";
@@ -270,6 +270,8 @@ export class TrainerConfig {
     return this;
   }
 
+
+
   getDerivedType(): TrainerType {
     let trainerType = this.trainerType;
     switch (trainerType) {
@@ -285,6 +287,21 @@ export class TrainerConfig {
       break;
     case TrainerType.LARRY_ELITE:
       trainerType = TrainerType.LARRY;
+      break;
+    case TrainerType.MARNIE_ELITE:
+      trainerType = TrainerType.MARNIE;
+      break;
+    case TrainerType.NESSA_ELITE:
+      trainerType = TrainerType.NESSA;
+      break;
+    case TrainerType.BEA_ELITE:
+      trainerType = TrainerType.BEA;
+      break;
+    case TrainerType.ALLISTER_ELITE:
+      trainerType = TrainerType.ALLISTER;
+      break;
+    case TrainerType.RAIHAN_ELITE:
+      trainerType = TrainerType.RAIHAN;
       break;
     }
 
@@ -1108,17 +1125,17 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.OLYMPIA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["OLYMPIA"], Type.PSYCHIC),
   [TrainerType.WULFRIC]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["WULFRIC"], Type.ICE),
   [TrainerType.MILO]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MILO"], Type.GRASS),
-  [TrainerType.NESSA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["NESSA"], Type.WATER),
+  [TrainerType.NESSA]: new TrainerConfig(++t).setName("Nessa").initForGymLeader(signatureSpecies["NESSA"], Type.WATER),
   [TrainerType.KABU]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KABU"], Type.FIRE),
-  [TrainerType.BEA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BEA"], Type.FIGHTING),
-  [TrainerType.ALLISTER]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["ALLISTER"], Type.GHOST),
+  [TrainerType.BEA]: new TrainerConfig(++t).setName("Bea").initForGymLeader(signatureSpecies["BEA"], Type.FIGHTING),
+  [TrainerType.ALLISTER]: new TrainerConfig(++t).setName("Allister").initForGymLeader(signatureSpecies["ALLISTER"], Type.GHOST),
   [TrainerType.OPAL]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["OPAL"], Type.FAIRY),
   [TrainerType.BEDE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BEDE"], Type.FAIRY),
   [TrainerType.GORDIE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GORDIE"], Type.ROCK),
   [TrainerType.MELONY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MELONY"], Type.ICE),
   [TrainerType.PIERS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["PIERS"], Type.DARK),
-  [TrainerType.MARNIE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MARNIE"], Type.DARK),
-  [TrainerType.RAIHAN]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RAIHAN"], Type.DRAGON),
+  [TrainerType.MARNIE]: new TrainerConfig(++t).setName("Marnie").initForGymLeader(signatureSpecies["MARNIE"], Type.DARK),
+  [TrainerType.RAIHAN]: new TrainerConfig(++t).setName("Raihan").initForGymLeader(signatureSpecies["RAIHAN"], Type.DRAGON),
   [TrainerType.KATY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KATY"], Type.BUG),
   [TrainerType.BRASSIUS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BRASSIUS"], Type.GRASS),
   [TrainerType.IONO]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["IONO"], Type.ELECTRIC),
@@ -1156,6 +1173,11 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.OLIVIA]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["OLIVIA"], Type.ROCK),
   [TrainerType.ACEROLA]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["ACEROLA"], Type.GHOST),
   [TrainerType.KAHILI]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["KAHILI"], Type.FLYING),
+  [TrainerType.MARNIE_ELITE]: new TrainerConfig(++t).setName("Marnie").initForEliteFour([ Species.MORPEKO, Species.LIEPARD, Species.TOXICROAK,Species.SCRAFTY, Species.GRIMMSNARL], Type.DARK),
+  [TrainerType.NESSA_ELITE]: new TrainerConfig(++t).setName("Nessa").initForEliteFour([ Species.GOLISOPOD,Species.PELIPPER,Species.QUAGSIRE,Species.TOXAPEX,Species.DREDNAW], Type.WATER),
+  [TrainerType.BEA_ELITE]: new TrainerConfig(++t).setName("Bea").initForEliteFour([ Species.HAWLUCHA,Species.GRAPPLOCT,Species.SIRFETCHD,Species.FALINKS,Species.MACHAMP], Type.FIGHTING),
+  [TrainerType.ALLISTER_ELITE]: new TrainerConfig(++t).setName("Allister").initForEliteFour([ Species.DUSKNOIR,Species.CHANDELURE,Species.CURSOLA,Species.RUNERIGUS,Species.GENGAR], Type.GHOST),
+  [TrainerType.RAIHAN_ELITE]: new TrainerConfig(++t).setName("Raihan").initForEliteFour([ Species.TORKOAL,Species.GOODRA,Species.TURTONATOR,Species.FLYGON,Species.DURALUDON], Type.DRAGON),
   [TrainerType.RIKA]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["RIKA"], Type.GROUND),
   [TrainerType.POPPY]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["POPPY"], Type.STEEL),
   [TrainerType.LARRY_ELITE]: new TrainerConfig(++t).setName("Larry").initForEliteFour(signatureSpecies["LARRY_ELITE"], Type.NORMAL, Type.FLYING),
