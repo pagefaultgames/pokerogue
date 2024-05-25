@@ -471,7 +471,7 @@ export const trainerTypeDialogue = {
       encounter: [
         "My boyfriend is the best trainer ever!",
         "It's a beautiful victorious day outside!",
-	"Another victory for my camping streak!"
+        "Another victory for my camping streak!"
       ],
       victory: [
         "Ow! Wait for my boyfriend to see!",
