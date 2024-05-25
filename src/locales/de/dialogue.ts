@@ -2312,113 +2312,113 @@ export const miscDialogue: SimpleTranslationEntries = {
 export const doubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
-      1: `Blue: Hey Red, let's show them what we're made of!
-                  $Red: ...
-                  $Blue: This is Pallet Town Power!`,
+      1: `Blau: Hey Rot, lass uns ihnen zeigen, was wir drauf haben!
+                  $Rot: ...
+                  $Blau: Das ist die Macht von Alabastia!`,
     },
     "victory": {
-      1: `Blue: That was a great battle!
-              $Red: ...`,
+      1: `Blau: Das war ein großartiger Kampf!
+              $Rot: ...`,
     },
   },
   "red_blue_double": {
     "encounter": {
-      1: `Red: ...!
-                  $Blue: He never talks much.
-                    $Blue: But dont let that fool you! He is a champ after all!`,
+      1: `Rot: ...!
+                  $Blau: Er redet nicht viel...
+                    $Blau: Aber lass dich davon nicht täuschen! Er ist schließlich ein Champ!`,
     },
     "victory": {
-      1: `Red: ...!
-                $Blue: Next time we will beat you!`,
+      1: `Rot: ...!
+                $Blau: Das nächste Mal gewinnen wir!`,
     },
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Tate: Are you suprised?
-                  $Liza: We are two gym leaders at once!
-                  $Tate: We are twins!
-                  $Liza: We dont need to talk to understand each other!
-                  $Tate: Twice the power...
-                  $Liza: Can you handle it?`,
+      1: `Ben: Hehehe...Bist du überrascht?
+                  $Svenja: Wir sind zwei Arenaleiter auf einmal!
+                  $Ben: Wir sind Zwillinge!
+                  $Svenja: Wir müssen nicht reden um uns gegenseitig zu verstehen!
+                  $Ben: Die doppelte Kraft...
+                  $Svenja: Kannst du ihr standhalten?`,
     },
     "victory": {
-      1: `Tate: What? Our combination was perfect!
-                  $Liza: Looks like we need to train more...`,
+      1: `Ben: Was? Unsere Kombination war perfekt!
+                  $Svenja: Sieht so aus als müssten wir wohl mehr tranieren...`,
     },
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Liza: Hihihi... Are you suprised?
-                  $Tate: Yes, we are really two gym leaders at once!
-                  $Liza: This is my twin brother Tate!
-                  $Tate: And this is my twin sister Liza!
-                  $Liza: Don't you think we are a perfect combination?`
+      1: `Svenja: Hihihi... Bist du überrascht?
+                  $Ben: Ja, wir sind wirklich zwei Arenaleiter auf einmal!
+                  $Svenja: Das ist mein Zwillingsbruder Ben!
+                  $Ben: Und das meine Zwillingsschwester Svenja!
+                  $Svenja: Wir sind die perfekte Kombo!`
     },
     "victory": {
-      1: `Liza: Are we...
-                  $Tate: ...not as strong as we thought?`,
+      1: `Svenja: Sind wir...
+                  $Ben: ...nicht so stark wie wir dachten?`,
     },
   },
   "wallace_steven_double": {
     "encounter": {
-      1: `Steven: Wallace, let's show them the power of the champions!
-                  $Wallace: We will show you the power of Hoenn!
-                  $Steven: Let's go!`,
+      1: `Troy: Wassili, lass uns ihnen die Kraft von Champions zeigen!
+                  $Wassili: Wir zeigen dir die Kraft von Hoenn!
+                  $Troy: Los gehts!`,
     },
     "victory": {
-      1: `Steven: That was a great battle!
-                  $Wallace: We will win next time!`,
+      1: `Troy: Das war ein großartiger Kampf!
+                  $Wassili: Das nächste Mal gewinnen wir!`,
     },
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
-            $Steven: Oh... I see... Let's go then!`,
+      1: `Troy: Hast du irgendwelche seltenen Pokémon?
+          $Wassili: Troy... Wir sind hier um zu kämpfen und nicht um mit unseren Pokémon zu prahlen...
+            $Troy: Oh... Wenn das so ist... Lass uns anfangen!`,
     },
     "victory": {
-      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
-            $Wallace: Steven...`,
+      1: `Troy: Jetzt da wir mit Kämpfen fertig sind... Lass uns mit unsereren Pokémon prahlen!
+            $Wassili: Troy...`,
     },
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Alder: We are the strongest trainers in Unova!
-                  $Iris: Fights against strong trainers are the best!`,
+      1: `Lauro: Wir sind die stärksten Trainer aus Einall!
+                  $Lilia: Kämpfe gegen starke Trainer machen am meisten Spaß!`,
     },
     "victory": {
-      1:   `Alder: Wow! You are super strong!
-                  $Iris: We will win next time!`,
+      1: `Lauro: Wow! Du bist super stark!
+                  $Lilia: Beim nächsten Mal schlagen wir dich!`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris: Welcome Challenger! I am THE Unova Champion!
-                  $Alder: Iris, aren't you a bit too excited?`,
+      1: `Lilia: Willkommen Herausforderer! Ich bin DER Champion von Einall!
+                  $Lauro: Lilia, bist du nicht etwas zu aufgeregt?`,
     },
     "victory": {
-      1:    `Iris: A loss like this is not easy to take...
-                  $Alder: But we will only get stronger with every loss!`,
-    },
-  },
-  "piers_marnie_double": {
-    "encounter": {
-      1:   `Marnie: Brother, let's show them the power of Spikemuth!
-                  $Piers: We bring darkness!`,
-    },
-    "victory": {
-      1:  `Marnie: You brought light to our darkness!
-                  $Piers: Its too bright...`,
+      1: `Lilia: Eine solche Niederlage ist nicht einfach zu verkraften...
+                  $Lauro: Aber wir wachsen an unseren Niederlagen und werden immer besser!`,
     },
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `Piers: Ready for a concert?
-                    $Marnie: Brother... They are here to fight, not to sing...`,
+      1: `Mary: Bruder, lass uns ihnen die Kraft von Spikeford zeigen!
+                  $Nezz: Wir bringen die Dunkelheit!`,
     },
     "victory": {
-      1:  `Piers: Now that was a great concert!
-                    $Marnie: Brother...`,
+      1: `Mary: Du hast Licht in unsere Dunkelheit gebracht!
+                  $Piers: Es ist viel zu hell...`,
+    },
+  },
+  "piers_marnie_double": {
+    "encounter": {
+      1: `Nezz: Bereit für ein Konzert?
+                    $Mary: Bruder...Sie sind hier um zu kämpfen, nicht um zu singen...`,
+    },
+    "victory": {
+      1: `Nezz: Das war mal ein großartiges Konzert!
+                    $Marnie: Bruder...`,
     },
   },
 };
