@@ -188,7 +188,7 @@ export function getNonVolatileStatusEffects():Array<StatusEffect>{
     StatusEffect.SLEEP,
     StatusEffect.FREEZE,
     StatusEffect.BURN
-  ]
+  ];
 }
 
 /**
@@ -197,5 +197,5 @@ export function getNonVolatileStatusEffects():Array<StatusEffect>{
  * @param status The status to check
  */
 export function isNonVolatileStatusEffect(status: StatusEffect): boolean{
-  return getNonVolatileStatusEffects().includes(status)
+  return getNonVolatileStatusEffects().includes(status);
 }
