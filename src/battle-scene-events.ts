@@ -1,11 +1,31 @@
 import Move from "./data/move";
 
+/** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {
-  MOVE_USED = "onMoveUsed"
+  /**
+   * Triggers when a move is successfully used
+   * @see {@linkcode MoveUsedEvent}
+   */
+  MOVE_USED = "onMoveUsed",
+  /**
+   * Triggers on the first turn of a new battle
+   * @see {@linkcode TurnInitEvent}
+   */
+  TURN_INIT = "onTurnInit",
+  /**
+   * Triggers after a turn ends in battle
+   * @see {@linkcode TurnEndEvent}
+   */
+  TURN_END  = "onTurnEnd",
+  /**
+   * Triggers when a new {@linkcode Arena} is created during initialization
+   * @see {@linkcode NewArenaEvent}
+   */
+  NEW_ARENA = "onNewArena",
 }
 
 /**
- * Container class for `onMoveUsed` events
+ * Container class for {@linkcode BattleSceneEventType.MOVE_USED} events
  * @extends Event
 */
 export class MoveUsedEvent extends Event {
@@ -21,5 +41,36 @@ export class MoveUsedEvent extends Event {
     this.userId = userId;
     this.move = move;
     this.ppUsed = ppUsed;
+  }
+}
+/**
+ * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events
+ * @extends Event
+*/
+export class TurnInitEvent extends Event {
+  constructor() {
+    super(BattleSceneEventType.TURN_INIT);
+  }
+}
+/**
+ * Container class for {@linkcode BattleSceneEventType.TURN_END} events
+ * @extends Event
+*/
+export class TurnEndEvent extends Event {
+  /** The amount of turns in the current battle */
+  public turnCount: number;
+  constructor(turnCount: number) {
+    super(BattleSceneEventType.TURN_END);
+
+    this.turnCount = turnCount;
+  }
+}
+/**
+ * Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events
+ * @extends Event
+*/
+export class NewArenaEvent extends Event {
+  constructor() {
+    super(BattleSceneEventType.NEW_ARENA);
   }
 }
