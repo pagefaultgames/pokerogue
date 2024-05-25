@@ -10,7 +10,6 @@ import PokemonSpecies, {getPokemonSpecies, PokemonSpeciesFilter} from "./pokemon
 import {Species} from "./enums/species";
 import {tmSpecies} from "./tms";
 import {Type} from "./type";
-import {initTrainerTypeDialogue} from "./dialogue";
 import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
 import {PartyMemberStrength} from "./enums/party-member-strength";
@@ -648,13 +647,15 @@ export class TrainerConfig {
           ? scene.anims.generateFrameNames(partnerTrainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128})
           : null;
         console.warn = originalWarn;
-        scene.anims.create({
-          key: trainerKey,
-          frames: frameNames,
-          frameRate: 24,
-          repeat: -1
-        });
-        if (isDouble) {
+        if (!(scene.anims.exists(trainerKey))) {
+          scene.anims.create({
+            key: trainerKey,
+            frames: frameNames,
+            frameRate: 24,
+            repeat: -1
+          });
+        }
+        if (isDouble && !(scene.anims.exists(partnerTrainerKey))) {
           scene.anims.create({
             key: partnerTrainerKey,
             frames: partnerFrameNames,
@@ -1072,7 +1073,3 @@ export const trainerConfigs: TrainerConfigs = {
       return [ modifierTypes.TERA_SHARD().generateType(null, [ starter.species.type1 ]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier ];
     }),
 };
-
-(function () {
-  initTrainerTypeDialogue();
-})();
