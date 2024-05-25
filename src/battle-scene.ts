@@ -1257,7 +1257,7 @@ export default class BattleScene extends SceneBase {
       return;
     }
     const formattedMoney =
-			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatLargeNumber(this.money, 1000) : this.money.toLocaleString("en-US");
+			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatLargeNumber(this.money, 1000) : this.money.toLocaleString();
     this.moneyText.setText(`₽${formattedMoney}`);
     if (forceVisible) {
       this.moneyText.setVisible(true);
