@@ -18,5 +18,5 @@ export const egg: SimpleTranslationEntries = {
   "tooManyEggs": "Hai troppe Uova!",
   "pull": "Tiro",
   "pulls": "Tiri",
-  "eggHatched": "{{pokemonName}} a éclos de l’Œuf !"
+  "eggHatched": "{{pokemonName}} hatched from the egg!"
 } as const;
