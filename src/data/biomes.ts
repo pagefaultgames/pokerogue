@@ -6,22 +6,23 @@ import { TrainerType } from "./enums/trainer-type";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Biome } from "./enums/biome";
 import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
+import i18next from "i18next";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1) {
-    return "Somewhere you can't remember";
+    return i18next.t("biome:unknownLocation");
   }
   switch (biome) {
   case Biome.GRASS:
-    return "Grassy Field";
+    return i18next.t("biome:GRASS");
   case Biome.RUINS:
-    return "Ancient Ruins";
+    return i18next.t("biome:RUINS");
   case Biome.ABYSS:
-    return "The Abyss";
+    return i18next.t("biome:ABYSS");
   case Biome.END:
-    return "???";
+    return i18next.t("biome:END");
   default:
-    return Utils.toReadableString(Biome[biome]);
+    return i18next.t(`biome:${Biome[biome].toUpperCase()}`);
   }
 }
 
