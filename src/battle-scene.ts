@@ -1249,8 +1249,8 @@ export default class BattleScene extends SceneBase {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
     this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
-    this.biomeWaveText.setColor(!isBoss ? "#404040" : "#f89890");
-    this.biomeWaveText.setShadowColor(!isBoss ? "#ded6b5" : "#984038");
+    this.biomeWaveText.setColor(!isBoss ? "#ffffff" : "#f89890");
+    this.biomeWaveText.setShadowColor(!isBoss ? "#636363" : "#984038");
     this.biomeWaveText.setVisible(true);
   }
 
