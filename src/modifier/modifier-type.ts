@@ -1,27 +1,27 @@
 import * as Modifiers from "./modifier";
 import { AttackMove, allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
-import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from '../data/pokeball';
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../field/pokemon';
-import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
-import { Stat, getStatName } from '../data/pokemon-stat';
-import { tmPoolTiers, tmSpecies } from '../data/tms';
-import { Type } from '../data/type';
-import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
-import * as Utils from '../utils';
-import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
-import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
-import { Unlockables } from '../system/unlockables';
-import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
-import { SpeciesFormKey } from '../data/pokemon-species';
-import BattleScene from '../battle-scene';
-import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
-import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
-import { ModifierTier } from './modifier-tier';
-import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
-import i18next from '#app/plugins/i18n';
-import { getModifierTierTextTint } from '#app/ui/text';
-import { BattlerTagType } from '#app/data/enums/battler-tag-type.js';
+import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
+import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
+import { Stat, getStatName } from "../data/pokemon-stat";
+import { tmPoolTiers, tmSpecies } from "../data/tms";
+import { Type } from "../data/type";
+import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "../ui/party-ui-handler";
+import * as Utils from "../utils";
+import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from "../data/temp-battle-stat";
+import { BerryType, getBerryEffectDescription, getBerryName } from "../data/berry";
+import { Unlockables } from "../system/unlockables";
+import { StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
+import { SpeciesFormKey } from "../data/pokemon-species";
+import BattleScene from "../battle-scene";
+import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from "../system/voucher";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from "../data/pokemon-forms";
+import { ModifierTier } from "./modifier-tier";
+import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
+import i18next from "#app/plugins/i18n";
+import { getModifierTierTextTint } from "#app/ui/text";
+import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -230,11 +230,12 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
 
   constructor(localeKey: string, iconImage: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, group?: string) {
     super(localeKey, iconImage, newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
-    selectFilter || ((pokemon: PlayerPokemon) => {
-      if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED)))))
-        return PartyUiHandler.NoEffectMessage;
-      return null;
-    }), group || 'potion');
+      selectFilter || ((pokemon: PlayerPokemon) => {
+        if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))) {
+          return PartyUiHandler.NoEffectMessage;
+        }
+        return null;
+      }), group || "potion");
 
     this.restorePoints = restorePoints;
     this.restorePercent = restorePercent;
@@ -279,12 +280,13 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
 export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id))),
-      (pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED)))
-          return PartyUiHandler.NoEffectMessage;
-        };
-        return null;
+    (pokemon: PlayerPokemon) => {
+      if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
+        return PartyUiHandler.NoEffectMessage;
       }
+    };
+    return null;
+  }
 
   getDescription(scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.PokemonStatusHealModifierType.description");

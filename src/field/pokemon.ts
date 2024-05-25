@@ -2397,8 +2397,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     if (confusion) {
-      if (this.getTag(BattlerTagType.CONFUSED))
+      if (this.getTag(BattlerTagType.CONFUSED)) {
         this.lapseTag(BattlerTagType.CONFUSED);
+      }
     }
   }
 

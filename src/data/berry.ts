@@ -95,7 +95,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       if (pokemon.status) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
       }
-      pokemon.resetStatus(true, true)
+      pokemon.resetStatus(true, true);
       pokemon.updateInfo();
     };
   case BerryType.LIECHI:
