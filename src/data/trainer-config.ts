@@ -688,13 +688,15 @@ export class TrainerConfig {
           ? scene.anims.generateFrameNames(partnerTrainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128})
           : null;
         console.warn = originalWarn;
-        scene.anims.create({
-          key: trainerKey,
-          frames: frameNames,
-          frameRate: 24,
-          repeat: -1
-        });
-        if (isDouble) {
+        if (!(scene.anims.exists(trainerKey))) {
+          scene.anims.create({
+            key: trainerKey,
+            frames: frameNames,
+            frameRate: 24,
+            repeat: -1
+          });
+        }
+        if (isDouble && !(scene.anims.exists(partnerTrainerKey))) {
           scene.anims.create({
             key: partnerTrainerKey,
             frames: partnerFrameNames,
