@@ -4,7 +4,7 @@ export const biome: SimpleTranslationEntries = {
   "unknownLocation": "Somewhere you can\'t remember",
   "TOWN": "Town",
   "PLAINS": "Plains",
-  "GRASS": "Grass",
+  "GRASS": "Grassy Field",
   "TALL_GRASS": "Tall Grass",
   "METROPOLIS": "Metropolis",
   "FOREST": "Forest",
