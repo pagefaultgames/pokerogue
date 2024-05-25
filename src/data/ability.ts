@@ -20,8 +20,9 @@ import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
-import { getPokeballName } from "./pokeball";
 import { BerryModifierType } from "#app/modifier/modifier-type";
+import { getPokeballName } from "./pokeball";
+import { Species } from "./enums/species";
 import {BattlerIndex} from "#app/battle";
 
 export class Ability implements Localizable {
@@ -1856,6 +1857,39 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : "stats"}!`);
+  }
+}
+
+/**
+ * This attribute applies confusion to the target whenever the user
+ * directly poisons them with a move, e.g. Poison Puppeteer.
+ * Called in {@linkcode StatusEffectAttr}.
+ * @extends PostAttackAbAttr
+ * @see {@linkcode applyPostAttack}
+ */
+export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
+  /** List of effects to apply confusion after */
+  private effects: StatusEffect[];
+
+  constructor(...effects: StatusEffect[]) {
+    super();
+    this.effects = effects;
+  }
+  /**
+   * Applies confusion to the target pokemon.
+   * @param pokemon {@link Pokemon} attacking
+   * @param passive N/A
+   * @param defender {@link Pokemon} defending
+   * @param move {@link Move} used to apply status effect and confusion
+   * @param hitResult N/A
+   * @param args [0] {@linkcode StatusEffect} applied by move
+   * @returns true if defender is confused
+   */
+  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (this.effects.indexOf(args[0]) > -1 && !defender.isFainted()) {
+      return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.moveId, defender.id);
+    }
+    return false;
   }
 }
 
@@ -4241,6 +4275,6 @@ export function initAbilities() {
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .unimplemented(),
+      .conditionalAttr(pokemon => pokemon.species.speciesId===Species.PECHARUNT,ConfusionOnStatusEffectAbAttr,StatusEffect.POISON,StatusEffect.TOXIC)
   );
 }
