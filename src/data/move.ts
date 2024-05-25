@@ -2903,6 +2903,11 @@ export class PreAttackStatChangeAttr extends MoveAttr {
 /**
  * Attribute used for moves that steal the enemy's positive stat boosts before dealing damage
  * @extends PreAttackStatChangeAttr
+ * @param user The {@linkcode Pokemon} that is stealing the boosts
+ * @param target The {@linkcode Pokemon} that is having their positive stat boosts stolen and reset to 0
+ * @param move N/A
+ * @param args [0] {@linkcode boolean} Whether the move could hit the target, if false (immune, dodged...) no stats are stolen
+ * @returns true if stats are stolen, false if move didn't hit or the target had no positive stats to take
  */
 export class StealStatBoostsAttr extends PreAttackStatChangeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2912,26 +2917,32 @@ export class StealStatBoostsAttr extends PreAttackStatChangeAttr {
       return false;
     }
 
-    // If the target has any stat boost (at least +1 in any stat)
-    if (target.summonData.battleStats.find((stat) => stat > 0)) {
-      const targetBoosts = target.summonData.battleStats.map((stat) => stat > 0 ? stat : 0);
+    let stolen = false;
+    const targetStats = target.summonData.battleStats;
+    const targetBoosts: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
 
-      // Reset the target's positive boosts back to 0
-      target.summonData.battleStats = target.summonData.battleStats.map(stat => Math.min(0, stat));
+    // Take positive stat boosts from the target, and reset them to 0
+    targetStats.forEach((stat, index) => {
+      if (stat > 0) {
+        targetBoosts[index] = stat;
+        targetStats[index] = 0;
+        stolen = true;
+      }
+    });
+
+    // If any stats were stolen, announce it and raise the user's stats accordingly
+    if (stolen) {
       target.updateInfo();
       user.scene.queueMessage(getPokemonMessage(user, " stole the target's boosted stats!"));
 
-      // For each battle stat, check if any boosts were stolen and apply them to the user
       targetBoosts.forEach((boost, index) => {
         if (boost > 0) {
           user.scene.overridePhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [index], boost));
         }
       });
-
-      return true;
     }
 
-    return false;
+    return stolen;
   }
 }
 
