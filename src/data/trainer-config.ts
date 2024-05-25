@@ -280,59 +280,6 @@ export class TrainerConfig {
     case TrainerType.LARRY_ELITE:
       trainerType = TrainerType.LARRY;
       break;
-    }
-
-    return trainerType;
-  }
-
-  setName(name: string): TrainerConfig {
-    if (name === "Finn") {
-      // Give the rival a localized name
-      // First check if i18n is initialized
-      if (!getIsInitialized()) {
-        initI18n();
-      }
-      // This is only the male name, because the female name is handled in a different function (setHasGenders)
-      if (name === "Finn") {
-        name = i18next.t("trainerNames:rival");
-      }
-    }
-    this.name = name;
-    return this;
-  }
-
-  setTitle(title: string): TrainerConfig {
-    // First check if i18n is initialized
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
-    // Make the title lowercase and replace spaces with underscores
-    title = title.toLowerCase().replace(/\s/g, "_");
-
-    // Get the title from the i18n file
-    this.title = i18next.t(`titles:${title}`);
-
-
-    return this;
-  }
-
-  getDerivedType(): TrainerType {
-    let trainerType = this.trainerType;
-    switch (trainerType) {
-    case TrainerType.RIVAL_2:
-    case TrainerType.RIVAL_3:
-    case TrainerType.RIVAL_4:
-    case TrainerType.RIVAL_5:
-    case TrainerType.RIVAL_6:
-      trainerType = TrainerType.RIVAL;
-      break;
-    case TrainerType.LANCE_CHAMPION:
-      trainerType = TrainerType.LANCE;
-      break;
-    case TrainerType.LARRY_ELITE:
-      trainerType = TrainerType.LARRY;
-      break;
     case TrainerType.ROCKET_BOSS_GIOVANNI_1:
     case TrainerType.ROCKET_BOSS_GIOVANNI_2:
       trainerType = TrainerType.GIOVANNI;
@@ -476,6 +423,21 @@ export class TrainerConfig {
 
   setSpecialtyTypes(...specialtyTypes: Type[]): TrainerConfig {
     this.specialtyTypes = specialtyTypes;
+    return this;
+  }
+
+  setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig {
+    this.genModifiersFunc = genModifiersFunc;
+    return this;
+  }
+
+  setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
+    this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
+      const modifierTypeFunc = func();
+      const modifierType = modifierTypeFunc();
+      modifierType.withIdFromFunc(modifierTypeFunc);
+      return modifierType;
+    });
     return this;
   }
 
