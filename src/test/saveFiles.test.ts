@@ -9,6 +9,7 @@ import {Species} from "#app/data/enums/species";
 import {Moves} from "#app/data/enums/moves";
 import {Modifier} from "#app/modifier/modifier";
 import ModifierData from "#app/system/modifier-data";
+import {LoginPhase, TitlePhase} from "#app/phases";
 const saveKey = "x0i2O7WRiANTqPmZ";
 describe("Session import/export", () => {
   let game, scene, gameData, sessionData;
@@ -50,6 +51,10 @@ describe("Session import/export", () => {
 
   it('start a login phase to create a new session', () => {
     scene.launchBattle();
+    scene.pushPhase(new LoginPhase(scene));
+    scene.pushPhase(new TitlePhase(scene));
+    scene.shiftPhase();
+    scene.gameData.saveAll(scene, true, true, true, true).then(() => scene.reset(true));
   });
 });
 

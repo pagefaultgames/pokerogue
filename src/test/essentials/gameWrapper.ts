@@ -63,6 +63,7 @@ export default class GameWrapper {
       setMask: () => null,
       setPositionRelative: () => null,
       on: () => null,
+      off: () => null,
       setAngle: () => null,
       setTint: () => null,
       setShadowOffset: () => null,
@@ -88,6 +89,11 @@ export default class GameWrapper {
     addMethods.getAt = () => ({ ...methodsWithoutGetAt });
 
     _scene.game = this;
+    _scene.sound = {
+      play: () => null,
+      get: () => null,
+      getAllPlaying: () => [],
+    };
     _scene.time = {
       addEvent: () => null,
       delayedCall: (time, fn) => fn(),
