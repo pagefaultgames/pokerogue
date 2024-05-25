@@ -1358,12 +1358,12 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
 
 /**
  * Makes the user ignore all opponent's stat changes (with the
- * exception of {@linkcode BattleStat.SPD}). Tied to {@linkcode Abilities.UNAWARE}.
+ * exception of {@linkcode BattleStat.SPD}).
  *
  * @extends AbAttr
  * @see {@linkcode apply}
  */
-export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
+export class UnawareAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
@@ -3514,7 +3514,7 @@ export function initAbilities() {
     new Ability(Abilities.FOREWARN, 4)
       .attr(ForewarnAbAttr),
     new Ability(Abilities.UNAWARE, 4)
-      .attr(IgnoreOpponentStatChangesAbAttr)
+      .attr(UnawareAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
       .attr(DamageBoostAbAttr, 2, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) <= 0.5),
