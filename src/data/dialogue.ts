@@ -2439,6 +2439,27 @@ export const doubleBattleDialogue = {
                   $Alder: But we will only get stronger with every loss!`,
     ]
   },
+  "marnie_piers_double": {
+    encounter: [
+      `Marnie: Brother, let's show them the power of Spikemuth!
+                  $Piers: We bring darkness!`,
+    ],
+    victory: [
+      `Marnie: You brought light to our darkness!
+                  $Piers: Its too bright...`,
+    ]
+  },
+  "piers_marnie_double": {
+    encounter: [
+      `Piers: Ready for a concert?
+                    $Marnie: Brother... They are here to fight, not to sing...`,
+    ],
+    victory: [
+      `Piers: Now that was a great concert!
+                    $Marnie: Brother...`,
+    ]
+  },
+
 
 
 };
