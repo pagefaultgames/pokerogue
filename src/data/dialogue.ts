@@ -1978,72 +1978,72 @@ export const trainerTypeDialogue = {
   },
   [TrainerType.MARNIE_ELITE]: {
     encounter: [
-      "You've made it this far, huh? Let's see if you can handle my Pokémon!",
-      "I'll give it my best shot, but don't think I'll go easy on you!",
+      "dialogue:marnie_elite.encounter.1",
+      "dialogue:marnie_elite.encounter.2"
     ],
     victory: [
-      "I can't believe I lost... But you deserved that win. Well done!",
-      "Looks like I've still got a lot to learn. Great battle, though!",
+      "dialogue:marnie_elite.victory.1",
+      "dialogue:marnie_elite.victory.2"
     ],
     defeat: [
-      "You put up a good fight, but I've got the edge! Better luck next time!",
-      "Seems like my training's paid off. Thanks for the battle!",
+      "dialogue:marnie_elite.defeat.1",
+      "dialogue:marnie_elite.defeat.2"
     ]
   },
   [TrainerType.NESSA_ELITE]: {
     encounter: [
-      "The tides are turning in my favor. Ready to get swept away?",
-      "Let's make some waves with this battle! I hope you're prepared!",
+      "dialogue:nessa_elite.encounter.1",
+      "dialogue:nessa_elite.encounter.2"
     ],
     victory: [
-      "You navigated those waters perfectly... Well done!",
-      "Looks like my currents were no match for you. Great job!",
+      "dialogue:nessa_elite.victory.1",
+      "dialogue:nessa_elite.victory.2"
     ],
     defeat: [
-      "Water always finds a way. That was a refreshing battle!",
-      "You fought well, but the ocean's power is unstoppable!",
+      "dialogue:nessa_elite.defeat.1",
+      "dialogue:nessa_elite.defeat.2"
     ]
   },
   [TrainerType.BEA_ELITE]: {
     encounter: [
-      "Prepare yourself! My fighting spirit burns bright!",
-      "Let's see if you can keep up with my relentless pace!",
+      "dialogue:bea_elite.encounter.1",
+      "dialogue:bea_elite.encounter.2"
     ],
     victory: [
-      "Your strength... It's impressive. You truly deserve this win.",
-      "I've never felt this intensity before. Amazing job!",
+      "dialogue:bea_elite.victory.1",
+      "dialogue:bea_elite.victory.2"
     ],
     defeat: [
-      "Another victory for my intense training regimen! Well done!",
-      "You've got strength, but I trained harder. Great battle!",
+      "dialogue:bea_elite.defeat.1",
+      "dialogue:bea_elite.defeat.2"
     ]
   },
   [TrainerType.ALLISTER_ELITE]: {
     encounter: [
-      "Shadows fall... Are you ready to face your fears?",
-      "Let's see if you can handle the darkness that I command.",
+      "dialogue:allister_elite.encounter.1",
+      "dialogue:allister_elite.encounter.2"
     ],
     victory: [
-      "You've dispelled the shadows... For now. Well done.",
-      "Your light pierced through my darkness. Great job.",
+      "dialogue:allister_elite.victory.1",
+      "dialogue:allister_elite.victory.2"
     ],
     defeat: [
-      "The shadows have spoken... Your strength isn't enough.",
-      "Darkness triumphs... Maybe next time you'll see the light.",
+      "dialogue:allister_elite.defeat.1",
+      "dialogue:allister_elite.defeat.2"
     ]
   },
   [TrainerType.RAIHAN_ELITE]: {
     encounter: [
-      "Storm's brewing! Let's see if you can weather this fight!",
-      "Get ready to face the eye of the storm!",
+      "dialogue:raihan_elite.encounter.1",
+      "dialogue:raihan_elite.encounter.2"
     ],
     victory: [
-      "You've bested the storm... Incredible job!",
-      "You rode the winds perfectly... Great battle!",
+      "dialogue:raihan_elite.victory.1",
+      "dialogue:raihan_elite.victory.2"
     ],
     defeat: [
-      "Another storm weathered, another victory claimed! Well fought!",
-      "You got caught in my storm! Better luck next time!",
+      "dialogue:raihan_elite.defeat.1",
+      "dialogue:raihan_elite.defeat.2"
     ]
   },
   [TrainerType.RIVAL]: [
