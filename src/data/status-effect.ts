@@ -35,17 +35,17 @@ export function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText
   const sourceClause = sourceText ? ` ${statusEffect !== StatusEffect.SLEEP ? "by" : "from"} ${sourceText}` : "";
   switch (statusEffect) {
   case StatusEffect.POISON:
-    return `\nwas poisoned${sourceClause}! a modif`;
+    return `\nwas poisoned${sourceClause}!`;
   case StatusEffect.TOXIC:
-    return `\nwas badly poisoned${sourceClause}! a modif`;
+    return `\nwas badly poisoned${sourceClause}!`;
   case StatusEffect.PARALYSIS:
-    return ` was paralyzed${sourceClause}!\nIt may be unable to move! a modif`;
+    return ` was paralyzed${sourceClause}!\nIt may be unable to move!`;
   case StatusEffect.SLEEP:
-    return `\nfell asleep${sourceClause}! a modif`;
+    return `\nfell asleep${sourceClause}!`;
   case StatusEffect.FREEZE:
-    return `\nwas frozen solid${sourceClause}! a modif`;
+    return `\nwas frozen solid${sourceClause}!`;
   case StatusEffect.BURN:
-    return `\nwas burned${sourceClause}! a modif`;
+    return `\nwas burned${sourceClause}!`;
   }
 
   return "";
@@ -55,15 +55,15 @@ export function getStatusEffectActivationText(statusEffect: StatusEffect): strin
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return " is hurt\nby poison! a modif";
+    return " is hurt\nby poison!";
   case StatusEffect.PARALYSIS:
-    return " is paralyzed!\nIt can't move! a modif";
+    return " is paralyzed!\nIt can't move!";
   case StatusEffect.SLEEP:
-    return " is fast asleep. a modif";
+    return " is fast asleep.";
   case StatusEffect.FREEZE:
-    return " is\nfrozen solid! a modif";
+    return " is\nfrozen solid!";
   case StatusEffect.BURN:
-    return " is hurt\nby its burn! a modif";
+    return " is hurt\nby its burn!";
   }
 
   return "";
@@ -73,15 +73,15 @@ export function getStatusEffectOverlapText(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return " is\nalready poisoned! a modif";
+    return " is\nalready poisoned!";
   case StatusEffect.PARALYSIS:
-    return " is\nalready paralyzed! a modif";
+    return " is\nalready paralyzed!";
   case StatusEffect.SLEEP:
-    return " is\nalready asleep! a modif";
+    return " is\nalready asleep!";
   case StatusEffect.FREEZE:
-    return " is\nalready frozen! a modif";
+    return " is\nalready frozen!";
   case StatusEffect.BURN:
-    return " is\nalready burned! a modif";
+    return " is\nalready burned!";
   }
 
   return "";
@@ -91,15 +91,15 @@ export function getStatusEffectHealText(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return " was\ncured of its poison! a modif";
+    return " was\ncured of its poison!";
   case StatusEffect.PARALYSIS:
-    return " was\nhealed of paralysis! a modif";
+    return " was\nhealed of paralysis!";
   case StatusEffect.SLEEP:
-    return " woke up! a modif";
+    return " woke up!";
   case StatusEffect.FREEZE:
-    return " was\ndefrosted! a modif";
+    return " was\ndefrosted!";
   case StatusEffect.BURN:
-    return " was\nhealed of its burn! a modif";
+    return " was\nhealed of its burn!";
   }
 
   return "";
@@ -109,15 +109,15 @@ export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return "poisoning a modif";
+    return "poisoning";
   case StatusEffect.PARALYSIS:
-    return "paralysis a modif";
+    return "paralysis";
   case StatusEffect.SLEEP:
-    return "sleep a modif";
+    return "sleep";
   case StatusEffect.FREEZE:
-    return "freezing a modif";
+    return "freezing";
   case StatusEffect.BURN:
-    return "burn a modif";
+    return "burn";
   }
 }
 

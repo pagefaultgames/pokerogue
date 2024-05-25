@@ -9,10 +9,10 @@ export function getPokemonPrefix(pokemon: Pokemon): string {
   let prefix: string;
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
-    prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe a modif" : "Wild a modif" : "";
+    prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe" : "Wild" : "";
     break;
   case BattleSpec.FINAL_BOSS:
-    prefix = !pokemon.isPlayer() ? "Foe a modif" : "";
+    prefix = !pokemon.isPlayer() ? "Foe" : "";
     break;
   }
   return prefix;

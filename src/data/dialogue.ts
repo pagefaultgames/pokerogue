@@ -11,7 +11,7 @@ export interface TrainerTypeMessages {
 export interface TrainerTypeDialogue {
   [key: integer]: TrainerTypeMessages | [ TrainerTypeMessages, TrainerTypeMessages ]
 }
-// a modif
+//
 export const trainerTypeDialogue = {
   [TrainerType.YOUNGSTER]: [
     {
