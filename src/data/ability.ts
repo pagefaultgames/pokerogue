@@ -1377,11 +1377,11 @@ export class IgnoreOpponentEvasionAbAttr extends AbAttr {
     super(false);
   }
   /**
-   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * Changes the evasion stat to 0 during hit check computation.
    * @param pokemon N/A
    * @param passive N/A
    * @param cancelled N/A
-   * @param args [0] {@linkcode Utils.IntegerHolder} of BattleStat.EVA
+   * @param args [0] {@linkcode Utils.IntegerHolder} of {@linkcode BattleStat.EVA}
    * @returns if evasion level was successfully considered as 0
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
@@ -3288,6 +3288,7 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.ILLUMINATE, 3)
       .attr(ProtectStatAbAttr, BattleStat.ACC)
+      .attr(IgnoreOpponentEvasionAbAttr)
       .attr(DoubleBattleChanceAbAttr)
       .ignorable(),
     new Ability(Abilities.TRACE, 3)
