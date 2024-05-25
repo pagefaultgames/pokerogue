@@ -545,8 +545,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             switch (this.cursor) {
               case 0:
                 if (!this.scene.gameData.voucherCounts[VoucherType.REGULAR]) {
-                  error = true;
-                  this.showError(i18next.t('egg:notEnoughVouchers'));
+                //  error = true;
+                  this.pull(10);
+                 // this.showError(i18next.t('egg:notEnoughVouchers'));
                 } else if (this.scene.gameData.eggs.length < 99) {
                   this.consumeVouchers(VoucherType.REGULAR, 1);
                   this.pull();

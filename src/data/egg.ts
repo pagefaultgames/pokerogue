@@ -43,13 +43,13 @@ export class Egg {
 export function getEggTierDefaultHatchWaves(tier: EggTier): integer {
   switch (tier) {
     case EggTier.COMMON:
-      return 10;
+      return 1;
     case EggTier.GREAT:
-      return 25;
+      return 5;
     case EggTier.ULTRA:
-      return 50;
+      return 10;
   }
-  return 100;
+  return 50;
 }
 
 export function getEggDescriptor(egg: Egg): string {
