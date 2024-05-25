@@ -162,14 +162,14 @@ abstract class ConditionalProtectTag extends ArenaTag {
 
     this.protectConditionFunc = condition;
   }
-  
+
   onAdd(arena: Arena): void {
-    arena.scene.queueMessage(`${super.getMoveName()} protected${this.side === ArenaTagSide.PLAYER ? ' your' : this.side === ArenaTagSide.ENEMY ? ' the\nopposing' : ''} team!`)
+    arena.scene.queueMessage(`${super.getMoveName()} protected${this.side === ArenaTagSide.PLAYER ? " your" : this.side === ArenaTagSide.ENEMY ? " the\nopposing" : ""} team!`);
   }
 
   // Removes default message for effect removal
   onRemove(arena: Arena): void { }
-  
+
   /**
    * apply(): Checks incoming moves against the condition function
    * and protects the target if conditions are met
@@ -177,7 +177,7 @@ abstract class ConditionalProtectTag extends ArenaTag {
    * @param args[0] (Utils.BooleanHolder) Signals if the move is cancelled
    * @param args[1] (Pokemon) The intended target of the move
    * @param args[2...] (any[]) The parameters to the condition function
-   * @returns 
+   * @returns
    */
   apply(arena: Arena, args: any[]): boolean {
     if ((args[0] as Utils.BooleanHolder).value) {
@@ -189,7 +189,7 @@ abstract class ConditionalProtectTag extends ArenaTag {
          && this.protectConditionFunc(...args.slice(2))) {
       (args[0] as Utils.BooleanHolder).value = true;
       new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
-      arena.scene.queueMessage(`${super.getMoveName()} protected ${getPokemonMessage(target, '!')}`)
+      arena.scene.queueMessage(`${super.getMoveName()} protected ${getPokemonMessage(target, "!")}`);
       return true;
     }
     return false;
@@ -217,14 +217,14 @@ class QuickGuardTag extends ConditionalProtectTag {
  */
 class WideGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side, 
-      (moveTarget: MoveTarget) : boolean => { 
-        switch(moveTarget) {
-          case MoveTarget.ALL_ENEMIES:
-          case MoveTarget.ALL_NEAR_ENEMIES:
-          case MoveTarget.ALL_OTHERS:
-          case MoveTarget.ALL_NEAR_OTHERS:
-            return true;
+    super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side,
+      (moveTarget: MoveTarget) : boolean => {
+        switch (moveTarget) {
+        case MoveTarget.ALL_ENEMIES:
+        case MoveTarget.ALL_NEAR_ENEMIES:
+        case MoveTarget.ALL_OTHERS:
+        case MoveTarget.ALL_NEAR_OTHERS:
+          return true;
         }
         return false;
       }
@@ -238,7 +238,7 @@ class WideGuardTag extends ConditionalProtectTag {
  */
 class MatBlockTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side, 
+    super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side,
       (moveCategory: MoveCategory) : boolean => {
         return moveCategory !== MoveCategory.STATUS;
       }
@@ -247,21 +247,21 @@ class MatBlockTag extends ConditionalProtectTag {
 
   onAdd(arena: Arena) {
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(getPokemonMessage(source, ' intends to flip up a mat\nand block incoming attacks!'));
+    arena.scene.queueMessage(getPokemonMessage(source, " intends to flip up a mat\nand block incoming attacks!"));
   }
 }
 
-/** 
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield}
- * Condition: The incoming move is a Status move, is not a hazard, and does 
+ * Condition: The incoming move is a Status move, is not a hazard, and does
  * not target all Pokemon or sides of the field.
 */
 class CraftyShieldTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side, 
+    super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side,
       (moveCategory: MoveCategory, moveTarget: MoveTarget) : boolean => {
         return moveCategory === MoveCategory.STATUS
-          && moveTarget !== MoveTarget.ENEMY_SIDE 
+          && moveTarget !== MoveTarget.ENEMY_SIDE
           && moveTarget !== MoveTarget.BOTH_SIDES
           && moveTarget !== MoveTarget.ALL;
       }
@@ -634,44 +634,44 @@ class TailwindTag extends ArenaTag {
 
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
-    case ArenaTagType.MIST:
-      return new MistTag(turnCount, sourceId, side);
-    case ArenaTagType.QUICK_GUARD:
-      return new QuickGuardTag(sourceId, side);
-    case ArenaTagType.WIDE_GUARD:
-      return new WideGuardTag(sourceId, side);
-    case ArenaTagType.MAT_BLOCK:
-      return new MatBlockTag(sourceId, side);
-    case ArenaTagType.CRAFTY_SHIELD:
-      return new CraftyShieldTag(sourceId, side);
-    case ArenaTagType.MUD_SPORT:
-      return new MudSportTag(turnCount, sourceId);
-    case ArenaTagType.WATER_SPORT:
-      return new WaterSportTag(turnCount, sourceId);
-    case ArenaTagType.SPIKES:
-      return new SpikesTag(sourceId, side);
-    case ArenaTagType.TOXIC_SPIKES:
-      return new ToxicSpikesTag(sourceId, side);
-    case ArenaTagType.FUTURE_SIGHT:
-    case ArenaTagType.DOOM_DESIRE:
-      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
-    case ArenaTagType.WISH:
-      return new WishTag(turnCount, sourceId, side);
-    case ArenaTagType.STEALTH_ROCK:
-      return new StealthRockTag(sourceId, side);
-    case ArenaTagType.STICKY_WEB:
-      return new StickyWebTag(sourceId, side);
-    case ArenaTagType.TRICK_ROOM:
-      return new TrickRoomTag(turnCount, sourceId);
-    case ArenaTagType.GRAVITY:
-      return new GravityTag(turnCount);
-    case ArenaTagType.REFLECT:
-      return new ReflectTag(turnCount, sourceId, side);
-    case ArenaTagType.LIGHT_SCREEN:
-      return new LightScreenTag(turnCount, sourceId, side);
-    case ArenaTagType.AURORA_VEIL:
-      return new AuroraVeilTag(turnCount, sourceId, side);
-    case ArenaTagType.TAILWIND:
-      return new TailwindTag(turnCount, sourceId, side);
+  case ArenaTagType.MIST:
+    return new MistTag(turnCount, sourceId, side);
+  case ArenaTagType.QUICK_GUARD:
+    return new QuickGuardTag(sourceId, side);
+  case ArenaTagType.WIDE_GUARD:
+    return new WideGuardTag(sourceId, side);
+  case ArenaTagType.MAT_BLOCK:
+    return new MatBlockTag(sourceId, side);
+  case ArenaTagType.CRAFTY_SHIELD:
+    return new CraftyShieldTag(sourceId, side);
+  case ArenaTagType.MUD_SPORT:
+    return new MudSportTag(turnCount, sourceId);
+  case ArenaTagType.WATER_SPORT:
+    return new WaterSportTag(turnCount, sourceId);
+  case ArenaTagType.SPIKES:
+    return new SpikesTag(sourceId, side);
+  case ArenaTagType.TOXIC_SPIKES:
+    return new ToxicSpikesTag(sourceId, side);
+  case ArenaTagType.FUTURE_SIGHT:
+  case ArenaTagType.DOOM_DESIRE:
+    return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
+  case ArenaTagType.WISH:
+    return new WishTag(turnCount, sourceId, side);
+  case ArenaTagType.STEALTH_ROCK:
+    return new StealthRockTag(sourceId, side);
+  case ArenaTagType.STICKY_WEB:
+    return new StickyWebTag(sourceId, side);
+  case ArenaTagType.TRICK_ROOM:
+    return new TrickRoomTag(turnCount, sourceId);
+  case ArenaTagType.GRAVITY:
+    return new GravityTag(turnCount);
+  case ArenaTagType.REFLECT:
+    return new ReflectTag(turnCount, sourceId, side);
+  case ArenaTagType.LIGHT_SCREEN:
+    return new LightScreenTag(turnCount, sourceId, side);
+  case ArenaTagType.AURORA_VEIL:
+    return new AuroraVeilTag(turnCount, sourceId, side);
+  case ArenaTagType.TAILWIND:
+    return new TailwindTag(turnCount, sourceId, side);
   }
 }

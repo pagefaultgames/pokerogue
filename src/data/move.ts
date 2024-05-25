@@ -206,13 +206,13 @@ export default class Move implements Localizable {
 
   isAllyTarget(): boolean {
     switch (this.moveTarget) {
-      case MoveTarget.USER:
-      case MoveTarget.NEAR_ALLY:
-      case MoveTarget.ALLY:
-      case MoveTarget.USER_OR_NEAR_ALLY:
-      case MoveTarget.USER_AND_ALLIES:
-      case MoveTarget.USER_SIDE:
-        return true;
+    case MoveTarget.USER:
+    case MoveTarget.NEAR_ALLY:
+    case MoveTarget.ALLY:
+    case MoveTarget.USER_OR_NEAR_ALLY:
+    case MoveTarget.USER_AND_ALLIES:
+    case MoveTarget.USER_SIDE:
+      return true;
     }
     return false;
   }
@@ -3741,7 +3741,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class RemoveArenaTagsAttr extends MoveEffectAttr {
   public tagTypes: ArenaTagType[];
   public selfSideTarget: boolean;
-  
+
   constructor(tagTypes: ArenaTagType[], selfSideTarget: boolean) {
     super(true, MoveEffectTrigger.POST_APPLY);
 
@@ -3756,7 +3756,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
 
     const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-    for (let tagType of this.tagTypes) {
+    for (const tagType of this.tagTypes) {
       user.scene.arena.removeTagOnSide(tagType, side);
     }
 

@@ -5,21 +5,21 @@ import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import { Moves } from "../data/enums/moves";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags } from "../data/move";
-import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
-import * as Utils from '../utils';
-import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
-import { getLevelTotalExp } from '../data/exp';
-import { Stat } from '../data/pokemon-stat';
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from '../modifier/modifier';
-import { PokeballType } from '../data/pokeball';
-import { Gender } from '../data/gender';
-import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
-import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
-import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from '../data/tms';
-import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from '../phases';
-import { BattleStat } from '../data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
+import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import * as Utils from "../utils";
+import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
+import { getLevelTotalExp } from "../data/exp";
+import { Stat } from "../data/pokemon-stat";
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { PokeballType } from "../data/pokeball";
+import { Gender } from "../data/gender";
+import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
+import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
+import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
+import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
+import { BattleStat } from "../data/battle-stat";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from "../data/enums/species";
 import { WeatherType } from "../data/weather";
@@ -1621,7 +1621,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.arena.applyTagsForSide(ArenaTagType.MAT_BLOCK, defendingSide, cancelled, this, move.category);
       this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
     }
-    
+
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
