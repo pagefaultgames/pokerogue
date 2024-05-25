@@ -807,6 +807,9 @@ export class PokemonForm extends PokemonSpeciesForm {
   public formKey: string;
   public formSpriteKey: string;
 
+  // This is a collection of form keys that have in-run form changes, but should still be separately selectable from the start screen
+  private starterSelectableKeys: string[] = ["10", "50", "10-pc", "50-pc", "red", "orange", "yellow", "green", "blue", "indigo", "violet"];
+
   constructor(formName: string, formKey: string, type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
     catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string) {
@@ -819,6 +822,10 @@ export class PokemonForm extends PokemonSpeciesForm {
 
   getFormSpriteKey(_formIndex?: integer) {
     return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
+  }
+
+  isStarterSelectable() {
+    return !this.formKey || this.starterSelectableKeys.indexOf[this.formKey] !== -1;
   }
 }
 
