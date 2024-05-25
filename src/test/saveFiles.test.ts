@@ -49,7 +49,7 @@ describe("Session import/export", () => {
   });
 
   it('start a login phase to create a new session', () => {
-    // scene.launchBattle();
+    scene.launchBattle();
   });
 });
 

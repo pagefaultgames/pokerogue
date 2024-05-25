@@ -1,4 +1,4 @@
-
+import fs from "fs";
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
   public scene: {
@@ -114,6 +114,9 @@ export default class GameWrapper {
       once: () => null,
       isLoading: () => null,
       start: () => null,
+      spritesheet: () => null,
+      audio: () => null,
+      image: () => null,
     };
     _scene.anims = {
       create: () => null,
@@ -151,13 +154,15 @@ export default class GameWrapper {
         transit: () => null,
       }),
     };
-    _scene.cachedFetch = () => new Promise((resolve) => resolve({
-      response: {
-        body: {},
-        status: 200,
-      },
-      json: () => ({}),
-    }));
+    _scene.cachedFetch = (url, init) => {
+      return new Promise((resolve) => {
+        const newUrl = prependPath(url);
+        const raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
+        const data = JSON.parse(raw);
+        const response = createFetchResponse(data);
+        return resolve(response);
+      });
+    };
     _scene.input = {
       gamepad: {
         on: () => null,
@@ -173,4 +178,21 @@ export default class GameWrapper {
     this.scenes[key] = _scene;
     _scene.create();
   }
+}
+
+function prependPath(originalPath) {
+  const prefix = "public";
+  if (originalPath.startsWith("./")) {
+    return originalPath.replace("./", `${prefix}/`);
+  }
+  return originalPath;
+}
+// Simulate fetch response
+function createFetchResponse(data) {
+  return {
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve(data),
+    text: () => Promise.resolve(JSON.stringify(data)),
+  };
 }
