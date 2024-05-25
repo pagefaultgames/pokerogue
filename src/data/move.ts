@@ -1320,8 +1320,9 @@ export class MultiHitAttr extends MoveAttr {
       }
       break;
     case MultiHitType.BEAT_UP:
+      const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
       // No status means the ally pokemon can contribute to Beat Up
-      hitTimes = user.scene.getParty().reduce((total, pokemon) => {
+      hitTimes = party.reduce((total, pokemon) => {
         return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
       }, 0);
     }
@@ -2323,7 +2324,7 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
  * @returns The base power of the Beat Up hit.
  */
 const beatUpFunc = (user: Pokemon, allyIndex: number): number => {
-  const party = user.scene.getParty();
+  const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
 
   for (let i = allyIndex; i < party.length; i++) {
     const pokemon = party[i];
