@@ -906,7 +906,7 @@ export const signatureSpecies: SignatureSpecies = {
   WALLACE: [Species.MILOTIC, Species.KYOGRE, Species.WHISCASH, Species.WALREIN, Species.LUDICOLO],
   CYNTHIA: [Species.SPIRITOMB, Species.GIRATINA, Species.GARCHOMP, Species.MILOTIC, Species.LUCARIO, Species.TOGEKISS],
   ALDER: [Species.VOLCARONA, Species.GROUDON, Species.BOUFFALANT, Species.ACCELGOR, Species.CONKELDURR],
-  IRIS: [Species.HAXORUS, Species.YVELTAL, Species.DRUDDIGON, Species.ARON, Species.LAPRAS],
+  IRIS: [Species.HAXORUS, Species.YVELTAL, Species.DRUDDIGON, Species.AGGRON, Species.LAPRAS],
   DIANTHA: [Species.HAWLUCHA, Species.XERNEAS, Species.GOURGEIST, Species.GOODRA, Species.GARDEVOIR],
   HAU: [Species.ALOLA_RAICHU, [Species.SOLGALEO, Species.LUNALA], Species.NOIVERN, [Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA], Species.CRABOMINABLE],
   GEETA: [Species.GLIMMORA, Species.MIRAIDON, Species.ESPATHRA, Species.VELUZA, Species.KINGAMBIT],
