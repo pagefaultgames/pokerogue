@@ -23,3 +23,21 @@ export class MoveUsedEvent extends Event {
     this.ppUsed = ppUsed;
   }
 }
+export class TurnInitEvent extends Event {
+  constructor() {
+    super("onTurnInit");
+  }
+}
+export class TurnEndEvent extends Event {
+  public turnCount: number;
+  constructor(turnCount: number) {
+    super("onTurnEnd");
+
+    this.turnCount = turnCount;
+  }
+}
+export class NewArenaEvent extends Event {
+  constructor() {
+    super("onNewArena");
+  }
+}

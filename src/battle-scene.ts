@@ -56,6 +56,7 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { NewArenaEvent } from "./battle-scene-events";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -76,36 +77,6 @@ export interface PokeballCounts {
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
-export class MoveUsedEvent extends Event {
-  public userIndex: number;
-  public move: Move;
-  public ppUsed: number;
-  constructor(userIndex: number, move: Move, ppUsed: number) {
-    super("onMoveUsed");
-
-    this.userIndex = userIndex;
-    this.move = move;
-    this.ppUsed = ppUsed;
-  }
-}
-export class TurnInitEvent extends Event {
-  constructor() {
-    super("onTurnInit");
-  }
-}
-export class TurnEndEvent extends Event {
-  public turnCount: number;
-  constructor(turnCount: number) {
-    super("onTurnEnd");
-
-    this.turnCount = turnCount;
-  }
-}
-export class NewArenaEvent extends Event {
-  constructor() {
-    super("onNewArena");
-  }
-}
 export default class BattleScene extends SceneBase {
   public rexUI: UIPlugin;
   public inputController: InputsController;
@@ -1341,7 +1312,7 @@ export default class BattleScene extends SceneBase {
   }
 
   sendTextToBack(): void {
-    this.fieldUI.sendToBack(this.waveCountText);
+    this.fieldUI.sendToBack(this.biomeWaveText);
     this.fieldUI.sendToBack(this.moneyText);
     this.fieldUI.sendToBack(this.scoreText);
   }
