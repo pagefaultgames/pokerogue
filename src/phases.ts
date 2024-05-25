@@ -729,6 +729,11 @@ export class EncounterPhase extends BattlePhase {
 
     this.scene.initSession();
 
+    // Failsafe if players somehow skip floor 200 in classic mode
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
+      this.scene.unshiftPhase(new GameOverPhase(this.scene));
+    }
+
     const loadEnemyAssets = [];
 
     const battle = this.scene.currentBattle;
@@ -2297,9 +2302,6 @@ export class BattleEndPhase extends BattlePhase {
     super.start();
 
     this.scene.currentBattle.addBattleScore(this.scene);
-    if (this.scene.currentBattle.moneyScattered) {
-      this.scene.currentBattle.pickUpScatteredMoney(this.scene);
-    }
 
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer) {
@@ -2317,6 +2319,10 @@ export class BattleEndPhase extends BattlePhase {
 
     for (const pokemon of this.scene.getParty().filter(p => !p.isFainted())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+    }
+
+    if (this.scene.currentBattle.moneyScattered) {
+      this.scene.currentBattle.pickUpScatteredMoney(this.scene);
     }
 
     this.scene.clearEnemyHeldItemModifiers();
@@ -3862,6 +3868,11 @@ export class GameOverPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    // Failsafe if players somehow skip floor 200 in classic mode
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
+      this.victory = true;
+    }
 
     if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();

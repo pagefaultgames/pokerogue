@@ -5,7 +5,9 @@ export const titles: SimpleTranslationEntries = {
   "elite_four": "Top Vier",
   "gym_leader": "Arenaleiter",
   "gym_leader_female": "Arenaleiterin",
+  "gym_leader_double": "Arenaleiter-Duo",
   "champion": "Champion",
+  "champion_double": "Champion-Duo",
   "rival": "Rivale",
   "professor": "Professor",
   "frontier_brain": "Kampfkoryphäen",
@@ -241,4 +243,16 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Delion",
   "rival": "Finn",
   "rival_female": "Ivy",
+
+  // Double Names
+  "blue_red_double": "Blau & Rot",
+  "red_blue_double": "Rot & Blau",
+  "tate_liza_double": "Ben & Svenja",
+  "liza_tate_double": "Svenja & Ben",
+  "steven_wallace_double": "Troy & Wassili",
+  "wallace_steven_double": "Wassili & Troy",
+  "alder_iris_double": "Lauro & Lilia",
+  "iris_alder_double": "Lilia & Lauro",
+  "piers_marnie_double": "Nezz & Mary",
+  "marnie_piers_double": "Mary & Nezz",
 } as const;
