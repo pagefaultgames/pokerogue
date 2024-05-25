@@ -2301,9 +2301,6 @@ export class BattleEndPhase extends BattlePhase {
     super.start();
 
     this.scene.currentBattle.addBattleScore(this.scene);
-    if (this.scene.currentBattle.moneyScattered) {
-      this.scene.currentBattle.pickUpScatteredMoney(this.scene);
-    }
 
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer) {
@@ -2321,6 +2318,10 @@ export class BattleEndPhase extends BattlePhase {
 
     for (const pokemon of this.scene.getParty().filter(p => !p.isFainted())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+    }
+
+    if (this.scene.currentBattle.moneyScattered) {
+      this.scene.currentBattle.pickUpScatteredMoney(this.scene);
     }
 
     this.scene.clearEnemyHeldItemModifiers();
