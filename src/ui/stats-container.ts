@@ -70,6 +70,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
         let label = "";
 
+        // Check to see if IVs are 31, if so change the text style to gold, otherwise leave them be.
         if (ivs[i] === 31) {
           label += `[color=${getTextColor(TextStyle.SUMMARY_GOLD, false, (this.scene as BattleScene).uiTheme)}][shadow]${ivs[i].toString()}[/shadow][/color]`;
         } else {
