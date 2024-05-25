@@ -859,7 +859,22 @@ export default class BattleScene extends SceneBase {
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
-    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
+    let newWaveIndex = waveIndex;
+    if (newWaveIndex === undefined) {
+      if (this.currentBattle?.waveIndex === undefined) {
+        newWaveIndex = startingWave;
+      } else if (this.gameMode.isTurbo) {
+        newWaveIndex = this.currentBattle?.waveIndex + 1;
+        if (!fixedBattles[newWaveIndex]) {
+          newWaveIndex++;
+          if (newWaveIndex % 2 && !fixedBattles[newWaveIndex]) {
+            newWaveIndex++;
+          }
+        }
+      } else {
+        newWaveIndex = this.currentBattle?.waveIndex + 1;
+      }
+    }
     let newDouble: boolean;
     let newBattleType: BattleType;
     let newTrainer: Trainer;
@@ -2129,3 +2144,4 @@ export default class BattleScene extends SceneBase {
     (window as any).gameInfo = gameInfo;
   }
 }
+

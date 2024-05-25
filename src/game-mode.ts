@@ -11,7 +11,8 @@ export enum GameModes {
   CLASSIC,
   ENDLESS,
   SPLICED_ENDLESS,
-  DAILY
+  DAILY,
+  TURBO,
 }
 
 interface GameModeConfig {
@@ -25,6 +26,7 @@ interface GameModeConfig {
   hasRandomBiomes?: boolean;
   hasRandomBosses?: boolean;
   isSplicedOnly?: boolean;
+  isTurbo?: boolean;
 }
 
 export class GameMode implements GameModeConfig {
@@ -39,6 +41,7 @@ export class GameMode implements GameModeConfig {
   public hasRandomBiomes: boolean;
   public hasRandomBosses: boolean;
   public isSplicedOnly: boolean;
+  public isTurbo: boolean;
 
   constructor(modeId: GameModes, config: GameModeConfig) {
     this.modeId = modeId;
@@ -162,6 +165,8 @@ export class GameMode implements GameModeConfig {
     switch (modeId) {
     case GameModes.CLASSIC:
       return waveIndex === 200;
+    case GameModes.TURBO:
+      return waveIndex >= 200;
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
       return !(waveIndex % 250);
@@ -233,6 +238,8 @@ export class GameMode implements GameModeConfig {
     switch (this.modeId) {
     case GameModes.CLASSIC:
       return "Classic";
+    case GameModes.TURBO:
+      return "Classic (Turbo)";
     case GameModes.ENDLESS:
       return "Endless";
     case GameModes.SPLICED_ENDLESS:
@@ -245,7 +252,9 @@ export class GameMode implements GameModeConfig {
 
 export const gameModes = Object.freeze({
   [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true }),
+  [GameModes.TURBO]: new GameMode(GameModes.TURBO, { isClassic: true, hasTrainers: true, hasFixedBattles: true, isTurbo: true }),
   [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true }),
   [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true }),
   [GameModes.DAILY]: new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true })
 });
+

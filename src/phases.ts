@@ -207,6 +207,13 @@ export class TitlePhase extends Phase {
               }
             },
             {
+              label: gameModes[GameModes.TURBO].getName(),
+              handler: () => {
+                setModeAndEnd(GameModes.TURBO);
+                return true;
+              }
+            },
+            {
               label: gameModes[GameModes.ENDLESS].getName(),
               handler: () => {
                 setModeAndEnd(GameModes.ENDLESS);
@@ -926,7 +933,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.currentBattle.started = true;
         this.scene.playBgm(undefined);
         this.scene.pbTray.showPbTray(this.scene.getParty());
-			  this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+        this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
           const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
@@ -1136,7 +1143,8 @@ export class SelectBiomePhase extends BattlePhase {
     const currentBiome = this.scene.arena.biomeType;
 
     const setNextBiome = (nextBiome: Biome) => {
-      if (this.scene.currentBattle.waveIndex % 10 === 1) {
+      if (this.scene.currentBattle.waveIndex % 10 === 1
+        || this.scene.currentBattle.waveIndex % 10 === 2 && this.scene.gameMode.isTurbo) {
         this.scene.applyModifiers(MoneyInterestModifier, true, this.scene);
         this.scene.unshiftPhase(new PartyHealPhase(this.scene, false));
       }
@@ -3596,6 +3604,9 @@ export class VictoryPhase extends PokemonPhase {
 
     if (participantIds.size) {
       let expValue = this.getPokemon().getExpValue();
+      if (this.scene.gameMode.isTurbo) {
+        expValue = Math.floor(expValue * 1.5);
+      }
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         expValue = Math.floor(expValue * 1.5);
       }
@@ -4971,7 +4982,14 @@ export class SelectModifierPhase extends BattlePhase {
     } else {
       baseValue = 250;
     }
-    return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount), Number.MAX_SAFE_INTEGER);
+    const cost = Math.min(
+      Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount),
+      Number.MAX_SAFE_INTEGER);
+    // Turbo has less than half the items offered; make rerolls cheaper
+    if (this.scene.gameMode.isTurbo) {
+      return Math.ceil(cost / 4);
+    }
+    return cost;
   }
 
   getPoolType(): ModifierPoolType {
