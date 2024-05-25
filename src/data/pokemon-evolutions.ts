@@ -1619,7 +1619,7 @@ interface PokemonPrevolutions {
 
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
-{
+export function initPokemonPrevolutions(): void {
   const megaFormKeys = [ SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y ].map(sfk => sfk as string);
   const prevolutionKeys = Object.keys(pokemonEvolutions);
   prevolutionKeys.forEach(pk => {
