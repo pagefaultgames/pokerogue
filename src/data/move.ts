@@ -951,7 +951,6 @@ export enum MultiHitType {
   _2,
   _2_TO_5,
   _3,
-  _3_INCR,
   _1_TO_10,
   BEAT_UP,
 }
@@ -2744,6 +2743,13 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
+  private maxHits: integer;
+
+  constructor(maxHits: integer) {
+    super();
+
+    this.maxHits = maxHits;
+  }
 
   /**
    * Increases power of move in increments of the base power for the amount of times
@@ -2758,7 +2764,7 @@ export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
     const power = args[0] as Utils.NumberHolder;
     const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
 
-    power.value = move.power * (1 + hitsTotal);
+    power.value = move.power * Math.min(1 + hitsTotal, this.maxHits);
 
     return true;
   }
@@ -5365,7 +5371,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3)
-      .attr(MultiHitPowerIncrementAttr)
+      .attr(MultiHitPowerIncrementAttr, 3)
       .checkAllHits(),
     new AttackMove(Moves.THIEF, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
       .attr(StealHeldItemChanceAttr, 0.3),
@@ -7212,7 +7218,7 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, false),
     new AttackMove(Moves.TRIPLE_AXEL, Type.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._3)
-      .attr(MultiHitPowerIncrementAttr)
+      .attr(MultiHitPowerIncrementAttr, 3)
       .checkAllHits(),
     new AttackMove(Moves.DUAL_WINGBEAT, Type.FLYING, MoveCategory.PHYSICAL, 40, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2),
