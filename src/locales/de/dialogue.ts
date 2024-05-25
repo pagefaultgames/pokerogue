@@ -2276,17 +2276,17 @@ export const dialogue: DialogueTranslationEntries = {
 };
 
 export const battleSpecDialogue: SimpleTranslationEntries = {
-  "encounter": `It appears the time has finally come once again.\nYou know why you have come here, do you not?
-               $You were drawn here, because you have been here before.\nCountless times.
-               $Though, perhaps it can be counted.\nTo be precise, this is in fact your 5,643,853rd cycle.
-               $Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.
-               $Until now you have yet to succeed, but I sense a different presence in you this time.\n
-               $You are the only one here, though it is as if there is… another.
-               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millennia?
-               $We begin.`,
-  "firstStageWin": `I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.
-                    $Do not disappoint me.`,
-  "secondStageWin": "…Magnificent."
+  "encounter": `Es scheint, als wäre es wieder mal an der Zeit.\nDu weißt, warum du hierher kommen musst, oder?
+	       $Dich hat es hierher gezogen, du warst bereits hier.\nUnzählige Male.
+	       $Obwohl, vielleicht doch nicht unzählig.\nUm genau zu sein, dies ist der 5.643.853te Zyklus.
+           $Du verlierst jeden Zyklus dein Gedächtnis. Trotzdem \nbleibt etwas, ein Teil deines ehemaligen Ichs, erhalten.
+           $Bis jetzt hast du es noch nicht vollbracht zu siegen, aber dieses Mal spüre ich eine andere Präsenz in dir.\n
+           $Du bist der Einzige hier, aber es kommt mir so vor als wäre da...jemand anderes.
+           $Wirst du endlich beweisen, dass du ein würdiger Herausforder bist?\nDie Herausforderung auf die ich seit Jahrtausenden warte?
+           $Lass uns beginnen.`,
+  "firstStageWin": `Ahh verstehe. Diese Präsenz, die ich gespürt habe, ist wirklich real.\nEs scheint als müsste ich micht nicht länger zurück halten.
+                    $Enttäusche mich nicht.`,
+  "secondStageWin": "…Herrlich."
 };
 
 export const miscDialogue: SimpleTranslationEntries = {
