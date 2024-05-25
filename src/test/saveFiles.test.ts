@@ -156,7 +156,6 @@ describe("Session import/export", () => {
     scene.arena.init();
     scene.shiftPhase();
     await scene.getCurrentPhase().doEncounter();
-    await holdOn(2000)
     phase = scene.getCurrentPhase();
     phase = scene.getCurrentPhase();
   //   const spy = vi.fn();
