@@ -39,10 +39,10 @@ export function generateStarter(scene) {
   return starters;
 }
 
-export function waitPhaseQueueCountIs(scene, count= 0) {
+export function waitFirstInPhaseQueueIs(scene, phaseInstance) {
   return new Promise(resolve => {
     const interval = setInterval(() => {
-      if (scene.phaseQueue.length === count) {
+      if (scene.phaseQueue.length && scene.phaseQueue[0] instanceof phaseInstance) {
         clearInterval(interval);
         resolve(true);
       }

@@ -78,10 +78,12 @@ export default class GameWrapper {
       setFrame: () => null,
       setWordWrapWidth: () => null,
       setFontSize: () => null,
+      play: () => null,
       setColor: () => null,
       setCrop: () => null,
       setShadowColor: () => null,
       removeAll: () => null,
+      disableInteractive: () => null,
       getIndex: () => -1,
       destroy: () => null,
       addAt: () => null,
@@ -95,6 +97,7 @@ export default class GameWrapper {
         }
       },
       frame: {},
+      repeatCount: {},
       displayWidth: text.length * 3,
       displayHeight: text.length * 3,
 
@@ -111,7 +114,18 @@ export default class GameWrapper {
       getAllPlaying: () => [],
     };
     _scene.time = {
-      addEvent: () => null,
+      addEvent: (evt) => {
+        const delay = 1;
+        setInterval(() => {
+          if (evt.callback) {
+            evt.callback();
+          }
+        }, delay);
+        return {
+          repeatCount: 0,
+          remove: () => null,
+        };
+      },
       delayedCall: (time, fn) => fn(),
     };
     _scene.tweens = {
@@ -121,7 +135,11 @@ export default class GameWrapper {
         }
       },
       chain: () => null,
-      addCounter: () => null,
+      addCounter: (data) => {
+        if (data.onComplete) {
+          data.onComplete();
+        }
+      },
     };
     _scene.add = {
       container: () => ({...addMethods}),
