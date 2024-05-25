@@ -109,11 +109,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   /**
-     * Returns the name of the trainer based on the provided trainer slot and the option to include a title.
-     * @param {TrainerSlot} trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
-     * @param {boolean} includeTitle - Whether to include the title in the returned name. Defaults to false.
-     * @returns {string} - The formatted name of the trainer.
-     **/
+   * Returns the name of the trainer based on the provided trainer slot and the option to include a title.
+   * @param {TrainerSlot} trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
+   * @param {boolean} includeTitle - Whether to include the title in the returned name. Defaults to false.
+   * @returns {string} - The formatted name of the trainer.
+   **/
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle: boolean = false): string {
     // Get the base title based on the trainer slot and variant.
     let name = this.config.getTitle(trainerSlot, this.variant);
@@ -482,13 +482,13 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   /**
-     * Attempts to animate a given set of {@linkcode Phaser.GameObjects.Sprite}
-     * @see {@linkcode Phaser.GameObjects.Sprite.play}
-     * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
-     * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
-     * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
-     * @returns true if the sprite was able to be animated
-     */
+   * Attempts to animate a given set of {@linkcode Phaser.GameObjects.Sprite}
+   * @see {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
+   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
+   * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @returns true if the sprite was able to be animated
+   */
   tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, animConfig: Phaser.Types.Animations.PlayAnimationConfig): boolean {
     // Show an error in the console if there isn't a texture loaded
     if (sprite.texture.key === "__MISSING") {

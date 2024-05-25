@@ -309,11 +309,11 @@ export class TrainerConfig {
   }
 
   /**
-     * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
-     * @param {string} [nameFemale] - The name of the female trainer. If 'Ivy', a localized name will be assigned.
-     * @param {TrainerType | string} [femaleEncounterBgm] - The encounter BGM for the female trainer, which can be a TrainerType or a string.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     **/
+   * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
+   * @param {string} [nameFemale] - The name of the female trainer. If 'Ivy', a localized name will be assigned.
+   * @param {TrainerType | string} [femaleEncounterBgm] - The encounter BGM for the female trainer, which can be a TrainerType or a string.
+   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   **/
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
     // If the female name is 'Ivy' (the rival), assign a localized name.
     if (nameFemale === "Ivy") {
@@ -346,11 +346,11 @@ export class TrainerConfig {
   }
 
   /**
-     * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
-     * @param nameDouble - The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
-     * @param doubleEncounterBgm - The encounter BGM for the double trainer, which can be a TrainerType or a string.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     */
+   * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
+   * @param nameDouble - The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
+   * @param doubleEncounterBgm - The encounter BGM for the double trainer, which can be a TrainerType or a string.
+   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   */
   setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
     this.hasDouble = true;
     this.nameDouble = nameDouble;
@@ -361,10 +361,10 @@ export class TrainerConfig {
   }
 
   /**
-     * Sets the trainer type for double battles.
-     * @param trainerTypeDouble - The TrainerType of the partner in a double battle.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     */
+   * Sets the trainer type for double battles.
+   * @param trainerTypeDouble - The TrainerType of the partner in a double battle.
+   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   */
   setDoubleTrainerType(trainerTypeDouble: TrainerType): TrainerConfig {
     this.trainerTypeDouble = trainerTypeDouble;
     this.setDoubleMessages(this.nameDouble);
@@ -372,9 +372,9 @@ export class TrainerConfig {
   }
 
   /**
-     * Sets the encounter and victory messages for double trainers.
-     * @param nameDouble - The name of the pair (e.g. "red_blue_double").
-     */
+   * Sets the encounter and victory messages for double trainers.
+   * @param nameDouble - The name of the pair (e.g. "red_blue_double").
+   */
   setDoubleMessages(nameDouble: string) {
     // Check if there is double battle dialogue for this trainer
     if (doubleBattleDialogue[nameDouble]) {
@@ -385,10 +385,10 @@ export class TrainerConfig {
   }
 
   /**
-     * Sets the title for double trainers
-     * @param titleDouble - the key for the title in the i18n file. (e.g., "champion_double").
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     */
+   * Sets the title for double trainers
+   * @param titleDouble - the key for the title in the i18n file. (e.g., "champion_double").
+   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   */
   setDoubleTitle(titleDouble: string): TrainerConfig {
     // First check if i18n is initialized
     if (!getIsInitialized()) {
@@ -496,11 +496,11 @@ export class TrainerConfig {
   }
 
   /**
-     * Initializes the trainer configuration for a Gym Leader.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
-     * @param {Type[]} specialtyTypes - The specialty types for the Gym Leader.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     * **/
+   * Initializes the trainer configuration for a Gym Leader.
+   * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
+   * @param {Type[]} specialtyTypes - The specialty types for the Gym Leader.
+   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   * **/
   initForGymLeader(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
@@ -548,11 +548,11 @@ export class TrainerConfig {
   }
 
   /**
-     * Initializes the trainer configuration for an Elite Four member.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
-     * @param {Type[]} specialtyTypes - The specialty types for the Elite Four member.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     **/
+   * Initializes the trainer configuration for an Elite Four member.
+   * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
+   * @param {Type[]} specialtyTypes - The specialty types for the Elite Four member.
+   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   **/
   initForEliteFour(signatureSpecies: (Species | Species[])[], ...specialtyTypes: Type[]): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
@@ -599,10 +599,10 @@ export class TrainerConfig {
   }
 
   /**
-     * Initializes the trainer configuration for a Champion.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the Champion.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     **/
+   * Initializes the trainer configuration for a Champion.
+   * @param {Species | Species[]} signatureSpecies - The signature species for the Champion.
+   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   **/
   initForChampion(signatureSpecies: (Species | Species[])[]): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
@@ -645,11 +645,11 @@ export class TrainerConfig {
   }
 
   /**
-     * Retrieves the title for the trainer based on the provided trainer slot and variant.
-     * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
-     * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
-     * @returns {string} - The title of the trainer.
-     **/
+   * Retrieves the title for the trainer based on the provided trainer slot and variant.
+   * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
+   * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
+   * @returns {string} - The title of the trainer.
+   **/
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
     const ret = this.name;
 
@@ -779,9 +779,9 @@ type SignatureSpecies = {
 };
 
 /*
-    * The signature species for each Gym Leader, Elite Four member, and Champion.
-    * The key is the trainer type, and the value is an array of Species or Species arrays.
-    * This is in a separate const so it can be accessed from other places and not just the trainerConfigs
+ * The signature species for each Gym Leader, Elite Four member, and Champion.
+ * The key is the trainer type, and the value is an array of Species or Species arrays.
+ * This is in a separate const so it can be accessed from other places and not just the trainerConfigs
  */
 export const signatureSpecies: SignatureSpecies = {
   BROCK: [Species.GEODUDE, Species.ONIX],
