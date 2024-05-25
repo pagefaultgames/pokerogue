@@ -39,7 +39,7 @@ export const berry: BerryTranslationEntries = {
   },
   "STARF": {
     name: "Krambobeere",
-    effect: "Erhöht eine Statuswert stark, wenn die KP unter 25% sind"
+    effect: "Erhöht einen zufälligen Statuswert stark, wenn die KP unter 25% sind"
   },
   "LEPPA": {
     name: "Jonagobeere",
