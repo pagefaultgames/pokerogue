@@ -367,58 +367,59 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "Meine Expertise in Bezug auf Gesteins-Pokémon wird dich besiegen! Komm schon!",
+      2: "Meine felsenfeste Entschlossenheit wird dich überwältigen!",
+      3: "Ich bin ein harter Fels, der nicht so leicht zu brechen ist!"
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
+      1: "Die Stärke deiner Pokémon hat meine steinharte Verteidigung überwunden!",
+      2: "Die Welt ist riesig! Ich bin froh, dass ich die Chance hatte, gegen dich zu kämpfen.",
       3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "Der beste Angriff ist eine gute Verteidigung!\nDas ist meine Art, Dinge zu tun!",
+      2: "Komm und studiere Felsen mit mir, um besser zu lernen wie man gegen sie kämpft!",
+      3: "Meine Reisen durch die Regionen zahlen sich aus!"
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "Meine Taktik ist ein Frontalangriff mit Wasser-Pokémon!",
+      2: "Hiya! Ich zeige dir die Stärke meiner Wasser-Pokémon!",
+      3: `Mein Traum war es, auf eine Reise zu gehen und gegen starke Trainer zu kämpfen… 
+          $Wirst du eine ausreichende Herausforderung sein?`
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "Du bist wirklich stark… Ich gebe zu, du hast es drauf…",
+      2: "Du weißt, dass du nur Glück hattest, oder?",
+      3: "Wow, ich kann nicht glauben, dass du mich besiegt hast!"
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "War die mächtige Misty zu viel für dich?",
+      2: "Ich hoffe, du hast die eleganten Schwimmtechniken meiner Pokémon gesehen!",
+      3: "Deine Pokémon waren keine Herausforderung für meine geliebten Pokémon!"
     }
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "Meine Elektro-Pokémon haben mich im Krieg gerettet! Ich werde dir zeigen, wie!",
+      2: "Du wirst um Gnade winseln, wenn ich dich geschockt habe!",
+      3: "Ich werde dich genau so zappen, wie ich es mit all meinen Feinden im Kampf mache!"
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "Whoa! Dein Team ist echt stark!",
+      2: "Aaargh, du bist stark! Selbst meine elektrischen Tricks haben gegen dich verloren.",
+      3: "Das war ein absolut schockierender Verlust!"
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "Oh ja! Wenn es um Elektro-Pokémon geht, bin ich weltweit die Nummer eins!",
+      2: "Hahaha! Das war ein elektrisierender Kampf!",
+      3: "Ein Pokémon-Kampf ist Krieg, und ich habe dir den Nahkampf gezeigt!"
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
+      1: "Ah, das Wetter ist hier so schön…\nOh, ein Kampf? Nun gut.",
       2: "My Pokémon battling skills rival that of my flower arranging skills.",
       3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
       4: "Seeing flowers in a garden is so soothing."
