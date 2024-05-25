@@ -3,322 +3,329 @@ import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins
 export const dialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
-      1: "Hey, wanna battle?",
-      2: "Are you a new trainer too?",
-      3: "Hey, I haven't seen you before. Let's battle!",
-      4: "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      5: "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
-      6: "All right! Let's go!",
-      7: "All right! Here I come! I'll show you my power!",
-      8: "Haw haw haw... I'll show you how hawesome my Pokémon are!",
-      9: "No need to waste time saying hello. Bring it on whenever you're ready!",
-      10: "Don't let your guard down, or you may be crying when a kid beats you.",
-      11: "I've raised my Pokémon with great care. You're not allowed to hurt them!",
-      12: "Glad you made it! It won't be an easy job from here.",
-      13: "The battles continue forever! Welcome to the world with no end!"
+      1: "Hey, willst du kämpfen?",
+      2: "Bist du auch ein neuer Trainer?",
+      3: "Hey, ich habe dich noch nie gesehen. Lass uns kämpfen!",
+      4: "Ich habe gerade verloren und suche nach neuen Pokémon.\nWarte! Du siehst schwach aus! Lass uns kämpfen!",
+      5: `Haben wir uns schon mal getroffen oder nicht? Ich erinnere mich nicht wirklich
+          $Nun, ich denke, es ist trotzdem schön, dich zu treffen!`,
+      6: "Okay, lass uns kämpfen!",
+      7: "Okay, hier komme ich! Ich zeige dir meine Kraft!",
+      8: "Fan fan fan... Ich zeige dir wie fantastisch meine Pokémon sind!",
+      9: "Es ist nicht nötig, Zeit mit Begrüßungen zu verschwenden.\nSobald du bereit bist geht es los!",
+      10: "Lass deine Deckung nicht fallen, sonst weinst du, wenn dich ein Kind besiegt.",
+      11: "Ich habe meine Pokémon mit großer Sorgfalt aufgezogen. Du darfst ihnen nicht wehtun!",
+      12: "Schön, dass du es geschafft hast! Von hier an wird es nicht einfacher.",
+      13: "Die Kämpfe gehen immer weiter! Willkommen in der Welt ohne Ende!",
     },
     "victory": {
-      1: "Wow! You're strong!",
-      2: "I didn't stand a chance, huh?",
-      3: "I'll find you again when I'm older and beat you!",
-      4: "Ugh. I don't have any more Pokémon.",
-      5: "No way… NO WAY! How could I lose again…",
-      6: "No! I lost!",
-      7: "Whoa! You are incredible! I'm amazed and surprised!",
-      8: "Could it be… How… My Pokémon and I are the strongest, though…",
-      9: "I won't lose next time! Let's battle again sometime!",
-      10: "Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!",
-      11: "Your Pokémon are more amazing! Trade with me!",
-      12: "I got a little carried away earlier, but what job was I talking about?",
-      13: "Ahaha! There it is! That's right! You're already right at home in this world!"
+      1: "Wow! Du bist stark!",
+      2: "Ich hatte keine Chance, oder?",
+      3: "Wenn ich älter bin, werde ich dich besiegen!",
+      4: "Ugh. Ich habe keine Pokémon mehr.",
+      5: "Das kann nicht sein… DAS KANN NICHT SEIN! Wie konnte ich schon wieder verlieren…",
+      6: "Nein! Ich habe verloren!",
+      7: "Wow! Du bist unglaublich! Ich bin erstaunt und überrascht!",
+      8: "Kann es sein… Wie… Meine Pokémon und ich sind die stärksten, aber…",
+      9: "Das nächste Mal werde ich dich besiegen! Lass uns wieder kämpfen!",
+      10: "Man! Kannst du nicht sehen, dass ich nur ein Kind bin? Es war nicht fair von dir, so hart zu kämpfen!",
+      11: "Deine Pokémon sind unglaublich! Tauschst du mit mir?",
+      12: "Ich habe mich ein bisschen mitreißen lassen, worüber habe ich vorhin gesprochen?",
+      13:  "Ahaha! Da ist es! Genau! Du bist schon jetzt in dieser Welt zu Hause!",
     }
   },
   "lass": {
     "encounter": {
-      1: "Let's have a battle, shall we?",
-      2: "You look like a new trainer. Let's have a battle!",
-      3: "I don't recognize you. How about a battle?",
-      4: "Let's have a fun Pokémon battle!",
-      5: "I'll show you the ropes of how to really use Pokémon!",
-      6: "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      7: "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      8: "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      9: "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      1: "Lass uns kämpfen, wollen wir?",
+      2: "Du siehst wie ein neuer Trainer aus. Lass uns kämpfen!",
+      3: "Ich erkenne dich nicht. Wie wäre es mit einem Kampf?",
+      4: "Lass uns einen lustigen Pokémon-Kampf haben!",
+      5: "Ich zeige dir, wie man Pokémon wirklich einsetzt!",
+      6: "Ein ernsthafter Kampf beginnt mit einem ernsten Anfang! Bist du sicher, dass du bereit bist?",
+      7: `Du bist nur einmal jung. Und du hast nur eine Chance bei einem bestimmten Kampf.
+          $Bald wirst du nur noch eine Erinnerung sein.`,
+      8: "Du solltest es leicht mit mir angehen, OK? Aber ich kämpfe ernsthaft!",
+      9: "Die Schule ist langweilig. Ich habe nichts zu tun. Gähn. Ich kämpfe nur, um die Zeit totzuschlagen."
     },
     "victory": {
-      1: "That was impressive! I've got a lot to learn.",
-      2: "I didn't think you'd beat me that bad…",
-      3: "I hope we get to have a rematch some day.",
-      4: "That was pretty amazingly fun! You've totally exhausted me…",
-      5: "You actually taught me a lesson! You're pretty amazing!",
-      6: "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      7: "I don't need memories like this. Deleting memory…",
-      8: "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      9: "I'm actually getting tired of battling… There's gotta be something new to do…"
+      1: "Das war beeindruckend! Ich habe noch viel zu lernen.",
+      2: "Ich dachte nicht, dass du mich so schlagen würdest…",
+      3: "Ich hoffe, wir haben eines Tages ein Rematch.",
+      4: "Das war ziemlich erstaunlich! Du hast mich total erschöpft…",
+      5: "Du hast mir tatsächlich eine Lektion erteilt! Du bist ziemlich erstaunlich!",
+      6: "Ernsthaft, ich habe verloren. Das ist, wie, ernsthaft deprimierend, aber du warst ernsthaft cool.",
+      7: "Ich brauche keine Erinnerungen wie diese. Löschen der Erinnerung…",
+      8: `Hey! Ich habe dir gesagt, du sollst es leicht mit mir angehen!
+          $Trotzdem bist du ziemlich cool, wenn du ernsthaft bist.`,
+      9: "Ich werde langsam müde vom Kämpfen… Es muss etwas Neues zu tun geben…"
     }
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "Gehorsame Pokémon, eigensinnige Pokémon… Pokémon haben einzigartige Eigenschaften.",
+      2: "Auch wenn meine Erziehung und mein Verhalten schlecht sind, habe ich meine Pokémon gut aufgezogen.",
+      3: "Hmm, disziplinierst du deine Pokémon? Zu viel Verwöhnen ist nicht gut.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "Es ist wichtig, die Eigenschaften jedes Pokémon zu pflegen und zu trainieren.",
+      2: "Im Gegensatz zu meinem teuflischen Selbst sind dies einige gute Pokémon.",
+      3: "Zu viel Lob kann sowohl Pokémon als auch Menschen verwöhnen.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "Du solltest nicht wütend auf deine Pokémon werden, auch wenn du einen Kampf verlierst.",
+      2: "Richtig? Ziemlich gute Pokémon, oder? Ich bin dafür geeignet, Dinge großzuziehen.",
+      3: `Egal wie sehr du deine Pokémon liebst,
+          $du musst sie trotzdem disziplinieren, wenn sie sich schlecht benehmen.`
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "Pokémon verraten dich nie. Sie erwidern die ganze Liebe, die du ihnen gibst.",
+      2: "Soll ich dir einen Tipp geben, wie man gute Pokémon trainiert?",
+      3: "Ich habe diese sehr speziellen Pokémon mit einer speziellen Methode aufgezogen."
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "Ugh… So sollte das nicht laufen. Habe ich die falsche Mischung verabreicht?",
+      2: "Wie konnte das meinen Pokémon passieren… Was fütterst du deine Pokémon?",
+      3: `Wenn ich verliere, sagt dir das, dass ich nur die Zeit totgeschlagen habe.
+          $Es verletzt mein Ego überhaupt nicht.`
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "Das beweist, dass meine Pokémon meine Liebe angenommen haben.",
+      2: "Der wahre Trick, um gute Pokémon zu trainieren, besteht darin, gute Pokémon zu fangen.",
+      3: "Pokémon werden stark oder schwach, je nachdem, wie du sie großziehst."
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "Aack! Du hast mich einen Biss verlieren lassen!\nWas wirst du dagegen tun?",
+      2: "Geh weg! Du erschreckst die Pokémon!",
+      3: "Mal sehen, ob du einen Sieg an Land ziehen kannst!",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "Vergiss es einfach.",
+      2: "Nächstes Mal werde ich den Triumph an Land ziehen!",
+      3: "Ich glaube, ich habe die Strömungen diesmal unterschätzt.",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "Woah! Ich habe einen großen Fang gemacht!",
+      2: "Die Leine ist drin, bereit, den Erfolg an Land zu ziehen!",
+      3: "Bereit, Wellen zu schlagen!"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "Ich komme mit einem stärkeren Haken zurück.",
+      2: "Ich werde das nächste Mal den Sieg an Land ziehen.",
+      3: "Ich schärfe nur meine Haken für das Comeback!"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "Zeit, einzutauchen!",
+      2: "Lass uns die Wellen des Sieges reiten!",
+      3: "Bereit, einen Sprung ins Wasser zu machen!",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "Getränkt in Niederlage!",
+      2: "Eine Welle der Niederlage!",
+      3: "Zurück ans Ufer, schätze ich.",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "Packe deine Sachen, es geht los!",
+      2: "Mal sehen, ob du mithalten kannst!",
+      3: "Bereit machen, Herausforderer!",
+      4: "Ich habe 20 Jahre damit verbracht, mich selbst zu finden… Aber wo bin ich?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "Diesmal bin ich gestolpert!",
+      2: "Oh, ich glaube, ich bin verloren.",
+      3: "Sackgasse!",
+      4: "Warte eine Sekunde! Hey! Weißt du nicht, wer ich bin?"
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "Du scheinst ziemlich zuversichtlich zu sein.",
+      2: "Deine Pokémon… Zeig sie mir…",
+      3: "Weil ich ein Ass-Trainer bin, denken die Leute, ich sei stark.",
+      4: "Weißt du, was es braucht, um ein Ass-Trainer zu sein?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "Ja… Du hast gute Pokémon…",
+      2: "Was?! Aber ich bin ein Kampfgott!",
+      3: "Natürlich, du bist der Hauptcharakter!",
+      4: "OK! OK! Du könntest ein Ass-Trainer sein!"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "Ich widme meinen Körper und meine Seele den Pokémon-Kämpfen!",
+      2: "Alles innerhalb meiner Erwartungen… Nichts Überraschendes…",
+      3: `Ich dachte, ich würde zu einem zerbrechlichen Menschen heranwachsen, 
+          $der aussieht, als würde er zerbrechen, wenn du ihn zu fest drückst.`,
+      4: "Natürlich bin ich stark und verliere nicht. Es ist wichtig, dass ich anmutig gewinne."
     }
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "Zeit, das Schlachtfeld mit Eleganz und Anmut zu betreten!",
     },
     "victory": {
-      2: "My elegance remains unbroken!",
+      2: "Meine Eleganz bleibt ungebrochen!",
     }
   },
   "twins": {
     "encounter": {
-      1: "Get ready, because when we team up, it's double the trouble!",
-      2: "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      3: "Hope you're ready for double trouble, because we're about to bring the heat!"
+      1: "Mach dich bereit, denn wenn wir zusammenarbeiten, gibt es doppelten Ärger!",
+      2: "Zwei Herzen, eine Strategie – mal sehen, ob du mit unserer Zwillingskraft mithalten kannst!",
+      3: "Hoffe, du bist bereit für doppelten Ärger, denn wir werden dir einheizen!"
     },
     "victory": {
-      1: "We may have lost this round, but our bond remains unbreakable!",
-      2: "Our twin spirit won't be dimmed for long.",
-      3: "We'll come back stronger as a dynamic duo!"
+      1: "Wir haben vielleicht diese Runde verloren, aber unsere Bindung bleibt unzerbrechlich!",
+      2: "Unser Zwillingsgeist wird nicht lange getrübt bleiben.",
+      3: "Wir werden als dynamisches Duo stärker zurückkommen!"
     },
     "defeat": {
-      1: "Twin power reigns supreme!",
-      2: "Two hearts, one triumph!",
-      3: "Double the smiles, double the victory dance!"
+      1: "Zwillingskraft herrscht vor!",
+      2: "Zwei Herzen, ein Triumph!",
+      3: "Doppelte Freude, doppelter Siegestanz!"
     }
   },
   "cyclist": {
     "encounter": {
-      1: "Get ready to eat my dust!",
-      2: "Gear up, challenger! I'm about to leave you in the dust!",
-      3: "Pedal to the metal, let's see if you can keep pace!"
+      1: "Mach dich bereit, meinen Staub zu schlucken!",
+      2: "Mach dich bereit, Herausforderer! Ich werde dich im Staub zurücklassen!",
+      3: "Volle Fahrt voraus, mal sehen, ob du mithalten kannst!"
     },
     "victory": {
-      1: "Spokes may be still, but determination pedals on.",
-      2: "Outpaced!",
-      3: "The road to victory has many twists and turns yet to explore."
+      1: "Die Speichen stehen still, aber die Entschlossenheit dreht weiter.",
+      2: "Abgehängt!",
+      3: "Der Weg zum Sieg hat viele Kurven und Wendungen, die es noch zu erkunden gilt."
     },
   },
   "black_belt": {
     "encounter": {
-      1: "I praise your courage in challenging me! For I am the one with the strongest kick!",
-      2: "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?"
+      1: "Ich lobe deinen Mut, mich herauszufordern! Denn ich bin derjenige mit dem stärksten Tritt!",
+      2: "Oh, ich verstehe. Möchtest du in Stücke geschnitten werden? Oder bevorzugst du die Rolle des Punchingballs?"
     },
     "victory": {
-      1: "Oh. The Pokémon did the fighting. My strong kick didn't help a bit.",
-      2: "Hmmm… If I was going to lose anyway, I was hoping to get totally messed up in the process."
+      1: "Oh. Die Pokémon haben gekämpft. Mein starker Tritt hat überhaupt nicht geholfen.",
+      2: "Hmmm… Wenn ich sowieso verlieren würde, wollte ich wenigstens total vermöbelt werden."
     },
   },
   "battle_girl": {
     "encounter": {
-      1: "You don't have to try to impress me. You can lose against me.",
+      1: "Du musst mich nicht beeindrucken. Du kannst gegen mich verlieren.",
     },
     "victory": {
-      1: "It's hard to say good-bye, but we are running out of time…",
+      1: "Es ist schwer, sich zu verabschieden, aber uns läuft die Zeit davon…",
     },
   },
   "hiker": {
     "encounter": {
-      1: "My middle-age spread has given me as much gravitas as the mountains I hike!",
-      2: "I inherited this big-boned body from my parents… I'm like a living mountain range…",
+      1: "Mein mittelalterlicher Bauch gibt mir so viel Gravitas wie die Berge, die ich besteige!",
+      2: "Ich habe diesen kräftigen Körper von meinen Eltern geerbt… Ich bin wie eine lebende Bergkette…",
     },
     "victory": {
-      1: "At least I cannot lose when it comes to BMI!",
-      2: "It's not enough… It's never enough. My bad cholesterol isn't high enough…"
+      1: "Zumindest kann ich nicht verlieren, wenn es um BMI geht!",
+      2: "Es ist nicht genug… Es ist nie genug. Mein schlechtes Cholesterin ist nicht hoch genug…"
     },
   },
   "ranger": {
     "encounter": {
-      1: "When I am surrounded by nature, most other things cease to matter.",
-      2: "When I'm living without nature in my life, sometimes I'll suddenly feel an anxiety attack coming on."
+      1: "Wenn ich von der Natur umgeben bin, hören die meisten anderen Dinge auf, wichtig zu sein.",
+      2: "Wenn ich ohne die Natur in meinem Leben lebe, fühle ich mich wie ein Fisch ohne Wasser."
     },
     "victory": {
-      1: "It doesn't matter to the vastness of nature whether I win or lose…",
-      2: "Something like this is pretty trivial compared to the stifling feelings of city life."
+      1: "Es spielt keine Rolle für die Weite der Natur, ob ich gewinne oder verliere…",
+      2: "So etwas ist ziemlich trivial im Vergleich zu den erdrückenden Gefühlen des Stadtlebens."
     },
     "defeat": {
-      1: "I won the battle. But victory is nothing compared to the vastness of nature…",
-      2: "I'm sure how you feel is not so bad if you compare it to my anxiety attacks…"
+      1: "Ich habe den Kampf gewonnen. Aber der Sieg ist nichts im Vergleich zur Weite der Natur…",
+      2: "Ich bin sicher, das mein Sieg nur dank der Natur möglich war."
     }
   },
   "scientist": {
     "encounter": {
-      1: "My research will lead this world to peace and joy.",
+      1: "Meine Forschung wird diese Welt zu Frieden und Freude führen.",
     },
     "victory": {
-      1: "I am a genius… I am not supposed to lose against someone like you…",
+      1: "Ich bin ein Genie… Ich sollte nicht gegen jemanden wie dich verlieren…",
     },
   },
   "school_kid": {
     "encounter": {
-      1: "…Heehee. I'm confident in my calculations and analysis.",
-      2: "I'm gaining as much experience as I can because I want to be a Gym Leader someday."
+      1: "…Heehee. Ich bin zuversichtlich in meine Berechnungen und Analysen.",
+      2: "Ich sammle so viel Erfahrung wie möglich, weil ich eines Tages ein Arenaleiter sein möchte."
     },
     "victory": {
-      1: "Ohhhh… Calculation and analysis are perhaps no match for chance…",
-      2: "Even difficult, trying experiences have their purpose, I suppose."
+      1: "Ohhhh… Berechnungen und Analysen sind kein Gegner für den Zufall…",
+      2: "Auch schwierige, anstrengende Erfahrungen haben ihren Zweck, denke ich."
     }
   },
   "artist": {
     "encounter": {
-      1: "I used to be popular, but now I am all washed up.",
+      1: "Früher war ich beliebt, aber jetzt bin ich völlig veraltet.",
     },
     "victory": {
-      1: "As times change, values also change. I realized that too late.",
+      1: "Mit der Zeit ändern sich auch die Werte. Das habe ich zu spät erkannt.",
     },
   },
   "guitarist": {
     "encounter": {
-      1: "Get ready to feel the rhythm of defeat as I strum my way to victory!",
+      1: "Mach dich bereit, den Rhythmus der Niederlage zu spüren, während ich meinen Weg zum Sieg spiele!",
     },
     "victory": {
-      1: "Silenced for now, but my melody of resilience will play on.",
+      1: "Für den Moment zum Schweigen gebracht, aber meine Melodie der Widerstandsfähigkeit wird weiterspielen.",
     },
   },
   "worker": {
     "encounter": {
-      1: "It bothers me that people always misunderstand me. I'm a lot more pure than everyone thinks.",
+      1: "Es stört mich, dass die Leute mich immer missverstehen. Ich bin garnicht so grob wie alle denken.",
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work.",
+      1: "Ich will wirklich nicht, dass meine Haut verbrennt, also möchte ich im Schatten arbeiten.",
     },
   },
   "worker_female": {
     "encounter": {
-      1: `It bothers me that people always misunderstand me. 
-                $I'm a lot more pure than everyone thinks.`
+      1: "Es stört mich, dass die Leute mich immer missverstehen. Ich bin garnicht so grob wie alle denken."
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      1: "Ich will wirklich nicht, dass meine Haut verbrennt, also möchte ich im Schatten arbeiten."
     },
     "defeat": {
-      1: "My body and mind aren't necessarily always in sync."
+      1: "Mein Körper und mein Geist sind nicht immer unbedingt synchron."
     }
   },
   "worker_double": {
     "encounter": {
-      1: "I'll show you we can break you. We've been training in the field!",
+      1: "Ich zeige dir, dass wir dich brechen können. Wir haben auf dem Feld trainiert!",
     },
     "victory": {
-      1: "How strange… How could this be… I shouldn't have been outmuscled.",
+      1: "Wie seltsam… Wie konnte das passieren… Ich hätte nicht ausgemuskelt werden sollen.",
     },
   },
   "hex_maniac": {
     "encounter": {
-      1: "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      2: "I grow stronger with each tear I cry."
+      1: `Ich höre normalerweise nur klassische Musik, aber wenn ich verliere,
+          $werde ich ein bisschen New Age ausprobieren!`,
+      2: "Ich werde mit jeder Träne stärker, die ich weine."
     },
     "victory": {
-      1: "Is this the dawning of the age of Aquarius?",
-      2: "Now I can get even stronger. I grow with every grudge."
+      1: "Ist das der Beginn des Zeitalters des Wassermanns? Ich bin bereit für die Veränderung.",
+      2: "Jetzt kann ich noch stärker werden. Ich wachse mit jedem Groll."
     },
     "defeat": {
-      1: "New age simply refers to twentieth century classical composers, right?",
-      2: "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      1: "New Age bezieht sich einfach auf Komponisten der klassischen Musik des 20. Jahrhunderts, richtig?",
+      2: `Lass dich nicht von Traurigkeit oder Frustration aufhalten.
+          $Du kannst deine Groll nutzen, um dich zu motivieren.`
     }
   },
   "psychic": {
     "encounter": {
-      1: "Hi! Focus!",
+      1: "Hallo! Konzentrier dich!",
     },
     "victory": {
       1: "Eeeeek!",
@@ -326,36 +333,36 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "officer": {
     "encounter": {
-      1: "Brace yourself, because justice is about to be served!",
-      2: "Ready to uphold the law and serve justice on the battlefield!"
+      1: "Bereite dich vor, denn die Gerechtigkeit wird gleich vollstreckt!",
+      2: "Bereit, das Gesetz zu verteidigen und die Gerechtigkeit auf dem Schlachtfeld zu wahren!"
     },
     "victory": {
-      1: "The weight of justice feels heavier than ever…",
-      2: "The shadows of defeat linger in the precinct."
+      1: "Die Gerechtigkeit auf meinen Schultern fühlt sich schwerer an denn je…",
+      2: "Die Schatten der Niederlage schweben über dem Revier."
     }
   },
   "beauty": {
     "encounter": {
-      1: "My last ever battle… That's the way I'd like us to view this match…",
+      1: "Mein letzter Kampf überhaupt… So möchte ich, dass wir diesen Kampf sehen…",
     },
     "victory": {
-      1: "It's been fun… Let's have another last battle again someday…",
+      1: "Es war schön… Lass uns irgendwann wieder einen letzten Kampf haben…",
     },
   },
   "baker": {
     "encounter": {
-      1: "Hope you're ready to taste defeat!"
+      1: "Hoffe, du bist bereit, die Niederlage zu schmecken!"
     },
     "victory": {
-      1: "I'll bake a comeback."
+      1: "Ich werde ein Comeback backen."
     },
   },
   "biker": {
     "encounter": {
-      1: "Time to rev up and leave you in the dust!"
+      1: "Zeit, aufzudrehen und dich im Staub zurückzulassen!"
     },
     "victory": {
-      1: "I'll tune up for the next race."
+      1: "Ich werde für das nächste Rennen tunen."
     },
   },
   "brock": {
