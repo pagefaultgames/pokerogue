@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   "zippyZap": {
     name: "Britzelturbo",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
+    effect: "Ein stürmischer Blitz-Angriff mit hoher Erstschlag- und Volltrefferquote."
   },
   "splishySplash": {
     name: "Plätschersurfer",
