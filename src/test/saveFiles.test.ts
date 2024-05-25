@@ -7,9 +7,15 @@ import BattleScene from "#app/battle-scene.js";
 import GameWrapper from "#app/test/essentials/gameWrapper";
 import {Species} from "#app/data/enums/species";
 import {Moves} from "#app/data/enums/moves";
-import {EncounterPhase, LoginPhase, SelectStarterPhase, TitlePhase} from "#app/phases";
+import {CommandPhase, EncounterPhase, LoginPhase, SelectStarterPhase, TitlePhase} from "#app/phases";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
-import {blobToString, generateStarter, holdOn} from "#app/test/essentials/utils";
+import {
+  blobToString,
+  generateStarter,
+  holdOn,
+  waitPhaseQueueCountIs,
+  waitPhaseQueueIsEmpty
+} from "#app/test/essentials/utils";
 import * as Utils from "#app/utils";
 import {loggedInUser, setLoggedInUser} from "#app/account";
 import {GameModes} from "#app/game-mode";
@@ -91,7 +97,22 @@ describe("Session import/export", () => {
     });
   })
 
-  it('select new Game', () => {
+  it.skip('testing wait phase queue', async () => {
+    const fakeScene = {
+      phaseQueue: [1, 2, 3] // Initially not empty
+    };
+    setTimeout(() => {
+      fakeScene.phaseQueue = [];
+}, 500);
+    const spy = vi.fn();
+    await waitPhaseQueueCountIs(fakeScene, 0).then(result => {
+      expect(result).toBe(true);
+      spy(); // Call the spy function
+    });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('select new Game', async () => {
     scene.launchBattle();
     scene.pushPhase(new LoginPhase(scene));
     scene.pushPhase(new TitlePhase(scene));
@@ -99,9 +120,7 @@ describe("Session import/export", () => {
     scene.shiftPhase();
     const gameMode = GameModes.CLASSIC;
     scene.pushPhase(new SelectStarterPhase(scene, gameMode));
-    holdOn(300);
     scene.newArena(scene.gameMode.getStartingBiome(scene));
-    holdOn(300);
     scene.pushPhase(new EncounterPhase(scene, false));
     scene.shiftPhase();
     let phase = scene.getCurrentPhase();
@@ -111,9 +130,17 @@ describe("Session import/export", () => {
     scene.arena.init();
     scene.shiftPhase();
     scene.getCurrentPhase().doEncounter();
-    scene.getCurrentPhase().doEncounterCommon();
-    phase = scene.getCurrentPhase();
-
+    scene.getCurrentPhase().doEncounterCommon(false);
+    scene.shiftPhase();
+    const spy = vi.fn();
+    await waitPhaseQueueCountIs(scene, 2).then(result => {
+      expect(result).toBe(true);
+      phase = scene.getCurrentPhase();
+      expect(phase).not.toBeInstanceOf(LoginPhase);
+      expect(phase).toBeInstanceOf(CommandPhase);
+      spy(); // Call the spy function
+    });
+    expect(spy).toHaveBeenCalled();
   });
 });
 

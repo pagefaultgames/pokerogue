@@ -57,6 +57,7 @@ export default class GameWrapper {
       setText: (value) => text = value,
       setPosition: () => null,
       setTexture: () => null,
+      setTintFill: () => null,
       clearTint: () => null,
       stop: () => null,
       fillStyle: () => null,
@@ -81,7 +82,7 @@ export default class GameWrapper {
       setCrop: () => null,
       setShadowColor: () => null,
       removeAll: () => null,
-      getIndex: () => 0,
+      getIndex: () => -1,
       destroy: () => null,
       addAt: () => null,
       getBounds: () => ({ width: 0, height: 0 }),
@@ -114,7 +115,11 @@ export default class GameWrapper {
       delayedCall: (time, fn) => fn(),
     };
     _scene.tweens = {
-      add: () => null,
+      add: (data) => {
+        if (data.onComplete) {
+          data.onComplete();
+        }
+      },
       chain: () => null,
       addCounter: () => null,
     };

@@ -38,3 +38,14 @@ export function generateStarter(scene) {
   }
   return starters;
 }
+
+export function waitPhaseQueueCountIs(scene, count= 0) {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (scene.phaseQueue.length === count) {
+        clearInterval(interval);
+        resolve(true);
+      }
+    }, 100);
+  });
+}
