@@ -10,6 +10,10 @@ const mockLocalStorage = (() => {
       store[key] = value;
     },
 
+    hasOwnProperty(key: string) {
+      return store.hasOwnProperty(key);
+    },
+
     removeItem(key: string) {
       delete store[key];
     },

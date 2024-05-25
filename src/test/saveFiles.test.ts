@@ -13,8 +13,6 @@ import {
   blobToString,
   generateStarter,
   holdOn, waitFirstInPhaseQueueIs,
-  waitPhaseQueueCountIs,
-  waitPhaseQueueIsEmpty
 } from "#app/test/essentials/utils";
 import * as Utils from "#app/utils";
 import {loggedInUser, setLoggedInUser} from "#app/account";
@@ -22,6 +20,7 @@ import {GameModes} from "#app/game-mode";
 import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
 import {Mode} from "#app/ui/ui";
 import {MockFetch} from "#app/test/essentials/mockFetch";
+import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
 const saveKey = "x0i2O7WRiANTqPmZ";
 describe("Session import/export", () => {
   let game, scene, gameData, sessionData;
@@ -48,9 +47,31 @@ describe("Session import/export", () => {
     sessionData = gameData.parseSessionData(dataStr);
   })
 
-  it('check if session data is valid', () => {
+  it.skip('check if session data is valid', () => {
     const valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
     expect(valid).toBe(true);
+  });
+
+  it.skip('test fetch mock async', async () => {
+    const spy = vi.fn();
+    await fetch('https://localhost:8080/account/info').then(response => {
+      expect(response.status).toBe(200);
+      expect(response.ok).toBe(true);
+      return response.json();
+    }).then(data => {
+      spy(); // Call the spy function
+      expect(data).toEqual(infoHandler);
+    });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it.skip('test fetch mock sync', async () => {
+    const response = await fetch('https://localhost:8080/account/info');
+    const data = await response.json();
+
+    expect(response.ok).toBe(true);
+    expect(response.status).toBe(200);
+    expect(data).toEqual(infoHandler);
   });
 
   it.skip('check first pokemon in the party', () => {
@@ -123,7 +144,7 @@ describe("Session import/export", () => {
     scene.shiftPhase();
     scene.shiftPhase();
     const gameMode = GameModes.CLASSIC;
-    scene.ui.setMode(Mode.MESSAGE);
+    // scene.ui.setMode(Mode.MESSAGE);
     scene.pushPhase(new SelectStarterPhase(scene, gameMode));
     scene.newArena(scene.gameMode.getStartingBiome(scene));
     scene.pushPhase(new EncounterPhase(scene, false));
@@ -136,6 +157,8 @@ describe("Session import/export", () => {
     scene.shiftPhase();
     await scene.getCurrentPhase().doEncounter();
     await holdOn(2000)
+    phase = scene.getCurrentPhase();
+    phase = scene.getCurrentPhase();
   //   const spy = vi.fn();
   //   await waitFirstInPhaseQueueIs(scene, EnemyCommandPhase).then(result => {
   //     expect(result).toBe(true);

@@ -5,11 +5,16 @@ const MockConsoleLog = () => {
   return ({
     log(msg) {
       logs.push(msg);
-      originalLog(msg); // Appelle le console.log originel
+      if (msg.includes("phase")) {
+        originalLog(msg);
+      }
     },
     error(msg) {
       logs.push(msg);
       originalError(msg); // Appelle le console.error originel
+    },
+    debug(msg) {
+      logs.push(msg);
     }
   });
 };
