@@ -17,7 +17,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "为一只宝可梦回复 {{restorePoints}} HP 或 {{restorePercent}}% HP，取最大值",
+      description: "为一只宝可梦回复 {{restorePoints}} HP 或 {{restorePercent}}% HP，取较大值",
       extra: {
         "fully": "为一只宝可梦回复全部HP",
         "fullyWithStatus": "为一只宝可梦回复全部HP并消除所有负面\n状态",
@@ -139,10 +139,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "厉害伤药" },
     "MAX_POTION": { name: "全满药" },
     "FULL_RESTORE": { name: "全复药" },
-    
+
     "REVIVE": { name: "活力碎片" },
     "MAX_REVIVE": { name: "活力块" },
-    
+
     "FULL_HEAL": { name: "万灵药" },
 
     "SACRED_ASH": { name: "圣灰" },
@@ -187,18 +187,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "护符金币", description: "金钱奖励增加20%" },
     "GOLDEN_PUNCH": { name: "黄金拳头", description: "将50%造成的伤害转换为金钱" },
     "COIN_CASE": { name: "代币盒", description: "每十场战斗, 获得自己金钱10%的利息" },
-    
+
     "LOCK_CAPSULE": { name: "上锁的容器", description: "允许在刷新物品时锁定物品稀有度" },
 
     "GRIP_CLAW": { name: "紧缠钩爪" },
     "WIDE_LENS": { name: "广角镜" },
-    
+
     "MULTI_LENS": { name: "多重镜" },
 
     "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (含复活)" },
-    "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级提升1级" },
+    "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级额外增加1级" },
 
-    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有25%的几率不会消耗树果" },
+    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有33%的几率不会消耗树果" },
 
     "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷入濒死状态" },
 
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "酸酸苹果",
     "STRAWBERRY_SWEET": "草莓糖饰",
     "UNREMARKABLE_TEACUP": "凡作茶碗",
-  
+
     "CHIPPED_POT": "缺损的茶壶",
     "BLACK_AUGURITE": "黑奇石",
     "GALARICA_CUFF": "伽勒豆蔻手环",
