@@ -166,7 +166,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonFusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
       }
 
-      const starterSpeciesId = pokemon.species.getRootSpeciesId(true);
+      const starterSpeciesId = pokemon.species.getRootSpeciesId();
       const originalIvs: integer[] = this.scene.gameData.dexData[starterSpeciesId].caughtAttr
         ? this.scene.gameData.dexData[starterSpeciesId].ivs
         : null;
