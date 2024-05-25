@@ -61,7 +61,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { MoveUsedEvent } from "./battle-scene-events";
+import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 
 
 export class LoginPhase extends Phase {
@@ -1719,6 +1719,7 @@ export class TurnInitPhase extends FieldPhase {
     super.start();
 
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
+    this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {
@@ -2252,6 +2253,7 @@ export class TurnEndPhase extends FieldPhase {
     super.start();
 
     this.scene.currentBattle.incrementTurn(this.scene);
+    this.scene.eventTarget.dispatchEvent(new TurnEndEvent(this.scene.currentBattle.turn));
 
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
