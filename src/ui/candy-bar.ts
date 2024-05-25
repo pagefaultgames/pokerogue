@@ -21,24 +21,24 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, 'party_exp_bar', null, 8, 18, 21, 5, 6, 4);
+    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", null, 8, 18, 21, 5, 6, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.candyIcon = this.scene.add.sprite(14, 0, 'items', 'candy');
+    this.candyIcon = this.scene.add.sprite(14, 0, "items", "candy");
     this.candyIcon.setOrigin(0.5, 0);
     this.candyIcon.setScale(0.5);
 
     this.add(this.candyIcon);
 
-    this.candyOverlayIcon = this.scene.add.sprite(14, 0, 'items', 'candy_overlay');
+    this.candyOverlayIcon = this.scene.add.sprite(14, 0, "items", "candy_overlay");
     this.candyOverlayIcon.setOrigin(0.5, 0);
     this.candyOverlayIcon.setScale(0.5);
 
     this.add(this.candyOverlayIcon);
 
-    this.countText = addTextObject(this.scene, 22, 4, '', TextStyle.BATTLE_INFO);
+    this.countText = addTextObject(this.scene, 22, 4, "", TextStyle.BATTLE_INFO);
     this.countText.setOrigin(0, 0);
     this.add(this.countText);
 
@@ -49,10 +49,11 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   showStarterSpeciesCandy(starterSpeciesId: Species, count: integer): Promise<void> {
     return new Promise<void>(resolve => {
       if (this.shown) {
-        if (this.speciesId === starterSpeciesId)
+        if (this.speciesId === starterSpeciesId) {
           return resolve();
-        else
+        } else {
           return this.hide().then(() => this.showStarterSpeciesCandy(starterSpeciesId, count)).then(() => resolve());
+        }
       }
 
       const colorScheme = starterColors[starterSpeciesId];
@@ -66,23 +67,24 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
       (this.scene as BattleScene).fieldUI.bringToTop(this);
 
-      if (this.tween)
+      if (this.tween) {
         this.tween.stop();
+      }
 
-      (this.scene as BattleScene).playSound('shing');
+      (this.scene as BattleScene).playSound("shing");
 
       this.tween = this.scene.tweens.add({
         targets: this,
         x: (this.scene.game.canvas.width / 6) - (this.bg.width - 5),
         duration: 500,
-        ease: 'Sine.easeOut',
+        ease: "Sine.easeOut",
         onComplete: () => {
           this.tween = null;
           this.resetAutoHideTimer();
           resolve();
         }
       });
-    
+
       this.setVisible(true);
       this.shown = true;
     });
@@ -90,20 +92,23 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
   hide(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!this.shown)
+      if (!this.shown) {
         return resolve();
+      }
 
-      if (this.autoHideTimer)
+      if (this.autoHideTimer) {
         clearInterval(this.autoHideTimer);
+      }
 
-      if (this.tween)
+      if (this.tween) {
         this.tween.stop();
+      }
 
       this.tween = this.scene.tweens.add({
         targets: this,
         x: (this.scene.game.canvas.width / 6),
         duration: 500,
-        ease: 'Sine.easeIn',
+        ease: "Sine.easeIn",
         onComplete: () => {
           this.tween = null;
           this.shown = false;
@@ -115,8 +120,9 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   }
 
   resetAutoHideTimer(): void {
-    if (this.autoHideTimer)
+    if (this.autoHideTimer) {
       clearInterval(this.autoHideTimer);
+    }
     this.autoHideTimer = setTimeout(() => {
       this.hide();
       this.autoHideTimer = null;
