@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "察觉",
-    description: "出场时，可以察觉对手的持有物。",
+    description: "出场时，可以察觉对手的特性。",
   },
   reckless: {
     name: "舍身",

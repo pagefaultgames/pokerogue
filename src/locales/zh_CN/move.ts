@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   "zippyZap": {
     name: "电电加速",
-    effect: "迅猛无比的电击。必定能够\n先制攻击，击中对方的要害。",
+    effect: "迅猛无比的电击。必定能够\n先制攻击，并且提高自己的\n闪避率。",
   },
   "splishySplash": {
     name: "滔滔冲浪",
