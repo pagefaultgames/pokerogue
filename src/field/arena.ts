@@ -737,12 +737,14 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
       if (this.base.texture.frameTotal > 1) {
         const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
-        this.scene.anims.create({
-          key: baseKey,
-          frames: baseFrameNames,
-          frameRate: 12,
-          repeat: -1
-        });
+        if (!(this.scene.anims.exists(baseKey))) {
+          this.scene.anims.create({
+            key: baseKey,
+            frames: baseFrameNames,
+            frameRate: 12,
+            repeat: -1
+          });
+        }
         this.base.play(baseKey);
       } else {
         this.base.stop();
@@ -762,12 +764,14 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
           if (hasProps && prop.texture.frameTotal > 1) {
             const propFrameNames = this.scene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
-            this.scene.anims.create({
-              key: propKey,
-              frames: propFrameNames,
-              frameRate: 12,
-              repeat: -1
-            });
+            if (!(this.scene.anims.exists(propKey))) {
+              this.scene.anims.create({
+                key: propKey,
+                frames: propFrameNames,
+                frameRate: 12,
+                repeat: -1
+              });
+            }
             prop.play(propKey);
           } else {
             prop.stop();
