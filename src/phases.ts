@@ -2161,7 +2161,13 @@ export class TurnStartPhase extends FieldPhase {
       case Command.RUN:
         let runningPokemon = pokemon;
         if (this.scene.currentBattle.double) {
-          const playerActivePokemon = field.filter(pokemon => pokemon.isPlayer() && pokemon.isActive());
+          const playerActivePokemon = field.filter(pokemon => {
+            if (!!pokemon) {
+              return pokemon.isPlayer() && pokemon.isActive();
+            } else {
+              return;
+            }
+          });
           // if only one pokemon is alive, use that one
           if (playerActivePokemon.length > 1) {
             // find which active pokemon has faster speed
