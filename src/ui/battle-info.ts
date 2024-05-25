@@ -380,6 +380,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     if (this.player) {
       this.y -= 12 * (mini ? 1 : -1);
+      this.baseY = this.y;
     }
 
     const offsetElements = [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.statusIndicator, this.levelContainer ];
