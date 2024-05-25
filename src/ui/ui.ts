@@ -110,7 +110,7 @@ export default class UI extends Phaser.GameObjects.Container {
   private tooltipBg: Phaser.GameObjects.NineSlice;
   private tooltipTitle: Phaser.GameObjects.Text;
   private tooltipContent: Phaser.GameObjects.Text;
-  
+
   private overlayActive: boolean;
 
   constructor(scene: BattleScene) {
@@ -163,7 +163,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
     this.achvBar = new AchvBar(this.scene as BattleScene);
     this.achvBar.setup();
-   
+
     (this.scene as BattleScene).uiContainer.add(this.achvBar);
 
     this.savingIcon = new SavingIconHandler(this.scene as BattleScene);

@@ -32,7 +32,7 @@ export function isMobile() {
  */
 function simulateKeyboardEvent(eventType, button, buttonMap) {
   const key = buttonMap[button];
-  
+
   switch (eventType) {
   case "keydown":
     key.onDown({});

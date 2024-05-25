@@ -123,10 +123,10 @@ export class UiInputs {
     case Mode.PARTY:
     case Mode.SUMMARY:
     case Mode.STARTER_SELECT:
-    case Mode.CONFIRM:
     case Mode.OPTION_SELECT:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
+    case Mode.CONFIRM:
     case Mode.MENU:
     case Mode.SETTINGS:
     case Mode.ACHIEVEMENTS:

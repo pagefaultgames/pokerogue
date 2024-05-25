@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   frisk: {
     name: "察觉",
-    description: "进入战斗时，神奇宝贝可以检查对方神奇宝贝的能力。",
+    description: "出场时，可以察觉对手的特性。",
   },
   reckless: {
     name: "舍身",
@@ -1063,7 +1063,7 @@ export const ability: AbilityTranslationEntries = {
   },
   asOneGlastrier: {
     name: "人马一体",
-    description: "兼备蕾冠王的紧张感和灵幽\n马的漆黑嘶鸣这两种特性。",
+    description: "兼备蕾冠王的紧张感和雪暴\n马的苍白嘶鸣这两种特性。",
   },
   asOneSpectrier: {
     name: "人马一体",
@@ -1211,11 +1211,11 @@ export const ability: AbilityTranslationEntries = {
   },
   embodyAspectTeal: {
     name: "面影辉映",
-    description: "将回忆映于心中，让水井面\n具发出光辉，提高自己的特\n防。",
+    description: "将回忆映于心中，让碧草面\n具发出光辉，提高自己的速\n度。",
   },
   embodyAspectWellspring: {
     name: "面影辉映",
-    description: "将回忆映于心中，让碧草面\n具发出光辉，提高自己的速\n度。",
+    description: "将回忆映于心中，让水井面\n具发出光辉，提高自己的特\n防。",
   },
   embodyAspectHearthflame: {
     name: "面影辉映",

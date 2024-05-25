@@ -56,7 +56,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       let newText = "";
       for (let w = 0; w < textWords.length; w++) {
         const nextWordText = newText ? `${newText} ${textWords[w]}` : textWords[w];
-        
+
         if (textWords[w].includes("\n")) {
           newText = nextWordText;
           lastLineCount++;

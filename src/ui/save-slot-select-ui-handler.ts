@@ -189,10 +189,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
     this.saveSlotSelectMessageBoxContainer.setVisible(!!text?.length);
   }
-  
+
   setCursor(cursor: integer): boolean {
     const changed = super.setCursor(cursor);
-    
+
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", null, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
@@ -205,7 +205,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   setScrollCursor(scrollCursor: integer): boolean {
     const changed = scrollCursor !== this.scrollCursor;
-    
+
     if (changed) {
       this.scrollCursor = scrollCursor;
       this.setCursor(this.cursor);
@@ -250,7 +250,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     super(scene, 0, slotId * 56);
 
     this.slotId = slotId;
-    
+
     this.setup();
   }
 
