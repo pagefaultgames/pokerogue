@@ -4,7 +4,7 @@ export const tutorial: SimpleTranslationEntries = {
   "intro": `欢迎来到PokéRogue！这是一款以战斗为核心的融合了roguelite元素的宝可梦同人游戏。
     $本游戏未进行商业化，我们没有\nPokémon或Pokémon使用的版
     $权资产的所有权。
-    $游戏仍在开发中，但已可完整游玩。如需报\n告错误，请使用 Discord 社区。
+    $游戏仍在开发中，但已可完整游玩。如需报\n告错误，请通过 Discord 社区。
     $如果游戏运行缓慢，请确保在浏览器设置中\n打开了“硬件加速”。`,
 
   "accessMenu": "在等待输入时，按 M 或 Escape 键可访\n问菜单。菜单包含设置和各种功能。",
