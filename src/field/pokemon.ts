@@ -635,7 +635,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           break;
         }
       }
-      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, statLevel);
+      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, statLevel, battleStat);
       if (move) {
         applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
       }

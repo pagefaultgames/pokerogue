@@ -1356,12 +1356,32 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
   }
 }
 
+/**
+ * Makes the user ignore all opponent's stat changes (with the
+ * exception of {@linkcode BattleStat.SPD}). Tied to {@linkcode Abilities.UNAWARE}.
+ *
+ * @extends AbAttr
+ * @see {@linkcode apply}
+ */
 export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
 
+  /**
+   * Ignores the stat changes if the given {@linkcode BattleStat} is not speed.
+   * @param pokemon N/A
+   * @param passive N/A
+   * @param cancelled N/A
+   * @param args [0] {@linkcode Utils.IntegerHolder} holder of the {@linkcode BattleStat} value
+   *             [1] {@linkcode BattleStat} tied to the first argument
+   * @returns
+   */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
+    const stat = args[1] as BattleStat;
+    if (stat === BattleStat.SPD) {
+      return false;
+    }
     (args[0] as Utils.IntegerHolder).value = 0;
 
     return true;
