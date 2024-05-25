@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, VariableMoveTypeAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -329,6 +329,12 @@ export class PreDefendMovePowerToOneAbAttr extends ReceivedMoveDamageMultiplierA
   }
 }
 
+/**
+ * Determines whether a Pokemon is immune to a move because of an ability.
+ * @extends PreDefendAbAttr
+ * @see {@linkcode applyPreDefend}
+ * @see {@linkcode getCondition}
+ */
 export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: Type;
   private condition: AbAttrCondition;
@@ -339,9 +345,19 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     this.immuneType = immuneType;
     this.condition = condition;
   }
-
+  /**
+   * @param pokemon {@linkcode Pokemon} the defending Pokemon
+   * @param passive N/A
+   * @param attacker {@linkcode Pokemon} the attacking Pokemon
+   * @param move {@linkcode PokemonMove} the attacking move
+   * @param cancelled N/A
+   * @param args [0] {@linkcode Utils.NumberHolder} gets set to 0 if move is immuned by an ability.
+   */
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if ((move.getMove() instanceof AttackMove || move.getMove().getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === this.immuneType)) && move.getMove().type === this.immuneType) {
+    const moveType = new Utils.IntegerHolder(move.getMove().type);
+    // Check if move has VariableMoveTypeAttr, and if so apply it to get new move type
+    move.getMove().getAttrs(VariableMoveTypeAttr).find(attr => (attr as VariableMoveTypeAttr).apply(attacker, pokemon, move.getMove(), [moveType]));
+    if ((move.getMove() instanceof AttackMove || move.getMove().getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === this.immuneType)) && moveType.value === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
