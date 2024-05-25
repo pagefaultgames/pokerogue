@@ -23,6 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "eggMoves": "蛋招式",
   "start": "开始",
   "addToParty": "加入队伍",
+  "base": "基体值",
   "toggleBase": "切换基体值",
   "toggleIVs": "切换个体值",
   "manageMoves": "管理招式",

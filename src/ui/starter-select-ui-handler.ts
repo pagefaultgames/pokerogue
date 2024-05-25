@@ -845,10 +845,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               overrideSound: true
             },
             {
-              label: i18next.t("starterSelectUiHandler:toggleBase"),
+              label: i18next.t("starterSelectUiHandler:base"),
               handler: () => {
                 // menu code for "Toggle Base-Values"-Button
-                this.toggleStatsMode(StatsMode.BASE);
+                const originalMode = this.statsMode;
+                if (originalMode !== StatsMode.BASE) {
+                  this.toggleStatsMode(StatsMode.BASE);
+                }
 
                 // generate options
                 const options = [];
@@ -892,18 +895,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     options: options.concat({
                       label: i18next.t("starterSelectUiHandler:toggleBase"),
                       handler: () => {
-                        // close and show the sprite again
-                        this.toggleStatsMode(StatsMode.NONE);
+                        // close and keep showing base stats for the base form or show the sprite again, if base-stats have already been shown before entering the base-stats menu
+                        if (originalMode === StatsMode.BASE) {
+                          this.toggleStatsMode(StatsMode.NONE);
+                        }
                         ui.setMode(Mode.STARTER_SELECT);
                         return true;
                       },
                       onHover: () => {
-                        //this.statsContainer.updateBase([0, 0, 0, 0, 0, 0]); // resetting the graph doesn't quite look right so i kept the last shown one as is, if someone has a better idea, feel free to change this behavior
+                        this.statsContainer.updateBase(this.lastSpecies.baseStats);
                       }
                     }).concat({
                       label: i18next.t("menu:cancel"),
                       handler: () => {
-                        // close but keep showing the default base stats for the current selection, depending on the cursor position
+                        // close and return to last used mode
+                        if (originalMode !== StatsMode.BASE) {
+                          this.toggleStatsMode(originalMode);
+                        }
                         ui.setMode(Mode.STARTER_SELECT);
                         return true;
                       },
@@ -1963,15 +1971,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  toggleStatsMode(mode?: StatsMode): void {
+  toggleStatsMode(mode?: StatsMode, force?: boolean): void {
     // toggles the stats-chart
-    // no parameter/null/false = no stats
-    mode |= StatsMode.NONE;
+    // no parameter/null/false => show IVs if none are shown, otherwise hide the current stats
+    // if a mode is given, that mode is toggled (hide stats or show IVs, depending on whether they are currently shown or not)
+    // this behavior can be disabled by setting force = true
+    if ((this.statsMode === mode && !force) || !mode) {
+      mode = this.statsMode === StatsMode.NONE ? StatsMode.IV : StatsMode.NONE;
+    }
     this.statsMode = mode;
     switch (mode) {
     case StatsMode.BASE:
     case StatsMode.IV:
-      this.showStats(); // exact behavior for each of the modes has been implemented in thsi sub-function
+      this.showStats(); // exact behavior for each of the modes has been implemented in this sub-function
       this.pokemonSprite.setVisible(false);
       break;
     case StatsMode.NONE:

@@ -23,6 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "eggMoves": "Ei-Attacken",
   "start": "Start",
   "addToParty": "Zum Team hinzufügen",
+  "base": "Basiswerte",
   "toggleBase": "Basiswerte anzeigen/verbergen",
   "toggleIVs": "DVs anzeigen/verbergen",
   "manageMoves": "Attacken ändern",

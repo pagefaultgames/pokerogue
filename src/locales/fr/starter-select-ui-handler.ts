@@ -23,6 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "eggMoves": "Capacités Œuf",
   "start": "Lancer",
   "addToParty": "Ajouter à l’équipe",
+  "base": "Base-Stats.",
   "toggleBase": "Voir Base-Stats.",
   "toggleIVs": "Voir IVs",
   "manageMoves": "Gérer Capacités",

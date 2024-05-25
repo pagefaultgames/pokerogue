@@ -23,6 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "eggMoves": "Mosse delle uova",
   "start": "Inizia",
   "addToParty": "Aggiungi al Gruppo",
+  "base": "Base-Statis.",
   "toggleBase": "Vedi/Nascondi Base-Statis.",
   "toggleIVs": "Vedi/Nascondi IV",
   "manageMoves": "Gestisci Mosse",
