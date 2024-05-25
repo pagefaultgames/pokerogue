@@ -730,7 +730,7 @@ export class EncounterPhase extends BattlePhase {
     this.scene.initSession();
 
     // Failsafe if players somehow skip floor 200 in classic mode
-    if (this.scene.gameMode.modeId === GameModes.CLASSIC && this.scene.currentBattle.waveIndex > 200) {
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
       this.scene.unshiftPhase(new GameOverPhase(this.scene));
     }
 
@@ -3853,7 +3853,7 @@ export class GameOverPhase extends BattlePhase {
     super.start();
 
     // Failsafe if players somehow skip floor 200 in classic mode
-    if (this.scene.gameMode.modeId === GameModes.CLASSIC && this.scene.currentBattle.waveIndex > 200) {
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
       this.victory = true;
       this.handleGameOver();
     }
