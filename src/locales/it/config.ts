@@ -10,6 +10,7 @@ import { menuUiHandler } from "./menu-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
+import { phases } from "./phases";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
@@ -22,7 +23,7 @@ import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
 
-export const itConfig = {
+export const frConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
@@ -35,6 +36,7 @@ export const itConfig = {
   modifierType: modifierType,
   move: move,
   nature: nature,
+  phases: phases,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
