@@ -729,6 +729,11 @@ export class EncounterPhase extends BattlePhase {
 
     this.scene.initSession();
 
+    // Failsafe if players somehow skip floor 200 in classic mode
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
+      this.scene.unshiftPhase(new GameOverPhase(this.scene));
+    }
+
     const loadEnemyAssets = [];
 
     const battle = this.scene.currentBattle;
@@ -3861,6 +3866,11 @@ export class GameOverPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    // Failsafe if players somehow skip floor 200 in classic mode
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
+      this.victory = true;
+    }
 
     if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
