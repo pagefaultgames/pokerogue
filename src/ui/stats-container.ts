@@ -5,7 +5,7 @@ import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./t
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
-const ivChartStatIndexes = [0,1,2,5,4,3] // swap special attack and speed
+const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export class StatsContainer extends Phaser.GameObjects.Container {
@@ -53,8 +53,8 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, '0', TextStyle.TOOLTIP_CONTENT);
-      this.ivStatValueTexts[i].setOrigin(0.5)
+      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[i].setOrigin(0.5);
 
       this.add(statLabel);
       this.add(this.ivStatValueTexts[i]);
@@ -66,14 +66,15 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
       this.statsIvsCache = ivChartData.slice(0);
-      
+
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
         let label = ivs[i].toString();
         if (this.showDiff && originalIvs) {
-          if (originalIvs[i] < ivs[i])
+          if (originalIvs[i] < ivs[i]) {
             label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, (this.scene as BattleScene).uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, (this.scene as BattleScene).uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
-          else
-            label += ' (-)';
+          } else {
+            label += " (-)";
+          }
         }
         t.setText(`[shadow]${label}[/shadow]`);
       });
@@ -82,7 +83,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         from: 0,
         to: 1,
         duration: 1000,
-        ease: 'Cubic.easeOut',
+        ease: "Cubic.easeOut",
         onUpdate: (tween: Phaser.Tweens.Tween) => {
           const progress = tween.getValue();
           const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));

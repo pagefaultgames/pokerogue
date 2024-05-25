@@ -1,17 +1,17 @@
-import { Species } from './data/enums/species';
+import { Species } from "./data/enums/species";
 import { Abilities } from "./data/enums/abilities";
 import { Biome } from "./data/enums/biome";
 import { Moves } from "./data/enums/moves";
 import { WeatherType } from "./data/weather";
-import { Variant } from './data/variant';
-import { BerryType } from './data/berry';
-import { TempBattleStat } from './data/temp-battle-stat';
-import { Nature } from './data/nature';
-import { Type } from './data/type';
-import { Stat } from './data/pokemon-stat';
-import { PokeballCounts } from './battle-scene';
-import { PokeballType } from './data/pokeball';
-import { StatusEffect } from './data/status-effect';
+import { Variant } from "./data/variant";
+import { BerryType } from "./data/berry";
+import { TempBattleStat } from "./data/temp-battle-stat";
+import { Nature } from "./data/nature";
+import { Type } from "./data/type";
+import { Stat } from "./data/pokemon-stat";
+import { PokeballCounts } from "./battle-scene";
+import { PokeballType } from "./data/pokeball";
+import { StatusEffect } from "./data/status-effect";
 
 /**
  * Overrides for testing different in game situations
@@ -23,7 +23,7 @@ import { StatusEffect } from './data/status-effect';
  */
 
 // a specific seed (default: a random string of 24 characters)
-export const SEED_OVERRIDE: string = '';
+export const SEED_OVERRIDE: string = "";
 export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
 export const STARTING_WAVE_OVERRIDE: integer = 0;
@@ -31,15 +31,15 @@ export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
-    active: false,
-    pokeballs: {
-        [PokeballType.POKEBALL]: 5,
-        [PokeballType.GREAT_BALL]: 0,
-        [PokeballType.ULTRA_BALL]: 0,
-        [PokeballType.ROGUE_BALL]: 0,
-        [PokeballType.MASTER_BALL]: 0,
-    }
-}
+  active: false,
+  pokeballs: {
+    [PokeballType.POKEBALL]: 5,
+    [PokeballType.GREAT_BALL]: 0,
+    [PokeballType.ULTRA_BALL]: 0,
+    [PokeballType.ROGUE_BALL]: 0,
+    [PokeballType.MASTER_BALL]: 0,
+  }
+};
 
 /**
  * PLAYER OVERRIDES
@@ -80,8 +80,8 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  * if count is not provided, it will default to 1
  * @example Modifier Override [{name: "EXP_SHARE", count: 2}]
  * @example Held Item Override [{name: "LUCKY_EGG"}]
- * 
- * Some items are generated based on a sub-type (i.e. berries), to override those: 
+ *
+ * Some items are generated based on a sub-type (i.e. berries), to override those:
  * @example [{name: "BERRY", count: 5, type: BerryType.SITRUS}]
  * types are listed in interface below
  * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
@@ -95,8 +95,8 @@ interface ModifierOverride {
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType
 }
-export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = []; 
-export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = []; 
+export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
+export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = []; 
+export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
