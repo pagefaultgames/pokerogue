@@ -196,3 +196,19 @@ function createFetchResponse(data) {
     text: () => Promise.resolve(JSON.stringify(data)),
   };
 }
+// Mock implementation of Promise.allSettled that resolves all promises
+function mockAllSettled(promises) {
+  return Promise.all(promises.map(promise => {
+    // Simulate a resolved promise for each input promise
+    return Promise.resolve(promise)
+      .then(value => ({
+        status: "fulfilled",
+        value
+      }))
+      .catch(reason => ({
+        status: "rejected",
+        reason
+      }));
+  }));
+}
+Promise.allSettled = mockAllSettled;
