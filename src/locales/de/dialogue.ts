@@ -2085,127 +2085,138 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "rival": {
     "encounter": {
-      1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
-                    $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
-                    $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
-                    $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
+      1: `@c{smile}Hey, ich habe dich gesucht! Ich weiß, dass du es nicht erwarten konntest loszugehen,
+                    $aber hättest ja wenigstens Tschüss sagen können...
+                    $@c{smile_eclosed}Du verfolgst also wirklich deinen Traum?\nIch kann es kaum glauben.
+                    $@c{serious_smile_fists}Da wir schon einmal hier sind, wie wäre es mit einem Kampf?\nImmerhin muss ich doch sicherstellen, dass du bereit bist.
+                    $@c{serious_mopen_fists}Halte dich nicht zurück, zeig mir alles was du hast!`
     },
     "victory": {
-      1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
-                   $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
-                   $By the way, the professor asked me to give you these items. They look pretty cool.
-                   $@c{serious_smile_fists}Good luck out there!`
+      1: `@c{shock}Wow…Du hast mich komplett überrumpelt.\nBist du wirklich ein Anfänger?
+                   $@c{smile}Vielleicht war es einfach etwas Glück, aber…\nWer weiß, vielleicht schaffst du es irgendwann
+                   $ja wirklich ganz groß raus zu kommen.
+                   $Übrigens, der Professor hat mich gebeten dir diese Items zu geben. Die sehen wirklich cool aus.
+                   $@c{serious_smile_fists}Viel Glück da draußen!`
     },
   },
   "rival_female": {
     "encounter": {
-      1: `@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?
-                    $@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…
-                    $@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!
-                    $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
+      1: `@c{smile_wave}Da bist du! Ich habe schon überall nach dir gesucht!\n@c{angry_mopen}Hast du etwas vergessen
+                    $deiner besten Freundin Tschüss zu sagen?
+                    $@c{smile_ehalf}Du folgst deinem Traum, oder?\nDas ist wirklich heute…
+                    $@c{smile}Naja, ich vergeben dir, dass du mich vergessen hast, aber nur unter einer Bedingung. @c{smile_wave_wink}Du musst gegen mich kämpfen!
+                    $@c{angry_mopen}Gib alles! Wir wollen doch nicht, dass dein Abenteuer endet bevor es begonnen hat, richtig?`
     },
     "victory": {
-      1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
-                    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
-                    $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
-                    $@c{smile_wave}Do your best like always! I believe in you!`
+      1: `@c{shock}Du hast gerade erst angefangen und bist schon so stark?!@d{96} @c{angry}Du hast sowas von betrogen, oder?
+                    $@c{smile_wave_wink}Ich mach nur Spaß!@d{64} @c{smile_eclosed}Ich habe ehrlich verloren… Ich habe das Gefühl, dass du es dort draußen weit bringen wirst.
+                    $@c{smile}Übrigens, der Professor hat mich gebeten dir diese Items zu geben. Ich hoffe sie sind hilfreich!
+                    $@c{smile_wave}Gib wie immer dein Bestes! Ich glaube an dich!`
     },
   },
   "rival_2": {
     "encounter": {
-      1: `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
-                $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
-                $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
-                $I've been doing a lot of my own training so I'll definitely put up a fight this time.
-                $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
+      1: `@c{smile}Hey, du auch hier?\n@c{smile_eclosed}Immernoch ungeschlagen, hmm…?
+                $@c{serious_mopen_fists}Ich weiß es sieht so aus, als wäre ich dir hierher gefolgt, aber das ist so nicht ganz richtig.
+                $@c{serious_smile_fists}Ehrlicherweise kann ich es, seit du mich damals besiegt hast, garnicht erwarten erneut gegen dich zu kämpfen.
+                $Ich habe selbst hart traniert. Ich werde dir diesesmal also ein würdigerer Gegner sein!.
+                $@c{serious_mopen_fists}Halt dich nicht zurück, genauso wie beim letzten Mal!\nLos gehts!`
     },
     "victory": {
-      1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
-                $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
-                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
-                $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
-                $@c{smile}Anyway, take care!`
+      1: `@c{neutral_eclosed}Oh. Ich war also zu sehr von mir überzeugt.
+                $@c{smile}Das ist Ok. Ich hatte mir schon gedacht, dass sowas passiert.\n
+                $@c{serious_mopen_fists}Es bedeutet einfach, dass ich mich beim nächsten Mal mehr anstrengen muss!\n
+                $@c{smile}Nicht, dass du wirklich Hilfe benötigen würdest, aber ich habe hier noch eins von diesen Dingern herumliegen.
+                $Du kannst es haben.\n
+                $@c{serious_smile_fists}Erwarte aber nicht, dass ich dir noch mehr gebe!\nIch kann meinen Rivalen doch keine Vorteile verschaffen.
+                $@c{smile}Egal, pass auf dich auf!`
     },
   },
   "rival_2_female": {
     "encounter": {
-      1: `@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!
-                $@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.
-                $@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.
-                $@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.
-                $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
+      1: `@c{smile_wave}Oh, wie schön dich hier zu trefen. Sieht so aus als wärst du noch ungeschlagen. @c{angry_mopen}Hmm… Nicht schlecht!
+                $@c{angry_mopen}Ich weiß was du denkst, und nein, ich habe dich nicht verfolgt. @c{smile_eclosed}Ich bin einfach in der Gegend gewesen.
+                $@c{smile_ehalf}Ich freu mich für dich, aber ich muss dich wissen lassen, dass es auch Ok ist ab und zu mal zu verlieren.
+                $@c{smile}Wir lernen oft mehr aus unseren Fehlern, als aus unseren Erfolgen.
+                $@c{angry_mopen}Auf jeden Fall habe ich für unseren Rückkampf hart traniert. Also zeig mir was du drauf hast!`
     },
     "victory": {
-      1: `@c{neutral}I… wasn't supposed to lose that time…
-                $@c{smile}Aw well. That just means I'll have to train even harder for next time!
-                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
-                $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
-                $@c{smile_wave}Keep at it!`
+      1: `@c{neutral}Ich… sollte dieses Mal doch nicht verlieren…
+                $@c{smile}Na gut. Das bedeutet ich muss noch härter tranieren!
+                $@c{smile_wave}Ich habe noch eins von diesen Dingern!\n@c{smile_wave_wink}Kein Grund mir zu danken~.
+                $@c{angry_mopen}Das ist aber das Letzte! Du bekommst ab jett keine Geschenke mehr von mir!
+                $@c{smile_wave}Bleib stark!`
     },
     "defeat": {
-      1: "It's OK to lose sometimes…"
+      1: "Es ist Ok manchmal zu verlieren…"
     }
   },
   "rival_3": {
     "encounter": {
-      1: `@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.
-                $@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.
-                $@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.
-                $@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
-                $@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?
-                $@c{serious_mopen_fists}If so, prove it to me.`
+      1: `@c{smile}Hey, schau mal wen wir hier haben! Ist schon eine Weile her.\n@c{neutral}Du bist… immernoch ungeschlagen?
+                $@c{neutral_eclosed}Die Dinge waren irgendwie... seltsam.\nEs ist Zuhause einfach nicht das Gleiche ohne dich.
+                $@c{serious}Ich weiß es ist selbstsüchtig, aber ich musste das einfach mal loswerden.
+                $@c{neutral_eclosed}Denkst du nicht, dass du dich etwas übernommen hast?
+                $@c{serious}Es ist nicht realistisch immer zu gewinnen\nWir müssen manchmal verlieren. Um daran zu wachsen.
+                $@c{neutral_eclosed}Du hattest einen guten Lauf, aber es liegt noch so viel vor dir. Es wird nicht gerade einfacher. @c{neutral}Bist du bereit dafür?
+                $@c{serious_mopen_fists}Falls ja, beweise es mir!`
     },
     "victory": {
-      1: "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
+      1: `@c{angry_mhalf}Das ist doch Schwachsinn… Ich habe kaum aufgehört zu tranieren…
+          $Warum bin ich immernoch so viel schwächer?`
     },
   },
   "rival_3_female": {
     "encounter": {
-      1: `@c{smile_wave}Long time no see! Still haven't lost, huh.\n@c{angry}You're starting to get on my nerves. @c{smile_wave_wink}Just kidding!
-                $@c{smile_ehalf}But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.
-                $@c{smile_eclosed}I support you in your dream and everything, but the reality is you're going to lose sooner or later.
-                $@c{smile}And when you do, I'll be there for you like always.\n@c{angry_mopen}Now, let me show you how strong I've become!`
+      1: `@c{smile_wave}Lange nicht gesehen! Immernoch nicht verloren?\n@c{angry}Du fängst mich an zu nerven. @c{smile_wave_wink}Ich mach nur Spaß!
+                $@c{smile_ehalf}Aber ehrlich, vermisst du dein Zuhause garnicht? Oder mich?
+                $Ich… Ich meine, wir vermissen dich wirklich.
+                $@c{smile_eclosed}Ich unterstütze dich bei deinem Traum, aber die Realität ist, du wirst früher oder später verlieren.
+                $@c{smile}Und ich bin für dich da falls du es tust, wie immer.\n@c{angry_mopen}Also, zeig mir wie stark du geworden bist!`
     },
     "victory": {
-      1: "@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…"
+      1: `@c{shock}Nach allem was ich getan habe… war es immernoch nicht genug…?
+          $Wenn es so weiter geht hole ich nie auf…`
 
     },
     "defeat": {
-      1: "You gave it your best, now let's go home."
+      1: "Du hast dein Bestes gegeben. Lass uns nach Hause gehen."
     }
   },
   "rival_4": {
     "encounter": {
       1: `@c{neutral}Hey.
-                $I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.
-                $@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.
-                $@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
-                $@c{serious_mopen_fists}None of that matters anymore, not until I win.
-                $@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.
-                $@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.
-                $@c{serious_mopen_fists}Prepare yourself.`
+                $Ich werde jetzt keine Gefälligkeiten mit dir austauschen.\n@c{neutral_eclosed}Ich bin hier um zu gewinnen. Mehr nicht.
+                $@c{serious_mhalf_fists}Durch mein Traning habe ich gelernt mein Potenzial zu maximieren.
+                $@c{smile}Man hat deutlich mehr Zeit, wenn man auf Schlaf und unnötige soziale Interaktionen verzichtet. 
+                $@c{serious_mopen_fists}Das ist alles nicht mehr wichtig, nicht solange ich nicht gewonnen habe.
+                $@c{neutral_eclosed}Ich bin an dem Punkt an dem ich nicht mehr verliere.\n@c{smile_eclosed}Ich schätze deine Einstellung war doch nicht so falsch.
+                $@c{angry_mhalf}Nur die Schwachen verlieren, und ich bin nicht mehr schwach.
+                $@c{serious_mopen_fists}Bereite dich vor zu verlieren.`
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
+      1: "@c{neutral}Was…@d{64} Was bist du?"
     },
   },
   "rival_4_female": {
     "encounter": {
-      1: `@c{neutral}It's me! You didn't forget about me again… did you?
-                $@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
-                $@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
-                $@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
-                $@c{neutral}In fact, I… hardly recognize myself.
-                $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
-                $And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.
-                $@c{angry_mopen}Prepare yourself.`
+      1: `@c{neutral}Ich bins! Du hast mich doch nicht vergessen, oder?
+                $@c{smile}Du solltest stolz auf dich sein. Du hast es soweit gebracht. Glückwunsch!
+                $Aber hier endet deine Reise jetzt.
+                $@c{smile_eclosed}Du hast etwas in mir erwachen lassen, etwas von dem ich nicht wusste, dass es da war.
+                $Alles was ich jetzt mache ist tranieren. @c{smile_ehalf}Ich esse oder schlafe kaum. 
+                $Ich traniere meine Pokémon den ganzen Tag. Und werde immer stärker.
+                $@c{neutral}Genau genommen, erkenne ich mich garnicht wieder.
+                $Und jetzt habe ich endlich meinen Höhepunkt erreicht.\nNiemand kann mich jetzt noch schlagen.
+                $Und weißt du was? Das ist alles wegen dir.\n@c{smile_ehalf}Ich weiß nicht ob ich dir danken, oder dich hassen soll!
+                $@c{angry_mopen}Mach dich bereit!`
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
+      1: "@c{neutral}Was…@d{64} Was bist du?"
 
     },
     "defeat": {
-      1: "$@c{smile}You should be proud of how far you made it."
+      1: "$@c{smile}Du solltest stolz darauf sein wie weit du es geschafft hast."
     }
   },
   "rival_5": {
@@ -2230,46 +2241,47 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "rival_6": {
     "encounter": {
-      1: `@c{smile_eclosed}We meet again.
-                $@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
-                $@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.
-                $@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.
-                $@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
-                $@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
-                $@c{serious_mhalf_fists}You feel the same, don't you?
-                $@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
-                $Those times we cherished together that seem so recent are nothing but a distant memory.
-                $@c{neutral_eclosed}Who can say whether they were ever even real in the first place.
-                $@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.
-                $@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance.`
+      1: `@c{smile_eclosed}So sehen wir uns wieder.
+                $@c{neutral}Ich hatte Zeit über alles nachzudenken.\nÜber den Grund, warum alles so merkwürdig erscheint.
+                $@c{neutral_eclosed}Dein Traum, mein Antrieb dich besiegen zu wollen…\nEs ist alles Teil von etwas Größerem.
+                $@c{serious}Es geht nicht um dich, oder mich… Es geht um diese Welt.\n@c{serious_mhalf_fists}Es ist mein Schicksal dich an deine Grenzen zu treiben.
+                $@c{neutral_eclosed}Ob ich meine Aufgabe erfüllt habe kann ich nicht sagen, aber ich habe alles getan was ich konnte.
+                $@c{neutral}Der Ort an dem wir uns befinden ist angsteinflößend… 
+                $Trotzdem fühlt es sich so an, als würde mich das nicht stören, als wäre ich bereits schonmal hier gewesen.
+                $@c{serious_mhalf_fists}Dir geht es doch genauso, oder?
+                $@c{serious}…und irgendwas hier spricht zu mir.\nDas ist alles was die Welt seit langem kennt.
+                $Die Zeiten die wir zusammen verbracht haben, die so nah erscheinen, sind nichts als eine ferne Erinnerung.
+                $@c{neutral_eclosed}Wer weiß, ob sie jemals real waren?
+                $@c{serious_mopen_fists}Du musst weiter gehen, denn wenn du es nicht tust, wird es nie enden. Du bist der Einzige, der das schaffen kann.
+                $@c{serious_smile_fists}Ich… Ich weiß nicht was das alles bedeutet, aber ich fühle, dass es wahr ist.
+                $@c{serious_mopen_fists}Wenn du mich nicht hier und jetzt besiegen kannst, hast du keine Chance.`
     },
     "victory": {
-      1: `@c{smile_eclosed}It looks like my work is done here.
-                $I want you to promise me one thing.\n@c{smile}After you heal the world, please come home.`
+      1: `@c{smile_eclosed}Es sieht so aus, als wäre meine Arbeit getan.
+                $Ich will dass du mir eine Sache versprichst.\n@c{smile}Komm bitte nach Hause nachdem du die Welt gerettet hast.`
     },
   },
   "rival_6_female": {
     "encounter": {
-      1: `@c{smile_ehalf}So it's just us again.
-                $@c{smile_eclosed}You know, I keep going around and around in my head…
-                $@c{smile_ehalf}There's something to all this, why everything seems so strange now…
-                $@c{smile}You have your dream, and I have this ambition in me…
-                $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
-                $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
-                $@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
-                $It's something about this strange and dreadful place… Everything seems so clear…
-                $This… is all the world's known for a long time now.
-                $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
-                $@c{smile_ehalf}Were they even real? They seem so far away now…
-                $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
-                $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
+      1: `@c{smile_ehalf}Jetzt sind es wieder nur wir zwei.
+                $@c{smile_eclosed}Weißt du, egal wie ich es drehe und wende…
+                $@c{smile_ehalf}Irgendwas stört mich an der ganzen Sache, es erscheint mir irgendwie komisch…
+                $@c{smile}Du hast deinen Traum, und ich habe diesen Antrieb…
+                $Ich kann nicht anders, als zu glauben, dass es einen größeren Zweck gibt.
+                $@c{smile_eclosed}Ich denke, ich sollte dich an deine Grenzen treiben.
+                $@c{smile_ehalf}Ich bin mir nicht sicher, ob ich meine Aufgabe erfüllt habe, aber ich habe mein Bestes gegeben.
+                $Irgendwas an diesem komischen und furchteinflößenden Ort… All das scheint so klar…
+                $Es… ist alles was die Welt seit langem kennt.
+                $@c{smile_eclosed}Es kommt mir so vor als könnte ich mich kaum an die Erinnerungen erinnern, die wir zusammen hatten.
+                $@c{smile_ehalf}Waren sie jemals real? Sie scheinen so weit weg…
+                $@c{angry_mopen}Du musst weiter gehen, denn wenn du es nicht tust, wird es nie enden. Du bist der Einzige, der das schaffen kann.
+                $@c{smile_ehalf}Ich… Ich weiß nicht was das alles bedeutet, aber ich fühle, dass es wahr ist.
+                $@c{neutral}Wenn du mich nicht hier und jetzt besiegen kannst, hast du keine Chance.`
     },
     "victory": {
-      1: `@c{smile_ehalf}I… I think I fulfilled my purpose…
-                $@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.
-                $@c{smile_ehalf}…Thank you.`
+      1: `@c{smile_ehalf}Ich… Ich denke ich habe meine Aufgabe erfüllt.
+                $@c{smile_eclosed}Versprich mir… Nachdem du die Welt geheilt hast… Komm bitte sicher nach Hause. 
+                $@c{smile_ehalf}…Danke.`
 
     },
   },
