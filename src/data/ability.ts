@@ -3012,6 +3012,29 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Gives money to the user after the battle.
+ *
+ * @extends PostBattleAbAttr
+ * @see {@linkcode applyPostBattle}
+ */
+export class MoneyAbAttr extends PostBattleAbAttr {
+  constructor() {
+    super();
+  }
+
+  /**
+   * @param pokemon {@linkcode Pokemon} that is the user of this ability.
+   * @param passive N/A
+   * @param args N/A
+   * @returns true
+   */
+  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    pokemon.scene.currentBattle.moneyScattered += pokemon.scene.getWaveMoneyAmount(0.2);
+    return true;
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -3557,7 +3580,7 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW),
     new Ability(Abilities.HONEY_GATHER, 4)
-      .unimplemented(),
+      .attr(MoneyAbAttr),
     new Ability(Abilities.FRISK, 4)
       .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
