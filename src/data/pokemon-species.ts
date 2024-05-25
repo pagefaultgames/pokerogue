@@ -149,6 +149,13 @@ export abstract class PokemonSpeciesForm {
     this.genderDiffs = genderDiffs;
   }
 
+  /**
+   * Method to get the root species id of a Pokemon.
+   * Magmortar.getRootSpeciesId(true) => Magmar
+   * Magmortar.getRootSpeciesId(false) => Magby
+   * @param forStarter boolean to get the nonbaby form of a starter
+   * @returns The species
+   */
   getRootSpeciesId(forStarter: boolean = false): Species {
     let ret = this.speciesId;
     while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret))) {
