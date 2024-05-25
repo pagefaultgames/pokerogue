@@ -2743,6 +2743,7 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
+  /** The max number of base power increments allowed for this move */
   private maxHits: integer;
 
   constructor(maxHits: integer) {
