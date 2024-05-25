@@ -453,12 +453,12 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-[TrainerType.CAMPER]: [
+  [TrainerType.CAMPER]: [
     {
       encounter: [
         "My girlfriend is the best trainer ever!",
         "It's a beautiful victorious day outside!",
-	"Another victory for my camping streak!"
+        "Another victory for my camping streak!"
       ],
       victory: [
         "Ow! Wait for my girlfriend to see!",
