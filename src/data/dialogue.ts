@@ -88,7 +88,7 @@ export const trainerTypeDialogue = {
         "dialogue:breeder.victory.2",
         "dialogue:breeder.victory.3",
       ],
-      defeat:[
+      defeat: [
         "dialogue:breeder.defeat.1",
         "dialogue:breeder.defeat.2",
         "dialogue:breeder.defeat.3",
@@ -105,7 +105,7 @@ export const trainerTypeDialogue = {
         "dialogue:breeder_female.victory.2",
         "dialogue:breeder_female.victory.3",
       ],
-      defeat:[
+      defeat: [
         "dialogue:breeder_female.defeat.1",
         "dialogue:breeder_female.defeat.2",
         "dialogue:breeder_female.defeat.3",
@@ -2173,117 +2173,45 @@ export const trainerTypeDialogue = {
 
 export const doubleBattleDialogue = {
   "blue_red_double": {
-    encounter: [
-      `Blue: Hey Red, let's show them what we're made of!
-                  $Red: ...
-                  $Blue: This is Pallet Town Power!`,
-    ],
-
-    victory: [
-      `Blue: That was a great battle!
-              $Red: ...`,
-    ]
+    encounter: ["doubleBattleDialogue:blue_red_double.encounter.1"],
+    victory: ["doubleBattleDialogue:blue_red_double.victory.1"]
   },
   "red_blue_double": {
-    encounter: [
-      `Red: ...!
-                  $Blue: He never talks much.
-                    $Blue: But dont let that fool you! He is a champ after all!`,
-    ],
-    victory: [
-      `Red: ...!
-                $Blue: Next time we will beat you!`,]
+    encounter: ["doubleBattleDialogue:red_blue_double.encounter.1"],
+    victory: ["doubleBattleDialogue:red_blue_double.victory.1"]
   },
   "tate_liza_double": {
-    encounter: [
-      `Tate: Are you suprised?
-                  $Liza: We are two gym leaders at once!
-                  $Tate: We are twins!
-                  $Liza: We dont need to talk to understand each other!
-                  $Tate: Twice the power...
-                  $Liza: Can you handle it?`,
-    ],
-    victory: [
-      `Tate: What? Our combination was perfect!
-                  $Liza: Looks like we need to train more...`,
-    ]
+    encounter: ["doubleBattleDialogue:tate_liza_double.encounter.1"],
+    victory: ["doubleBattleDialogue:tate_liza_double.victory.1"]
   },
   "liza_tate_double": {
-    encounter: [
-      `Liza: Hihihi... Are you suprised?
-                  $Tate: Yes, we are really two gym leaders at once!
-                  $Liza: This is my twin brother Tate!
-                  $Tate: And this is my twin sister Liza!
-                  $Liza: Don't you think we are a perfect combination?`
-    ],
-    victory: [
-      `Liza: Are we...
-                  $Tate: ...not as strong as we thought?`,
-    ]
+    encounter: ["doubleBattleDialogue:liza_tate_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:liza_tate_double.victory.1"]
   },
   "wallace_steven_double": {
-    encounter: [
-      `Steven: Wallace, let's show them the power of the champions!
-                  $Wallace: We will show you the power of Hoenn!
-                  $Steven: Let's go!`,
-    ],
-    victory: [
-      `Steven: That was a great battle!
-                  $Wallace: We will win next time!`,
-    ]
+    encounter: [ "doubleBattleDialogue:wallace_steven_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:wallace_steven_double.victory.1"]
   },
   "steven_wallace_double": {
-    encounter: [
-      `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
-            $Steven: Oh... I see... Let's go then!`,
-    ],
-    victory: [
-      `Steven: Now that we are done with the battle, let's show off our pokémon!
-            $Wallace: Steven...`,
-    ]
+    encounter: [ "doubleBattleDialogue:steven_wallace_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:steven_wallace_double.victory.1"]
   },
   "alder_iris_double": {
-    encounter: [
-      `Alder: We are the strongest trainers in Unova!
-                  $Iris: Fights against strong trainers are the best!`,
-    ],
-    victory: [
-      `Alder: Wow! You are super strong!
-                  $Iris: We will win next time!`,
-    ]
+    encounter: [ "doubleBattleDialogue:alder_iris_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:alder_iris_double.victory.1"]
   },
   "iris_alder_double": {
-    encounter: [
-      `Iris: Welcome Challenger! I am THE Unova Champion!
-                  $Alder: Iris, aren't you a bit too excited?`,
-    ],
-    victory: [
-      `Iris: A loss like this is not easy to take...
-                  $Alder: But we will only get stronger with every loss!`,
-    ]
+    encounter: [ "doubleBattleDialogue:iris_alder_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:iris_alder_double.victory.1"]
   },
   "marnie_piers_double": {
-    encounter: [
-      `Marnie: Brother, let's show them the power of Spikemuth!
-                  $Piers: We bring darkness!`,
-    ],
-    victory: [
-      `Marnie: You brought light to our darkness!
-                  $Piers: Its too bright...`,
-    ]
+    encounter: [ "doubleBattleDialogue:marnie_piers_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:marnie_piers_double.victory.1"]
   },
   "piers_marnie_double": {
-    encounter: [
-      `Piers: Ready for a concert?
-                    $Marnie: Brother... They are here to fight, not to sing...`,
-    ],
-    victory: [
-      `Piers: Now that was a great concert!
-                    $Marnie: Brother...`,
-    ]
+    encounter: [ "doubleBattleDialogue:piers_marnie_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:piers_marnie_double.victory.1"]
   },
-
 
 
 };

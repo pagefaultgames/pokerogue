@@ -2237,3 +2237,118 @@ export const miscDialogue: SimpleTranslationEntries = {
         $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
         $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
 };
+
+
+export const doubleBattleDialogue: DialogueTranslationEntries = {
+  "blue_red_double": {
+    "encounter": {
+      1: `Blue: Hey Red, let's show them what we're made of!
+                  $Red: ...
+                  $Blue: This is Pallet Town Power!`,
+    },
+    "victory": {
+      1: `Blue: That was a great battle!
+              $Red: ...`,
+    },
+  },
+  "red_blue_double": {
+    "encounter": {
+      1: `Red: ...!
+                  $Blue: He never talks much.
+                    $Blue: But dont let that fool you! He is a champ after all!`,
+    },
+    "victory": {
+      1: `Red: ...!
+                $Blue: Next time we will beat you!`,
+    },
+  },
+  "tate_liza_double": {
+    "encounter": {
+      1: `Tate: Are you suprised?
+                  $Liza: We are two gym leaders at once!
+                  $Tate: We are twins!
+                  $Liza: We dont need to talk to understand each other!
+                  $Tate: Twice the power...
+                  $Liza: Can you handle it?`,
+    },
+    "victory": {
+      1: `Tate: What? Our combination was perfect!
+                  $Liza: Looks like we need to train more...`,
+    },
+  },
+  "liza_tate_double": {
+    "encounter": {
+      1: `Liza: Hihihi... Are you suprised?
+                  $Tate: Yes, we are really two gym leaders at once!
+                  $Liza: This is my twin brother Tate!
+                  $Tate: And this is my twin sister Liza!
+                  $Liza: Don't you think we are a perfect combination?`
+    },
+    "victory": {
+      1: `Liza: Are we...
+                  $Tate: ...not as strong as we thought?`,
+    },
+  },
+  "wallace_steven_double": {
+    "encounter": {
+      1: `Steven: Wallace, let's show them the power of the champions!
+                  $Wallace: We will show you the power of Hoenn!
+                  $Steven: Let's go!`,
+    },
+    "victory": {
+      1: `Steven: That was a great battle!
+                  $Wallace: We will win next time!`,
+    },
+  },
+  "steven_wallace_double": {
+    "encounter": {
+      1: `Steven: Do you have any rare pokémon?
+          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
+            $Steven: Oh... I see... Let's go then!`,
+    },
+    "victory": {
+      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
+            $Wallace: Steven...`,
+    },
+  },
+  "alder_iris_double": {
+    "encounter": {
+      1:  `Alder: We are the strongest trainers in Unova!
+                  $Iris: Fights against strong trainers are the best!`,
+    },
+    "victory": {
+      1:   `Alder: Wow! You are super strong!
+                  $Iris: We will win next time!`,
+    },
+  },
+  "iris_alder_double": {
+    "encounter": {
+      1:   `Iris: Welcome Challenger! I am THE Unova Champion!
+                  $Alder: Iris, aren't you a bit too excited?`,
+    },
+    "victory": {
+      1:    `Iris: A loss like this is not easy to take...
+                  $Alder: But we will only get stronger with every loss!`,
+    },
+  },
+  "piers_marnie_double": {
+    "encounter": {
+      1:   `Marnie: Brother, let's show them the power of Spikemuth!
+                  $Piers: We bring darkness!`,
+    },
+    "victory": {
+      1:  `Marnie: You brought light to our darkness!
+                  $Piers: Its too bright...`,
+    },
+  },
+  "marnie_piers_double": {
+    "encounter": {
+      1:  `Piers: Ready for a concert?
+                    $Marnie: Brother... They are here to fight, not to sing...`,
+    },
+    "victory": {
+      1:  `Piers: Now that was a great concert!
+                    $Marnie: Brother...`,
+    },
+  },
+};

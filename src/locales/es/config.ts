@@ -21,7 +21,7 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
-import {dialogue, battleSpecDialogue, miscDialogue} from "./dialogue";
+import {dialogue, battleSpecDialogue, miscDialogue,doubleBattleDialogue} from "./dialogue";
 
 export const esConfig = {
   ability: ability,
@@ -52,4 +52,5 @@ export const esConfig = {
   dialogue: dialogue,
   battleSpecDialogue: battleSpecDialogue,
   miscDialogue: miscDialogue,
+  doubleBattleDialogue: doubleBattleDialogue
 };

@@ -21,6 +21,8 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
+import {dialogue, battleSpecDialogue, miscDialogue,doubleBattleDialogue} from "./dialogue";
+
 
 export const zhTWConfig = {
   ability: ability,
@@ -48,4 +50,8 @@ export const zhTWConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   voucher: voucher,
+  dialogue: dialogue,
+  battleSpecDialogue: battleSpecDialogue,
+  miscDialogue: miscDialogue,
+  doubleBattleDialogue: doubleBattleDialogue
 };

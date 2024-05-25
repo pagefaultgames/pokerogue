@@ -182,6 +182,7 @@ declare module "i18next" {
       dialogue: DialogueTranslationEntries;
       battleSpecDialogue: SimpleTranslationEntries;
       miscDialogue: SimpleTranslationEntries;
+      doubleBattleDialogue: DialogueTranslationEntries;
     };
   }
 }
