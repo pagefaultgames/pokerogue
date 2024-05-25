@@ -322,12 +322,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               console.warn = () => {};
               const battleFrameNames = this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
               console.warn = originalWarn;
-              this.scene.anims.create({
-                key: this.getBattleSpriteKey(),
-                frames: battleFrameNames,
-                frameRate: 12,
-                repeat: -1
-              });
+              if (!(this.scene.anims.exists(this.getBattleSpriteKey()))) {
+                this.scene.anims.create({
+                  key: this.getBattleSpriteKey(),
+                  frames: battleFrameNames,
+                  frameRate: 12,
+                  repeat: -1
+                });
+              }
             }
             this.playAnim();
             const updateFusionPaletteAndResolve = () => {
@@ -524,13 +526,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     shinySparkle.setVisible(false);
     shinySparkle.setOrigin(0.5, 1);
     const frameNames = this.scene.anims.generateFrameNames(key, { suffix: ".png", end: 34 });
-    this.scene.anims.create({
-      key: `sparkle${keySuffix}`,
-      frames: frameNames,
-      frameRate: 32,
-      showOnStart: true,
-      hideOnComplete: true,
-    });
+    if (!(this.scene.anims.exists(`sparkle${keySuffix}`))) {
+      this.scene.anims.create({
+        key: `sparkle${keySuffix}`,
+        frames: frameNames,
+        frameRate: 32,
+        showOnStart: true,
+        hideOnComplete: true,
+      });
+    }
     this.add(shinySparkle);
 
     this.shinySparkle = shinySparkle;
@@ -1800,6 +1804,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
+        // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
+        const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
+
         const oneHitKo = result === HitResult.ONE_HIT_KO;
         if (damage.value) {
           if (this.getHpRatio() === 1) {
@@ -1860,6 +1867,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (damage) {
           this.scene.clearPhaseQueueSplice();
+
+          const attacker = this.scene.getPokemonById(source.id);
+          destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
         }
       }
       break;

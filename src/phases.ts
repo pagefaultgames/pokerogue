@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, AuraAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, AuraAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -61,6 +61,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
+import { MoveUsedEvent } from "./battle-scene-events";
 
 
 export class LoginPhase extends Phase {
@@ -2157,13 +2158,28 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
+        break;
       case Command.RUN:
-        const isSwitch = turnCommand.command === Command.POKEMON;
-        if (isSwitch) {
-          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
-        } else {
-          this.scene.unshiftPhase(new AttemptRunPhase(this.scene, pokemon.getFieldIndex()));
+        let runningPokemon = pokemon;
+        if (this.scene.currentBattle.double) {
+          const playerActivePokemon = field.filter(pokemon => {
+            if (!!pokemon) {
+              return pokemon.isPlayer() && pokemon.isActive();
+            } else {
+              return;
+            }
+          });
+          // if only one pokemon is alive, use that one
+          if (playerActivePokemon.length > 1) {
+            // find which active pokemon has faster speed
+            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
+            // check if either active pokemon has the ability "Run Away"
+            const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
+            runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
+          }
         }
+        this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
         break;
       }
     }
@@ -2390,7 +2406,7 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
-      if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId) {
+      if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       }
       return this.end();
@@ -2473,8 +2489,9 @@ export class MovePhase extends BattlePhase {
       const moveQueue = this.pokemon.getMoveQueue();
       if (this.cancelled || this.failed) {
         if (this.failed) {
-          this.move.usePp(ppUsed);
-        } // Only use PP if the move failed
+          this.move.usePp(ppUsed); // Only use PP if the move failed
+          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+        }
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
@@ -2504,8 +2521,9 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
-      if (!moveQueue.length || !moveQueue.shift().ignorePP) {// using .shift here clears out two turn moves once they've been used
+      if (!moveQueue.length || !moveQueue.shift().ignorePP) { // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
+        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length) {
@@ -2532,7 +2550,16 @@ export class MovePhase extends BattlePhase {
           this.showFailedText(failedText);
         }
       }
-
+      // Checks if Dancer ability is triggered
+      if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
+        // Pokemon with Dancer can be on either side of the battle so we check in both cases
+        this.scene.getPlayerField().forEach(pokemon => {
+          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
+        });
+        this.scene.getEnemyParty().forEach(pokemon => {
+          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
+        });
+      }
       this.end();
     };
 
@@ -4400,7 +4427,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       }
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
-        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL);
+        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL as DamageResult);
         healAmount.value = 0;
       }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)

@@ -17,7 +17,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "为一只宝可梦回复 {{restorePoints}} HP 或 {{restorePercent}}% HP，取最大值",
+      description: "为一只宝可梦回复 {{restorePoints}} HP 或 {{restorePercent}}% HP，取较大值",
       extra: {
         "fully": "为一只宝可梦回复全部HP",
         "fullyWithStatus": "为一只宝可梦回复全部HP并消除所有负面\n状态",
@@ -196,7 +196,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MULTI_LENS": { name: "多重镜" },
 
     "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (含复活)" },
-    "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级提升1级" },
+    "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级额外增加1级" },
 
     "BERRY_POUCH": { name: "树果袋", description: "使用树果时有33%的几率不会消耗树果" },
 
