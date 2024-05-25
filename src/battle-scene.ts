@@ -863,16 +863,18 @@ export default class BattleScene extends SceneBase {
     if (newWaveIndex === undefined) {
       if (this.currentBattle?.waveIndex === undefined) {
         newWaveIndex = startingWave;
-      } else if (this.gameMode.isTurbo) {
+      } else {
         newWaveIndex = this.currentBattle?.waveIndex + 1;
-        if (!fixedBattles[newWaveIndex]) {
+
+        // Turbo mode: If we don't have a fixed battle next, skip a wave
+        if (this.gameMode.isTurbo && !fixedBattles[newWaveIndex]) {
           newWaveIndex++;
+          // If we're on an odd wave (because we just started the game or left a fixed battle), skip back to even
+          // Effectively, Turbo spends all its time on even-numbered waves except to hit fixed battles
           if (newWaveIndex % 2 && !fixedBattles[newWaveIndex]) {
             newWaveIndex++;
           }
         }
-      } else {
-        newWaveIndex = this.currentBattle?.waveIndex + 1;
       }
     }
     let newDouble: boolean;
