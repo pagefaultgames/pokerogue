@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "Daily Run (Beta)",
   "loadGame": "Load Game",
   "newGame": "New Game",
+  "settings": "Settings",
   "selectGameMode": "Select a game mode.",
   "logInOrCreateAccount": "Log in or create an account to start. No email required!",
   "username": "Username",

@@ -261,6 +261,14 @@ export class TitlePhase extends Phase {
         return true;
       },
       keepOpen: true
+    },
+    {
+      label: i18next.t("menu:settings"),
+      handler: () => {
+        this.scene.ui.setOverlayMode(Mode.SETTINGS);
+        return true;
+      },
+      keepOpen: true
     });
     const config: OptionSelectConfig = {
       options: options,
@@ -1010,7 +1018,6 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
-
     handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
   }
 
