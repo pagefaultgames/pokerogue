@@ -322,12 +322,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               console.warn = () => {};
               const battleFrameNames = this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
               console.warn = originalWarn;
-              this.scene.anims.create({
-                key: this.getBattleSpriteKey(),
-                frames: battleFrameNames,
-                frameRate: 12,
-                repeat: -1
-              });
+              if (!(this.scene.anims.exists(this.getBattleSpriteKey()))) {
+                this.scene.anims.create({
+                  key: this.getBattleSpriteKey(),
+                  frames: battleFrameNames,
+                  frameRate: 12,
+                  repeat: -1
+                });
+              }
             }
             this.playAnim();
             const updateFusionPaletteAndResolve = () => {
@@ -524,13 +526,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     shinySparkle.setVisible(false);
     shinySparkle.setOrigin(0.5, 1);
     const frameNames = this.scene.anims.generateFrameNames(key, { suffix: ".png", end: 34 });
-    this.scene.anims.create({
-      key: `sparkle${keySuffix}`,
-      frames: frameNames,
-      frameRate: 32,
-      showOnStart: true,
-      hideOnComplete: true,
-    });
+    if (!(this.scene.anims.exists(`sparkle${keySuffix}`))) {
+      this.scene.anims.create({
+        key: `sparkle${keySuffix}`,
+        frames: frameNames,
+        frameRate: 32,
+        showOnStart: true,
+        hideOnComplete: true,
+      });
+    }
     this.add(shinySparkle);
 
     this.shinySparkle = shinySparkle;
