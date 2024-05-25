@@ -36,5 +36,5 @@ export const biome: SimpleTranslationEntries = {
   "SNOWY_FOREST": "Forêt Enneigée",
   "ISLAND": "Île",
   "LABORATORY": "Laboratoire",
-  "END": "Final",
+  "END": "???",
 } as const;

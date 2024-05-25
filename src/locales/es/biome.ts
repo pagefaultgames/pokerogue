@@ -27,7 +27,7 @@ export const biome: SimpleTranslationEntries = {
   "RUINS": "Ancient Ruins",
   "WASTELAND": "Wasteland",
   "ABYSS": "The Abyss",
-  "SPACE": "Stratosphere",
+  "SPACE": "Space",
   "CONSTRUCTION_SITE": "Construction Site",
   "JUNGLE": "Jungle",
   "FAIRY_CAVE": "Fairy Cave",
@@ -36,5 +36,5 @@ export const biome: SimpleTranslationEntries = {
   "SNOWY_FOREST": "Snowy Forest",
   "ISLAND": "Island",
   "LABORATORY": "Laboratory",
-  "END": "Final Destination",
+  "END": "??? ",
 } as const;
