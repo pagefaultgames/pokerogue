@@ -2924,7 +2924,7 @@ export class StealStatBoostsAttr extends PreAttackStatChangeAttr {
       // For each battle stat, check if any boosts were stolen and apply them to the user
       targetBoosts.forEach((boost, index) => {
         if (boost > 0) {
-          user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [index], boost));
+          user.scene.overridePhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [index], boost));
         }
       });
 

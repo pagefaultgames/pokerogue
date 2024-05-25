@@ -3067,28 +3067,28 @@ export class StatChangePhase extends PokemonPhase {
     const battleStats = this.getPokemon().summonData.battleStats;
     const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
 
+    if (this.showMessage) {
+      const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
+      for (const message of messages) {
+        this.scene.queueMessage(message);
+      }
+    }
+
+    for (const stat of filteredStats) {
+      pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
+    }
+
+    if (levels.value > 0 && this.canBeCopied) {
+      for (const opponent of pokemon.getOpponents()) {
+        applyAbAttrs(StatChangeCopyAbAttr, opponent, null, this.stats, levels.value);
+      }
+    }
+
+    applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
+
+    pokemon.updateInfo();
+
     const end = () => {
-      if (this.showMessage) {
-        const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
-        for (const message of messages) {
-          this.scene.queueMessage(message);
-        }
-      }
-
-      for (const stat of filteredStats) {
-        pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
-      }
-
-      if (levels.value > 0 && this.canBeCopied) {
-        for (const opponent of pokemon.getOpponents()) {
-          applyAbAttrs(StatChangeCopyAbAttr, opponent, null, this.stats, levels.value);
-        }
-      }
-
-      applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
-
-      pokemon.updateInfo();
-
       handleTutorial(this.scene, Tutorial.Stat_Change).then(() => super.end());
     };
 
