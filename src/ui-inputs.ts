@@ -100,6 +100,10 @@ export class UiInputs {
     }
   }
   buttonInfo(pressed: boolean = true): void {
+    if (!this.scene.showMovesetFlyout) {
+      return;
+    }
+
     for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
       p.toggleFlyout(pressed);
     }
