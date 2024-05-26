@@ -29,8 +29,9 @@ export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
 export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
-export const ARENA_TINT_OVERRIDE: TimeOfDay = null; // TimeOfDay.DAWN, TimeOfDay.NIGHT, etc
-export const XP_MULTIPLIER_OVERRIDE: number = null; // if set, multiply the xp gained by this number
+export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
+// Multiplies XP gained by this value including 0. Set to null to ignore the override
+export const XP_MULTIPLIER_OVERRIDE: number = null;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
@@ -61,7 +62,7 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const GENDER_OVERRIDE: Gender = null; // GENDERS.MALE, GENDERS.FEMALE, GENDERS.GENDERLESS
+export const GENDER_OVERRIDE: Gender = null;
 export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
