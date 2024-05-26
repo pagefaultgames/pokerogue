@@ -736,7 +736,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
       for (const e of pokemonEvolutions[p]) {
-        if (e.speciesId === this.speciesId && (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey)) {
+        if (e.speciesId === this.speciesId && (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey) && prevolutionLevels.every(pe => pe[0] !== parseInt(p))) {
           const speciesId = parseInt(p) as Species;
           const level = e.level;
           prevolutionLevels.push([ speciesId, level ]);
