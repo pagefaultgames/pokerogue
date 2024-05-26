@@ -228,6 +228,7 @@ export class TrainerConfig {
 
   getSpriteKey(female?: boolean): string {
     let ret = this.getKey();
+    console.log(ret);
     if (this.hasGenders) {
       ret += `_${female ? "f" : "m"}`;
     }
@@ -913,6 +914,8 @@ export const signatureSpecies: SignatureSpecies = {
   NEMONA: [Species.LYCANROC, Species.KORAIDON, Species.KOMMO_O, Species.PAWMOT, Species.DUSKNOIR],
   KIERAN: [Species.POLITOED, [Species.OGERPON, Species.TERAPAGOS], Species.HYDRAPPLE, Species.PORYGON_Z, Species.GRIMMSNARL],
   LEON: [Species.DRAGAPULT, [Species.ZACIAN, Species.ZAMAZENTA], Species.SEISMITOAD, Species.AEGISLASH, Species.CHARIZARD],
+  VOLO: [Species.SPIRITOMB, Species.GIRATINA, Species.HISUI_ARCANINE, Species.GARCHOMP, Species.LUCARIO, Species.TOGEKISS],
+  HOP: [[Species.ZACIAN, Species.ZAMAZENTA], Species.DUBWOOL, Species.SNORLAX, Species.CORVIKNIGHT, [Species.RILLABOOM, Species.CINDERACE, Species.INTELEON]],
 };
 
 export const trainerConfigs: TrainerConfigs = {
@@ -1197,7 +1200,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion(signatureSpecies["LANCE_CHAMPION"]).setBattleBgm("battle_johto_champion"),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(signatureSpecies["STEVEN"]).setBattleBgm("battle_hoenn_champion").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double"),
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion(signatureSpecies["WALLACE"]).setBattleBgm("battle_hoenn_champion").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double"),
-  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(signatureSpecies["CYNTHIA"]).setBattleBgm("battle_sinnoh_champion"),
+  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(signatureSpecies["CYNTHIA"]).setBattleBgm("battle_sinnoh_champion").setDoubleTrainerType(TrainerType.VOLO).setDoubleTitle("timespace_double").setHasDouble("cynthia_volo_double"),
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(signatureSpecies["ALDER"]).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder"),
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(signatureSpecies["IRIS"]).setBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double"),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(signatureSpecies["DIANTHA"]),
@@ -1205,7 +1208,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(signatureSpecies["GEETA"]),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(signatureSpecies["NEMONA"]),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(signatureSpecies["KIERAN"]),
-  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"]),
+  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"]).setDoubleTrainerType(TrainerType.HOP).setDoubleTitle("sibling_double").setHasDouble("leon_hop_double"),
+
+  [TrainerType.HOP]: new TrainerConfig((t=TrainerType.HOP)).initForChampion(signatureSpecies["HOP"]).setDoubleTrainerType(TrainerType.LEON).setDoubleTitle("sibling_double").setHasDouble("hop_leon_double"),
+  [TrainerType.VOLO]: new TrainerConfig(++t).initForChampion(signatureSpecies["VOLO"]).setBattleBgm("battle_sinnoh_champion").setDoubleTrainerType(TrainerType.CYNTHIA).setDoubleTitle("timespace_double").setHasDouble("volo_cynthia_double"),
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)
     .setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE)
