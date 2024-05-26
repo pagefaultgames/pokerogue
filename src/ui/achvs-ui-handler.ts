@@ -32,7 +32,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
-		
+
     const headerText = addTextObject(this.scene, 0, 0, i18next.t("achv:Achievements.name"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
@@ -137,15 +137,15 @@ export default class AchvsUiHandler extends MessageUiHandler {
   }
 
   protected showAchv(achv: Achv) {
-    achv.name = i18next.t(`achv:${achv.localizationKey}.name`)
-    achv.description = getAchievementDescription(achv.localizationKey)
+    achv.name = i18next.t(`achv:${achv.localizationKey}.name`);
+    achv.description = getAchievementDescription(achv.localizationKey);
     const achvUnlocks = this.scene.gameData.achvUnlocks;
     const unlocked = achvUnlocks.hasOwnProperty(achv.id);
     const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
-    this.titleText.setText(unlocked ? achv.name : '???');
-    this.showText(!hidden ? achv.description : '');
+    this.titleText.setText(unlocked ? achv.name : "???");
+    this.showText(!hidden ? achv.description : "");
     this.scoreText.setText(`${achv.score}pt`);
-    this.unlockText.setText(unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t('achv:Locked.name'));
+    this.unlockText.setText(unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:Locked.name"));
   }
 
   processInput(button: Button): boolean {

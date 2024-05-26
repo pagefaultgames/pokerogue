@@ -63,16 +63,16 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "35px",
   },
   "fr":{
-    starterInfoTextSize: '54px',
-    instructionTextSize: '42px',
+    starterInfoTextSize: "54px",
+    instructionTextSize: "42px",
   },
   "it":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
   "pt_BR":{
-    starterInfoTextSize: '47px',
-    instructionTextSize: '38px',
+    starterInfoTextSize: "47px",
+    instructionTextSize: "38px",
     starterInfoXPos: 33,
   },
   "zh":{

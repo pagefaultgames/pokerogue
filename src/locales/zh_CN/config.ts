@@ -28,7 +28,7 @@ import { biome } from "./biome";
 export const zhCnConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
-	achv: achv,
+  achv: achv,
   battle: battle,
   commandUiHandler: commandUiHandler,
   egg: egg,
