@@ -161,6 +161,7 @@ declare module "i18next" {
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
+      biome: SimpleTranslationEntries;
     };
   }
 }

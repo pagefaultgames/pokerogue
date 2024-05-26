@@ -20,6 +20,8 @@ import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
+import { biome } from "./biome";
+
 
 
 export const ptBrConfig = {
@@ -47,4 +49,5 @@ export const ptBrConfig = {
   modifierType: modifierType,
   berry: berry,
   voucher: voucher,
+  biome: biome,
 };
