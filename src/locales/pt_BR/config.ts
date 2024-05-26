@@ -22,8 +22,10 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { biome } from "./biome";
 
-export const ptBrConfig = {    
+
+export const ptBrConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   achv: achv,
@@ -50,4 +52,5 @@ export const ptBrConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  biome: biome,
 };

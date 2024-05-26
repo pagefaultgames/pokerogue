@@ -22,6 +22,8 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { biome } from "./biome";
+
 
 export const deConfig = {
   ability: ability,
@@ -50,4 +52,5 @@ export const deConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   voucher: voucher,
+  biome: biome,
 };

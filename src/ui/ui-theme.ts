@@ -42,7 +42,7 @@ export function addWindow(scene: BattleScene, x: number, y: number, width: numbe
   }
 
   const borderSize = scene.uiTheme ? 6 : 8;
-    
+
   const window = scene.add.nineslice(x, y, `window_${scene.windowType}${getWindowVariantSuffix(windowVariant)}`, null, width, height, borderSize, borderSize, borderSize, borderSize);
   window.setOrigin(0, 0);
 

@@ -22,7 +22,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "nature": "Wesen:",
   "eggMoves": "Ei-Attacken",
   "start": "Start",
-  "addToParty": "Zum Team hinzufügen", 
+  "addToParty": "Zum Team hinzufügen",
   "toggleIVs": "DVs anzeigen/verbergen",
   "manageMoves": "Attacken ändern",
   "useCandies": "Bonbons verwenden",

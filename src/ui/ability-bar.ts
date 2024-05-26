@@ -63,7 +63,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
         this.resetAutoHideTimer();
       }
     });
-   
+
     this.setVisible(true);
     this.shown = true;
   }

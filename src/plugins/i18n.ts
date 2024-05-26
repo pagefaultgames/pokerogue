@@ -133,7 +133,7 @@ export function initI18n(): void {
       },
       zh_CN: {
         ...zhCnConfig
-      }, 
+      },
       zh_TW: {
         ...zhTWConfig
       }
@@ -171,6 +171,7 @@ declare module "i18next" {
       berry: BerryTranslationEntries;
 	    voucher: SimpleTranslationEntries;
       achv: AchievementTranslationEntries;
+      biome: SimpleTranslationEntries;
     };
   }
 }
