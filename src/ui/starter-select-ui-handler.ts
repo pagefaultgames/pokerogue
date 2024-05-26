@@ -704,7 +704,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.scene.candyUpgradeDisplay === 1) {
             // 'Only Passives' mode
             if (this.scene.candyUpgradeNotification === 1) {
-              // If the player has enough candy to upgrade the passive, animate the icon
               if (this.scene.gameData.starterData[species.speciesId].candyCount >= this.scene.gameData.getSpeciesStarterValue(species.speciesId) && !(this.scene.gameData.starterData[species.speciesId].passiveAttr & PassiveAttr.UNLOCKED)) {
                 this.scene.tweens.chain({
                   targets: icon,
@@ -728,7 +727,33 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
               // 'On' mode
             } else if (this.scene.candyUpgradeNotification === 2) {
-              icon.setY(icon.y);
+              if (
+                (this.scene.gameData.starterData[species.speciesId].candyCount >=
+                 this.scene.gameData.getSpeciesStarterValue(species.speciesId) &&
+                 !(this.scene.gameData.starterData[species.speciesId].passiveAttr & PassiveAttr.UNLOCKED)) ||
+                 (this.scene.gameData.starterData[species.speciesId].candyCount >=
+                  getValueReductionCandyCounts(speciesStarters[species.speciesId])[this.scene.gameData.starterData[species.speciesId].valueReduction] &&
+                  this.scene.gameData.starterData[species.speciesId].valueReduction < 2)) {
+                this.scene.tweens.chain({
+                  targets: icon,
+                  loop: -1,
+                  loopDelay: 1000,
+                  tweens: [
+                    {
+                      y: "-=5",
+                      duration: Utils.fixedInt(125),
+                      ease: "Cubic.easeOut",
+                      yoyo: true
+                    },
+                    {
+                      y: "-=3",
+                      duration: Utils.fixedInt(150),
+                      ease: "Cubic.easeOut",
+                      yoyo: true
+                    }
+                  ]
+                });
+              }
             }
           }
         }
@@ -1543,6 +1568,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
           this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
         }
+
+        // Pause the animation when the species is selected
+
         this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
         let starterIndex = -1;
@@ -1909,6 +1937,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   updateCandyUpgradeIcon(cursor: integer): void {
     const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
+
+    // 'Animation' mode
+    if (this.scene.candyUpgradeDisplay === 1) {
+      this.candyUpgradeIcon[cursor].setVisible(false);
+      this.candyUpgradeOverlayIcon[cursor].setVisible(false);
+      return;
+    }
 
     switch (this.scene.candyUpgradeNotification) {
     // 'Off' mode
