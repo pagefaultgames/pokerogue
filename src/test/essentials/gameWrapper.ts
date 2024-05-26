@@ -22,10 +22,10 @@ export default class GameWrapper {
   };
 
   constructor() {
-      this.gameObj.renderer = new CanvasRenderer(this.gameObj);
-      this.gameObj.renderer.maxTextures = -1;
-      this.gameObj.manager = new InputManager(this.gameObj, {});
-      this.gameObj.pluginEvents = new EventEmitter();
+    this.gameObj.renderer = new CanvasRenderer(this.gameObj);
+    this.gameObj.renderer.maxTextures = -1;
+    this.gameObj.manager = new InputManager(this.gameObj, {});
+    this.gameObj.pluginEvents = new EventEmitter();
 
 
     window.matchMedia = () => ({
@@ -33,20 +33,6 @@ export default class GameWrapper {
     });
     this.scene = {
       add: this.addScene.bind(this),
-    };
-    this.canvas = {
-      height: 0,
-      width: 0,
-    };
-    this.renderer = {
-      maxTextures: "",
-      gl: {},
-      deleteTexture: () => null,
-      canvasToTexture: () => null
-    };
-    this.events = {
-      on: () => null,
-      once: () => null,
     };
     this.config = {
       seed: ["test"],
