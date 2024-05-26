@@ -688,7 +688,7 @@ export default class SummaryUiHandler extends UiHandler {
       trainerIdText.setOrigin(0, 0);
       profileContainer.add(trainerIdText);
 
-      const typeLabel = addTextObject(this.scene, 7, 28, `${i18next.t("summaryUiHandler:type")}/`, TextStyle.WINDOW_ALT);
+      const typeLabel = addTextObject(this.scene, 7, 28, "Type/", TextStyle.WINDOW_ALT);
       typeLabel.setOrigin(0, 0);
       profileContainer.add(typeLabel);
 
