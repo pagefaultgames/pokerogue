@@ -28,6 +28,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "manageNature": "Gérer Nature",
   "useCandies": "Utiliser Bonbons",
   "selectNature": "Sélectionnez Nature.",
+  "neutralNature": "Neutral",
   "selectMoveSwapOut": "Sélectionnez la capacité à échanger.",
   "selectMoveSwapWith": "Sélectionnez laquelle échanger avec",
   "unlockPassive": "Débloquer Passif",

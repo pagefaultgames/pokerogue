@@ -28,6 +28,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "manageNature": "管理性格",
   "useCandies": "使用糖果",
   "selectNature": "选择性格",
+  "neutralNature": "中性的",
   "selectMoveSwapOut": "选择要替换的招式。",
   "selectMoveSwapWith": "选择要替换成的招式",
   "unlockPassive": "解锁被动",
