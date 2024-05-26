@@ -33,7 +33,7 @@ export const weather: SimpleTranslationEntries = {
   "heavyRainStartMessage": "A heavy downpour started!",
   "heavyRainLapseMessage": "The heavy downpour continues.",
   "heavyRainClearMessage": "The heavy rain stopped.",
-    
+
   "harshSunStartMessage": "The sunlight got hot!",
   "harshSunLapseMessage": "The sun is scorching hot.",
   "harshSunClearMessage": "The harsh sunlight faded.",

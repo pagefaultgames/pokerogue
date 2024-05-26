@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Honigmaul",
-    description: "Das Pokémon sammelt nach Kämpfen eventuell Honig auf.",
+    description:  "Sammelt nach dem Kampf Honig. Dieser wird dann für Geld verkauft.",
   },
   frisk: {
     name: "Schnüffler",

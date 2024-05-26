@@ -54,7 +54,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -65,7 +65,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
-    
+
     this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
 

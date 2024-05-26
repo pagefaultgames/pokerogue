@@ -124,7 +124,7 @@ export function initI18n(): void {
       },
       zh_CN: {
         ...zhCnConfig
-      }, 
+      },
       zh_TW: {
         ...zhTWConfig
       }
@@ -161,6 +161,7 @@ declare module "i18next" {
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
+      biome: SimpleTranslationEntries;
     };
   }
 }
