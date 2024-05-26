@@ -226,13 +226,13 @@ export class TrainerConfig {
     return TrainerType[this.getDerivedType()].toString().toLowerCase();
   }
 
-  getSpriteKey(female?: boolean): string {
+  getSpriteKey(female?: boolean,isDouble: boolean = false): string {
     let ret = this.getKey();
     if (this.hasGenders) {
       ret += `_${female ? "f" : "m"}`;
     }
     // If a special double trainer class was set, set it as the sprite key
-    if (this.trainerTypeDouble && female) {
+    if (this.trainerTypeDouble && female && isDouble) {
       ret = TrainerType[this.trainerTypeDouble].toString().toLowerCase();
     }
     return ret;
@@ -689,8 +689,8 @@ export class TrainerConfig {
   loadAssets(scene: BattleScene, variant: TrainerVariant): Promise<void> {
     return new Promise(resolve => {
       const isDouble = variant === TrainerVariant.DOUBLE;
-      const trainerKey = this.getSpriteKey(variant === TrainerVariant.FEMALE);
-      const partnerTrainerKey = this.getSpriteKey(true);
+      const trainerKey = this.getSpriteKey(variant === TrainerVariant.FEMALE, false);
+      const partnerTrainerKey = this.getSpriteKey(true,true);
       scene.loadAtlas(trainerKey, "trainer");
       if (isDouble) {
         scene.loadAtlas(partnerTrainerKey, "trainer");
@@ -874,7 +874,7 @@ export const signatureSpecies: SignatureSpecies = {
   FLINT: [Species.FLAREON, Species.HOUNDOOM, Species.RAPIDASH, Species.INFERNAPE],
   LUCIAN: [Species.MR_MIME, Species.GALLADE, Species.BRONZONG, Species.ALAKAZAM],
   SHAUNTAL: [Species.COFAGRIGUS, Species.CHANDELURE, Species.GOLURK, Species.DRIFBLIM],
-  MARSHAL: [Species.TIMBURR, Species.MIENFOO, Species.THROH, Species.SAWK],
+  MARSHAL: [Species.CONKELDURR, Species.MIENSHAO, Species.THROH, Species.SAWK],
   GRIMSLEY: [Species.LIEPARD, Species.KINGAMBIT, Species.SCRAFTY, Species.KROOKODILE],
   CAITLIN: [Species.MUSHARNA, Species.GOTHITELLE, Species.SIGILYPH, Species.REUNICLUS],
   MALVA: [Species.PYROAR, Species.TORKOAL, Species.CHANDELURE, Species.TALONFLAME],
