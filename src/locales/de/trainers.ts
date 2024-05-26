@@ -10,10 +10,22 @@ export const titles: SimpleTranslationEntries = {
   "champion_double": "Champion-Duo",
   "rival": "Rivale",
   "professor": "Professor",
+  "professor_female": "Professorin",
   "frontier_brain": "Kampfkoryphäen",
+
+  // Special Trainers
+  "pkm_trainer": "Pokémon-Trainer",
+  "pkm_trainer_female": "Pokémon-Trainerin",
+  "pkm_tamer": "Pokémon-Bändiger",
+  "pkm_tamer_female": "Pokémon-Bändigerin",
+
+  // Double Titles
   "timespace_double": "Zeit-Raum-Duo",
   "sibling_double": "Geschwister-Duo",
   "ninja_double": "Ninja-Duo",
+  "dragon_tamer_double": "Drachenbändiger-Duo",
+  "kalos_legends_double": "Kalos-Legenden-Duo",
+  "alola_legends_double": "Alola-Legenden-Duo",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -247,6 +259,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "rival": "Finn",
   "rival_female": "Ivy",
 
+  "volo": "Volo",
+  "hop": "Hop",
+  "kukui": "Kukui",
+  "carmine": "Hana",
+
   // Double Names
   "blue_red_double": "Blau & Rot",
   "red_blue_double": "Rot & Blau",
@@ -268,4 +285,12 @@ export const trainerNames: SimpleTranslationEntries = {
   "geeta_nemona_double": "Sagaria & Nemila",
   "janine_koga_double": "Janina & Koga",
   "koga_janine_double": "Koga & Janina",
+  "lance_clair_double": "Siegfried & Sandra",
+  "clair_lance_double": "Sandra & Siegfried",
+  "kieran_carmine_double": "Jo & Hana",
+  "carmine_kieran_double": "Hana & Jo",
+  "hau_kukui_double": "Tali & Kukui",
+  "kukui_hau_double": "Kukui & Tali",
+  "diantha_korrina_double": "Diantha & Connie",
+  "korrina_diantha_double": "Connie & Diantha",
 } as const;
