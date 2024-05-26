@@ -74,7 +74,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     console.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
 
     const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale));
+      const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale,this.isDouble()));
       ret.setOrigin(0.5, 1);
       ret.setPipeline(this.scene.spritePipeline, {tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow});
       return ret;
@@ -105,7 +105,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getKey(forceFemale?: boolean): string {
-    return this.config.getSpriteKey(this.variant === TrainerVariant.FEMALE || forceFemale);
+    return this.config.getSpriteKey(this.variant === TrainerVariant.FEMALE || forceFemale,this.isDouble());
   }
 
   /**

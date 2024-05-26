@@ -655,6 +655,9 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
+      pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
+    }
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
