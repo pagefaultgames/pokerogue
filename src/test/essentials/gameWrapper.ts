@@ -116,11 +116,90 @@ export default class GameWrapper {
     addMethods.setStrokeStyle = () => ({ ...methodsWithoutSetStrokeStyle });
     addMethods.getAt = () => ({ ...methodsWithoutGetAt });
 
+    _scene.add = {
+      container: () => ({...addMethods}),
+      sprite: {
+        apply: () => ({...addMethods}),
+      },
+      existing: () => null,
+      rectangle: () => ({...addMethods}),
+      nineslice: () => ({...addMethods}),
+      image: () => ({...addMethods}),
+      text: () => ({...addMethods}),
+      polygon: () => ({...addMethods}),
+    };
+    _scene.anims = {
+      create: () => null,
+      generateFrameNumbers: () => null,
+      generateFrameNames: () => ([]),
+    };
+    _scene.cachedFetch = (url, init) => {
+      return new Promise((resolve) => {
+        const newUrl = prependPath(url);
+        const raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
+        const data = JSON.parse(raw);
+        const response = createFetchResponse(data);
+        return resolve(response);
+      });
+    };
     _scene.game = this;
+    _scene.input = {
+      gamepad: {
+        on: () => null,
+        refreshPads: () => null,
+      },
+      keyboard: {
+        on: () => null,
+        addKey: () => ({
+          on: () => null,
+        }),
+      }
+    };
+    _scene.load = {
+      setBaseURL: () => null,
+      once: () => null,
+      isLoading: () => null,
+      start: () => null,
+      spritesheet: () => null,
+      audio: () => null,
+      image: () => null,
+      atlas: () => null,
+    };
+    _scene.make = {
+      graphics: () => ({...addMethods}),
+      rexTransitionImagePack: () => ({
+        transit: () => null,
+      }),
+    };
+    _scene.renderer = {
+      pipelines: {
+        add: () => null,
+      },
+    };
     _scene.sound = {
       play: () => null,
       get: (key) => new NoAudioSound(undefined, key),
       getAllPlaying: () => [],
+    };
+    _scene.sys = {
+      queueDepthSort: () => null,
+      game: this,
+      textures: {
+        addCanvas: () => ({
+          get: () => ({ // this.frame in Text.js
+            source: {},
+            setSize: () => null,
+            glTexture: () => ({
+              spectorMetadata: {},
+            }),
+          }),
+        })
+      },
+      cache: {},
+      scale: {},
+      events: {
+        on: () => null,
+      }
     };
     _scene.time = {
       addEvent: (evt) => {
@@ -149,85 +228,6 @@ export default class GameWrapper {
           data.onComplete();
         }
       },
-    };
-    _scene.add = {
-      container: () => ({...addMethods}),
-      sprite: {
-        apply: () => ({...addMethods}),
-      },
-      existing: () => null,
-      rectangle: () => ({...addMethods}),
-      nineslice: () => ({...addMethods}),
-      image: () => ({...addMethods}),
-      text: () => ({...addMethods}),
-      polygon: () => ({...addMethods}),
-    };
-    _scene.load = {
-      setBaseURL: () => null,
-      once: () => null,
-      isLoading: () => null,
-      start: () => null,
-      spritesheet: () => null,
-      audio: () => null,
-      image: () => null,
-      atlas: () => null,
-    };
-    _scene.anims = {
-      create: () => null,
-      generateFrameNumbers: () => null,
-      generateFrameNames: () => ([]),
-    };
-    _scene.sys = {
-      queueDepthSort: () => null,
-      game: this,
-      textures: {
-        addCanvas: () => ({
-          get: () => ({ // this.frame in Text.js
-            source: {},
-            setSize: () => null,
-            glTexture: () => ({
-              spectorMetadata: {},
-            }),
-          }),
-        })
-      },
-      cache: {},
-      scale: {},
-      events: {
-        on: () => null,
-      }
-    };
-    _scene.renderer = {
-      pipelines: {
-        add: () => null,
-      },
-    };
-    _scene.make = {
-      graphics: () => ({...addMethods}),
-      rexTransitionImagePack: () => ({
-        transit: () => null,
-      }),
-    };
-    _scene.cachedFetch = (url, init) => {
-      return new Promise((resolve) => {
-        const newUrl = prependPath(url);
-        const raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
-        const data = JSON.parse(raw);
-        const response = createFetchResponse(data);
-        return resolve(response);
-      });
-    };
-    _scene.input = {
-      gamepad: {
-        on: () => null,
-        refreshPads: () => null,
-      },
-      keyboard: {
-        on: () => null,
-        addKey: () => ({
-          on: () => null,
-        }),
-      }
     };
 
     // const a = game;
