@@ -34,6 +34,7 @@ export enum TrainerType {
   PILOT,
   POKEFAN,
   PRESCHOOLER,
+  PRISONER,
   PSYCHIC,
   RANGER,
   RICH,
