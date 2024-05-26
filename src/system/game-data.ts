@@ -189,6 +189,7 @@ export interface StarterDataEntry {
   valueReduction: integer;
   classicWinCount: integer;
   nature: integer;
+  abilityIndex: integer;
 }
 
 export interface StarterData {
@@ -1174,7 +1175,8 @@ export class GameData {
         passiveAttr: 0,
         valueReduction: 0,
         classicWinCount: 0,
-        nature: 0
+        nature: 0,
+        abilityIndex: 0
       };
     }
 
@@ -1410,6 +1412,12 @@ export class GameData {
   }
 
   getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): integer {
+    const lastAbilityIndex = this.scene.gameData.starterData[species.speciesId].abilityIndex;
+    // If the last picked ability is not the first one, default to it instead
+    if (lastAbilityIndex > 0) {
+      return lastAbilityIndex;
+    }
+
     const abilityAttr = this.starterData[species.speciesId].abilityAttr;
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }

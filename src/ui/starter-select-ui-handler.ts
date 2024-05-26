@@ -1076,6 +1076,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newAbilityIndex !== this.abilityCursor);
+            this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityIndex = newAbilityIndex;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
             success = true;
           }
