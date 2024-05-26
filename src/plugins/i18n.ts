@@ -179,6 +179,7 @@ declare module "i18next" {
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
+      biome: SimpleTranslationEntries;
       dialogue: DialogueTranslationEntries;
       battleSpecDialogue: SimpleTranslationEntries;
       miscDialogue: SimpleTranslationEntries;

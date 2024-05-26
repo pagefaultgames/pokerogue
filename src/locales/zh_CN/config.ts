@@ -22,6 +22,7 @@ import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
 import {dialogue, battleSpecDialogue, miscDialogue,doubleBattleDialogue} from "./dialogue";
+import { biome } from "./biome";
 
 export const zhCnConfig = {
   ability: ability,
@@ -49,6 +50,7 @@ export const zhCnConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   voucher: voucher,
+  biome: biome,
   dialogue: dialogue,
   battleSpecDialogue: battleSpecDialogue,
   miscDialogue: miscDialogue,

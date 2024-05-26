@@ -22,7 +22,7 @@ import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
 import {dialogue, battleSpecDialogue, miscDialogue,doubleBattleDialogue} from "./dialogue";
-
+import { biome } from "./biome";
 
 export const zhTWConfig = {
   ability: ability,
@@ -53,5 +53,6 @@ export const zhTWConfig = {
   dialogue: dialogue,
   battleSpecDialogue: battleSpecDialogue,
   miscDialogue: miscDialogue,
-  doubleBattleDialogue: doubleBattleDialogue
+  doubleBattleDialogue: doubleBattleDialogue,
+  biome: biome
 };
