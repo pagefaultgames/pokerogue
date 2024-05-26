@@ -1356,7 +1356,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
-    console.log(`SET SPECIES NATURE CURSOR ${this.natureCursor}`);
 
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
@@ -1531,7 +1530,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
-    console.log(`NATURE INDEX ${natureIndex}`);
 
     if (species?.forms?.find(f => f.formKey === "female")) {
       if (female !== undefined) {
