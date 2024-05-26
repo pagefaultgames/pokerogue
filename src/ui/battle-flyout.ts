@@ -53,6 +53,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
   private moveInfo: MoveInfo[] = new Array();
 
+  private readonly onMoveUsed = (event) => this.updateInfo(event);
+
   constructor(scene: Phaser.Scene, player: boolean) {
     super(scene, 0, 0);
     this.battleScene = scene as BattleScene;
@@ -107,7 +109,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.name = `Flyout ${this.pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
 
-    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, (e) => this.updateInfo(e));
+    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsed);
   }
 
   /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
@@ -151,5 +153,11 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });
+  }
+
+  destroy(fromScene?: boolean): void {
+    this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsed);
+
+    super.destroy();
   }
 }

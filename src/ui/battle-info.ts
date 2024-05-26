@@ -59,7 +59,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private statValuesContainer: Phaser.GameObjects.Container;
   private statNumbers: Phaser.GameObjects.Sprite[];
 
-  private flyoutMenu: BattleFlyout;
+  public flyoutMenu: BattleFlyout;
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -420,8 +420,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0
     });
-
-    this.flyoutMenu?.toggleFlyout(visible);
   }
 
   updateBossSegments(pokemon: EnemyPokemon): void {

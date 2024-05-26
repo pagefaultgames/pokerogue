@@ -76,6 +76,7 @@ export class UiInputs {
   getActionsKeyUp(): ActionKeys {
     const actions = {};
     actions[Button.STATS] = () => this.buttonStats(false);
+    actions[Button.CYCLE_VARIANT] = () => this.buttonInfo(false);
     return actions;
   }
 
@@ -94,14 +95,13 @@ export class UiInputs {
   }
 
   buttonStats(pressed: boolean = true): void {
-    if (pressed) {
-      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-        p.toggleStats(true);
-      }
-    } else {
-      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-        p.toggleStats(false);
-      }
+    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+      p.toggleStats(pressed);
+    }
+  }
+  buttonInfo(pressed: boolean = true): void {
+    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+      p.toggleFlyout(pressed);
     }
   }
 
@@ -141,6 +141,8 @@ export class UiInputs {
   buttonCycleOption(button: Button): void {
     if (this.scene.ui?.getHandler() instanceof StarterSelectUiHandler) {
       this.scene.ui.processInput(button);
+    } else if (button === Button.CYCLE_VARIANT) {
+      this.buttonInfo(true);
     }
   }
 
