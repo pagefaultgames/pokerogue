@@ -33,15 +33,12 @@ export enum Setting {
   Gamepad_Support = "GAMEPAD_SUPPORT",
   Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
   Touch_Controls = "TOUCH_CONTROLS",
-  Vibration = "VIBRATION"
+  Vibration = "VIBRATION",
+  Move_Touch_Controls = "MOVE_TOUCH_CONTROLS"
 }
 
 export interface SettingOptions {
   [key: string]: string[]
-}
-
-export interface SettingDefaults {
-  [key: string]: integer
 }
 
 export const settingOptions: SettingOptions = {
@@ -69,8 +66,13 @@ export const settingOptions: SettingOptions = {
   [Setting.Gamepad_Support]: ["Auto", "Disabled"],
   [Setting.Swap_A_and_B]: ["Enabled", "Disabled"],
   [Setting.Touch_Controls]: ["Auto", "Disabled"],
-  [Setting.Vibration]: ["Auto", "Disabled"]
+  [Setting.Vibration]: ["Auto", "Disabled"],
+  [Setting.Move_Touch_Controls]: ["Configure"]
 };
+
+export interface SettingDefaults {
+  [key: string]: integer
+}
 
 export const settingDefaults: SettingDefaults = {
   [Setting.Game_Speed]: 3,
@@ -97,10 +99,21 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Gamepad_Support]: 0,
   [Setting.Swap_A_and_B]: 1, // Set to 'Disabled' by default
   [Setting.Touch_Controls]: 0,
-  [Setting.Vibration]: 0
+  [Setting.Vibration]: 0,
+  [Setting.Move_Touch_Controls]: 0
 };
 
 export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set, Setting.Candy_Upgrade_Display];
+
+export const activatableSettings: Setting[] = [Setting.Move_Touch_Controls];
+
+type SettingPredicates = {
+  [key in Setting]?: () => boolean
+};
+
+export const settingPredicates: SettingPredicates = {
+  [Setting.Move_Touch_Controls]: () => hasTouchscreen(),
+};
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {

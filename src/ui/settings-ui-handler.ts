@@ -1,11 +1,12 @@
 import BattleScene from "../battle-scene";
-import { Setting, reloadSettings, settingDefaults, settingOptions } from "../system/settings";
+import { Button } from "../enums/buttons";
+import { Setting, activatableSettings, reloadSettings, settingDefaults, settingOptions, settingPredicates } from "../system/settings";
+import MoveTouchControlsHandler from "./settings/touch/move-touch-controls-handler";
 import { hasTouchscreen, isMobile } from "../touch-controls";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
@@ -24,12 +25,14 @@ export default class SettingsUiHandler extends UiHandler {
 
   private reloadRequired: boolean;
   private reloadI18n: boolean;
+  moveTouchControlsHandler: MoveTouchControlsHandler;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
     this.reloadRequired = false;
     this.reloadI18n = false;
+    this.moveTouchControlsHandler = MoveTouchControlsHandler.getInstance();
   }
 
   setup() {
@@ -55,6 +58,10 @@ export default class SettingsUiHandler extends UiHandler {
     this.optionValueLabels = [];
 
     Object.keys(Setting).forEach((setting, s) => {
+      // Skip settings that should not be displayed
+      if (settingPredicates?.[Setting[setting]] && !settingPredicates[Setting[setting]](this.scene)) {
+        return;
+      }
       let settingName = setting.replace(/\_/g, " ");
       if (reloadSettings.includes(Setting[setting])) {
         settingName += " (Requires Reload)";
@@ -73,7 +80,6 @@ export default class SettingsUiHandler extends UiHandler {
 
         return valueLabel;
       }));
-
       const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
 
       const labelWidth =  Math.max(78, this.settingLabels[s].displayWidth + 8);
@@ -95,12 +101,10 @@ export default class SettingsUiHandler extends UiHandler {
     this.settingsContainer.add(headerText);
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(this.optionsContainer);
-
     ui.add(this.settingsContainer);
 
     this.setCursor(0);
     this.setScrollCursor(0);
-
     this.settingsContainer.setVisible(false);
   }
 
@@ -187,14 +191,17 @@ export default class SettingsUiHandler extends UiHandler {
           success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
         }
         break;
+      case Button.ACTION:
+        const setting = Setting[Object.keys(Setting)[cursor]];
+        if (activatableSettings.includes(setting)) {
+          success = this.activateSetting(setting);
+        }
       }
     }
-
     // Plays a select sound effect if an action was successfully processed.
     if (success) {
       ui.playSelect();
     }
-
     return success;
   }
 
@@ -220,6 +227,10 @@ export default class SettingsUiHandler extends UiHandler {
       return false;
     }
 
+    if (activatableSettings.includes(setting)) {
+      return true;
+    }
+
     const lastCursor = this.optionCursors[settingIndex];
 
     const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
@@ -241,7 +252,6 @@ export default class SettingsUiHandler extends UiHandler {
         }
       }
     }
-
     return true;
   }
 
@@ -261,13 +271,20 @@ export default class SettingsUiHandler extends UiHandler {
 
   updateSettingsScroll(): void {
     this.optionsContainer.setY(-16 * this.scrollCursor);
-
     for (let s = 0; s < this.settingLabels.length; s++) {
       const visible = s >= this.scrollCursor && s < this.scrollCursor + 9;
       this.settingLabels[s].setVisible(visible);
       for (const option of this.optionValueLabels[s]) {
         option.setVisible(visible);
       }
+    }
+  }
+
+  activateSetting(setting: Setting): boolean {
+    switch (setting) {
+    case Setting.Move_Touch_Controls:
+      this.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), this.scene);
+      return true;
     }
   }
 

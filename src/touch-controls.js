@@ -2,6 +2,27 @@ export const keys = new Map();
 export const keysDown = new Map();
 let lastTouchedId;
 
+/** Whether touch controls are disabled */
+let disabled = false;
+/** Whether the last touch event has finished before disabling */
+let finishedLastTouch = false;
+
+/**
+ * Disable touch controls
+ */
+export function disableTouchControls() {
+  disabled = true;
+  finishedLastTouch = false;
+}
+
+/**
+ * Enable touch controls
+ */
+export function enableTouchControls() {
+  disabled = false;
+  finishedLastTouch = false;
+}
+
 export function initTouchControls(buttonMap) {
   const dpadDiv = document.querySelector("#dpad");
   preventElementZoom(dpadDiv);
@@ -34,7 +55,6 @@ export function isMobile() {
  */
 function simulateKeyboardEvent(eventType, button, buttonMap) {
   const key = buttonMap[button];
-
   switch (eventType) {
   case "keydown":
     key.onDown({});
@@ -67,9 +87,11 @@ function simulateKeyboardEvent(eventType, button, buttonMap) {
  */
 function bindKey(node, key, buttonMap) {
   keys.set(node.id, key);
-
   node.addEventListener("touchstart", event => {
     event.preventDefault();
+    if (disabled) {
+      return;
+    }
     simulateKeyboardEvent("keydown", key, buttonMap);
     keysDown.set(event.target.id, node.id);
     node.classList.add("active");
@@ -77,7 +99,10 @@ function bindKey(node, key, buttonMap) {
 
   node.addEventListener("touchend", event => {
     event.preventDefault();
-
+    if (disabled && finishedLastTouch) {
+      return;
+    }
+    finishedLastTouch = true;
     const pressedKey = keysDown.get(event.target.id);
     if (pressedKey && keys.has(pressedKey)) {
       const key = keys.get(pressedKey);
@@ -94,6 +119,9 @@ function bindKey(node, key, buttonMap) {
 
   // Inspired by https://github.com/pulsejet/mkxp-web/blob/262a2254b684567311c9f0e135ee29f6e8c3613e/extra/js/dpad.js
   node.addEventListener("touchmove", event => {
+    if (disabled) {
+      return;
+    }
     const { target, clientX, clientY } = event.changedTouches[0];
     const origTargetId = keysDown.get(target.id);
     const nextTargetId = document.elementFromPoint(clientX, clientY).id;
@@ -135,8 +163,7 @@ function preventElementZoom(element) {
     if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
       return;
     } // not double-tap
-
     event.preventDefault();
-    event.target.click();
+    event.target?.click?.();
   });
 }
