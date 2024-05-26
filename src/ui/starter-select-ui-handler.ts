@@ -907,6 +907,49 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           }
           const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
+          if (this.canCycleNature) {
+            // if we could cycle natures, enable the improved nature menu
+            const showNatureOptions = () => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
+                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: natures.map((n: Nature, i: number) => {
+                      const option: OptionSelectItem = {
+                        label: getNatureName(n, true, true, true, this.scene.uiTheme),
+                        handler: () => {
+                          // update default nature in starter save data
+                          starterData.nature = n as unknown as integer;
+                          this.clearText();
+                          ui.setMode(Mode.STARTER_SELECT);
+                          // set nature for starter
+                          this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
+                          return true;
+                        }
+                      };
+                      return option;
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
+                      handler: () => {
+                        this.clearText();
+                        ui.setMode(Mode.STARTER_SELECT);
+                        return true;
+                      }
+                    }),
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+                });
+              });
+            };
+            options.push({
+              label: i18next.t("starterSelectUiHandler:manageNature"),
+              handler: () => {
+                showNatureOptions();
+                return true;
+              }
+            });
+          }
           const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) {
@@ -1085,6 +1128,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
             const natureIndex = natures.indexOf(this.natureCursor);
             const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+            // store cycled nature as default
+            this.scene.gameData.starterData[this.lastSpecies.speciesId].nature = newNature as unknown as integer;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
             success = true;
           }
@@ -1354,6 +1399,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
+    if (species && this.scene.gameData.starterData[species.speciesId]?.nature) {
+      // load default nature from stater save data, if set
+      this.natureCursor = this.scene.gameData.starterData[species.speciesId].nature;
+    }
 
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
@@ -1457,7 +1506,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
           const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-          const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
+          // load default nature from stater save data, if set
+          const defaultNature = this.scene.gameData.starterData[species.speciesId]?.nature || this.scene.gameData.getSpeciesDefaultNature(species);
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
 
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature);
