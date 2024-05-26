@@ -469,7 +469,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.candyUpgradeIcon = new Array(81).fill(null).map((_, i) => {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
-      const ret = this.scene.add.image(x + 163, y + 21, 'candy');
+      const ret = this.scene.add.image(x + 163, y + 21, "candy");
       ret.setOrigin(0, 0);
       ret.setScale(0.25);
       ret.setVisible(false);
@@ -480,7 +480,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.candyUpgradeOverlayIcon = new Array(81).fill(null).map((_, i) => {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
-      const ret = this.scene.add.image(x + 163, y + 21, 'candy_overlay');
+      const ret = this.scene.add.image(x + 163, y + 21, "candy_overlay");
       ret.setOrigin(0, 0);
       ret.setScale(0.25);
       ret.setVisible(false);
@@ -488,7 +488,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return ret;
     });
     
-    this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
+    this.pokemonSprite = this.scene.add.sprite(53, 63, "pkmn__sub");
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
@@ -695,10 +695,45 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           } else if (dexEntry.seenAttr) {
             icon.setTint(0x808080);
           }
-        });
+
+          // Kill any existing tweens
+          this.scene.tweens.killTweensOf(icon);
+          // TODO: Reset the icon's position
+
+          // 'Animation' mode
+          if (this.scene.candyUpgradeDisplay === 1) {
+            // 'Only Passives' mode
+            if (this.scene.candyUpgradeNotification === 1) {
+              // If the player has enough candy to upgrade the passive, animate the icon
+              if (this.scene.gameData.starterData[species.speciesId].candyCount >= this.scene.gameData.getSpeciesStarterValue(species.speciesId) && !(this.scene.gameData.starterData[species.speciesId].passiveAttr & PassiveAttr.UNLOCKED)) {
+                this.scene.tweens.chain({
+                  targets: icon,
+                  loop: -1,
+                  loopDelay: 1000,
+                  tweens: [
+                    {
+                      y: "-=5",
+                      duration: Utils.fixedInt(125),
+                      ease: "Cubic.easeOut",
+                      yoyo: true
+                    },
+                    {
+                      y: "-=3",
+                      duration: Utils.fixedInt(150),
+                      ease: "Cubic.easeOut",      
+                      yoyo: true
+                    }
+                  ],
+                });
+              }
+              // 'On' mode
+            } else if (this.scene.candyUpgradeNotification === 2) {
+              icon.setY(icon.y);
+            }
+          }
+        }
+        );
       }
-      
-      this.starterSelectCallback = args[0] as StarterSelectCallback;
 
       this.starterSelectContainer.setVisible(true);
 
@@ -1329,12 +1364,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
         // 'Candy Icon' mode
-        if (this.scene.candyUpgradeDisplay == 0) {
-          // kill the animation if it's running
+        if (this.scene.candyUpgradeDisplay === 0) {
 
           if (!starterColors[speciesId]) {
             // Default to white if no colors are found
-            starterColors[speciesId] = [ 'ffffff', 'ffffff' ];
+            starterColors[speciesId] = [ "ffffff", "ffffff" ];
           }
 
           // Set the candy colors
@@ -1342,12 +1376,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.candyUpgradeOverlayIcon[s].setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
           
           // 'Off' mode
-          if (this.scene.candyUpgradeNotification == 0) { 
+          if (this.scene.candyUpgradeNotification === 0) { 
             this.candyUpgradeIcon[s].setVisible(false);
             this.candyUpgradeOverlayIcon[s].setVisible(false);
 
             // 'Only Passive Unlocks' mode
-          } else if (this.scene.candyUpgradeNotification == 1) { 
+          } else if (this.scene.candyUpgradeNotification === 1) { 
             this.candyUpgradeIcon[s].setVisible(
               slotVisible && (
                 this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
@@ -1355,17 +1389,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
 
             // 'On' mode
-          } else if (this.scene.candyUpgradeNotification == 2) { 
+          } else if (this.scene.candyUpgradeNotification === 2) { 
             this.candyUpgradeIcon[s].setVisible(
               slotVisible && (
                 (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) &&
                 !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) || 
                 (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction] && 
                 this.scene.gameData.starterData[speciesId].valueReduction < 2)));
-              this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
+            this.candyUpgradeOverlayIcon[s].setVisible(slotVisible && this.candyUpgradeIcon[s].visible);
           }
-        } else if (this.scene.candyUpgradeDisplay == 1) {
-          // animate the pokemon icon. receive the pokemon icon
+        } else if (this.scene.candyUpgradeDisplay === 1) {
+          this.candyUpgradeIcon[s].setVisible(false);
+          this.candyUpgradeOverlayIcon[s].setVisible(false);
         }
       }
     } else {
@@ -1876,27 +1911,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
 
     switch (this.scene.candyUpgradeNotification) {
-      // 'Off' mode
-      case 0: 
-          return;
+    // 'Off' mode
+    case 0: 
+      return;
 
       // 'Only Passive Unlocks' mode
-      case 1: 
-        this.candyUpgradeIcon[cursor].setVisible(this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED));
-        this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
-        return;
+    case 1: 
+      this.candyUpgradeIcon[cursor].setVisible(this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED));
+      this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
+      return;
 
       // 'On' mode
-      case 2: 
-        this.candyUpgradeIcon[cursor].setVisible(
-            (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) ||
+    case 2: 
+      this.candyUpgradeIcon[cursor].setVisible(
+        (this.scene.gameData.starterData[speciesId].candyCount >= getPassiveCandyCount(speciesStarters[speciesId]) && !(this.scene.gameData.starterData[speciesId].passiveAttr & PassiveAttr.UNLOCKED)) ||
             (this.scene.gameData.starterData[speciesId].candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[this.scene.gameData.starterData[speciesId].valueReduction]) &&
             this.scene.gameData.starterData[speciesId].valueReduction < 2);
-        this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
-        return;
+      this.candyUpgradeOverlayIcon[cursor].setVisible(this.candyUpgradeIcon[cursor].visible);
+      return;
 
-      default:
-        return;
+    default:
+      return;
     }
   }
 
