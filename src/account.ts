@@ -15,8 +15,8 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       loggedInUser = { username: "Guest", lastSessionSlot: -1 };
       let lastSessionSlot = -1;
       // Get last slot saved and checks if it has data to enable continue
-      const slotId = parseInt(localStorage.getItem('slotId'));
-      if (localStorage.getItem(`sessionData${slotId ? slotId : ''}_${loggedInUser.username}`)) {
+      const slotId = parseInt(localStorage.getItem("slotId"));
+      if (localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
         lastSessionSlot = slotId;
       }
       loggedInUser.lastSessionSlot = lastSessionSlot;
