@@ -22,7 +22,7 @@ import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
 import { biome } from "./biome";
-
+import { pokemonInfoContainer } from "./pokemon-info-container";
 
 export const itConfig = {
   ability: ability,
@@ -51,4 +51,5 @@ export const itConfig = {
   berry: berry,
   voucher: voucher,
   biome: biome,
+  pokemonInfoContainer: pokemonInfoContainer,
 };
