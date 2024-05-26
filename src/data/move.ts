@@ -7706,6 +7706,7 @@ export function initMoves() {
       //TODO: Should also apply when target move priority increased by ability ex. gale wings
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
-      .attr(StatusEffectAttr, StatusEffect.TOXIC)
+      .attr(StatusEffectAttr, StatusEffect.TOXIC),
+    new AttackMove(Moves.SPEED_WEED, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 1),
   );
 }

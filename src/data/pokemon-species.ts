@@ -193,7 +193,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   isObtainable(): boolean {
-    return (this.generation <= 9 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
+    return (this.generation <= 10 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
   }
 
   isCatchable(): boolean {
@@ -316,7 +316,6 @@ export abstract class PokemonSpeciesForm {
     if (isVariant) {
       ret += `_${variant + 1}`;
     }
-
     return ret;
   }
 
@@ -2610,6 +2609,8 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.PALDEA_WOOPER, 9, false, false, false, "Water Fish Pokémon", Type.POISON, Type.GROUND, 0.4, 11, Abilities.POISON_POINT, Abilities.WATER_ABSORB, Abilities.UNAWARE, 210, 55, 45, 45, 25, 25, 15, 255, 50, 42, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.BLOODMOON_URSALUNA, 9, false, false, false, "Peat Pokémon", Type.GROUND, Type.NORMAL, 2.7, 333, Abilities.MINDS_EYE, Abilities.NONE, Abilities.NONE, 555, 113, 70, 120, 135, 65, 52, 75, 50, 275, GrowthRate.MEDIUM_FAST, 50, false),
+
+    new PokemonSpecies(Species.GRASSHOLE, 10, false, false, false, "Anal Plant Pokémon", Type.GRASS,null, 0.7, 6.9, Abilities.OVERGROW, Abilities.CHEEK_POUCH, Abilities.ANALYTIC, 318, 56, 60, 55, 47, 50, 50, 45, 70, 45, GrowthRate.MEDIUM_SLOW, 87.5, false),
   );
 }
 
@@ -3209,6 +3210,8 @@ export const speciesStarters = {
   [Species.PALDEA_TAUROS]: 5,
   [Species.PALDEA_WOOPER]: 3,
   [Species.BLOODMOON_URSALUNA]: 7,
+
+  [Species.GRASSHOLE]: 3,
 };
 
 export const noStarterFormKeys: string[] = [
@@ -3817,7 +3820,8 @@ export const starterPassiveAbilities = {
   [Species.HISUI_ZORUA]: Abilities.ADAPTABILITY,
   [Species.PALDEA_TAUROS]: Abilities.RATTLED,
   [Species.PALDEA_WOOPER]: Abilities.THICK_FAT,
-  [Species.BLOODMOON_URSALUNA]: Abilities.BERSERK
+  [Species.BLOODMOON_URSALUNA]: Abilities.BERSERK,
+  [Species.GRASSHOLE]: Abilities.OVERGROW,
 };
 
 // TODO: Remove

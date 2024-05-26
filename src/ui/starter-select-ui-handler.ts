@@ -112,7 +112,8 @@ const gens = [
   i18next.t("starterSelectUiHandler:gen6"),
   i18next.t("starterSelectUiHandler:gen7"),
   i18next.t("starterSelectUiHandler:gen8"),
-  i18next.t("starterSelectUiHandler:gen9")
+  i18next.t("starterSelectUiHandler:gen8"),
+  "Clover"
 ];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
@@ -1186,6 +1187,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     } else {
       this.scene.gameData.starterData[speciesId].moveset = this.starterMoveset.slice(0) as StarterMoveset;
     }
+
     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined, false);
   }
 
@@ -1300,7 +1302,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       changed = super.setCursor(cursor);
 
       this.cursorObj.setPosition(150 + 18 * (cursor % 9), 10 + 18 * Math.floor(cursor / 9));
-
       this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][cursor]);
 
       this.updateInstructions();
@@ -1354,7 +1355,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
-
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
         this.statsContainer.setVisible(true);
@@ -1375,8 +1375,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.lastSpecies = species;
-
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
+
       this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
       this.pokemonNameText.setText(species.name);
 
@@ -1440,6 +1440,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         let starterIndex = -1;
 
+
         this.starterGens.every((g, i) => {
           const starterSpecies = this.genSpecies[g][this.starterCursors[i]];
           if (starterSpecies.speciesId === species.speciesId) {
@@ -1448,14 +1449,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           return true;
         });
-
         let props: DexAttrProps;
-
         if (starterIndex > -1) {
           props = this.scene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, this.starterAbilityIndexes[starterIndex], this.starterNatures[starterIndex]);
         } else {
           const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+
           const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
           const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
@@ -1515,7 +1515,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonCandyDarknessOverlay.setVisible(false);
       this.pokemonCandyCountText.setVisible(false);
       this.pokemonFormText.setVisible(false);
-
       this.setSpeciesDetails(species, false, 0, false, 0, 0, 0);
       this.pokemonSprite.clearTint();
     }

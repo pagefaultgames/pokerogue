@@ -2163,6 +2163,7 @@ export enum Species {
   PALDEA_WOOPER = 8194,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ursaluna_(Pokémon) | Source} */
   BLOODMOON_URSALUNA = 8901,
+  GRASSHOLE = 10001,
 }
 
 export const defaultStarterSpecies: Species[] = [
@@ -2174,5 +2175,6 @@ export const defaultStarterSpecies: Species[] = [
   Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
   Species.ROWLET, Species.LITTEN, Species.POPPLIO,
   Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
-  Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
+  Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY,
+  Species.GRASSHOLE,
 ];

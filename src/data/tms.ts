@@ -1501,6 +1501,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.FLY]: [
     Species.CHARIZARD,
@@ -3922,6 +3923,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.FLAMETHROWER]: [
     Species.CHARMANDER,
@@ -6500,6 +6502,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.SOLAR_BEAM]: [
     Species.BULBASAUR,
@@ -6835,6 +6838,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
+    Species.GRASSHOLE,
   ],
   [Moves.FIRE_SPIN]: [
     Species.CHARMANDER,
@@ -8065,6 +8069,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.DIG]: [
     Species.CHARMANDER,
@@ -9336,6 +9341,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_QWILFISH,
     Species.HISUI_SNEASEL,
     Species.PALDEA_WOOPER,
+    Species.GRASSHOLE,
   ],
   [Moves.PSYCHIC]: [
     Species.BUTTERFREE,
@@ -11049,6 +11055,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
     Species.GALAR_ARTICUNO,
+    Species.GRASSHOLE,
   ],
   [Moves.CONFUSE_RAY]: [
     Species.VULPIX,
@@ -15194,6 +15201,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.ROCK_SLIDE]: [
     Species.CHARMANDER,
@@ -20102,6 +20110,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.SCARY_FACE]: [
     Species.CHARMANDER,
@@ -22212,6 +22221,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ELECTRODE,
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
+    Species.GRASSHOLE,
   ],
   [Moves.ENDURE]: [
     Species.BULBASAUR,
@@ -25369,6 +25379,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_DARMANITAN,
     Species.GALAR_YAMASK,
     Species.GALAR_STUNFISK,
+    Species.GRASSHOLE,
   ],
   [Moves.SLEEP_TALK]: [
     Species.BULBASAUR,
@@ -28057,6 +28068,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_EXEGGUTOR,
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
+    Species.GRASSHOLE,
   ],
   [Moves.SAFEGUARD]: [
     Species.BULBASAUR,
@@ -30166,6 +30178,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_EXEGGUTOR,
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
+    Species.GRASSHOLE,
   ],
   [Moves.RAIN_DANCE]: [
     Species.SQUIRTLE,
@@ -31630,6 +31643,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.CRUNCH]: [
     Species.CHARMANDER,
@@ -33051,6 +33065,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.WHIRLPOOL]: [
     Species.SQUIRTLE,
@@ -34152,6 +34167,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
+    Species.GRASSHOLE,
   ],
   [Moves.WILL_O_WISP]: [
     Species.CHARMANDER,
@@ -35354,6 +35370,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.FOCUS_PUNCH]: [
     Species.CHARMANDER,
@@ -39967,6 +39984,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.METAL_SOUND]: [
     Species.MAGNEMITE,
@@ -40626,6 +40644,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ELECTRODE,
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
+    Species.GRASSHOLE,
   ],
   [Moves.AERIAL_ACE]: [
     Species.CHARMANDER,
@@ -49626,6 +49645,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
+    Species.GRASSHOLE,
   ],
   [Moves.DEFOG]: [
     Species.CHARIZARD,

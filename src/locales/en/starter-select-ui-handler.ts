@@ -16,6 +16,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "gen7": "VII",
   "gen8": "VIII",
   "gen9": "IX",
+  "gen10": "Clover",
   "growthRate": "Growth Rate:",
   "ability": "Ability:",
   "passive": "Passive:",

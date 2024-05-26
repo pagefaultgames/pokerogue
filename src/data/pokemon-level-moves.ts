@@ -18520,7 +18520,23 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 56, Moves.MOONBLAST ],
     [ 64, Moves.HAMMER_ARM ],
     [ 70, Moves.BLOOD_MOON ],
-  ]
+  ],  [Species.GRASSHOLE]: [
+    [ 1, Moves.TACKLE ],
+    [ 1, Moves.GROWL ],
+    [ 6, Moves.LEAFAGE],
+    [ 10, Moves.MUD_SLAP],
+    [ 14, Moves.BITE],
+    [ 17, Moves.MAGNITUDE ],
+    [ 19, Moves.RAZOR_LEAF ],
+    [ 18, Moves.SEED_BOMB ],
+    [ 22, Moves.ROTOTILLER ],
+    [ 26, Moves.BULLDOZE ],
+    [ 30, Moves.SEED_BOMB ],
+    [ 34, Moves.CRUNCH ],
+    [ 37, Moves.INGRAIN ],
+    [ 40, Moves.HIGH_HORSEPOWER],
+    [ 44, Moves.SYNTHESIS ],
+  ],
 };
 
 export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
@@ -19173,5 +19189,6 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 55, Moves.WAVE_CRASH ],
       [ 60, Moves.CLOSE_COMBAT ],
     ]
-  }
+  },
+
 };

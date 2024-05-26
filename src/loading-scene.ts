@@ -228,7 +228,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("end_m", "cg");
     this.loadImage("end_f", "cg");
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 11; i++) {
       this.loadAtlas(`pokemon_icons_${i}`, "");
       if (i) {
         this.loadAtlas(`pokemon_icons_${i}v`, "");
