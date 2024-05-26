@@ -162,6 +162,7 @@ declare module "i18next" {
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
+	  pokemonInfoContainer: SimpleTranslationEntries;
     };
   }
 }
