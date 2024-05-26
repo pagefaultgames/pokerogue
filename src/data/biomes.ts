@@ -1671,7 +1671,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   [Biome.METROPOLIS]: {
     [BiomePoolTier.COMMON]: [ TrainerType.CLERK, TrainerType.CYCLIST, TrainerType.OFFICER, TrainerType.WAITER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.BREEDER, TrainerType.DEPOT_AGENT, TrainerType.GUITARIST ],
-    [BiomePoolTier.RARE]: [ TrainerType.ARTIST ],
+    [BiomePoolTier.RARE]: [ TrainerType.ARTIST, TrainerType.PRISONER ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
     [BiomePoolTier.BOSS]: [ TrainerType.WHITNEY, TrainerType.NORMAN, TrainerType.IONO, TrainerType.LARRY ],
@@ -1956,7 +1956,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [Biome.SLUM]: {
     [BiomePoolTier.COMMON]: [ TrainerType.BIKER, TrainerType.OFFICER, TrainerType.ROUGHNECK ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.BAKER ],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.BAKER, TrainerType.PRISONER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -7302,6 +7302,11 @@ export function initBiomes() {
     ],
     [ TrainerType.HEX_MANIAC, [
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
+    ]
+    ],
+    [ TrainerType.PRISONER, [
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON ],
+      [ Biome.METROPOLIS, BiomePoolTier.RARE ]
     ]
     ],
     [ TrainerType.BROCK, [
