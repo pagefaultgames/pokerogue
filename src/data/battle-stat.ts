@@ -41,7 +41,7 @@ export function getBattleStatLevelChangeDescription(levels: integer, up: boolean
     case 4:
     case 5:
     case 6:
-      return "rose drastically"; 
+      return "rose drastically";
     default:
       return "won't go any higher";
     }

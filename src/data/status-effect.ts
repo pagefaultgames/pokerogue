@@ -164,14 +164,38 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
 * @param statusA The first Status
 * @param statusB The second Status
 */
-export function getRandomStatus(statusA: Status, statusB: Status): Status {  
+export function getRandomStatus(statusA: Status, statusB: Status): Status {
   if (statusA === undefined || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
     return statusB;
   }
   if (statusB === undefined || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
     return statusA;
   }
-  
+
 
   return Utils.randIntRange(0, 2) ? statusA : statusB;
+}
+
+/**
+ * Gets all non volatile status effects
+ * @returns A list containing all non volatile status effects
+ */
+export function getNonVolatileStatusEffects():Array<StatusEffect> {
+  return [
+    StatusEffect.POISON,
+    StatusEffect.TOXIC,
+    StatusEffect.PARALYSIS,
+    StatusEffect.SLEEP,
+    StatusEffect.FREEZE,
+    StatusEffect.BURN
+  ];
+}
+
+/**
+ * Returns whether a statuss effect is non volatile.
+ * Non-volatile status condition is a status that remains after being switched out.
+ * @param status The status to check
+ */
+export function isNonVolatileStatusEffect(status: StatusEffect): boolean {
+  return getNonVolatileStatusEffects().includes(status);
 }

@@ -96,7 +96,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
         pokemon.resetStatus();
         pokemon.updateInfo();
-      } 
+      }
       if (pokemon.getTag(BattlerTagType.CONFUSED)) {
         pokemon.lapseTag(BattlerTagType.CONFUSED);
       }
@@ -137,7 +137,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.battleData.berriesEaten.push(berryType);
       }
       const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio()) ? pokemon.getMoveset().find(m => !m.getPpRatio()) : pokemon.getMoveset().find(m => m.getPpRatio() < 1);
-      if(ppRestoreMove !== undefined){
+      if (ppRestoreMove !== undefined) {
         ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}!`));
       }

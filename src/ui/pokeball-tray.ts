@@ -76,7 +76,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
           });
         }
       });
-    
+
       this.setVisible(true);
       this.shown = true;
 

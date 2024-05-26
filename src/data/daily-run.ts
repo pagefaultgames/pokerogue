@@ -54,7 +54,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
       starters.push(getDailyRunStarter(scene, starterSpecies, startingLevel));
     }
   }, 0, seed);
-  
+
   return starters;
 }
 
