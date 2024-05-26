@@ -20,6 +20,7 @@ import {trainerNamePools} from "../data/trainer-names";
 import {ArenaTagSide, ArenaTrapTag} from "#app/data/arena-tag";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
+import {Species} from "#app/data/enums/species";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -275,7 +276,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
 
       // Create an empty species pool (which will be set to one of the species pools based on the index)
-      let newSpeciesPool = [];
+      const newSpeciesPool = [];
       let useNewSpeciesPool = false;
 
       // If we are in a double battle of named trainers, we need to use alternate species pools (generate half the party from each trainer)
@@ -284,40 +285,26 @@ export default class Trainer extends Phaser.GameObjects.Container {
         // Use the new species pool for this party generation
         useNewSpeciesPool = true;
 
-
         // Get the species pool for the partner trainer and the current trainer
         const speciesPoolPartner = signatureSpecies[TrainerType[this.config.trainerTypeDouble]];
         const speciesPool = signatureSpecies[TrainerType[this.config.trainerType]];
 
-
-        // Get the species that are already in the enemy party so we dont generate the same species twice
-        const AlreadyUsedSpecies = battle.enemyParty.map(p => p.species.speciesId);
-
-        // Filter out the species that are already in the enemy party from the main trainer species pool
-        const speciesPoolFiltered = speciesPool.filter(species => {
-          // Since some species pools have arrays in them (use either of those species), we need to check if one of the species is already in the party and filter the whole array if it is
-          if (Array.isArray(species)) {
-            return !species.some(s => AlreadyUsedSpecies.includes(s));
-          }
-          return !AlreadyUsedSpecies.includes(species);
-        });
-
-        // Filter out the species that are already in the enemy party from the partner trainer species pool
-        const speciesPoolPartnerFiltered = speciesPoolPartner.filter(species => {
-          // Since some species pools have arrays in them (use either of those species), we need to check if one of the species is already in the party and filter the whole array if it is
-          if (Array.isArray(species)) {
-            return !species.some(s => AlreadyUsedSpecies.includes(s));
-          }
-          return !AlreadyUsedSpecies.includes(species);
-        });
-
-
         // If the index is even, use the species pool for the main trainer (that way he only uses his own pokemon in battle)
-        if (!(index % 2)) {
-          newSpeciesPool = speciesPoolFiltered;
-        } else {
-          // If the index is odd, use the species pool for the partner trainer (that way he only uses his own pokemon in battle)
-          newSpeciesPool = speciesPoolPartnerFiltered;
+        if (index === 0 && speciesPool.length > 0) {
+          newSpeciesPool.push(speciesPool[0] as Species);
+        } else if (index === 2 && speciesPool.length > 1) {
+          newSpeciesPool.push(speciesPool[1] as Species);
+        } else if (index === 4 && speciesPool.length > 2) {
+          newSpeciesPool.push(speciesPool[2] as Species);
+        }
+
+        // If the index is odd, use the species pool for the partner trainer
+        if (index === 1 && speciesPoolPartner.length > 0) {
+          newSpeciesPool.push(speciesPoolPartner[speciesPoolPartner.length-1] as Species);
+        } else if (index === 3 && speciesPoolPartner.length > 1) {
+          newSpeciesPool.push(speciesPoolPartner[speciesPoolPartner.length-2] as Species);
+        } else if (index === 5 && speciesPoolPartner.length > 2) {
+          newSpeciesPool.push(speciesPoolPartner[speciesPoolPartner.length-3] as Species);
         }
 
         // Fallback for when the species pool is empty

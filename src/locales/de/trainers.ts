@@ -13,6 +13,7 @@ export const titles: SimpleTranslationEntries = {
   "frontier_brain": "Kampfkoryphäen",
   "timespace_double": "Zeit-Raum-Duo",
   "sibling_double": "Geschwister-Duo",
+  "ninja_double": "Ninja-Duo",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -261,4 +262,10 @@ export const trainerNames: SimpleTranslationEntries = {
   "cynthia_volo_double": "Cynthia & Volo",
   "hop_leon_double": "Hop & Delion",
   "leon_hop_double": "Delion & Hop",
+  "opal_bede_double": "Papella & Betys",
+  "bede_opal_double": "Betys & Papella",
+  "nemona_geeta_double": "Nemila & Sagaria",
+  "geeta_nemona_double": "Sagaria & Nemila",
+  "janine_koga_double": "Janina & Koga",
+  "koga_janine_double": "Koga & Janina",
 } as const;

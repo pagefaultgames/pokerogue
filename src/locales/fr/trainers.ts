@@ -11,6 +11,9 @@ export const titles: SimpleTranslationEntries = {
   "rival": "Rival·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "professor": "Professeur·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "frontier_brain": "Meneur·euse de Zone", //Written in gender-inclusive language in wait of a potential split of the entry
+  "timespace_double": "Timespace Duo",
+  "sibling_double": "Sibling Duo",
+  "ninja_double": "Ninja Duo",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -256,4 +259,14 @@ export const trainerNames: SimpleTranslationEntries = {
   "iris_alder_double": "Iris & Alder",
   "marnie_piers_double": "Marnie & Piers",
   "piers_marnie_double": "Piers & Marnie",
+  "volo_cynthia_double": "Volo & Cynthia",
+  "cynthia_volo_double": "Cynthia & Volo",
+  "hop_leon_double": "Hop & Leon",
+  "leon_hop_double": "Leon & Hop",
+  "opal_bede_double": "Opal & Bede",
+  "bede_opal_double": "Bede & Opal",
+  "nemona_geeta_double": "Nemona & Geeta",
+  "geeta_nemona_double": "Geeta & Nemona",
+  "janine_koga_double": "Janine & Koga",
+  "koga_janine_double": "Koga & Janine",
 } as const;
