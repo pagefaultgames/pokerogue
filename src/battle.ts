@@ -11,6 +11,7 @@ import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
+import {trainerConfigs} from "#app/data/trainer-config";
 
 export enum BattleType {
     WILD,
@@ -308,6 +309,10 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): Get
         ? Utils.randSeedItem(trainerPoolEntry)
         : trainerPoolEntry;
       trainerTypes.push(trainerType);
+    }
+    // If the trainer type has a double variant, there's a 33% chance of it being a double battle
+    if (trainerConfigs[trainerTypes[rand]].trainerTypeDouble) {
+      return new Trainer(scene, trainerTypes[rand], Utils.randSeedInt(3) ? TrainerVariant.DOUBLE : TrainerVariant.DEFAULT);
     }
     return new Trainer(scene, trainerTypes[rand], TrainerVariant.DEFAULT);
   };

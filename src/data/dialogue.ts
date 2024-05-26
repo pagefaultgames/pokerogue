@@ -1,15 +1,15 @@
-import { trainerConfigs } from "./trainer-config";
-import { TrainerType } from "./enums/trainer-type";
-import { BattleSpec } from "../enums/battle-spec";
+import {trainerConfigs} from "./trainer-config";
+import {TrainerType} from "./enums/trainer-type";
+import {BattleSpec} from "../enums/battle-spec";
 
 export interface TrainerTypeMessages {
-  encounter?: string | string[],
-  victory?: string | string[],
-  defeat?: string | string[]
+    encounter?: string | string[],
+    victory?: string | string[],
+    defeat?: string | string[]
 }
 
 export interface TrainerTypeDialogue {
-  [key: integer]: TrainerTypeMessages | [ TrainerTypeMessages, TrainerTypeMessages ]
+    [key: integer]: TrainerTypeMessages | [TrainerTypeMessages, TrainerTypeMessages]
 }
 
 export const trainerTypeDialogue = {
@@ -84,7 +84,7 @@ export const trainerTypeDialogue = {
         "Unlike my diabolical self, these are some good Pokémon.",
         "Too much praise can spoil both Pokémon and people.",
       ],
-      defeat:[
+      defeat: [
         "You should not get angry at your Pokémon, even if you lose a battle.",
         "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
         "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
@@ -2346,6 +2346,124 @@ export const trainerTypeDialogue = {
   ]
 };
 
+
+export const doubleBattleDialogue = {
+  "blue_red_double": {
+    encounter: [
+      `Blue: Hey Red, let's show them what we're made of!
+                  $Red: ...
+                  $Blue: This is Pallet Town Power!`,
+    ],
+
+    victory: [
+      `Blue: That was a great battle!
+              $Red: ...`,
+    ]
+  },
+  "red_blue_double": {
+    encounter: [
+      `Red: ...!
+                  $Blue: He never talks much.
+                    $Blue: But dont let that fool you! He is a champ after all!`,
+    ],
+    victory: [
+      `Red: ...!
+                $Blue: Next time we will beat you!`,]
+  },
+  "tate_liza_double": {
+    encounter: [
+      `Tate: Are you suprised?
+                  $Liza: We are two gym leaders at once!
+                  $Tate: We are twins!
+                  $Liza: We dont need to talk to understand each other!
+                  $Tate: Twice the power...
+                  $Liza: Can you handle it?`,
+    ],
+    victory: [
+      `Tate: What? Our combination was perfect!
+                  $Liza: Looks like we need to train more...`,
+    ]
+  },
+  "liza_tate_double": {
+    encounter: [
+      `Liza: Hihihi... Are you suprised?
+                  $Tate: Yes, we are really two gym leaders at once!
+                  $Liza: This is my twin brother Tate!
+                  $Tate: And this is my twin sister Liza!
+                  $Liza: Don't you think we are a perfect combination?`
+    ],
+    victory: [
+      `Liza: Are we...
+                  $Tate: ...not as strong as we thought?`,
+    ]
+  },
+  "wallace_steven_double": {
+    encounter: [
+      `Steven: Wallace, let's show them the power of the champions!
+                  $Wallace: We will show you the power of Hoenn!
+                  $Steven: Let's go!`,
+    ],
+    victory: [
+      `Steven: That was a great battle!
+                  $Wallace: We will win next time!`,
+    ]
+  },
+  "steven_wallace_double": {
+    encounter: [
+      `Steven: Do you have any rare pokémon?
+          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
+            $Steven: Oh... I see... Let's go then!`,
+    ],
+    victory: [
+      `Steven: Now that we are done with the battle, let's show off our pokémon!
+            $Wallace: Steven...`,
+    ]
+  },
+  "alder_iris_double": {
+    encounter: [
+      `Alder: We are the strongest trainers in Unova!
+                  $Iris: Fights against strong trainers are the best!`,
+    ],
+    victory: [
+      `Alder: Wow! You are super strong!
+                  $Iris: We will win next time!`,
+    ]
+  },
+  "iris_alder_double": {
+    encounter: [
+      `Iris: Welcome Challenger! I am THE Unova Champion!
+                  $Alder: Iris, aren't you a bit too excited?`,
+    ],
+    victory: [
+      `Iris: A loss like this is not easy to take...
+                  $Alder: But we will only get stronger with every loss!`,
+    ]
+  },
+  "marnie_piers_double": {
+    encounter: [
+      `Marnie: Brother, let's show them the power of Spikemuth!
+                  $Piers: We bring darkness!`,
+    ],
+    victory: [
+      `Marnie: You brought light to our darkness!
+                  $Piers: Its too bright...`,
+    ]
+  },
+  "piers_marnie_double": {
+    encounter: [
+      `Piers: Ready for a concert?
+                    $Marnie: Brother... They are here to fight, not to sing...`,
+    ],
+    victory: [
+      `Piers: Now that was a great concert!
+                    $Marnie: Brother...`,
+    ]
+  },
+
+
+
+};
+
 export const battleSpecDialogue = {
   [BattleSpec.FINAL_BOSS]: {
     encounter: `It appears the time has finally come once again.\nYou know why you have come here, do you not?
@@ -2393,7 +2511,7 @@ export function initTrainerTypeDialogue(): void {
   const trainerTypes = Object.keys(trainerTypeDialogue).map(t => parseInt(t) as TrainerType);
   for (const trainerType of trainerTypes) {
     const messages = trainerTypeDialogue[trainerType];
-    const messageTypes = [ "encounter", "victory", "defeat" ];
+    const messageTypes = ["encounter", "victory", "defeat"];
     for (const messageType of messageTypes) {
       if (Array.isArray(messages)) {
         if (messages[0][messageType]) {
