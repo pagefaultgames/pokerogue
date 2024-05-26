@@ -21,8 +21,7 @@ import { weather } from "./weather";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
 import { biome } from "./biome";
-
-
+import { pokemonInfoContainer } from "./pokemon-info-container";
 
 export const ptBrConfig = {
   ability: ability,
@@ -50,4 +49,5 @@ export const ptBrConfig = {
   berry: berry,
   voucher: voucher,
   biome: biome,
+  pokemonInfoContainer: pokemonInfoContainer,
 };
