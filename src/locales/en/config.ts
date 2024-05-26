@@ -21,8 +21,9 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
+import { biome } from "./biome";
 
-export const enConfig = {    
+export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
@@ -48,4 +49,5 @@ export const enConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   voucher: voucher,
+  biome: biome,
 };

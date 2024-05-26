@@ -76,7 +76,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     });
 
     this.scene.time.delayedCall(10000, () => this.hide());
-  
+
     this.setVisible(true);
     this.shown = true;
   }

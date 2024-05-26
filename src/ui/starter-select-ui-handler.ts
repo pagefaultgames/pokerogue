@@ -278,7 +278,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    
+
     // The position should be set per language
     const starterInfoXPos = textSettings?.starterInfoXPos || 31;
     const starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
@@ -1108,7 +1108,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             let newFormIndex = props.formIndex;
             do {
               newFormIndex = (newFormIndex + 1) % formCount;
-              if (this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
+              if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
                 break;
               }
             } while (newFormIndex !== props.formIndex);
@@ -1499,7 +1499,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
-        if(i18next.exists("growth:" + growthAux)){
+        if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t("growth:"+ growthAux as any);
         }
         this.pokemonGrowthRateText.setText(growthReadable);
@@ -1734,7 +1734,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
-        this.canCycleForm = species.forms.filter(f => !f.formKey || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
+        this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
         this.canCycleVariant = shiny && [ dexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT, dexEntry.caughtAttr & DexAttr.VARIANT_2, dexEntry.caughtAttr & DexAttr.VARIANT_3].filter(v => v).length > 1;
@@ -1791,12 +1791,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length) {
           this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
         }
-        
+
         // Remove duplicate moves
         this.starterMoveset = this.starterMoveset.filter(
           (move, i) => {
             return this.starterMoveset.indexOf(move) === i;
-          }) as StarterMoveset;        
+          }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
 

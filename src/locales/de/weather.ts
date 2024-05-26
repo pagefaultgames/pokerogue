@@ -33,7 +33,7 @@ export const weather: SimpleTranslationEntries = {
   "heavyRainStartMessage": "Es fängt an, in Strömen zu regnen!",
   "heavyRainLapseMessage": "Der strömende Regen hält an.",
   "heavyRainClearMessage": "Der strömende Regen lässt nach.",
-    
+
   "harshSunStartMessage": "Das Sonnenlicht wird sehr viel stärker!",
   "harshSunLapseMessage": "Das Sonnenlicht ist sehr stark.",
   "harshSunClearMessage": "Das Sonnenlicht verliert an Intensität.",
