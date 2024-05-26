@@ -5,7 +5,9 @@ export const titles: SimpleTranslationEntries = {
   "elite_four": "四天王",
   "gym_leader": "道館館主",
   "gym_leader_female": "道館館主",
+  "gym_leader_double": "Gym Leader Duo",
   "champion": "冠軍",
+  "champion_double": "Champion Duo",
   "rival": "勁敵",
   "professor": "博士",
   "frontier_brain": "開拓頭腦",
@@ -296,5 +298,17 @@ export const trainerNames: SimpleTranslationEntries = {
 
   // 勁敵 Rival
   "rival": "芬恩",
-  "rival_female": "艾薇"
+  "rival_female": "艾薇",
+
+  // Double Names
+  "blue_red_double": "Blue & Red",
+  "red_blue_double": "Red & Blue",
+  "tate_liza_double": "Tate & Liza",
+  "liza_tate_double": "Liza & Tate",
+  "steven_wallace_double": "Steven & Wallace",
+  "wallace_steven_double": "Wallace & Steven",
+  "alder_iris_double": "Alder & Iris",
+  "iris_alder_double": "Iris & Alder",
+  "marnie_piers_double": "Marnie & Piers",
+  "piers_marnie_double": "Piers & Marnie",
 } as const;

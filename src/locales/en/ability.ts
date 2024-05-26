@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Honey Gather",
-    description: "The Pokémon may gather Honey after a battle.",
+    description: "The Pokémon gathers Honey after a battle. The Honey is then sold for money.",
   },
   frisk: {
     name: "Frisk",
