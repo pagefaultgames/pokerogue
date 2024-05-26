@@ -18,6 +18,9 @@ import MockNineslice from "#app/test/essentials/mocksContainer/mockNineslice";
 import MockImage from "#app/test/essentials/mocksContainer/mockImage";
 import MockText from "#app/test/essentials/mocksContainer/mockText";
 import MockPolygon from "#app/test/essentials/mocksContainer/mockPolygon";
+import MockContainer from "#app/test/essentials/mocksContainer/mockContainer";
+import MockSprite from "#app/test/essentials/mocksContainer/mockSprite";
+import MockGraphics from "#app/test/essentials/mocksContainer/mockGraphics";
 
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
@@ -120,10 +123,8 @@ export default class GameWrapper {
     addMethods.getAt = () => ({ ...methodsWithoutGetAt });
 
     _scene.add = {
-      container: () => ({...addMethods}),
-      sprite: {
-        apply: () => ({...addMethods}),
-      },
+      container: (x, y) => new MockContainer(_scene, x, y),
+      sprite: (x,y, texture) => new MockSprite(_scene, x, y, texture),
       existing: () => null,
       rectangle: (x, y, width, height, fillColor) => new MockRectangle(_scene, x, y, width, height, fillColor),
       nineslice: (x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight) => new MockNineslice(_scene, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight),
@@ -142,7 +143,7 @@ export default class GameWrapper {
       });
     };
     _scene.make = {
-      graphics: () => ({...addMethods}),
+      graphics: (config) => new MockGraphics(_scene, config),
       rexTransitionImagePack: () => ({
         transit: () => null,
       }),

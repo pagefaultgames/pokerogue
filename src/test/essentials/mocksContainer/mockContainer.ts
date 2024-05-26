@@ -7,11 +7,13 @@ export default class MockContainer {
   protected visible;
   private alpha;
   private style;
+  public frame;
 
   constructor(scene, x, y) {
     this.scene = scene;
     this.x = x;
     this.y = y;
+    this.frame = {};
   }
   setVisible(visible) {
     this.visible = visible;
@@ -124,4 +126,36 @@ export default class MockContainer {
     // Sets the stroke style for the graphics.
     return this;
   }
+
+  setDepth(depth) {
+    // Sets the depth of this Game Object.
+  }
+
+  add(obj) {
+    // Adds a child to this Game Object.
+  }
+
+  getAt(index) {
+    // Returns the child at the given index.
+    return this;
+  }
+
+  setTexture(texture) {
+    // Sets the texture this Game Object will use to render with.
+  }
+
+  clearTint() {
+    // Clears any previously set tint.
+  }
+
+  removeAll() {
+    // Removes all Game Objects from this Container.
+  }
+
+  addAt(index, obj) {
+  }
+
+  getIndex(obj) {
+  }
+
 }
