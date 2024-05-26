@@ -31,7 +31,7 @@ export const dialogue: DialogueTranslationEntries = {
       10: "Man! Kannst du nicht sehen, dass ich nur ein Kind bin? Es war nicht fair von dir, so hart zu kämpfen!",
       11: "Deine Pokémon sind unglaublich! Tauschst du mit mir?",
       12: "Ich habe mich ein bisschen mitreißen lassen, worüber habe ich vorhin gesprochen?",
-      13:  "Ahaha! Da ist es! Genau! Du bist schon jetzt in dieser Welt zu Hause!",
+      13: "Ahaha! Da ist es! Genau! Du bist schon jetzt in dieser Welt zu Hause!",
     }
   },
   "lass": {
@@ -420,89 +420,90 @@ export const dialogue: DialogueTranslationEntries = {
   "erika": {
     "encounter": {
       1: "Ah, das Wetter ist hier so schön…\nOh, ein Kampf? Nun gut.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      2: "Meine Pokémon-Kampffähigkeiten stehen in Konkurrenz zu meinen Blumenarrangierfähigkeiten.",
+      3: "Oh, ich hoffe, der angenehme Duft meiner Pokémon lässt mich nicht wieder einschlafen…",
+      4: "Blumen in einem Garten zu sehen ist so beruhigend.",
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "Oh! Ich gestehe meine Niederlage ein.",
+      2: "Dieser Kampf war so entspannend.",
+      3: "Ah, es scheint, dass ich verloren habe…",
+      4: "Na immerhin habe ich noch meine Blumen."
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "Ich hatte Angst, dass ich einschlafen würde…",
+      2: "Es scheint, als hätten meine Pflanzen-Pokémon dich überwältigt.",
+      3: "Dieser Kampf war eine so beruhigende Erfahrung.",
+      4: "Das war alles?"
     }
   },
   "janine": {
     "encounter": {
-      1: "I am mastering the art of poisonous attacks.\nI shall spar with you today!",
-      2: "Father trusts that I can hold my own.\nI will prove him right!",
-      3: "My ninja techniques are only second to my Father's!\nCan you keep up?"
+      1: "Ich meistere die Kunst der giftigen Angriffe. Ich werde heute mit dir trainieren!",
+      2: "Vater vertraut darauf, dass ich mich behaupten kann. Ich werde ihm recht geben!",
+      3: "Meine Ninja-Techniken sind nur zweitrangig zu denen meines Vaters! Kannst du mithalten?"
     },
     "victory": {
-      1: "Even now, I still need training… I understand.",
-      2: "Your battle technique has outmatched mine.",
-      3: "I'm going to really apply myself and improve my skills."
+      1: "Selbst jetzt brauche ich noch Training… Ich verstehe.",
+      2: "Dein Kampfstil hat meinen überwältigt.",
+      3: "Ich werde mich wirklich anstrengen und meine Fähigkeiten verbessern."
     },
     "defeat": {
-      1: "Fufufu… the poison has sapped all your strength to battle.",
-      2: "Ha! You didn't stand a chance against my superior ninja skills!",
-      3: "Father's faith in me has proven to not be misplaced."
+      1: "Fufufu… das Gift hat dir all deine Kraft zum Kämpfen geraubt.",
+      2: "Ha! Du hattest keine Chance gegen meine überlegenen Ninja-Fähigkeiten!",
+      3: "Vaters Vertrauen in mich war nicht unbegründet."
     }
   },
   "sabrina": {
     "encounter": {
-      1: "Through my psychic ability, I had a vision of your arrival!",
-      2: "I dislike fighting, but if you wish, I will show you my powers!",
-      3: "I can sense great ambition in you. I shall see if it not unfounded."
+      1: "Ich habe deine Ankunft in einer Vision gesehen!",
+      2: "Ich mag es nicht zu kämpfen, aber wenn du darauf bestehst, werde ich dir meine Kräfte zeigen!",
+      3: "Ich spüre große Ambitionen in dir. Ich werde sehen, ob sie begründet sind."
     },
     "victory": {
-      1: "Your power… It far exceeds what I foresaw…",
-      2: "I failed to accurately predict your power.",
-      3: "Even with my immense psychic powers, I cannot sense another as strong as you."
+      1: "Deine Kraft… Sie übertrifft bei weitem das, was ich vorausgesehen habe…",
+      2: "Ich habe es nicht geschafft, deine Stärke genau vorherzusagen.",
+      3: "Selbst mit meinen immensen psychischen Kräften kann ich niemanden spüren, der stärker ist als du."
     },
     "defeat": {
-      1: "This victory… It is exactly as I foresaw in my visions!",
-      2: "Perhaps it was another I sensed a great desire in…",
-      3: "Hone your abilities before recklessly charging into battle.\nYou never know what the future may hold if you do…"
+      1: "Dieser Sieg… Genau so habe ich ihn in meinen Visionen gesehen!",
+      2: "Vielleicht war es jemand anderes, den ich spürte…",
+      3: `Verfeinere deine Fähigkeiten, bevor du unüberlegt in den Kampf stürzt.
+          $Du weißt nie, was die Zukunft bereithält, wenn du es tust…`
     }
   },
   "blaine": {
     "encounter": {
-      1: "Hah! Hope you brought a Burn Heal!",
-      2: "My fiery Pokémon will incinerate all challengers!",
-      3: "Get ready to play with fire!"
+      1: "Hah! Ich hoffe, du hast Feuerheiler mitgebracht!",
+      2: "Meine feurigen Pokémon werden alle Herausforderer verbrennen!",
+      3: "Mach dich bereit, mit dem Feuer zu spielen!"
     },
     "victory": {
-      1: "I have burned down to nothing! Not even ashes remain!",
-      2: "Didn't I stoke the flames high enough?",
-      3: "I'm all burned out… But this makes my motivation to improve burn even hotter!"
+      1: "Ich habe mich bis auf die Knochen verbrannt! Nicht einmal Asche bleibt!",
+      2: "Habe ich die Flammen nicht hoch genug geschürt?",
+      3: "Ich bin komplett ausgebrannt… Aber das lässt meine Motivation, mich zu verbessern, noch heißer brennen!"
     },
     "defeat": {
-      1: "My raging inferno cannot be quelled!",
-      2: "My Pokémon have been powered up with the heat from this victory!",
-      3: "Hah! My passion burns brighter than yours!"
+      1: "Mein wütendes Inferno kann nicht gelöscht werden!",
+      2: "Meine Pokémon sind durch die Hitze dieses Sieges gestärkt worden!",
+      3: "Hah! Meine Leidenschaft brennt heller als deine!"
     }
   },
   "giovanni": {
     "encounter": {
-      1: "I, the leader of Team Rocket, will make you feel a world of pain!",
-      2: "My training here will be vital before I am to face my old associates again.",
-      3: "I do not think you are prepared for the level of failure you are about to experience!"
+      1: "Ich, der Anführer von Team Rocket, werde dir eine Welt voller Schmerz bereiten!",
+      2: "Mein Training hier wird entscheidend sein, bevor ich mich wieder meinen alten Kollegen stelle.",
+      3: "Ich denke dass du nicht auf die Ausmaße des Scheiterns vorbereitet bist, die du gleich erleben wirst!"
     },
     "victory": {
-      1: "WHAT! Me, lose?! There is nothing I wish to say to you!",
-      2: "Hmph… You could never understand what I hope to achieve.",
-      3: "This defeat is merely delaying the inevitable.\nI will rise Team Rocket from the ashes in due time."
+      1: "WAS! Ich, verlieren?! Es gibt nichts, was ich dir sagen möchte!",
+      2: "Hmm… Du wirst nie verstehen können, was ich zu erreichen versuche.",
+      3: "Diese Niederlage ist nur ein kleiner Rückschlag.\nTeam Rocket wird aus der Asche auferstehen."
     },
     "defeat": {
-      1: "Not being able to measure your own strength shows that you are still but a child.",
-      2: "Do not try to interfere with me again.",
-      3: "I hope you understand how foolish challenging me was."
+      1: "Das du nicht in der Lage bist, deine eigene Stärke einzuschätzen, zeigt, dass du noch ein Kind bist.",
+      2: "Versuche nicht, dich wieder in meine Angelegenheiten einzumischen.",
+      3: "Ich hoffe, du verstehst, wie dumm es war, mich herauszufordern."
     }
   },
   "roxanne": {

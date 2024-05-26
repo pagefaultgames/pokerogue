@@ -2013,6 +2013,76 @@ export const dialogue: DialogueTranslationEntries = {
       1: "Things didn't heat up for you."
     }
   },
+  "marnie_elite": {
+    "encounter": {
+      1: "You've made it this far, huh? Let's see if you can handle my Pokémon!",
+      2: "I'll give it my best shot, but don't think I'll go easy on you!"
+    },
+    "victory": {
+      1: "I can't believe I lost... But you deserved that win. Well done!",
+      2: "Looks like I've still got a lot to learn. Great battle, though!"
+    },
+    "defeat": {
+      1: "You put up a good fight, but I've got the edge! Better luck next time!",
+      2: "Seems like my training's paid off. Thanks for the battle!"
+    }
+  },
+  "nessa_elite": {
+    "encounter": {
+      1: "The tides are turning in my favor. Ready to get swept away?",
+      2: "Let's make some waves with this battle! I hope you're prepared!"
+    },
+    "victory": {
+      1: "You navigated those waters perfectly... Well done!",
+      2: "Looks like my currents were no match for you. Great job!"
+    },
+    "defeat": {
+      1: "Water always finds a way. That was a refreshing battle!",
+      2: "You fought well, but the ocean's power is unstoppable!"
+    }
+  },
+  "bea_elite": {
+    "encounter": {
+      1: "Prepare yourself! My fighting spirit burns bright!",
+      2: "Let's see if you can keep up with my relentless pace!"
+    },
+    "victory": {
+      1: "Your strength... It's impressive. You truly deserve this win.",
+      2: "I've never felt this intensity before. Amazing job!"
+    },
+    "defeat": {
+      1: "Another victory for my intense training regimen! Well done!",
+      2: "You've got strength, but I trained harder. Great battle!"
+    }
+  },
+  "allister_elite": {
+    "encounter": {
+      1: "Shadows fall... Are you ready to face your fears?",
+      2: "Let's see if you can handle the darkness that I command."
+    },
+    "victory": {
+      1: "You've dispelled the shadows... For now. Well done.",
+      2: "Your light pierced through my darkness. Great job."
+    },
+    "defeat": {
+      1: "The shadows have spoken... Your strength isn't enough.",
+      2: "Darkness triumphs... Maybe next time you'll see the light."
+    }
+  },
+  "raihan_elite": {
+    "encounter": {
+      1: "Storm's brewing! Let's see if you can weather this fight!",
+      2: "Get ready to face the eye of the storm!"
+    },
+    "victory": {
+      1: "You've bested the storm... Incredible job!",
+      2: "You rode the winds perfectly... Great battle!"
+    },
+    "defeat": {
+      1: "Another storm weathered, another victory claimed! Well fought!",
+      2: "You got caught in my storm! Better luck next time!"
+    }
+  },
   "rival": {
     "encounter": {
       1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
@@ -2221,7 +2291,7 @@ export const battleSpecDialogue: SimpleTranslationEntries = {
 
 export const miscDialogue: SimpleTranslationEntries = {
   "ending":
-        `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
+      `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
         $@c{smile}It's over.@d{64} You ended the loop.
         $@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
         $@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?
@@ -2229,7 +2299,7 @@ export const miscDialogue: SimpleTranslationEntries = {
         $@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.
         $@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.`,
   "ending_female":
-        `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
+      `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
         $@c{smile_eclosed}Of course… I always had that feeling.\n@c{smile}It's over now, right? You ended the loop.
         $@c{smile_ehalf}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
         $I'll be the only one to remember what you did.\n@c{angry_mopen}I'll try not to forget!
@@ -2237,8 +2307,6 @@ export const miscDialogue: SimpleTranslationEntries = {
         $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
         $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
 };
-
-
 
 export const doubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
