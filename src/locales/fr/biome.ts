@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const biome: SimpleTranslationEntries = {
-  "unknownLocation": "Dans un endroit inconnu",
+  "unknownLocation": "vous avez oublié où",
   "TOWN": "Ville",
   "PLAINS": "Plaines",
   "GRASS": "Herbes",
@@ -17,9 +17,9 @@ export const biome: SimpleTranslationEntries = {
   "BADLANDS": "Terres Sauvages",
   "CAVE": "Grotte",
   "DESERT": "Desert",
-  "ICE_CAVE": "Caverne Glaciale",
+  "ICE_CAVE": "Caverne Gelée",
   "MEADOW": "Prairie",
-  "POWER_PLANT": "Centrale Électrique",
+  "POWER_PLANT": "Centrale",
   "VOLCANO": "Volcan",
   "GRAVEYARD": "Cimetière",
   "DOJO": "Dojo",
@@ -34,7 +34,7 @@ export const biome: SimpleTranslationEntries = {
   "TEMPLE": "Temple",
   "SLUM": "Bidonville",
   "SNOWY_FOREST": "Forêt Enneigée",
-  "ISLAND": "Île",
+  "ISLAND": "Ile",
   "LABORATORY": "Laboratoire",
   "END": "???",
 } as const;
