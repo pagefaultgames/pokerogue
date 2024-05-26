@@ -1562,6 +1562,8 @@ export class SwitchSummonPhase extends SummonPhase {
 
     this.lastPokemon?.resetSummonData();
 
+    this.scene.arena.refreshAbTags();
+
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
   }
 
@@ -3494,6 +3496,7 @@ export class FaintPhase extends PokemonPhase {
       applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move), lastAttack.result);
     }
 
+    this.scene.arena.refreshAbTags();
     const alivePlayField = this.scene.getField(true);
     alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon));
     if (pokemon.turnData?.attacksReceived?.length) {

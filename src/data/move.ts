@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, PostSummonAddArenaTagAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
@@ -213,19 +213,6 @@ export default class Move implements Localizable {
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
       return true;
-    }
-    return false;
-  }
-
-  isAllyTarget(): boolean {
-    switch (this.moveTarget) {
-      case MoveTarget.USER:
-      case MoveTarget.NEAR_ALLY:
-      case MoveTarget.ALLY:
-      case MoveTarget.USER_OR_NEAR_ALLY:
-      case MoveTarget.USER_AND_ALLIES:
-      case MoveTarget.USER_SIDE:
-        return true;
     }
     return false;
   }
@@ -4601,9 +4588,15 @@ export class AbilityChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    (this.selfTarget ? user : target).summonData.ability = this.ability;
+    const pokemon = this.selfTarget ? user : target;
+    const hadAbArenaTag = pokemon.hasAbilityWithAttr(PostSummonAddArenaTagAbAttr);
+    pokemon.summonData.ability = this.ability;
 
-    user.scene.queueMessage("The " + getPokemonMessage((this.selfTarget ? user : target), ` acquired\n${allAbilities[this.ability].name}!`));
+    if (hadAbArenaTag) {
+      pokemon.scene.arena.refreshAbTags();
+    }
+
+    user.scene.queueMessage("The " + getPokemonMessage(pokemon, ` acquired\n${allAbilities[this.ability].name}!`));
 
     return true;
   }
@@ -4704,6 +4697,10 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
     target.summonData.abilitySuppressed = true;
 
+    if (target.hasAbilityWithAttr(PostSummonAddArenaTagAbAttr)) {
+      target.scene.arena.refreshAbTags();
+    }
+
     target.scene.queueMessage(getPokemonMessage(target, " ability\nwas suppressed!"));
 
     return true;
@@ -4721,6 +4718,8 @@ export class TransformAttr extends MoveEffectAttr {
         return resolve(false);
       }
 
+      const hadAbArenaTag = user.hasAbilityWithAttr(PostSummonAddArenaTagAbAttr);
+
       user.summonData.speciesForm = target.getSpeciesForm();
       user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
       user.summonData.ability = target.getAbility().id;
@@ -4730,6 +4729,10 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.battleStats = target.summonData.battleStats.slice(0);
       user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       user.summonData.types = target.getTypes();
+
+      if (hadAbArenaTag) {
+        user.scene.arena.refreshAbTags();
+      }
 
       user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto ${target.name}!`));
 

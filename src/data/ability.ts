@@ -870,6 +870,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !attacker.getAbility().hasAttr(PostDefendAbilityGiveAbAttr)) {
       attacker.summonData.ability = this.ability;
+      pokemon.scene.arena.refreshAbTags();
 
       return true;
     }
@@ -1480,6 +1481,21 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     return pokemon.addTag(this.tagType, this.turnCount);
+  }
+}
+
+export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
+  private tagType: ArenaTagType;
+  private side: ArenaTagSide;
+
+  constructor(tagType: ArenaTagType, side: ArenaTagSide, showAbility?: boolean) {
+    super(showAbility);
+
+    this.tagType = tagType;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    return pokemon.scene.arena.addTag(this.tagType, 0, Moves.NONE, pokemon.id, this.side);
   }
 }
 
@@ -4225,17 +4241,17 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.VESSEL_OF_RUIN, 9)
-      .ignorable()
-      .unimplemented(),
+      .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.VESSEL_OF_RUIN, ArenaTagSide.BOTH, true)
+      .ignorable(),
     new Ability(Abilities.SWORD_OF_RUIN, 9)
-      .ignorable()
-      .unimplemented(),
+      .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.SWORD_OF_RUIN, ArenaTagSide.BOTH, true)
+      .ignorable(),
     new Ability(Abilities.TABLETS_OF_RUIN, 9)
-      .ignorable()
-      .unimplemented(),
+      .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.TABLETS_OF_RUIN, ArenaTagSide.BOTH, true)
+      .ignorable(),
     new Ability(Abilities.BEADS_OF_RUIN, 9)
-      .ignorable()
-      .unimplemented(),
+      .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.BEADS_OF_RUIN, ArenaTagSide.BOTH, true)
+      .ignorable(),
     new Ability(Abilities.ORICHALCUM_PULSE, 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)

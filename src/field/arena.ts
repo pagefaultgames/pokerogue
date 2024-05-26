@@ -9,7 +9,7 @@ import { CommonAnimPhase, WeatherEffectPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
+import { AbArenaTag, ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { TrainerType } from "../data/enums/trainer-type";
 import { BattlerIndex } from "../battle";
@@ -575,6 +575,16 @@ export class Arena {
     });
   }
 
+  refreshAbTags(): void {
+    const abTags = this.tags.filter(t => t instanceof AbArenaTag);
+
+    abTags.forEach(t => {
+      if (!(t as AbArenaTag).isActive(this)) {
+        this.removeTag(t.tagType);
+      }
+    })
+  }
+
   removeTag(tagType: ArenaTagType): boolean {
     const tags = this.tags;
     const tag = tags.find(t => t.tagType === tagType);
@@ -593,7 +603,6 @@ export class Arena {
     }
     return !!tag;
   }
-
 
   removeAllTags(): void {
     while (this.tags.length) {

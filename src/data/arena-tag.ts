@@ -9,7 +9,7 @@ import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, allAbilities, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ProtectStatAbAttr, allAbilities, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { Abilities } from "./enums/abilities";
@@ -145,7 +145,7 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
   }
 
   onAdd(arena: Arena): void {
-    arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? '\non your side' : this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : ''}.`);
+    arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? "\non your side" : this.side === ArenaTagSide.ENEMY ? "\non the foe\'s side" : ""}.`);
   }
 }
 
@@ -268,83 +268,6 @@ class CraftyShieldTag extends ConditionalProtectTag {
           && moveTarget !== MoveTarget.ALL;
       }
     );
-  }
-}
-
-/**
- * Arena Tag class for the {@link https://bulbapedia.bulbagarden.net/wiki/Treasures_of_ruin Treasures of Ruin}
- * abilities. 
- */
-export class TreasureOfRuinTag extends ArenaTag {
-  private stat: Stat;
-  private sourceAbility: Abilities;
-
-  constructor(tagType: ArenaTagType, sourceAbility: Abilities, sourceId: integer, stat: Stat) {
-    super(tagType, 0, Moves.NONE, sourceId, ArenaTagSide.BOTH);
-
-    this.stat = stat;
-    this.sourceAbility = sourceAbility;
-  }
-
-  getAbilityName(): string {
-    return this.sourceAbility ?
-      allAbilities[this.sourceAbility].name :
-      null;
-  }
-
-  // This might need to be moved to the abilities themselves
-  onAdd(arena: Arena): void {
-    const user: Pokemon = arena.scene.getPokemonById(this.sourceId);
-    const statName: string = getStatName(this.stat);
-
-    arena.scene.queueMessage(
-      `${user.name}'s ${this.getAbilityName()} weakened the ${statName}\nof all surrounding Pokemon!`);
-  }
-
-  // Removes default message for arena tag removal
-  onRemove(arena: Arena) { }
-
-  /**
-   * apply: 
-   * @param arena   (Arena)              The arena containing this tag
-   * @param args[0] (Pokemon)            The Pokemon to which this tag is applied
-   * @param args[1] (Stat)               The type of the checked Stat value
-   * @param args[2] (Utils.NumberHolder) A container for the checked Stat value
-   * @returns true if the flag modifies the Stat value, false otherwise.
-   */
-  apply(arena: Arena, args: any[]): boolean {
-    const target = args[0] as Pokemon;
-    const stat = args[1] as Stat;
-
-    if (target.id !== this.sourceId && this.stat === stat) {
-      (args[2] as Utils.NumberHolder).value *= 0.75;
-      return true;
-    }
-    return false;
-  }
-}
-
-class VesselOfRuinTag extends TreasureOfRuinTag {
-  constructor(sourceId: integer) {
-    super(ArenaTagType.VESSEL_OF_RUIN, Abilities.VESSEL_OF_RUIN, sourceId, Stat.SPATK);
-  }
-}
-
-class SwordOfRuinTag extends TreasureOfRuinTag {
-  constructor(sourceId: integer) {
-    super(ArenaTagType.SWORD_OF_RUIN, Abilities.SWORD_OF_RUIN, sourceId, Stat.DEF);
-  }
-}
-
-class TabletsOfRuinTag extends TreasureOfRuinTag {
-  constructor(sourceId: integer) {
-    super(ArenaTagType.TABLETS_OF_RUIN, Abilities.TABLETS_OF_RUIN, sourceId, Stat.ATK);
-  }
-}
-
-class BeadsOfRuinTag extends TreasureOfRuinTag {
-  constructor(sourceId: integer) {
-    super(ArenaTagType.BEADS_OF_RUIN, Abilities.BEADS_OF_RUIN, sourceId, Stat.SPDEF);
   }
 }
 
@@ -708,6 +631,121 @@ class TailwindTag extends ArenaTag {
 
   onRemove(arena: Arena): void {
     arena.scene.queueMessage(`${this.side === ArenaTagSide.PLAYER ? "Your" : this.side === ArenaTagSide.ENEMY ? "The opposing" : ""} team's Tailwind petered out!`);
+  }
+}
+
+export abstract class AbArenaTag extends ArenaTag {
+  public sourceAbility: Abilities;
+  public isIgnorable: boolean;
+
+  constructor(tagType: ArenaTagType, sourceAbility: Abilities, sourceId: integer, side: ArenaTagSide, isIgnorable: boolean = false) {
+    super(tagType, 0, Moves.NONE, sourceId, side);
+
+    this.sourceAbility = sourceAbility;
+    this.isIgnorable = isIgnorable;
+  }
+
+  // Removes default message for arena tag removal
+  onRemove(arena: Arena): void { }
+
+  getAbilityName(): string {
+    return this.sourceAbility ?
+      allAbilities[this.sourceAbility].name :
+      null;
+  }
+
+  isActive(arena: Arena): boolean {
+    const playField = arena.scene.getField(true);
+
+    for (const p of playField) {
+      if (p.hasAbility(this.sourceAbility) && !p.summonData.abilitySuppressed) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * apply:
+   * @param arena   (Arena) The arena containing this tag
+   * @param args[0] (Pokemon) The Pokemon to which this tag is applied
+   * @returns true if this tag can be applied, false otherwise
+   */
+  apply(arena: Arena, ...args: any[]): boolean {
+    const target = args[0] as Pokemon;
+
+    return !this.isIgnorable || !target.hasAbilityWithAttr(MoveAbilityBypassAbAttr);
+  }
+}
+
+/**
+ * Arena Tag class for the {@link https://bulbapedia.bulbagarden.net/wiki/Treasures_of_ruin Treasures of Ruin}
+ * abilities.
+ */
+export class TreasureOfRuinTag extends AbArenaTag {
+  private stat: Stat;
+
+  constructor(tagType: ArenaTagType, sourceAbility: Abilities, sourceId: integer, side: ArenaTagSide, stat: Stat, isIgnorable: boolean = false) {
+    super(tagType, sourceAbility, sourceId, side, isIgnorable);
+
+    this.stat = stat;
+    this.sourceAbility = sourceAbility;
+  }
+
+  onAdd(arena: Arena): void {
+    const user: Pokemon = arena.scene.getPokemonById(this.sourceId);
+    const statName: string = getStatName(this.stat);
+
+    arena.scene.queueMessage(
+      `${user.name}'s ${this.getAbilityName()} weakened the ${statName}\nof all surrounding Pokemon!`);
+  }
+
+  /**
+   * apply:
+   * @param arena   (Arena)              The arena containing this tag
+   * @param args[0] (Pokemon)            The Pokemon to which this tag is applied
+   * @param args[1] (Stat)               The type of the checked Stat
+   * @param args[2] (Utils.NumberHolder) A container for the checked Stat value
+   * @returns true if the flag modifies the Stat value, false otherwise.
+   */
+  apply(arena: Arena, args: any[]): boolean {
+    const target = args[0] as Pokemon;
+
+    if (!super.apply(arena, target)) {
+      return false;
+    }
+
+    const stat = args[1] as Stat;
+
+    if (!target.hasAbility(this.sourceAbility) && this.stat === stat) {
+      (args[2] as Utils.NumberHolder).value *= 0.75;
+      return true;
+    }
+    return false;
+  }
+}
+
+class VesselOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.VESSEL_OF_RUIN, Abilities.VESSEL_OF_RUIN, sourceId, ArenaTagSide.BOTH, Stat.SPATK, true);
+  }
+}
+
+class SwordOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.SWORD_OF_RUIN, Abilities.SWORD_OF_RUIN, sourceId, ArenaTagSide.BOTH, Stat.DEF, true);
+  }
+}
+
+class TabletsOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.TABLETS_OF_RUIN, Abilities.TABLETS_OF_RUIN, sourceId, ArenaTagSide.BOTH, Stat.ATK, true);
+  }
+}
+
+class BeadsOfRuinTag extends TreasureOfRuinTag {
+  constructor(sourceId: integer) {
+    super(ArenaTagType.BEADS_OF_RUIN, Abilities.BEADS_OF_RUIN, sourceId, ArenaTagSide.BOTH, Stat.SPDEF, true);
   }
 }
 
