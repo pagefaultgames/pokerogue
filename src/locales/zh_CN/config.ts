@@ -4,6 +4,7 @@ import { achv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { biome } from "./biome";
 import { commandUiHandler } from "./command-ui-handler";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
@@ -22,7 +23,6 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
-import { biome } from "./biome";
 
 
 export const zhCnConfig = {
@@ -30,6 +30,9 @@ export const zhCnConfig = {
   abilityTriggers: abilityTriggers,
   achv: achv,
   battle: battle,
+  battleMessageUiHandler: battleMessageUiHandler,
+  berry: berry,
+  biome: biome,
   commandUiHandler: commandUiHandler,
   egg: egg,
   fightUiHandler: fightUiHandler,
@@ -48,9 +51,6 @@ export const zhCnConfig = {
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
-  weather: weather,
-  battleMessageUiHandler: battleMessageUiHandler,
-  berry: berry,
   voucher: voucher,
-  biome: biome,
+  weather: weather,
 };
