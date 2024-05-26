@@ -1832,7 +1832,7 @@ export default class BattleScene extends SceneBase {
         } else {
           const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
           itemModifier.stackCount -= countTaken;
-					newItemModifier.stackCount = countTaken;
+          newItemModifier.stackCount = countTaken;
         }
         removeOld = !itemModifier.stackCount;
         if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {

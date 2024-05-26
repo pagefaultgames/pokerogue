@@ -233,17 +233,14 @@ export default class PartyUiHandler extends MessageUiHandler {
     let success = false;
 
     if (this.optionsMode) {
-      const option = this.options[this.optionsCursor]
+      const option = this.options[this.optionsCursor];
       if (button === Button.ACTION) {
         const pokemon = this.scene.getParty()[this.cursor];
         if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode && option !== PartyOption.CANCEL) {
-          const pokemon = this.scene.getParty()[this.cursor];
-          const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-            && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[];
-            this.startTransfer();
-            this.clearOptions();
-            ui.playSelect();
-            return true;
+          this.startTransfer();
+          this.clearOptions();
+          ui.playSelect();
+          return true;
         } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER && option !== PartyOption.CANCEL) {
           const filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
           if (filterResult === null) {
@@ -377,19 +374,19 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else {
         switch (button) {
         case Button.LEFT:
-            if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-              this.transferQuantities[option] = this.transferQuantities[option] == 1 ? this.transferQuantitiesMax[option] : this.transferQuantities[option] - 1
-              this.updateOptions()
-              success = this.setCursor(this.optionsCursor)
-            }
-          break;
+          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+            this.transferQuantities[option] = this.transferQuantities[option] === 1 ? this.transferQuantitiesMax[option] : this.transferQuantities[option] - 1
+            this.updateOptions();
+            success = this.setCursor(this.optionsCursor);
+          }
+        break;
         case Button.RIGHT:
-            if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-              this.transferQuantities[option] = this.transferQuantities[option] == this.transferQuantitiesMax[option] ? 1 : this.transferQuantities[option] + 1
-              this.updateOptions()
-              success = this.setCursor(this.optionsCursor)
-            }
-          break;
+          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+            this.transferQuantities[option] = this.transferQuantities[option] === this.transferQuantitiesMax[option] ? 1 : this.transferQuantities[option] + 1
+            this.updateOptions();
+            success = this.setCursor(this.optionsCursor);
+          }
+        break;
         case Button.UP:
           success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1);
           break;
@@ -403,9 +400,9 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.cursor < 6) {
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-              && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[]
-            this.transferQuantities = itemModifiers.map(item => item.getStackCount())
-            this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount())
+              && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
+            this.transferQuantities = itemModifiers.map(item => item.getStackCount());
+            this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
           }
           this.showOptions();
           ui.playSelect();
