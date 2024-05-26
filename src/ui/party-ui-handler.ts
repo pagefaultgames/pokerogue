@@ -57,7 +57,7 @@ export enum PartyOption {
 }
 
 export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
-export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, itemQuantity?: integer, toCursor?: integer) => void;
+export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, toCursor?: integer) => void;
 export type PartyModifierSpliceSelectCallback = (fromCursor: integer, toCursor?: integer) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string;
 export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => string;
@@ -582,7 +582,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       break;
     case PartyUiMode.MODIFIER_TRANSFER:
       if (!this.transferMode) {
-        optionsMessage = "Select a held item to transfer.";
+        optionsMessage = "Select a held item to transfer.\nUse < and > to change the quantity.";
       }
       break;
     case PartyUiMode.SPLICE:
@@ -596,7 +596,11 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.updateOptions();
 
-    this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 30);
+    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 42);
+    } else {
+      this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 30);
+    }
 
     this.setCursor(0);
   }
