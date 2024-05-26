@@ -15,6 +15,9 @@ import UpdateList = Phaser.GameObjects.UpdateList;
 import ScaleManager = Phaser.Scale.ScaleManager;
 import MockRectangle from "#app/test/essentials/mocksContainer/mockRectangle";
 import MockNineslice from "#app/test/essentials/mocksContainer/mockNineslice";
+import MockImage from "#app/test/essentials/mocksContainer/mockImage";
+import MockText from "#app/test/essentials/mocksContainer/mockText";
+import MockPolygon from "#app/test/essentials/mocksContainer/mockPolygon";
 
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
@@ -124,9 +127,9 @@ export default class GameWrapper {
       existing: () => null,
       rectangle: (x, y, width, height, fillColor) => new MockRectangle(_scene, x, y, width, height, fillColor),
       nineslice: (x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight) => new MockNineslice(_scene, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight),
-      image: () => ({...addMethods}),
-      text: () => ({...addMethods}),
-      polygon: () => ({...addMethods}),
+      image: (x, y, texture) => new MockImage(_scene, x, y, texture),
+      text: (x, y, content, styleOptions) => new MockText(_scene, x, y, content, styleOptions),
+      polygon: (x, y, content, fillColor, fillAlpha) => new MockPolygon(_scene, x, y, content, fillColor, fillAlpha),
     };
 
     _scene.cachedFetch = (url, init) => {
