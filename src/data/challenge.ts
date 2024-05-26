@@ -273,7 +273,7 @@ export class SingleTypeChallenge extends Challenge {
       overrideValue = this.value;
     }
     if (overrideValue) {
-      return Type[this.value - 1].toString();
+      return i18next.t(`pokemonInfo:Type.${Type[overrideValue-1].toString()}`);
     } else {
       return "None";
     }
