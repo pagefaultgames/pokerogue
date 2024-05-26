@@ -159,6 +159,8 @@ describe("Session import/export", () => {
     await scene.getCurrentPhase().doEncounter();
     phase = scene.getCurrentPhase();
     phase = scene.getCurrentPhase();
+    // the issue is that there is a check in frames that are renderered and add phase according to that
+    // so we need some logic in these frames
   //   const spy = vi.fn();
   //   await waitFirstInPhaseQueueIs(scene, EnemyCommandPhase).then(result => {
   //     expect(result).toBe(true);
