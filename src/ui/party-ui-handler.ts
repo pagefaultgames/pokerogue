@@ -375,18 +375,18 @@ export default class PartyUiHandler extends MessageUiHandler {
         switch (button) {
         case Button.LEFT:
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            this.transferQuantities[option] = this.transferQuantities[option] === 1 ? this.transferQuantitiesMax[option] : this.transferQuantities[option] - 1
+            this.transferQuantities[option] = this.transferQuantities[option] === 1 ? this.transferQuantitiesMax[option] : this.transferQuantities[option] - 1;
             this.updateOptions();
             success = this.setCursor(this.optionsCursor);
           }
-        break;
+          break;
         case Button.RIGHT:
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            this.transferQuantities[option] = this.transferQuantities[option] === this.transferQuantitiesMax[option] ? 1 : this.transferQuantities[option] + 1
+            this.transferQuantities[option] = this.transferQuantities[option] === this.transferQuantitiesMax[option] ? 1 : this.transferQuantities[option] + 1;
             this.updateOptions();
             success = this.setCursor(this.optionsCursor);
           }
-        break;
+          break;
         case Button.UP:
           success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1);
           break;
