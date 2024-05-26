@@ -50,41 +50,49 @@ describe("check if every variant's sprite are correctly set", () => {
         if (name.includes("_")) {
           const id = name.split("_")[0];
           const variant = name.split("_")[1];
+          const index = parseInt(variant, 10) - 1;
           if (ext !== "json") {
+            const urlJsonFile = `${dirpath}${id}.json`;
             if (mlist.hasOwnProperty(id)) {
-              const urlJsonFile = `${dirpath}${id}.json`;
               const trimmedUrlJsonFilepath = `${trimmedDirpath}${id}.json`;
               const jsonFileExists = fs.existsSync(urlJsonFile);
-              if (mlist[id].includes(1)) {
+              if (mlist[id].includes(1) && !jsonFileExists) {
                 const msg = `[${name}] MISSING JSON ${trimmedUrlJsonFilepath}`;
-                if (!jsonFileExists && !errors.includes(msg)) {
+                if (!errors.includes(msg)) {
                   errors.push(msg);
                 }
               }
-            }
-            if (!mlist.hasOwnProperty(id)) {
-              errors.push(`[${id}] missing key ${id} in masterlist for ${trimmedFilePath}`);
-            } else if (mlist[id][parseInt(variant, 10) - 1] !== 2) {
-              const urlJsonFile = `${dirpath}${name}.json`;
-              const trimmedUrlJsonFilepath = `${trimmedDirpath}${name}.json`;
-              const jsonFileExists = fs.existsSync(urlJsonFile);
-              if (mlist[id].includes(1)) {
-                const msg = `[${id}] MISSING JSON ${trimmedUrlJsonFilepath}`;
-                if (!jsonFileExists && !errors.includes(msg)) {
-                  errors.push(msg);
+              if (!mlist.hasOwnProperty(id) && jsonFileExists) {
+                errors.push(`[${id}] missing key ${id} in masterlist for ${trimmedFilePath}`);
+              }
+              if (mlist[id][index] === 1 && jsonFileExists) {
+                const raw = fs.readFileSync(urlJsonFile, {encoding: "utf8", flag: "r"});
+                const data = JSON.parse(raw);
+                const keys = Object.keys(data);
+                if (!keys.includes(`${index}`)) {
+                  const urlSpriteJsonFile = `${dirpath}${id}_${variant}.json`;
+                  const trimmedUrlSpriteFilepath = `${trimmedDirpath}${id}_${variant}.json`;
+                  const spriteFileExists = fs.existsSync(urlSpriteJsonFile);
+                  if (spriteFileExists) {
+                    errors.push(`[${id}] [${mlist[id]}] - the value should be 2 for the index ${index} - ${trimmedUrlSpriteFilepath}`);
+                  }
                 }
               }
-              errors.push(`[${id}] [${mlist[id]}] - the value should be 2 for the index ${parseInt(variant, 10) - 1} - ${trimmedFilePath}`);
             }
           }
         } else if (!mlist.hasOwnProperty(name)) {
-          errors.push(`named - missing key ${name} in masterlist for ${trimmedFilePath}`);
+          errors.push(`[${name}] - missing key ${name} in masterlist for ${trimmedFilePath}`);
         } else {
           const raw = fs.readFileSync(filePath, {encoding: "utf8", flag: "r"});
           const data = JSON.parse(raw);
           for (const key of Object.keys(data)) {
             if (mlist[name][key] !== 1) {
-              errors.push(`[${name}] [${mlist[name]}] - the value should be 1 for the index ${key} - ${trimmedFilePath}`);
+              // if 2, check if json there
+              const urlSpriteJsonFile = `${dirpath}${name}_${parseInt(key, 10) + 1}.json`;
+              const spriteFileExists = fs.existsSync(urlSpriteJsonFile);
+              if (!spriteFileExists) {
+                errors.push(`[${name}] [${mlist[name]}] - the value should be 1 for the index ${key} - ${trimmedFilePath}`);
+              }
             }
           }
         }

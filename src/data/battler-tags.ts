@@ -254,6 +254,51 @@ export class ConfusedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag applied to the {@linkcode Move.DESTINY_BOND} user.
+ * @extends BattlerTag
+ * @see {@linkcode apply}
+ */
+export class DestinyBondTag extends BattlerTag {
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
+  }
+
+  /**
+   * Lapses either before the user's move and does nothing
+   * or after receiving fatal damage. When the damage is fatal,
+   * the attacking Pokemon is taken down as well, unless it's a boss.
+   *
+   * @param {Pokemon} pokemon Pokemon that is attacking the Destiny Bond user.
+   * @param {BattlerTagLapseType} lapseType CUSTOM or PRE_MOVE
+   * @returns false if the tag source fainted or one turn has passed since the application
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType !== BattlerTagLapseType.CUSTOM) {
+      return super.lapse(pokemon, lapseType);
+    }
+    const source = pokemon.scene.getPokemonById(this.sourceId);
+    if (!source.isFainted()) {
+      return true;
+    }
+
+    if (source.getAlly() === pokemon) {
+      return false;
+    }
+
+    const targetMessage = getPokemonMessage(pokemon, "");
+
+    if (pokemon.isBossImmune()) {
+      pokemon.scene.queueMessage(`${targetMessage} is unaffected\nby the effects of Destiny Bond.`);
+      return false;
+    }
+
+    pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`);
+    pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
+    return false;
+  }
+}
+
 export class InfatuatedTag extends BattlerTag {
   constructor(sourceMove: integer, sourceId: integer) {
     super(BattlerTagType.INFATUATED, BattlerTagLapseType.MOVE, 1, sourceMove, sourceId);
@@ -1416,6 +1461,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new MagnetRisenTag(tagType, sourceMove);
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
+  case BattlerTagType.DESTINY_BOND:
+    return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

@@ -1,7 +1,7 @@
 import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { MoveCategory, allMoves } from "./move";
+import { MoveCategory, allMoves, MoveTarget } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, StatChangePhase} from "../phases";
@@ -11,6 +11,7 @@ import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
+import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 
 export enum ArenaTagSide {
   BOTH,
@@ -143,6 +144,128 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
 
   onAdd(arena: Arena): void {
     arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? "\non your side" : this.side === ArenaTagSide.ENEMY ? "\non the foe's side" : ""}.`);
+  }
+}
+
+type ProtectConditionFunc = (...args: any[]) => boolean;
+
+/**
+ * Abstract class to implement conditional team protection
+ * applies protection based on the attributes of incoming moves
+ * @param protectConditionFunc: The function determining if an incoming move is negated
+ */
+abstract class ConditionalProtectTag extends ArenaTag {
+  protected protectConditionFunc: ProtectConditionFunc;
+
+  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, side: ArenaTagSide, condition: ProtectConditionFunc) {
+    super(tagType, 1, sourceMove, sourceId, side);
+
+    this.protectConditionFunc = condition;
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(`${super.getMoveName()} protected${this.side === ArenaTagSide.PLAYER ? " your" : this.side === ArenaTagSide.ENEMY ? " the\nopposing" : ""} team!`);
+  }
+
+  // Removes default message for effect removal
+  onRemove(arena: Arena): void { }
+
+  /**
+   * apply(): Checks incoming moves against the condition function
+   * and protects the target if conditions are met
+   * @param arena The arena containing this tag
+   * @param args[0] (Utils.BooleanHolder) Signals if the move is cancelled
+   * @param args[1] (Pokemon) The intended target of the move
+   * @param args[2...] (any[]) The parameters to the condition function
+   * @returns
+   */
+  apply(arena: Arena, args: any[]): boolean {
+    if ((args[0] as Utils.BooleanHolder).value) {
+      return false;
+    }
+
+    const target = args[1] as Pokemon;
+    if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
+         && this.protectConditionFunc(...args.slice(2))) {
+      (args[0] as Utils.BooleanHolder).value = true;
+      new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
+      arena.scene.queueMessage(`${super.getMoveName()} protected ${getPokemonMessage(target, "!")}`);
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Guard_(move) Quick Guard}
+ * Condition: The incoming move has increased priority.
+ */
+class QuickGuardTag extends ConditionalProtectTag {
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.QUICK_GUARD, Moves.QUICK_GUARD, sourceId, side,
+      (priority: integer) : boolean => {
+        return priority > 0;
+      }
+    );
+  }
+}
+
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard}
+ * Condition: The incoming move can target multiple Pokemon. The move's source
+ * can be an ally or enemy.
+ */
+class WideGuardTag extends ConditionalProtectTag {
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side,
+      (moveTarget: MoveTarget) : boolean => {
+        switch (moveTarget) {
+        case MoveTarget.ALL_ENEMIES:
+        case MoveTarget.ALL_NEAR_ENEMIES:
+        case MoveTarget.ALL_OTHERS:
+        case MoveTarget.ALL_NEAR_OTHERS:
+          return true;
+        }
+        return false;
+      }
+    );
+  }
+}
+
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block}
+ * Condition: The incoming move is a Physical or Special attack move.
+ */
+class MatBlockTag extends ConditionalProtectTag {
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side,
+      (moveCategory: MoveCategory) : boolean => {
+        return moveCategory !== MoveCategory.STATUS;
+      }
+    );
+  }
+
+  onAdd(arena: Arena) {
+    const source = arena.scene.getPokemonById(this.sourceId);
+    arena.scene.queueMessage(getPokemonMessage(source, " intends to flip up a mat\nand block incoming attacks!"));
+  }
+}
+
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield}
+ * Condition: The incoming move is a Status move, is not a hazard, and does
+ * not target all Pokemon or sides of the field.
+*/
+class CraftyShieldTag extends ConditionalProtectTag {
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side,
+      (moveCategory: MoveCategory, moveTarget: MoveTarget) : boolean => {
+        return moveCategory === MoveCategory.STATUS
+          && moveTarget !== MoveTarget.ENEMY_SIDE
+          && moveTarget !== MoveTarget.BOTH_SIDES
+          && moveTarget !== MoveTarget.ALL;
+      }
+    );
   }
 }
 
@@ -513,6 +636,14 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
   switch (tagType) {
   case ArenaTagType.MIST:
     return new MistTag(turnCount, sourceId, side);
+  case ArenaTagType.QUICK_GUARD:
+    return new QuickGuardTag(sourceId, side);
+  case ArenaTagType.WIDE_GUARD:
+    return new WideGuardTag(sourceId, side);
+  case ArenaTagType.MAT_BLOCK:
+    return new MatBlockTag(sourceId, side);
+  case ArenaTagType.CRAFTY_SHIELD:
+    return new CraftyShieldTag(sourceId, side);
   case ArenaTagType.MUD_SPORT:
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:
