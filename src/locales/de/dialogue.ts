@@ -667,104 +667,108 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "crasher_wake": {
     "encounter": {
-      1: "Crash! Crash! Watch out!\nCrasher Wake…is…heeere!",
-      2: "Crash! Crash! Crasher Wake!",
-      3: "I'm the tidal wave of power to wash you away!"
+      1: "Aufgepasst! Wellenbrecher Marinus… ist… da!",
+      2: "Brechende Wellen! Ich bin Wellenbrecher Marinus!",
+      3: "Ich bin die Flutwelle der Macht, die dich wegspült!"
     },
     "victory": {
-      1: "That puts a grin on my face!\nGuhahaha! That was a blast!",
-      2: "Hunwah! It's gone and ended!\nHow will I say this…\nI want more! I wanted to battle a lot more!",
-      3: "WHAAAAT!?"
+      1: "Das bringt ein Grinsen in mein Gesicht! Guhahaha! Das war ein Spaß!",
+      2: "Hunwah! Es ist vorbei! Wie soll ich das sagen… Ich will mehr! Ich wollte viel mehr kämpfen!",
+      3: "WAAAS?!"
     },
     "defeat": {
-      1: "Yeeeeah! That's right!",
-      2: "I won, but I want more! I wanted to battle a lot more!",
-      3: "So long!"
+      1: "Yeeeeah! So muss das sein!",
+      2: "Ich habe gewonnen, aber ich will mehr! Ich wollte viel mehr kämpfen!",
+      3: "Bis bald! Ich freue mich auf den nächsten Kampf!"
     }
   },
   "falkner": {
     "encounter": {
-      1: "I'll show you the real power of the magnificent bird Pokémon!",
-      2: "Winds, stay with me!",
-      3: "Dad! I hope you're watching me battle from above!"
+      1: "Ich werde dir die wahre Kraft der prächtigen Flug-Pokémon zeigen!",
+      2: "Winde, bleibt bei mir!",
+      3: "Vater! Ich hoffe, du siehst mir beim Kampf von oben zu!"
     },
     "victory": {
-      1: "I understand… I'll bow out gracefully.",
-      2: "A defeat is a defeat. You are strong indeed.",
-      3: "…Shoot! Yeah, I lost."
+      1: "Ich verstehe… Ich werde mich anmutig zurückziehen.",
+      2: "Eine Niederlage ist eine Niederlage. Du bist wirklich stark.",
+      3: "…Verdammt! Ich habe verloren!"
     },
     "defeat": {
-      1: "Dad! I won with your cherished bird Pokémon…",
-      2: "Bird Pokémon are the best after all!",
-      3: "Feels like I'm catching up to my dad!"
+      1: "Vater! Ich habe mit deinen geliebten Flug-Pokémon gewonnen…",
+      2: "Flug-Pokémon sind die Besten!",
+      3: "Ich habe das Gefühl, dass ich meinem Vater näher komme!"
     }
   },
   "nessa": {
     "encounter": {
-      1: "No matter what kind of plan your refined mind may be plotting, my partner and I will be sure to sink it.",
-      2: "I'm not here to chat. I'm here to win!",
-      3: "This is a little gift from my Pokémon… I hope you can take it!"
+      1: `Egal, welchen Plan dein raffinierter Verstand auch schmiedet,
+          $mein Partner und ich werden ihn mit Sicherheit zu Fall bringen.`,
+      2: "Ich bin nicht hier, um zu plaudern. Ich bin hier, um zu gewinnen!",
+      3: "Das ist ein kleines Geschenk von meinen Pokémon… Ich hoffe, du kannst es annehmen!"
     },
     "victory": {
-      1: "You and your Pokémon are just too much…",
-      2: "How…? How can this be?!",
-      3: "I was totally washed away!"
+      1: "Du und deine Pokémon sind einfach zu stark…",
+      2: "Wie…? Wie kann das sein?",
+      3: "Ich wurde total weggespült!"
     },
     "defeat": {
-      1: "The raging wave crashes again!",
-      2: "Time to ride the wave of victory!",
+      1: "Die wütenede Welle schlägt wieder zu!",
+      2: "Es ist Zeit, die Welle des Sieges zu reiten!",
       3: "Ehehe!"
     }
   },
   "melony": {
     "encounter": {
-      1: "I'm not going to hold back!",
-      2: "All righty, I suppose we should get started.",
-      3: "I'll freeze you solid!"
+      1: "Ich halte mich nicht zurück!",
+      2: "Okay, ich denke, wir sollten anfangen.",
+      3: "Ich werde dich einfrieren!"
     },
     "victory": {
-      1: "You… You're pretty good, huh?",
-      2: "If you find Gordie around, be sure to give him a right trashing, would you?",
-      3: "I think you took breaking the ice a little too literally…"
+      1: "Du… Du bist ziemlich gut, oder?",
+      2: "Wenn du Mac triffst, haue ihn für mich um, ja?",
+      3: "Ich denke, du hast 'das Eis brechen' ein wenig zu wörtlich genommen…"
     },
     "defeat": {
-      1: "Now do you see how severe battles can be?",
-      2: "Hee! Looks like I went and won again!",
-      3: "Are you holding back?"
+      1: "Siehst du jetzt, wie ernst Kämpfe sein können?",
+      2: "Hee! Es sieht so aus, als hätte ich wieder gewonnen!",
+      3: "Hältst du dich zurück?"
     }
   },
   "marlon": {
     "encounter": {
-      1: "You look strong! Shoots! Let's start!",
-      2: "I'm strong like the ocean's wide. You're gonna get swept away, fo' sho'.",
-      3: "Oh ho, so I'm facing you! That's off the wall."
+      1: "Du siehst stark aus! Los geht's!",
+      2: "Ich bin stark wie das weite Meer. Du wirst weggespült, das ist sicher.",
+      3: "Oh ho, ich treffe auf dich! Das ist abgefahren."
     },
     "victory": {
-      1: "You totally rocked that! You're raising some wicked Pokémon. You got this Trainer thing down!",
-      2: "You don't just look strong, you're strong fo' reals! Eh, I was swept away, too!",
-      3: "You're strong as a gnarly wave!"
+      1: "Du hast total gerockt! Du ziehst einige krasse Pokémon groß. Du hast das Trainer-Ding drauf!",
+      2: "Du siehst nicht nur stark aus, du bist auch stark! Eh, ich wurde auch weggespült!",
+      3: "Du bist stark wie eine spektakuläre Welle!"
     },
     "defeat": {
-      1: "You're tough, but it's not enough to sway the sea, 'K!",
-      2: "Hee! Looks like I went and won again!",
-      3: "Sweet, sweet victory!"
+      1: "Du bist stark, aber nicht stark genug, um das Meer zu beeinflussen, 'OK!",
+      2: "Hee! Sieht so aus, als hätte ich wieder gewonnen!",
+      3: "Süßer, süßer Sieg!"
     }
   },
   "shauntal": {
     "encounter": {
-      1: "Excuse me. You're a challenger, right?\nI'm the Elite Four's Ghost-type Pokémon user, Shauntal, and I shall be your opponent.",
-      2: "I absolutely love writing about Trainers who come here and the Pokémon they train.\nCould I use you and your Pokémon as a subject?",
-      3: "Every person who works with Pokémon has a story to tell.\nWhat story is about to be told?"
+      1: `Entschuldigung. Du bist ein Herausforderer, oder?\nIch bin Anissa, die Geist-Pokémon-Nutzerin
+          $der Top Vier. Ich werde dich in die Welt der Bücher entführen.`,
+      2: `Ich liebe es, über Trainer und deren Pokémon zu schreiben.
+          $Könnte ich dich als Inspiration verwenden?`,
+      3: "Jeder, der mit Pokémon arbeitet, hat eine Geschichte zu erzählen. Welche Geschichte wird erzählt?"
     },
     "victory": {
-      1: "Wow. I'm dumbstruck!",
-      2: "S-sorry! First, I must apologize to my Pokémon…\n\nI'm really sorry you had a bad experience because of me!",
-      3: "Even in light of that, I'm still one of the Elite Four!"
+      1: "Wow. Ich bin sprachlos!",
+      2:  `E-entschuldigung! Zuerst muss ich mich bei meinen Pokémon entschuldigen…
+          $Es tut mir wirklich leid, dass ihr wegen mir eine schlechte Erfahrung gemacht habt.`,
+      3: "Selbst in Anbetracht dessen, bin ich immer noch eine der Top Vier!"
     },
     "defeat": {
       1: "Eheh.",
-      2: "That gave me excellent material for my next novel!",
-      3: "And so, another tale ends…"
+      2: "Das war exzellentes Material für meinen nächsten Roman!",
+      3: "Und wenn sie nicht gestorben sind, dann leben sie noch heute…",
     }
   },
   "marshal": {
