@@ -188,6 +188,7 @@ export interface StarterDataEntry {
   passiveAttr: integer;
   valueReduction: integer;
   classicWinCount: integer;
+  nature: integer;
 }
 
 export interface StarterData {
@@ -1172,7 +1173,8 @@ export class GameData {
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0,
-        classicWinCount: 0
+        classicWinCount: 0,
+        nature: 0
       };
     }
 
@@ -1413,6 +1415,12 @@ export class GameData {
   }
 
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
+    const lastUsedNature = this.scene.gameData.starterData[species.speciesId].nature;
+    // If last used nature is non-default, pick it instead
+    if (lastUsedNature > 0) {
+      return lastUsedNature;
+    }
+
     const dexEntry = this.dexData[species.speciesId];
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & Math.pow(2, n + 1)) {

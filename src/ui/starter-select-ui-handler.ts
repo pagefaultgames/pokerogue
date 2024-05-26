@@ -1084,7 +1084,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.canCycleNature) {
             const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
             const natureIndex = natures.indexOf(this.natureCursor);
-            const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+            const newNature = natures[(natureIndex + 1) % natures.length];
+            this.scene.gameData.starterData[this.lastSpecies.speciesId].nature = newNature;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
             success = true;
           }
@@ -1354,6 +1355,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
+    console.log(`SET SPECIES NATURE CURSOR ${this.natureCursor}`);
 
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
@@ -1528,6 +1530,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
+    console.log(`NATURE INDEX ${natureIndex}`);
 
     if (species?.forms?.find(f => f.formKey === "female")) {
       if (female !== undefined) {
