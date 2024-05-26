@@ -18,6 +18,7 @@ import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
 import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { initChallenges } from "./data/challenge";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -303,6 +304,7 @@ export class LoadingScene extends SceneBase {
     initSpecies();
     initMoves();
     initAbilities();
+    initChallenges();
   }
 
   loadLoadingScreen() {

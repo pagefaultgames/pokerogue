@@ -6,12 +6,14 @@ import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
 import * as Overrides from "./overrides";
+import { Challenge } from "./data/challenge";
 
 export enum GameModes {
   CLASSIC,
   ENDLESS,
   SPLICED_ENDLESS,
-  DAILY
+  DAILY,
+  CHALLENGE
 }
 
 interface GameModeConfig {
@@ -39,9 +41,11 @@ export class GameMode implements GameModeConfig {
   public hasRandomBiomes: boolean;
   public hasRandomBosses: boolean;
   public isSplicedOnly: boolean;
+  public challenges: Challenge[];
 
   constructor(modeId: GameModes, config: GameModeConfig) {
     this.modeId = modeId;
+    this.challenges = [];
     Object.assign(this, config);
   }
 
@@ -239,13 +243,38 @@ export class GameMode implements GameModeConfig {
       return "Endless (Spliced)";
     case GameModes.DAILY:
       return "Daily Run";
+    case GameModes.CHALLENGE:
+      return "Challenge";
+    }
+  }
+
+  static getModeName(modeId: GameModes): string {
+    switch (modeId) {
+    case GameModes.CLASSIC:
+      return "Classic";
+    case GameModes.ENDLESS:
+      return "Endless";
+    case GameModes.SPLICED_ENDLESS:
+      return "Endless (Spliced)";
+    case GameModes.DAILY:
+      return "Daily Run";
+    case GameModes.CHALLENGE:
+      return "Challenge";
     }
   }
 }
 
-export const gameModes = Object.freeze({
-  [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true }),
-  [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true }),
-  [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true }),
-  [GameModes.DAILY]: new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true })
-});
+export function getGameMode(gameMode: GameModes): GameMode {
+  switch (gameMode) {
+  case GameModes.CLASSIC:
+    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true });
+  case GameModes.ENDLESS:
+    return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
+  case GameModes.SPLICED_ENDLESS:
+    return new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true });
+  case GameModes.DAILY:
+    return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
+  case GameModes.CHALLENGE:
+    return new GameMode(GameModes.CHALLENGE, { isClassic: true });
+  }
+}

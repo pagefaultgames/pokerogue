@@ -54,7 +54,7 @@ import { TerrainType } from "./data/terrain";
 import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
-import { GameModes, gameModes } from "./game-mode";
+import { GameMode, GameModes, getGameMode } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
 import { Abilities } from "./data/enums/abilities";
@@ -200,23 +200,30 @@ export class TitlePhase extends Phase {
         if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
           const options: OptionSelectItem[] = [
             {
-              label: gameModes[GameModes.CLASSIC].getName(),
+              label: GameMode.getModeName(GameModes.CLASSIC),
               handler: () => {
                 setModeAndEnd(GameModes.CLASSIC);
                 return true;
               }
             },
             {
-              label: gameModes[GameModes.ENDLESS].getName(),
+              label: GameMode.getModeName(GameModes.ENDLESS),
               handler: () => {
                 setModeAndEnd(GameModes.ENDLESS);
+                return true;
+              }
+            },
+            {
+              label: GameMode.getModeName(GameModes.CHALLENGE),
+              handler: () => {
+                setModeAndEnd(GameModes.CHALLENGE);
                 return true;
               }
             }
           ];
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
-              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
+              label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
               handler: () => {
                 setModeAndEnd(GameModes.SPLICED_ENDLESS);
                 return true;
@@ -297,7 +304,7 @@ export class TitlePhase extends Phase {
       this.scene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
-        this.scene.gameMode = gameModes[GameModes.DAILY];
+        this.scene.gameMode = getGameMode(GameModes.DAILY);
 
         this.scene.setSeed(seed);
         this.scene.resetSeed(1);
@@ -359,7 +366,12 @@ export class TitlePhase extends Phase {
   end(): void {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
-      this.scene.pushPhase(new SelectStarterPhase(this.scene, this.gameMode));
+      this.scene.gameMode = getGameMode(this.gameMode);
+      if (this.gameMode === GameModes.CHALLENGE) {
+        this.scene.pushPhase(new SelectChallengePhase(this.scene));
+      } else {
+        this.scene.pushPhase(new SelectStarterPhase(this.scene));
+      }
       this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
     } else {
       this.scene.playBgm();
@@ -494,13 +506,24 @@ export class SelectGenderPhase extends Phase {
   }
 }
 
-export class SelectStarterPhase extends Phase {
-  private gameMode: GameModes;
-
-  constructor(scene: BattleScene, gameMode: GameModes) {
+export class SelectChallengePhase extends Phase {
+  constructor(scene: BattleScene) {
     super(scene);
+  }
 
-    this.gameMode = gameMode;
+  start() {
+    super.start();
+
+    this.scene.playBgm("menu");
+
+    this.scene.ui.setMode(Mode.CHALLENGE_SELECT);
+  }
+}
+
+export class SelectStarterPhase extends Phase {
+
+  constructor(scene: BattleScene) {
+    super(scene);
   }
 
   start() {
@@ -566,7 +589,7 @@ export class SelectStarterPhase extends Phase {
           this.end();
         });
       });
-    }, this.gameMode);
+    });
   }
 }
 

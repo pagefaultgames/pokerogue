@@ -22,6 +22,7 @@ import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
 import { biome } from "./biome";
+import { challenges, challengeUiHandler } from "./challenges";
 
 export const enConfig = {
   ability: ability,
@@ -50,4 +51,6 @@ export const enConfig = {
   berry: berry,
   voucher: voucher,
   biome: biome,
+  challengeUiHandler: challengeUiHandler,
+  challenges: challenges
 };

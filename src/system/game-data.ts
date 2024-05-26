@@ -9,7 +9,7 @@ import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
-import { GameModes, gameModes } from "../game-mode";
+import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
@@ -681,7 +681,7 @@ export class GameData {
         const initSessionFromData = async sessionData => {
           console.debug(sessionData);
 
-          scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
+          scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();

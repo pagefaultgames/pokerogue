@@ -20,7 +20,7 @@ import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
-import { GameMode, GameModes, gameModes } from "./game-mode";
+import { GameMode, GameModes, getGameMode } from "./game-mode";
 import FieldSpritePipeline from "./pipelines/field-sprite";
 import SpritePipeline from "./pipelines/sprite";
 import PartyExpBar from "./ui/party-exp-bar";
@@ -763,7 +763,7 @@ export default class BattleScene extends SceneBase {
       this.gameData = new GameData(this);
     }
 
-    this.gameMode = gameModes[GameModes.CLASSIC];
+    this.gameMode = getGameMode(GameModes.CLASSIC);
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
