@@ -14,7 +14,7 @@ import {doubleBattleDialogue} from "./dialogue";
 import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
 import {PartyMemberStrength} from "./enums/party-member-strength";
-import i18next from "i18next";
+import i18next, {ParseKeys} from "i18next";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 
 export enum TrainerPoolTier {
