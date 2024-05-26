@@ -508,158 +508,161 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "roxanne": {
     "encounter": {
-      1: "Would you kindly demonstrate how you battle?",
-      2: "You can learn many things by battling many trainers.",
-      3: "Oh, you caught me strategizing.\nWould you like to battle?"
+      1: "Wärs du so freundlich und würdest mir zeigen, wie du kämpfst?",
+      2: "Man lernt so viel, wenn man gegen viele Trainer kämpft.",
+      3: "Oh, du hast mich beim Strategie entwickeln erwischt. Möchtest du kämpfen?"
     },
     "victory": {
-      1: "Oh, I appear to have lost.\nI understand.",
-      2: "It seems that I still have so much more to learn when it comes to battle.",
-      3: "I'll take what I learned here today to heart."
+      1: "Oh, es scheint, als hätte ich verloren.",
+      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um den Kämpfe geht.",
+      3: "Ich werde mir zu Herzen nehmen, was ich heute gelernt habe."
     },
     "defeat": {
-      1: "I have learned many things from our battle.\nI hope you have too.",
-      2: "I look forward to battling you again.\nI hope you'll use what you've learned here.",
-      3: "I won due to everything I have learned."
+      1: "Ich habe so viele Dinge aus unserem Kampf gelernt. Ich hoffe, du auch.",
+      2: `Ich freue mich darauf, wieder gegen dich zu kämpfen.
+          $Ich hoffe, du wirst das, was du hier gelernt hast, anwenden.`,
+      3: "Ich habe gewonnen, weil ich alles gelernt habe."
     }
   },
   "brawly": {
     "encounter": {
-      1: "Oh man, a challenger!\nLet's see what you can do!",
-      2: "You seem like a big splash.\nLet's battle!",
-      3: "Time to create a storm!\nLet's go!"
+      1: "Oh man, ein Herausforderer!\nLass uns sehen, was du kannst!",
+      2: "Du scheinst auf große Auftritte zu stehen.\nLass uns kämpfen",
+      3: "Zeit, einen Sturm zu entfachen!\nLos geht's!"
     },
     "victory": {
-      1: "Oh woah, you've washed me out!",
-      2: "You surfed my wave and crashed me down!",
-      3: "I feel like I'm lost in Granite Cave!"
+      1: "Oh wow, du hast mich überrumpelt!",
+      2: "Du hast meinen Flow übernommen und mich besiegt!",
+      3: "Ich fühle mich als hätte ich mich in der Granithöhle verirrt!"
     },
     "defeat": {
-      1: "Haha, I surfed the big wave!\nChallenge me again sometime.",
-      2: "Surf with me again some time!",
-      3: "Just like the tides come in and out, I hope you return to challenge me again."
+      1: "Haha, ich surfe die große Welle! Fordere mich irgendwann wieder heraus.",
+      2: "Surfe mal wieder mit mir!",
+      3: "Genau wie die Gezeiten kommen und gehen, hoffe ich, dass du zurückkommst, um mich herauszufordern."
     }
   },
   "wattson": {
     "encounter": {
-      1: "Time to get shocked!\nWahahahaha!",
-      2: "I'll make sparks fly!\nWahahahaha!",
-      3: "I hope you brought Paralyz Heal!\nWahahahaha!"
+      1: "Zeit, geschockt zu werden! Wahahahaha!",
+      2: "Ich lass die Funken fliegen! Wahahahaha!",
+      3: "Ich hoffe, du hast Para-Heiler dabei! Wahahahaha!"
     },
     "victory": {
-      1: "Seems like I'm out of charge!\nWahahahaha!",
-      2: "You've completely grounded me!\nWahahahaha!",
-      3: "Thanks for the thrill!\nWahahahaha!"
+      1: "Scheint als wäre ich entladen! Wahahahaha!",
+      2: "Du hast mich komplett geerdet! Wahahahaha!",
+      3: "Danke für den Nervenkitzel! Wahahahaha!"
     },
     "defeat": {
-      1: "Recharge your batteries and challenge me again sometime!\nWahahahaha!",
-      2: "I hope you found our battle electrifying!\nWahahahaha!",
-      3: "Aren't you shocked I won?\nWahahahaha!"
+      1: "Lade deine Batterien wieder auf und fordere mich irgendwann wieder heraus! Wahahahaha!",
+      2: "Ich hoffe du fandest unseren Kampf elektrisierend! Wahahahaha!",
+      3: "Bist du nicht geschockt, dass ich gewonnen habe? Wahahahaha!"
     }
   },
   "flannery": {
     "encounter": {
-      1: "Nice to meet you! Wait, no…\nI will crush you!",
-      2: "I've only been a leader for a little while, but I'll smoke you!",
-      3: "It's time to demonstrate the moves my grandfather has taught me! Let's battle!"
+      1: "Nett dich zu kennenzulernen! Warte, nein… Ich werde dich zermalmen!",
+      2: "Ich bin noch nicht lange Arenaleiterin, aber ich werde dich grillen!",
+      3: "Es ist Zeit, dir die Kampftechniken zu zeigen, die mein Großvater mir beigebracht hat! Lass uns kämpfen!"
     },
     "victory": {
-      1: "You remind me of my grandfather…\nNo wonder I lost.",
-      2: "Am I trying too hard?\nI should relax, can't get too heated.",
-      3: "Losing isn't going to smother me out.\nTime to reignite training!"
+      1: "Du erinnerst mich an meinen Großvater… Kein Wunder, dass ich verloren habe.",
+      2: "Strenge ich mich zu sehr an? Ich sollte mich entspannen, ich darf mich nicht zu sehr aufregen.",
+      3: "Zu verlieren wird meine Flamme nicht ersticken. Zeit, das Training wieder zu entfachen!"
     },
     "defeat": {
-      1: "I hope I've made my grandfather proud…\nLet's battle again some time.",
-      2: "I…I can't believe I won!\nDoing things my way worked!",
-      3: "Let's exchange burning hot moves again soon!"
+      1: "Ich hoffe, ich habe meinen Großvater stolz gemacht… Lass uns irgendwann wieder kämpfen.",
+      2: "Ich… Ich kann nicht glauben, dass ich gewonnen habe! Meine Art zu kämpfen hat funktioniert!",
+      3: "Lass uns bald wieder heiße Moves austauschen!"
     }
   },
   "norman": {
     "encounter": {
-      1: "I'm surprised you managed to get here.\nLet's battle.",
-      2: "I'll do everything in my power as a Gym Leader to win.\nLet's go!",
-      3: "You better give this your all.\nIt's time to battle!"
+      1: "Ich bin überrascht, dass du es bis hierher geschafft hast. Lass uns kämpfen.",
+      2: "Ich werde alles in meiner Macht stehende tun, um als Arenaleiter zu gewinnen. Los geht's!",
+      3: "Du solltest alles geben! Lasst uns kämpfen!"
     },
     "victory": {
-      1: "I lost to you…?\nRules are rules, though.",
-      2: "Was moving from Olivine a mistake…?",
-      3: "I can't believe it.\nThat was a great match."
+      1: "Ich habe gegen dich verloren…? Das ist eine Überraschung.",
+      2: "War der Umzug nach Hoenn die richtige Entscheidung? Ich bin mir nicht sicher.",
+      3: "Ich kann es nicht fasen. Das war ein großartiger Kampf."
     },
     "defeat": {
-      1: "We both tried our best.\nI hope we can battle again soon.",
-      2: "You should try challenging my kid instead.\nYou might learn something!",
-      3: "Thank you for the excellent battle.\nBetter luck next time."
+      1: "Wir haben beide unser Bestes gegeben. Ich hoffe, wir können bald wieder kämpfen.",
+      2: "Du solltest versuchen, mein Kind herauszufordern. Du könntest etwas lernen!",
+      3: "Danke für den tollen Kampf. Viel Glück beim nächsten Mal."
     }
   },
   "winona": {
     "encounter": {
-      1: "I've been soaring the skies looking for prey…\nAnd you're my target!",
-      2: "No matter how our battle is, my Flying Pokémon and I will triumph with grace. Let's battle!",
-      3: "I hope you aren't scared of heights.\nLet's ascend!"
+      1: "Ich bin durch die Lüfte geflogen und habe nach Beute gesucht… und du bist mein Ziel!",
+      2: "Egal, wie unser Kampf ausgeht, meine Flug-Pokémon und ich werden mit Anmut triumphieren. Auf in den Kampf!",
+      3: "Ich hoffe, du hast keine Höhenangst. Lasst uns aufsteigen!"
     },
     "victory": {
-      1: "You're the first Trainer I've seen with more grace than I.\nExcellently played.",
-      2: "Oh, my Flying Pokémon have plummeted!\nVery well.",
-      3: "Though I may have fallen, my Pokémon will continue to fly!"
+      1: "Du bist der erste Trainer, den ich gesehen habe, der mehr Anmut hat als ich. Ausgezeichnet",
+      2: "Meine Flug-Pokémon sind abgestürzt! Na gut.",
+      3: "Auch wenn ich gefallen sein mag, meine Pokémon werden weiter fliegen!"
     },
     "defeat": {
-      1: "My Flying Pokémon and I will forever dance elegantly!",
-      2: "I hope you enjoyed our show.\nOur graceful dance is finished.",
-      3: "Won't you come see our elegant choreography again?"
+      1: "Meine Flug-Pokémon und ich werden für immer elegant tanzen!",
+      2: "Ich hoffe du hast die Show genossen. Unser anmutiger Tanz ist beendet.",
+      3: "Wirst du zurückkommen und unsere elegante Choreographie noch einmal sehen?"
     }
   },
   "tate": {
     "encounter": {
-      1: "Hehehe…\nWere you surprised to see me without my sister?",
-      2: "I can see what you're thinking…\nYou want to battle!",
-      3: "How can you defeat someone…\nWho knows your every move?"
+      1: "Hehehe… Bist du überrascht, mich ohne meine Schwester zu sehen?",
+      2: "Ich kann sehen, was du denkst… Du willst kämpfen!",
+      3: "Wie kannst du jemanden besiegen der deine Gedanken lesen kann?"
     },
     "victory": {
-      1: "It can't be helped…\nI miss Liza…",
-      2: "Your bond with your Pokémon was stronger than mine.",
-      3: "If I were with Liza, we would have won.\nWe can finish each other's thoughts!"
+      1: "Ich kann es nicht ändern… Ich vermisse Svenja…",
+      2: "Die Bande zwischen dir und deinen Pokémon ist stärker als meine.",
+      3: "Zusammen mit Svenja wären wir unschlagbar gewesen. Wir können gegenseitig unsere Sätze beenden!"
     },
     "defeat": {
-      1: "My Pokémon and I are superior!",
-      2: "If you can't even defeat me, you'll never be able to defeat Liza either.",
-      3: "It's all thanks to my strict training with Liza.\nI can make myself one with Pokémon."
+      1: "Meine Pokémon und ich sind siegreich.",
+      2: "Wenn du mich nicht besiegen kannst, wirst du auch niemals Svenja besiegen können.",
+      3: "All das verdanke ich meinem strengen Training mit Svenja. Meine Pokémon und ich sind eins."
     }
   },
   "liza": {
     "encounter": {
-      1: "Fufufu…\nWere you surprised to see me without my brother?",
-      2: "I can determine what you desire…\nYou want to battle, don't you?",
-      3: "How can you defeat someone…\nWho's one with their Pokémon?"
+      1: "Hihihi… Bist du überrascht, mich ohne meinen Bruder zu sehen?",
+      2: "Ich kann sehen, wonach du verlangst… Du willst kämpfen, oder?",
+      3: "Wie kannst du jemanden besiegen, der eins mit seinen Pokémon ist?"
     },
     "victory": {
-      1: "It can't be helped…\nI miss Tate…",
-      2: "Your bond with your Pokémon…\nIt's stronger than mine.",
-      3: "If I were with Tate, we would have won.\nWe can finish each other's sentences!"
+      1: "Ich kann es nicht ändern… Ich vermisse Ben…",
+      2: "Das Band zwischen dir und deinen Pokémon ist stärker als meins.",
+      3: "Zusammen mit Ben wären wir unschlagbar gewesen. Wir können gegenseitig unsere Sätze beenden!"
     },
     "defeat": {
-      1: "My Pokémon and I are victorious.",
-      2: "If you can't even defeat me, you'll never be able to defeat Tate either.",
-      3: "It's all thanks to my strict training with Tate.\nI can synchronize myself with my Pokémon."
+      1: "Meine Pokémon und ich sind siegreich.",
+      2: "Wenn du mich nicht besiegen kannst, wirst du auch niemals Ben besiegen können.",
+      3: "All das verdanke ich meinem strengen Training mit Ben. Meine Pokémon und ich sind eins."
     }
   },
   "juan": {
     "encounter": {
-      1: "Now's not the time to act coy.\nLet's battle!",
-      2: "Ahahaha, You'll be witness to my artistry with Water Pokémon!",
-      3: "A typhoon approaches!\nWill you be able to test me?",
-      4: "Please, you shall bear witness to our artistry.\nA grand illusion of water sculpted by my Pokémon and myself!"
+      1: "Jetzt ist nicht die Zeit, schüchtern zu sein. Lass uns kämpfen!",
+      2: "Ahahaha, Du wirst Zeuge meiner Kunstfertigkeit mit Wasser-Pokémon!",
+      3: "Ein Taifun nähert sich! Wirst du mich testen können?",
+      4: `Bitte, du wirst Zeuge unserer Kunstfertigkeit.
+          $Eine großartige Illusion aus Wasser, die von meinen Pokémon und mir geschaffen wurde!`
     },
     "victory": {
-      1: "You may be a genius who can take on Wallace!",
-      2: "I focused on elegance while you trained.\nIt's only natural that you defeated me.",
-      3: "Ahahaha!\nVery well, You have won this time.",
-      4: "From you, I sense the brilliant shine of skill that will overcome all."
+      1: "Du bist ein Genie, das Wasilli herausfordern kann!",
+      2: `Ich habe mich auf Eleganz konzentriert, während du trainiert hast.
+          $Es kein Wunder, dass du gewonnen hast.`,
+      3: "Ahahaha! Nun gut, dieses Mal hast du gewonnen.",
+      4: "Ich spüre den Glanz deines Könnens, der alles überwinden wird."
     },
     "defeat": {
-      1: "My Pokémon and I have sculpted an illusion of Water and come out victorious.",
-      2: "Ahahaha, I have won, and you have lost.",
-      3: "Shall I loan you my outfit? It may help you battle!\nAhahaha, I jest!",
-      4: "I'm the winner! Which is to say, you lost."
+      1: "Meine Pokémon und ich haben eine Illusion aus Wasser geschaffen und sind siegreich hervorgegangen.",
+      2: "Ahahaha, Ich habe gewonnen, und du hast verloren.",
+      3: "Soll ich dir mein Outfit leihen? Es könnte dir beim Kampf helfen! Ahahaha, ich scherze!",
+      4: "Ich bin der Gewinner! Das heißt, du hast verloren."
     }
   },
   "crasher_wake": {
