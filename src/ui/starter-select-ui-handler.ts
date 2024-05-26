@@ -707,7 +707,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             icon.setTint(0x808080);
           }
 
-          this.setIconUpgradeBounce(icon, species.speciesId);
+          this.setIconUpgradeBounce(icon, species);
         });
       }
 
@@ -739,10 +739,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    * @param speciesId The species ID of the icon used to check for upgrades
    * @param startPaused Should this animation be paused after it is added?
    */
-  setIconUpgradeBounce(icon: Phaser.GameObjects.GameObject, speciesId: number, startPaused: boolean = false): void {
+  setIconUpgradeBounce(icon: Phaser.GameObjects.GameObject, speciesId: PokemonSpecies, startPaused: boolean = false): void {
     this.scene.tweens.killTweensOf(icon);
     // Skip animations if they are disabled
-    if (this.scene.candyUpgradeDisplay <= 0) {
+    if (this.scene.candyUpgradeDisplay === 0 || speciesId.speciesId !== speciesId.getRootSpeciesId(false)) {
       return;
     }
 
@@ -769,9 +769,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       ],};
 
-    const starterData = this.scene.gameData.starterData[speciesId];
+    const starterData = this.scene.gameData.starterData[speciesId.speciesId];
     const passiveAvailable =
-         starterData.candyCount >= this.scene.gameData.getSpeciesStarterValue(speciesId)
+         starterData.candyCount >= this.scene.gameData.getSpeciesStarterValue(speciesId.speciesId)
     && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
 
     // 'Only Passives' mode
@@ -782,7 +782,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       const costReductionAvailable =
-         starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[starterData.valueReduction]
+         starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId.speciesId])[starterData.valueReduction]
       && starterData.valueReduction < 2;
 
       if (passiveAvailable || costReductionAvailable) {
@@ -1040,7 +1040,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
                     // Resets the bounce animation if needed after this purchase
                     const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
-                    this.setIconUpgradeBounce(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies.speciesId, true);
+                    this.setIconUpgradeBounce(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
 
                     return true;
                   }
@@ -1076,7 +1076,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
                     // Resets the bounce animation if needed after this purchase
                     const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
-                    this.setIconUpgradeBounce(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies.speciesId, true);
+                    this.setIconUpgradeBounce(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
 
                     return true;
                   }
@@ -1397,8 +1397,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
+        const species = this.genSpecies[genCursorWithScroll][s];
         // 'Candy Icon' mode
-        if (this.scene.candyUpgradeDisplay === 0) {
+        if (this.scene.candyUpgradeDisplay === 0 && species?.getRootSpeciesId(false) === species?.speciesId) {
 
           if (!starterColors[speciesId]) {
             // Default to white if no colors are found
