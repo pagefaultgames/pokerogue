@@ -874,7 +874,7 @@ export const signatureSpecies: SignatureSpecies = {
   FLINT: [Species.FLAREON, Species.HOUNDOOM, Species.RAPIDASH, Species.INFERNAPE],
   LUCIAN: [Species.MR_MIME, Species.GALLADE, Species.BRONZONG, Species.ALAKAZAM],
   SHAUNTAL: [Species.COFAGRIGUS, Species.CHANDELURE, Species.GOLURK, Species.DRIFBLIM],
-  MARSHAL: [Species.TIMBURR, Species.MIENFOO, Species.THROH, Species.SAWK],
+  MARSHAL: [Species.CONKELDURR, Species.MIENSHAO, Species.THROH, Species.SAWK],
   GRIMSLEY: [Species.LIEPARD, Species.KINGAMBIT, Species.SCRAFTY, Species.KROOKODILE],
   CAITLIN: [Species.MUSHARNA, Species.GOTHITELLE, Species.SIGILYPH, Species.REUNICLUS],
   MALVA: [Species.PYROAR, Species.TORKOAL, Species.CHANDELURE, Species.TALONFLAME],
