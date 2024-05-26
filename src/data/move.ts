@@ -951,7 +951,7 @@ export enum MultiHitType {
   _2,
   _2_TO_5,
   _3,
-  _1_TO_10,
+  _10,
   BEAT_UP,
 }
 
@@ -1282,33 +1282,8 @@ export class MultiHitAttr extends MoveAttr {
     case MultiHitType._3:
       hitTimes = 3;
       break;
-    case MultiHitType._1_TO_10:
-      {
-        const rand = user.randSeedInt(90);
-        const hitValue = new Utils.IntegerHolder(rand);
-        applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
-        if (hitValue.value >= 81) {
-          hitTimes = 1;
-        } else if (hitValue.value >= 73) {
-          hitTimes = 2;
-        } else if (hitValue.value >= 66) {
-          hitTimes = 3;
-        } else if (hitValue.value >= 60) {
-          hitTimes = 4;
-        } else if (hitValue.value >= 54) {
-          hitTimes = 5;
-        } else if (hitValue.value >= 49) {
-          hitTimes = 6;
-        } else if (hitValue.value >= 44) {
-          hitTimes = 7;
-        } else if (hitValue.value >= 40) {
-          hitTimes = 8;
-        } else if (hitValue.value >= 36) {
-          hitTimes = 9;
-        } else {
-          hitTimes = 10;
-        }
-      }
+    case MultiHitType._10:
+      hitTimes = 10;
       break;
     case MultiHitType.BEAT_UP:
       // No status means the ally pokemon can contribute to Beat Up
@@ -7463,7 +7438,7 @@ export function initMoves() {
     new AttackMove(Moves.SPIN_OUT, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -2, true),
     new AttackMove(Moves.POPULATION_BOMB, Type.NORMAL, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 9)
-      .attr(MultiHitAttr, MultiHitType._1_TO_10)
+      .attr(MultiHitAttr, MultiHitType._10)
       .slicingMove()
       .checkAllHits(),
     new AttackMove(Moves.ICE_SPINNER, Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
