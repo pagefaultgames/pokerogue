@@ -825,10 +825,6 @@ export class PokemonForm extends PokemonSpeciesForm {
   getFormSpriteKey(_formIndex?: integer) {
     return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
   }
-
-  isStarterSelectable() {
-    return !this.formKey || this.starterSelectableKeys.indexOf[this.formKey] !== -1;
-  }
 }
 
 export enum SpeciesFormKey {
