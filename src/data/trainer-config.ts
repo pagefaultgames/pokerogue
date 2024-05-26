@@ -886,11 +886,11 @@ export const signatureSpecies: SignatureSpecies = {
   OLIVIA: [Species.ARMALDO, Species.CRADILY, Species.ALOLA_GOLEM, Species.LYCANROC],
   ACEROLA: [Species.BANETTE, Species.DRIFBLIM, Species.DHELMISE, Species.PALOSSAND],
   KAHILI: [Species.BRAVIARY, Species.HAWLUCHA, Species.ORICORIO, Species.TOUCANNON],
-  MARNIE_ELITE: [ Species.MORPEKO, Species.LIEPARD, Species.TOXICROAK,Species.SCRAFTY, Species.GRIMMSNARL],
-  NESSA_ELITE: [ Species.GOLISOPOD,Species.PELIPPER,Species.QUAGSIRE,Species.TOXAPEX,Species.DREDNAW],
-  BEA_ELITE: [ Species.HAWLUCHA,Species.GRAPPLOCT,Species.SIRFETCHD,Species.FALINKS,Species.MACHAMP],
-  ALLISTER_ELITE:[ Species.DUSKNOIR,Species.CHANDELURE,Species.CURSOLA,Species.RUNERIGUS,Species.GENGAR],
-  RAIHAN_ELITE: [ Species.TORKOAL,Species.GOODRA,Species.TURTONATOR,Species.FLYGON,Species.DURALUDON],
+  MARNIE_ELITE: [Species.MORPEKO, Species.LIEPARD, Species.TOXICROAK, Species.SCRAFTY, Species.GRIMMSNARL],
+  NESSA_ELITE: [Species.GOLISOPOD, Species.PELIPPER, Species.QUAGSIRE, Species.TOXAPEX, Species.DREDNAW],
+  BEA_ELITE: [Species.HAWLUCHA, Species.GRAPPLOCT, Species.SIRFETCHD, Species.FALINKS, Species.MACHAMP],
+  ALLISTER_ELITE:[Species.DUSKNOIR, Species.CHANDELURE, Species.CURSOLA, Species.RUNERIGUS, Species.GENGAR],
+  RAIHAN_ELITE: [Species.TORKOAL, Species.GOODRA, Species.TURTONATOR, Species.FLYGON, Species.DURALUDON],
   RIKA: [Species.WHISCASH, Species.DONPHAN, Species.CAMERUPT, Species.CLODSIRE],
   POPPY: [Species.COPPERAJAH, Species.BRONZONG, Species.CORVIKNIGHT, Species.TINKATON],
   LARRY_ELITE: [Species.STARAPTOR, Species.FLAMIGO, Species.ALTARIA, Species.TROPIUS],
@@ -909,10 +909,10 @@ export const signatureSpecies: SignatureSpecies = {
   IRIS: [Species.HAXORUS, Species.YVELTAL, Species.DRUDDIGON, Species.AGGRON, Species.LAPRAS],
   DIANTHA: [Species.HAWLUCHA, Species.XERNEAS, Species.GOURGEIST, Species.GOODRA, Species.GARDEVOIR],
   HAU: [Species.ALOLA_RAICHU, [Species.SOLGALEO, Species.LUNALA], Species.NOIVERN, [Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA], Species.CRABOMINABLE],
+  LEON: [Species.DRAGAPULT, [Species.ZACIAN, Species.ZAMAZENTA], Species.SEISMITOAD, Species.AEGISLASH, Species.CHARIZARD],
   GEETA: [Species.GLIMMORA, Species.MIRAIDON, Species.ESPATHRA, Species.VELUZA, Species.KINGAMBIT],
   NEMONA: [Species.LYCANROC, Species.KORAIDON, Species.KOMMO_O, Species.PAWMOT, Species.DUSKNOIR],
   KIERAN: [Species.POLITOED, [Species.OGERPON, Species.TERAPAGOS], Species.HYDRAPPLE, Species.PORYGON_Z, Species.GRIMMSNARL],
-  LEON: [Species.DRAGAPULT, [Species.ZACIAN, Species.ZAMAZENTA], Species.SEISMITOAD, Species.AEGISLASH, Species.CHARIZARD],
 };
 
 export const trainerConfigs: TrainerConfigs = {
@@ -1202,10 +1202,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(signatureSpecies["IRIS"]).setBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double"),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(signatureSpecies["DIANTHA"]),
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(signatureSpecies["HAU"]),
+  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"]),
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(signatureSpecies["GEETA"]),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(signatureSpecies["NEMONA"]),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(signatureSpecies["KIERAN"]),
-  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"]),
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)
     .setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE)
