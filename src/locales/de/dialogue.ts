@@ -779,13 +779,13 @@ export const dialogue: DialogueTranslationEntries = {
       3: "Ich selber suche die Stärke eines Kämpfers zu entwickeln und jede Schwäche in mir zu brechen!"
     },
     "victory": {
-      1: "Whew! Well done!",
-      2: "As your battles continue, aim for even greater heights!",
-      3: "The strength shown by you and your Pokémon has deeply impressed me…"
+      1: "Puh! Gut gemacht!",
+      2: "Während deine Kämpfe weitergehen, strebe nach noch größeren Höhen!",
+      3: "Die Stärke, die du und deine Pokémon gezeigt haben, hat mich tief beeindruckt..."
     },
     "defeat": {
       1: "Hmm.",
-      2: "That was good battle.",
+      2: "Das war ein guter Kampf.",
       3: "Haaah! Haaah! Haiyaaaah!"
     }
   },
