@@ -2729,7 +2729,9 @@ export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
 
   /**
    * Increases power of move in increments of the base power for the amount of times
-   * the move hit
+   * the move hit. In the case that the move is extended, it will circle back to the
+   * original base power of the move after incrementing past the maximum amount of
+   * hits.
    * @param user {@linkcode Pokemon} that used the move
    * @param target {@linkcode Pokemon} that the move was used on
    * @param move {@linkcode Move} with this attribute
@@ -2737,10 +2739,10 @@ export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
    * @returns true if attribute application succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const power = args[0] as Utils.NumberHolder;
     const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
+    const power = args[0] as Utils.NumberHolder;
 
-    power.value = move.power * Math.min(1 + hitsTotal, this.maxHits);
+    power.value = move.power * (1 + hitsTotal % this.maxHits);
 
     return true;
   }
