@@ -20,8 +20,9 @@ import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
-import { getPokeballName } from "./pokeball";
 import { BerryModifierType } from "#app/modifier/modifier-type";
+import { getPokeballName } from "./pokeball";
+import { Species } from "./enums/species";
 import {BattlerIndex} from "#app/battle";
 
 export class Ability implements Localizable {
@@ -555,7 +556,10 @@ export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const ret = super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
     if (ret) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+      const simulated = args.length > 1 && args[1];
+      if (!simulated) {
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+      }
     }
 
     return ret;
@@ -1778,6 +1782,39 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   }
 }
 
+/**
+ * This attribute applies confusion to the target whenever the user
+ * directly poisons them with a move, e.g. Poison Puppeteer.
+ * Called in {@linkcode StatusEffectAttr}.
+ * @extends PostAttackAbAttr
+ * @see {@linkcode applyPostAttack}
+ */
+export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
+  /** List of effects to apply confusion after */
+  private effects: StatusEffect[];
+
+  constructor(...effects: StatusEffect[]) {
+    super();
+    this.effects = effects;
+  }
+  /**
+   * Applies confusion to the target pokemon.
+   * @param pokemon {@link Pokemon} attacking
+   * @param passive N/A
+   * @param defender {@link Pokemon} defending
+   * @param move {@link Move} used to apply status effect and confusion
+   * @param hitResult N/A
+   * @param args [0] {@linkcode StatusEffect} applied by move
+   * @returns true if defender is confused
+   */
+  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (this.effects.indexOf(args[0]) > -1 && !defender.isFainted()) {
+      return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.moveId, defender.id);
+    }
+    return false;
+  }
+}
+
 export class PreSetStatusAbAttr extends AbAttr {
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -2975,6 +3012,29 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Gives money to the user after the battle.
+ *
+ * @extends PostBattleAbAttr
+ * @see {@linkcode applyPostBattle}
+ */
+export class MoneyAbAttr extends PostBattleAbAttr {
+  constructor() {
+    super();
+  }
+
+  /**
+   * @param pokemon {@linkcode Pokemon} that is the user of this ability.
+   * @param passive N/A
+   * @param args N/A
+   * @returns true
+   */
+  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    pokemon.scene.currentBattle.moneyScattered += pokemon.scene.getWaveMoneyAmount(0.2);
+    return true;
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -3520,7 +3580,7 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW),
     new Ability(Abilities.HONEY_GATHER, 4)
-      .unimplemented(),
+      .attr(MoneyAbAttr),
     new Ability(Abilities.FRISK, 4)
       .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
@@ -4155,6 +4215,6 @@ export function initAbilities() {
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .unimplemented(),
+      .conditionalAttr(pokemon => pokemon.species.speciesId===Species.PECHARUNT,ConfusionOnStatusEffectAbAttr,StatusEffect.POISON,StatusEffect.TOXIC)
   );
 }

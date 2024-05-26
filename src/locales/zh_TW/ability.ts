@@ -418,7 +418,7 @@ export const ability: AbilityTranslationEntries = {
   snowWarning: { name: "降雪", description: "出場時，會將天氣變爲下雪。" },
   honeyGather: {
     name: "採蜜",
-    description: "戰鬥結束時，有時候會撿來\n甜甜蜜。",
+    description: "The Pokémon gathers Honey after a battle. The Honey is then sold for money.",
   },
   frisk: {
     name: "察覺",

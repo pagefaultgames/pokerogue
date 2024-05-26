@@ -29,7 +29,7 @@ export const menu: SimpleTranslationEntries = {
   "confirmPassword": "Bestätige Passwort",
   "registrationAgeWarning": "Mit der Registrierung bestätigen Sie, dass Sie 13 Jahre oder älter sind.",
   "backToLogin": "Zurück zur Anmeldung",
-  "failedToLoadSaveData": "Speicherdaten konnten nicht geladen werden. Bitte laden Sie die Seite neu.\nWenn dies weiterhin der Fall ist, wenden Sie sich bitte an den Administrator.",
+  "failedToLoadSaveData": "Speicherdaten konnten nicht geladen werden. Bitte laden Sie die Seite neu.\nÜberprüfe den #announcements-Kanal im Discord bei anhaltenden Problemen",
   "sessionSuccess": "Sitzung erfolgreich geladen.",
   "failedToLoadSession": "Ihre Sitzungsdaten konnten nicht geladen werden.\nSie könnten beschädigt sein.",
   "boyOrGirl": "Bist du ein Junge oder ein Mädchen?",
