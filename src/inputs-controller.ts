@@ -342,7 +342,7 @@ export class InputsController {
       [Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
       [Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
       [Button.SUBMIT]: [keyCodes.ENTER],
-      [Button.ACTION]: [keyCodes.SPACE, keyCodes.Z],
+      [Button.ACTION]: [keyCodes.SPACE, keyCodes.Z, keyCodes.Y],
       [Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
       [Button.MENU]: [keyCodes.ESC, keyCodes.M],
       [Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
