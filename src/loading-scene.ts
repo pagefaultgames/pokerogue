@@ -18,6 +18,7 @@ import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
 import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import i18next from "i18next";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -205,6 +206,21 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("pb", "");
     this.loadAtlas("items", "");
     this.loadAtlas("types", "");
+
+    (i18next.options.supportedLngs as Array<any>).forEach(lang => {
+      switch (lang) {
+      case "pt":
+        lang = "pt_BR";
+        break;
+      case "zh":
+        lang = "zh_CN";
+        break;
+      }
+      if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`types_${lang}`, "");
+      }
+    });
+
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
 
