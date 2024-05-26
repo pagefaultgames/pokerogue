@@ -1424,7 +1424,7 @@ export class GameData {
 
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
     const lastUsedNature = this.scene.gameData.starterData[species.speciesId].nature;
-    // If last used nature is non-default, pick it instead
+    // If the last used nature is not the first one, default to it instead
     if (lastUsedNature > 0) {
       return lastUsedNature;
     }
