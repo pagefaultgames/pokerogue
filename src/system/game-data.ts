@@ -179,6 +179,13 @@ export interface StarterMoveData {
   [key: integer]: StarterMoveset | StarterFormMoveData
 }
 
+export interface StarterAttributes {
+	nature: integer;
+	ability: integer;
+	variant: integer;
+	form: integer;
+}
+
 export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData;
   eggMoves: integer;
@@ -188,6 +195,7 @@ export interface StarterDataEntry {
   passiveAttr: integer;
   valueReduction: integer;
   classicWinCount: integer;
+  starterAttributes: StarterAttributes;
 }
 
 export interface StarterData {

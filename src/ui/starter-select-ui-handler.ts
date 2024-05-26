@@ -935,7 +935,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         label: getNatureName(n, true, true, true, this.scene.uiTheme),
                         handler: () => {
                           // update default nature in starter save data
-                          starterData.nature = n as unknown as integer;
+                          if (!starterData.starterAttributes) {
+                            starterData.starterAttributes = {};
+                          }
+                          starterData.starterAttributes.nature = n as unknown as integer;
                           this.clearText();
                           ui.setMode(Mode.STARTER_SELECT);
                           // set nature for starter
@@ -1183,7 +1186,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const natureIndex = natures.indexOf(this.natureCursor);
             const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
             // store cycled nature as default
-            this.scene.gameData.starterData[this.lastSpecies.speciesId].nature = newNature as unknown as integer;
+            const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
+            if (!starterData.starterAttributes) {
+              starterData.starterAttributes = {};
+            }
+            starterData.starterAttributes.nature = newNature as unknown as integer;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
             success = true;
           }
@@ -1561,7 +1568,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
           const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
           // load default nature from stater save data, if set
-          const defaultNature = this.scene.gameData.starterData[species.speciesId]?.nature || this.scene.gameData.getSpeciesDefaultNature(species);
+          const defaultNature = this.scene.gameData.starterData[species.speciesId]?.starterAttributes?.nature || this.scene.gameData.getSpeciesDefaultNature(species);
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
 
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature);
