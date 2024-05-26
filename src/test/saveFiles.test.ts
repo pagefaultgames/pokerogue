@@ -24,21 +24,23 @@ import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
 const saveKey = "x0i2O7WRiANTqPmZ";
 describe("Session import/export", () => {
   let game, scene, gameData, sessionData;
+  Object.defineProperty(window, "localStorage", {
+    value: mockLocalStorage(),
+  });
+  Object.defineProperty(window, "console", {
+    value: mockConsoleLog(),
+  });
+  navigator.getGamepads = vi.fn().mockReturnValue([]);
+
   beforeAll(() => {
     game = new GameWrapper();
     setLoggedInUser("Greenlamp", 1);
     scene = new BattleScene();
     game.scene.add("battle", scene);
+    scene.launchBattle();
     gameData = new GameData(scene);
 
     Utils.setCookie(Utils.sessionIdKey, 'fake_token');
-
-    Object.defineProperty(window, "localStorage", {
-      value: mockLocalStorage(),
-    });
-    Object.defineProperty(window, "console", {
-      value: mockConsoleLog(),
-    });
 
     global.fetch = vi.fn(MockFetch);
 
@@ -138,7 +140,6 @@ describe("Session import/export", () => {
   });
 
   it('select new Game', async () => {
-    scene.launchBattle();
     scene.pushPhase(new LoginPhase(scene));
     scene.pushPhase(new TitlePhase(scene));
     scene.shiftPhase();

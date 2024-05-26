@@ -15,6 +15,9 @@ const MockConsoleLog = () => {
     },
     debug(msg) {
       logs.push(msg);
+    },
+    warn(msg) {
+      logs.push(msg);
     }
   });
 };
