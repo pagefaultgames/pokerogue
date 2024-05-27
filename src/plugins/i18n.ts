@@ -180,10 +180,14 @@ declare module "i18next" {
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
-      dialogue: DialogueTranslationEntries;
-      battleSpecDialogue: SimpleTranslationEntries;
-      miscDialogue: SimpleTranslationEntries;
-      doubleBattleDialogue: DialogueTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
     };
   }
 }

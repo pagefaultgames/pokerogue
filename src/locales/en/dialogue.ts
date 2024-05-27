@@ -1,6 +1,7 @@
 import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
 
-export const dialogue: DialogueTranslationEntries = {
+// Dialogue of the NPCs in the game when the player character is male (or unset)
+export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
       1: "Hey, wanna battle?",
@@ -2275,7 +2276,12 @@ export const dialogue: DialogueTranslationEntries = {
   },
 };
 
-export const battleSpecDialogue: SimpleTranslationEntries = {
+
+// Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
+export const PGFdialogue: SimpleTranslationEntries = PGMdialogue;
+
+// Dialogue of the endboss of the game when the player character is male (Or unset)
+export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `It appears the time has finally come once again.\nYou know why you have come here, do you not?
                $You were drawn here, because you have been here before.\nCountless times.
                $Though, perhaps it can be counted.\nTo be precise, this is in fact your 5,643,853rd cycle.
@@ -2289,7 +2295,11 @@ export const battleSpecDialogue: SimpleTranslationEntries = {
   "secondStageWin": "…Magnificent."
 };
 
-export const miscDialogue: SimpleTranslationEntries = {
+// Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
+export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDialogue;
+
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
+export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
         `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
         $@c{smile}It's over.@d{64} You ended the loop.
@@ -2307,8 +2317,12 @@ export const miscDialogue: SimpleTranslationEntries = {
         $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
         $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
 };
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
+export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
 
-export const doubleBattleDialogue: DialogueTranslationEntries = {
+
+// Dialogue of the named double battles in the game. For when the player is male (or unset).
+export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
       1: `Blue: Hey Red, let's show them what we're made of!
@@ -2421,3 +2435,6 @@ export const doubleBattleDialogue: DialogueTranslationEntries = {
     },
   },
 };
+
+// Dialogue of the named double battles in the game. For when the player is female. For languages that do not have gendered pronouns, this can be set to PGMdoubleBattleDialogue.
+export const PGFdoubleBattleDialogue: DialogueTranslationEntries = PGMdoubleBattleDialogue;

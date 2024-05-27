@@ -1,6 +1,8 @@
 import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
 
-export const dialogue: DialogueTranslationEntries = {
+
+// Dialogue of the NPCs in the game when the player character is male (or unset)
+export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
       1: "Hey, willst du kämpfen?",
@@ -2334,7 +2336,11 @@ export const dialogue: DialogueTranslationEntries = {
   },
 };
 
-export const battleSpecDialogue: SimpleTranslationEntries = {
+// Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
+export const PGFdialogue: SimpleTranslationEntries = PGMdialogue;
+
+// Dialogue of the endboss of the game when the player character is male (Or unset)
+export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Es scheint, als wäre es wieder mal an der Zeit.\nDu weißt, warum du hierher kommen musst, oder?
 	       $Dich hat es hierher gezogen, du warst bereits hier.\nUnzählige Male.
 	       $Obwohl, vielleicht doch nicht unzählig.\nUm genau zu sein, dies ist der 5.643.853te Zyklus.
@@ -2348,27 +2354,46 @@ export const battleSpecDialogue: SimpleTranslationEntries = {
   "secondStageWin": "…Herrlich."
 };
 
-export const miscDialogue: SimpleTranslationEntries = {
+// Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
+export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDialogue;
+
+
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
+export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-        `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
-        $@c{smile}It's over.@d{64} You ended the loop.
-        $@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?
-        $@c{serious_smile_fists}Your legend will always live on in our hearts.
-        $@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.
-        $@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.`,
+      `@c{smile}Oh? Du hast gewonnen?@d{96} @c{smile_eclosed}Ich schätze, das hätte ich wissen sollen.
+        $Aber, du bist jetzt zurück.
+        $@c{smile}Es ist vorbei.@d{64} Du hast die Schleife beendet.
+        $@c{serious_smile_fists}Du hast auch deinen Traum erfüllt, nicht wahr?\nDu hast nicht einmal verloren.
+        $@c{neutral}Ich bin der Einzige, der sich daran erinnern wird, was du getan hast.@d{96}
+        $Ich schätze, das ist in Ordnung, oder?
+        $@c{serious_smile_fists}Deine Legende wird immer in unseren Herzen weiterleben.
+        $@c{smile_eclosed}Wie auch immer, ich habe genug von diesem Ort, oder nicht? Lass uns nach Hause gehen.
+        $@c{serious_smile_fists}Vielleicht können wir, wenn wir zurück sind, noch einen Kampf haben?
+        $Wenn du dazu bereit bist.`,
   "ending_female":
-        `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
-        $@c{smile_eclosed}Of course… I always had that feeling.\n@c{smile}It's over now, right? You ended the loop.
-        $@c{smile_ehalf}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $I'll be the only one to remember what you did.\n@c{angry_mopen}I'll try not to forget!
-        $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
-        $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
-        $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
+      `@c{shock}Du bist zurück?@d{32} Bedeutet das…@d{96} du hast gewonnen?!
+       $@c{smile_ehalf}Ich hätte wissen sollen, dass du es in dir hast.
+        $@c{smile_eclosed}Natürlich… ich hatte immer dieses Gefühl.
+        $@c{smile}Es ist jetzt vorbei, richtig? Du hast die Schleife beendet.
+        $@c{smile_ehalf}Du hast auch deinen Traum erfüllt, nicht wahr?
+        $Du hast nicht einmal verloren.
+        $Ich werde die Einzige sein, die sich daran erinnert, was du getan hast.
+        $@c{angry_mopen}Ich werde versuchen, es nicht zu vergessen!
+        $@c{smile_wave_wink}Nur ein Scherz!@d{64} @c{smile}Ich würde es nie vergessen.@d{32}
+        $Deine Legende wird in unseren Herzen weiterleben.
+        $@c{smile_wave}Wie auch immer,@d{64} es wird spät…@d{96} denke ich?\nEs ist schwer zu sagen an diesem Ort.
+        $Lass uns nach Hause gehen. 
+        $@c{smile_wave_wink}Vielleicht können wir morgen noch einen Kampf haben, der alten Zeiten willen?`,
 };
 
 
-export const doubleBattleDialogue: DialogueTranslationEntries = {
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
+export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
+
+
+// Dialogue of the named double battles in the game. For when the player is male (or unset).
+export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
       1: `Blau: Hey Rot, lass uns ihnen zeigen, was wir drauf haben!
@@ -2481,3 +2506,6 @@ export const doubleBattleDialogue: DialogueTranslationEntries = {
     },
   },
 };
+
+// Dialogue of the named double battles in the game. For when the player is female. For languages that do not have gendered pronouns, this can be set to PGMdoubleBattleDialogue.
+export const PGFdoubleBattleDialogue: DialogueTranslationEntries = PGMdoubleBattleDialogue;

@@ -14,7 +14,6 @@ import {doubleBattleDialogue} from "./dialogue";
 import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
 import {PartyMemberStrength} from "./enums/party-member-strength";
-import i18next, {ParseKeys} from "i18next";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 
 export enum TrainerPoolTier {
@@ -379,17 +378,9 @@ export class TrainerConfig {
     // Check if there is double battle dialogue for this trainer
     if (doubleBattleDialogue[nameDouble]) {
       // Set encounter and victory messages for double trainers
-      // Handle localization
-      (doubleBattleDialogue[nameDouble].encounter as string[]).forEach((message:string, index:number) => {
-        doubleBattleDialogue[nameDouble].encounter[index] = i18next.t(message as ParseKeys);
-      });
-
-      (doubleBattleDialogue[nameDouble].victory as string[]).forEach((message: string, index:number) => {
-        doubleBattleDialogue[nameDouble].victory[index] = i18next.t(message as ParseKeys);
-      });
-
       this.doubleEncounterMessages = doubleBattleDialogue[nameDouble].encounter;
       this.doubleVictoryMessages = doubleBattleDialogue[nameDouble].victory;
+      this.doubleDefeatMessages = doubleBattleDialogue[nameDouble].defeat;
     }
   }
 
@@ -1218,7 +1209,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion(signatureSpecies["LANCE_CHAMPION"],true).setBattleBgm("battle_johto_champion"),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(signatureSpecies["STEVEN"],true).setBattleBgm("battle_hoenn_champion").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double"),
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion(signatureSpecies["WALLACE"],true).setBattleBgm("battle_hoenn_champion").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double"),
-  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(signatureSpecies["CYNTHIA"],false).setBattleBgm("battle_sinnoh_champion").setDoubleTrainerType(TrainerType.VOLO).setDoubleTitle("timespace_double").setHasDouble("cynthia_volo_double"),
+  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(signatureSpecies["CYNTHIA"],false).setBattleBgm("battle_sinnoh_champion"),
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(signatureSpecies["ALDER"],true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder"),
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(signatureSpecies["IRIS"],false).setBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double"),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(signatureSpecies["DIANTHA"],false),
@@ -1226,7 +1217,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(signatureSpecies["GEETA"],false),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(signatureSpecies["NEMONA"],false),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(signatureSpecies["KIERAN"],true),
-  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"],true).setDoubleTrainerType(TrainerType.HOP).setDoubleTitle("sibling_double").setHasDouble("leon_hop_double"),
+  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"],true),
 
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)

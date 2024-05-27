@@ -1,36 +1,37 @@
 import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
 
-export const dialogue: DialogueTranslationEntries = {
+// Dialogue of the NPCs in the game when the player character is male (or unset)
+export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
-      1: "Hé ! Combat ?",
-      2: "Toi aussi tu débutes ?",
-      3: "Hé, j’me souviens pas de ta tête. Combat !",
-	  4: "J’ai perdu, alors j’essaye de capturer d’autres Pokémon.\nHé, t’as l'air faible toi ! Allez, combat !",
-      5: "On s’connait ? J’ai comme un doute. Dans tous les cas, sympa de te rencontrer !",
-      6: "Allez, c’est parti !",
-      7: "Attention, me voilà !\nTu vas voir comment j’suis fort !",
-	  8: "Coucou… Tu veux voir mes bô Pokémon ?",
-	  9: "Trève de mondanités. Ramène-toi quand tu le sens !",
-	  10: "Baisse pas ta garde si tu veux pas pleurer d’avoir perdu face à un gamin.",
-	  11: "J'ai tout donné pour élever mes Pokémon. Attention à toi si tu leur fait du mal !",
-	  12: "Incroyable que t’y sois parvenu·e! Mais la suite va pas être une partie de plaisir.",//Involves player's gender, to split someday, if possible
-	  13: "Les combats sont éternels ! Bienvenue dans un monde sans fin !"
+      1: "Hey, wanna battle?",
+      2: "Are you a new trainer too?",
+      3: "Hey, I haven't seen you before. Let's battle!",
+      4: "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
+      5: "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
+      6: "All right! Let's go!",
+      7: "All right! Here I come! I'll show you my power!",
+      8: "Haw haw haw... I'll show you how hawesome my Pokémon are!",
+      9: "No need to waste time saying hello. Bring it on whenever you're ready!",
+      10: "Don't let your guard down, or you may be crying when a kid beats you.",
+      11: "I've raised my Pokémon with great care. You're not allowed to hurt them!",
+      12: "Glad you made it! It won't be an easy job from here.",
+      13: "The battles continue forever! Welcome to the world with no end!"
     },
     "victory": {
-      1: "Hé, mais t’es trop fort·e !",//Involves player's gender
-      2: "En vrai j’avais aucune chance hein ?",
-      3: "J’te retrouverai un jour, et là j’te battrai !",
-      4: "Arg… J’ai plus aucun Pokémon.",
-      5: "Non… IMPOSSIBLE ! Pourquoi j’ai encore perdu…",
-      6: "Non ! J’ai perdu !",
-	  7: "Waah ! T’es trop incroyable ! J’suis bouche bée !",
-      8: "Pourquoi… Comment… Pourtant on est les plus forts, mes Pokémon et moi…",
-	  9: "J’perdrai pas la prochaien fois ! Remettons ça un jour !",
-	  10: "Weeeesh ! Tu vois que j’suis qu’un gamin ? C'est pas juste de me bully comme ça !",
-	  11: "Tes Pokémon sont trop incroyables !\n… P’tit échange ?",
-	  12: "Je me suis fait un peu aider plus tôt, mais de quel taf je parlais ?",
-	  13: "Ahaha ! Et voilà, ça y est !\nT'es déjà comme chez toi dans ce monde !"
+      1: "Wow! You're strong!",
+      2: "I didn't stand a chance, huh?",
+      3: "I'll find you again when I'm older and beat you!",
+      4: "Ugh. I don't have any more Pokémon.",
+      5: "No way… NO WAY! How could I lose again…",
+      6: "No! I lost!",
+      7: "Whoa! You are incredible! I'm amazed and surprised!",
+      8: "Could it be… How… My Pokémon and I are the strongest, though…",
+      9: "I won't lose next time! Let's battle again sometime!",
+      10: "Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!",
+      11: "Your Pokémon are more amazing! Trade with me!",
+      12: "I got a little carried away earlier, but what job was I talking about?",
+      13: "Ahaha! There it is! That's right! You're already right at home in this world!"
     }
   },
   "lass": {
@@ -2085,127 +2086,127 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "rival": {
     "encounter": {
-	  1: `@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…
-					$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.
-					$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t'es prête.
-					$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !`
+      1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
+                    $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
+                    $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
+                    $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
     },
     "victory": {
-	  1: `@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?
-				   $@c{smile}T'as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.
-				   $D'ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympa.
-                   $@c{serious_smile_fists}Bonne chance à toi !`
+      1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
+                   $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
+                   $By the way, the professor asked me to give you these items. They look pretty cool.
+                   $@c{serious_smile_fists}Good luck out there!`
     },
   },
   "rival_female": {
     "encounter": {
-      1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
-                    $@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…
-					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affronte !
-					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?`
+      1: `@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?
+                    $@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…
+                    $@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!
+                    $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
     },
     "victory": {
-      1: `@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T'as triché non ? Avoue !
-                    $@c{smile_wave_wink}J'déconne !@d{64} @c{smile_eclosed}J'ai perdu dans les règles… J’ai le sentiment que tu vas très bien t’en sortir.
-					$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !
-					$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !`
+      1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
+                    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
+                    $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
+                    $@c{smile_wave}Do your best like always! I believe in you!`
     },
   },
   "rival_2": {
     "encounter": {
-	  1: `@c{smile}Hé, toi aussi t’es là ?\n@c{smile_eclosed}Toujours invaincue, hein… ?
-				$@c{serious_mopen_fists}Je sais que j’ai l’air de t’avoir suivie ici, mais c'est pas complètement vrai.
-				$@c{serious_smile_fists}Pour être honnête, ça me démangeait d’avoir une revanche depuis que tu m'as battu.
-				$Je me suis beaucoup entrainé, alors sois sure que je vais pas retenir mes coups cette fois.
-                $@c{serious_mopen_fists}Et comme la dernière fois, ne te retiens pas !\nC’est parti !`
+      1: `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
+                $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
+                $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
+                $I've been doing a lot of my own training so I'll definitely put up a fight this time.
+                $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
     },
     "victory": {
-	  1: `@c{neutral_eclosed}Oh. Je crois que j’ai trop pris la confiance.
-				$@c{smile}Pas grave, c'est OK. Je me doutais que ça arriverait.\n@c{serious_mopen_fists}Je vais juste devoir encore plus m’entrainer !\n
-                $@c{smile}Ah, et pas que t’aies réellement besoin d’aide, mais j’ai ça en trop sur moi qui pourrait t’intéresser.\n
-				$@c{serious_smile_fists}Mais n’espère plus en avoir d’autres !\nJe peux pas passer mon temps à aider mon adversaire.
-                $@c{smile}Bref, prends soin de toi !`
+      1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
+                $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
+                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
+                $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
+                $@c{smile}Anyway, take care!`
     },
   },
   "rival_2_female": {
     "encounter": {
-	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincu. @c{angry_mopen}Eh… Pas mal !
-				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
-				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perde parfois.
-				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
-				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t'as intérêt à tout donner !`
+      1: `@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!
+                $@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.
+                $@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.
+                $@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.
+                $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
     },
     "victory": {
-	  1: `@c{neutral}Je… J’étais pas encore supposée perdre…
-				$@c{smile}Bon. Ça veut juste dire que je vois devoir encore plus m’entrainer !
-				$@c{smile_wave}J’ai aussi ça en rab pour toi !\n@c{smile_wave_wink}Inutile de me remercier ~.
-                $@c{angry_mopen}C’était le dernier, terminé les cadeaux après celui-là !
-                $@c{smile_wave}Allez, tiens le coup !`
+      1: `@c{neutral}I… wasn't supposed to lose that time…
+                $@c{smile}Aw well. That just means I'll have to train even harder for next time!
+                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
+                $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
+                $@c{smile_wave}Keep at it!`
     },
     "defeat": {
-      1: "Je suppose que c’est parfois normal de perdre…"
+      1: "It's OK to lose sometimes…"
     }
   },
   "rival_3": {
     "encounter": {
-	  1: `@c{smile}Hé, mais qui voilà ! Ça fait un bail.\n@c{neutral}T’es… toujours invaincue ? Incroyable.
-				$@c{neutral_eclosed}Tout est devenu un peu… étrange.\nC’est plus pareil sans toi au village.
-				$@c{serious}Je sais que c’est égoïste, mais j’ai besoin d’expier ça.\n@c{neutral_eclosed}Je crois que tout ça te dépasse.
-				$@c{serious}Ne jamais perdre, c’est juste irréaliste.\nGrandir, c’est parfois aussi savoir perdre.
-				$@c{neutral_eclosed}T’as un beau parcours, mais il y a encore tellement à venir et ça va pas s’arranger. @c{neutral}T’es prête pour ça ?
-                $@c{serious_mopen_fists}Si tu l’es, alors prouve-le.`
+      1: `@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.
+                $@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.
+                $@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.
+                $@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
+                $@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?
+                $@c{serious_mopen_fists}If so, prove it to me.`
     },
     "victory": {
-	  1: "@c{angry_mhalf}C’est lunaire… J’ai presque fait que m’entrainer…\nAlors pourquoi il y a encore un tel écart entre nous ?"
+      1: "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
     },
   },
   "rival_3_female": {
     "encounter": {
-	  1: `@c{smile_wave}Ça fait une éternité ! Toujours debout hein ?\n@c{angry}Tu commences à me pousser à bout là. @c{smile_wave_wink}T’inquiètes j’déconne !
-				$@c{smile_ehalf}Mais en vrai, ta maison te manque pas ? Ou… Moi ?\nJ… Je veux dire… Tu me manque vraiment beaucoup.
-				$@c{smile_eclosed}Je te soutiendrai toujours dans tes ambitions, mais la vérité est que tu finiras par perdre un jour ou l’autre.
-                $@c{smile}Quand ça arrivera, je serai là pour toi, comme toujours.\n@c{angry_mopen}Maintenant, montre-moi à quel point t’es devenu fort !`
+      1: `@c{smile_wave}Long time no see! Still haven't lost, huh.\n@c{angry}You're starting to get on my nerves. @c{smile_wave_wink}Just kidding!
+                $@c{smile_ehalf}But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.
+                $@c{smile_eclosed}I support you in your dream and everything, but the reality is you're going to lose sooner or later.
+                $@c{smile}And when you do, I'll be there for you like always.\n@c{angry_mopen}Now, let me show you how strong I've become!`
     },
     "victory": {
-	  1: "@c{shock}Après tout ça… Ça te suffit toujours pas… ?\nTu reviendras jamais à ce rythme…"
+      1: "@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…"
 
     },
     "defeat": {
-	  1: "T’as fait de ton mieux.\nAllez, rentrons à la maison."
+      1: "You gave it your best, now let's go home."
     }
   },
   "rival_4": {
     "encounter": {
-      1: `@c{neutral}Hé.
-				$Je vais pas y aller par quatre chemins avec toi.\n@c{neutral_eclosed}Je suis là pour gagner. Simple, basique.
-				$@c{serious_mhalf_fists}J’ai appris à maximiser tout mon potentiel en m’entrainant d’arrachepied.
-				$@c{smile}C’est fou tout le temps que tu peux te dégager si tu dors pas en sacrifiant ta vie sociale.
-				$@c{serious_mopen_fists}Plus rien n’a d’importace désormais, pas tant que j’aurai pas gagné.
-				$@c{neutral_eclosed}J'ai attient un stade où je ne peux plus perdre.\n@c{smile_eclosed}Je présume que ta philosophie était pas si fausse finalement.
-				$@c{angry_mhalf}La défaite, c'est pour les faibles, et je ne suis plus un faible.
-                $@c{serious_mopen_fists}Tiens-toi prête.`
+      1: `@c{neutral}Hey.
+                $I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.
+                $@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.
+                $@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
+                $@c{serious_mopen_fists}None of that matters anymore, not until I win.
+                $@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.
+                $@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.
+                $@c{serious_mopen_fists}Prepare yourself.`
     },
     "victory": {
-      1: "@c{neutral}Que…@d{64} Qui es-tu ?"
+      1: "@c{neutral}What…@d{64} What are you?"
     },
   },
   "rival_4_female": {
     "encounter": {
-	  1: `@c{neutral}C’est moi ! Tu m’as pas encore oubliée… n’est-ce pas ?
-				$@c{smile}Tu devrais être fier d’être arrivé aussi loin. GG !\nMais c’est certainement pas la fin de ton aventure.
-				$@c{smile_eclosed}T’as éveillé en moi quelque chose que j’ignorais.\nTout mon temps passe dans l'entrainement.
-				$@c{smile_ehalf}Je dors et je mange à peine, je m’entraine juste tous les jours, et deviens de plus en plus forte.
-                $@c{neutral}En vrai, Je… J’ai de la peine à me reconnaitre.
-				$Mais maintenant, je suis au top de mes capacités.\nJe doute que tu sois de nouveau capable de me battre.
-				$Et tu sais quoi ? Tout ça, c’est de ta faute.\n@c{smile_ehalf}Et j’ignore si je dois te remercier ou te haïr.
-                $@c{angry_mopen}Tiens-toi prêt.`
+      1: `@c{neutral}It's me! You didn't forget about me again… did you?
+                $@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
+                $@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
+                $@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
+                $@c{neutral}In fact, I… hardly recognize myself.
+                $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
+                $And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.
+                $@c{angry_mopen}Prepare yourself.`
     },
     "victory": {
-      1: "@c{neutral}Que…@d{64} Qui es-tu ?"
+      1: "@c{neutral}What…@d{64} What are you?"
 
     },
     "defeat": {
-      1: "$@c{smile}Tu devrais être fier d’être arrivé jusque là."
+      1: "$@c{smile}You should be proud of how far you made it."
     }
   },
   "rival_5": {
@@ -2230,194 +2231,210 @@ export const dialogue: DialogueTranslationEntries = {
   },
   "rival_6": {
     "encounter": {
-      1: `@c{smile_eclosed}Nous y revoilà.
-				$@c{neutral}J’ai eu du temps pour réfléchir à tout ça.\nIl y a une raison à pourquoi tout semble étrange.
-				$@c{neutral_eclosed}Ton rêve, ma volonté de te battre…\nFont partie de quelque chose plus grand.
-				$@c{serious}C’est même pas à propos de moi, ni de toi… Mais du monde, @c{serious_mhalf_fists}et te repousser dans tes limites est ma mission.
-				$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.
-				$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.
-                $@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?
-				$@c{serious}…et c’est comme si quelque chose ici me parlait.\nComme si c’était tout ce que ce monde avait toujours connu.
-				$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.
-				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels.
-				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.
-				$@c{serious_smile_fists}Difficile connaitre le sens de tout ça, je sais juste que c’est la réalité.
-				$@c{serious_mopen_fists}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance.`
+      1: `@c{smile_eclosed}We meet again.
+                $@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
+                $@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.
+                $@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.
+                $@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
+                $@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
+                $@c{serious_mhalf_fists}You feel the same, don't you?
+                $@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
+                $Those times we cherished together that seem so recent are nothing but a distant memory.
+                $@c{neutral_eclosed}Who can say whether they were ever even real in the first place.
+                $@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
+                $@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.
+                $@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance.`
     },
     "victory": {
-      1: `@c{smile_eclosed}J'ai fait ce que je j'avais à faire.
-				$Prmoets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison.`
+      1: `@c{smile_eclosed}It looks like my work is done here.
+                $I want you to promise me one thing.\n@c{smile}After you heal the world, please come home.`
     },
   },
   "rival_6_female": {
     "encounter": {
-      1: `@c{smile_ehalf}C’est donc encore entre toi et moi.
-				$@c{smile_eclosed}Tu sais, j’ai beau retouner ça dans tous les sens…
-                $@c{smile_ehalf}Quelque chose peut expliquer tout ça, pourquoi tout semble si étrange…
-				$@c{smile}T’as tes rêves, j’ai mes ambitions…
-				$J’ai juste le sentiment qu’il y a un grand dessein derrière tout ça, derrière ce qu’on fait toi et moi.
-                $@c{smile_eclosed}Je crois que mon but est de… repousser tes limites.
-				$@c{smile_ehalf}Je suis pas certaine de bien être douée à cet exercice, mais je fait de mon mieux.
-				$Cet endroit épouvantable cache quelque chose d’étrange… Tout semble si limpide…
-                $Comme… si c’était tout ce que ce monde avait toujours connu.
-				$@c{smile_eclosed}J’ai le sentiment que nos précieux moments ensemble sont devenus si flous.
-				$@c{smile_ehalf}Ont-ils au moins été réels ? Tout semble si loin maintenant…
-                $@c{angry_mopen}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es le seul à en être capable.
-                $@c{smile_ehalf}Je… j’ignore le sens de tout ça… Mais je sais que c’est la réalité.
-                $@c{neutral}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance.`
+      1: `@c{smile_ehalf}So it's just us again.
+                $@c{smile_eclosed}You know, I keep going around and around in my head…
+                $@c{smile_ehalf}There's something to all this, why everything seems so strange now…
+                $@c{smile}You have your dream, and I have this ambition in me…
+                $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
+                $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
+                $@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
+                $It's something about this strange and dreadful place… Everything seems so clear…
+                $This… is all the world's known for a long time now.
+                $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
+                $@c{smile_ehalf}Were they even real? They seem so far away now…
+                $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
+                $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
+                $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
     },
     "victory": {
-      1: `@c{smile_ehalf}Je… Je crois que j'ai rempli ma mission…
-                $@c{smile_eclosed}Promets-moi… Après avoir réparé ce monde… Reviens à la maison sain et sauf.
-                $@c{smile_ehalf}… Merci.`
+      1: `@c{smile_ehalf}I… I think I fulfilled my purpose…
+                $@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.
+                $@c{smile_ehalf}…Thank you.`
 
     },
   },
 };
 
-export const battleSpecDialogue: SimpleTranslationEntries = {//Involves player's gender
-  "encounter": `Une fois de plus, te revoilà.\nSais-tu que ce n’est point là ta première venue ?
-               $Tu a été appelé·e ici parce que t’y est déjà venu·e.\nUn nombre inimaginable de fois.
-               $Mais allons-y, faisons le décompte.\nTu en es très précisément à ton 5 643 853e cycle.
-			   $Chaque cycle réinitialise ton souvenir du précédent.\nMais étrangement, des bribes subsistent en toi.
-			   $Jusqu’à maintenant, tu as toujours échoué. Mais je ressens quelque chose de différent cette fois-ci.\n
-			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
-			   $Vas-tu enfin me liver un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
-               $Commençons.`,
-  "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
-                    $Ne me déçoit pas.`,
-  "secondStageWin": "… Magnifique."
+
+// Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
+export const PGFdialogue: SimpleTranslationEntries = PGMdialogue;
+
+// Dialogue of the endboss of the game when the player character is male (Or unset)
+export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
+  "encounter": `It appears the time has finally come once again.\nYou know why you have come here, do you not?
+               $You were drawn here, because you have been here before.\nCountless times.
+               $Though, perhaps it can be counted.\nTo be precise, this is in fact your 5,643,853rd cycle.
+               $Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.
+               $Until now you have yet to succeed, but I sense a different presence in you this time.\n
+               $You are the only one here, though it is as if there is… another.
+               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millennia?
+               $We begin.`,
+  "firstStageWin": `I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.
+                    $Do not disappoint me.`,
+  "secondStageWin": "…Magnificent."
 };
 
-export const miscDialogue: SimpleTranslationEntries = {
+// Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
+export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDialogue;
+
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
+export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-	  `@c{smile}Oh ? T’as gagné ?@d{96} @c{smile_eclosed}J'aurais dû le savoir.\nMais de voilà de retour.
-        $@c{smile}C’est terminé.@d{64} T’as brisé ce cycle infernal.
-		$@c{serious_smile_fists}T’as aussi accompli ton rêve non ?\nTu n’as pas connu la moindre défaite.
-		$@c{neutral}Je suis le seul à me souvenir de ce que t’as fait.@d{96}\nJe pense que ça ira, non ?
-		$@c{serious_smile_fists}Ta légende vivra à jamais dans nos cœurs.
-		$@c{smile_eclosed}Bref, j’en ai un peu marre de ce endroit, pas toi ? Rentrons à la maison.
-		$@c{serious_smile_fists}On se fera un p’tit combat une fois rentrés ?\nSi t’es d’accord.`,
+      `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
+        $@c{smile}It's over.@d{64} You ended the loop.
+        $@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
+        $@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?
+        $@c{serious_smile_fists}Your legend will always live on in our hearts.
+        $@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.
+        $@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.`,
   "ending_female":
-      `@c{shock}T’es revenu ?@d{32} Ça veut dire …@d{96} que t’as gagné ?!\n@c{smile_ehalf}J'aurais dû le savoir.
-		$@c{smile_eclosed}Bien sûr… J’ai toujours eu ce sentiment.\n@c{smile}C’est fini maitenant hein ? T’as brisé ce cycle.
-		$@c{smile_ehalf}T’as aussi accompli ton rêve non ?\nTu n’as pas connu la moindre défaite.
-        $Je serai la seule à me souvenir de ce que t’as fait.\n@c{angry_mopen}Je tâcherai de ne pas oublier !
-        $@c{smile_wave_wink}J’déconne !@d{64} @c{smile}Jamais j’oublierai.@d{32}\nTa légende vivra à jamais dans nos cœurs.
-        $@c{smile_wave}Bon,@d{64} il se fait tard…@d{96} je crois ?\nDifficile à dire ici.
-        $Retrons, @c{smile_wave_wink}et demain on se fera un p’tit combat, comme au bon vieux temps ?`,
+      `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
+        $@c{smile_eclosed}Of course… I always had that feeling.\n@c{smile}It's over now, right? You ended the loop.
+        $@c{smile_ehalf}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
+        $I'll be the only one to remember what you did.\n@c{angry_mopen}I'll try not to forget!
+        $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
+        $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
+        $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
 };
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
+export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
 
-export const doubleBattleDialogue: DialogueTranslationEntries = {
+
+// Dialogue of the named double battles in the game. For when the player is male (or unset).
+export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
-      1: `Blue : Hé Red, montrons-leur de quel bois on se chauffe !
-                  $Red : …
-                  $Blue : Voilà la puissance du Bourg Palette !`,
+      1: `Blue: Hey Red, let's show them what we're made of!
+                  $Red: ...
+                  $Blue: This is Pallet Town Power!`,
     },
     "victory": {
-      1: `Blue : C’était un magnifique combat !
-              $Red : …`,
+      1: `Blue: That was a great battle!
+              $Red: ...`,
     },
   },
   "red_blue_double": {
     "encounter": {
-      1: `Red : … !
-                  $Blue : Il est pas très loquace.
-					$Blue : Mais ne te laisse pas avoir, il reste un Maitre Pokémon !`,
+      1: `Red: ...!
+                  $Blue: He never talks much.
+                    $Blue: But dont let that fool you! He is a champ after all!`,
     },
     "victory": {
-      1: `Red : … !
-                $Blue : La prochaine fois, on va te battre !`,
+      1: `Red: ...!
+                $Blue: Next time we will beat you!`,
     },
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Lévy : Are you suprised?
-                  $Tatia : We are two gym leaders at once!
-                  $Lévy : We are twins!
-                  $Tatia : We dont need to talk to understand each other!
-                  $Lévy : Twice the power...
-                  $Tatia : Can you handle it?`,
+      1: `Tate: Are you suprised?
+                  $Liza: We are two gym leaders at once!
+                  $Tate: We are twins!
+                  $Liza: We dont need to talk to understand each other!
+                  $Tate: Twice the power...
+                  $Liza: Can you handle it?`,
     },
     "victory": {
-      1: `Lévy : What? Our combination was perfect!
-                  $Tatia : Looks like we need to train more...`,
+      1: `Tate: What? Our combination was perfect!
+                  $Liza: Looks like we need to train more...`,
     },
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Tatia : Hihihi... Are you suprised?
-                  $Lévy : Yes, we are really two gym leaders at once!
-                  $Tatia : This is my twin brother Tate!
-                  $Lévy : And this is my twin sister Liza!
-                  $Tatia : Don't you think we are a perfect combination?`
+      1: `Liza: Hihihi... Are you suprised?
+                  $Tate: Yes, we are really two gym leaders at once!
+                  $Liza: This is my twin brother Tate!
+                  $Tate: And this is my twin sister Liza!
+                  $Liza: Don't you think we are a perfect combination?`
     },
     "victory": {
-      1: `Tatia : Are we...
-                  $Lévy : ...not as strong as we thought?`,
+      1: `Liza: Are we...
+                  $Tate: ...not as strong as we thought?`,
     },
   },
   "wallace_steven_double": {
     "encounter": {
-      1: `Pierre R. : Marc, let's show them the power of the champions!
-                  $Marc : We will show you the power of Hoenn!
-                  $Pierre R. : Let's go!`,
+      1: `Steven: Wallace, let's show them the power of the champions!
+                  $Wallace: We will show you the power of Hoenn!
+                  $Steven: Let's go!`,
     },
     "victory": {
-      1: `Pierre R. : That was a great battle!
-                  $Marc : We will win next time!`,
+      1: `Steven: That was a great battle!
+                  $Wallace: We will win next time!`,
     },
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Pierre R. : Do you have any rare Pokémon?
-          $Marc : Pierre... We are here for a battle, not to show off our pokémon.
-            $Pierre R. : Oh... I see... Let's go then!`,
+      1: `Steven: Do you have any rare pokémon?
+          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
+            $Steven: Oh... I see... Let's go then!`,
     },
     "victory": {
-      1: `Pierre R. : Now that we are done with the battle, let's show off our pokémon!
-            $Marc : Pierre...`,
+      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
+            $Wallace: Steven...`,
     },
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Goyah : We are the strongest trainers in Unova!
-                  $Iris : Fights against strong trainers are the best!`,
+      1:  `Alder: We are the strongest trainers in Unova!
+                  $Iris: Fights against strong trainers are the best!`,
     },
     "victory": {
-      1:   `Goyah : Wow! You are super strong!
-                  $Iris : We will win next time!`,
+      1:   `Alder: Wow! You are super strong!
+                  $Iris: We will win next time!`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris : Welcome Challenger! I am THE Unova Champion!
-                  $Goyah : Iris, aren't you a bit too excited?`,
+      1:   `Iris: Welcome Challenger! I am THE Unova Champion!
+                  $Alder: Iris, aren't you a bit too excited?`,
     },
     "victory": {
-      1:    `Iris : A loss like this is not easy to take...
-                  $Goyah : But we will only get stronger with every loss!`,
+      1:    `Iris: A loss like this is not easy to take...
+                  $Alder: But we will only get stronger with every loss!`,
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Rosemary : Frérot, montrons-leur la puissance de Smashings !
-                  $Peterson : Nous sommes les ténèbres !`,
+      1:   `Marnie: Brother, let's show them the power of Spikemuth!
+                  $Piers: We bring darkness!`,
     },
     "victory": {
-      1:  `Rosemary : T’as amené la lumière dans les ténèbres !
-                  $Peterson : P’têtre un peu trop…`,
+      1:  `Marnie: You brought light to our darkness!
+                  $Piers: Its too bright...`,
     },
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `Peterson : Chauds pour un concert ?
-                    $Rosemary : Frérot… Ils sont pas là pour chanter, mais se battre…`,
+      1:  `Piers: Ready for a concert?
+                    $Marnie: Brother... They are here to fight, not to sing...`,
     },
     "victory": {
-      1:  `Peterson : Ça c'est du rock !
-                    $Rosemary : Frérot…`,
+      1:  `Piers: Now that was a great concert!
+                    $Marnie: Brother...`,
     },
   },
 };
+
+// Dialogue of the named double battles in the game. For when the player is female. For languages that do not have gendered pronouns, this can be set to PGMdoubleBattleDialogue.
+export const PGFdoubleBattleDialogue: DialogueTranslationEntries = PGMdoubleBattleDialogue;
