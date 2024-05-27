@@ -381,7 +381,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CORNERSTONE_MASK": "Masque de la Pierre",
     "SHOCK_DRIVE": "Module Choc",
     "BURN_DRIVE": "Module Pyro",
-    "CHILL_DRIVE": "Module Aqua",
-    "DOUSE_DRIVE": "Module Choc",
+    "CHILL_DRIVE": "Module Cryo",
+    "DOUSE_DRIVE": "Module Aqua",
   },
 } as const;

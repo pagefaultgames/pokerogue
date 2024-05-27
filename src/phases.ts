@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -61,7 +61,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { MoveUsedEvent } from "./battle-scene-events";
+import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 
 
 export class LoginPhase extends Phase {
@@ -529,9 +529,12 @@ export class SelectStarterPhase extends Phase {
           if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
             starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
           }
-          const starterGender = starter.species.malePercent !== null
+          let starterGender = starter.species.malePercent !== null
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
+          if (Overrides.GENDER_OVERRIDE !== null) {
+            starterGender = Overrides.GENDER_OVERRIDE;
+          }
           const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
           const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
           starterPokemon.tryPopulateMoveset(starter.moveset);
@@ -728,6 +731,11 @@ export class EncounterPhase extends BattlePhase {
     this.scene.updateGameInfo();
 
     this.scene.initSession();
+
+    // Failsafe if players somehow skip floor 200 in classic mode
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
+      this.scene.unshiftPhase(new GameOverPhase(this.scene));
+    }
 
     const loadEnemyAssets = [];
 
@@ -1714,6 +1722,7 @@ export class TurnInitPhase extends FieldPhase {
     super.start();
 
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
+    this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {
@@ -2157,10 +2166,17 @@ export class TurnStartPhase extends FieldPhase {
         break;
       case Command.POKEMON:
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
+        break;
       case Command.RUN:
         let runningPokemon = pokemon;
         if (this.scene.currentBattle.double) {
-          const playerActivePokemon = field.filter(pokemon => pokemon.isPlayer() && pokemon.isActive());
+          const playerActivePokemon = field.filter(pokemon => {
+            if (!!pokemon) {
+              return pokemon.isPlayer() && pokemon.isActive();
+            } else {
+              return;
+            }
+          });
           // if only one pokemon is alive, use that one
           if (playerActivePokemon.length > 1) {
             // find which active pokemon has faster speed
@@ -2240,6 +2256,7 @@ export class TurnEndPhase extends FieldPhase {
     super.start();
 
     this.scene.currentBattle.incrementTurn(this.scene);
+    this.scene.eventTarget.dispatchEvent(new TurnEndEvent(this.scene.currentBattle.turn));
 
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
@@ -2289,9 +2306,6 @@ export class BattleEndPhase extends BattlePhase {
     super.start();
 
     this.scene.currentBattle.addBattleScore(this.scene);
-    if (this.scene.currentBattle.moneyScattered) {
-      this.scene.currentBattle.pickUpScatteredMoney(this.scene);
-    }
 
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer) {
@@ -2309,6 +2323,10 @@ export class BattleEndPhase extends BattlePhase {
 
     for (const pokemon of this.scene.getParty().filter(p => !p.isFainted())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+    }
+
+    if (this.scene.currentBattle.moneyScattered) {
+      this.scene.currentBattle.pickUpScatteredMoney(this.scene);
     }
 
     this.scene.clearEnemyHeldItemModifiers();
@@ -2397,7 +2415,7 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
-      if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId) {
+      if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       }
       return this.end();
@@ -2536,7 +2554,16 @@ export class MovePhase extends BattlePhase {
           this.showFailedText(failedText);
         }
       }
-
+      // Checks if Dancer ability is triggered
+      if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
+        // Pokemon with Dancer can be on either side of the battle so we check in both cases
+        this.scene.getPlayerField().forEach(pokemon => {
+          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
+        });
+        this.scene.getEnemyParty().forEach(pokemon => {
+          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
+        });
+      }
       this.end();
     };
 
@@ -2622,8 +2649,14 @@ export class MoveEffectPhase extends PokemonPhase {
 
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
     super(scene, battlerIndex);
-
     this.move = move;
+    // In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
+    // with no party members available to switch in, then the right Pokemon takes the index
+    // of the left Pokemon and gets hit unless this is checked.
+    if (targets.includes(battlerIndex) && this.move.getMove().moveTarget === MoveTarget.ALL_NEAR_OTHERS) {
+      const i = targets.indexOf(battlerIndex);
+      targets.splice(i,i+1);
+    }
     this.targets = targets;
   }
 
@@ -3603,6 +3636,9 @@ export class VictoryPhase extends PokemonPhase {
         if (partyMember.pokerus) {
           expMultiplier *= 1.5;
         }
+        if (Overrides.XP_MULTIPLIER_OVERRIDE !== null) {
+          expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
+        }
         const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
         this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
         partyMemberExp.push(Math.floor(pokemonExp.value));
@@ -3848,6 +3884,11 @@ export class GameOverPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    // Failsafe if players somehow skip floor 200 in classic mode
+    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
+      this.victory = true;
+    }
 
     if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
@@ -4407,7 +4448,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       }
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
-        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL);
+        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL as DamageResult);
         healAmount.value = 0;
       }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)
@@ -4970,7 +5011,7 @@ export class EggLapsePhase extends Phase {
     super.start();
 
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
-      return --egg.hatchWaves < 1;
+      return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
     if (eggsToHatch.length) {

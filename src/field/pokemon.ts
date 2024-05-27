@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
@@ -322,12 +322,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               console.warn = () => {};
               const battleFrameNames = this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
               console.warn = originalWarn;
-              this.scene.anims.create({
-                key: this.getBattleSpriteKey(),
-                frames: battleFrameNames,
-                frameRate: 12,
-                repeat: -1
-              });
+              if (!(this.scene.anims.exists(this.getBattleSpriteKey()))) {
+                this.scene.anims.create({
+                  key: this.getBattleSpriteKey(),
+                  frames: battleFrameNames,
+                  frameRate: 12,
+                  repeat: -1
+                });
+              }
             }
             this.playAnim();
             const updateFusionPaletteAndResolve = () => {
@@ -524,13 +526,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     shinySparkle.setVisible(false);
     shinySparkle.setOrigin(0.5, 1);
     const frameNames = this.scene.anims.generateFrameNames(key, { suffix: ".png", end: 34 });
-    this.scene.anims.create({
-      key: `sparkle${keySuffix}`,
-      frames: frameNames,
-      frameRate: 32,
-      showOnStart: true,
-      hideOnComplete: true,
-    });
+    if (!(this.scene.anims.exists(`sparkle${keySuffix}`))) {
+      this.scene.anims.create({
+        key: `sparkle${keySuffix}`,
+        frames: frameNames,
+        frameRate: 32,
+        showOnStart: true,
+        hideOnComplete: true,
+      });
+    }
     this.add(shinySparkle);
 
     this.shinySparkle = shinySparkle;
@@ -1607,6 +1611,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (types.find(t => move.isTypeImmune(t))) {
       typeMultiplier.value = 0;
+    }
+
+    // Apply arena tags for conditional protection
+    if (!move.hasFlag(MoveFlags.IGNORE_PROTECT) && !move.isAllyTarget()) {
+      const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      this.scene.arena.applyTagsForSide(ArenaTagType.QUICK_GUARD, defendingSide, cancelled, this, move.priority);
+      this.scene.arena.applyTagsForSide(ArenaTagType.WIDE_GUARD, defendingSide, cancelled, this, move.moveTarget);
+      this.scene.arena.applyTagsForSide(ArenaTagType.MAT_BLOCK, defendingSide, cancelled, this, move.category);
+      this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
     }
 
     switch (moveCategory) {
