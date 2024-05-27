@@ -21,6 +21,7 @@ import MockPolygon from "#app/test/essentials/mocksContainer/mockPolygon";
 import MockContainer from "#app/test/essentials/mocksContainer/mockContainer";
 import MockSprite from "#app/test/essentials/mocksContainer/mockSprite";
 import MockGraphics from "#app/test/essentials/mocksContainer/mockGraphics";
+import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureManager";
 
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
@@ -48,16 +49,8 @@ export default class GameWrapper {
   }
 
   private addScene(key: string, _scene: any): void {
-    _scene.add = {
-      container: (x, y) => new MockContainer(_scene, x, y),
-      sprite: (x,y, texture) => new MockSprite(_scene, x, y, texture),
-      existing: () => null,
-      rectangle: (x, y, width, height, fillColor) => new MockRectangle(_scene, x, y, width, height, fillColor),
-      nineslice: (x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight) => new MockNineslice(_scene, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight),
-      image: (x, y, texture) => new MockImage(_scene, x, y, texture),
-      text: (x, y, content, styleOptions) => new MockText(_scene, x, y, content, styleOptions),
-      polygon: (x, y, content, fillColor, fillAlpha) => new MockPolygon(_scene, x, y, content, fillColor, fillAlpha),
-    };
+    const mockTextureManager = new MockTextureManager(_scene);
+    _scene.add = mockTextureManager.add;
 
     _scene.cachedFetch = (url, init) => {
       return new Promise((resolve) => {

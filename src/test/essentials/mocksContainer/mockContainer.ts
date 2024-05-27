@@ -9,8 +9,7 @@ export default class MockContainer {
   private style;
   public frame;
 
-  constructor(scene, x, y) {
-    this.scene = scene;
+  constructor(x, y) {
     this.x = x;
     this.y = y;
     this.frame = {};

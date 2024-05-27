@@ -2,8 +2,8 @@ import MockContainer from "#app/test/essentials/mocksContainer/mockContainer";
 
 
 export default class MockText extends MockContainer {
-  constructor(scene, x, y, content, styleOptions) {
-    super(scene, x, y);
+  constructor(x, y, content, styleOptions) {
+    super(x, y);
   }
 
   runWordWrap(text) {
