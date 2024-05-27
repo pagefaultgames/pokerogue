@@ -734,17 +734,34 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
+   * Calculates the icon position of a {@linkcode PokemonSpecies}
+   * @param species {@linkcode PokemonSpecies} to calculate the icon position of
+   * @returns An interface with an x and y property
+   */
+  getIconPosition(species: PokemonSpecies): {x: number, y: number} {
+    const index = this.genSpecies[species.generation - 1].indexOf(species);
+
+    const x = ((index % 9) * 18) - 2;
+    const y = (Math.floor(index / 9) * 18) + 2;
+
+    return {x: x, y: y};
+  }
+
+  /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
    * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
-   * @param speciesId The species ID of the icon used to check for upgrades
+   * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
    * @param startPaused Should this animation be paused after it is added?
    */
-  setIconUpgradeBounce(icon: Phaser.GameObjects.GameObject, speciesId: PokemonSpecies, startPaused: boolean = false): void {
+  setIconUpgradeBounce(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, startPaused: boolean = false): void {
     this.scene.tweens.killTweensOf(icon);
     // Skip animations if they are disabled
-    if (this.scene.candyUpgradeDisplay === 0 || speciesId.speciesId !== speciesId.getRootSpeciesId(false)) {
+    if (this.scene.candyUpgradeDisplay === 0 || species.speciesId !== species.getRootSpeciesId(false)) {
       return;
     }
+
+    const position = this.getIconPosition(species);
+    icon.y = position.y;
 
     const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
       targets: icon,
@@ -755,23 +772,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       tweens: [
         {
           targets: icon,
-          y: "-=5",
+          y: position.y - 5,
           duration: Utils.fixedInt(125),
           ease: "Cubic.easeOut",
           yoyo: true
         },
         {
           targets: icon,
-          y: "-=3",
+          y: position.y - 3,
           duration: Utils.fixedInt(150),
           ease: "Cubic.easeOut",
           yoyo: true
         }
       ],};
 
-    const starterData = this.scene.gameData.starterData[speciesId.speciesId];
+    const starterData = this.scene.gameData.starterData[species.speciesId];
     const passiveAvailable =
-         starterData.candyCount >= this.scene.gameData.getSpeciesStarterValue(speciesId.speciesId)
+         starterData.candyCount >= this.scene.gameData.getSpeciesStarterValue(species.speciesId)
     && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
 
     // 'Only Passives' mode
@@ -782,7 +799,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       const costReductionAvailable =
-         starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId.speciesId])[starterData.valueReduction]
+         starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[species.speciesId])[starterData.valueReduction]
       && starterData.valueReduction < 2;
 
       if (passiveAvailable || costReductionAvailable) {
@@ -1514,9 +1531,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       lastSpeciesIcon.setTexture(this.lastSpecies.getIconAtlasKey(props.formIndex, props.shiny, props.variant), this.lastSpecies.getIconId(props.female, props.formIndex, props.shiny, props.variant));
       this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
+
+      // Resume the animation for the previously selected species
+      const speciesIndex = this.genSpecies[this.lastSpecies.generation - 1].indexOf(this.lastSpecies);
+      const icon = this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(speciesIndex) as Phaser.GameObjects.Sprite;
+      this.scene.tweens.getTweensOf(icon).forEach(t => t.resume());
     }
 
-    const lastSelectedSpecies = this.lastSpecies;
     this.lastSpecies = species;
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
@@ -1581,22 +1602,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         // Pause the animation when the species is selected
-        let speciesIndex = this.genSpecies[species.generation - 1].indexOf(species);
-        let icon = this.starterSelectGenIconContainers[species.generation - 1].getAt(speciesIndex) as Phaser.GameObjects.Sprite;
+        const speciesIndex = this.genSpecies[species.generation - 1].indexOf(species);
+        const icon = this.starterSelectGenIconContainers[species.generation - 1].getAt(speciesIndex) as Phaser.GameObjects.Sprite;
         this.scene.tweens.getTweensOf(icon).forEach(t => t.pause());
         // Reset the position of the icon
-        icon.x = ((speciesIndex % 9) * 18) - 2;
-        icon.y = (Math.floor(speciesIndex / 9) * 18) + 2;
+        const position = this.getIconPosition(species);
+        icon.x = position.x;
+        icon.y = position.y;
 
         // Initiates the small up and down idle animation
         this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
-
-        // Resume the animation for the previously selected species
-        if (lastSelectedSpecies) {
-          speciesIndex = this.genSpecies[lastSelectedSpecies.generation - 1].indexOf(lastSelectedSpecies);
-          icon = this.starterSelectGenIconContainers[lastSelectedSpecies.generation - 1].getAt(speciesIndex) as Phaser.GameObjects.Sprite;
-          this.scene.tweens.getTweensOf(icon).forEach(t => t.resume());
-        }
 
         let starterIndex = -1;
 

@@ -53,7 +53,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Tutorials]: ["Off", "On"],
   [Setting.Enable_Retries]: ["Off", "On"],
   [Setting.Candy_Upgrade_Notification]: ["Off", "Passives Only", "On"],
-  [Setting.Candy_Upgrade_Display]: ["Candy Icon", "Animation"],
+  [Setting.Candy_Upgrade_Display]: ["Icon", "Animation"],
   [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
   [Setting.Move_Animations]: ["Off", "On"],
   [Setting.Show_Stats_on_Level_Up]: ["Off", "On"],
@@ -95,7 +95,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set];
+export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set, Setting.Candy_Upgrade_Display];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
