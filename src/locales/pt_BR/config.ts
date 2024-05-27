@@ -19,30 +19,35 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { berry } from "./berry";
+import { voucher } from "./voucher";
+import { biome } from "./biome";
 
 
-export const ptBrConfig = {    
-    ability: ability,
-    abilityTriggers: abilityTriggers,
-    battle: battle,
-    commandUiHandler: commandUiHandler,
-    egg: egg,
-    fightUiHandler: fightUiHandler,
-    menuUiHandler: menuUiHandler,
-    menu: menu,
-    move: move,
-    pokeball: pokeball,
-    pokemonInfo: pokemonInfo,
-    pokemon: pokemon,
-    starterSelectUiHandler: starterSelectUiHandler,
-    titles: titles,
-    trainerClasses: trainerClasses,
-    trainerNames: trainerNames,
-    tutorial: tutorial,
-    splashMessages: splashMessages,
-    nature: nature,
-    growth: growth,
-    weather: weather,
-    modifierType: modifierType,
-    berry: berry,
-}
+
+export const ptBrConfig = {
+  ability: ability,
+  abilityTriggers: abilityTriggers,
+  battle: battle,
+  commandUiHandler: commandUiHandler,
+  egg: egg,
+  fightUiHandler: fightUiHandler,
+  menuUiHandler: menuUiHandler,
+  menu: menu,
+  move: move,
+  pokeball: pokeball,
+  pokemonInfo: pokemonInfo,
+  pokemon: pokemon,
+  starterSelectUiHandler: starterSelectUiHandler,
+  titles: titles,
+  trainerClasses: trainerClasses,
+  trainerNames: trainerNames,
+  tutorial: tutorial,
+  splashMessages: splashMessages,
+  nature: nature,
+  growth: growth,
+  weather: weather,
+  modifierType: modifierType,
+  berry: berry,
+  voucher: voucher,
+  biome: biome,
+};

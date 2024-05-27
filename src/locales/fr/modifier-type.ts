@@ -52,16 +52,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’1 cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
+	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fait monter un Pokémon d’1 niveau",
+      description: "Fait monter un Pokémon d’un niveau",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Fait monter toute l’équipe d’1 niveau",
+      description: "Fait monter toute l’équipe d’un niveau",
     },
     "PokemonBaseStatBoosterModifierType": {
 	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
@@ -139,10 +139,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "Hyper Potion" },
     "MAX_POTION": { name: "Potion Max" },
     "FULL_RESTORE": { name: "Guérison" },
-    
+
     "REVIVE": { name: "Rappel" },
     "MAX_REVIVE": { name: "Rappel Max" },
-    
+
     "FULL_HEAL": { name: "Total Soin" },
 
     "SACRED_ASH": { name: "Cendres Sacrées" },
@@ -187,18 +187,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "Pièce Rune", description: "Augmente de 20% les gains d’argent" },
     "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent" },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts" },
-    
+
     "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés" },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
-    
+
     "MULTI_LENS": { name: "Multi Loupe" },
 
     "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
     "CANDY_JAR": { name: "Jarre de Bonbons", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
-    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 25% de chances qu’une Baie utilisée ne soit pas consommée" },
+    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 33% de chances qu’une Baie utilisée ne soit pas consommée" },
 
     "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
 
@@ -214,13 +214,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
     "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
 
-	"IV_SCANNER": { name: "Scanner d’IV", description: "Scanne les IV d’un Pokémon sauvage. 2 IV sont révélés par Scanner. Les meilleurs sont montrés en 1er." },
+    "IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de deux IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
 
     "DNA_SPLICERS": { name: "Pointeau ADN" },
 
     "MINI_BLACK_HOLE": { name: "Mini Trou Noir" },
 
-    "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute 1 choix d’objet à la fin de chaque combat" },
+    "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute un choix d’objet à la fin de chaque combat" },
 
     "ENEMY_DAMAGE_BOOSTER": { name: "Jeton Dégâts", description: "Augmente les dégâts de 5%" },
     "ENEMY_DAMAGE_REDUCTION": { name: "Jeton Protection", description: "Diminue les dégâts reçus de 2,5%" },
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "Pomme Acidulée",
     "STRAWBERRY_SWEET": "Fraise en Sucre",
     "UNREMARKABLE_TEACUP": "Bol Médiocre",
-  
+
     "CHIPPED_POT": "Théière Ébréchée",
     "BLACK_AUGURITE": "Obsidienne",
     "GALARICA_CUFF": "Bracelet Galanoa",
@@ -381,7 +381,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CORNERSTONE_MASK": "Masque de la Pierre",
     "SHOCK_DRIVE": "Module Choc",
     "BURN_DRIVE": "Module Pyro",
-    "CHILL_DRIVE": "Module Aqua",
-    "DOUSE_DRIVE": "Module Choc",
+    "CHILL_DRIVE": "Module Cryo",
+    "DOUSE_DRIVE": "Module Aqua",
   },
 } as const;
