@@ -27,7 +27,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       6: "Non ! J’ai perdu !",
 	  7: "Waah ! T’es trop incroyable ! J’suis bouche bée !",
       8: "Pourquoi… Comment… Pourtant on est les plus forts, mes Pokémon et moi…",
-	  9: "J’perdrai pas la prochaien fois ! Remettons ça un jour !",
+	  9: "J’perdrai pas la prochaine fois ! Remettons ça un jour !",
 	  10: "Weeeesh ! Tu vois que j’suis qu’un gamin ? C'est pas juste de me bully comme ça !",
 	  11: "Tes Pokémon sont trop incroyables !\n… P’tit échange ?",
 	  12: "Je me suis fait un peu aider plus tôt, mais de quel taf je parlais ?",
@@ -2094,7 +2094,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
 	  1: `@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?
 				   $@c{smile}T'as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.
-				   $D'ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympa.
+				   $D'ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.
                    $@c{serious_smile_fists}Bonne chance à toi !`
     },
   },
@@ -2102,8 +2102,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
                     $@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…
-					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affronte !
-					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?`
+					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affrontes !
+					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencée, hein ?`
     },
     "victory": {
       1: `@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T'as triché non ? Avoue !
@@ -2117,7 +2117,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 	  1: `@c{smile}Hé, toi aussi t’es là ?\n@c{smile_eclosed}Toujours invaincue, hein… ?
 				$@c{serious_mopen_fists}Je sais que j’ai l’air de t’avoir suivie ici, mais c'est pas complètement vrai.
 				$@c{serious_smile_fists}Pour être honnête, ça me démangeait d’avoir une revanche depuis que tu m'as battu.
-				$Je me suis beaucoup entrainé, alors sois sure que je vais pas retenir mes coups cette fois.
+				$Je me suis beaucoup entrainé, alors sois sûre que je vais pas retenir mes coups cette fois.
                 $@c{serious_mopen_fists}Et comme la dernière fois, ne te retiens pas !\nC’est parti !`
     },
     "victory": {
@@ -2132,7 +2132,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
 	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincu. @c{angry_mopen}Eh… Pas mal !
 				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
-				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perde parfois.
+				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perdre parfois.
 				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
 				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t'as intérêt à tout donner !`
     },
@@ -2162,7 +2162,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3_female": {
     "encounter": {
-	  1: `@c{smile_wave}Ça fait une éternité ! Toujours debout hein ?\n@c{angry}Tu commences à me pousser à bout là. @c{smile_wave_wink}T’inquiètes j’déconne !
+	  1: `@c{smile_wave}Ça fait une éternité ! Toujours debout hein ?\n@c{angry}Tu commences à me pousser à bout là. @c{smile_wave_wink}T’inquiète, j’déconne !
 				$@c{smile_ehalf}Mais en vrai, ta maison te manque pas ? Ou… Moi ?\nJ… Je veux dire… Tu me manque vraiment beaucoup.
 				$@c{smile_eclosed}Je te soutiendrai toujours dans tes ambitions, mais la vérité est que tu finiras par perdre un jour ou l’autre.
                 $@c{smile}Quand ça arrivera, je serai là pour toi, comme toujours.\n@c{angry_mopen}Maintenant, montre-moi à quel point t’es devenu fort !`
@@ -2179,10 +2179,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `@c{neutral}Hé.
 				$Je vais pas y aller par quatre chemins avec toi.\n@c{neutral_eclosed}Je suis là pour gagner. Simple, basique.
-				$@c{serious_mhalf_fists}J’ai appris à maximiser tout mon potentiel en m’entrainant d’arrachepied.
+				$@c{serious_mhalf_fists}J’ai appris à maximiser tout mon potentiel en m’entrainant d’arrache-pied.
 				$@c{smile}C’est fou tout le temps que tu peux te dégager si tu dors pas en sacrifiant ta vie sociale.
-				$@c{serious_mopen_fists}Plus rien n’a d’importace désormais, pas tant que j’aurai pas gagné.
-				$@c{neutral_eclosed}J'ai attient un stade où je ne peux plus perdre.\n@c{smile_eclosed}Je présume que ta philosophie était pas si fausse finalement.
+				$@c{serious_mopen_fists}Plus rien n’a d’importance désormais, pas tant que j’aurai pas gagné.
+				$@c{neutral_eclosed}J'ai atteint un stade où je ne peux plus perdre.\n@c{smile_eclosed}Je présume que ta philosophie était pas si fausse finalement.
 				$@c{angry_mhalf}La défaite, c'est pour les faibles, et je ne suis plus un faible.
                 $@c{serious_mopen_fists}Tiens-toi prête.`
     },
@@ -2233,21 +2233,21 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `@c{smile_eclosed}Nous y revoilà.
 				$@c{neutral}J’ai eu du temps pour réfléchir à tout ça.\nIl y a une raison à pourquoi tout semble étrange.
-				$@c{neutral_eclosed}Ton rêve, ma volonté de te battre…\nFont partie de quelque chose plus grand.
+				$@c{neutral_eclosed}Ton rêve, ma volonté de te battre…\nFont partie de quelque chose de plus grand.
 				$@c{serious}C’est même pas à propos de moi, ni de toi… Mais du monde, @c{serious_mhalf_fists}et te repousser dans tes limites est ma mission.
 				$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.
 				$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.
                 $@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?
 				$@c{serious}…et c’est comme si quelque chose ici me parlait.\nComme si c’était tout ce que ce monde avait toujours connu.
 				$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.
-				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels.
+				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?
 				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.
-				$@c{serious_smile_fists}Difficile connaitre le sens de tout ça, je sais juste que c’est la réalité.
+				$@c{serious_smile_fists}Difficile de comprendre le sens de tout ça, je sais juste que c’est la réalité.
 				$@c{serious_mopen_fists}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
       1: `@c{smile_eclosed}J'ai fait ce que je j'avais à faire.
-				$Prmoets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison.`
+				Prmets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison.`
     },
   },
   "rival_6_female": {
@@ -2258,7 +2258,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{smile}T’as tes rêves, j’ai mes ambitions…
 				$J’ai juste le sentiment qu’il y a un grand dessein derrière tout ça, derrière ce qu’on fait toi et moi.
                 $@c{smile_eclosed}Je crois que mon but est de… repousser tes limites.
-				$@c{smile_ehalf}Je suis pas certaine de bien être douée à cet exercice, mais je fait de mon mieux.
+				$@c{smile_ehalf}Je suis pas certaine de bien être douée à cet exercice, mais je fais de mon mieux.
 				$Cet endroit épouvantable cache quelque chose d’étrange… Tout semble si limpide…
                 $Comme… si c’était tout ce que ce monde avait toujours connu.
 				$@c{smile_eclosed}J’ai le sentiment que nos précieux moments ensemble sont devenus si flous.
