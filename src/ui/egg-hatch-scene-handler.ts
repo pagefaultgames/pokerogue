@@ -15,12 +15,14 @@ export default class EggHatchSceneHandler extends UiHandler {
     this.eggHatchContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.scene.fieldUI.add(this.eggHatchContainer);
 
-    const eggLightraysAnimFrames = this.scene.anims.generateFrameNames('egg_lightrays', { start: 0, end: 3 });
-    this.scene.anims.create({
-      key: 'egg_lightrays',
-      frames: eggLightraysAnimFrames,
-      frameRate: 32
-    });
+    const eggLightraysAnimFrames = this.scene.anims.generateFrameNames("egg_lightrays", { start: 0, end: 3 });
+    if (!(this.scene.anims.exists("egg_lightrays"))) {
+      this.scene.anims.create({
+        key: "egg_lightrays",
+        frames: eggLightraysAnimFrames,
+        frameRate: 32
+      });
+    }
   }
 
   show(_args: any[]): boolean {
@@ -36,8 +38,9 @@ export default class EggHatchSceneHandler extends UiHandler {
   processInput(button: Button): boolean {
     if (button === Button.ACTION || button === Button.CANCEL) {
       const phase = this.scene.getCurrentPhase();
-      if (phase instanceof EggHatchPhase && phase.trySkip())
+      if (phase instanceof EggHatchPhase && phase.trySkip()) {
         return true;
+      }
     }
 
     return this.scene.ui.getMessageHandler().processInput(button);
