@@ -15,6 +15,7 @@ import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
 import {PartyMemberStrength} from "./enums/party-member-strength";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
+import i18next from "i18next";
 
 export enum TrainerPoolTier {
   COMMON,
