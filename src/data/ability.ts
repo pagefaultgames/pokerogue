@@ -3888,7 +3888,6 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(StatusEffectImmunityAbAttr, ...getNonVolatileStatusEffects())
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
-      // The Pokémon with this Ability Dream Eater, Nightmare, and Bad Dreams
       .partial(),
     new Ability(Abilities.QUEENLY_MAJESTY, 7)
       .attr(FieldPriorityMoveImmunityAbAttr)
