@@ -1801,6 +1801,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           damage.value = 0;
         }
 
+        // If ally has Abilities.STEELY_SPIRIT, steel moves are boosted.
+        if (this.scene.currentBattle.double &&
+          move.type === Type.STEEL &&
+          !source.hasAbility(Abilities.STEELY_SPIRIT) &&
+          source.getAlly().hasAbility(Abilities.STEELY_SPIRIT)
+        ) {
+          power.value *= 1.5;
+        }
+
         console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
         // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
