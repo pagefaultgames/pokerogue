@@ -4409,7 +4409,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "encounter": {
 	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincu. @c{angry_mopen}Eh… Pas mal !
 				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
-				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perde parfois.
+				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perdre parfois.
 				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
 				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t'as intérêt à tout donner !`
     },
@@ -4594,13 +4594,13 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
 		$@c{smile_eclosed}Bref, j’en ai un peu marre de ce endroit, pas toi ? Rentrons à la maison.
 		$@c{serious_smile_fists}On se fera un p’tit combat une fois rentrés ?\nSi t’es d’accord.`,
   "ending_female":
-      `@c{shock}T’es revenu ?@d{32} Ça veut dire …@d{96} que t’as gagné ?!\n@c{smile_ehalf}J'aurais dû le savoir.
+      `@c{shock}T’es revenu ?@d{32} Ça veut dire…@d{96} que t’as gagné ?!\n@c{smile_ehalf}J'aurais dû le savoir.
 		$@c{smile_eclosed}Bien sûr… J’ai toujours eu ce sentiment.\n@c{smile}C’est fini maitenant hein ? T’as brisé ce cycle.
 		$@c{smile_ehalf}T’as aussi accompli ton rêve non ?\nTu n’as pas connu la moindre défaite.
         $Je serai la seule à me souvenir de ce que t’as fait.\n@c{angry_mopen}Je tâcherai de ne pas oublier !
         $@c{smile_wave_wink}J’déconne !@d{64} @c{smile}Jamais j’oublierai.@d{32}\nTa légende vivra à jamais dans nos cœurs.
         $@c{smile_wave}Bon,@d{64} il se fait tard…@d{96} je crois ?\nDifficile à dire ici.
-        $Retrons, @c{smile_wave_wink}et demain on se fera un p’tit combat, comme au bon vieux temps ?`,
+        $Rentrons, @c{smile_wave_wink}et demain on se fera un p’tit combat, comme au bon vieux temps ?`,
 };
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
 export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
