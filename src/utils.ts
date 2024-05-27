@@ -1,3 +1,5 @@
+import i18next from "i18next";
+
 export const MissingTextureKey = "__MISSING";
 
 export function toReadableString(str: string): string {
@@ -7,12 +9,12 @@ export function toReadableString(str: string): string {
 export function randomString(length: integer, seeded: boolean = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
-  
+
   for (let i = 0; i < length; i++) {
     const randomIndex = seeded ? randSeedInt(characters.length) : Math.floor(Math.random() * characters.length);
     result += characters[randomIndex];
   }
-  
+
   return result;
 }
 
@@ -20,7 +22,7 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   if (!shiftCount) {
     shiftCount = 0;
   }
-  
+
   let newStr = "";
 
   for (let i = 0; i < str.length; i++) {
@@ -146,11 +148,11 @@ export function getPlayTimeString(totalSeconds: integer): string {
 }
 
 export function binToDec(input: string): integer {
-  const place: integer[] = []; 
+  const place: integer[] = [];
   const binary: string[] = [];
-  
+
   let decimalNum = 0;
-  
+
   for (let i = 0; i < input.length; i++) {
     binary.push(input[i]);
     place.push(Math.pow(2, i));
@@ -213,6 +215,26 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
     decimalNumber = decimalNumber.slice(0, -1);
   }
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ""}${suffix}`;
+}
+
+// Abbreviations from 10^0 to 10^33
+const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
+
+export function formatFancyLargeNumber(number: number, rounded: number = 2): string {
+  let exponent: number;
+
+  if (number < 1000) {
+    exponent = 0;
+  } else {
+    const maxExp = AbbreviationsLargeNumber.length - 1;
+
+    exponent = Math.floor(Math.log(number) / Math.log(1000));
+    exponent = Math.min(exponent, maxExp);
+
+    number /= Math.pow(1000, exponent);
+  }
+
+  return `${(exponent === 0) ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
 }
 
 export function formatStat(stat: integer, forHp: boolean = false): string {
@@ -332,7 +354,7 @@ export function fixedInt(value: integer): integer {
 export function rgbToHsv(r: integer, g: integer, b: integer) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
-  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
+  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c));
   return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v];
 }
 
@@ -364,4 +386,30 @@ export function rgbHexToRgba(hex: string) {
 
 export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
+}
+
+/*This function returns true if the current lang is available for some functions
+If the lang is not in the function, it usually means that lang is going to use the default english version
+This function is used in:
+- summary-ui-handler.ts: If the lang is not available, it'll use types.json (english)
+English itself counts as not available
+*/
+export function verifyLang(lang?: string): boolean {
+  //IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
+  if (!lang) {
+    lang = i18next.language;
+  }
+
+  switch (lang) {
+  case "es":
+  case "fr":
+  case "de":
+  case "it":
+  case "zh_CN":
+  case "zh_TW":
+  case "pt_BR":
+    return true;
+  default:
+    return false;
+  }
 }

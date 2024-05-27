@@ -7,9 +7,9 @@ export const tutorial: SimpleTranslationEntries = {
     $Das Spiel befindet sich noch in der Entwicklung, ist aber voll spielbar.
     $Für Fehlerberichte nutze bitte den PokéRogue Discord-Server.
     $Sollte das Spiel langsam laufen, überprüfe, ob in deinem Browser "Hardwarebeschleunigung" aktiviert ist.`,
-    
+
   "accessMenu": "Nutze M oder Esc, um das Menü zu öffnen. Dort hast du Zugriff auf die Einstellungen und andere Funktionen.",
-    
+
   "menu": `In diesem Menü hast du Zugriff auf die Einstellungen.
     $Dort kannst du u. A. die Spielgeschwin-\ndigkeit und das Fensterdesign ändern.
     $Das Menü verbirgt noch andere Funktionen - probier' sie gerne aus!`,
