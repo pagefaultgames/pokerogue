@@ -572,6 +572,10 @@ export class EncoreTag extends BattlerTag {
     this.justEncored = false;
     return ret;
   }
+
+  getDescriptor() {
+    return "encore";
+  }
 }
 
 export class TormentTag extends BattlerTag {

@@ -3724,14 +3724,13 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a bursting aura!"))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, 6)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DISABLE)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.TORMENT)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.TAUNT)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.TORMENT)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.ENCORE)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DISABLE)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.HEAL_BLOCK)
-      .ignorable()
-      .partial(),
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
+      .ignorable(),
     new Ability(Abilities.FLOWER_VEIL, 6)
       .ignorable()
       .unimplemented(),
