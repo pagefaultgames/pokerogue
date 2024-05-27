@@ -4600,7 +4600,7 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
         $Je serai la seule à me souvenir de ce que t’as fait.\n@c{angry_mopen}Je tâcherai de ne pas oublier !
         $@c{smile_wave_wink}J’déconne !@d{64} @c{smile}Jamais j’oublierai.@d{32}\nTa légende vivra à jamais dans nos cœurs.
         $@c{smile_wave}Bon,@d{64} il se fait tard…@d{96} je crois ?\nDifficile à dire ici.
-        $Retrons, @c{smile_wave_wink}et demain on se fera un p’tit combat, comme au bon vieux temps ?`,
+        $Rentrons, @c{smile_wave_wink}et demain on se fera un p’tit combat, comme au bon vieux temps ?`,
 };
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
 export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
