@@ -8,6 +8,7 @@ import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
+import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 interface DisplayStat {
   label_key?: string;
@@ -67,6 +68,10 @@ const displayStats: DisplayStats = {
   sessionsWon: {
     label_key: "classicWins",
     sourceFunc: gameData => gameData.gameStats.sessionsWon.toString(),
+  },
+  prestigeLevel: {
+    label_key: "Prestige",
+    sourceFunc: gameData => Math.max(gameData.prestigeLevel - 1, 0).toString()
   },
   dailyRunSessionsPlayed: {
     label_key: "dailyRunAttempts",
@@ -209,6 +214,10 @@ const displayStats: DisplayStats = {
     hidden: true
   },
 };
+
+if (!FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+  delete displayStats.prestigeLevel;
+}
 
 export default class GameStatsUiHandler extends UiHandler {
   private gameStatsContainer: Phaser.GameObjects.Container;
