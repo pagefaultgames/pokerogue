@@ -11,9 +11,11 @@ export default class MockTextureManager {
   private textures: Map<string, any>;
   private scene;
   public add;
+  public displayList;
   constructor(scene) {
     this.scene = scene;
     this.textures = new Map();
+    this.displayList = new Phaser.GameObjects.DisplayList(scene);
     this.add = {
       container: this.container.bind(this),
       sprite: this.sprite.bind(this),
@@ -23,6 +25,7 @@ export default class MockTextureManager {
       image: this.image.bind(this),
       polygon: this.polygon.bind(this),
       text: this.text.bind(this),
+      displayList: this.displayList,
     };
   }
 
@@ -31,7 +34,7 @@ export default class MockTextureManager {
   }
 
   sprite(x,y, texture) {
-    return new MockSprite(this.scene, x, y, texture);
+    return new MockSprite(this, x, y, texture);
   }
 
   existing() {

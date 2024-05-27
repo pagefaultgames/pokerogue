@@ -49,3 +49,14 @@ export function waitFirstInPhaseQueueIs(scene, phaseInstance) {
     }, 100);
   });
 }
+
+export function setPositionRelative(guideObject: any, x: number, y: number) {
+  if (guideObject && guideObject instanceof Phaser.GameObjects.GameObject) {
+    const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
+    const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
+    this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
+    return;
+  }
+
+  this.setPosition(x, y);
+}

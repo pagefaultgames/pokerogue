@@ -13,15 +13,41 @@ import CanvasRenderer = Phaser.Renderer.Canvas.CanvasRenderer;
 import CacheManager = Phaser.Cache.CacheManager;
 import UpdateList = Phaser.GameObjects.UpdateList;
 import ScaleManager = Phaser.Scale.ScaleManager;
-import MockRectangle from "#app/test/essentials/mocksContainer/mockRectangle";
-import MockNineslice from "#app/test/essentials/mocksContainer/mockNineslice";
-import MockImage from "#app/test/essentials/mocksContainer/mockImage";
-import MockText from "#app/test/essentials/mocksContainer/mockText";
-import MockPolygon from "#app/test/essentials/mocksContainer/mockPolygon";
-import MockContainer from "#app/test/essentials/mocksContainer/mockContainer";
-import MockSprite from "#app/test/essentials/mocksContainer/mockSprite";
 import MockGraphics from "#app/test/essentials/mocksContainer/mockGraphics";
 import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureManager";
+import Phaser from "phaser";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import {setPositionRelative} from "#app/test/essentials/utils";
+
+// Phaser.GameObjects.Image.prototype.setPositionRelative = (key) => ({});
+// // Phaser.GameObjects.Image.prototype.frame = {realHeight: 1};
+// Phaser.GameObjects.Image.prototype.frame = new GameObjectFactory(_scene).frame;
+// Phaser.GameObjects.Image.prototype.setTexture = (key) => ({});
+// Phaser.GameObjects.Image.prototype.setSizeToFrame = () => null;
+//
+// Phaser.GameObjects.Text.prototype.setPositionRelative = (key) => ({});
+// Phaser.GameObjects.Text.prototype.frame = new Frame({source: {width: 1, height: 1}} as Texture, 0, 0, 0, 0, 0, 0);
+// Phaser.GameObjects.Text.prototype.setTexture = (key) => ({});
+// Phaser.GameObjects.Text.prototype.setSizeToFrame = () => null;
+//
+// Phaser.GameObjects.Sprite.prototype.setTexture = (key) => ({});
+// Phaser.GameObjects.Sprite.prototype.texture = { frameTotal: 1, get: () => null };
+// Phaser.GameObjects.Sprite.prototype.setSizeToFrame = () => null;
+//
+// Phaser.GameObjects.NineSlice.prototype.setTexture = () => ({});
+// Phaser.GameObjects.NineSlice.prototype.setSizeToFrame = () => null;
+// Phaser.GameObjects.NineSlice.prototype.frame = {};
+//
+// Phaser.GameObjects.GameObject.prototype.setInteractive = () => null;
+// Phaser.Textures.TextureManager.prototype.getFrame = () => ({});
+
+Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
+BBCodeText.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
@@ -49,24 +75,6 @@ export default class GameWrapper {
   }
 
   private addScene(key: string, _scene: any): void {
-    const mockTextureManager = new MockTextureManager(_scene);
-    _scene.add = mockTextureManager.add;
-
-    _scene.cachedFetch = (url, init) => {
-      return new Promise((resolve) => {
-        const newUrl = prependPath(url);
-        const raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
-        const data = JSON.parse(raw);
-        const response = createFetchResponse(data);
-        return resolve(response);
-      });
-    };
-    _scene.make = {
-      graphics: (config) => new MockGraphics(_scene, config),
-      rexTransitionImagePack: () => ({
-        transit: () => null,
-      }),
-    };
 
     _scene.game = this.gameObj;
     _scene.scene = _scene;
@@ -88,18 +96,18 @@ export default class GameWrapper {
     _scene.textures = this.gameObj.textures;
     _scene.sys.textures = this.gameObj.textures;
     _scene.events = this.gameObj.events;
-    _scene.sys.events = this.gameObj.events;
+    _scene.sys.events = new EventEmitter()
     _scene.sys.updateList = new UpdateList(_scene);
     _scene.tweens = new TweenManager(_scene);
     _scene.manager = this.gameObj.manager;
     _scene.pluginEvents = this.gameObj.pluginEvents;
     _scene.input = this.gameObj.input;
+    _scene.sys.input = this.gameObj.input;
     _scene.manager.keyboard = new KeyboardManager(_scene);
     _scene.pluginEvents = new EventEmitter();
     _scene.input.keyboard = new KeyboardPlugin(_scene);
     _scene.input.gamepad = new GamepadPlugin(_scene);
     _scene.time = new Clock(_scene);
-    _scene.systems.displayList = _scene.add.displayList
     _scene.load = new LoaderPlugin(_scene);
     _scene.load.cacheManager = new CacheManager(_scene);
     _scene.sys.cache = _scene.load.cacheManager;
@@ -107,6 +115,25 @@ export default class GameWrapper {
     _scene.load.video = () => null;
     _scene.spritePipeline = {};
     _scene.fieldSpritePipeline = {};
+    const mockTextureManager = new MockTextureManager(_scene);
+    _scene.add = mockTextureManager.add;
+    _scene.systems.displayList = _scene.add.displayList
+
+    _scene.cachedFetch = (url, init) => {
+      return new Promise((resolve) => {
+        const newUrl = prependPath(url);
+        const raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
+        const data = JSON.parse(raw);
+        const response = createFetchResponse(data);
+        return resolve(response);
+      });
+    };
+    _scene.make = {
+      graphics: (config) => new MockGraphics(_scene, config),
+      rexTransitionImagePack: () => ({
+        transit: () => null,
+      }),
+    };
 
     // const a = this.gameObj;
     this.scenes[key] = _scene;
