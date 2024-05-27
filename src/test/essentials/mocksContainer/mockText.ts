@@ -1,3 +1,5 @@
+import UI from "#app/ui/ui";
+
 export default class MockText {
   private phaserText;
   private wordWrapWidth;
@@ -6,6 +8,7 @@ export default class MockText {
     // Phaser.GameObjects.TextStyle.prototype.setStyle = () => null;
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
+    UI.prototype.showText = this.showText;
     // super(scene, x, y);
     // this.phaserText = new Phaser.GameObjects.Text(scene, x, y, content, styleOptions);
   }
@@ -59,6 +62,12 @@ export default class MockText {
     }
 
     return result;
+  }
+
+  showText(text, delay, callback, callbackDelay, prompt, promptDelay) {
+    if (callback) {
+      callback();
+    }
   }
 
   setScale(scale) {
