@@ -1409,6 +1409,44 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
   }
 }
 
+export class AfterYouEffectAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const userPhase = user.scene.getCurrentPhase();
+    const targetPhase = user.scene.findPhase(phase => phase instanceof MovePhase && phase.pokemon.getBattlerIndex() === target.getBattlerIndex());
+
+    // Find the next queued move
+    const userPhaseIndex = user.scene.getPhaseIndex(phase => phase === userPhase);
+    const queuedMovePhase = user.scene.findPhase(phase => {
+      const phaseIndex = user.scene.getPhaseIndex(foundPhase => foundPhase === phase);
+      return phase instanceof MovePhase && phaseIndex > userPhaseIndex
+    });
+    // If there are no other moves in the queue, fail
+    if (!queuedMovePhase) {
+      return false;
+    }
+    // If the next queued move is target's move, we don't need to do anything
+    if (queuedMovePhase === targetPhase) {
+      return true;
+    }
+
+    // If there is another move queued before target's move, remove target's move from the queue and put it next immediately after "After You"
+    user.scene.tryRemovePhase(phase => phase === targetPhase);
+    user.scene.unshiftPhase(targetPhase);
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      return !target.turnData.acted &&
+      user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT &&
+      user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move !== Moves.AFTER_YOU;
+    }
+  }
+}
+
 export class PsychoShiftEffectAttr extends MoveEffectAttr {
   constructor() {
     super(false, MoveEffectTrigger.HIT);
@@ -6319,9 +6357,10 @@ export function initMoves() {
       .attr(AbilityChangeAttr, Abilities.SIMPLE),
     new StatusMove(Moves.ENTRAINMENT, Type.NORMAL, 100, 15, -1, 0, 5)
       .attr(AbilityGiveAttr),
+      ///
     new StatusMove(Moves.AFTER_YOU, Type.NORMAL, -1, 15, -1, 0, 5)
-      .ignoresProtect()
-      .unimplemented(),
+      .attr(AfterYouEffectAttr)
+      .ignoresProtect(),
     new AttackMove(Moves.ROUND, Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .soundBased()
       .partial(),

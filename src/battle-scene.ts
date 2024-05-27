@@ -1652,6 +1652,10 @@ export default class BattleScene extends SceneBase {
     return this.phaseQueue.find(phaseFilter);
   }
 
+  getPhaseIndex(phaseFilter: (phase: Phase) => boolean): int {
+    return this.phaseQueue.indexOf(this.phaseQueue.find(phaseFilter));
+  }
+
   tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {
     const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
     if (phaseIndex > -1) {
