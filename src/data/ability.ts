@@ -1073,6 +1073,40 @@ export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
   }
 }
 
+export class SteelySpiritAbAttr extends VariableMovePowerAbAttr {
+  /**
+   *
+   * @param pokemon the attacker pokemon
+   * @param passive N/A
+   * @param defender the target pokemon
+   * @param move the move used by the attacker pokemon
+   * @param args Utils.NumberHolder as move power
+   * @returns true if the function succeeds
+   */
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    const isSteelMove = move.getMove().type === Type.STEEL;
+    const onePokemonWithAbility = pokemon.hasAbility(Abilities.STEELY_SPIRIT);
+    const twoPokemonWithAbility = pokemon.scene.currentBattle.double && pokemon.hasAbility(Abilities.STEELY_SPIRIT) && pokemon.getAlly().hasAbility(Abilities.STEELY_SPIRIT);
+    const power = (args[0] as Utils.NumberHolder);
+
+    if(isSteelMove){
+      if(twoPokemonWithAbility) {
+        // double 50% power boost if two pokemon have Ability.STEELY_SPIRIT
+        power.value *= 1.5 * 1.5;
+        return true;
+      }
+      if(onePokemonWithAbility) {
+        // 50% power boost if only one pokemon has Ability.STEELY_SPIRIT
+        power.value *= 1.5;
+        return true;
+      }
+      
+    }
+
+    return false;
+  }
+}
+
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   constructor(boostedType: Type) {
     super(boostedType);
@@ -4009,8 +4043,7 @@ export function initAbilities() {
     new Ability(Abilities.SCREEN_CLEANER, 8)
       .unimplemented(),
     new Ability(Abilities.STEELY_SPIRIT, 8)
-      .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
-      .partial(),
+      .attr(SteelySpiritAbAttr),
     new Ability(Abilities.PERISH_BODY, 8)
       .unimplemented(),
     new Ability(Abilities.WANDERING_SPIRIT, 8)
