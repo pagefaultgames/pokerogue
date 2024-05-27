@@ -2885,6 +2885,13 @@ export class PlayerPokemon extends Pokemon {
       if (!batonPass) {
         this.resetSummonData();
       }
+
+      // remove taunt, torment, encore, and disable tags
+      this.removeTag(BattlerTagType.TAUNT);
+      this.removeTag(BattlerTagType.TORMENT);
+      this.removeTag(BattlerTagType.ENCORE);
+      this.removeTag(BattlerTagType.DISABLE);
+
       this.hideInfo();
       this.setVisible(false);
 

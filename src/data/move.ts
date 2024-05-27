@@ -7645,7 +7645,7 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(Moves.PSYCHIC_NOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, 0, 9)
       .soundBased()
-      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, true, 2, 2)
+      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, false, 2, 2)
       .partial(),
     new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
