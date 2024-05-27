@@ -5,9 +5,9 @@ export const tutorial: SimpleTranslationEntries = {
     $Questo gioco non è monetizzato e non siamo proprietari di Pokemon e Assets presenti nel gioco.
     $Il gioco è work-in-progress ma giocabile al 100%.\nPer reportare eventuali bugs è possibile discuterne sul nostro Discord.
     $Se il game risulta 'lento', assicurati di aver abilitato l'Accelerazione Hardware nelle impostazioni del tuo Browser`,
-    
+
   "accessMenu": "Per accedere al menù, press M o Esc.\nDal menù puoi cambiare impostazioni, controllare la wiki e accedere a varie features.",
-    
+
   "menu": `Da questo menù puoi accedere alle impostazioni.
     $Dalle impostazioni puoi cambiare velocità di gioco, stile di finestra e altre opzioni.
     $Ci sono varie funzionalità, controlla bene e non perderti nulla!`,

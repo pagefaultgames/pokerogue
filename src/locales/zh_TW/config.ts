@@ -21,8 +21,17 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
+import {
+  PGMdialogue,
+  PGFdialogue,
+  PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue,
+  PGMmiscDialogue,
+  PGFmiscDialogue, PGMdoubleBattleDialogue, PGFdoubleBattleDialogue
+} from "./dialogue";
+import { biome } from "./biome";
 
-export const zhTWConfig = {    
+export const zhTWConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
@@ -48,4 +57,13 @@ export const zhTWConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   voucher: voucher,
+  biome: biome,
+  PGMdialogue: PGMdialogue,
+  PGFdialogue: PGFdialogue,
+  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
+  PGMmiscDialogue: PGMmiscDialogue,
+  PGFmiscDialogue: PGFmiscDialogue,
+  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
 };

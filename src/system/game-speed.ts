@@ -85,7 +85,7 @@ export function initGameSpeed() {
     }
     return originalAddCounter.apply(this, [ config ]);
   };
-  
+
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((
     scene: Phaser.Scene,
