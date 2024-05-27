@@ -6,7 +6,7 @@ import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
 import * as Overrides from "./overrides";
-import { Challenge } from "./data/challenge";
+import { allChallenges, Challenge, copyChallenge } from "./data/challenge";
 
 export enum GameModes {
   CLASSIC,
@@ -45,7 +45,7 @@ export class GameMode implements GameModeConfig {
 
   constructor(modeId: GameModes, config: GameModeConfig) {
     this.modeId = modeId;
-    this.challenges = [];
+    this.challenges = allChallenges.map(c => copyChallenge(c));
     Object.assign(this, config);
   }
 

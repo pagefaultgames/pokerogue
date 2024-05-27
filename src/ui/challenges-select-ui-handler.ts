@@ -5,7 +5,6 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
 import i18next from "#app/plugins/i18n.js";
-import { allChallenges, copyChallenge } from "../data/challenge";
 import { SelectStarterPhase, TitlePhase } from "#app/phases.js";
 
 /**
@@ -18,6 +17,8 @@ export default class GameChallengesUiHandler extends UiHandler {
   private scrollCursor: integer;
 
   private optionsBg: Phaser.GameObjects.NineSlice;
+
+  private difficultyText: Phaser.GameObjects.Text;
 
   private descriptionText: Phaser.GameObjects.Text;
 
@@ -48,9 +49,9 @@ export default class GameChallengesUiHandler extends UiHandler {
     difficultyBg.setOrigin(0, 0);
     difficultyBg.setPositionRelative(headerBg, headerBg.width, 0);
 
-    const difficultyText = addTextObject(this.scene, 0, 0, "99/99", TextStyle.SETTINGS_LABEL);
-    difficultyText.setOrigin(0, 0);
-    difficultyText.setPositionRelative(difficultyBg, 8, 4);
+    this.difficultyText = addTextObject(this.scene, 0, 0, "0", TextStyle.SETTINGS_LABEL);
+    this.difficultyText.setOrigin(0, 0);
+    this.difficultyText.setPositionRelative(difficultyBg, 8, 4);
 
     const difficultyName = addTextObject(this.scene, 0, 0, i18next.t("challengeUiHandler:CHALLENGE_POINTS"), TextStyle.SETTINGS_LABEL);
     difficultyName.setOrigin(0, 0);
@@ -63,7 +64,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     descriptionBg.setOrigin(0, 0);
     descriptionBg.setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
-    this.descriptionText = addTextObject(this.scene, 0, 0, allChallenges[0].getDescription(), TextStyle.SETTINGS_LABEL);
+    this.descriptionText = addTextObject(this.scene, 0, 0, this.scene.gameMode.challenges[0].getDescription(), TextStyle.SETTINGS_LABEL);
     this.descriptionText.setOrigin(0, 0);
     this.descriptionText.setWordWrapWidth(500, true);
     this.descriptionText.setPositionRelative(descriptionBg, 6, 4);
@@ -73,7 +74,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.challengeLabels = [];
     this.challengeValueLabels = [];
 
-    allChallenges.forEach((challenge, s) => {
+    this.scene.gameMode.challenges.forEach((challenge, s) => {
       this.challengeLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, challenge.getName(), TextStyle.SETTINGS_LABEL);
       this.challengeLabels[s].setOrigin(0, 0);
 
@@ -88,7 +89,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.add(headerBg);
     this.challengesContainer.add(headerText);
     this.challengesContainer.add(difficultyBg);
-    this.challengesContainer.add(difficultyText);
+    this.challengesContainer.add(this.difficultyText);
     this.challengesContainer.add(difficultyName);
     this.challengesContainer.add(this.optionsBg);
     this.challengesContainer.add(descriptionBg);
@@ -103,18 +104,29 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.setVisible(false);
   }
 
+
+  updateText(): void {
+    this.descriptionText.text = this.scene.gameMode.challenges[this.cursor + this.scrollCursor].getDescription();
+    this.descriptionText.updateText();
+
+    const totalDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getDifficulty(), 0);
+    const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
+    this.difficultyText.text = `${totalDifficulty}` + (totalMinDifficulty ? `/${totalMinDifficulty}` : "");
+    this.difficultyText.updateText();
+
+    this.challengeValueLabels.forEach((t, i) => {
+      this.challengeValueLabels[i].text = this.scene.gameMode.challenges[i].getValue();
+      this.challengeValueLabels[i].updateText();
+    });
+  }
+
   show(args: any[]): boolean {
     super.show(args);
 
     this.challengesContainer.setVisible(true);
     this.setCursor(0);
 
-    this.descriptionText.text = allChallenges[0].getDescription();
-    this.descriptionText.update();
-    this.challengeValueLabels.forEach((t, i) => {
-      this.challengeValueLabels[i].text = allChallenges[i].getValue();
-      this.challengeValueLabels[i].updateText();
-    });
+    this.updateText();
 
     this.getUi().moveTo(this.challengesContainer, this.getUi().length - 1);
 
@@ -145,11 +157,15 @@ export default class GameChallengesUiHandler extends UiHandler {
       this.scene.getCurrentPhase().end();
       success = true;
     } else if (button === Button.SUBMIT) {
-      this.scene.gameMode.challenges = allChallenges.filter(c => c.value !== 0).map(c => copyChallenge(c));
-      allChallenges.forEach(c => c.reset());
-      this.scene.unshiftPhase(new SelectStarterPhase(this.scene));
-      this.scene.getCurrentPhase().end();
-      success = true;
+      const totalDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getDifficulty(), 0);
+      const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
+      if (totalDifficulty >= totalMinDifficulty) {
+        this.scene.unshiftPhase(new SelectStarterPhase(this.scene));
+        this.scene.getCurrentPhase().end();
+        success = true;
+      } else {
+        success = false;
+      }
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
@@ -169,8 +185,7 @@ export default class GameChallengesUiHandler extends UiHandler {
           success = successA && successB; // success is just there to play the little validation sound effect
         }
         if (success) {
-          this.descriptionText.text = allChallenges[this.cursor + this.scrollCursor].getDescription();
-          this.descriptionText.updateText();
+          this.updateText();
         }
         break;
       case Button.DOWN:
@@ -189,22 +204,21 @@ export default class GameChallengesUiHandler extends UiHandler {
           success = successA && successB; // Indicates a successful cursor and scroll adjustment.
         }
         if (success) {
-          this.descriptionText.text = allChallenges[this.cursor + this.scrollCursor].getDescription();
-          this.descriptionText.updateText();
+          this.updateText();
         }
         break;
       case Button.LEFT:
         // Moves the option cursor left, if possible.
-        success = allChallenges[cursor].decreaseValue();
+        success = this.scene.gameMode.challenges[cursor].decreaseValue();
         if (success) {
-          this.challengeValueLabels[cursor].text = allChallenges[cursor].getValue();
+          this.updateText();
         }
         break;
       case Button.RIGHT:
         // Moves the option cursor right, if possible.
-        success = allChallenges[cursor].increaseValue();
+        success = this.scene.gameMode.challenges[cursor].increaseValue();
         if (success) {
-          this.challengeValueLabels[cursor].text = allChallenges[cursor].getValue();
+          this.updateText();
         }
         break;
       }

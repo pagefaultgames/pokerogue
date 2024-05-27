@@ -205,6 +205,14 @@ export abstract class Challenge implements Localizable {
   }
 
   /**
+   * Gets the minimum difficulty added by this challenge.
+   * @returns {integer} The difficulty value.
+   */
+  getMinDifficulty(): integer {
+    return 0;
+  }
+
+  /**
    * Modifies the data or game state in some way to apply the challenge.
    * @param {ChallengeType} challengeType Which challenge type this is being applied for.
    * @param args Irrelevant. See the specific challenge's apply function for additional information.
@@ -248,6 +256,13 @@ export class SingleGenerationChallenge extends Challenge {
       }
     }
     return false;
+  }
+
+  /**
+   * @overrides
+   */
+  getDifficulty(): number {
+    return this.value > 0 ? 1 : 0;
   }
 
   static loadChallenge(source: SingleGenerationChallenge | any): SingleGenerationChallenge {
@@ -294,6 +309,13 @@ export class SingleTypeChallenge extends Challenge {
       }
     }
     return false;
+  }
+
+  /**
+   * @overrides
+   */
+  getDifficulty(): number {
+    return this.value > 0 ? 1 : 0;
   }
 
   static loadChallenge(source: SingleTypeChallenge | any): SingleTypeChallenge {
