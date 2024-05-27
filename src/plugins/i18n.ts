@@ -67,6 +67,23 @@ export interface AchievementTranslationEntry {
 
 export interface AchievementTranslationEntries {
   [key: string]: AchievementTranslationEntry
+
+export interface DialogueTranslationEntry {
+  [key: number]: string;
+}
+
+export interface DialogueTranslationCategory {
+  encounter: DialogueTranslationEntry;
+  victory: DialogueTranslationEntry;
+  defeat?: DialogueTranslationEntry;
+}
+
+export interface DialogueTranslationTrainerClass {
+  [key: string]: DialogueTranslationCategory;
+}
+
+export interface DialogueTranslationEntries {
+  [key: string]: DialogueTranslationTrainerClass;
 }
 
 export interface Localizable {
@@ -169,9 +186,19 @@ declare module "i18next" {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-	    voucher: SimpleTranslationEntries;
       achv: AchievementTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
     };
   }
 }

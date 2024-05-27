@@ -22,8 +22,16 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
-
+import {
+  PGMdialogue,
+  PGFdialogue,
+  PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue,
+  PGMmiscDialogue,
+  PGFmiscDialogue, PGMdoubleBattleDialogue, PGFdoubleBattleDialogue
+} from "./dialogue";
+import { biome } from "./biome";
+import { pokemonInfoContainer } from "./pokemon-info-container";
 
 export const zhTWConfig = {
   ability: ability,
@@ -52,5 +60,14 @@ export const zhTWConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather,
+  biome: biome,
+  pokemonInfoContainer: pokemonInfoContainer,
+  PGMdialogue: PGMdialogue,
+  PGFdialogue: PGFdialogue,
+  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
+  PGMmiscDialogue: PGMmiscDialogue,
+  PGFmiscDialogue: PGFmiscDialogue,
+  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
 };
