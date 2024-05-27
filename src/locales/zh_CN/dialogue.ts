@@ -2434,6 +2434,219 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
                     $Marnie: Brother...`,
     },
   },
+  "volo_cynthia_double": {
+    "encounter": {
+      1: `Volo: A team that united the power of today and the past!
+          $Cynthia: A Team that represents a bond across space and time!
+          $Volo: You will not be able to defeat us!`,
+    },
+    "victory": {
+      1: `Cynthia: Such a strong trainer exists in this world?
+          $Volo: It seems the future is in good hands...`,
+    },
+  },
+  "cynthia_volo_double": {
+    "encounter": {
+      1: `Cynthia: I represent the power of Sinnoh!
+            $Volo: And I represent the power of Hisui!
+            $Cynthia: Together we are unbeatable!`,
+    },
+    "victory": {
+      1: `Volo: We were defeated?
+            $Cynthia: Even our combined power was not enough...`,
+    },
+  },
+  "hop_leon_double": {
+    "encounter": {
+      1: `Hop: Brother, let's show them the power of the Galar region!
+            $Leon: I am the undefeated champion of Galar!
+            $Leon: You dont have a chance!`,
+    },
+    "victory": {
+      1: `Hop: Not undefeated anymore...!
+          $Leon: Hop..Really? Right now?`,
+    },
+  },
+  "leon_hop_double": {
+    "encounter": {
+      1: `Leon: Your Champ Leon is here!
+            $Hop: And I am his brother!
+            $Leon: People call me "Leon, The Unbeatable"!`,
+    },
+    "victory": {
+      1: `Hop: I am so sorry, brother...
+          $Leon: I am not mad, we will win next time!`,
+    },
+  },
+  "opal_bede_double": {
+    "encounter": {
+      1: `Opal: THIS is a pretty pink!
+            $Bede: W-What?
+            $Opal: Pink from head to toe!`,
+    },
+    "victory": {
+      1: `Opal: Do you see the pink now?
+          $Bede: Of course. Its fabulous!`,
+    },
+  },
+  "bede_opal_double": {
+    "encounter": {
+      1: `Bede: We are the gym leaders of Ballonlea!
+          $Opal: And we are here to show you the power of pink!`,
+    },
+    "victory": {
+      1: `Bede: You and your pokémon are still lacking pink...
+          $Opal: But you are a great trainer!`,
+    },
+  },
+  "nemona_geeta_double": {
+    "encounter": {
+      1: `Nemona: Hi there, we don´t know each other yet, but we are you interested in a battle?
+          $Geeta: Nemona, you are so direct!`,
+    },
+    "victory": {
+      1: `Nemona: Let us battle again right away!
+          $Geeta: We don´t have Pokémons left...`,
+    },
+  },
+  "geeta_nemona_double": {
+    "encounter": {
+      1: `Geeta: We are the best trainers of Paldea!
+          $Nemona: And we will show you our power!`,
+    },
+    "victory": {
+      1: `Geeta: We will win next time!
+            $Nemona: Bye, I need to go train!
+            $Geeta: Well...There she goes...`,
+    },
+  },
+  "janine_koga_double": {
+    "encounter": {
+      1: `Janine: We are the ninja masters of Kanto!
+          $Koga: Our poison will defeat you!`,
+    },
+    "victory": {
+      1: `Janine: Maybe we should have used more ninja tactics...
+          $Koga: No, we need to use more poison!`,
+    },
+  },
+  "koga_janine_double": {
+    "encounter": {
+      1: `Koga: I am Koga of the Elite Four! Former Gym Leader of Fuchsia City!
+          $Janine: I am Janine, the current Gym Leader of Fuchsia City!
+            $Koga: My daughter is a great ninja!
+            $Janine: And my father is a great poison master!
+            $Koga: You will ask for mercy!`,
+    },
+    "victory": {
+      1: `Koga: Well maybe we should ask for mercy instead!
+          $Janine: Maybe...Or use smokebombs!`,
+    },
+  },
+  "lance_clair_double": {
+    "encounter": {
+      1: `Lance: We are the best dragon trainers in the world!
+            $Clair: Well...At least in Kanto and Johto!`,
+    },
+    "victory": {
+      1: `Lance: Dont tell Drake and Iris about this...
+            $Clair: Dont worry, I will not!`,
+    },
+  },
+  "clair_lance_double": {
+    "encounter": {
+      1: `Clair: I am the Dragon Master of Blackthorn City!
+            $Lance: And I am the Champion of the Indigo Plateau!
+            $Clair: My cousin and I will show you why dragons are the best!`,
+    },
+    "victory": {
+      1: `Clair: Dragons are still the best!
+            $Lance: And so majestic!`,
+    },
+  },
+  "kieran_carmine_double": {
+    "encounter": {
+      1: `Kieran: Carmine, look. A new face.
+            $Carmine: Are you a new challenger? If you want to go through us, you have to defeat us first!
+            $Kieran: Carmine, you are too direct.`,
+    },
+    "victory": {
+      1: `Kieran: How did we lose? What is your secret?
+          $Carmine: That was a nice battle. Hope to see you again!`,
+    },
+  },
+  "carmine_kieran_double": {
+    "encounter": {
+      1: `Carmine: Hello, we are Carmine and Kieran. 
+            $Kieran: From the Blueberry Academy. Welcome to Kitakami`,
+    },
+    "victory": {
+      1: `Carmine: You should come visit us at the academy. 
+            $Kieran: And then we will beat you!`,
+    },
+  },
+  "hau_kukui_double": {
+    "encounter": {
+      1: `Hau: The Professor and I are ready for a battle!
+            $Kukui: Let´s show them the power of Alola!`,
+    },
+    "victory": {
+      1: `Hau: We lost, but dont worry. You can´t have a rainbow without a little rain.
+            $Kukui: Let´s go surfing! After a battle, there is nothing better than a good surf!`,
+    },
+  },
+  "kukui_hau_double": {
+    "encounter": {
+      1: `Kukui: I am the professor of Alola. And this is my student Hau.
+            $Hau: And I am the future champion of Alola!`,
+    },
+    "victory": {
+      1: `Kukui: I am proud of you, Hau. You did a great job.
+            $Hau: Thanks, Professor. But we will win next time!`,
+    },
+  },
+  "diantha_korrina_double": {
+    "encounter": {
+      1: `Diantha: Welcome, I am Diantha, the Kalos Champion.
+            $Korrina: And I am Korrina, the Shalour City Gym Leader.`,
+    },
+    "victory": {
+      1: `Diantha: That was a great battle. You are a strong trainer.
+         $Korrina: We will win next time!`,
+    }
+  },
+  "korrina_diantha_double": {
+    "encounter": {
+      1: `Korrina: Lady Diantha, I am ready for a battle.
+         $Diantha: Then show them the power of our magnificent pokémon!`,
+    },
+    "victory": {
+      1: `Korrina: Did you see my moves? I am the best!
+         $Diantha: Well, we lost, so lets go back to training!`,
+    }
+  },
+  "roark_byron_double": {
+    "encounter": {
+      1: `Roark: Let´s show them the power of our Pokémon!
+          $Byron: We will show you the power of the underground!
+          $Roark: Let´s go under!`,
+    },
+    "victory": {
+      1: `Roark: How did I do dad?
+          $Byron: You did great son! But we still lost... So back to the underground! Let´s train more`,
+    }
+  },
+  "byron_roark_double": {
+    "encounter": {
+      1: `Byron: I am the Canalave City Gym Leader!
+          $Roark: And I am the Oreburgh City Gym Leader!
+          $Byron: We will show you the power of the underground!`,
+    },
+    "victory": {
+      1: `Byron: That was nearly as hard as my Steelix!
+            $Roark: And also as heavy as my Rampardos!`,
+    }
+  }
 };
 
 // Dialogue of the named double battles in the game. For when the player is female. For languages that do not have gendered pronouns, this can be set to PGMdoubleBattleDialogue.

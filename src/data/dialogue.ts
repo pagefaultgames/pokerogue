@@ -250,7 +250,7 @@ export const trainerTypeDialogue = {
         "dialogue:battle_girl.encounter.1",
       ],
       victory: [
-        "dialogue.battle_girl.victory.1",
+        "dialogue:battle_girl.victory.1",
       ]
     }
   ],
@@ -2212,8 +2212,86 @@ export const doubleBattleDialogue = {
     encounter: [ "doubleBattleDialogue:piers_marnie_double.encounter.1"],
     victory: [ "doubleBattleDialogue:piers_marnie_double.victory.1"]
   },
-
-
+  "koga_janine_double": {
+    encounter: [ "doubleBattleDialogue:koga_janine_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:koga_janine_double.victory.1"]
+  },
+  "janine_koga_double": {
+    encounter: [ "doubleBattleDialogue:janine_koga_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:janine_koga_double.victory.1"]
+  },
+  "volo_cynthia_double": {
+    encounter: [ "doubleBattleDialogue:volo_cynthia_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:volo_cynthia_double.victory.1"]
+  },
+  "cynthia_volo_double": {
+    encounter: [ "doubleBattleDialogue:cynthia_volo_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:cynthia_volo_double.victory.1"]
+  },
+  "leon_hop_double": {
+    encounter: [ "doubleBattleDialogue:leon_hop_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:leon_hop_double.victory.1"]
+  },
+  "hop_leon_double": {
+    encounter: [ "doubleBattleDialogue:hop_leon_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:hop_leon_double.victory.1"]
+  },
+  "geeta_nemona_double": {
+    encounter: [ "doubleBattleDialogue:geeta_nemona_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:geeta_nemona_double.victory.1"]
+  },
+  "nemona_geeta_double": {
+    encounter: [ "doubleBattleDialogue:nemona_geeta_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:nemona_geeta_double.victory.1"]
+  },
+  "opal_bede_double": {
+    encounter: [ "doubleBattleDialogue:opal_bede_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:opal_bede_double.victory.1"]
+  },
+  "bede_opal_double": {
+    encounter: [ "doubleBattleDialogue:bede_opal_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:bede_opal_double.victory.1"]
+  },
+  "kieran_carmine_double": {
+    encounter: [ "doubleBattleDialogue:kieran_carmine_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:kieran_carmine_double.victory.1"]
+  },
+  "carmine_kieran_double": {
+    encounter: [ "doubleBattleDialogue:carmine_kieran_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:carmine_kieran_double.victory.1"]
+  },
+  "lance_clair_double": {
+    encounter: [ "doubleBattleDialogue:lance_clair_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:lance_clair_double.victory.1"]
+  },
+  "clair_lance_double": {
+    encounter: [ "doubleBattleDialogue:clair_lance_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:clair_lance_double.victory.1"]
+  },
+  "hau_kukui_double": {
+    encounter: [ "doubleBattleDialogue:hau_kukui_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:hau_kukui_double.victory.1"]
+  },
+  "kukui_hau_double": {
+    encounter: [ "doubleBattleDialogue:kukui_hau_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:kukui_hau_double.victory.1"]
+  },
+  "diantha_korrina_double": {
+    encounter: [ "doubleBattleDialogue:diantha_korrina_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:diantha_korrina_double.victory.1"]
+  },
+  "korrina_diantha_double": {
+    encounter: [ "doubleBattleDialogue:korrina_diantha_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:korrina_diantha_double.victory.1"]
+  },
+  "roark_byron_double": {
+    encounter: [ "doubleBattleDialogue:roark_byron_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:roark_byron_double.victory.1"]
+  },
+  "byron_roark_double": {
+    encounter: [ "doubleBattleDialogue:byron_roark_double.encounter.1"],
+    victory: [ "doubleBattleDialogue:byron_roark_double.victory.1"]
+  },
 };
 
 export const battleSpecDialogue = {

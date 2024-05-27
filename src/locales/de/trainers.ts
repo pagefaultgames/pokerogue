@@ -295,4 +295,6 @@ export const trainerNames: SimpleTranslationEntries = {
   "kukui_hau_double": "Kukui & Tali",
   "diantha_korrina_double": "Diantha & Connie",
   "korrina_diantha_double": "Connie & Diantha",
+  "roark_byron_double": "Veit & Adam",
+  "byron_roark_double": "Adam & Veit",
 } as const;

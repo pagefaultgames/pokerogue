@@ -233,7 +233,8 @@ export class TrainerConfig {
     }
     // If a special double trainer class was set, set it as the sprite key
     if (this.trainerTypeDouble && female && isDouble) {
-      ret = TrainerType[this.trainerTypeDouble].toString().toLowerCase();
+      // Get the derived type for the double trainer since the sprite key is based on the derived type
+      ret = TrainerType[this.getDerivedType(this.trainerTypeDouble)].toString().toLowerCase();
     }
     return ret;
   }
@@ -271,9 +272,13 @@ export class TrainerConfig {
   }
 
 
-
-  getDerivedType(): TrainerType {
-    let trainerType = this.trainerType;
+  /**
+   * Returns the derived trainer type for a given trainer type.
+   * @param trainerTypeToDeriveFrom - The trainer type to derive from. (If null, the this.trainerType property will be used.)
+   * @returns {TrainerType} - The derived trainer type.
+   */
+  getDerivedType(trainerTypeToDeriveFrom: TrainerType = null): TrainerType {
+    let trainerType = trainerTypeToDeriveFrom ? trainerTypeToDeriveFrom : this.trainerType;
     switch (trainerType) {
     case TrainerType.RIVAL_2:
     case TrainerType.RIVAL_3:
@@ -1167,12 +1172,12 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["TATE"],true, Type.PSYCHIC).setBattleBgm("battle_hoenn_gym").setHasDouble("tate_liza_double").setDoubleTrainerType(TrainerType.LIZA).setDoubleTitle("gym_leader_double"),
   [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["LIZA"],false, Type.PSYCHIC).setBattleBgm("battle_hoenn_gym").setHasDouble("liza_tate_double").setDoubleTrainerType(TrainerType.TATE).setDoubleTitle("gym_leader_double"),
   [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["JUAN"],true, Type.WATER).setBattleBgm("battle_hoenn_gym"),
-  [TrainerType.ROARK]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["ROARK"],true, Type.ROCK).setBattleBgm("battle_sinnoh_gym"),
+  [TrainerType.ROARK]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["ROARK"],true, Type.ROCK).setBattleBgm("battle_sinnoh_gym").setHasDouble("roark_byron_double").setDoubleTrainerType(TrainerType.BYRON).setDoubleTitle("gym_leader_double"),
   [TrainerType.GARDENIA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GARDENIA"],false, Type.GRASS).setBattleBgm("battle_sinnoh_gym"),
   [TrainerType.MAYLENE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MAYLENE"],false, Type.FIGHTING).setBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CRASHER_WAKE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["CRASHER_WAKE"],true, Type.WATER).setBattleBgm("battle_sinnoh_gym"),
   [TrainerType.FANTINA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["FANTINA"],false, Type.GHOST).setBattleBgm("battle_sinnoh_gym"),
-  [TrainerType.BYRON]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BYRON"],true, Type.STEEL).setBattleBgm("battle_sinnoh_gym"),
+  [TrainerType.BYRON]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BYRON"],true, Type.STEEL).setBattleBgm("battle_sinnoh_gym").setHasDouble("byron_roark_double").setDoubleTrainerType(TrainerType.ROARK).setDoubleTitle("gym_leader_double"),
   [TrainerType.CANDICE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["CANDICE"],false, Type.ICE).setBattleBgm("battle_sinnoh_gym"),
   [TrainerType.VOLKNER]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["VOLKNER"],true, Type.ELECTRIC).setBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CILAN]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["CILAN"],true, Type.GRASS),
@@ -1190,7 +1195,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.MARLON]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MARLON"],true, Type.WATER),
   [TrainerType.VIOLA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["VIOLA"],false, Type.BUG),
   [TrainerType.GRANT]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GRANT"],true, Type.ROCK),
-  [TrainerType.KORRINA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KORRINA"],false, Type.FIGHTING).setHasDouble("korina_diantha_double").setDoubleTrainerType(TrainerType.DIANTHA).setDoubleTitle("kalos_legends_double"),
+  [TrainerType.KORRINA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KORRINA"],false, Type.FIGHTING).setHasDouble("korrina_diantha_double").setDoubleTrainerType(TrainerType.DIANTHA).setDoubleTitle("kalos_legends_double"),
   [TrainerType.RAMOS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RAMOS"],true, Type.GRASS),
   [TrainerType.CLEMONT]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["CLEMONT"],true, Type.ELECTRIC),
   [TrainerType.VALERIE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["VALERIE"],false, Type.FAIRY),
@@ -1264,19 +1269,19 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion(signatureSpecies["LANCE_CHAMPION"],true).setBattleBgm("battle_johto_champion").setHasDouble("lance_clair_double").setDoubleTrainerType(TrainerType.CLAIR).setDoubleTitle("dragon_tamer_double"),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(signatureSpecies["STEVEN"],true).setBattleBgm("battle_hoenn_champion").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double"),
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion(signatureSpecies["WALLACE"],true).setBattleBgm("battle_hoenn_champion").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double"),
-  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(signatureSpecies["CYNTHIA"],false).setBattleBgm("battle_sinnoh_champion").setDoubleTrainerType(TrainerType.VOLO).setDoubleTitle("timespace_double").setHasDouble("cynthia_volo_double"),
+  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(signatureSpecies["CYNTHIA"],false).setHasDouble("cynthia_volo_double").setBattleBgm("battle_sinnoh_champion").setDoubleTrainerType(TrainerType.VOLO).setDoubleTitle("timespace_double"),
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(signatureSpecies["ALDER"],true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder"),
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(signatureSpecies["IRIS"],false).setBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double"),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(signatureSpecies["DIANTHA"],false).setHasDouble("diantha_korrina_double").setDoubleTrainerType(TrainerType.KORRINA).setDoubleTitle("kalos_legends_double"),
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(signatureSpecies["HAU"],true).setHasDouble("hau_kukui_double").setDoubleTrainerType(TrainerType.KUKUI).setDoubleTitle("alola_legends_double"),
-  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"],true).setDoubleTrainerType(TrainerType.HOP).setDoubleTitle("sibling_double").setHasDouble("leon_hop_double"),
+  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"],true).setHasDouble("leon_hop_double").setDoubleTrainerType(TrainerType.HOP).setDoubleTitle("sibling_double"),
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(signatureSpecies["GEETA"],false).setHasDouble("geeta_nemona_double").setDoubleTrainerType(TrainerType.NEMONA).setDoubleTitle("champion_double"),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(signatureSpecies["NEMONA"],false).setHasDouble("nemona_geeta_double").setDoubleTrainerType(TrainerType.GEETA).setDoubleTitle("champion_double"),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(signatureSpecies["KIERAN"],true).setHasDouble("kieran_carmine_double").setDoubleTrainerType(TrainerType.CARMINE).setDoubleTitle("sibling_double"),
 
   // Special Trainers
-  [TrainerType.HOP]: new TrainerConfig((t=TrainerType.HOP)).initForSpecial(signatureSpecies["HOP"],"pkm_trainer").setDoubleTrainerType(TrainerType.LEON).setDoubleTitle("sibling_double").setHasDouble("hop_leon_double"),
-  [TrainerType.VOLO]: new TrainerConfig(++t).initForSpecial(signatureSpecies["VOLO"],"pkm_tamer").setBattleBgm("battle_sinnoh_champion").setDoubleTrainerType(TrainerType.CYNTHIA).setDoubleTitle("timespace_double").setHasDouble("volo_cynthia_double"),
+  [TrainerType.HOP]: new TrainerConfig((t=TrainerType.HOP)).initForSpecial(signatureSpecies["HOP"],"pkm_trainer").setHasDouble("hop_leon_double").setDoubleTrainerType(TrainerType.LEON).setDoubleTitle("sibling_double"),
+  [TrainerType.VOLO]: new TrainerConfig(++t).initForSpecial(signatureSpecies["VOLO"],"pkm_tamer").setBattleBgm("battle_sinnoh_champion").setHasDouble("volo_cynthia_double").setDoubleTrainerType(TrainerType.CYNTHIA).setDoubleTitle("timespace_double"),
   [TrainerType.CARMINE]: new TrainerConfig(++t).initForSpecial(signatureSpecies["CARMINE"],"pkm_trainer_female").setHasDouble("carmine_kieran_double").setDoubleTrainerType(TrainerType.KIERAN).setDoubleTitle("sibling_double"),
   [TrainerType.KUKUI]: new TrainerConfig(++t).initForSpecial(signatureSpecies["KUKUI"],"professor").setHasDouble("kukui_hau_double").setDoubleTrainerType(TrainerType.HAU).setDoubleTitle("alola_legends_double"),
 
