@@ -21,6 +21,7 @@ import { PlayerGender } from "../system/game-data";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
 import { Ability } from "../data/ability.js";
+import i18next from "i18next";
 
 enum Page {
   PROFILE,
@@ -694,8 +695,7 @@ export default class SummaryUiHandler extends UiHandler {
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
         const xCoord = 39 + 34 * index;
         const typeIcon = !tera
-          ? this.scene.add.sprite(xCoord, 42, "types", Type[type].toLowerCase())
-          : this.scene.add.sprite(xCoord, 42, "type_tera");
+          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
           typeIcon.setScale(0.5);
           const typeRgb = getTypeRgb(type);
@@ -920,8 +920,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveRowsContainer.add(moveRowContainer);
 
         if (move) {
-          const typeIcon = this.scene.add.sprite(0, 0, "types", Type[move.getMove().type].toLowerCase());
-          typeIcon.setOrigin(0, 1);
+          const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
         }
 
