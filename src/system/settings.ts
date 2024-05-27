@@ -5,6 +5,7 @@ import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
+import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
@@ -130,7 +131,12 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     scene.enableRetries = settingOptions[setting][value] === "On";
     break;
   case Setting.Candy_Upgrade_Notification:
+    if (scene.candyUpgradeNotification === value) {
+      break;
+    }
+
     scene.candyUpgradeNotification = value;
+    scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
     break;
   case Setting.Candy_Upgrade_Display:
     scene.candyUpgradeDisplay = value;

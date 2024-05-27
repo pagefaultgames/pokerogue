@@ -29,6 +29,7 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -679,6 +680,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.statsContainer);
 
+    this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
+
     this.updateInstructions();
   }
 
@@ -788,8 +791,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const starterData = this.scene.gameData.starterData[species.speciesId];
     const passiveAvailable =
-         starterData.candyCount >= this.scene.gameData.getSpeciesStarterValue(species.speciesId)
-    && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
+           starterData.candyCount >= this.scene.gameData.getSpeciesStarterValue(species.speciesId)
+      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
 
     // 'Only Passives' mode
     if (this.scene.candyUpgradeNotification === 1) {
@@ -799,12 +802,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       const costReductionAvailable =
-         starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[species.speciesId])[starterData.valueReduction]
-      && starterData.valueReduction < 2;
+           starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[species.speciesId])[starterData.valueReduction]
+        && starterData.valueReduction < 2;
 
       if (passiveAvailable || costReductionAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
+    }
+  }
+
+  onCandyUpgradeDisplayChanged(event: Event) {
+    const candyUpgradeDisplayEvent = event as CandyUpgradeNotificationChangedEvent;
+    if (!candyUpgradeDisplayEvent) {
+      return;
+    }
+
+    for (let g = 0; g < this.genSpecies.length; g++) {
+      this.genSpecies[g].forEach((species, s) => {
+        const icon = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
+
+        this.setIconUpgradeBounce(icon, species);
+      });
     }
   }
 
