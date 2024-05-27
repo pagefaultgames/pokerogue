@@ -2017,12 +2017,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  removeTag(tagType: BattlerTagType): boolean {
+  removeTag(tagType: BattlerTagType, bypassOnRemove: boolean = false): boolean {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag) {
       tag.turnCount = 0;
-      tag.onRemove(this);
+      if (!bypassOnRemove) {
+        tag.onRemove(this);
+      }
       tags.splice(tags.indexOf(tag), 1);
     }
     return !!tag;
@@ -2887,10 +2889,10 @@ export class PlayerPokemon extends Pokemon {
       }
 
       // remove taunt, torment, encore, and disable tags
-      this.removeTag(BattlerTagType.TAUNT);
-      this.removeTag(BattlerTagType.TORMENT);
-      this.removeTag(BattlerTagType.ENCORE);
-      this.removeTag(BattlerTagType.DISABLE);
+      this.removeTag(BattlerTagType.TAUNT, true);
+      this.removeTag(BattlerTagType.TORMENT, true);
+      this.removeTag(BattlerTagType.ENCORE, true);
+      this.removeTag(BattlerTagType.DISABLE, true);
 
       this.hideInfo();
       this.setVisible(false);
