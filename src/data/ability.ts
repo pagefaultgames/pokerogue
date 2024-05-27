@@ -1089,18 +1089,18 @@ export class SteelySpiritAbAttr extends VariableMovePowerAbAttr {
     const twoPokemonWithAbility = pokemon.scene.currentBattle.double && pokemon.hasAbility(Abilities.STEELY_SPIRIT) && pokemon.getAlly().hasAbility(Abilities.STEELY_SPIRIT);
     const power = (args[0] as Utils.NumberHolder);
 
-    if(isSteelMove){
-      if(twoPokemonWithAbility) {
+    if (isSteelMove) {
+      if (twoPokemonWithAbility) {
         // double 50% power boost if two pokemon have Ability.STEELY_SPIRIT
         power.value *= 1.5 * 1.5;
         return true;
       }
-      if(onePokemonWithAbility) {
+      if (onePokemonWithAbility) {
         // 50% power boost if only one pokemon has Ability.STEELY_SPIRIT
         power.value *= 1.5;
         return true;
       }
-      
+
     }
 
     return false;
