@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "25-tough-cosplay.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 46,
+				"h": 46
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 30,
+						"y": 25,
+						"w": 40,
+						"h": 46
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 46
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:849a27dcbeef96526f6268d102045801:eacf6be2a31863fa8195a0fcd3fad5f7:f52cf98cd3f9b5d722626437d7f07944$"
+	}
+}
