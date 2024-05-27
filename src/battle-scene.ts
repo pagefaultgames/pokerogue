@@ -657,6 +657,9 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
+      pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
+    }
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
@@ -1067,6 +1070,10 @@ export default class BattleScene extends SceneBase {
     case Species.TATSUGIRI:
     case Species.PALDEA_TAUROS:
       return Utils.randSeedInt(species.forms.length);
+    case Species.PIKACHU:
+      return Utils.randSeedInt(8);
+    case Species.EEVEE:
+      return Utils.randSeedInt(2);
     case Species.GRENINJA:
       return Utils.randSeedInt(2);
     case Species.ZYGARDE:
@@ -1263,7 +1270,7 @@ export default class BattleScene extends SceneBase {
       return;
     }
     const formattedMoney =
-			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatLargeNumber(this.money, 1000) : this.money.toLocaleString();
+			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
     this.moneyText.setText(`₽${formattedMoney}`);
     if (forceVisible) {
       this.moneyText.setVisible(true);
