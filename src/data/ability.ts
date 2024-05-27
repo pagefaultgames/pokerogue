@@ -4095,7 +4095,8 @@ export function initAbilities() {
     new Ability(Abilities.SCREEN_CLEANER, 8)
       .unimplemented(),
     new Ability(Abilities.STEELY_SPIRIT, 8)
-      .unimplemented(),
+      .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
+      .partial(),
     new Ability(Abilities.PERISH_BODY, 8)
       .unimplemented(),
     new Ability(Abilities.WANDERING_SPIRIT, 8)
