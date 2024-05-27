@@ -2356,6 +2356,19 @@ export class BeatUpAttr extends VariablePowerAttr {
   }
 }
 
+export class MultiHitThreeIncAttr extends VariablePowerAttr {
+
+  /**
+  * Gets the current number of hits left and doubles or triples the power for the 2nd and 3rd hits respectively
+  */
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+    power.value = move.power * (4 - user.turnData.hitsLeft);
+    return true;
+  }
+}
+
 const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   let message: string = null;
   user.scene.executeWithSeedOffset(() => {
@@ -5409,6 +5422,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3_INCR)
+	  .attr(MultiHitThreeIncAttr)
       .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
         user.turnData.hitsLeft = 1;
         return true;
@@ -7266,11 +7280,11 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, false),
     new AttackMove(Moves.TRIPLE_AXEL, Type.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._3_INCR)
+	  .attr(MultiHitThreeIncAttr)
       .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
         user.turnData.hitsLeft = 1;
         return true;
-      })
-      .partial(),
+      }),
     new AttackMove(Moves.DUAL_WINGBEAT, Type.FLYING, MoveCategory.PHYSICAL, 40, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.SCORCHING_SANDS, Type.GROUND, MoveCategory.SPECIAL, 70, 100, 10, 30, 0, 8)
