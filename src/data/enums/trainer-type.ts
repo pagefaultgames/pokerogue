@@ -176,10 +176,10 @@ export enum TrainerType {
   IRIS,
   DIANTHA,
   HAU,
+  LEON,
   GEETA,
   NEMONA,
   KIERAN,
-  LEON, // He's problematic right now because he has no corresponding Elite Four
   RIVAL = 375,
   RIVAL_2,
   RIVAL_3,

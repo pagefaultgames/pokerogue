@@ -1,4 +1,4 @@
-import { default as BattleScene } from "../battle-scene";
+import {default as BattleScene} from "../battle-scene";
 import UiHandler from "./ui-handler";
 import BattleMessageUiHandler from "./battle-message-ui-handler";
 import CommandUiHandler from "./command-ui-handler";
@@ -13,7 +13,7 @@ import StarterSelectUiHandler from "./starter-select-ui-handler";
 import EvolutionSceneHandler from "./evolution-scene-handler";
 import TargetSelectUiHandler from "./target-select-ui-handler";
 import SettingsUiHandler from "./settings-ui-handler";
-import { TextStyle, addTextObject } from "./text";
+import {addTextObject, TextStyle} from "./text";
 import AchvBar from "./achv-bar";
 import MenuUiHandler from "./menu-ui-handler";
 import AchvsUiHandler from "./achvs-ui-handler";
@@ -22,7 +22,7 @@ import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
 import VouchersUiHandler from "./vouchers-ui-handler";
-import { addWindow } from "./ui-theme";
+import {addWindow} from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
@@ -36,6 +36,8 @@ import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import {Button} from "../enums/buttons";
+import i18next, {ParseKeys} from "i18next";
+import {PlayerGender} from "#app/system/game-data";
 
 export enum Mode {
   MESSAGE,
@@ -234,6 +236,19 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   showDialogue(text: string, name: string, delay: integer = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    // First get the gender of the player (default male) (also used if UNSET)
+    let playerGenderPrefix = "PGM";
+    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
+      playerGenderPrefix = "PGF";
+    }
+    // Add the prefix to the text
+    const localizationKey = playerGenderPrefix + text;
+    // Get localized dialogue (if available)
+    if (i18next.exists(localizationKey as ParseKeys) ) {
+
+
+      text = i18next.t(localizationKey as ParseKeys);
+    }
     if (text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       let showMessageAndCallback = () => callback();
