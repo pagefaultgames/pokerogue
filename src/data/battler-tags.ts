@@ -494,9 +494,10 @@ export class DisableTag extends BattlerTag {
 
 export class EncoreTag extends BattlerTag {
   public moveId: Moves;
+  public justEncored: boolean = true;
 
   constructor(sourceId: integer) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.TURN_END, 4, Moves.ENCORE, sourceId);
+    super(BattlerTagType.ENCORE, BattlerTagLapseType.TURN_END, 3, Moves.ENCORE, sourceId);
   }
 
   /**
@@ -564,6 +565,12 @@ export class EncoreTag extends BattlerTag {
     super.onRemove(pokemon);
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s Encore\nended!"));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType) {
+    const ret = super.lapse(pokemon, lapseType);
+    this.justEncored = false;
+    return ret;
   }
 }
 

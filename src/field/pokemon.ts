@@ -3753,18 +3753,26 @@ export class PokemonMove {
   }
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
+    if (this.moveId === Moves.STRUGGLE) {
+      return true;
+    }
+
     const isMoveDisabled = this.moveId && pokemon.findTag(t => t instanceof DisableTag) && (pokemon.findTag(t => t instanceof DisableTag) as DisableTag).disabledMove === this.moveId;
 
     // for taunt: check valid move, pokemon is taunted, and move is status
     const isMoveDisabledTaunt = this.moveId && pokemon.findTag(t => t instanceof TauntTag) && this.getMove().category === MoveCategory.STATUS;
 
-    // for torment: check valid move, pokemon is tormented, pokemon has moved this summon, and selected move is the same as previous move
-    const isMoveDisabledTorment = this.moveId && pokemon.summonData.tormented && pokemon.summonData.prevMove === this.moveId;
+    // for torment: check valid move, pokemon is tormented, and selected move is the same as previous move (undefined if no previous move this summon)
+    // also check that pokemon was not just encored (this turn), which would override torment
+    const isMoveDisabledTorment = this.moveId && pokemon.summonData.tormented && pokemon.summonData.prevMove === this.moveId && (pokemon.findTag(t => t instanceof EncoreTag) === undefined || !(pokemon.findTag(t => t instanceof EncoreTag) as EncoreTag).justEncored);
+
+    // for encore: check valid move, pokemon is encored, and selected move is not the same as previous move (undefined if no previous move this summon)
+    const isMoveDisabledEncore = this.moveId && pokemon.findTag(t => t instanceof EncoreTag) && (pokemon.findTag(t => t instanceof EncoreTag) as EncoreTag).moveId !== this.moveId;
 
     // for heal block: check valid move, pokemon is blocked from healing, move is a healing move (all marked for triage ability)
     const isMoveDisabledHealBlock = this.moveId && pokemon.findTag(t => t instanceof HealBlockTag) && this.getMove().hasFlag(MoveFlags.TRIAGE_MOVE);
 
-    if (isMoveDisabled || isMoveDisabledTaunt || isMoveDisabledTorment || isMoveDisabledHealBlock) {
+    if (isMoveDisabled || isMoveDisabledTaunt || isMoveDisabledTorment || isMoveDisabledEncore || isMoveDisabledHealBlock) {
       return false;
     }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
