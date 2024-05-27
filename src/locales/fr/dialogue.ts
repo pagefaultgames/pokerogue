@@ -4361,6 +4361,50 @@ export const PGFdialogue: DialogueTranslationEntries = {
       2: "You got caught in my storm! Better luck next time!"
     }
   },
+  "volo": {
+    "encounter": {
+      1: "I am Volo, i want to see Arceus, the god of all Pokémon. I will defeat you to get closer to my goal."
+    },
+    "victory": {
+      1: "Why? Why are YOU chosen by Arceus?"
+    },
+    "defeat": {
+      1: "Yes! Yes! Arceus, give me strength!"
+    }
+  },
+  "hop": {
+    "encounter": {
+      1: "I'm here to see if you're ready to face the Champion! Well, i am still working on it."
+    },
+    "victory": {
+      1: "Looks like i still have a long way to go before i can face the Champion.",
+    },
+    "defeat": {
+      1: "Yes! I won! I'm getting closer to my goal!"
+    }
+  },
+  "carmine": {
+    "encounter": {
+      1: "I am Carmine, from the Blueberry Academy. I am here to test your skills.",
+    },
+    "victory": {
+      1: "You are a worthy opponent. I am glad to have battled you."
+    },
+    "defeat": {
+      1: "Yes! The Blueberry Academy will be proud of me!"
+    }
+  },
+  "kukui": {
+    "encounter": {
+      1: "Did you hear about the Pokémon of Alola? They're all so unique and interesting!"
+    },
+    "victory": {
+      1: "It seems you know the Aloha spirit well!"
+    },
+    "defeat": {
+      1: "Maybe you should come to Alola and learn more about our Pokémon!"
+    }
+  },
   "rival": {
     "encounter": {
 	  1: `@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…

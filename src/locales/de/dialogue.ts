@@ -2131,7 +2131,51 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Du bist in meinen Sturm geraten! Viel Glück beim nächsten Mal!"
     }
   },
-
+  "volo": {
+    "encounter": {
+      1: `Ich bin Volo und ich will Arceus sehen, den Gott aller Pokémon.
+          $Ich werde dich besiegen, um meinem Ziel näher zu kommen.`,
+    },
+    "victory": {
+      1: "Warum? Warum wurdest DU von Arceus auserwählt?"
+    },
+    "defeat": {
+      1: "Ja! Ja! Arceus, gib mir Kraft!"
+    }
+  },
+  "hop": {
+    "encounter": {
+      1: "Ich bin hier, um zu sehen, ob du bereit bist, dem Champion gegenüberzutreten! Los geht's!"
+    },
+    "victory": {
+      1: "Es sieht so aus, als hätte ich noch einen langen Weg vor mir, bevor ich Delion gegenübertreten kann."
+    },
+    "defeat": {
+      1: "Ja! Ich habe gewonnen! Ich komme meinem Ziel näher!"
+    }
+  },
+  "carmine": {
+    "encounter": {
+      1: "Ich bin Hana, von der Blaubeer-Akademie. Ich bin hier, um deine Fähigkeiten zu testen."
+    },
+    "victory": {
+      1: "Du bist ein würdiger Gegner. Ich bin froh, gegen dich gekämpft zu haben."
+    },
+    "defeat": {
+      1: "Ja! Die Blaubeer-Akademie wird stolz auf mich sein!"
+    }
+  },
+  "kukui": {
+    "encounter": {
+      1: "Hast du von den Pokémon aus Alola gehört? Sie sind alle so einzigartig und interessant!"
+    },
+    "victory": {
+      1: "Es scheint, du kennst dich mit Pokémon aus Alola aus! Ich bin beeindruckt!"
+    },
+    "defeat": {
+      1: "Vielleicht solltest du nach Alola kommen und mehr über unsere Pokémon lernen!"
+    }
+  },
   "rival": {
     "encounter": {
       1: `@c{smile}Hey, ich habe dich gesucht! Ich weiß, dass du es nicht erwarten konntest loszugehen,

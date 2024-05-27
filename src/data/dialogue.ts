@@ -2046,6 +2046,50 @@ export const trainerTypeDialogue = {
       "dialogue:raihan_elite.defeat.2"
     ]
   },
+  [TrainerType.VOLO] : {
+    encounter: [
+      "dialogue:volo.encounter.1"
+    ],
+    victory: [
+      "dialogue:volo.victory.1"
+    ],
+    defeat: [
+      "dialogue:volo.defeat.1"
+    ]
+  },
+  [TrainerType.HOP]: {
+    encounter: [
+      "dialogue:hop.encounter.1"
+    ],
+    victory: [
+      "dialogue:hop.victory.1"
+    ],
+    defeat: [
+      "dialogue:hop.defeat.1"
+    ]
+  },
+  [TrainerType.CARMINE]: {
+    encounter: [
+      "dialogue:carmine.encounter.1"
+    ],
+    victory: [
+      "dialogue:carmine.victory.1"
+    ],
+    defeat: [
+      "dialogue:carmine.defeat.1"
+    ]
+  },
+  [TrainerType.KUKUI]: {
+    encounter: [
+      "dialogue:kukui.encounter.1"
+    ],
+    victory: [
+      "dialogue:kukui.victory.1"
+    ],
+    defeat: [
+      "dialogue:kukui.defeat.1"
+    ]
+  },
   [TrainerType.RIVAL]: [
     {
       encounter: [
