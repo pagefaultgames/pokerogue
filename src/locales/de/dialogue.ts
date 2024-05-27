@@ -174,7 +174,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Zeit, das Schlachtfeld mit Eleganz und Anmut zu betreten!",
     },
     "victory": {
-      2: "Meine Eleganz bleibt ungebrochen!",
+      1: "Meine Eleganz bleibt ungebrochen!",
     }
   },
   "twins": {
