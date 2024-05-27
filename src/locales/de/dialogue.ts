@@ -1635,13 +1635,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Ich habe mich entschieden, erneut meinen Hut in den Ring zu werfen.
                 $Komm jetzt... Zeig mir die Früchte deines Trainings.`,
-      "victory": {
-        1: "Ich freue mich auf Neuigkeiten über all deine Erfolge!"
-      },
-      "defeat": {
-        1: "Was ist los? Das ist doch nicht alles, oder?"
-      }
     },
+    "victory": {
+      1: "Ich freue mich auf Neuigkeiten über all deine Erfolge!"
+    },
+    "defeat": {
+      1: "Was ist los? Das ist doch nicht alles, oder?"
+    }
   },
   "nemona": {
     "encounter": {
