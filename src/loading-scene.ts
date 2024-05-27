@@ -216,6 +216,10 @@ export class LoadingScene extends SceneBase {
         break;
       }
       if (Utils.verifyLang(lang)) {
+        if (lang === "zh_CN") {
+          // Load also the traditional Chinese since it doesn't have a separate language code in supportedLngs
+          this.loadAtlas("types_zh_TW", "");
+        }
         this.loadAtlas(`types_${lang}`, "");
       }
     });
