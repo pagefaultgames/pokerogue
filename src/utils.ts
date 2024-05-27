@@ -217,6 +217,26 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ""}${suffix}`;
 }
 
+// Abbreviations from 10^0 to 10^33
+const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
+
+export function formatFancyLargeNumber(number: number, rounded: number = 2): string {
+  let exponent: number;
+
+  if (number < 1000) {
+    exponent = 0;
+  } else {
+    const maxExp = AbbreviationsLargeNumber.length - 1;
+
+    exponent = Math.floor(Math.log(number) / Math.log(1000));
+    exponent = Math.min(exponent, maxExp);
+
+    number /= Math.pow(1000, exponent);
+  }
+
+  return `${(exponent === 0) ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+}
+
 export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
