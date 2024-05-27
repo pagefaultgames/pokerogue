@@ -4002,8 +4002,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .ignorable()
       .unimplemented(),
-    new Ability(Abilities.POWER_SPOT, 8)
-      .unimplemented(),
+    new Ability(Abilities.POWER_SPOT, 8),
     new Ability(Abilities.MIMICRY, 8)
       .unimplemented(),
     new Ability(Abilities.SCREEN_CLEANER, 8)
