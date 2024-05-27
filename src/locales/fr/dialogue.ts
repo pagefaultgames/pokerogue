@@ -2444,7 +2444,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Time to grace the battlefield with elegance and poise!",
     },
     "victory": {
-      2: "My elegance remains unbroken!",
+      1: "My elegance remains unbroken!",
     }
   },
   "twins": {
