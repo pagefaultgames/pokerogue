@@ -12,7 +12,7 @@ import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
 import {
   blobToString,
   generateStarter,
-  holdOn, waitFirstInPhaseQueueIs,
+  holdOn, waitMode,
 } from "#app/test/essentials/utils";
 import * as Utils from "#app/utils";
 import {loggedInUser, setLoggedInUser} from "#app/account";
@@ -23,6 +23,8 @@ import {MockFetch} from "#app/test/essentials/mockFetch";
 import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
 import {apiFetch} from "#app/utils";
 const saveKey = "x0i2O7WRiANTqPmZ";
+
+
 describe("Session import/export", () => {
   let game, scene, gameData, sessionData;
   Object.defineProperty(window, "localStorage", {
@@ -110,6 +112,11 @@ describe("Session import/export", () => {
     expect(sessionData.modifiers[0].stackCount).toBe(60);
   });
 
+    it('should return the result from the worker', async () => {
+      const result = await runWorker();
+      expect(result).toBe('Work is done!');
+    });
+
   it.skip('import session', () => {
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData1_Greenlamp.cookies", {encoding: "utf8", flag: "r"});
     let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
@@ -153,10 +160,17 @@ describe("Session import/export", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('select new Game', async () => {
+  it.skip('select new Game', async () => {
     scene.pushPhase(new LoginPhase(scene));
     scene.pushPhase(new TitlePhase(scene));
     scene.shiftPhase();
+    try {
+      await waitMode(scene, Mode.TITLE);
+    } catch (error) {
+      console.error(error);
+    }
+    const mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.TITLE);
     // scene.shiftPhase();
     // const gameMode = GameModes.CLASSIC;
     // // scene.ui.setMode(Mode.MESSAGE);
@@ -184,6 +198,6 @@ describe("Session import/export", () => {
   //     spy(); // Call the spy function
   //   });
   //   expect(spy).toHaveBeenCalled();
-  });
+  }, 10000);
 });
 

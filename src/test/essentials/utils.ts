@@ -39,14 +39,14 @@ export function generateStarter(scene) {
   return starters;
 }
 
-export function waitFirstInPhaseQueueIs(scene, phaseInstance) {
+export function waitMode(scene, mode) {
   return new Promise(resolve => {
     const interval = setInterval(() => {
-      if (scene.phaseQueue.length && scene.phaseQueue[0] instanceof phaseInstance) {
+      if (scene.ui?.getMode() === mode) {
         clearInterval(interval);
         resolve(true);
       }
-    }, 100);
+    }, 1000);
   });
 }
 

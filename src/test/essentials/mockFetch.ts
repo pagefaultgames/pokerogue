@@ -11,7 +11,7 @@ export const MockFetch = (input, init) => {
 
   const handlers = {
     "account/info": infoHandler,
-    "savedata/session?slot=1": sessionHandler,
+    "savedata/session?slot=": sessionHandler,
     "savedata/system": systemHandler,
     "daily/rankingpagecount": { data: 0 },
     "game/titlestats": titlestatHandler,
