@@ -355,3 +355,31 @@ export default class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.setVisible(false);
   }
 }
+
+export function initStatsKeys() {
+  const statKeys = Object.keys(displayStats);
+
+  for (const key of statKeys) {
+    if (typeof displayStats[key] === "string") {
+      let label = displayStats[key] as string;
+      let hidden = false;
+      if (label.endsWith("?")) {
+        label = label.slice(0, -1);
+        hidden = true;
+      }
+      displayStats[key] = {
+        label_key: label,
+        sourceFunc: gameData => gameData.gameStats[key].toString(),
+        hidden: hidden
+      };
+    } else if (displayStats[key] === null) {
+      displayStats[key] = {
+        sourceFunc: gameData => gameData.gameStats[key].toString()
+      };
+    }
+    if (!(displayStats[key] as DisplayStat).label_key) {
+      const splittableKey = key.replace(/([a-z]{2,})([A-Z]{1}(?:[^A-Z]|$))/g, "$1_$2");
+      (displayStats[key] as DisplayStat).label_key = Utils.toReadableString(`${splittableKey[0].toUpperCase()}${splittableKey.slice(1)}`);
+    }
+  }
+}
