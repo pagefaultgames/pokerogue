@@ -1839,24 +1839,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
 
-        if (source.turnData.hitsLeft === 1) {
-          switch (result) {
-          case HitResult.SUPER_EFFECTIVE:
-            this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
-            break;
-          case HitResult.NOT_VERY_EFFECTIVE:
-            this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
-            break;
-          case HitResult.NO_EFFECT:
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
-            break;
-          case HitResult.IMMUNE:
-            this.scene.queueMessage(`${this.name} is unaffected!`);
-            break;
-          case HitResult.ONE_HIT_KO:
-            this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
-            break;
-          }
+        switch (result) {
+        case HitResult.SUPER_EFFECTIVE:
+          this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
+          break;
+        case HitResult.NOT_VERY_EFFECTIVE:
+          this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
+          break;
+        case HitResult.NO_EFFECT:
+          this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
+          break;
+        case HitResult.IMMUNE:
+          this.scene.queueMessage(`${this.name} is unaffected!`);
+          break;
+        case HitResult.ONE_HIT_KO:
+          this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
+          break;
         }
 
         if (this.isFainted()) {
