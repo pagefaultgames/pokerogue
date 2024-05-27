@@ -2103,7 +2103,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
                     $@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…
 					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affrontes !
-					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencée, hein ?`
+					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?`
     },
     "victory": {
       1: `@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T'as triché non ? Avoue !
@@ -2247,7 +2247,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `@c{smile_eclosed}J'ai fait ce que je j'avais à faire.
-				Prmets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison.`
+				Promets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison.`
     },
   },
   "rival_6_female": {
