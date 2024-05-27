@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import UI  from "./ui/ui";
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from "./data/pokemon-species";
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import * as Utils from "./utils";
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
@@ -15,10 +15,9 @@ import { GameData, PlayerGender } from "./system/game-data";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
-import { initMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from "./data/ability";
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
 import { GameMode, GameModes, gameModes } from "./game-mode";
@@ -57,6 +56,7 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { NewArenaEvent } from "./battle-scene-events";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -152,7 +152,8 @@ export default class BattleScene extends SceneBase {
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
-  private waveCountText: Phaser.GameObjects.Text;
+  /** Combined Biome and Wave count text */
+  private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
   private scoreText: Phaser.GameObjects.Text;
   private luckLabelText: Phaser.GameObjects.Text;
@@ -185,13 +186,16 @@ export default class BattleScene extends SceneBase {
   public rngSeedOverride: string = "";
   public rngOffset: integer = 0;
 
+  /**
+   * Allows subscribers to listen for events
+   *
+   * Current Events:
+   * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
+   */
+  public readonly eventTarget: EventTarget = new EventTarget();
+
   constructor() {
     super("battle");
-
-    initSpecies();
-    initMoves();
-    initAbilities();
-
     this.phaseQueue = [];
     this.phaseQueuePrepend = [];
     this.phaseQueuePrependSpliceIndex = -1;
@@ -348,9 +352,9 @@ export default class BattleScene extends SceneBase {
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
-    this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
-    this.waveCountText.setOrigin(1, 0);
-    this.fieldUI.add(this.waveCountText);
+    this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.biomeWaveText.setOrigin(1, 0);
+    this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setOrigin(1, 0);
@@ -478,7 +482,7 @@ export default class BattleScene extends SceneBase {
       }
     });
 
-    this.updateWaveCountText();
+    this.updateBiomeWaveText();
     this.updateMoneyText();
     this.updateScoreText();
   }
@@ -651,6 +655,9 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
+      pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
+    }
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
@@ -792,8 +799,8 @@ export default class BattleScene extends SceneBase {
 
     this.currentBattle = null;
 
-    this.waveCountText.setText(startingWave.toString());
-    this.waveCountText.setVisible(false);
+    this.biomeWaveText.setText(startingWave.toString());
+    this.biomeWaveText.setVisible(false);
 
     this.updateMoneyText();
     this.moneyText.setVisible(false);
@@ -992,6 +999,7 @@ export default class BattleScene extends SceneBase {
 
   newArena(biome: Biome): Arena {
     this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
+    this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
 
@@ -1060,6 +1068,10 @@ export default class BattleScene extends SceneBase {
     case Species.TATSUGIRI:
     case Species.PALDEA_TAUROS:
       return Utils.randSeedInt(species.forms.length);
+    case Species.PIKACHU:
+      return Utils.randSeedInt(8);
+    case Species.EEVEE:
+      return Utils.randSeedInt(2);
     case Species.GRENINJA:
       return Utils.randSeedInt(2);
     case Species.ZYGARDE:
@@ -1242,12 +1254,13 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  updateWaveCountText(): void {
+  updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
-    this.waveCountText.setText(this.currentBattle.waveIndex.toString());
-    this.waveCountText.setColor(!isBoss ? "#404040" : "#f89890");
-    this.waveCountText.setShadowColor(!isBoss ? "#ded6b5" : "#984038");
-    this.waveCountText.setVisible(true);
+    const biomeString: string = getBiomeName(this.arena.biomeType);
+    this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
+    this.biomeWaveText.setColor(!isBoss ? "#ffffff" : "#f89890");
+    this.biomeWaveText.setShadowColor(!isBoss ? "#636363" : "#984038");
+    this.biomeWaveText.setVisible(true);
   }
 
   updateMoneyText(): void {
@@ -1295,8 +1308,8 @@ export default class BattleScene extends SceneBase {
 
   updateUIPositions(): void {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
-    this.waveCountText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
-    this.moneyText.setY(this.waveCountText.y + 10);
+    this.biomeWaveText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
+    this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
     [ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
     const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
