@@ -79,10 +79,31 @@ export default class GameWrapper {
 
     _scene.game = this.gameObj;
     _scene.scene = _scene;
-    _scene.sys.game = this.gameObj;
-    _scene.sys.settings.loader = {
-      key: key,
-    }
+    _scene.sys = {
+      queueDepthSort: () => null,
+      game: this.gameObj,
+      textures: {
+        addCanvas: () => ({
+          get: () => ({ // this.frame in Text.js
+            source: {},
+            setSize: () => null,
+            glTexture: () => ({
+              spectorMetadata: {},
+            }),
+          }),
+        })
+      },
+      cache: {},
+      scale: {},
+      events: {
+        on: () => null,
+      },
+      settings: {
+        loader: {
+          key: key,
+        }
+      }
+    };
     _scene.sound = {
       play: () => null,
       get: (key) => new NoAudioSound(undefined, key),

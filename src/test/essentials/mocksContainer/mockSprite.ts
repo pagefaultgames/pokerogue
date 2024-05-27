@@ -123,6 +123,10 @@ export default class MockSprite {
     return this.phaserSprite.apply();
   }
 
+  play() {
+    // return this.phaserSprite.play();
+  }
+
 
 
 
