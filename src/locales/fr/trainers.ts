@@ -6,10 +6,10 @@ export const titles: SimpleTranslationEntries = {
   "elite_four_female": "Conseil 4",
   "gym_leader": "Champion d’Arène",
   "gym_leader_female": "Championne d’Arène",
-  "gym_leader_double": "Gym Leader Duo",
-  "champion": "Maitre·esse", //Written in gender-inclusive language in wait of a potential split of the entry
-  "champion_female": "Champion",
-  "champion_double": "Champion Duo",
+  "gym_leader_double": "Duo de Champions",
+  "champion": "Maitre",
+  "champion_female": "Maitresse",
+  "champion_double": "Duo de Maitres",
   "rival": "Rival·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "professor": "Professeur·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "frontier_brain": "Meneur·euse de Zone", //Written in gender-inclusive language in wait of a potential split of the entry
