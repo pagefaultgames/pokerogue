@@ -2238,7 +2238,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.
 				$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.
                 $@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?
-				$@c{serious}…et c’est comme si quelque chose ici me parlait.\nComme si c’était tout ce que ce monde avait toujours connu.
+				$@c{serious}…et c’est comme si quelque chose ici me parlait.
+                                $Comme si c’était tout ce que ce monde avait toujours connu.
 				$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.
 				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?
 				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.
@@ -4561,7 +4562,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Chaque cycle réinitialise ton souvenir du précédent.\nMais étrangement, des bribes subsistent en toi.
 			   $Jusqu’à maintenant, tu as toujours échoué. Mais je ressens quelque chose de différent cette fois-ci.\n
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
-			   $Vas-tu enfin me liver un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
+			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
   "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
@@ -4576,7 +4577,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Chaque cycle réinitialise ton souvenir du précédent.\nMais étrangement, des bribes subsistent en toi.
 			   $Jusqu’à maintenant, tu as toujours échoué. Mais je ressens quelque chose de différent cette fois-ci.\n
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
-			   $Vas-tu enfin me liver un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
+			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
   "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
