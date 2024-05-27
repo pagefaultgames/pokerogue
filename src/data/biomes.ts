@@ -6,24 +6,23 @@ import { TrainerType } from "./enums/trainer-type";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Biome } from "./enums/biome";
 import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
+import i18next from "i18next";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1) {
-    return "Somewhere you can't remember";
+    return i18next.t("biome:unknownLocation");
   }
   switch (biome) {
   case Biome.GRASS:
-    return "Grassy Field";
+    return i18next.t("biome:GRASS");
   case Biome.RUINS:
-    return "Ancient Ruins";
+    return i18next.t("biome:RUINS");
   case Biome.ABYSS:
-    return "The Abyss";
-  case Biome.SPACE:
-    return "Stratosphere";
+    return i18next.t("biome:ABYSS");
   case Biome.END:
-    return "Final Destination";
+    return i18next.t("biome:END");
   default:
-    return Utils.toReadableString(Biome[biome]);
+    return i18next.t(`biome:${Biome[biome].toUpperCase()}`);
   }
 }
 
@@ -57,7 +56,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.VOLCANO]: [ Biome.BEACH, [ Biome.ICE_CAVE, 4 ] ],
   [Biome.GRAVEYARD]: Biome.ABYSS,
   [Biome.DOJO]: [ Biome.PLAINS, [ Biome.TEMPLE, 3 ] ],
-  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 8 ] ],
+  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 4 ] ],
   [Biome.RUINS]: [ Biome.FOREST ],
   [Biome.WASTELAND]: Biome.BADLANDS,
   [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 3 ], [ Biome.WASTELAND, 3 ] ],
@@ -200,7 +199,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.NIGHT]: [ { 1: [ Species.SHINX ], 15: [ Species.LUXIO ], 30: [ Species.LUXRAY ] } ],
       [TimeOfDay.ALL]: [ { 1: [ Species.ABRA ], 16: [ Species.KADABRA ] }, { 1: [ Species.BUNEARY ], 20: [ Species.LOPUNNY ] }, { 1: [ Species.ROOKIDEE ], 18: [ Species.CORVISQUIRE ], 38: [ Species.CORVIKNIGHT ] } ]
     },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FARFETCHD, Species.LICKITUNG, Species.CHANSEY, Species.EEVEE, Species.SNORLAX, { 1: [ Species.DUNSPARCE ], 72: [ Species.DUDUNSPARCE ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FARFETCHD, Species.LICKITUNG, Species.CHANSEY, Species.EEVEE, Species.SNORLAX, { 1: [ Species.DUNSPARCE ], 62: [ Species.DUDUNSPARCE ] } ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.DITTO, Species.LATIAS, Species.LATIOS ] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [ Species.DODRIO, Species.FURRET, Species.GUMSHOOS, Species.GREEDENT ],
@@ -268,7 +267,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAY]: [],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
-      [TimeOfDay.ALL]: [ Species.PINSIR, { 1: [ Species.CHIKORITA ], 16: [ Species.BAYLEEF ], 32: [ Species.MEGANIUM ] }, { 1: [ Species.GIRAFARIG ], 72: [ Species.FARIGIRAF ] }, Species.ZANGOOSE, Species.KECLEON, Species.TROPIUS ]
+      [TimeOfDay.ALL]: [ Species.PINSIR, { 1: [ Species.CHIKORITA ], 16: [ Species.BAYLEEF ], 32: [ Species.MEGANIUM ] }, { 1: [ Species.GIRAFARIG ], 62: [ Species.FARIGIRAF ] }, Species.ZANGOOSE, Species.KECLEON, Species.TROPIUS ]
     },
     [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.SCYTHER, Species.SHEDINJA, Species.ROTOM ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
@@ -474,8 +473,8 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.ALL]: [ { 1: [ Species.TOTODILE ], 18: [ Species.CROCONAW ], 30: [ Species.FERALIGATR ] }, { 1: [ Species.MUDKIP ], 16: [ Species.MARSHTOMP ], 36: [ Species.SWAMPERT ] } ]
     },
     [BiomePoolTier.SUPER_RARE]: {
-      [TimeOfDay.DAWN]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 90: [ Species.HISUI_GOODRA ] } ],
-      [TimeOfDay.DAY]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 90: [ Species.HISUI_GOODRA ] } ],
+      [TimeOfDay.DAWN]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 80: [ Species.HISUI_GOODRA ] } ],
+      [TimeOfDay.DAY]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 80: [ Species.HISUI_GOODRA ] } ],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
       [TimeOfDay.ALL]: [ Species.POLITOED, Species.GALAR_STUNFISK ]
@@ -7795,6 +7794,7 @@ export function initBiomes() {
       const biomeTierPool = biomeTrainerPools[biome][tier];
       biomeTierPool.push(trainerType);
     }
+    //outputPools();
   }
 
 

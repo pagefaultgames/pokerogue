@@ -9,7 +9,6 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
-import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
 import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
 import {initBiomes} from "#app/data/biomes";
 import {initEggMoves} from "#app/data/egg-moves";
@@ -17,6 +16,8 @@ import {initPokemonForms} from "#app/data/pokemon-forms";
 import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
+import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import i18next from "i18next";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -204,6 +205,25 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("pb", "");
     this.loadAtlas("items", "");
     this.loadAtlas("types", "");
+
+    (i18next.options.supportedLngs as Array<any>).forEach(lang => {
+      switch (lang) {
+      case "pt":
+        lang = "pt_BR";
+        break;
+      case "zh":
+        lang = "zh_CN";
+        break;
+      }
+      if (Utils.verifyLang(lang)) {
+        if (lang === "zh_CN") {
+          // Load also the traditional Chinese since it doesn't have a separate language code in supportedLngs
+          this.loadAtlas("types_zh_TW", "");
+        }
+        this.loadAtlas(`types_${lang}`, "");
+      }
+    });
+
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
 
@@ -293,11 +313,11 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
     initEggMoves();
     initPokemonForms();
+    initTrainerTypeDialogue();
     initSpecies();
     initMoves();
     initAbilities();
