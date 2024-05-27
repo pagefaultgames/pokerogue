@@ -18,6 +18,7 @@ import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureM
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import {setPositionRelative} from "#app/test/essentials/utils";
+import NoAudioSound = Phaser.Sound.NoAudioSound;
 
 // Phaser.GameObjects.Image.prototype.setPositionRelative = (key) => ({});
 // // Phaser.GameObjects.Image.prototype.frame = {realHeight: 1};
@@ -82,6 +83,24 @@ export default class GameWrapper {
     _scene.sys.settings.loader = {
       key: key,
     }
+    _scene.sound = {
+      play: () => null,
+      get: (key) => new NoAudioSound(undefined, key),
+      getAllPlaying: () => [],
+    };
+    _scene.tweens = {
+      add: (data) => {
+        if (data.onComplete) {
+          data.onComplete();
+        }
+      },
+      chain: () => null,
+      addCounter: (data) => {
+        if (data.onComplete) {
+          data.onComplete();
+        }
+      },
+    }
     _scene.system = _scene.sys;
     _scene.systems = _scene.sys;
     _scene.renderer = this.gameObj.renderer;
@@ -92,13 +111,11 @@ export default class GameWrapper {
     _scene.plugins = this.gameObj.plugins;
     _scene.registry = this.gameObj.registry;
     _scene.scale = this.gameObj.scale;
-    _scene.sound = this.gameObj.sound;
     _scene.textures = this.gameObj.textures;
     _scene.sys.textures = this.gameObj.textures;
     _scene.events = this.gameObj.events;
     _scene.sys.events = new EventEmitter()
     _scene.sys.updateList = new UpdateList(_scene);
-    _scene.tweens = new TweenManager(_scene);
     _scene.manager = this.gameObj.manager;
     _scene.pluginEvents = this.gameObj.pluginEvents;
     _scene.input = this.gameObj.input;
@@ -107,7 +124,6 @@ export default class GameWrapper {
     _scene.pluginEvents = new EventEmitter();
     _scene.input.keyboard = new KeyboardPlugin(_scene);
     _scene.input.gamepad = new GamepadPlugin(_scene);
-    _scene.time = new Clock(_scene);
     _scene.load = new LoaderPlugin(_scene);
     _scene.load.cacheManager = new CacheManager(_scene);
     _scene.sys.cache = _scene.load.cacheManager;
@@ -133,6 +149,21 @@ export default class GameWrapper {
       rexTransitionImagePack: () => ({
         transit: () => null,
       }),
+    };
+    _scene.time = {
+      addEvent: (evt) => {
+        const delay = 1;
+        setInterval(() => {
+          if (evt.callback) {
+            evt.callback();
+          }
+        }, delay);
+        return {
+          repeatCount: 0,
+          remove: () => null,
+        };
+      },
+      delayedCall: (time, fn) => fn(),
     };
 
     // const a = this.gameObj;

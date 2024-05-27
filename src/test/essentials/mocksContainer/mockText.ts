@@ -10,6 +10,9 @@ export default class MockText {
 
   runWordWrap(text) {
     // Runs word wrap logic on the given text.
+    if (!text) {
+      return "";
+    }
     return this.phaserText.runWordWrap(text);
   }
 

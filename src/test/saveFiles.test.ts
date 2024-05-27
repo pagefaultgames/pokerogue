@@ -21,6 +21,7 @@ import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
 import {Mode} from "#app/ui/ui";
 import {MockFetch} from "#app/test/essentials/mockFetch";
 import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
+import {apiFetch} from "#app/utils";
 const saveKey = "x0i2O7WRiANTqPmZ";
 describe("Session import/export", () => {
   let game, scene, gameData, sessionData;
@@ -57,6 +58,19 @@ describe("Session import/export", () => {
   it.skip('test fetch mock async', async () => {
     const spy = vi.fn();
     await fetch('https://localhost:8080/account/info').then(response => {
+      expect(response.status).toBe(200);
+      expect(response.ok).toBe(true);
+      return response.json();
+    }).then(data => {
+      spy(); // Call the spy function
+      expect(data).toEqual(infoHandler);
+    });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it.skip('test apifetch mock async', async () => {
+    const spy = vi.fn();
+    await apiFetch('https://localhost:8080/account/info').then(response => {
       expect(response.status).toBe(200);
       expect(response.ok).toBe(true);
       return response.json();
@@ -143,22 +157,22 @@ describe("Session import/export", () => {
     scene.pushPhase(new LoginPhase(scene));
     scene.pushPhase(new TitlePhase(scene));
     scene.shiftPhase();
-    scene.shiftPhase();
-    const gameMode = GameModes.CLASSIC;
-    // scene.ui.setMode(Mode.MESSAGE);
-    scene.pushPhase(new SelectStarterPhase(scene, gameMode));
-    scene.newArena(scene.gameMode.getStartingBiome(scene));
-    scene.pushPhase(new EncounterPhase(scene, false));
-    scene.shiftPhase();
-    let phase = scene.getCurrentPhase();
-    const starters = generateStarter(scene);
-    phase.initBattle(starters);
-    scene.newBattle();
-    scene.arena.init();
-    scene.shiftPhase();
-    await scene.getCurrentPhase().doEncounter();
-    phase = scene.getCurrentPhase();
-    phase = scene.getCurrentPhase();
+    // scene.shiftPhase();
+    // const gameMode = GameModes.CLASSIC;
+    // // scene.ui.setMode(Mode.MESSAGE);
+    // scene.pushPhase(new SelectStarterPhase(scene, gameMode));
+    // scene.newArena(scene.gameMode.getStartingBiome(scene));
+    // scene.pushPhase(new EncounterPhase(scene, false));
+    // scene.shiftPhase();
+    // let phase = scene.getCurrentPhase();
+    // const starters = generateStarter(scene);
+    // phase.initBattle(starters);
+    // scene.newBattle();
+    // scene.arena.init();
+    // scene.shiftPhase();
+    // await scene.getCurrentPhase().doEncounter();
+    // phase = scene.getCurrentPhase();
+    // phase = scene.getCurrentPhase();
     // the issue is that there is a check in frames that are renderered and add phase according to that
     // so we need some logic in these frames
   //   const spy = vi.fn();

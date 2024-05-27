@@ -158,4 +158,20 @@ export default class MockContainer {
   getIndex(obj) {
   }
 
+  getAt(index) {
+    return this;
+  }
+
+  getAll() {
+    return [];
+  }
+
+  sendToBack() {
+    // Sends this Game Object to the back of its parent's display list.
+  }
+
+  moveAbove(obj) {
+    // Moves this Game Object to be above the given Game Object in the display list.
+  }
+
 }
