@@ -5,8 +5,8 @@ export default class MockSprite extends MockContainer {
   public pipelineData;
   public texture;
   public key;
-  constructor(x, y, texture) {
-    super(x, y);
+  constructor(scene, x, y, texture) {
+    super(scene, x, y);
     this.pipelineData = {};
     this.texture = {
       key: "",
