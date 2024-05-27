@@ -1076,7 +1076,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newAbilityIndex !== this.abilityCursor);
-            this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityIndex = newAbilityIndex;
+            this.scene.gameData.localOnlyStarterData[this.lastSpecies.speciesId].abilityIndex = newAbilityIndex;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
             success = true;
           }
@@ -1086,7 +1086,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
             const natureIndex = natures.indexOf(this.natureCursor);
             const newNature = natures[(natureIndex + 1) % natures.length];
-            this.scene.gameData.starterData[this.lastSpecies.speciesId].nature = newNature;
+            this.scene.gameData.localOnlyStarterData[this.lastSpecies.speciesId].nature = newNature;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
             success = true;
           }

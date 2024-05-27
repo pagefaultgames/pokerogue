@@ -86,6 +86,7 @@ interface SystemSaveData {
   gender: PlayerGender;
   dexData: DexData;
   starterData: StarterData;
+  localOnlyStarterData?: LocalOnlyStarterData;
   gameStats: GameStats;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
@@ -188,12 +189,19 @@ export interface StarterDataEntry {
   passiveAttr: integer;
   valueReduction: integer;
   classicWinCount: integer;
-  nature: integer;
-  abilityIndex: integer;
 }
 
 export interface StarterData {
   [key: integer]: StarterDataEntry
+}
+
+export interface LocalOnlyStarterDataEntry {
+  nature: integer;
+  abilityIndex: integer;
+}
+
+export interface LocalOnlyStarterData {
+  [key: integer]: LocalOnlyStarterDataEntry
 }
 
 export interface TutorialFlags {
@@ -230,6 +238,7 @@ export class GameData {
   private defaultDexData: DexData;
 
   public starterData: StarterData;
+  public localOnlyStarterData: LocalOnlyStarterData;
 
   public gameStats: GameStats;
 
@@ -266,7 +275,7 @@ export class GameData {
     this.initStarterData();
   }
 
-  public getSystemSaveData(): SystemSaveData {
+  public getSystemSaveData(includeLocalData: boolean = false): SystemSaveData {
     return {
       trainerId: this.trainerId,
       secretId: this.secretId,
@@ -280,7 +289,8 @@ export class GameData {
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
       gameVersion: this.scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      ...(includeLocalData && {localOnlyStarterData: this.localOnlyStarterData})
     };
   }
 
@@ -938,7 +948,8 @@ export class GameData {
         const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
 
         const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData();
+        const localOnlySystemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData(true);
+        const { localOnlyStarterData, ...systemData } = localOnlySystemData;
 
         const request = {
           system: systemData,
@@ -947,7 +958,7 @@ export class GameData {
           clientSessionId: clientSessionId
         };
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
+        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(localOnlySystemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
 
         localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
@@ -1162,6 +1173,7 @@ export class GameData {
 
   private initStarterData(): void {
     const starterData: StarterData = {};
+    const localOnlyStarterData: LocalOnlyStarterData = {};
 
     const starterSpeciesIds = Object.keys(speciesStarters).map(k => parseInt(k) as Species);
 
@@ -1174,13 +1186,17 @@ export class GameData {
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0,
-        classicWinCount: 0,
+        classicWinCount: 0
+      };
+
+      localOnlyStarterData[speciesId] = {
         nature: 0,
         abilityIndex: 0
       };
     }
 
     this.starterData = starterData;
+    this.localOnlyStarterData = localOnlyStarterData;
   }
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true, trainer: boolean = false): void {
@@ -1412,7 +1428,7 @@ export class GameData {
   }
 
   getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): integer {
-    const lastAbilityIndex = this.scene.gameData.starterData[species.speciesId].abilityIndex;
+    const lastAbilityIndex = this.scene.gameData.localOnlyStarterData[species.speciesId].abilityIndex;
     // If the last picked ability is not the first one, default to it instead
     if (lastAbilityIndex > 0) {
       return lastAbilityIndex;
@@ -1423,7 +1439,7 @@ export class GameData {
   }
 
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
-    const lastNature = this.scene.gameData.starterData[species.speciesId].nature;
+    const lastNature = this.scene.gameData.localOnlyStarterData[species.speciesId].nature;
     // If the last used nature is not the first one, default to it instead
     if (lastNature > 0) {
       return lastNature;
