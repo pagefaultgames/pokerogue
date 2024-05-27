@@ -3237,21 +3237,32 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
         let damage: integer = 0;
         switch (pokemon.status.effect) {
         case StatusEffect.POISON:
-          damage = Math.max(pokemon.getMaxHp() >> 3, 1);
+          if (pokemon.hasAbility(90)){
+            damage = 0;
+          }
+          else{
+            damage = Math.max(pokemon.getMaxHp() >> 3, 1);
+          }
           break;
         case StatusEffect.TOXIC:
-          damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
+          if (pokemon.hasAbility(90)){
+            damage = 0;
+          }
+          else{
+            damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
+          }
           break;
         case StatusEffect.BURN:
           damage = Math.max(pokemon.getMaxHp() >> 4, 1);
           break;
         }
+        
         if (damage) {
 		  // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
+          this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
           this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage, false, true));
           pokemon.updateInfo();
         }

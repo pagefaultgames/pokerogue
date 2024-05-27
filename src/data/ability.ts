@@ -2,7 +2,7 @@ import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { PokemonHealPhase, PostTurnStatusEffectPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
@@ -3379,7 +3379,8 @@ export function initAbilities() {
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, 4)
-      .unimplemented(),
+      .conditionalAttr(pokemon => !!pokemon.status && pokemon.status.effect === StatusEffect.POISON, PostTurnHealAbAttr)
+      .ignorable(),
     new Ability(Abilities.ADAPTABILITY, 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
