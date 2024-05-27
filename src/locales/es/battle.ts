@@ -58,5 +58,5 @@ export const battle: SimpleTranslationEntries = {
   "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?",
   "wildPokemonAffix": "Wild",
   "foePokemonAffix": "Foe",
-  "useMove": "{{pokemonPrefix}}{{pokemonName}} used {{moveName}}!"
+  "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!"
 } as const;

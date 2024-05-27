@@ -56,7 +56,7 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "{{pokemonName}}'s {{moveName}} ist\nnicht mehr deaktiviert!",
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "IV-Scanner auf {{pokemonName}} benutzen?",
-  "wildPokemonAffix": "Wild",
-  "foePokemonAffix": "Foe",
-  "useMove": "{{pokemonPrefix}}{{pokemonName}} used {{moveName}}!"
+  "wildPokemonWithAffix": "{{pokemonName}} (wild)",
+  "foePokemonWithAffix": "{{pokemonName}} (Gegner)",
+  "useMove": "{{pokemonNameWithAffix}} setzt {{moveName}} ein!"
 } as const;

@@ -3,21 +3,21 @@ import Pokemon from "./field/pokemon";
 import i18next from "./plugins/i18n";
 
 export function getPokemonMessage(pokemon: Pokemon, content: string): string {
-  return `${getPokemonAffix(pokemon)}${pokemon.name}${content}`;
+  return `${getPokemonNameWithAffix(pokemon)} ${content}`;
 }
 
-export function getPokemonAffix(pokemon: Pokemon): string {
+export function getPokemonNameWithAffix(pokemon: Pokemon): string {
   let prefix: string;
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
     prefix = !pokemon.isPlayer()
       ? pokemon.hasTrainer()
-        ? `${i18next.t("battle:foePokemonAffix")} `
-        : `${i18next.t("battle:wildPokemonAffix")} `
-      : "";
+        ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name })
+        : i18next.t("battle:wildPokemonWithAffix", { pokemonName: pokemon.name })
+      : pokemon.name;
     break;
   case BattleSpec.FINAL_BOSS:
-    prefix = !pokemon.isPlayer() ? `${i18next.t("battle:foePokemonAffix")} ` : "";
+    prefix = !pokemon.isPlayer() ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name }) : pokemon.name;
     break;
   }
   return prefix;
