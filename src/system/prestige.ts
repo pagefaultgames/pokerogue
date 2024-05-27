@@ -1,4 +1,6 @@
-export enum PrestigeModifierAttribute {}
+export enum PrestigeModifierAttribute {
+  SHOP_ITEM_PRICES
+}
 
 enum PrestigeModifierOperation {
   ADD,
@@ -21,13 +23,17 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   // Level 0 - Should be empty
   [],
   // Level 1
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.1),
+  ],
   // Level 2
   [],
   // Level 3
   [],
   // Level 4
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.2)
+  ],
   // Level 5
   [],
   // Level 6
@@ -35,11 +41,15 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   // Level 7
   [],
   // Level 8
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.3)
+  ],
   // Level 9
   [],
   // Level 10
-  []
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.4)
+  ]
 ];
 
 export abstract class Prestige {
