@@ -1,4 +1,6 @@
-export enum PrestigeModifierAttribute {}
+export enum PrestigeModifierAttribute {
+  STARTER_PARTY_POINTS
+}
 
 enum PrestigeModifierOperation {
   ADD,
@@ -21,7 +23,9 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   // Level 0 - Should be empty
   [],
   // Level 1
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -2)
+  ],
   // Level 2
   [],
   // Level 3
@@ -31,7 +35,9 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   // Level 5
   [],
   // Level 6
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -3)
+  ],
   // Level 7
   [],
   // Level 8
@@ -39,7 +45,9 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   // Level 9
   [],
   // Level 10
-  []
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -4)
+  ]
 ];
 
 export abstract class Prestige {
