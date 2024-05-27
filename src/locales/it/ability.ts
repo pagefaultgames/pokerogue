@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Mielincetta",
-    description: "Il Pokémon può raccogliere del Miele alla fine della lotta.",
+    description: "The Pokémon gathers Honey after a battle. The Honey is then sold for money.",
   },
   frisk: {
     name: "Indagine",
@@ -711,7 +711,7 @@ export const ability: AbilityTranslationEntries = {
   },
   megaLauncher: {
     name: "Megalancio",
-    description: 'Potenzia le mosse "pulsar", Forzasfera e Ondasana.',
+    description: "Potenzia le mosse \"pulsar\", Forzasfera e Ondasana.",
   },
   grassPelt: {
     name: "Peloderba",

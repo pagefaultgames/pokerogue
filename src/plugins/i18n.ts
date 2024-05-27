@@ -1,13 +1,15 @@
-import i18next from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18next from "i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
-import { deConfig } from '#app/locales/de/config.js';
-import { enConfig } from '#app/locales/en/config.js';
-import { esConfig } from '#app/locales/es/config.js';
-import { frConfig } from '#app/locales/fr/config.js';
-import { itConfig } from '#app/locales/it/config.js';
-import { ptBrConfig } from '#app/locales/pt_BR/config.js';
-import { zhCnConfig } from '#app/locales/zh_CN/config.js';
+import { deConfig } from "#app/locales/de/config.js";
+import { enConfig } from "#app/locales/en/config.js";
+import { esConfig } from "#app/locales/es/config.js";
+import { frConfig } from "#app/locales/fr/config.js";
+import { itConfig } from "#app/locales/it/config.js";
+import { ptBrConfig } from "#app/locales/pt_BR/config.js";
+import { zhCnConfig } from "#app/locales/zh_CN/config.js";
+import { zhTWConfig } from "#app/locales/zh_TW/config.js";
+
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -58,6 +60,24 @@ export interface BerryTranslationEntries {
   [key: string]: BerryTranslationEntry
 }
 
+export interface DialogueTranslationEntry {
+  [key: number]: string;
+}
+
+export interface DialogueTranslationCategory {
+  encounter: DialogueTranslationEntry;
+  victory: DialogueTranslationEntry;
+  defeat?: DialogueTranslationEntry;
+}
+
+export interface DialogueTranslationTrainerClass {
+  [key: string]: DialogueTranslationCategory;
+}
+
+export interface DialogueTranslationEntries {
+  [key: string]: DialogueTranslationTrainerClass;
+}
+
 export interface Localizable {
   localize(): void;
 }
@@ -68,10 +88,11 @@ export function initI18n(): void {
     return;
   }
   isInitialized = true;
-  let lang = '';
+  let lang = "";
 
-  if (localStorage.getItem('prLang'))
-    lang = localStorage.getItem('prLang');
+  if (localStorage.getItem("prLang")) {
+    lang = localStorage.getItem("prLang");
+  }
 
 
 
@@ -94,8 +115,8 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     nonExplicitSupportedLngs: true,
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh','pt'],
+    fallbackLng: "en",
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt"],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -121,13 +142,16 @@ export function initI18n(): void {
       },
       zh_CN: {
         ...zhCnConfig
+      },
+      zh_TW: {
+        ...zhTWConfig
       }
     },
   });
 }
 
 // Module declared to make referencing keys in the localization files type-safe.
-declare module 'i18next' {
+declare module "i18next" {
   interface CustomTypeOptions {
     resources: {
       menu: SimpleTranslationEntries;
@@ -154,7 +178,17 @@ declare module 'i18next' {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-	  voucher: SimpleTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
+      biome: SimpleTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
     };
   }
 }
