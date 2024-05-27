@@ -4594,7 +4594,7 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
 		$@c{smile_eclosed}Bref, j’en ai un peu marre de ce endroit, pas toi ? Rentrons à la maison.
 		$@c{serious_smile_fists}On se fera un p’tit combat une fois rentrés ?\nSi t’es d’accord.`,
   "ending_female":
-      `@c{shock}T’es revenu ?@d{32} Ça veut dire …@d{96} que t’as gagné ?!\n@c{smile_ehalf}J'aurais dû le savoir.
+      `@c{shock}T’es revenu ?@d{32} Ça veut dire…@d{96} que t’as gagné ?!\n@c{smile_ehalf}J'aurais dû le savoir.
 		$@c{smile_eclosed}Bien sûr… J’ai toujours eu ce sentiment.\n@c{smile}C’est fini maitenant hein ? T’as brisé ce cycle.
 		$@c{smile_ehalf}T’as aussi accompli ton rêve non ?\nTu n’as pas connu la moindre défaite.
         $Je serai la seule à me souvenir de ce que t’as fait.\n@c{angry_mopen}Je tâcherai de ne pas oublier !
