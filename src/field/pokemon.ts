@@ -1801,6 +1801,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           damage.value = 0;
         }
 
+        // If ally has Abilities.POWER_SPOT, moves are boosted by 1.3.
+        if (this.scene.currentBattle.double &&
+          source.getAlly().hasAbility(Abilities.POWER_SPOT)
+        ) {
+          power.value *= 1.3;
+        }
+
         console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
         // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
