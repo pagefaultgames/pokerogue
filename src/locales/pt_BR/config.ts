@@ -18,11 +18,18 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { weather } from "./weather";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
+import {
+  PGMdialogue,
+  PGFdialogue,
+  PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue,
+  PGMmiscDialogue,
+  PGFmiscDialogue, PGMdoubleBattleDialogue, PGFdoubleBattleDialogue
+} from "./dialogue";
 import { biome } from "./biome";
-
-
 
 export const ptBrConfig = {
   ability: ability,
@@ -31,23 +38,32 @@ export const ptBrConfig = {
   commandUiHandler: commandUiHandler,
   egg: egg,
   fightUiHandler: fightUiHandler,
-  menuUiHandler: menuUiHandler,
+  growth: growth,
   menu: menu,
+  menuUiHandler: menuUiHandler,
+  modifierType: modifierType,
   move: move,
+  nature: nature,
   pokeball: pokeball,
-  pokemonInfo: pokemonInfo,
   pokemon: pokemon,
+  pokemonInfo: pokemonInfo,
+  splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
-  splashMessages: splashMessages,
-  nature: nature,
-  growth: growth,
   weather: weather,
-  modifierType: modifierType,
+  battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   voucher: voucher,
   biome: biome,
+  PGMdialogue: PGMdialogue,
+  PGFdialogue: PGFdialogue,
+  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
+  PGMmiscDialogue: PGMmiscDialogue,
+  PGFmiscDialogue: PGFmiscDialogue,
+  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
 };

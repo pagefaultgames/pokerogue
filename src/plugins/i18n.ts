@@ -60,6 +60,24 @@ export interface BerryTranslationEntries {
   [key: string]: BerryTranslationEntry
 }
 
+export interface DialogueTranslationEntry {
+  [key: number]: string;
+}
+
+export interface DialogueTranslationCategory {
+  encounter: DialogueTranslationEntry;
+  victory: DialogueTranslationEntry;
+  defeat?: DialogueTranslationEntry;
+}
+
+export interface DialogueTranslationTrainerClass {
+  [key: string]: DialogueTranslationCategory;
+}
+
+export interface DialogueTranslationEntries {
+  [key: string]: DialogueTranslationTrainerClass;
+}
+
 export interface Localizable {
   localize(): void;
 }
@@ -162,6 +180,14 @@ declare module "i18next" {
       berry: BerryTranslationEntries;
 	  voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
     };
   }
 }
