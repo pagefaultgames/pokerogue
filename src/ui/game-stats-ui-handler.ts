@@ -7,9 +7,10 @@ import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "../enums/buttons";
+import i18next from "../plugins/i18n";
 
 interface DisplayStat {
-  label?: string;
+  label_key?: string;
   sourceFunc?: (gameData: GameData) => string;
   hidden?: boolean;
 }
@@ -20,70 +21,193 @@ interface DisplayStats {
 
 const displayStats: DisplayStats = {
   playTime: {
+    label_key: "playTime",
     sourceFunc: gameData => Utils.getPlayTimeString(gameData.gameStats.playTime)
   },
-  battles: "Total Battles",
+  battles: {
+    label_key: "totalBattles",
+    sourceFunc: gameData => gameData.gameStats.battles.toString(),
+  },
   startersUnlocked: {
-    label: "Starters",
+    label_key: "starters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!d.caughtAttr);
       return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarters).length) * 1000) / 10}%)`;
     }
   },
   shinyStartersUnlocked: {
-    label: "Shiny Starters",
+    label_key: "shinyStarters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!(d.caughtAttr & DexAttr.SHINY));
       return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarters).length) * 1000) / 10}%)`;
     }
   },
   dexSeen: {
-    label: "Species Seen",
+    label_key: "speciesSeen",
     sourceFunc: gameData => {
       const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr);
       return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     }
   },
   dexCaught: {
-    label: "Species Caught",
+    label_key: "speciesCaught",
     sourceFunc: gameData => {
       const caughtCount = gameData.getSpeciesCount(d => !!d.caughtAttr);
       return `${caughtCount} (${Math.floor((caughtCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     }
   },
-  ribbonsOwned: "Ribbons Owned",
-  classicSessionsPlayed: "Classic Runs",
-  sessionsWon: "Classic Wins",
-  dailyRunSessionsPlayed: "Daily Run Attempts",
-  dailyRunSessionsWon: "Daily Run Wins",
-  endlessSessionsPlayed: "Endless Runs?",
-  highestEndlessWave: "Highest Wave (Endless)?",
-  highestMoney: "Highest Money",
-  highestDamage: "Highest Damage",
-  highestHeal: "Highest HP Healed",
-  pokemonSeen: "Pokémon Encountered",
-  pokemonDefeated: "Pokémon Defeated",
-  pokemonCaught: "Pokémon Caught",
-  pokemonHatched: "Eggs Hatched",
-  subLegendaryPokemonSeen: "Sub-Legends Seen?",
-  subLegendaryPokemonCaught: "Sub-Legends Caught?",
-  subLegendaryPokemonHatched: "Sub-Legends Hatched?",
-  legendaryPokemonSeen: "Legends Seen?",
-  legendaryPokemonCaught: "Legends Caught?",
-  legendaryPokemonHatched: "Legends Hatched?",
-  mythicalPokemonSeen: "Mythicals Seen?",
-  mythicalPokemonCaught: "Mythicals Caught?",
-  mythicalPokemonHatched: "Mythicals Hatched?",
-  shinyPokemonSeen: "Shinies Seen?",
-  shinyPokemonCaught: "Shinies Caught?",
-  shinyPokemonHatched: "Shinies Hatched?",
-  pokemonFused: "Pokémon Fused?",
-  trainersDefeated: "Trainers Defeated",
-  eggsPulled: "Eggs Pulled",
-  rareEggsPulled: "Rare Eggs Pulled?",
-  epicEggsPulled: "Epic Eggs Pulled?",
-  legendaryEggsPulled: "Legendary Eggs Pulled?",
-  manaphyEggsPulled: "Manaphy Eggs Pulled?"
+  ribbonsOwned: {
+    label_key: "ribbonsOwned",
+    sourceFunc: gameData => gameData.gameStats.ribbonsOwned.toString(),
+  },
+  classicSessionsPlayed:{
+    label_key: "classicRuns",
+    sourceFunc: gameData => gameData.gameStats.classicSessionsPlayed.toString(),
+  },
+  sessionsWon: {
+    label_key: "classicWins",
+    sourceFunc: gameData => gameData.gameStats.sessionsWon.toString(),
+  },
+  dailyRunSessionsPlayed: {
+    label_key: "dailyRunAttempts",
+    sourceFunc: gameData => gameData.gameStats.dailyRunSessionsPlayed.toString(),
+  },
+  dailyRunSessionsWon: {
+    label_key: "dailyRunWins",
+    sourceFunc: gameData => gameData.gameStats.dailyRunSessionsWon.toString(),
+  },
+  endlessSessionsPlayed: {
+    label_key: "endlessRuns",
+    sourceFunc: gameData => gameData.gameStats.endlessSessionsPlayed.toString(),
+    hidden: true
+  },
+  highestEndlessWave: {
+    label_key: "highestWaveEndless",
+    sourceFunc: gameData => gameData.gameStats.highestEndlessWave.toString(),
+    hidden: true
+  },
+  highestMoney: {
+    label_key: "highestMoney",
+    sourceFunc: gameData => Utils.formatFancyLargeNumber(gameData.gameStats.highestMoney, 3),
+  },
+  highestDamage: {
+    label_key: "highestDamage",
+    sourceFunc: gameData => gameData.gameStats.highestDamage.toString(),
+  },
+  highestHeal: {
+    label_key: "highestHPHealed",
+    sourceFunc: gameData => gameData.gameStats.highestHeal.toString(),
+  },
+  pokemonSeen: {
+    label_key: "pokemonEncountered",
+    sourceFunc: gameData => gameData.gameStats.pokemonSeen.toString(),
+  },
+  pokemonDefeated: {
+    label_key: "pokemonDefeated",
+    sourceFunc: gameData => gameData.gameStats.pokemonDefeated.toString(),
+  },
+  pokemonCaught: {
+    label_key: "pokemonCaught",
+    sourceFunc: gameData => gameData.gameStats.pokemonCaught.toString(),
+  },
+  pokemonHatched: {
+    label_key: "eggsHatched",
+    sourceFunc: gameData => gameData.gameStats.pokemonHatched.toString(),
+  },
+  subLegendaryPokemonSeen: {
+    label_key: "subLegendsSeen",
+    sourceFunc: gameData => gameData.gameStats.subLegendaryPokemonSeen.toString(),
+    hidden: true
+  },
+  subLegendaryPokemonCaught: {
+    label_key: "subLegendsCaught",
+    sourceFunc: gameData => gameData.gameStats.subLegendaryPokemonCaught.toString(),
+    hidden: true
+  },
+  subLegendaryPokemonHatched: {
+    label_key: "subLegendsHatched",
+    sourceFunc: gameData => gameData.gameStats.subLegendaryPokemonHatched.toString(),
+    hidden: true
+  },
+  legendaryPokemonSeen: {
+    label_key: "legendsSeen",
+    sourceFunc: gameData => gameData.gameStats.legendaryPokemonSeen.toString(),
+    hidden: true
+  },
+  legendaryPokemonCaught: {
+    label_key: "legendsCaught",
+    sourceFunc: gameData => gameData.gameStats.legendaryPokemonCaught.toString(),
+    hidden: true
+  },
+  legendaryPokemonHatched: {
+    label_key: "legendsHatched",
+    sourceFunc: gameData => gameData.gameStats.legendaryPokemonHatched.toString(),
+    hidden: true
+  },
+  mythicalPokemonSeen: {
+    label_key: "mythicalsSeen",
+    sourceFunc: gameData => gameData.gameStats.mythicalPokemonSeen.toString(),
+    hidden: true
+  },
+  mythicalPokemonCaught: {
+    label_key: "mythicalsCaught",
+    sourceFunc: gameData => gameData.gameStats.mythicalPokemonCaught.toString(),
+    hidden: true
+  },
+  mythicalPokemonHatched: {
+    label_key: "mythicalsHatched",
+    sourceFunc: gameData => gameData.gameStats.legendaryPokemonHatched.toString(),
+    hidden: true
+  },
+  shinyPokemonSeen: {
+    label_key: "shiniesSeen",
+    sourceFunc: gameData => gameData.gameStats.shinyPokemonSeen.toString(),
+    hidden: true
+  },
+  shinyPokemonCaught: {
+    label_key: "shiniesCaught",
+    sourceFunc: gameData => gameData.gameStats.shinyPokemonCaught.toString(),
+    hidden: true
+  },
+  shinyPokemonHatched: {
+    label_key: "shiniesHatched",
+    sourceFunc: gameData => gameData.gameStats.shinyPokemonHatched.toString(),
+    hidden: true
+  },
+  pokemonFused: {
+    label_key: "pokemonFused",
+    sourceFunc: gameData => gameData.gameStats.pokemonFused.toString(),
+    hidden: true
+  },
+  trainersDefeated: {
+    label_key: "trainersDefeated",
+    sourceFunc: gameData => gameData.gameStats.trainersDefeated.toString(),
+  },
+  eggsPulled: {
+    label_key: "eggsPulled",
+    sourceFunc: gameData => gameData.gameStats.eggsPulled.toString(),
+    hidden: true
+  },
+  rareEggsPulled: {
+    label_key: "rareEggsPulled",
+    sourceFunc: gameData => gameData.gameStats.rareEggsPulled.toString(),
+    hidden: true
+  },
+  epicEggsPulled: {
+    label_key: "epicEggsPulled",
+    sourceFunc: gameData => gameData.gameStats.epicEggsPulled.toString(),
+    hidden: true
+  },
+  legendaryEggsPulled: {
+    label_key: "legendaryEggsPulled",
+    sourceFunc: gameData => gameData.gameStats.legendaryEggsPulled.toString(),
+    hidden: true
+  },
+  manaphyEggsPulled: {
+    label_key: "manaphyEggsPulled",
+    sourceFunc: gameData => gameData.gameStats.manaphyEggsPulled.toString(),
+    hidden: true
+  },
 };
 
 export default class GameStatsUiHandler extends UiHandler {
@@ -110,7 +234,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, "Stats", TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
@@ -127,13 +251,15 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.statsContainer = this.scene.add.container(0, 0);
 
+
     new Array(18).fill(null).map((_, s) => {
-      const statLabel = addTextObject(this.scene, 8 + (s % 2 === 1 ? statsBgWidth : 0), 28 + Math.floor(s / 2) * 16, "", TextStyle.SETTINGS_LABEL);
+
+      const statLabel = addTextObject(this.scene, 8 + (s % 2 === 1 ? statsBgWidth : 0), 28 + Math.floor(s / 2) * 16, "", TextStyle.STATS_LABEL);
       statLabel.setOrigin(0, 0);
       this.statsContainer.add(statLabel);
       this.statLabels.push(statLabel);
 
-      const statValue = addTextObject(this.scene, (statsBgWidth * ((s % 2) + 1)) - 8, statLabel.y, "", TextStyle.WINDOW);
+      const statValue = addTextObject(this.scene, (statsBgWidth * ((s % 2) + 1)) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
       statValue.setOrigin(1, 0);
       this.statsContainer.add(statValue);
       this.statValues.push(statValue);
@@ -173,7 +299,7 @@ export default class GameStatsUiHandler extends UiHandler {
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
       const value = stat.sourceFunc(this.scene.gameData);
-      this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? stat.label : "???");
+      this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???");
       this.statValues[s].setText(value);
     });
     if (statKeys.length < 18) {
@@ -227,33 +353,5 @@ export default class GameStatsUiHandler extends UiHandler {
   clear() {
     super.clear();
     this.gameStatsContainer.setVisible(false);
-  }
-}
-
-export function initStatsKeys() {
-  const statKeys = Object.keys(displayStats);
-
-  for (const key of statKeys) {
-    if (typeof displayStats[key] === "string") {
-      let label = displayStats[key] as string;
-      let hidden = false;
-      if (label.endsWith("?")) {
-        label = label.slice(0, -1);
-        hidden = true;
-      }
-      displayStats[key] = {
-        label: label,
-        sourceFunc: gameData => gameData.gameStats[key].toString(),
-        hidden: hidden
-      };
-    } else if (displayStats[key] === null) {
-      displayStats[key] = {
-        sourceFunc: gameData => gameData.gameStats[key].toString()
-      };
-    }
-    if (!(displayStats[key] as DisplayStat).label) {
-      const splittableKey = key.replace(/([a-z]{2,})([A-Z]{1}(?:[^A-Z]|$))/g, "$1_$2");
-      (displayStats[key] as DisplayStat).label = Utils.toReadableString(`${splittableKey[0].toUpperCase()}${splittableKey.slice(1)}`);
-    }
   }
 }
