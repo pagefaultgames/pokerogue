@@ -274,7 +274,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
   EvolutionItem: {
     "NONE": "None",
 
-
+    "RAZOR_FANG": "Razor Fang",
     "RAZOR_CLAW": "Razor Claw",
     "LINKING_CORD": "联系绳",
     "SUN_STONE": "日之石",
