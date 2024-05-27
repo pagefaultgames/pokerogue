@@ -26,7 +26,7 @@ export enum MenuOptions {
 
 const wikiUrl = "https://wiki.pokerogue.net";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
-const githubUrl = "https://github.com/Flashfyre/pokerogue";
+const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
