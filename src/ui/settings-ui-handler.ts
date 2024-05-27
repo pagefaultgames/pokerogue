@@ -220,6 +220,14 @@ export default class SettingsUiHandler extends UiHandler {
       return false;
     }
 
+    // Don't allow skipping dialogues if the player has not won a session yet
+    if (setting === Setting.Skip_Dialogues && cursor && this.scene.gameData.gameStats.sessionsWon === 0) {
+      if (save) {
+        this.getUi().playError();
+      }
+      return false;
+    }
+
     const lastCursor = this.optionCursors[settingIndex];
 
     const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];

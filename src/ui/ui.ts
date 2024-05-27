@@ -236,6 +236,12 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   showDialogue(text: string, name: string, delay: integer = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    // Skip dialogue if the player has enabled the option
+    if ((this.scene as BattleScene).skipDialogues === true) {
+      console.log(`Dialogue with ${name} skipped`);
+      callback();
+      return;
+    }
     // First get the gender of the player (default male) (also used if UNSET)
     let playerGenderPrefix = "PGM";
     if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
