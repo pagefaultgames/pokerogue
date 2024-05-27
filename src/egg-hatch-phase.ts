@@ -17,7 +17,7 @@ import EggsToHatchCountContainer from "./ui/eggs-to-hatch-count-container";
 export class EggHatchPhase extends Phase {
   private egg: Egg;
 
-  private eggsHatchCount: integer;
+  private eggsToHatchCount: integer;
   private eggsToHatchCountContainer: EggsToHatchCountContainer;
 
   private eggHatchHandler: EggHatchSceneHandler;
@@ -40,11 +40,11 @@ export class EggHatchPhase extends Phase {
   private skipped: boolean;
   private evolutionBgm: AnySound;
 
-  constructor(scene: BattleScene, egg: Egg, eggsHatchCount: integer) {
+  constructor(scene: BattleScene, egg: Egg, eggsToHatchCount: integer) {
     super(scene);
 
     this.egg = egg;
-    this.eggsHatchCount = eggsHatchCount;
+    this.eggsToHatchCount = eggsToHatchCount;
   }
 
   start() {
@@ -89,7 +89,7 @@ export class EggHatchPhase extends Phase {
       this.eggContainer.add(this.eggLightraysOverlay);
       this.eggHatchContainer.add(this.eggContainer);
 
-      this.eggsToHatchCountContainer = new EggsToHatchCountContainer(this.scene, this.eggsHatchCount);
+      this.eggsToHatchCountContainer = new EggsToHatchCountContainer(this.scene, this.eggsToHatchCount);
       this.eggsToHatchCountContainer.setup();
 
       this.eggHatchContainer.add(this.eggsToHatchCountContainer);
@@ -271,8 +271,8 @@ export class EggHatchPhase extends Phase {
   doReveal(): void {
     // Update/reduce count of hatching eggs when revealed if count is at least 1
     // If count is 0, hide eggsToHatchCountContainer instead
-    if (this.eggsHatchCount > 1) {
-      this.eggsHatchCount -= 1;
+    if (this.eggsToHatchCount > 1) {
+      this.eggsToHatchCount -= 1;
     } else {
       this.eggsToHatchCountContainer.setVisible(false);
     }
@@ -297,10 +297,10 @@ export class EggHatchPhase extends Phase {
     this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
     this.scene.time.delayedCall(Utils.fixedInt(250), () => {
-      if (this.eggsHatchCount < 10) {
+      if (this.eggsToHatchCount < 10) {
         this.eggsToHatchCountContainer.setWindowToDefaultSize();
       }
-      this.eggsToHatchCountContainer.eggCountText.setText(`${this.eggsHatchCount}`);
+      this.eggsToHatchCountContainer.eggCountText.setText(`${this.eggsToHatchCount}`);
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(Utils.fixedInt(500), () => {

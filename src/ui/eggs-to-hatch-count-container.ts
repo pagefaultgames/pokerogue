@@ -11,35 +11,35 @@ export default class EggsToHatchCountContainer extends Phaser.GameObjects.Contai
   private readonly WINDOW_MEDIUM_WIDTH = 42;
   private readonly WINDOW_HEIGHT = 26;
 
-  private eggsHatchCount: integer;
-  private eggsHatchCountWindow: Phaser.GameObjects.NineSlice;
+  private eggsToHatchCount: integer;
+  private eggsToHatchCountWindow: Phaser.GameObjects.NineSlice;
 
   public eggCountText: Phaser.GameObjects.Text;
 
   /**
    * @param {BattleScene} scene - The scene to which this container belongs.
-   * @param {number} eggsHatchCount - The number of eggs to hatch.
+   * @param {number} eggsToHatchCount - The number of eggs to hatch.
    */
-  constructor(scene: BattleScene, eggsHatchCount: integer) {
+  constructor(scene: BattleScene, eggsToHatchCount: integer) {
     super(scene, 0, 0);
-    this.eggsHatchCount = eggsHatchCount;
+    this.eggsToHatchCount = eggsToHatchCount;
   }
 
   /**
    * Sets up the container, creating the window, egg sprite, and egg count text.
    */
   setup(): void {
-    const windowWidth = this.eggsHatchCount > 9 ? this.WINDOW_MEDIUM_WIDTH : this.WINDOW_DEFAULT_WIDTH;
+    const windowWidth = this.eggsToHatchCount > 9 ? this.WINDOW_MEDIUM_WIDTH : this.WINDOW_DEFAULT_WIDTH;
 
-    this.eggsHatchCountWindow = addWindow(this.scene as BattleScene, 5, 5, windowWidth, this.WINDOW_HEIGHT);
-    this.setVisible(this.eggsHatchCount > 1);
+    this.eggsToHatchCountWindow = addWindow(this.scene as BattleScene, 5, 5, windowWidth, this.WINDOW_HEIGHT);
+    this.setVisible(this.eggsToHatchCount > 1);
 
-    this.add(this.eggsHatchCountWindow);
+    this.add(this.eggsToHatchCountWindow);
 
     const eggSprite = this.scene.add.sprite(19, 18, "egg", "egg_0");
     eggSprite.setScale(0.32);
 
-    this.eggCountText = addTextObject(this.scene, 28, 13, `${this.eggsHatchCount}`, TextStyle.MESSAGE, { fontSize: "66px" });
+    this.eggCountText = addTextObject(this.scene, 28, 13, `${this.eggsToHatchCount}`, TextStyle.MESSAGE, { fontSize: "66px" });
 
     this.add(eggSprite);
     this.add(this.eggCountText);
@@ -49,6 +49,6 @@ export default class EggsToHatchCountContainer extends Phaser.GameObjects.Contai
    * Resets the window size to the default width and height.
    */
   setWindowToDefaultSize(): void {
-    this.eggsHatchCountWindow.setSize(this.WINDOW_DEFAULT_WIDTH, this.WINDOW_HEIGHT);
+    this.eggsToHatchCountWindow.setSize(this.WINDOW_DEFAULT_WIDTH, this.WINDOW_HEIGHT);
   }
 }
