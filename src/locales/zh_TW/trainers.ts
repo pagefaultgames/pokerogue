@@ -94,6 +94,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "rich_kid_female": "富家孩子",
   "rich_kids": "富二代組合",
   "roughneck": "光頭男",
+  "sailor": "Sailor",
   "scientist": "研究員",
   "scientist_female": "研究員",
   "scientists": "研究員組合",
