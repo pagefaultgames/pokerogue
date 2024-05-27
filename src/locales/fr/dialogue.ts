@@ -4409,7 +4409,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "encounter": {
 	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincu. @c{angry_mopen}Eh… Pas mal !
 				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
-				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perde parfois.
+				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perdre parfois.
 				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
 				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t'as intérêt à tout donner !`
     },
