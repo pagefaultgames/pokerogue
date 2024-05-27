@@ -158,6 +158,7 @@ export default class BattleScene extends SceneBase {
   public arenaNextEnemy: ArenaBase;
   public arena: Arena;
   public gameMode: GameMode;
+  public prestigeLevel: integer;
   public score: integer;
   public lockModifierTiers: boolean;
   public trainer: Phaser.GameObjects.Sprite;

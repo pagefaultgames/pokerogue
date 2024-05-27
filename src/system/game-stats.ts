@@ -4,6 +4,7 @@
 export class GameStats {
   public playTime: integer;
   public battles: integer;
+  public prestigeLevel: integer;
   public classicSessionsPlayed: integer;
   public sessionsWon: integer;
   public ribbonsOwned: integer;
@@ -42,6 +43,7 @@ export class GameStats {
   constructor(source?: any) {
     this.playTime = source?.playTime || 0;
     this.battles = source?.battles || 0;
+    this.prestigeLevel = source?.prestigeLevel || 0;
     this.classicSessionsPlayed = source?.classicSessionsPlayed || 0;
     this.sessionsWon = source?.sessionsWon || 0;
     this.ribbonsOwned = source?.ribbonsOwned || 0;
