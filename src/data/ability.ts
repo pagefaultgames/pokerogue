@@ -4010,7 +4010,7 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.STEELY_SPIRIT, 8)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
-      .conditionalAttr(p => p.scene.currentBattle.double && [Abilities.STEELY_SPIRIT].some(a => p.getAlly().hasAbility(a)), BattleStatMultiplierAbAttr, MoveTypePowerBoostAbAttr, Type.STEEL),
+      .conditionalAttr(p => p.scene.currentBattle.double && [Abilities.STEELY_SPIRIT].some(a => p.getAlly().hasAbility(a)), MoveTypePowerBoostAbAttr, Type.STEEL),
       .partial(),
     new Ability(Abilities.PERISH_BODY, 8)
       .unimplemented(),
