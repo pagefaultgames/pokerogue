@@ -206,23 +206,19 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("items", "");
     this.loadAtlas("types", "");
 
-    (i18next.options.supportedLngs as Array<any>).forEach(lang => {
-      switch (lang) {
-      case "pt":
-        lang = "pt_BR";
-        break;
-      case "zh":
-        lang = "zh_CN";
-        break;
-      }
+    // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
+    const lang = i18next.language;
+    if (lang !== "en") {
       if (Utils.verifyLang(lang)) {
-        if (lang === "zh_CN") {
-          // Load also the traditional Chinese since it doesn't have a separate language code in supportedLngs
-          this.loadAtlas("types_zh_TW", "");
-        }
         this.loadAtlas(`types_${lang}`, "");
+      } else {
+        // Fallback to English
+        this.loadAtlas("types", "");
       }
-    });
+    } else {
+      this.loadAtlas("types", "");
+    }
+
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");

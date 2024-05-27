@@ -186,7 +186,8 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
             i18next.changeLanguage(locale);
             localStorage.setItem("prLang", locale);
             cancelHandler();
-            scene.reset(true, false, true);
+            // Reload the whole game to apply the new locale since also some constants are translated
+            window.location.reload();
             return true;
           } catch (error) {
             console.error("Error changing locale:", error);
