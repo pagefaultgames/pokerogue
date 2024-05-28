@@ -2747,7 +2747,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `Veit: Wie habe ich mich gemacht, Vater?
-          $Adam: Du hast großartig gemacht, Sohn! Aber wir haben trotzdem verloren...
+          $Adam: Du warst großartig, Sohn! Aber wir haben trotzdem verloren...
           $Also zurück in den Untergrund! Lass uns mehr trainieren`,
     }
   },
