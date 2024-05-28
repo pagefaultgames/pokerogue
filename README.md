@@ -21,10 +21,6 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 **How do I test a new _______?**
 - In the `src/overrides.ts` file there are overrides for most values you'll need to change for testing
 
-
-## 🪧 To Do
-Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to see what we're working on
-
 # 📝 Credits
 > If this project contains assets you have produced and you do not see your name here, **please** reach out.
 
