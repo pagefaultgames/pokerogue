@@ -430,7 +430,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     BURN_DRIVE: "火焰卡帶",
     CHILL_DRIVE: "冰凍卡帶",
     DOUSE_DRIVE: "水流卡帶",
-    
+
     "FIST_PLATE": "Fist Plate",
     "SKY_PLATE": "Sky Plate",
     "TOXIC_PLATE": "Toxic Plate",
