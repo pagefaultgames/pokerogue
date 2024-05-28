@@ -107,14 +107,22 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         gachaInfoContainer.add(pokemonIcon);
         break;
       case GachaType.MOVE:
-        gachaUpLabel.setText("Move UP!");
-        gachaUpLabel.setX(0);
-        gachaUpLabel.setOrigin(0.5, 0);
+        gachaUpLabel
+          .setText("Move UP!")
+          .setX(0)
+          .setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        gachaUpLabel.setText("Shiny UP!");
-        gachaUpLabel.setX(0);
-        gachaUpLabel.setOrigin(0.5, 0);
+        gachaUpLabel
+          .setText("Shiny UP!")
+          .setX(0)
+          .setOrigin(0.5, 0);
+        break;
+      case GachaType.HIDDEN_ABILITY:
+        gachaUpLabel
+          .setText("Ability UP!")
+          .setX(0)
+          .setOrigin(0.5, 0);
         break;
       }
 

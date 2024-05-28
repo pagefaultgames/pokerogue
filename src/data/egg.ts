@@ -9,7 +9,8 @@ export const EGG_SEED = 1073741824;
 export enum GachaType {
   MOVE,
   LEGENDARY,
-  SHINY
+  SHINY,
+  HIDDEN_ABILITY
 }
 
 export class Egg {
@@ -88,6 +89,8 @@ export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string 
     return i18next.t("egg:gachaTypeMove");
   case GachaType.SHINY:
     return i18next.t("egg:gachaTypeShiny");
+  case GachaType.HIDDEN_ABILITY:
+    return i18next.t("egg:gachaTypeHiddenAbility");
   }
 }
 
