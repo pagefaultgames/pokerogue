@@ -3693,11 +3693,13 @@ export class PokemonBattleData {
 export class PokemonBattleSummonData {
   public turnCount: integer = 1;
   public moveHistory: TurnMove[] = [];
+  public statsBoostedOnFirstTurn: boolean = false;
 }
 
 export class PokemonTurnData {
   public flinched: boolean;
   public acted: boolean;
+  public statsBoosted: boolean;
   public hitCount: integer;
   public hitsLeft: integer;
   public damageDealt: integer = 0;

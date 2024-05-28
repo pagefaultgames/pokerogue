@@ -4776,6 +4776,50 @@ export class DestinyBondAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to apply {@linkcode BattlerTagType.CONFUSED} to the target if they have had their stats boosted this turn.
+ *
+ * @extends AddBattlerTagAttr
+ */
+export class ConfuseIfBoostedAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.CONFUSED, false, false, 2, 5);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (
+      target.turnData.statsBoosted ||
+      (user.scene.currentBattle.turn === 1 && target.battleSummonData.statsBoostedOnFirstTurn)
+    ) {
+      super.apply(user, target, move, args);
+    }
+    console.log('alluring', user, target);
+    return true;
+  }
+}
+
+/**
+ * Attribute to apply {@linkcode StatusEffect.BURN} to the target if they have had their stats boosted this turn.
+ *
+ * @extends MoveEffectAttr
+ */
+export class BurnIfBoostedAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (
+      target.turnData.statsBoosted || 
+      (user.scene.currentBattle.turn === 1 && target.battleSummonData.statsBoostedOnFirstTurn)
+    ) {
+      target.trySetStatus(StatusEffect.BURN, true, user);
+    }
+    console.log('burning', user, target);
+    return true;
+  }
+}
+
 export class LastResortAttr extends MoveAttr {
   getCondition(): MoveConditionFunc {
     return (user: Pokemon, target: Pokemon, move: Move) => {
@@ -7249,8 +7293,8 @@ export function initMoves() {
     new AttackMove(Moves.SKITTER_SMACK, Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new AttackMove(Moves.BURNING_JEALOUSY, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 5, 100, 0, 8)
-      .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(BurnIfBoostedAttr)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .partial(),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
@@ -7695,8 +7739,8 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ALLY)
       .partial(),
     new AttackMove(Moves.ALLURING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
-      .soundBased()
-      .partial(),
+      .attr(ConfuseIfBoostedAttr)
+      .soundBased(),
     new AttackMove(Moves.TEMPER_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SUPERCELL_SLAM, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, 0, 9)
