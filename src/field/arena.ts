@@ -72,10 +72,9 @@ export class Arena {
       && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
       let tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
       if (typeof luckValue !== 'undefined') { //if party passed
-        if (luckValue < 6) {
-          //Do nothing at low luck values
-        } else if (luckValue < 10) {
-          tierValue = Math.floor(tierValue * 5.5 / luckValue); 
+        if (luckValue < 6 && luckValue < 10) { //Do nothing at low luck values
+          
+          tierValue = Math.floor(tierValue * 5.5 / luckValue); //increase odds of lower rarity encounters occuring
         } else {
           tierValue = Math.floor(tierValue * 5.5 / luckValue);
           if (isBoss && tierValue >= 20) { //the modifiers to tierValue in this section are arbitrary
