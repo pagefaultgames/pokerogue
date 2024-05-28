@@ -58,6 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import { CursorMemory } from "./enums/cursor";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -111,6 +112,7 @@ export default class BattleScene extends SceneBase {
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
   public moveAnimations: boolean = true;
+  public cursorMemory: CursorMemory = 0;
   public expGainsSpeed: integer = 0;
   /**
 	 * Defines the experience gain display mode.

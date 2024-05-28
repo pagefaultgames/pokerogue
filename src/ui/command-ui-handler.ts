@@ -6,6 +6,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "../plugins/i18n";
 import {Button} from "../enums/buttons";
+import { CursorMemory } from "#app/enums/cursor";
 
 export enum Command {
   FIGHT = 0,
@@ -64,7 +65,11 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: commandPhase.getPokemon().name}), 0);
-    this.setCursor(this.getCursor());
+
+    if (this.scene.cursorMemory & CursorMemory.Command)
+      this.setCursor(this.getCursor());
+    else
+      this.setCursor(0)
 
     return true;
   }

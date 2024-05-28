@@ -9,6 +9,7 @@ import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from "../plugins/i18n";
 import {Button} from "../enums/buttons";
+import { CursorMemory } from "../enums/cursor";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -85,7 +86,12 @@ export default class FightUiHandler extends UiHandler {
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
-    this.setCursor(this.getCursor());
+
+    if (this.scene.cursorMemory & CursorMemory.Move)
+      this.setCursor(this.getCursor());
+    else
+      this.setCursor(0)
+
     this.displayMoves();
 
     return true;
