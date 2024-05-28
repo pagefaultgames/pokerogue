@@ -57,7 +57,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
   [Setting.Move_Animations]: ["Off", "On"],
   [Setting.Show_Stats_on_Level_Up]: ["Off", "On"],
-  [Setting.Hide_Unimplemented_Moves]: ['Off', 'On'],
+  [Setting.Hide_Unimplemented_Moves]: ["Off", "On"],
   [Setting.EXP_Gains_Speed]: ["Normal", "Fast", "Faster", "Skip"],
   [Setting.EXP_Party_Display]: ["Normal", "Level Up Notification", "Skip"],
   [Setting.HP_Bar_Speed]: ["Normal", "Fast", "Faster", "Instant"],
@@ -154,9 +154,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     scene.showLevelUpStats = settingOptions[setting][value] === "On";
     break;
   case Setting.Hide_Unimplemented_Moves:
-      scene.hideUnimplementedMoves = settingOptions[setting][value] === 'On'
-      break;
-    case Setting.EXP_Gains_Speed:
+    scene.hideUnimplementedMoves = settingOptions[setting][value] === "On";
+    break;
+  case Setting.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
     break;
   case Setting.EXP_Party_Display:

@@ -1212,7 +1212,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (this.scene.hideUnimplementedMoves) {
-      ret = ret.filter(([, move]) => allMoves[move].isImplemented())
+      ret = ret.filter(([, move]) => allMoves[move].isImplemented());
     }
 
     return ret;
