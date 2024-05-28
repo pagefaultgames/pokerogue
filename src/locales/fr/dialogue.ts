@@ -1595,13 +1595,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -3873,13 +3873,13 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
