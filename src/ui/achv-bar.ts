@@ -26,21 +26,30 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     let titleTextX = 40;
     let descriptionTextX = 43;
     let wordWrapWidth = 664;
+    let yicon = 4;
+    let bgWidth = 160;
     if (i18next.language === "de") {
       xNineSlice = -20;
-      heightNineSlice = 60;
+      heightNineSlice = 50;
       xicon = -16;
       titleTextX = 20;
       descriptionTextX = 23;
-      wordWrapWidth = 700;
+      wordWrapWidth = 720;
+      bgWidth = 180;
+
     }
 
-    this.bg = this.scene.add.nineslice(xNineSlice , 0, "achv_bar", null, 800, heightNineSlice, 41, 6, 16, 4);
+    this.bg = this.scene.add.nineslice(xNineSlice , 0, "achv_bar", null,bgWidth , heightNineSlice, 41, 6, 16, 4);
     this.bg.setOrigin(0, 0);
+
+    // This can not be done earlier because the bg is not yet created
+    if (i18next.language === "de") {
+      yicon = this.bg.height/2.5 - this.bg.height/4;
+    }
 
     this.add(this.bg);
 
-    this.icon = this.scene.add.sprite(xicon, this.bg.height/2 - this.bg.height/4, "items");
+    this.icon = this.scene.add.sprite(xicon, yicon, "items");
     this.icon.setOrigin(0, 0);
     this.add(this.icon);
 
