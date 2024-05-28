@@ -981,7 +981,7 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     if (!(args[1] as Utils.BooleanHolder).value) {
-      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(this.getMaxStackCount(null)) < this.getStackCount();
+      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(10)) < this.getStackCount() * 3;
     }
 
     return true;
