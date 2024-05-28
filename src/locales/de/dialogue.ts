@@ -1234,8 +1234,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
-                $Meine Forschung ist noch nicht abgeschlossen. OK, du gewinnst.`,
+      1: "Ich bin Kai, der Arenaleiter von Azalea City. Ich bin ein großer Fan von Käfer-Pokémon.",
     },
     "victory": {
       1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
