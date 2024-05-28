@@ -105,3 +105,19 @@ export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+
+/**
+ * STARTERS OVERRIDE
+ * Unlock all starters
+ */
+export const STARTERS_OVERRIDE: boolean = false;
+/**
+ * STARTERS FORMS OVERRIDE
+ * Unlock all forms for starters
+ */
+export const STARTERS_FORMS_OVERRIDE: boolean = false;
+/**
+ * STARTERS OVERRIDE
+ * Unlock all form even those not usually available for starters
+ */
+export const STARTERS_ALL_FORMS_OVERRIDE: boolean = false;
