@@ -1,7 +1,8 @@
 import BattleScene from "../battle-scene";
-import { Achv } from "../system/achv";
+import {Achv, getAchievementDescription} from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
+import i18next from "i18next";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
@@ -19,16 +20,31 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", null, 160, 40, 41, 6, 16, 4);
+    let xNineSlice = 0;
+    let heightNineSlice = 40;
+    let xicon= 4;
+    let titleTextX = 40;
+    let descriptionTextX = 43;
+    let wordWrapWidth = 664;
+    if (i18next.language === "de") {
+      xNineSlice = -20;
+      heightNineSlice = 60;
+      xicon = -16;
+      titleTextX = 20;
+      descriptionTextX = 23;
+      wordWrapWidth = 700;
+    }
+
+    this.bg = this.scene.add.nineslice(xNineSlice , 0, "achv_bar", null, 800, heightNineSlice, 41, 6, 16, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.icon = this.scene.add.sprite(4, 4, "items");
+    this.icon = this.scene.add.sprite(xicon, this.bg.height/2 - this.bg.height/4, "items");
     this.icon.setOrigin(0, 0);
     this.add(this.icon);
 
-    this.titleText = addTextObject(this.scene, 40, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.titleText = addTextObject(this.scene, titleTextX, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.titleText.setOrigin(0, 0);
     this.add(this.titleText);
 
@@ -36,11 +52,11 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.scoreText.setOrigin(1, 0);
     this.add(this.scoreText);
 
-    this.descriptionText = addTextObject(this.scene, 43, 16, "", TextStyle.WINDOW_ALT, { fontSize: "72px" });
+    this.descriptionText = addTextObject(this.scene, descriptionTextX, 16, "", TextStyle.WINDOW_ALT, { fontSize: "72px" });
     this.descriptionText.setOrigin(0, 0);
     this.add(this.descriptionText);
 
-    this.descriptionText.setWordWrapWidth(664);
+    this.descriptionText.setWordWrapWidth(wordWrapWidth);
     this.descriptionText.setLineSpacing(-5);
 
     this.setScale(0.5);
@@ -60,7 +76,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.icon.setFrame(achv.getIconImage());
     this.titleText.setText(achv.getName());
     this.scoreText.setVisible(achv instanceof Achv);
-    this.descriptionText.setText(achv.description);
+    this.descriptionText.setText(getAchievementDescription((achv as Achv).localizationKey));
 
     if (achv instanceof Achv) {
       this.scoreText.setText(`+${(achv as Achv).score}pt`);
