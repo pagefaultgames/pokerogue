@@ -71,18 +71,14 @@ export class Arena {
     const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
       let tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
-      if (typeof luckValue !== 'undefined') { //if party passed
-        if (luckValue < 6 && luckValue < 10) { //Do nothing at low luck values
+      if (typeof luckValue !== 'undefined') { //if luckValue passed in, use it to modify rare encounter odds
+          if (isBoss) {
+        tierValue = Utils.randSeedInt(512  - 2*luckValue); 
+      } else {
+        tierValue = Utils.randSeedInt(64  - luckValue/2);
+      }
           
-          tierValue = Math.floor(tierValue * 5.5 / luckValue); //increase odds of lower rarity encounters occuring
-        } else {
-          tierValue = Math.floor(tierValue * 5.5 / luckValue);
-          if (isBoss && tierValue >= 20) { //the modifiers to tierValue in this section are arbitrary
-            tierValue += 6; //Slight bump to common rarity bosses to make sure they stay more common than rares
-          } else if (!isBoss && tierValue >= 32) {
-            tierValue += 62; //Slight bump to common rarity enemies to make sure they appear more frequently than uncommons
-          }
-        }
+
       }
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
