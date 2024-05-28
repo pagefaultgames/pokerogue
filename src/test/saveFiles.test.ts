@@ -13,6 +13,8 @@ import {loggedInUser, setLoggedInUser} from "#app/account";
 import {Mode} from "#app/ui/ui";
 import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
 import {apiFetch} from "#app/utils";
+import {GameModes} from "#app/game-mode";
+import {TitlePhase} from "#app/phases";
 const saveKey = "x0i2O7WRiANTqPmZ";
 
 
@@ -108,6 +110,14 @@ describe("Session import/export", () => {
   it('Start at title mode', () => {
     const mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.TITLE);
+  });
+
+  it('Select gamemode Classic', () => {
+    const gameMode = GameModes.CLASSIC;
+    scene.ui.setMode(Mode.MESSAGE);
+    const titlePhase = new TitlePhase(scene);
+    titlePhase.end();
+
   });
 
   it.skip('Reach title mode', async () => {
