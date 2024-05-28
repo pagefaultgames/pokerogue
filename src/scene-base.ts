@@ -47,11 +47,11 @@ export class SceneBase extends Phaser.Scene {
     if (folder) {
       folder += "/";
     }
-    this.load.atlas(key, this.getCachedUrl(`images/${folder}${filenameRoot}.png`), this.getCachedUrl(`images/${folder}/${filenameRoot}.json`));
+    this.load.atlas(key, this.getCachedUrl(`images/${folder}${filenameRoot}.png`), this.getCachedUrl(`images/${folder}${filenameRoot}.json`));
     if (folder.startsWith("ui")) {
       legacyCompatibleImages.push(key);
       folder = folder.replace("ui", "ui/legacy");
-      this.load.atlas(`${key}_legacy`, this.getCachedUrl(`images/${folder}${filenameRoot}.png`), this.getCachedUrl(`images/${folder}/${filenameRoot}.json`));
+      this.load.atlas(`${key}_legacy`, this.getCachedUrl(`images/${folder}${filenameRoot}.png`), this.getCachedUrl(`images/${folder}${filenameRoot}.json`));
     }
   }
 
