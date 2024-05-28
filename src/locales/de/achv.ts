@@ -42,7 +42,7 @@ export const achv: AchievementTranslationEntries = {
   },
 
   "HealAchv": {
-    description: "Heile {{healAmount}} {{HP}} auf einmal. Mit einer Attacke, einer Fähigkeit oder einem gehaltenen Gegenstand",
+    description: "Heile {{healAmount}} {{HP}} auf einmal. Mit einer Attacke, Fähigkeit oder einem gehaltenen Gegenstand",
   },
   "250_HEAL": {
     name: "Anfänger-Heiler",
@@ -91,7 +91,7 @@ export const achv: AchievementTranslationEntries = {
 
   "TRANSFER_MAX_BATTLE_STAT": {
     name: "Teamwork",
-    description: "Nutze Staffette auf ein anderes Teammitglied, während der Anwender mindestens eines Statuswertes maximiert hat",
+    description: "Nutze Staffette, während der Anwender mindestens eines Statuswertes maximiert hat",
   },
   "MAX_FRIENDSHIP": {
     name:  "Freundschaftsmaximierung",

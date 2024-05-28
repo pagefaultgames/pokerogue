@@ -36,7 +36,8 @@ export class Achv {
   }
 
   getName(): string {
-    return this.name;
+    // Localization key is used to get the name of the achievement
+    return i18next.t(`achv:${this.localizationKey}.name`);
   }
 
   getIconImage(): string {
