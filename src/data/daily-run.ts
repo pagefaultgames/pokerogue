@@ -14,14 +14,14 @@ export interface DailyRunConfig {
 
 export function fetchDailyRunSeed(): Promise<string> {
   return new Promise<string>((resolve, reject) => {
-    Utils.apiFetch('daily/seed').then(response => {
+    Utils.apiFetch("daily/seed").then(response => {
       if (!response.ok) {
         resolve(null);
         return;
       }
       return response.text();
     }).then(seed => resolve(seed))
-    .catch(err => reject(err));
+      .catch(err => reject(err));
   });
 }
 
@@ -54,7 +54,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
       starters.push(getDailyRunStarter(scene, starterSpecies, startingLevel));
     }
   }, 0, seed);
-  
+
   return starters;
 }
 
