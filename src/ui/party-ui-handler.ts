@@ -388,9 +388,17 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           break;
         case Button.UP:
+          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+            this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            this.updateOptions();
+          }
           success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1);
           break;
         case Button.DOWN:
+          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+            this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            this.updateOptions();
+          }
           success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0);
           break;
         }
