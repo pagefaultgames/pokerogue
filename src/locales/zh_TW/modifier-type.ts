@@ -213,7 +213,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     CANDY_JAR: { name: "糖果罐", description: "神奇糖果提供的升級提升1級" },
     BERRY_POUCH: {
       name: "樹果袋",
-      description: "使用樹果時有33%的幾率不會消耗樹果",
+      description: "使用樹果時有30%的幾率不會消耗樹果",
     },
     FOCUS_BAND: {
       name: "氣勢頭帶",
