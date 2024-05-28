@@ -2,6 +2,7 @@ const MockConsoleLog = () => {
   const logs = [];
   const originalLog = console.log;
   const originalError = console.error;
+  const notified = [];
   return ({
     log(msg) {
       logs.push(msg);
@@ -18,6 +19,10 @@ const MockConsoleLog = () => {
     },
     warn(msg) {
       logs.push(msg);
+    },
+    notify(msg) {
+      originalLog(msg);
+      notified.push(msg);
     }
   });
 };

@@ -39,10 +39,10 @@ export function generateStarter(scene) {
   return starters;
 }
 
-export function waitMode(scene, mode) {
+export function waitUntil(truth) {
   return new Promise(resolve => {
     const interval = setInterval(() => {
-      if (scene.ui?.getMode() === mode) {
+      if (truth()) {
         clearInterval(interval);
         resolve(true);
       }

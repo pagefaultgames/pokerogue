@@ -22,28 +22,9 @@ import NoAudioSound = Phaser.Sound.NoAudioSound;
 import {vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
 import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
-
-// Phaser.GameObjects.Image.prototype.setPositionRelative = (key) => ({});
-// // Phaser.GameObjects.Image.prototype.frame = {realHeight: 1};
-// Phaser.GameObjects.Image.prototype.frame = new GameObjectFactory(_scene).frame;
-// Phaser.GameObjects.Image.prototype.setTexture = (key) => ({});
-// Phaser.GameObjects.Image.prototype.setSizeToFrame = () => null;
-//
-// Phaser.GameObjects.Text.prototype.setPositionRelative = (key) => ({});
-// Phaser.GameObjects.Text.prototype.frame = new Frame({source: {width: 1, height: 1}} as Texture, 0, 0, 0, 0, 0, 0);
-// Phaser.GameObjects.Text.prototype.setTexture = (key) => ({});
-// Phaser.GameObjects.Text.prototype.setSizeToFrame = () => null;
-//
-// Phaser.GameObjects.Sprite.prototype.setTexture = (key) => ({});
-// Phaser.GameObjects.Sprite.prototype.texture = { frameTotal: 1, get: () => null };
-// Phaser.GameObjects.Sprite.prototype.setSizeToFrame = () => null;
-//
-// Phaser.GameObjects.NineSlice.prototype.setTexture = () => ({});
-// Phaser.GameObjects.NineSlice.prototype.setSizeToFrame = () => null;
-// Phaser.GameObjects.NineSlice.prototype.frame = {};
-//
-// Phaser.GameObjects.GameObject.prototype.setInteractive = () => null;
-// Phaser.Textures.TextureManager.prototype.getFrame = () => ({});
+import MockLoader from "#app/test/essentials/mockLoader";
+import {MockFetch} from "#app/test/essentials/mockFetch";
+import * as Utils from "#app/utils";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -60,6 +41,8 @@ Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 BBCodeText.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 navigator.getGamepads = vi.fn().mockReturnValue([]);
+global.fetch = vi.fn(MockFetch);
+Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();
@@ -117,6 +100,7 @@ export default class GameWrapper {
     };
     _scene.sound = {
       play: () => null,
+      add: () => _scene.sound,
       get: (key) => new NoAudioSound(undefined, key),
       getAllPlaying: () => [],
     };
@@ -156,11 +140,9 @@ export default class GameWrapper {
     _scene.pluginEvents = new EventEmitter();
     _scene.input.keyboard = new KeyboardPlugin(_scene);
     _scene.input.gamepad = new GamepadPlugin(_scene);
-    _scene.load = new LoaderPlugin(_scene);
-    _scene.load.cacheManager = new CacheManager(_scene);
+    _scene.load = new MockLoader(_scene);
     _scene.sys.cache = _scene.load.cacheManager;
     _scene.sys.scale = new ScaleManager(_scene);
-    _scene.load.video = () => null;
     _scene.spritePipeline = {};
     _scene.fieldSpritePipeline = {};
     const mockTextureManager = new MockTextureManager(_scene);

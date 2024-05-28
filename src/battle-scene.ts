@@ -567,7 +567,7 @@ export default class BattleScene extends SceneBase {
 					resolve();
 				});*/
 
-        resolve();
+        return resolve();
       });
     });
   }
