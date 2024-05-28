@@ -250,7 +250,7 @@ export const trainerTypeDialogue = {
         "dialogue:battle_girl.encounter.1",
       ],
       victory: [
-        "dialogue.battle_girl.victory.1",
+        "dialogue:battle_girl.victory.1",
       ]
     }
   ],

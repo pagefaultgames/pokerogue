@@ -12,7 +12,7 @@ import { Stat } from "./data/pokemon-stat";
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import {TimeOfDay} from "#app/data/enums/time-of-day";
-import {Gender} from "pokenode-ts";
+import { Gender } from "./data/gender";
 
 /**
  * Overrides for testing different in game situations
