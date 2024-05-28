@@ -3,11 +3,13 @@ import {SimpleTranslationEntries} from "#app/plugins/i18n";
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
   "elite_four": "Conseil 4",
+  "elite_four_female": "Conseil 4",
   "gym_leader": "Champion d’Arène",
   "gym_leader_female": "Championne d’Arène",
-  "gym_leader_double": "Gym Leader Duo",
-  "champion": "Maitre·esse", //Written in gender-inclusive language in wait of a potential split of the entry
-  "champion_double": "Champion Duo",
+  "gym_leader_double": "Duo de Champions",
+  "champion": "Maitre",
+  "champion_female": "Maitresse",
+  "champion_double": "Duo de Maitres",
   "rival": "Rival·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "professor": "Professeur·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "frontier_brain": "Meneur·euse de Zone", //Written in gender-inclusive language in wait of a potential split of the entry
@@ -248,12 +250,12 @@ export const trainerNames: SimpleTranslationEntries = {
   // Double Names
   "blue_red_double": "Blue & Red",
   "red_blue_double": "Red & Blue",
-  "tate_liza_double": "Tate & Liza",
-  "liza_tate_double": "Liza & Tate",
-  "steven_wallace_double": "Steven & Wallace",
-  "wallace_steven_double": "Wallace & Steven",
-  "alder_iris_double": "Alder & Iris",
-  "iris_alder_double": "Iris & Alder",
-  "marnie_piers_double": "Marnie & Piers",
-  "piers_marnie_double": "Piers & Marnie",
+  "tate_liza_double": "Lévy & Tatia",
+  "liza_tate_double": "Tatia & Lévy",
+  "steven_wallace_double": "Pierre R. & Marc",
+  "wallace_steven_double": "Marc & Pierre R.",
+  "alder_iris_double": "Goyah & Iris",
+  "iris_alder_double": "Iris & Goyah",
+  "marnie_piers_double": "Rosemary & Peterson",
+  "piers_marnie_double": "Peterson & Rosemary",
 } as const;
