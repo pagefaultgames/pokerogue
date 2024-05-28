@@ -516,7 +516,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Oh, es scheint, als hätte ich verloren.",
-      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um den Kämpfe geht.",
+      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um Kämpfe geht.",
       3: "Ich werde mir zu Herzen nehmen, was ich heute gelernt habe."
     },
     "defeat": {
