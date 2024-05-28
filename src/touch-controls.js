@@ -124,13 +124,13 @@ function bindKey(node, key, buttonMap) {
  */
 function preventElementZoom(element) {
   element.addEventListener("touchstart", (event) => {
-    const t2 = event.timeStamp;
-    const t1 = event.currentTarget.dataset.lastTouch || t2;
-    const dt = t2 - t1;
+    const currentTouchTimeStamp = event.timeStamp;
+    const previousTouchTimeStamp = event.currentTarget.dataset.lastTouchTimeStamp || currentTouchTimeStamp;
+    const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
     const fingers = event.touches.length;
-    event.currentTarget.dataset.lastTouch = t2;
+    event.currentTarget.dataset.lastTouchTimeStamp = currentTouchTimeStamp;
 
-    if (!dt || dt > 500 || fingers > 1) {
+    if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
       return;
     } // not double-tap
 
