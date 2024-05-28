@@ -61,7 +61,7 @@ function simulateKeyboardEvent(eventType, key, events) {
     return;
   }
   const button = Button[key];
-  
+
   switch (eventType) {
   case "keydown":
     events.emit("input_down", {

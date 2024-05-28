@@ -67,7 +67,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
 
   swapAction(): boolean {
     const activeConfig = this.scene.inputController.getActiveConfig(Device.GAMEPAD);
-    if(this.scene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
+    if (this.scene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
       this.scene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
       return true;
     }

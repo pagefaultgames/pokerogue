@@ -98,7 +98,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.actionsContainer.add(this.cancelLabel);
   }
 
-  manageAutoCloseTimer(){
+  manageAutoCloseTimer() {
     clearTimeout(this.countdownTimer);
     this.countdownTimer = setTimeout(() => {
       this.timeLeftAutoClose -= 1;
