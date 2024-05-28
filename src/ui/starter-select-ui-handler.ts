@@ -453,7 +453,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const getShinyStar = (i: integer, v: integer): Phaser.GameObjects.Image => {
       const position = calcIconPosition(i);
-      const ret = this.scene.add.image(position.x + 163, position.y + 11, "shiny_star_small");
+      const ret = this.scene.add.image((position.x - v * 3) + 163, position.y + 11, "shiny_star_small");
       ret.setOrigin(0, 0);
       ret.setScale(0.5);
       ret.setVisible(false);
