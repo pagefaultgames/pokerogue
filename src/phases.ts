@@ -176,6 +176,10 @@ export class TitlePhase extends Phase {
     });
   }
 
+  setGameMode(gameMode: GameModes) {
+    this.gameMode = gameMode;
+  }
+
   showOptions(): void {
     const options: OptionSelectItem[] = [];
     if (loggedInUser.lastSessionSlot > -1) {

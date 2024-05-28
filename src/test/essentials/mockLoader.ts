@@ -36,4 +36,7 @@ export default class MockLoader {
   image() {
 
   }
+
+  atlas(key, textureUrl, atlasUrl) {
+  }
 }

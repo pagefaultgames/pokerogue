@@ -15,6 +15,7 @@ import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
 import {apiFetch} from "#app/utils";
 import {GameModes} from "#app/game-mode";
 import {TitlePhase} from "#app/phases";
+import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 const saveKey = "x0i2O7WRiANTqPmZ";
 
 
@@ -26,8 +27,6 @@ describe("Session import/export", () => {
     scene = new BattleScene();
     game.scene.add("battle", scene);
     await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
-
-
   }, 100000);
 
   it('test fetch mock async', async () => {
@@ -112,12 +111,16 @@ describe("Session import/export", () => {
     expect(mode).toBe(Mode.TITLE);
   });
 
-  it('Select gamemode Classic', () => {
+  it('Select gamemode Classic new game to starter selection', async () => {
     const gameMode = GameModes.CLASSIC;
     scene.ui.setMode(Mode.MESSAGE);
     const titlePhase = new TitlePhase(scene);
+    titlePhase.setGameMode(gameMode);
     titlePhase.end();
-
+    await waitUntil(() => scene.ui.getMode() === Mode.STARTER_SELECT);
+    const handler = scene.ui.getHandler() as StarterSelectUiHandler;
+    handler.tryStart(true);
+    expect(handler).toBeInstanceOf(StarterSelectUiHandler);
   });
 
   it.skip('Reach title mode', async () => {
