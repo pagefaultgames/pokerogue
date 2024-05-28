@@ -1,5 +1,4 @@
 import { Gender } from "./gender";
-import { FlinchChanceModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
