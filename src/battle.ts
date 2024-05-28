@@ -63,8 +63,8 @@ export default class Battle {
   private battleSeedState: string;
   public moneyScattered: number;
   public lastUsedPokeball: PokeballType;
-  public playerFaints: number;
-  public enemyFaints: number;
+  public playerFaints: number; // The amount of times pokemon on the players side have fainted
+  public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
 
   private rngCounter: integer = 0;
 
