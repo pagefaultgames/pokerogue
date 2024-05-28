@@ -1828,12 +1828,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.turnData.damageTaken += damage.value;
 
           // queue critical message before effectiveness
-          if (isCritical){
+          if (isCritical) {
             this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
           }
           if (source.isPlayer()) {
             this.scene.validateAchvs(DamageAchv, damage);
-            if (damage.value > this.scene.gameData.gameStats.highestDamage){
+            if (damage.value > this.scene.gameData.gameStats.highestDamage) {
               this.scene.gameData.gameStats.highestDamage = damage.value;
             }
           }
@@ -1843,7 +1843,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           // create attack result and push to turnData
           const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
           this.turnData.attacksReceived.unshift(attackResult);
-          if (source.isPlayer() && !this.isPlayer()){
+          if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
           }
         }
@@ -1887,20 +1887,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         /**
          * since damage is an object, I don't see how this would ever by false?
          * i think the motivation was to have this here to counter setPhaseQueueSplice()
-         * not sure the original motivation 
-         * 
-         * It would be bad to run both the top if block and the one below commented out without changing the later's condition 
+         * not sure the original motivation
+         * It would be bad to run both the top if block and the one below commented out without changing the later's condition
          */
 
-
-        /*
-        if (damage){
-          this.scene.clearPhaseQueueSplice();
+        if (damage) {
+          //this.scene.clearPhaseQueueSplice();
 
           const attacker = this.scene.getPokemonById(source.id);
           destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
         }
-        */
       }
       break;
     case MoveCategory.STATUS:
@@ -1923,7 +1919,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * called by damageAndUpdate()
-   * @param damage integer 
+   * @param damage integer
    * @param ignoreSegments boolean, not currently used
    * @param preventEndure  used to update damage if endure or sturdy
    * @param ignoreFaintPhase  flag on wheter to add FaintPhase if pokemon after applying damage faints
@@ -1953,10 +1949,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
       /**
-       * when adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls 
+       * when adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls
        * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
        * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
-       * 
+       *
        * once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
        */
       this.scene.setPhaseQueueSplice();

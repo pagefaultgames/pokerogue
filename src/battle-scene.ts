@@ -123,7 +123,7 @@ export default class BattleScene extends SceneBase {
 
   /**
 	 * PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue
-	 * PhaseQueue: dequeue/remove the first element to get the next phase 
+	 * PhaseQueue: dequeue/remove the first element to get the next phase
 	 * queues are moved around during the function shiftPhase() below
 	 * can debug phases using "phase.constructor.name"
 	 */
@@ -1592,7 +1592,7 @@ export default class BattleScene extends SceneBase {
 
   /**
 	 * PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue
-	 * PhaseQueue: dequeue/remove the first element to get the next phase 
+	 * PhaseQueue: dequeue/remove the first element to get the next phase
 	 * queues are moved around during shiftPhase() below
 	 */
 
@@ -1681,7 +1681,6 @@ export default class BattleScene extends SceneBase {
     }
     this.currentPhase = this.phaseQueue.shift();
     /** debugging
-		 * 
 		console.log(`SHIFT PHASE: State of the phaseQueue, what is going to be called next`)
 		this.phaseQueue.forEach(p => console.log(p.constructor.name));
 		 */
