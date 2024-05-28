@@ -570,6 +570,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GRENINJA, "battle-bond", "ash", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.GRENINJA, "ash", "battle-bond", new SpeciesFormChangeManualTrigger(), true)
   ],
+  [Species.PALAFIN] : [
+    new SpeciesFormChange(Species.PALAFIN, "zero", "hero", new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.PALAFIN, "hero", "zero", new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.AEGISLASH]: [
     new SpeciesFormChange(Species.AEGISLASH, "blade", "shield", new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, "shield", "blade", new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
