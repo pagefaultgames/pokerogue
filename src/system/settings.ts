@@ -244,8 +244,8 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
               handler: () => changeLocaleHandler("zh_TW")
             },
             {
-              label: '한국어',
-              handler: () => changeLocaleHandler('ko')
+              label: "한국어",
+              handler: () => changeLocaleHandler("ko")
             },
             {
               label: "Cancel",
