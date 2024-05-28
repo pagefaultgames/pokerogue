@@ -12,7 +12,7 @@ import { Stat } from "./data/pokemon-stat";
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import {TimeOfDay} from "#app/data/enums/time-of-day";
-import {Gender} from "pokenode-ts";
+import { Gender } from "./data/gender";
 
 /**
  * Overrides for testing different in game situations
@@ -32,6 +32,7 @@ export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 // Multiplies XP gained by this value including 0. Set to null to ignore the override
 export const XP_MULTIPLIER_OVERRIDE: number = null;
+export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
