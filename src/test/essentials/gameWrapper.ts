@@ -17,7 +17,7 @@ import MockGraphics from "#app/test/essentials/mocksContainer/mockGraphics";
 import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureManager";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {setPositionRelative} from "#app/test/essentials/utils";
+import {setPositionRelative, waitUntil} from "#app/test/essentials/utils";
 import NoAudioSound = Phaser.Sound.NoAudioSound;
 import {vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
@@ -25,6 +25,8 @@ import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
 import MockLoader from "#app/test/essentials/mockLoader";
 import {MockFetch} from "#app/test/essentials/mockFetch";
 import * as Utils from "#app/utils";
+import {Mode} from "#app/ui/ui";
+import {TitlePhase} from "#app/phases";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -67,6 +69,17 @@ export default class GameWrapper {
     this.config = {
       seed: ["test"],
     };
+  }
+
+  newGame(scene, gameMode): Promise<void> {
+    return new Promise(async (resolve) => {
+      scene.ui.setMode(Mode.MESSAGE);
+      const titlePhase = new TitlePhase(scene);
+      titlePhase.setGameMode(gameMode);
+      titlePhase.end();
+      await waitUntil(() => scene.ui.getMode() === Mode.STARTER_SELECT);
+      return resolve();
+    });
   }
 
   private addScene(key: string, _scene: any): void {

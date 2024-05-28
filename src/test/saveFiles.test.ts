@@ -1,5 +1,5 @@
 /* eslint-disable */
-import {describe, it, vi, expect, beforeAll} from "vitest";
+import {describe, it, vi, expect, beforeAll, beforeEach} from "vitest";
 import fs from "fs";
 import { AES, enc } from "crypto-js";
 import {decrypt, encrypt, GameData, GameDataType, getDataTypeKey} from "#app/system/game-data";
@@ -22,7 +22,7 @@ const saveKey = "x0i2O7WRiANTqPmZ";
 describe("Session import/export", () => {
   let game, scene, sessionData;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     game = new GameWrapper();
     scene = new BattleScene();
     game.scene.add("battle", scene);
@@ -119,7 +119,12 @@ describe("Session import/export", () => {
     titlePhase.end();
     await waitUntil(() => scene.ui.getMode() === Mode.STARTER_SELECT);
     const handler = scene.ui.getHandler() as StarterSelectUiHandler;
-    handler.tryStart(true);
+    expect(handler).toBeInstanceOf(StarterSelectUiHandler);
+  });
+
+  it('With gameWrapper: Select gamemode Classic new game to starter selection', async() => {
+    await game.newGame(scene, GameModes.CLASSIC);
+    const handler = scene.ui.getHandler() as StarterSelectUiHandler;
     expect(handler).toBeInstanceOf(StarterSelectUiHandler);
   });
 
