@@ -2819,7 +2819,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
 
     // Hit check only calculated on first hit for multi-hit moves unless flag is set to check all hits.
-    // However, if an ability with the MaxMultiHitAttr, namely Skill Link, is present, act as a normal
+    // However, if an ability with the MaxMultiHitAbAttr, namely Skill Link, is present, act as a normal
     // multi-hit move and proceed with all hits
     if (user.turnData.hitsLeft < user.turnData.hitCount) {
       if (!this.move.getMove().hasFlag(MoveFlags.CHECK_ALL_HITS) || user.hasAbilityWithAttr(MaxMultiHitAbAttr)) {
