@@ -7,18 +7,22 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
 }
 
 export function getPokemonNameWithAffix(pokemon: Pokemon): string {
-  let prefix: string;
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
-    prefix = !pokemon.isPlayer()
+    return !pokemon.isPlayer()
       ? pokemon.hasTrainer()
-        ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name })
-        : i18next.t("battle:wildPokemonWithAffix", { pokemonName: pokemon.name })
+        ? i18next.t("battle:foePokemonWithAffix", {
+          pokemonName: pokemon.name,
+        })
+        : i18next.t("battle:wildPokemonWithAffix", {
+          pokemonName: pokemon.name,
+        })
       : pokemon.name;
-    break;
   case BattleSpec.FINAL_BOSS:
-    prefix = !pokemon.isPlayer() ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name }) : pokemon.name;
-    break;
+    return !pokemon.isPlayer()
+      ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name })
+      : pokemon.name;
+  default:
+    pokemon.name;
   }
-  return prefix;
 }
