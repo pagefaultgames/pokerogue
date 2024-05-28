@@ -2223,8 +2223,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.MAGIKARP]: [
     [ 1, Moves.SPLASH ],
-    [ 5, Moves.WATER_GUN ], //Custom
-    [ 15, Moves.TACKLE ],
+    [ 5, Moves.TACKLE ], //Custom, moved from 15 to 5
     [ 25, Moves.FLAIL ],
   ],
   [Species.GYARADOS]: [
@@ -6109,8 +6108,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.FEEBAS]: [
     [ 1, Moves.SPLASH ],
-    [ 5, Moves.WATER_GUN ], //Custom
-    [ 15, Moves.TACKLE ],
+    [ 5, Moves.TACKLE ], //Custom, moved from 15 to 5
     [ 25, Moves.FLAIL ],
   ],
   [Species.MILOTIC]: [
