@@ -5,6 +5,7 @@ import pad_generic from "./configs/pad_generic";
 import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
+import pad_procon from "./configs/pad_procon";
 import {Button} from "./enums/buttons";
 
 export interface GamepadMapping {
@@ -421,6 +422,7 @@ export class InputsController {
      * - If the ID includes both '081f' and 'e401', it is identified as an unlicensed SNES gamepad.
      * - If the ID contains 'xbox' and '360', it is identified as an Xbox 360 gamepad.
      * - If the ID contains '054c', it is identified as a DualShock gamepad.
+     * - If the ID includes both '057e' and '2009', it is identified as a Pro controller gamepad.
      * If no specific identifiers are recognized, a generic gamepad configuration is returned.
      */
   mapGamepad(id: string): GamepadConfig {
@@ -432,6 +434,8 @@ export class InputsController {
       return pad_xbox360;
     } else if (id.includes("054c")) {
       return pad_dualshock;
+    } else if (id.includes("057e") && id.includes("2009")) {
+      return pad_procon;
     }
 
     return pad_generic;
