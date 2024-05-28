@@ -616,6 +616,23 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
       const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
       let ratio = relLevelExp ? levelExp / relLevelExp : 0;
+
+      if (instant || this.scene.expGainsSpeed >= 3) {
+        if (levelUp) {
+          this.lastLevelExp = 0;
+          this.lastLevel++;
+        } else {
+          this.lastExp = pokemon.exp;
+          this.lastLevelExp = pokemon.levelExp;
+        }
+        this.expMaskRect.x = ratio * 510;
+        if (levelUp) {
+          this.setLevel(this.lastLevel);
+        }
+        this.updateInfo(pokemon, true).then(() => resolve());
+        return;
+      }
+      
       if (this.lastLevel >= (this.scene as BattleScene).getMaxExpLevel(true)) {
         if (levelUp) {
           ratio = 1;
