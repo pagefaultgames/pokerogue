@@ -3508,7 +3508,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SPLASH ],
     [ 1, Moves.CHARM ],
     [ 1, Moves.ENCORE ],
-    [ 1, Moves.CONFUSION ], //Custom
   ],
   [Species.GIRAFARIG]: [
     [ 1, Moves.TACKLE ],
@@ -6295,7 +6294,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CHARM ],
     [ 1, Moves.ENCORE ],
     [ 1, Moves.AMNESIA ],
-    [ 1, Moves.CONFUSION ], //Custom
   ],
   [Species.SNORUNT]: [
     [ 1, Moves.POWDER_SNOW ],
