@@ -1727,9 +1727,11 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     pokemon.summonData.gender = target.getGender();
     pokemon.summonData.fusionGender = target.getFusionGender();
     pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
-    pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
+    pokemon.summonData.battleStats = target.summonData?.battleStats.slice(0) ?? [ 0, 0, 0, 0, 0, 0, 0 ];
     pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
     pokemon.summonData.types = target.getTypes();
+
+    pokemon.updateInfo();
 
     pokemon.scene.playSound("PRSFX- Transform");
 

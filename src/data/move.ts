@@ -4718,6 +4718,8 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       user.summonData.types = target.getTypes();
 
+      user.updateInfo();
+
       user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto ${target.name}!`));
 
       user.loadAssets(false).then(() => {
