@@ -13,7 +13,7 @@ export const achv: AchievementTranslationEntries = {
     description:"Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an",
   },
   "10K_MONEY": {
-    name: "Geldhüter",
+    name: "Besserverdiener",
   },
   "100K_MONEY": {
     name: "Reich",
@@ -38,7 +38,7 @@ export const achv: AchievementTranslationEntries = {
     name: "Das ist ne Menge Schaden!",
   },
   "10000_DMG": {
-    name: "Ein-Schlag-Mann",
+    name: "One Punch Man",
   },
 
   "HealAchv": {
