@@ -951,7 +951,14 @@ export class BerryModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 10;
+    switch (this.berryType) {
+      case BerryType.LUM:
+      case BerryType.LEPPA:
+      case BerryType.SITRUS:
+      case BerryType.ENIGMA:
+        return 2;
+    }
+    return 3;
   }
 }
 
