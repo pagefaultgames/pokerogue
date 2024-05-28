@@ -2052,7 +2052,7 @@ export const move: MoveTranslationEntries = {
   },
   acrobatics: {
     name: "애크러뱃",
-    effect: "경쾌하게 상대를 공격한다. 자신이 도구를 지니고 있지 않을 때 큰 데미지를 준다."
+    effect: "경쾌하게 상대를 공격한다. 도구를 적게 지니고 있을수록 더 큰 데미지를 준다."
   },
   reflectType: {
     name: "미러타입",

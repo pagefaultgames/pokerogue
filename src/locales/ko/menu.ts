@@ -29,7 +29,7 @@ export const menu: SimpleTranslationEntries = {
   "confirmPassword": "비밀번호 재입력",
   "registrationAgeWarning": "13세 이상입니다.",
   "backToLogin": "로그인 화면으로",
-  "failedToLoadSaveData": "데이터를 불러올 수 없었습니다. 페이지를 새로고침해주세요.\n문제가 계속 발생한다면, 관리자에게 연락해주세요.",
+  "failedToLoadSaveData": "데이터를 불러올 수 없었습니다. 페이지를 새로고침해주세요.\n문제가 지속된다면, 디스코드 #Announcements 채널을 확인해주세요.",
   "sessionSuccess": "세션 불러오기 성공.",
   "failedToLoadSession": "세션을 불러올 수 없었습니다.\n파일이 손상되었을 수 있습니다.",
   "boyOrGirl": "너는 남자니?\n아니면 여자니?",

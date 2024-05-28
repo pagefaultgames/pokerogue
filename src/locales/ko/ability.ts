@@ -475,7 +475,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "꿀모으기",
-    description: "배틀이 끝났을 때 달콤한꿀을 주울 때가 있다."
+    description: "배틀이 끝났을 때 달콤한꿀을 주울 때가 있다. 배틀 후에 꿀을 팔아 돈을 받을 수 있다."
   },
   frisk: {
     name: "통찰",

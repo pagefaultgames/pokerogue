@@ -3,9 +3,13 @@ import {SimpleTranslationEntries} from "#app/plugins/i18n";
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
     "elite_four": "사천왕",
+    "elite_four_female": "사천왕",
     "gym_leader": "체육관 관장",
     "gym_leader_female": "체육관 관장",
+    "gym_leader_double": "체육관 관장 듀오",
     "champion": "챔피언",
+    "champion_female": "챔피언",
+    "champion_double": "챔피언 듀오",
     "rival": "라이벌",
     "professor": "박사",
     "frontier_brain": "프런티어 브레인",
@@ -241,4 +245,16 @@ export const trainerNames: SimpleTranslationEntries = {
     "leon": "단델",
     "rival": "핀",
     "rival_female": "아이비",
+
+    // Double Names
+    "blue_red_double": "그린 & 레드",
+    "red_blue_double": "레드 & 그린",
+    "tate_liza_double": "풍 & 란",
+    "liza_tate_double": "란 & 풍",
+    "steven_wallace_double": "성호 & 윤진",
+    "wallace_steven_double": "윤진 & 성호",
+    "alder_iris_double": "노간주 & 아이리스",
+    "iris_alder_double": "아이리스 & 노간주",
+    "marnie_piers_double": "마리 & 두송",
+    "piers_marnie_double": "두송 & 마리",
 } as const;
