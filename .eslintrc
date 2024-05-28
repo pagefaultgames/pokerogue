@@ -22,7 +22,13 @@
         "@typescript-eslint/no-extra-semi": ["error"], // Disallows unnecessary semicolons for TypeScript-specific syntax
         "brace-style": "off", // Note: you must disable the base rule as it can report incorrect errors
         "curly": ["error", "all"], // Enforces the use of curly braces for all control statements
-        "@typescript-eslint/brace-style": ["error", "1tbs"]
+        "@typescript-eslint/brace-style": ["error", "1tbs"],
+        "no-trailing-spaces": ["error", { // Disallows trailing whitespace at the end of lines
+          "skipBlankLines": false, // Enforces the rule even on blank lines
+          "ignoreComments": false // Enforces the rule on lines containing comments
+        }],
+        "space-before-blocks": ["error", "always"], // Enforces a space before blocks
+        "keyword-spacing": ["error", { "before": true, "after": true }] // Enforces spacing before and after keywords
       }
     }
   ]

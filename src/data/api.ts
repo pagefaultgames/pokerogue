@@ -103,7 +103,7 @@ export async function printPokemon() {
 
   const offset = 0;
   const pokemonResponse = await api.pokemon.listPokemons(offset, 2000);
-  
+
   pokemonArr = pokemonResponse.results;
 
   const types = Utils.getEnumKeys(Type).map(t => t.toLowerCase());
@@ -121,7 +121,7 @@ export async function printPokemon() {
       if (!dexIdMatch) {
         continue;
       }
-      
+
       const matchingSpecies = pokemonSpeciesList[parseInt(dexIdMatch[1]) - 1];
 
       if (!matchingSpecies) {
@@ -236,7 +236,7 @@ export async function printPokemon() {
     let generationIndex = 0;
 
     if (!region) {
-      while (++generationIndex < 9 && dexId > generationDexNumbers[generationIndex]){}
+      while (++generationIndex < 9 && dexId > generationDexNumbers[generationIndex]) {}
     } else {
       generationIndex = regionalForms.indexOf(region.toLowerCase()) + 6;
     }
@@ -448,7 +448,7 @@ export async function printAbilities() {
   const replaceText = true;
 
   let abilityContent: string = await fs.readFile("./src/data/ability.ts");
-  
+
   const api = new MainClient();
 
   let enumStr = "export enum Abilities {\n  NONE,";
@@ -516,7 +516,7 @@ export async function printMoves() {
   const replaceText = true;
 
   let moveContent: string = await fs.readFile("./src/data/move.ts");
-  
+
   const api = new MainClient();
 
   let enumStr = "export enum Moves {\n  NONE,";
@@ -528,7 +528,7 @@ export async function printMoves() {
   const offset = 0;
   const movesResponse = await api.move.listMoves(offset, 2000);
   moves = movesResponse.results;
-  
+
   console.log(moves);
 
   for (const m of moves) {
@@ -594,7 +594,7 @@ export async function printTmSpecies() {
   const api = new MainClient();
 
   const moveIds = Object.keys(tmSpecies).map(k => parseInt(k) as Moves);
-  
+
   for (const moveId of moveIds) {
     const move = await api.move.getMoveById(moveId);
 
@@ -643,9 +643,9 @@ export async function printTmSpecies() {
         console.log("NO MATCH", species.name);
         continue;
       }
-  
+
       const speciesKey = Species[matchingSpecies.speciesId];
-      
+
       const matchingIndex = moveTmSpecies[moveId].findIndex(s => Array.isArray(s) ? s[0] === speciesKey : s === speciesKey);
 
       if (matchingIndex === -1) {

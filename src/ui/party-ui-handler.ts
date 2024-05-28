@@ -87,7 +87,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private transferMode: boolean;
   private transferOptionCursor: integer;
   private transferCursor: integer;
-  
+
   private lastCursor: integer = 0;
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback;
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
@@ -107,7 +107,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   };
 
   public static FilterFainted = (pokemon: PlayerPokemon) => {
-    if(!pokemon.isFainted()) {
+    if (!pokemon.isFainted()) {
       return `${pokemon.name} still has energy\nto battle!`;
     }
     return null;
@@ -158,7 +158,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partyMessageBox = partyMessageBox;
 
     const partyMessageText = addTextObject(this.scene, 8, 10, defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
-    
+
     partyMessageText.setOrigin(0, 0);
     partyMessageBoxContainer.add(partyMessageText);
 
@@ -403,7 +403,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             ui.playSelect();
           }
         }
-        
+
         return true;
       }
 
@@ -423,13 +423,13 @@ export default class PartyUiHandler extends MessageUiHandler {
         }
         break;
       case Button.RIGHT:
-        if (slotCount === battlerCount){
+        if (slotCount === battlerCount) {
           success = this.setCursor(6);
           break;
-        } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1){
+        } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1) {
           success = this.setCursor(2);
           break;
-        } else if (slotCount > battlerCount && this.cursor < battlerCount){
+        } else if (slotCount > battlerCount && this.cursor < battlerCount) {
           success = this.setCursor(this.lastCursor < 6 ? this.lastCursor ||  battlerCount : battlerCount);
           break;
         }
@@ -463,10 +463,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
     }
   }
-  
+
   setCursor(cursor: integer): boolean {
     let changed: boolean;
-    
+
     if (this.optionsMode) {
       changed = this.optionsCursor !== cursor;
       let isScroll = false;
@@ -544,7 +544,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.cursor === 6) {
       return;
     }
-    
+
     this.optionsMode = true;
 
     let optionsMessage = "Do what with this Pokémon?";
@@ -717,7 +717,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         case PartyOption.MOVE_3:
         case PartyOption.MOVE_4:
           const move = pokemon.moveset[option - PartyOption.MOVE_1];
-          if(this.showMovePp) {
+          if (this.showMovePp) {
             const maxPP = move.getMovePp();
             const currPP = maxPP - move.ppUsed;
             optionName = `${move.getName()} ${currPP}/${maxPP}`;
@@ -880,7 +880,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotIndex = slotIndex;
     this.pokemon = pokemon;
     this.iconAnimHandler = iconAnimHandler;
-    
+
     this.setup(partyUiMode, tmMoveId);
   }
 
@@ -989,7 +989,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         fusionShinyStar.setOrigin(0, 0);
         fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
         fusionShinyStar.setTint(getVariantTint(this.pokemon.fusionVariant));
-  
+
         slotInfoContainer.add(fusionShinyStar);
       }
     }

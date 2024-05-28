@@ -46,7 +46,7 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * @returns either: 
+   * @returns either:
    * - override from overrides.ts
    * - 20 for Daily Runs
    * - 5 for all other modes
@@ -132,7 +132,7 @@ export class GameMode implements GameModeConfig {
     }
     return false;
   }
-  
+
   isTrainerBoss(waveIndex: integer, biomeType: Biome, offsetGym: boolean): boolean {
     switch (this.modeId) {
     case GameModes.DAILY:
@@ -154,7 +154,7 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Checks if wave provided is the final for current or specified game mode
-   * @param waveIndex 
+   * @param waveIndex
    * @param modeId game mode
    * @returns if the current wave is final for classic or daily OR a minor boss in endless
    */
@@ -194,7 +194,7 @@ export class GameMode implements GameModeConfig {
      * @returns true if waveIndex is a multiple of 250 in Endless
      */
   isEndlessMinorBoss(waveIndex: integer): boolean {
-    return waveIndex % 250 === 0 && 
+    return waveIndex % 250 === 0 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
@@ -204,7 +204,7 @@ export class GameMode implements GameModeConfig {
      * @returns true if waveIndex is a multiple of 1000 in Endless
      */
   isEndlessMajorBoss(waveIndex: integer): boolean {
-    return waveIndex % 1000 === 0 && 
+    return waveIndex % 1000 === 0 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
