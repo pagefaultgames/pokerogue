@@ -29,6 +29,12 @@ export class UiInputs {
 
   listenInputs(): void {
     this.events.on("input_down", (event) => {
+      if (event.controller_type === "gamepad") {
+        const touchControls = document.getElementById("touchControls");
+        if (touchControls && touchControls.classList.contains("visible")) {
+          touchControls.classList.toggle("visible", false);
+        }
+      }
       const actions = this.getActionsKeyDown();
       if (!actions.hasOwnProperty(event.button)) {
         return;
