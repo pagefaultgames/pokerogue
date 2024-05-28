@@ -20,6 +20,7 @@ import {Button} from "#app/enums/buttons";
 import {Species} from "#app/data/enums/species";
 import {getPokemonSpecies} from "#app/data/pokemon-species";
 import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
+import SaveSlotSelectUiHandler, {SaveSlotUiMode} from "#app/ui/save-slot-select-ui-handler";
 const saveKey = "x0i2O7WRiANTqPmZ";
 
 
@@ -126,7 +127,7 @@ describe("Session import/export", () => {
     expect(handler).toBeInstanceOf(StarterSelectUiHandler);
   });
 
-  it('starter selected until save screen', async() => {
+  it.skip('starter selected until save screen', async() => {
     await game.newGame(scene, GameModes.CLASSIC);
     let handler = scene.ui.getHandler() as StarterSelectUiHandler;
     expect(handler).toBeInstanceOf(StarterSelectUiHandler);
@@ -135,11 +136,31 @@ describe("Session import/export", () => {
     handler.addToParty(getPokemonSpecies(Species.SQUIRTLE));
     handler.tryStart(true);
     await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-    handler = scene.ui.getHandler() as ConfirmUiHandler;
-    handler.processInput(Button.ACTION);
+    const confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+    confirmHandler.processInput(Button.ACTION);
     await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
     const mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.SAVE_SLOT);
+  }, 100000);
+
+  it('start battle', async() => {
+    await game.newGame(scene, GameModes.CLASSIC);
+    let handler = scene.ui.getHandler() as StarterSelectUiHandler;
+    expect(handler).toBeInstanceOf(StarterSelectUiHandler);
+    handler.addToParty(getPokemonSpecies(Species.BULBASAUR));
+    handler.addToParty(getPokemonSpecies(Species.CHARMANDER));
+    handler.addToParty(getPokemonSpecies(Species.SQUIRTLE));
+    handler.tryStart(true);
+    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+    let confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+    confirmHandler.processInput(Button.ACTION);
+    await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
+    const saveSlotHandler = scene.ui.getHandler() as SaveSlotSelectUiHandler;
+    saveSlotHandler.processInput(Button.ACTION);
+    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+    confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+    confirmHandler.processInput(Button.ACTION);
+
   }, 100000);
 
   it.skip('Reach title mode', async () => {

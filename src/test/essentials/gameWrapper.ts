@@ -114,8 +114,14 @@ export default class GameWrapper {
     _scene.sound = {
       play: () => null,
       add: () => _scene.sound,
-      get: (key) => new NoAudioSound(undefined, key),
+      get: () => _scene.sound,
       getAllPlaying: () => [],
+      manager: {
+        game: this.gameObj,
+      },
+      setVolume: () => null,
+      on: (evt, callback) => callback(),
+      key: "",
     };
     _scene.tweens = {
       add: (data) => {
@@ -172,7 +178,7 @@ export default class GameWrapper {
       });
     };
     _scene.make = {
-      graphics: (config) => new MockGraphics(_scene, config),
+      graphics: (config) => new MockGraphics(mockTextureManager, config),
       rexTransitionImagePack: () => ({
         transit: () => null,
       }),

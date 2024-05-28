@@ -4,7 +4,11 @@ export default class MockText {
   private phaserText;
   private wordWrapWidth;
   private splitRegExp;
-  constructor(scene, x, y, content, styleOptions) {
+  private scene;
+  private textureManager;
+  constructor(textureManager, x, y, content, styleOptions) {
+    this.scene = textureManager.scene;
+    this.textureManager = textureManager;
     // Phaser.GameObjects.TextStyle.prototype.setStyle = () => null;
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
@@ -189,5 +193,9 @@ export default class MockText {
 
   destroy() {
     // return this.phaserText.destroy();
+  }
+
+  setAlpha(alpha) {
+    // return this.phaserText.setAlpha(alpha);
   }
 }

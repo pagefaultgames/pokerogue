@@ -13,6 +13,7 @@ export const MockFetch = (input, init) => {
     "account/info": infoHandler,
     "savedata/session?slot=": sessionHandler,
     "savedata/system": systemHandler,
+    "savedata/updateall": "",
     "daily/rankingpagecount": { data: 0 },
     "game/titlestats": titlestatHandler,
     "daily/rankings": [],
@@ -22,7 +23,7 @@ export const MockFetch = (input, init) => {
   for (const key of Object.keys(handlers)) {
     if (url.includes(key)) {
       responseHandler = async() => handlers[key];
-      responseText = async() => JSON.stringify(handlers[key]);
+      responseText = async() => handlers[key] ? JSON.stringify(handlers[key]) : handlers[key];
       break;
     }
   }

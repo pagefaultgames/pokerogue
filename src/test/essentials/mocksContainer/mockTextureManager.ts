@@ -12,6 +12,8 @@ export default class MockTextureManager {
   private scene;
   public add;
   public displayList;
+  public containers = [];
+
   constructor(scene) {
     this.scene = scene;
     this.textures = new Map();
@@ -30,7 +32,7 @@ export default class MockTextureManager {
   }
 
   container(x, y) {
-    return new MockContainer(this.scene, x, y);
+    return new MockContainer(this, x, y);
   }
 
   sprite(x,y, texture) {
@@ -42,22 +44,22 @@ export default class MockTextureManager {
   }
 
   rectangle(x, y, width, height, fillColor) {
-    return new MockRectangle(this.scene, x, y, width, height, fillColor);
+    return new MockRectangle(this, x, y, width, height, fillColor);
   }
 
   nineslice(x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight) {
-    return new MockNineslice(this.scene, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight);
+    return new MockNineslice(this, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight);
   }
 
   image(x, y, texture) {
-    return new MockImage(this.scene, x, y, texture);
+    return new MockImage(this, x, y, texture);
   }
 
   text(x, y, content, styleOptions) {
-    return new MockText(this.scene, x, y, content, styleOptions);
+    return new MockText(this, x, y, content, styleOptions);
   }
 
   polygon(x, y, content, fillColor, fillAlpha) {
-    return new MockPolygon(this.scene, x, y, content, fillColor, fillAlpha);
+    return new MockPolygon(this, x, y, content, fillColor, fillAlpha);
   }
 }

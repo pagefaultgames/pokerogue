@@ -1,3 +1,5 @@
+import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureManager";
+
 export default class MockContainer {
   protected x;
   protected y;
@@ -8,12 +10,13 @@ export default class MockContainer {
   private alpha;
   private style;
   public frame;
+  protected textureManager;
 
-  constructor(scene, x, y) {
-    this.scene = scene;
+  constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;
     this.y = y;
     this.frame = {};
+    this.textureManager = textureManager;
   }
   setVisible(visible) {
     this.visible = visible;

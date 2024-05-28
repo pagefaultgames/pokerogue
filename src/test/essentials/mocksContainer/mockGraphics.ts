@@ -2,8 +2,8 @@ import MockContainer from "#app/test/essentials/mocksContainer/mockContainer";
 
 
 export default class MockGraphics extends MockContainer {
-  constructor(scene, config) {
-    super(scene, config.x, config.y);
+  constructor(textureManager, config) {
+    super(textureManager, config.x, config.y);
   }
 
   fillStyle(color) {
