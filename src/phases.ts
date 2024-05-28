@@ -62,6 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { MysteryEncounterPhase } from "./mystery-encounter-phase";
 
 
 export class LoginPhase extends Phase {
@@ -3710,6 +3711,12 @@ export class VictoryPhase extends PokemonPhase {
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
           }
         }
+
+        // Mystery Encounters should not count as their own floors, they happen between floors (to maintain balance of access to wild/trainer battles per biome)
+        if (this.scene.gameMode.hasMysteryEncounters) {
+          this.scene.pushPhase(new MysteryEncounterPhase(this.scene));
+        }
+
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else {
         this.scene.currentBattle.battleType = BattleType.CLEAR;

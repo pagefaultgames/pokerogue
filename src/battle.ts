@@ -14,9 +14,9 @@ import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
 
 export enum BattleType {
-    WILD,
-    TRAINER,
-    CLEAR
+  WILD,
+  TRAINER,
+  CLEAR
 }
 
 export enum BattlerIndex {

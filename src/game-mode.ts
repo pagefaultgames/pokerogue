@@ -19,6 +19,7 @@ interface GameModeConfig {
   isEndless?: boolean;
   isDaily?: boolean;
   hasTrainers?: boolean;
+  hasMysteryEncounters?: boolean;
   hasFixedBattles?: boolean;
   hasNoShop?: boolean;
   hasShortBiomes?: boolean;
@@ -33,6 +34,7 @@ export class GameMode implements GameModeConfig {
   public isEndless: boolean;
   public isDaily: boolean;
   public hasTrainers: boolean;
+  public hasMysteryEncounters: boolean;
   public hasFixedBattles: boolean;
   public hasNoShop: boolean;
   public hasShortBiomes: boolean;
@@ -244,8 +246,8 @@ export class GameMode implements GameModeConfig {
 }
 
 export const gameModes = Object.freeze({
-  [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true }),
-  [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true }),
+  [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true, hasFixedBattles: true }),
+  [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasMysteryEncounters: true, hasRandomBosses: true }),
   [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true }),
   [GameModes.DAILY]: new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true })
 });

@@ -68,7 +68,8 @@ export enum Mode {
   LOADING,
   SESSION_RELOAD,
   UNAVAILABLE,
-  OUTDATED
+  OUTDATED,
+  MYSTERY_ENCOUNTER
 }
 
 const transitionModes = [
