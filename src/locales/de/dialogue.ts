@@ -775,7 +775,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marshal": {
     "encounter": {
-      1: `Mein Mentor, Lauro, sieht sieht Potential in dir. Ich werde dich testen,
+      1: `Mein Mentor, Lauro, sieht Potential in dir. Ich werde dich testen,
           $dich an die Grenzen deiner Stärke bringen. Kiai!`,
       2: "Ein Sieg, ein entscheidender Sieg, das ist mein Ziel! Herausforderer, hier komme ich!",
       3: "Ich selber suche die Stärke eines Kämpfers zu entwickeln und jede Schwäche in mir zu brechen!"
