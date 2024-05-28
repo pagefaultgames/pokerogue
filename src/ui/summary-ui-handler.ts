@@ -1,27 +1,27 @@
+import { Variant, getVariantTint } from "#app/data/variant";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
+import { loggedInUser } from "../account";
 import BattleScene, { starterColors } from "../battle-scene";
+import { Ability } from "../data/ability.js";
+import { getBiomeName } from "../data/biomes";
+import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
+import { getGenderColor, getGenderSymbol } from "../data/gender";
+import Move, { MoveCategory } from "../data/move";
+import { Nature, getNatureStatMultiplier } from "../data/nature";
+import { getPokeballAtlasKey } from "../data/pokeball";
+import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
+import { Stat, getStatName } from "../data/pokemon-stat";
+import { StatusEffect } from "../data/status-effect";
+import { Type, getTypeRgb } from "../data/type";
+import { Button } from "../enums/buttons";
+import { PlayerPokemon } from "../field/pokemon";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { PlayerGender } from "../system/game-data";
+import * as Utils from "../utils";
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import * as Utils from "../utils";
-import { PlayerPokemon } from "../field/pokemon";
-import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
-import { argbFromRgba } from "@material/material-color-utilities";
-import { Type, getTypeRgb } from "../data/type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
-import Move, { MoveCategory } from "../data/move";
-import { getPokeballAtlasKey } from "../data/pokeball";
-import { getGenderColor, getGenderSymbol } from "../data/gender";
-import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
-import { Stat, getStatName } from "../data/pokemon-stat";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
-import { StatusEffect } from "../data/status-effect";
-import { getBiomeName } from "../data/biomes";
-import { Nature, getNatureStatMultiplier } from "../data/nature";
-import { loggedInUser } from "../account";
-import { PlayerGender } from "../system/game-data";
-import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "../enums/buttons";
-import { Ability } from "../data/ability.js";
-import i18next from "i18next";
 
 enum Page {
   PROFILE,
@@ -897,7 +897,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, "types", Type[this.newMove.type].toLowerCase());
+        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[this.newMove.type].toLowerCase());
         newMoveTypeIcon.setOrigin(0, 1);
         this.extraMoveRowContainer.add(newMoveTypeIcon);
 
