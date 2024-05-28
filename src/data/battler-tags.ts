@@ -15,6 +15,7 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
+import { Scene } from "phaser";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -1115,8 +1116,8 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
 }
 
 export class HideSpriteTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves) {
-    super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
+  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+    super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove, sourceId);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1131,6 +1132,10 @@ export class HideSpriteTag extends BattlerTag {
       duration: Utils.getFrameMs(2),
       onComplete: () => pokemon.setVisible(true)
     });
+  }
+
+  isSourceLinked(): boolean {
+    return true;
   }
 }
 
@@ -1305,6 +1310,79 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class SkyDropUserTag extends BattlerTag {
+  private sourcePokemon: integer;
+
+  constructor(sourceId: integer) {
+    super(BattlerTagType.SKY_DROP_USER, BattlerTagLapseType.MOVE_EFFECT, 1, Moves.SKY_DROP, sourceId);
+    this.sourcePokemon = sourceId;
+    console.log("in constructor for sky drop user tag")
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    console.log("in on add for skydrop target");
+    super.onAdd(pokemon);
+    //this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
+    pokemon.addTag(BattlerTagType.FLYING,2,Moves.SKY_DROP,this.sourcePokemon);
+  }
+
+  isSourceLinked(): boolean {
+    return true;
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+    pokemon.findAndRemoveTags(t => t.isSourceLinked() && t.sourceId === this.sourceId && t.sourceMove === this.sourceMove && t.tagType != BattlerTagType.SKY_DROP_USER);
+  }
+
+}
+
+export class SkyDropTargetTag extends BattlerTag {
+
+  constructor(sourceId: integer) {
+    console.log("in constructor for sky drop target tag")
+    super(BattlerTagType.SKY_DROP_TARGET, BattlerTagLapseType.MOVE, 2, Moves.SKY_DROP, sourceId);
+    this.sourceId = sourceId;
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    console.log("in on add for sky drop target tag")
+    console.log(this.sourceId);
+    pokemon.addTag(BattlerTagType.FLYING,2,Moves.SKY_DROP,this.sourceId);
+    pokemon.addTag(BattlerTagType.INTERRUPTED,2,Moves.SKY_DROP,this.sourceId);
+    pokemon.addTag(BattlerTagType.TRAPPED,2,Moves.SKY_DROP,this.sourceId);
+    super.onAdd(pokemon);
+  }
+
+  isSourceLinked(): boolean {
+    return true;
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    console.log("in on remove for sky drop target tag")
+    super.onRemove(pokemon)
+    pokemon.findAndRemoveTags(t => t.isSourceLinked() && t.sourceId === this.sourceId && t.sourceMove === this.sourceMove  && t.tagType != BattlerTagType.SKY_DROP_TARGET);
+    
+  }
+
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1389,7 +1467,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.UNDERGROUND:
   case BattlerTagType.UNDERWATER:
   case BattlerTagType.HIDDEN:
-    return new HideSpriteTag(tagType, turnCount, sourceMove);
+    return new HideSpriteTag(tagType, turnCount, sourceMove, sourceId);
   case BattlerTagType.FIRE_BOOST:
     return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
   case BattlerTagType.CRIT_BOOST:
@@ -1416,6 +1494,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new MagnetRisenTag(tagType, sourceMove);
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
+  case BattlerTagType.SKY_DROP_USER:
+    return new SkyDropUserTag(sourceId);
+  case BattlerTagType.SKY_DROP_TARGET:
+    return new SkyDropTargetTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
