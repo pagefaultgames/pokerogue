@@ -956,7 +956,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     case BerryType.LEPPA:
     case BerryType.SITRUS:
     case BerryType.ENIGMA:
-    return 2;
+      return 2;
     }
     return 3;
   }
