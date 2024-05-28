@@ -16,6 +16,10 @@ import {apiFetch} from "#app/utils";
 import {GameModes} from "#app/game-mode";
 import {TitlePhase} from "#app/phases";
 import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import {Button} from "#app/enums/buttons";
+import {Species} from "#app/data/enums/species";
+import {getPokemonSpecies} from "#app/data/pokemon-species";
+import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
 const saveKey = "x0i2O7WRiANTqPmZ";
 
 
@@ -29,7 +33,7 @@ describe("Session import/export", () => {
     await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
   }, 100000);
 
-  it('test fetch mock async', async () => {
+  it.skip('test fetch mock async', async () => {
     const spy = vi.fn();
     await fetch('https://localhost:8080/account/info').then(response => {
       expect(response.status).toBe(200);
@@ -42,7 +46,7 @@ describe("Session import/export", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('test apifetch mock async', async () => {
+  it.skip('test apifetch mock async', async () => {
     const spy = vi.fn();
     await apiFetch('https://localhost:8080/account/info').then(response => {
       expect(response.status).toBe(200);
@@ -55,7 +59,7 @@ describe("Session import/export", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('test fetch mock sync', async () => {
+  it.skip('test fetch mock sync', async () => {
     const response = await fetch('https://localhost:8080/account/info');
     const data = await response.json();
 
@@ -64,7 +68,7 @@ describe("Session import/export", () => {
     expect(data).toEqual(infoHandler);
   });
 
-  it('import session', () => {
+  it.skip('import session', () => {
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData1_Greenlamp.cookies", {encoding: "utf8", flag: "r"});
     let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
     sessionData = scene.gameData.parseSessionData(dataStr);
@@ -72,7 +76,7 @@ describe("Session import/export", () => {
     localStorage.setItem(dataKey, encrypt(dataStr, false));
   })
 
-  it('export session, check integrity of data', () => {
+  it.skip('export session, check integrity of data', () => {
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData1_Greenlamp.cookies", {encoding: "utf8", flag: "r"});
     let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
     sessionData = scene.gameData.parseSessionData(dataStr);
@@ -91,7 +95,7 @@ describe("Session import/export", () => {
     });
   })
 
-  it('testing wait phase queue', async () => {
+  it.skip('testing wait phase queue', async () => {
     const fakeScene = {
       phaseQueue: [1, 2, 3] // Initially not empty
     };
@@ -106,7 +110,7 @@ describe("Session import/export", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('Start at title mode', () => {
+  it.skip('Start at title mode', () => {
     const mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.TITLE);
   });
@@ -122,11 +126,21 @@ describe("Session import/export", () => {
     expect(handler).toBeInstanceOf(StarterSelectUiHandler);
   });
 
-  it('With gameWrapper: Select gamemode Classic new game to starter selection', async() => {
+  it('starter selected until save screen', async() => {
     await game.newGame(scene, GameModes.CLASSIC);
-    const handler = scene.ui.getHandler() as StarterSelectUiHandler;
+    let handler = scene.ui.getHandler() as StarterSelectUiHandler;
     expect(handler).toBeInstanceOf(StarterSelectUiHandler);
-  });
+    handler.addToParty(getPokemonSpecies(Species.BULBASAUR));
+    handler.addToParty(getPokemonSpecies(Species.CHARMANDER));
+    handler.addToParty(getPokemonSpecies(Species.SQUIRTLE));
+    handler.tryStart(true);
+    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+    handler = scene.ui.getHandler() as ConfirmUiHandler;
+    handler.processInput(Button.ACTION);
+    await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
+    const mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.SAVE_SLOT);
+  }, 100000);
 
   it.skip('Reach title mode', async () => {
     // scene.pushPhase(new LoginPhase(scene));

@@ -92,6 +92,22 @@ export default class MockText {
     // return this.phaserText.once(event, callback, source);
   }
 
+  off(event, callback, obj) {
+  }
+
+  removedFromScene() {
+
+  }
+
+  addToDisplayList() {
+
+  }
+
+  setStroke(color, thickness) {
+    // Sets the stroke color and thickness.
+    // return this.phaserText.setStroke(color, thickness);
+  }
+
   removeFromDisplayList() {
     // same as remove or destroy
     // return this.phaserText.removeFromDisplayList();

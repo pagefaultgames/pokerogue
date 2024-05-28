@@ -22,6 +22,9 @@ export default class MockContainer {
   once(event, callback, source) {
   }
 
+  off(event, callback, source) {
+  }
+
   removeFromDisplayList() {
     // same as remove or destroy
   }

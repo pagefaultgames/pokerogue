@@ -127,6 +127,10 @@ export default class MockSprite {
     // return this.phaserSprite.play();
   }
 
+  setPipelineData(key, value) {
+    this.pipelineData[key] = value;
+  }
+
 
 
 
