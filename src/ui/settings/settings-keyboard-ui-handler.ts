@@ -64,14 +64,13 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     this.settingsContainer.add(optionsContainer);
 
     const iconDelete = this.scene.add.sprite(0, 0, "keyboard");
-    iconDelete.setScale(.1);
     iconDelete.setOrigin(0, -0.1);
     iconDelete.setPositionRelative(this.actionsBg, this.headerBg.width - 260, 4);
     this.navigationIcons["BUTTON_DELETE"] = iconDelete;
 
     const deleteText = addTextObject(this.scene, 0, 0, "Delete", TextStyle.SETTINGS_LABEL);
-    deleteText.setOrigin(0, 0);
-    deleteText.setPositionRelative(iconDelete, -deleteText.width/6, -(deleteText.height/6)/2 - 6);
+    deleteText.setOrigin(0, 0.15);
+    deleteText.setPositionRelative(iconDelete, -deleteText.width/6-2, 0);
 
     this.settingsContainer.add(iconDelete);
     this.settingsContainer.add(deleteText);

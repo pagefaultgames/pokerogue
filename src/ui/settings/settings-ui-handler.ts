@@ -56,49 +56,44 @@ export default class SettingsUiHandler extends UiHandler {
     actionsBg.setOrigin(0, 0);
 
     const iconPreviousTab = this.scene.add.sprite(0, 0, "keyboard");
-    iconPreviousTab.setScale(.1);
     iconPreviousTab.setOrigin(0, -0.1);
     iconPreviousTab.setPositionRelative(headerBg, 8, 4);
     this.navigationIcons["BUTTON_CYCLE_FORM"] = iconPreviousTab;
 
     const iconNextTab = this.scene.add.sprite(0, 0, "keyboard");
-    iconNextTab.setScale(.1);
     iconNextTab.setOrigin(0, -0.1);
     iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
     this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
     const iconAction = this.scene.add.sprite(0, 0, "keyboard");
-    iconAction.setScale(.1);
     iconAction.setOrigin(0, -0.1);
     iconAction.setPositionRelative(actionsBg, headerBg.width - 20, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
     const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
-    actionText.setOrigin(0, 0);
-    actionText.setPositionRelative(iconAction, 0, 2);
-    actionText.setPositionRelative(iconAction, -actionText.width/6, -(actionText.height/6)/2 - 6);
+    actionText.setOrigin(0, 0.15);
+    actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
 
     const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
-    iconCancel.setScale(.1);
     iconCancel.setOrigin(0, -0.1);
     iconCancel.setPositionRelative(actionsBg, headerBg.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
     const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
-    cancelText.setOrigin(0, 0);
-    cancelText.setPositionRelative(iconCancel, -cancelText.width/6, -(cancelText.height/6)/2 - 6);
+    cancelText.setOrigin(0, 0.15);
+    cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
     const headerText = addTextObject(this.scene, 0, 0, "General", TextStyle.SETTINGS_SELECTED);
     headerText.setOrigin(0, 0);
-    headerText.setPositionRelative(headerBg, 8 + iconPreviousTab.width/6 - 4, 4);
+    headerText.setPositionRelative(headerBg, 18 + iconPreviousTab.width - 4, 4);
 
     const gamepadText = addTextObject(this.scene, 0, 0, "Gamepad", TextStyle.SETTINGS_LABEL);
     gamepadText.setOrigin(0, 0);
-    gamepadText.setPositionRelative(headerBg, 50 + iconPreviousTab.width/6 - 4, 4);
+    gamepadText.setPositionRelative(headerBg, 60 + iconPreviousTab.width - 4, 4);
 
     const keyboardText = addTextObject(this.scene, 0, 0, "Keyboard", TextStyle.SETTINGS_LABEL);
     keyboardText.setOrigin(0, 0);
-    keyboardText.setPositionRelative(headerBg, 97 + iconPreviousTab.width/6 - 4, 4);
+    keyboardText.setPositionRelative(headerBg, 107 + iconPreviousTab.width - 4, 4);
 
     this.optionsContainer = this.scene.add.container(0, 0);
 

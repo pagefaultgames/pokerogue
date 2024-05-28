@@ -94,28 +94,26 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       this.navigationIcons = {};
 
       const iconPreviousTab = this.scene.add.sprite(0, 0, "keyboard");
-      iconPreviousTab.setScale(.1);
       iconPreviousTab.setOrigin(0, -0.1);
       iconPreviousTab.setPositionRelative(this.headerBg, 8, 4);
       this.navigationIcons["BUTTON_CYCLE_FORM"] = iconPreviousTab;
 
       const iconNextTab = this.scene.add.sprite(0, 0, "keyboard");
-      iconNextTab.setScale(.1);
       iconNextTab.setOrigin(0, -0.1);
       iconNextTab.setPositionRelative(this.headerBg, this.headerBg.width - 20, 4);
       this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
       const headerText = addTextObject(this.scene, 0, 0, "General", TextStyle.SETTINGS_LABEL);
       headerText.setOrigin(0, 0);
-      headerText.setPositionRelative(this.headerBg, 8 + iconPreviousTab.width/6 - 4, 4);
+      headerText.setPositionRelative(this.headerBg, 18 + iconPreviousTab.width - 4, 4);
 
       const gamepadText = addTextObject(this.scene, 0, 0, "Gamepad", this.titleSelected === "Gamepad" ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
       gamepadText.setOrigin(0, 0);
-      gamepadText.setPositionRelative(this.headerBg, 50 + iconPreviousTab.width/6 - 4, 4);
+      gamepadText.setPositionRelative(this.headerBg, 60 + iconPreviousTab.width - 4, 4);
 
       const keyboardText = addTextObject(this.scene, 0, 0, "Keyboard", this.titleSelected === "Keyboard" ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
       keyboardText.setOrigin(0, 0);
-      keyboardText.setPositionRelative(this.headerBg, 97 + iconPreviousTab.width/6 - 4, 4);
+      keyboardText.setPositionRelative(this.headerBg, 107 + iconPreviousTab.width - 4, 4);
 
       this.optionsBg = addWindow(this.scene, 0, this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.headerBg.height - 2);
       this.optionsBg.setOrigin(0, 0);
@@ -124,35 +122,31 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       this.actionsBg.setOrigin(0, 0);
 
       const iconAction = this.scene.add.sprite(0, 0, "keyboard");
-      iconAction.setScale(.1);
       iconAction.setOrigin(0, -0.1);
       iconAction.setPositionRelative(this.actionsBg, this.headerBg.width - 20, 4);
       this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
       const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
-      actionText.setOrigin(0, 0);
-      actionText.setPositionRelative(iconAction, 0, 2);
-      actionText.setPositionRelative(iconAction, -actionText.width/6, -(actionText.height/6)/2 - 6);
+      actionText.setOrigin(0, 0.15);
+      actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
 
       const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
-      iconCancel.setScale(.1);
       iconCancel.setOrigin(0, -0.1);
       iconCancel.setPositionRelative(this.actionsBg, this.headerBg.width - 100, 4);
       this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
       const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
-      cancelText.setOrigin(0, 0);
-      cancelText.setPositionRelative(iconCancel, -cancelText.width/6, -(cancelText.height/6)/2 - 6);
+      cancelText.setOrigin(0, 0.15);
+      cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
       const iconReset = this.scene.add.sprite(0, 0, "keyboard");
-      iconReset.setScale(.1);
       iconReset.setOrigin(0, -0.1);
       iconReset.setPositionRelative(this.actionsBg, this.headerBg.width - 180, 4);
       this.navigationIcons["BUTTON_HOME"] = iconReset;
 
       const resetText = addTextObject(this.scene, 0, 0, "Reset all", TextStyle.SETTINGS_LABEL);
-      resetText.setOrigin(0, 0);
-      resetText.setPositionRelative(iconReset, -resetText.width/6, -(resetText.height/6)/2 - 6);
+      resetText.setOrigin(0, 0.15);
+      resetText.setPositionRelative(iconReset, -resetText.width/6-2, 0);
 
       this.settingsContainer.add(this.headerBg);
       this.settingsContainer.add(headerText);
@@ -228,8 +222,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
               }
               // For null options, add an icon for the key.
               const icon = this.scene.add.sprite(0, 0, this.textureOverride ? this.textureOverride : config.padType);
-              icon.setScale(0.1);
-              icon.setOrigin(0, -0.1);
+              icon.setOrigin(0, -0.15);
               inputsIcons[this.settingDevice[setting]] = icon;
               optionsContainer.add(icon);
               valueLabels.push(icon);
@@ -252,7 +245,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
           const totalWidth = optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
 
           // Define the minimum width for a label, ensuring it's at least 78 pixels wide or the width of the setting label plus some padding
-          const labelWidth = Math.max(90, settingLabels[s].displayWidth + 8);
+          const labelWidth = Math.max(130, settingLabels[s].displayWidth + 8);
 
           // Calculate the total available space for placing option labels next to their setting label
           // We reserve space for the setting label and then distribute the remaining space evenly

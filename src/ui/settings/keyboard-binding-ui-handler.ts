@@ -19,7 +19,6 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
 
     // New button icon setup.
     this.newButtonIcon = this.scene.add.sprite(0, 0, "keyboard");
-    this.newButtonIcon.setScale(0.15);
     this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 32);
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
