@@ -85,7 +85,7 @@ export interface Localizable {
 
 const alternativeFonts = {
   'ko': [
-    new FontFace("emerald", "url(./fonts/pokemon-dppt.ttf)")
+    new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)")
   ],
 }
 
