@@ -3893,7 +3893,7 @@ export class GameOverPhase extends BattlePhase {
       this.victory = true;
     }
 
-    if (this.scene.gameMode.isEndless) {
+    if (this.victory && this.scene.gameMode.isEndless) {
       this.scene.ui.showDialogue(i18next.t("PGMmiscDialogue:ending_endless"), i18next.t("PGMmiscDialogue:ending_name"), 0, () => this.handleGameOver());
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
