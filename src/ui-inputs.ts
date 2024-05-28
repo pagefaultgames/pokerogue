@@ -6,6 +6,7 @@ import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, settingOptions} from "./system/settings";
 import SettingsUiHandler from "./ui/settings-ui-handler";
 import {Button} from "./enums/buttons";
+import { isMobile } from "./touch-controls";
 
 export interface ActionKeys {
     [key in Button]: () => void;
@@ -29,12 +30,16 @@ export class UiInputs {
 
   listenInputs(): void {
     this.events.on("input_down", (event) => {
-      if (event.controller_type === "gamepad") {
-        const touchControls = document.getElementById("touchControls");
-        if (touchControls && touchControls.classList.contains("visible")) {
-          touchControls.classList.toggle("visible", false);
+      // Before hiding mobile controls, sanity check that we're on a mobile device first, and that touch controls were enabled at all
+      if (isMobile() && this.scene.enableTouchControls) {
+        if (event.controller_type === "gamepad") {
+          const touchControls = document.getElementById("touchControls");
+          if (touchControls && touchControls.classList.contains("visible")) {
+            touchControls.classList.toggle("visible", false);
+          }
         }
       }
+
       const actions = this.getActionsKeyDown();
       if (!actions.hasOwnProperty(event.button)) {
         return;

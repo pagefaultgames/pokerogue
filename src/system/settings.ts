@@ -166,6 +166,12 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     break;
   case Setting.Touch_Controls:
     scene.enableTouchControls = settingOptions[setting][value] !== "Disabled" && hasTouchscreen();
+
+    // Emit an event here when settings are loaded and when this option is updated so that we can keep track of it for future use.
+    // The value is mainly used in main to automatically enable/disable touch controls when external input is detected
+    const event = new CustomEvent("touchControlUpdate", {detail: scene.enableTouchControls});
+    window.dispatchEvent(event);
+
     const touchControls = document.getElementById("touchControls");
     if (touchControls) {
       touchControls.classList.toggle("visible", scene.enableTouchControls);
