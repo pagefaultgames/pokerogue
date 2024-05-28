@@ -1344,9 +1344,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const rows = Math.ceil(genStarters / 9);
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
+        // prepare persistent starter data to store changes
+        const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
+        if (!starterData.starterAttributes) {
+          starterData.starterAttributes = {};
+        }
         switch (button) {
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
+            starterData.starterAttributes.variant = !props.shiny ? props.variant : -1; // update shiny setting
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
             if (this.dexAttrCursor & DexAttr.SHINY) {
               this.scene.playSound("sparkle");
@@ -1365,6 +1371,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 break;
               }
             } while (newFormIndex !== props.formIndex);
+            starterData.starterAttributes.form = newFormIndex; // store the selected form
             this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
             success = true;
           }
@@ -1378,7 +1385,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case Button.CYCLE_ABILITY:
           if (this.canCycleAbility) {
             const abilityCount = this.lastSpecies.getAbilityCount();
-            const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
+            const abilityAttr = starterData.abilityAttr;
             let newAbilityIndex = this.abilityCursor;
             do {
               newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
@@ -1396,6 +1403,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newAbilityIndex !== this.abilityCursor);
+            starterData.starterAttributes.ability = newAbilityIndex; // store the selected ability
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
             success = true;
           }
@@ -1406,10 +1414,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const natureIndex = natures.indexOf(this.natureCursor);
             const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
             // store cycled nature as default
-            const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
-            if (!starterData.starterAttributes) {
-              starterData.starterAttributes = {};
-            }
             starterData.starterAttributes.nature = newNature as unknown as integer;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
             success = true;
@@ -1434,6 +1438,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newVariant !== props.variant);
+            starterData.starterAttributes.variant = newVariant; // store the selected variant
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
             success = true;
           }
@@ -1699,9 +1704,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
-    if (species && this.scene.gameData.starterData[species.speciesId]?.nature) {
+
+    const starterAttributes = species ? this.scene.gameData.starterData[species.speciesId]?.starterAttributes : null;
+    if (starterAttributes?.nature) {
       // load default nature from stater save data, if set
-      this.natureCursor = this.scene.gameData.starterData[species.speciesId].nature;
+      this.natureCursor = starterAttributes.nature;
+    }
+    if (!isNaN(starterAttributes?.ability)) {
+      // load default nature from stater save data, if set
+      this.abilityCursor = starterAttributes.ability;
     }
 
     if (this.statsMode) {
@@ -1825,10 +1836,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, this.starterAbilityIndexes[starterIndex], this.starterNatures[starterIndex]);
         } else {
           const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-          const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+          const defaultAbilityIndex = starterAttributes?.ability ?? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
           // load default nature from stater save data, if set
-          const defaultNature = this.scene.gameData.starterData[species.speciesId]?.starterAttributes?.nature || this.scene.gameData.getSpeciesDefaultNature(species);
+          const defaultNature = starterAttributes?.nature || this.scene.gameData.getSpeciesDefaultNature(species);
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+          if (!isNaN(starterAttributes?.variant)) {
+            if (props.shiny = (starterAttributes.variant >= 0)) {
+              props.variant = starterAttributes.variant;
+            }
+          }
+          props.formIndex = starterAttributes?.form ?? props.formIndex;
 
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature);
         }

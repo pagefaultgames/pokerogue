@@ -128,7 +128,7 @@ interface VoucherUnlocks {
 }
 
 export interface VoucherCounts {
-	[type: string]: integer;
+    [type: string]: integer;
 }
 
 export interface DexData {
@@ -180,10 +180,10 @@ export interface StarterMoveData {
 }
 
 export interface StarterAttributes {
-	nature: integer;
-	ability: integer;
-	variant: integer;
-	form: integer;
+    nature: integer;
+    ability: integer;
+    variant: integer;
+    form: integer;
 }
 
 export interface StarterDataEntry {
