@@ -1284,7 +1284,7 @@ export default class BattleScene extends SceneBase {
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
     } else {
-      this.luckText.setTint(0x83a55a, 0xee384a, 0x5271cd, 0x7b487b);
+      this.luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
     this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
     this.tweens.add({
