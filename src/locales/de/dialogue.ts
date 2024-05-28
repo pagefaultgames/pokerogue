@@ -930,7 +930,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lacey": {
     "encounter": {
-      1: "Ich werde dir mit meiner gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
+      1: "Ich werde dir mit meinem gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
     },
     "victory": {
       1: "Das war ein großartiger Kampf!"
