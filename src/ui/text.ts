@@ -32,6 +32,11 @@ export enum TextStyle {
 }
 
 interface LanguageSetting {
+  fontFace?: string,
+  partyFontFace?: string,
+  fontSize?: string,
+  statsLabelFontSize?: string,
+  statsValueFontSize?: string,
   summaryFontSize?: string,
   battleInfoFontSize?: string,
   partyFontSize?: string,
@@ -42,11 +47,18 @@ interface LanguageSetting {
 
 const languageSettings: { [key: string]: LanguageSetting } = {
   "en":{},
-  "de":{},
+  "de":{
+    statsLabelFontSize: "80px",
+    statsValueFontSize: "80px",
+  },
   "es":{},
   "it":{},
   "fr":{},
-  "zh_CN":{},
+  "zh_CN":{
+    fontFace: "emerald, pixel-zh_hans",
+    partyFontFace: "pkmnems, pixel-zh_hans",
+  },
+  "zh_TW": {},
   "pt_BR":{},
 };
 
@@ -93,8 +105,8 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   let shadowYpos = 5;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
-    fontFamily: "emerald",
-    fontSize: "96px",
+    fontFamily: languageSettings[lang]?.fontFace || "emerald",
+    fontSize: languageSettings[lang]?.fontSize || "96px",
     color: getTextColor(style, false, uiTheme),
     padding: {
       bottom: 6
@@ -116,30 +128,12 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     shadowYpos = 3;
     break;
   case TextStyle.STATS_LABEL:
-    let fontSizeLabel = "96px";
-    switch (lang) {
-    case "de":
-      fontSizeLabel = "80px";
-      break;
-    default:
-      fontSizeLabel = "96px";
-      break;
-    }
-    styleOptions.fontSize =  fontSizeLabel;
+    styleOptions.fontSize = languageSettings[lang]?.statsLabelFontSize || "96px";
     break;
   case TextStyle.STATS_VALUE:
     shadowXpos = 3;
     shadowYpos = 3;
-    let fontSizeValue = "96px";
-    switch (lang) {
-    case "de":
-      fontSizeValue = "80px";
-      break;
-    default:
-      fontSizeValue = "96px";
-      break;
-    }
-    styleOptions.fontSize =  fontSizeValue;
+    styleOptions.fontSize = languageSettings[lang]?.statsValueFontSize || "96px";
     break;
   case TextStyle.MESSAGE:
   case TextStyle.SETTINGS_LABEL:
@@ -156,7 +150,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   case TextStyle.PARTY:
   case TextStyle.PARTY_RED:
     styleOptions.fontSize = languageSettings[lang]?.partyFontSize || "66px";
-    styleOptions.fontFamily = "pkmnems";
+    styleOptions.fontFamily = languageSettings[lang]?.partyFontFace || "pkmnems";
     break;
   case TextStyle.TOOLTIP_CONTENT:
     styleOptions.fontSize = languageSettings[lang]?.tooltipContentFontSize || "64px";

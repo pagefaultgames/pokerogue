@@ -91,7 +91,9 @@ Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 BBCodeText.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
-document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
+document.fonts.load("16px emerald")
+  .then(() => document.fonts.load("10px pkmnems"))
+  .then(() => document.fonts.load("12px pixel-zh_hans"));
 
 let game;
 
