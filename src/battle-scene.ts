@@ -56,6 +56,7 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -94,6 +95,7 @@ export default class BattleScene extends SceneBase {
   public enableRetries: boolean = false;
   public candyUpgradeNotification: integer = 0;
   public candyUpgradeDisplay: integer = 0;
+  public moneyFormat: MoneyFormat = MoneyFormat.NORMAL;
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
@@ -1265,9 +1267,16 @@ export default class BattleScene extends SceneBase {
     this.biomeWaveText.setVisible(true);
   }
 
-  updateMoneyText(): void {
-    this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
-    this.moneyText.setVisible(true);
+  updateMoneyText(forceVisible: boolean = true): void {
+    if (this.money === undefined) {
+      return;
+    }
+    const formattedMoney =
+			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
+    this.moneyText.setText(`₽${formattedMoney}`);
+    if (forceVisible) {
+      this.moneyText.setVisible(true);
+    }
   }
 
   updateScoreText(): void {
@@ -1286,7 +1295,7 @@ export default class BattleScene extends SceneBase {
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
     } else {
-      this.luckText.setTint(0x83a55a, 0xee384a, 0x5271cd, 0x7b487b);
+      this.luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
     this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
     this.tweens.add({

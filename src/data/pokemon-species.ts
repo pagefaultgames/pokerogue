@@ -271,8 +271,28 @@ export abstract class PokemonSpeciesForm {
 
   abstract getFormSpriteKey(formIndex?: integer): string;
 
+
+  /**
+   * Variant Data key/index is either species id or species id followed by -formkey
+   * @param formIndex optional form index for pokemon with different forms
+   * @returns species id if no additional forms, index with formkey if a pokemon with a form
+   */
+  getVariantDataIndex(formIndex?: integer) {
+    let formkey = null;
+    let variantDataIndex: integer|string = this.speciesId;
+    const species = getPokemonSpecies(this.speciesId);
+    if (species.forms.length > 0) {
+      formkey = species.forms[formIndex]?.formKey;
+      if (formkey) {
+        variantDataIndex = `${this.speciesId}-${formkey}`;
+      }
+    }
+    return variantDataIndex;
+  }
+
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
-    const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
+    const variantDataIndex = this.getVariantDataIndex(formIndex);
+    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
@@ -281,9 +301,11 @@ export abstract class PokemonSpeciesForm {
       formIndex = this.formIndex;
     }
 
+    const variantDataIndex = this.getVariantDataIndex(formIndex);
+
     let ret = this.speciesId.toString();
 
-    const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
 
     if (shiny && !isVariant) {
       ret += "s";

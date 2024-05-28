@@ -6,6 +6,7 @@ import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
 import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { MoneyFormat } from "../enums/money-format";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
@@ -20,6 +21,7 @@ export enum Setting {
   Enable_Retries = "ENABLE_RETRIES",
   Candy_Upgrade_Notification = "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display = "CANDY_UPGRADE_DISPLAY",
+  Money_Format = "MONEY_FORMAT",
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
@@ -55,6 +57,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Enable_Retries]: ["Off", "On"],
   [Setting.Candy_Upgrade_Notification]: ["Off", "Passives Only", "On"],
   [Setting.Candy_Upgrade_Display]: ["Icon", "Animation"],
+  [Setting.Money_Format]: ["Normal", "Abbreviated"],
   [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
   [Setting.Move_Animations]: ["Off", "On"],
   [Setting.Show_Stats_on_Level_Up]: ["Off", "On"],
@@ -82,6 +85,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Enable_Retries]: 0,
   [Setting.Candy_Upgrade_Notification]: 0,
   [Setting.Candy_Upgrade_Display]: 0,
+  [Setting.Money_Format]: 0,
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
@@ -140,6 +144,16 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     break;
   case Setting.Candy_Upgrade_Display:
     scene.candyUpgradeDisplay = value;
+  case Setting.Money_Format:
+    switch (settingOptions[setting][value]) {
+    case "Normal":
+      scene.moneyFormat = MoneyFormat.NORMAL;
+      break;
+    case "Abbreviated":
+      scene.moneyFormat = MoneyFormat.ABBREVIATED;
+      break;
+    }
+    scene.updateMoneyText(false);
     break;
   case Setting.Sprite_Set:
     scene.experimentalSprites = !!value;
@@ -204,7 +218,8 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
             i18next.changeLanguage(locale);
             localStorage.setItem("prLang", locale);
             cancelHandler();
-            scene.reset(true, false, true);
+            // Reload the whole game to apply the new locale since also some constants are translated
+            window.location.reload();
             return true;
           } catch (error) {
             console.error("Error changing locale:", error);
