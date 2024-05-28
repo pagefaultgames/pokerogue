@@ -76,9 +76,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 2
   },
   "pt":{
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
-    starterInfoXPos: 32,
+    starterInfoTextSize: "48px",
+    instructionTextSize: "42px",
+    starterInfoXPos: 33,
   },
 };
 
@@ -468,13 +468,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, "types");
-    this.type1Icon.setScale(0.5);
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, "types");
-    this.type2Icon.setScale(0.5);
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
@@ -1041,7 +1039,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             let newFormIndex = props.formIndex;
             do {
               newFormIndex = (newFormIndex + 1) % formCount;
-              if (this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
+              if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
                 break;
               }
             } while (newFormIndex !== props.formIndex);
