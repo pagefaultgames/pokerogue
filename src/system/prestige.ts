@@ -1,4 +1,6 @@
-export enum PrestigeModifierAttribute {}
+export enum PrestigeModifierAttribute {
+  POKEMON_EXP_GAIN
+}
 
 enum PrestigeModifierOperation {
   ADD,
@@ -25,13 +27,17 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   // Level 2
   [],
   // Level 3
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.9)
+  ],
   // Level 4
   [],
   // Level 5
   [],
   // Level 6
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.85)
+  ],
   // Level 7
   [],
   // Level 8
@@ -39,7 +45,9 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   // Level 9
   [],
   // Level 10
-  []
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.8)
+  ]
 ];
 
 export abstract class Prestige {

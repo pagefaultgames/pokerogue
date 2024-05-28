@@ -62,7 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-import { Prestige } from "./system/prestige";
+import { Prestige, PrestigeModifierAttribute } from "./system/prestige";
 import { FEATURE_FLAGS, FeatureFlag } from "./feature-flags";
 
 
@@ -4249,7 +4249,8 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    const exp = new Utils.NumberHolder(this.expValue);
+    const rawExp = FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE] ? Prestige.getModifiedValue(this.scene.prestigeLevel, PrestigeModifierAttribute.POKEMON_EXP_GAIN, this.expValue) : this.expValue;
+    const exp = new Utils.NumberHolder(rawExp);
     this.scene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
     this.scene.ui.showText(i18next.t("battle:expGain", { pokemonName: pokemon.name, exp: exp.value }), null, () => {
