@@ -275,8 +275,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 4, Moves.QUICK_ATTACK ],
     [ 7, Moves.FOCUS_ENERGY ],
     [ 10, Moves.BITE ],
-    [ 13, Moves.LASER_FOCUS ],
-    [ 16, Moves.TAKE_DOWN ],
+    [ 13, Moves.PURSUIT ], //USUM
+    [ 16, Moves.HYPER_FANG ], //USUM
     [ 19, Moves.ASSURANCE ],
     [ 22, Moves.CRUNCH ],
     [ 25, Moves.SUCKER_PUNCH ],
@@ -287,13 +287,14 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.RATICATE]: [
     [ 0, Moves.SCARY_FACE ],
     [ 1, Moves.SWORDS_DANCE ],
+    [ 1, Moves.LASER_FOCUS ], //Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAIL_WHIP ],
     [ 1, Moves.QUICK_ATTACK ],
     [ 1, Moves.FOCUS_ENERGY ],
     [ 10, Moves.BITE ],
-    [ 13, Moves.LASER_FOCUS ],
-    [ 16, Moves.TAKE_DOWN ],
+    [ 13, Moves.PURSUIT ], //USUM
+    [ 16, Moves.HYPER_FANG ], //USUM
     [ 19, Moves.ASSURANCE ],
     [ 24, Moves.CRUNCH ],
     [ 29, Moves.SUCKER_PUNCH ],
@@ -1058,21 +1059,28 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CONFUSION ], //Custom
   ],
   [Species.KADABRA]: [
-    [ 0, Moves.PSYBEAM ], //Custom
+    [ 0, Moves.KINESIS ], //LGPE
+    [ 0, Moves.PSYBEAM ], //LGPE
     [ 1, Moves.DISABLE ],
     [ 1, Moves.TELEPORT ],
     [ 1, Moves.KINESIS ],
+    [ 1, Moves.CONFUSION ], //USUM
     [ 10, Moves.REFLECT ],
     [ 15, Moves.ALLY_SWITCH ],
-    [ 20, Moves.PSYCHO_CUT ],
-    [ 25, Moves.RECOVER ],
-    [ 30, Moves.PSYSHOCK ],
-    [ 35, Moves.PSYCHIC ],
-    [ 40, Moves.ROLE_PLAY ],
-    [ 45, Moves.FUTURE_SIGHT ],
+    [ 18, Moves.DISABLE ], //USUM
+    [ 21, Moves.PSYCHO_CUT ],
+    [ 23, Moves.MIRACLE_EYE ], //USUM
+    [ 26, Moves.RECOVER ],
+    [ 31, Moves.PSYSHOCK ],
+    [ 33, Moves.TELEKINESIS ], //USUM
+    [ 36, Moves.PSYCHIC ],
+    [ 41, Moves.ROLE_PLAY ],
+    [ 43, Moves.FUTURE_SIGHT ],
+    [ 46, Moves.TRICK ], //USUM
     [ 50, Moves.CALM_MIND ],
   ],
   [Species.ALAKAZAM]: [
+    [ 0, Moves.CALM_MIND ], //LGPE
     [ 1, Moves.DISABLE ],
     [ 1, Moves.CONFUSION ],
     [ 1, Moves.TELEPORT ],
@@ -1080,13 +1088,16 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 5, Moves.PSYBEAM ],
     [ 10, Moves.REFLECT ],
     [ 15, Moves.ALLY_SWITCH ],
-    [ 20, Moves.PSYCHO_CUT ],
-    [ 25, Moves.RECOVER ],
-    [ 30, Moves.PSYSHOCK ],
-    [ 35, Moves.PSYCHIC ],
-    [ 40, Moves.ROLE_PLAY ],
-    [ 45, Moves.FUTURE_SIGHT ],
-    [ 50, Moves.CALM_MIND ],
+    [ 18, Moves.DISABLE ], //USUM
+    [ 21, Moves.PSYCHO_CUT ],
+    [ 23, Moves.MIRACLE_EYE ], //USUM
+    [ 26, Moves.RECOVER ],
+    [ 31, Moves.PSYSHOCK ],
+    [ 33, Moves.TELEKINESIS ], //USUM
+    [ 36, Moves.PSYCHIC ],
+    [ 41, Moves.ROLE_PLAY ],
+    [ 43, Moves.FUTURE_SIGHT ],
+    [ 46, Moves.TRICK ], //USUM
   ],
   [Species.MACHOP]: [
     [ 1, Moves.LEER ],
@@ -1763,31 +1774,35 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.CUBONE]: [
     [ 1, Moves.GROWL ],
     [ 1, Moves.MUD_SLAP ],
-    [ 4, Moves.TAIL_WHIP ],
-    [ 8, Moves.FALSE_SWIPE ],
-    [ 12, Moves.HEADBUTT ],
-    [ 16, Moves.RETALIATE ],
-    [ 20, Moves.FLING ],
-    [ 24, Moves.STOMPING_TANTRUM ],
-    [ 29, Moves.BONE_RUSH ],
-    [ 32, Moves.FOCUS_ENERGY ],
-    [ 36, Moves.ENDEAVOR ],
-    [ 40, Moves.BONEMERANG ],
-    [ 44, Moves.THRASH ],
-    [ 48, Moves.DOUBLE_EDGE ],
+    [ 3, Moves.TAIL_WHIP ],
+    [ 7, Moves.BONE_CLUB ], //USUM
+    [ 11, Moves.HEADBUTT ],
+    [ 13, Moves.FALSE_SWIPE ],
+    [ 17, Moves.FOCUS_ENERGY ], //USUM
+    [ 21, Moves.FLING ],
+    [ 23, Moves.STOMPING_TANTRUM ],
+    [ 27, Moves.RETALIATE ],
+    [ 31, Moves.BONE_RUSH ],
+    [ 33, Moves.RAGE ], //USUM
+    [ 37, Moves.ENDEAVOR ],
+    [ 41, Moves.BONEMERANG ],
+    [ 43, Moves.THRASH ],
+    [ 47, Moves.DOUBLE_EDGE ],
   ],
   [Species.MAROWAK]: [
+    [ 0, Moves.SWORDS_DANCE ], //LGPE
     [ 1, Moves.TAIL_WHIP ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.MUD_SLAP ],
     [ 1, Moves.FALSE_SWIPE ],
     [ 1, Moves.BONE_CLUB ],
-    [ 12, Moves.HEADBUTT ],
-    [ 16, Moves.RETALIATE ],
-    [ 20, Moves.FLING ],
-    [ 24, Moves.STOMPING_TANTRUM ],
+    [ 11, Moves.HEADBUTT ],
+    [ 17, Moves.FOCUS_ENERGY ], //USUM
+    [ 21, Moves.FLING ],
+    [ 23, Moves.STOMPING_TANTRUM ],
+    [ 27, Moves.RETALIATE ],
     [ 31, Moves.BONE_RUSH ],
-    [ 36, Moves.FOCUS_ENERGY ],
+    [ 37, Moves.RAGE ], //USUM
     [ 42, Moves.ENDEAVOR ],
     [ 48, Moves.BONEMERANG ],
     [ 54, Moves.THRASH ],
@@ -2128,8 +2143,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SWEET_KISS ],
     [ 1, Moves.COPYCAT ],
     [ 12, Moves.CONFUSION ],
-    [ 16, Moves.COVET ],
-    [ 20, Moves.SING ],
+    [ 15, Moves.COVET ],
+    [ 18, Moves.SING ],
+    [ 21, Moves.HEART_STAMP ], //USUM
     [ 24, Moves.FAKE_TEARS ],
     [ 28, Moves.ICE_PUNCH ],
     [ 34, Moves.PSYCHIC ],
@@ -2207,6 +2223,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.MAGIKARP]: [
     [ 1, Moves.SPLASH ],
+    [ 5, Moves.WATER_GUN ], //Custom
     [ 15, Moves.TACKLE ],
     [ 25, Moves.FLAIL ],
   ],
@@ -3492,6 +3509,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SPLASH ],
     [ 1, Moves.CHARM ],
     [ 1, Moves.ENCORE ],
+    [ 1, Moves.CONFUSION ], //Custom
   ],
   [Species.GIRAFARIG]: [
     [ 1, Moves.TACKLE ],
@@ -4105,8 +4123,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 4, Moves.POWDER_SNOW ],
     [ 8, Moves.COPYCAT ],
     [ 12, Moves.CONFUSION ],
-    [ 16, Moves.COVET ],
-    [ 20, Moves.SING ],
+    [ 15, Moves.COVET ],
+    [ 18, Moves.SING ],
+    [ 21, Moves.HEART_STAMP ], //USUM
     [ 24, Moves.FAKE_TEARS ],
     [ 28, Moves.ICE_PUNCH ],
     [ 32, Moves.PSYCHIC ],
@@ -5117,32 +5136,36 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 19, Moves.KNOCK_OFF ],
     [ 22, Moves.BULK_UP ],
     [ 25, Moves.BELLY_DRUM ],
-    [ 28, Moves.DETECT ],
+    [ 28, Moves.SMELLING_SALTS ], //USUM
     [ 31, Moves.SEISMIC_TOSS ],
-    [ 34, Moves.FOCUS_PUNCH ],
+    [ 34, Moves.WAKE_UP_SLAP ], //USUM
     [ 37, Moves.ENDURE ],
     [ 40, Moves.CLOSE_COMBAT ],
     [ 43, Moves.REVERSAL ],
     [ 46, Moves.HEAVY_SLAM ],
   ],
   [Species.HARIYAMA]: [
+    [ 0, Moves.VITAL_THROW ], //Custom
     [ 1, Moves.BRINE ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.FOCUS_ENERGY ],
     [ 1, Moves.ARM_THRUST ],
+    [ 1, Moves.VITAL_THROW ], //USUM
+    [ 1, Moves.DETECT ],
     [ 10, Moves.FAKE_OUT ],
     [ 13, Moves.FORCE_PALM ],
     [ 16, Moves.WHIRLWIND ],
     [ 19, Moves.KNOCK_OFF ],
     [ 22, Moves.BULK_UP ],
     [ 26, Moves.BELLY_DRUM ],
-    [ 30, Moves.DETECT ],
+    [ 30, Moves.SMELLING_SALTS ], //USUM
     [ 34, Moves.SEISMIC_TOSS ],
-    [ 38, Moves.FOCUS_PUNCH ],
+    [ 38, Moves.WAKE_UP_SLAP ], //USUM
     [ 42, Moves.ENDURE ],
     [ 46, Moves.CLOSE_COMBAT ],
     [ 50, Moves.REVERSAL ],
     [ 54, Moves.HEAVY_SLAM ],
+    [ 58, Moves.FOCUS_PUNCH ],
     [ 60, Moves.HEADLONG_RUSH ],
   ],
   [Species.AZURILL]: [
@@ -5185,7 +5208,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 19, Moves.COPYCAT ],
     [ 22, Moves.PAYBACK ],
     [ 25, Moves.CHARM ],
-    [ 31, Moves.FACADE ],
+    [ 28, Moves.WAKE_UP_SLAP ], //USUM
+    [ 31, Moves.ASSIST ], //USUM
     [ 34, Moves.COVET ],
     [ 37, Moves.HEAL_BELL ],
     [ 40, Moves.DOUBLE_EDGE ],
@@ -6085,6 +6109,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.FEEBAS]: [
     [ 1, Moves.SPLASH ],
+    [ 5, Moves.WATER_GUN ], //Custom
     [ 15, Moves.TACKLE ],
     [ 25, Moves.FLAIL ],
   ],
@@ -6272,6 +6297,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CHARM ],
     [ 1, Moves.ENCORE ],
     [ 1, Moves.AMNESIA ],
+    [ 1, Moves.CONFUSION ], //Custom
   ],
   [Species.SNORUNT]: [
     [ 1, Moves.POWDER_SNOW ],
@@ -6432,14 +6458,16 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CHARM ],
     [ 4, Moves.WATER_GUN ],
     [ 7, Moves.AGILITY ],
+    [ 9, Moves.DRAINING_KISS ], //USUM
     [ 13, Moves.WISH ],
+    [ 13, Moves.LUCKY_CHANT ], //USUM
     [ 17, Moves.WATER_PULSE ],
     [ 20, Moves.ATTRACT ],
-    [ 22, Moves.DRAINING_KISS ],
+    [ 22, Moves.HEART_STAMP ], //USUM
     [ 26, Moves.FLAIL ],
     [ 31, Moves.SWEET_KISS ],
     [ 34, Moves.TAKE_DOWN ],
-    [ 37, Moves.BABY_DOLL_EYES ],
+    [ 37, Moves.CAPTIVATE ], //USUM
     [ 40, Moves.AQUA_RING ],
     [ 42, Moves.SOAK ],
     [ 46, Moves.HYDRO_PUMP ],
@@ -7176,7 +7204,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 37, Moves.SUPER_FANG ],
     [ 41, Moves.DISCHARGE ],
     [ 45, Moves.LAST_RESORT ],
-    [ 49, Moves.THUNDER ],
+    [ 49, Moves.HYPER_FANG ], //USUM
   ],
   [Species.BUIZEL]: [
     [ 1, Moves.TACKLE ],
@@ -7396,7 +7424,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 17, Moves.AERIAL_ACE ],
     [ 20, Moves.FURY_SWIPES ],
     [ 25, Moves.CHARM ],
-    [ 29, Moves.TAUNT ],
+    [ 29, Moves.ASSIST ], //USUM
     [ 32, Moves.RETALIATE ],
     [ 37, Moves.SLASH ],
     [ 41, Moves.SUCKER_PUNCH ],
@@ -7409,13 +7437,14 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.PLAY_ROUGH ],
     [ 1, Moves.SUCKER_PUNCH ],
+    [ 1, Moves.TAUNT ], //Custom
     [ 1, Moves.GROWL ],
     [ 1, Moves.FAKE_OUT ],
     [ 13, Moves.HYPNOSIS ],
     [ 17, Moves.AERIAL_ACE ],
     [ 20, Moves.FURY_SWIPES ],
     [ 25, Moves.CHARM ],
-    [ 29, Moves.TAUNT ],
+    [ 29, Moves.ASSIST ], //USUM
     [ 32, Moves.RETALIATE ],
     [ 37, Moves.SLASH ],
     [ 45, Moves.BODY_SLAM ],
@@ -8790,15 +8819,20 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.PURRLOIN]: [
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.GROWL ],
-    [ 4, Moves.SAND_ATTACK ],
+    [ 3, Moves.SAND_ATTACK ],
     [ 5, Moves.FAKE_OUT ],
+    [ 10, Moves.ASSIST ], //USUM
     [ 12, Moves.FURY_SWIPES ],
-    [ 16, Moves.TORMENT ],
+    [ 15, Moves.PURSUIT ], //USUM
+    [ 19, Moves.TORMENT ],
     [ 21, Moves.ASSURANCE ],
     [ 24, Moves.HONE_CLAWS ],
     [ 28, Moves.SUCKER_PUNCH ],
-    [ 32, Moves.NASTY_PLOT ],
-    [ 36, Moves.NIGHT_SLASH ],
+    [ 30, Moves.SLASH ], //USUM
+    [ 33, Moves.NASTY_PLOT ],
+    [ 33, Moves.CAPTIVATE ], //USUM
+    [ 37, Moves.NIGHT_SLASH ],
+    [ 39, Moves.SNATCH ], //USUM
     [ 40, Moves.PLAY_ROUGH ],
   ],
   [Species.LIEPARD]: [
@@ -8808,12 +8842,16 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.GROWL ],
     [ 1, Moves.FAKE_OUT ],
     [ 12, Moves.FURY_SWIPES ],
-    [ 16, Moves.TORMENT ],
-    [ 23, Moves.ASSURANCE ],
-    [ 28, Moves.HONE_CLAWS ],
+    [ 15, Moves.PURSUIT ], //USUM
+    [ 19, Moves.TORMENT ],
+    [ 22, Moves.ASSURANCE ],
+    [ 26, Moves.HONE_CLAWS ],
+    [ 31, Moves.SLASH ], //USUM
     [ 34, Moves.SUCKER_PUNCH ],
-    [ 40, Moves.NASTY_PLOT ],
-    [ 46, Moves.NIGHT_SLASH ],
+    [ 38, Moves.TAUNT ],
+    [ 43, Moves.NIGHT_SLASH ],
+    [ 47, Moves.SNATCH ], //USUM
+    [ 50, Moves.NASTY_PLOT ],
     [ 52, Moves.PLAY_ROUGH ],
   ],
   [Species.PANSAGE]: [
@@ -9049,32 +9087,36 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.WOOBAT]: [
     [ 1, Moves.GUST ],
     [ 1, Moves.ATTRACT ],
-    [ 5, Moves.CONFUSION ],
-    [ 10, Moves.ENDEAVOR ],
+    [ 4, Moves.CONFUSION ],
+    [ 8, Moves.ENDEAVOR ],
+    [ 12, Moves.ASSURANCE ],
     [ 15, Moves.AIR_CUTTER ],
-    [ 20, Moves.IMPRISON ],
-    [ 25, Moves.ASSURANCE ],
-    [ 30, Moves.AMNESIA ],
-    [ 35, Moves.AIR_SLASH ],
-    [ 40, Moves.PSYCHIC ],
-    [ 45, Moves.CALM_MIND ],
-    [ 50, Moves.FUTURE_SIGHT ],
-    [ 55, Moves.SIMPLE_BEAM ],
+    [ 19, Moves.IMPRISON ],
+    [ 21, Moves.HEART_STAMP ], //USUM
+    [ 25, Moves.ODOR_SLEUTH ], //USUM
+    [ 29, Moves.AMNESIA ],
+    [ 29, Moves.CALM_MIND ], //USUM
+    [ 32, Moves.AIR_SLASH ],
+    [ 36, Moves.FUTURE_SIGHT ],
+    [ 41, Moves.PSYCHIC ],
+    [ 47, Moves.SIMPLE_BEAM ],
   ],
   [Species.SWOOBAT]: [
     [ 1, Moves.GUST ],
     [ 1, Moves.CONFUSION ],
     [ 1, Moves.ATTRACT ],
     [ 1, Moves.ENDEAVOR ],
+    [ 12, Moves.ASSURANCE ],
     [ 15, Moves.AIR_CUTTER ],
-    [ 20, Moves.IMPRISON ],
-    [ 25, Moves.ASSURANCE ],
-    [ 30, Moves.AMNESIA ],
-    [ 35, Moves.AIR_SLASH ],
-    [ 40, Moves.PSYCHIC ],
-    [ 45, Moves.CALM_MIND ],
-    [ 50, Moves.FUTURE_SIGHT ],
-    [ 55, Moves.SIMPLE_BEAM ],
+    [ 19, Moves.IMPRISON ],
+    [ 21, Moves.HEART_STAMP ], //USUM
+    [ 25, Moves.ODOR_SLEUTH ], //USUM
+    [ 29, Moves.AMNESIA ],
+    [ 29, Moves.CALM_MIND ], //USUM
+    [ 32, Moves.AIR_SLASH ],
+    [ 36, Moves.FUTURE_SIGHT ],
+    [ 41, Moves.PSYCHIC ],
+    [ 47, Moves.SIMPLE_BEAM ],
   ],
   [Species.DRILBUR]: [
     [ 1, Moves.MUD_SLAP ],
@@ -9118,7 +9160,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 4, Moves.DISARMING_VOICE ],
     [ 9, Moves.BABY_DOLL_EYES ],
     [ 12, Moves.HELPING_HAND ],
-    [ 16, Moves.GROWL ],
+    [ 16, Moves.REFRESH ],
     [ 20, Moves.ZEN_HEADBUTT ],
     [ 24, Moves.LIFE_DEW ],
     [ 28, Moves.AFTER_YOU ],
@@ -9139,7 +9181,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 12, Moves.FOCUS_ENERGY ],
     [ 16, Moves.BULK_UP ],
     [ 20, Moves.ROCK_SLIDE ],
-    [ 24, Moves.SLAM ],
+    [ 24, Moves.CHIP_AWAY ], //USUM
     [ 28, Moves.SCARY_FACE ],
     [ 32, Moves.DYNAMIC_PUNCH ],
     [ 36, Moves.HAMMER_ARM ],
@@ -9156,7 +9198,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 12, Moves.FOCUS_ENERGY ],
     [ 16, Moves.BULK_UP ],
     [ 20, Moves.ROCK_SLIDE ],
-    [ 24, Moves.SLAM ],
+    [ 24, Moves.CHIP_AWAY ], //USUM
     [ 30, Moves.SCARY_FACE ],
     [ 36, Moves.DYNAMIC_PUNCH ],
     [ 42, Moves.HAMMER_ARM ],
@@ -9173,7 +9215,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 12, Moves.FOCUS_ENERGY ],
     [ 16, Moves.BULK_UP ],
     [ 20, Moves.ROCK_SLIDE ],
-    [ 24, Moves.SLAM ],
+    [ 24, Moves.CHIP_AWAY ], //USUM
     [ 30, Moves.SCARY_FACE ],
     [ 36, Moves.DYNAMIC_PUNCH ],
     [ 42, Moves.HAMMER_ARM ],
@@ -9550,6 +9592,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 12, Moves.LEECH_SEED ],
     [ 16, Moves.SUCKER_PUNCH ],
     [ 20, Moves.PIN_MISSILE ],
+    [ 22, Moves.NEEDLE_ARM ],
     [ 24, Moves.GIGA_DRAIN ],
     [ 28, Moves.SWEET_SCENT ],
     [ 32, Moves.SYNTHESIS ],
@@ -12652,25 +12695,29 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.YUNGOOS]: [
     [ 1, Moves.TACKLE ],
     [ 3, Moves.LEER ],
-    [ 7, Moves.PAYBACK ],
+    [ 7, Moves.PURSUIT ], //USUM
     [ 10, Moves.SAND_ATTACK ],
     [ 13, Moves.WORK_UP ],
+    [ 16, Moves.ODOR_SLEUTH ], //USUM
     [ 19, Moves.BITE ],
     [ 22, Moves.MUD_SLAP ],
     [ 25, Moves.SUPER_FANG ],
     [ 28, Moves.TAKE_DOWN ],
     [ 31, Moves.SCARY_FACE ],
     [ 34, Moves.CRUNCH ],
-    [ 37, Moves.YAWN ],
-    [ 40, Moves.THRASH ],
-    [ 43, Moves.REST ],
+    [ 37, Moves.HYPER_FANG ], //USUM
+    [ 40, Moves.YAWN ],
+    [ 43, Moves.THRASH ],
+    [ 46, Moves.REST ],
   ],
   [Species.GUMSHOOS]: [
     [ 1, Moves.SAND_ATTACK ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.LEER ],
     [ 1, Moves.PAYBACK ],
-    [ 1, Moves.PURSUIT ],
+    [ 1, Moves.PURSUIT ], //USUM
+    [ 1, Moves.ODOR_SLEUTH ], //USUM
+    [ 1, Moves.BIDE ], //USUM
     [ 13, Moves.WORK_UP ],
     [ 19, Moves.BITE ],
     [ 23, Moves.MUD_SLAP ],
@@ -12678,9 +12725,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 31, Moves.TAKE_DOWN ],
     [ 35, Moves.SCARY_FACE ],
     [ 39, Moves.CRUNCH ],
-    [ 43, Moves.YAWN ],
-    [ 47, Moves.THRASH ],
-    [ 52, Moves.REST ],
+    [ 43, Moves.HYPER_FANG ], //USUM
+    [ 47, Moves.YAWN ],
+    [ 51, Moves.THRASH ],
+    [ 55, Moves.REST ],
   ],
   [Species.GRUBBIN]: [
     [ 1, Moves.VISE_GRIP ],
@@ -17788,7 +17836,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 20, Moves.FLING ],
     [ 24, Moves.STOMPING_TANTRUM ],
     [ 31, Moves.BONE_RUSH ],
-    [ 36, Moves.WILL_O_WISP ],
+    [ 33, Moves.WILL_O_WISP ],
+    [ 37, Moves.RAGE ], //USUM
     [ 42, Moves.ENDEAVOR ],
     [ 48, Moves.BONEMERANG ],
     [ 54, Moves.THRASH ],
