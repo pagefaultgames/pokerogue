@@ -420,7 +420,7 @@ export class AttackMove extends Move {
      * > All damaging Fire-type moves can now thaw a frozen target, regardless of whether or not they have a chance to burn;
      */
     if (this.type === Type.FIRE) {
-      this.attrs.push(new HealStatusEffectAttr(false, StatusEffect.FREEZE));
+      this.addAttr(new HealStatusEffectAttr(false, StatusEffect.FREEZE));
     }
   }
 
@@ -1639,17 +1639,17 @@ export class StealEatBerryAttr extends EatBerryAttr {
 }
 
 /**
- * Move attribute that signals that that move should cure a status effect
+ * Move attribute that signals that the move should cure a status effect
  * @extends MoveEffectAttr
  * @see {@linkcode apply()}
  */
 export class HealStatusEffectAttr extends MoveEffectAttr {
-  /** Array of Status Effects to cure */
+  /** List of Status Effects to cure */
   private effects: StatusEffect[];
 
   /**
    * @param selfTarget - Whether this move targets the user
-   * @param ...effects - Array of status effects to cure
+   * @param ...effects - List of status effects to cure
    */
   constructor(selfTarget: boolean, ...effects: StatusEffect[]) {
     super(selfTarget);
@@ -1657,6 +1657,12 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
     this.effects = effects;
   }
 
+  /**
+   * @param user {@linkcode Pokemon} source of the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move the {@linkcode Move} being used
+   * @returns true if the status is cured
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
