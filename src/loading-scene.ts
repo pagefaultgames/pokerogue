@@ -17,6 +17,7 @@ import {initPokemonForms} from "#app/data/pokemon-forms";
 import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
+import {InitAchievements} from "#app/system/achv";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -301,6 +302,7 @@ export class LoadingScene extends SceneBase {
     initSpecies();
     initMoves();
     initAbilities();
+    InitAchievements();
   }
 
   loadLoadingScreen() {

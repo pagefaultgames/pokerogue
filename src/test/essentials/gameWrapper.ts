@@ -19,6 +19,9 @@ import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import {setPositionRelative} from "#app/test/essentials/utils";
 import NoAudioSound = Phaser.Sound.NoAudioSound;
+import {vi} from "vitest";
+import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
+import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
 
 // Phaser.GameObjects.Image.prototype.setPositionRelative = (key) => ({});
 // // Phaser.GameObjects.Image.prototype.frame = {realHeight: 1};
@@ -42,6 +45,13 @@ import NoAudioSound = Phaser.Sound.NoAudioSound;
 // Phaser.GameObjects.GameObject.prototype.setInteractive = () => null;
 // Phaser.Textures.TextureManager.prototype.getFrame = () => ({});
 
+Object.defineProperty(window, "localStorage", {
+  value: mockLocalStorage(),
+});
+Object.defineProperty(window, "console", {
+  value: mockConsoleLog(),
+});
+
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
@@ -49,6 +59,7 @@ Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 BBCodeText.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
+navigator.getGamepads = vi.fn().mockReturnValue([]);
 
 export default class GameWrapper {
   private scenes: Map<string, Phaser.Scene> = new Map();

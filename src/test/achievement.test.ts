@@ -1,8 +1,9 @@
-import {beforeEach, describe, expect, it} from "vitest";
+import {beforeAll, beforeEach, describe, expect, it} from "vitest";
 import {MoneyAchv, Achv, AchvTier, RibbonAchv, DamageAchv, HealAchv, LevelAchv, ModifierAchv, achvs} from "#app/system/achv";
 import BattleScene from "../battle-scene";
 import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
+import GameWrapper from "#app/test/essentials/gameWrapper";
 
 describe("check some Achievement related stuff", () => {
   it ("should check Achievement creation", () => {
@@ -85,6 +86,14 @@ describe("MoneyAchv", () => {
 });
 
 describe("RibbonAchv", () => {
+  let game, scene;
+  beforeAll(() => {
+    game = new GameWrapper();
+    scene = new BattleScene();
+    game.scene.add("battle", scene);
+    scene.launchBattle();
+  });
+
   it("should create an instance of RibbonAchv", () => {
     const ribbonAchv = new RibbonAchv("Test Ribbon Achievement", 10, "ribbon_icon", 10);
     expect(ribbonAchv).toBeInstanceOf(RibbonAchv);
@@ -93,8 +102,6 @@ describe("RibbonAchv", () => {
 
   it("should validate the achievement based on the ribbon amount", () => {
     const ribbonAchv = new RibbonAchv("Test Ribbon Achievement", 10, "ribbon_icon", 10);
-    const scene = new BattleScene();
-    scene.create();
     scene.gameData.gameStats.ribbonsOwned = 5;
 
     expect(ribbonAchv.validate(scene, [])).toBe(false);

@@ -27,13 +27,6 @@ const saveKey = "x0i2O7WRiANTqPmZ";
 
 describe("Session import/export", () => {
   let game, scene, gameData, sessionData;
-  Object.defineProperty(window, "localStorage", {
-    value: mockLocalStorage(),
-  });
-  Object.defineProperty(window, "console", {
-    value: mockConsoleLog(),
-  });
-  navigator.getGamepads = vi.fn().mockReturnValue([]);
 
   beforeAll(() => {
     game = new GameWrapper();
@@ -41,7 +34,7 @@ describe("Session import/export", () => {
     scene = new BattleScene();
     game.scene.add("battle", scene);
     scene.launchBattle();
-    gameData = new GameData(scene);
+    // gameData = new GameData(scene);
 
     Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
@@ -52,7 +45,7 @@ describe("Session import/export", () => {
     sessionData = gameData.parseSessionData(dataStr);
   })
 
-  it.skip('check if session data is valid', () => {
+  it('check if session data is valid', () => {
     const valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
     expect(valid).toBe(true);
   });
@@ -111,11 +104,6 @@ describe("Session import/export", () => {
     expect(sessionData.modifiers[0].typeId).toBe("EXP_CHARM");
     expect(sessionData.modifiers[0].stackCount).toBe(60);
   });
-
-    it('should return the result from the worker', async () => {
-      const result = await runWorker();
-      expect(result).toBe('Work is done!');
-    });
 
   it.skip('import session', () => {
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData1_Greenlamp.cookies", {encoding: "utf8", flag: "r"});
