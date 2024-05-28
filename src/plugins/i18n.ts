@@ -60,6 +60,19 @@ export interface BerryTranslationEntries {
   [key: string]: BerryTranslationEntry
 }
 
+export interface DialogueTranslationEntry {
+  [key: number]: string;
+}
+
+export interface DialogueTranslationCategory {
+  [category: string]: DialogueTranslationEntry;
+}
+
+export interface DialogueTranslationEntries {
+  [trainertype: string]: DialogueTranslationCategory;
+}
+
+
 export interface Localizable {
   localize(): void;
 }
@@ -160,8 +173,18 @@ declare module "i18next" {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-	  voucher: SimpleTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
     };
   }
 }
