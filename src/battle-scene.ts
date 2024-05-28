@@ -17,7 +17,7 @@ import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
 import { GameMode, GameModes, gameModes } from "./game-mode";
@@ -93,6 +93,19 @@ export default class BattleScene extends SceneBase {
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
+  /**
+   * Determines the condition for a notification should be shown for Candy Upgrades
+   * - 0 = 'Off'
+   * - 1 = 'Passives Only'
+   * - 2 = 'On'
+   */
+  public candyUpgradeNotification: integer = 0;
+  /**
+   * Determines what type of notification is used for Candy Upgrades
+   * - 0 = 'Icon'
+   * - 1 = 'Animation'
+   */
+  public candyUpgradeDisplay: integer = 0;
   public moneyFormat: MoneyFormat = MoneyFormat.NORMAL;
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
@@ -979,6 +992,7 @@ export default class BattleScene extends SceneBase {
         if (pokemon) {
           if (resetArenaState) {
             pokemon.resetBattleData();
+            applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon, true);
           }
           this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
         }

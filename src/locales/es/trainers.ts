@@ -2,19 +2,19 @@ import {SimpleTranslationEntries} from "#app/plugins/i18n";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
-  "elite_four": "Elite Four",
-  "elite_four_female": "Elite Four",
-  "gym_leader": "Gym Leader",
-  "gym_leader_female": "Gym Leader",
-  "gym_leader_double": "Gym Leader Duo",
-  "champion": "Champion",
-  "champion_female": "Champion",
-  "champion_double": "Champion Duo",
+  "elite_four": "Alto Mando",
+  "elite_four_female": "Alto Mando",
+  "gym_leader": "Líder de gimnasio",
+  "gym_leader_female": "Líder de gimnasio",
+  "gym_leader_double": "Líderes de Gimnasio",
+  "champion": "Campeón",
+  "champion_female": "Campeona",
+  "champion_double": "Campeones",
   "rival": "Rival",
-  "professor": "Professor",
-  "professor_female": "Professor",
-  "frontier_brain": "Frontier Brain",
-
+  "professor_female": "Professor", 
+  "professor": "Profesor",
+  "frontier_brain": "As del Frente Batalla",
+  
   // Special Trainers
   "pkm_trainer": "Pokémon Trainer",
   "pkm_trainer_female": "Pokémon Trainer",
