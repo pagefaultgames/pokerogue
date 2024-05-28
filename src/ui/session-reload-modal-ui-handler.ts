@@ -9,7 +9,7 @@ export default class SessionReloadModalUiHandler extends ModalUiHandler {
   }
 
   getModalTitle(): string {
-    return '';
+    return "";
   }
 
   getWidth(): number {
@@ -31,7 +31,7 @@ export default class SessionReloadModalUiHandler extends ModalUiHandler {
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, 'Your session is out of date.\nYour data will be reloaded…', TextStyle.WINDOW, { fontSize: '48px', align: 'center' });
+    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, "Your session is out of date.\nYour data will be reloaded…", TextStyle.WINDOW, { fontSize: "48px", align: "center" });
     label.setOrigin(0.5, 0.5);
 
     this.modalContainer.add(label);

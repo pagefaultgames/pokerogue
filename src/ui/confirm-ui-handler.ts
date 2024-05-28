@@ -42,7 +42,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       };
 
       super.show([ config ]);
-      
+
       this.switchCheck = args.length >= 3 && args[2] !== null && args[2] as boolean;
 
       const xOffset = (args.length >= 4 && args[3] !== null ? args[3] as number : 0);
@@ -59,8 +59,9 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   }
 
   processInput(button: Button): boolean {
-    if (button === Button.CANCEL && this.blockInput)
+    if (button === Button.CANCEL && this.blockInput) {
       this.unblockInput();
+    }
 
     return super.processInput(button);
   }
@@ -68,8 +69,9 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   setCursor(cursor: integer): boolean {
     const ret = super.setCursor(cursor);
 
-    if (ret && this.switchCheck)
+    if (ret && this.switchCheck) {
       this.switchCheckCursor = this.cursor;
+    }
 
     return ret;
   }

@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Heilungspin", description: "Erhöht die Effektivität von Heilungsattacken sowie Heilitems um 10% (Beleber ausgenommen)" },
     "CANDY_JAR": { name: "Bonbonglas", description: "Erhöht die Anzahl der Level die ein Sonderbonbon erhöht um 1" },
 
-    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 25% Chance hinzu, dass Beeren nicht verbraucht werden" },
+    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 33% Chance hinzu, dass Beeren nicht verbraucht werden" },
 
     "FOCUS_BAND": { name: "Fokusband", description: "Fügt eine 10% Chance hinzu, dass Angriffe die zur Kampfunfähigkeit führen mit 1 KP überlebt werden" },
 
@@ -226,13 +226,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_DAMAGE_REDUCTION": { name: "Schutzmarke", description: "Verringert den erhaltenen Schaden um 2,5%" },
     "ENEMY_HEAL": { name: "Wiederherstellungsmarke", description: "Heilt 2% der maximalen KP pro Runde" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Giftmarke" },
-      "ENEMY_ATTACK_PARALYZE_CHANCE": { "name": "Lähmungsmarke" },
-      "ENEMY_ATTACK_SLEEP_CHANCE": { "name": "Schlafmarke" },
-      "ENEMY_ATTACK_FREEZE_CHANCE": { "name": "Gefriermarke" },
-      "ENEMY_ATTACK_BURN_CHANCE": { "name": "Brandmarke" },
-      "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Vollheilungsmarke", "description": "Fügt eine 10%ige Chance hinzu, jede Runde einen Statuszustand zu heilen" },
-      "ENEMY_ENDURE_CHANCE": { "name": "Ausdauer-Marke" },
-      "ENEMY_FUSED_CHANCE": { "name": "Fusionsmarke", "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist" },
+    "ENEMY_ATTACK_PARALYZE_CHANCE": { "name": "Lähmungsmarke" },
+    "ENEMY_ATTACK_SLEEP_CHANCE": { "name": "Schlafmarke" },
+    "ENEMY_ATTACK_FREEZE_CHANCE": { "name": "Gefriermarke" },
+    "ENEMY_ATTACK_BURN_CHANCE": { "name": "Brandmarke" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Vollheilungsmarke", "description": "Fügt eine 10%ige Chance hinzu, jede Runde einen Statuszustand zu heilen" },
+    "ENEMY_ENDURE_CHANCE": { "name": "Ausdauer-Marke" },
+    "ENEMY_FUSED_CHANCE": { "name": "Fusionsmarke", "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist" },
 
   },
   TempBattleStatBoosterItem: {
