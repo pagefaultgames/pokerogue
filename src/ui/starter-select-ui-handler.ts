@@ -29,6 +29,7 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import * as Overrides from '../overrides';
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -664,7 +665,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.genSpecies[g].forEach((species, s) => {
           const dexEntry = this.scene.gameData.dexData[species.speciesId];
           const icon = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
-          if (dexEntry.caughtAttr) {
+          if (dexEntry.caughtAttr || Overrides.STARTERS_OVERRIDE) {
             icon.clearTint();
           } else if (dexEntry.seenAttr) {
             icon.setTint(0x808080);
@@ -789,7 +790,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else {
       if (button === Button.ACTION) {
-        if (!this.speciesStarterDexEntry?.caughtAttr) {
+        if (!this.speciesStarterDexEntry?.caughtAttr && !Overrides.STARTERS_OVERRIDE) {
           error = true;
         } else if (this.starterCursors.length < 6) {
           const options = [
@@ -1039,7 +1040,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             let newFormIndex = props.formIndex;
             do {
               newFormIndex = (newFormIndex + 1) % formCount;
-              if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
+              if ((this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) || Overrides.STARTERS_FORMS_OVERRIDE || Overrides.STARTERS_ALL_FORMS_OVERRIDE) {
                 break;
               }
             } while (newFormIndex !== props.formIndex);
@@ -1374,11 +1375,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.lastSpecies = species;
 
-    if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
+    if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || Overrides.STARTERS_OVERRIDE)) {
       this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
       this.pokemonNameText.setText(species.name);
 
-      if (this.speciesStarterDexEntry?.caughtAttr) {
+      if (this.speciesStarterDexEntry?.caughtAttr || Overrides.STARTERS_OVERRIDE) {
         const colorScheme = starterColors[species.speciesId];
 
         const luck = this.scene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
@@ -1585,7 +1586,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
       this.pokemonNumberText.setShadowColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true));
 
-      if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
+      if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr || Overrides.STARTERS_OVERRIDE) {
         let starterIndex = -1;
 
         this.starterGens.every((g, i) => {
@@ -1625,13 +1626,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
-        this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
+        this.canCycleForm = Overrides.STARTERS_ALL_FORMS_OVERRIDE ? species.forms.filter(f => f.formKey || pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey)).length > 1 : 
+        Overrides.STARTERS_FORMS_OVERRIDE ? species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey)).length > 1 : species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
         this.canCycleVariant = shiny && [ dexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT, dexEntry.caughtAttr & DexAttr.VARIANT_2, dexEntry.caughtAttr & DexAttr.VARIANT_3].filter(v => v).length > 1;
       }
 
-      if (dexEntry.caughtAttr && species.malePercent !== null) {
+      if ((dexEntry.caughtAttr && species.malePercent !== null) || Overrides.STARTERS_OVERRIDE) {
         const gender = !female ? Gender.MALE : Gender.FEMALE;
         this.pokemonGenderText.setText(getGenderSymbol(gender));
         this.pokemonGenderText.setColor(getGenderColor(gender));
@@ -1640,7 +1642,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonGenderText.setText("");
       }
 
-      if (dexEntry.caughtAttr) {
+      if (dexEntry.caughtAttr || Overrides.STARTERS_OVERRIDE) {
         const ability = this.lastSpecies.getAbility(abilityIndex);
         this.pokemonAbilityText.setText(allAbilities[ability].name);
 
