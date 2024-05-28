@@ -1484,6 +1484,14 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Attribute to add ability-based arena tags (@see {@link ./arena-tag.ts#AbArenaTag AbArenaTag}).
+ * @param tagType The type of AbArenaTag to be added
+ * @param side    The side of the field where the tag will be added
+ *
+ * Abilities with this attribute should also have {@link UnsuppressableAbilityAbAttr}.
+ * Suppression is handled by the arena tags after they are created.
+ */
 export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private tagType: ArenaTagType;
   private side: ArenaTagSide;
@@ -1494,6 +1502,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
     this.tagType = tagType;
   }
 
+  /** applyPostSummon: Adds the arena tag based on this attribute's fields */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     return pokemon.scene.arena.addTag(this.tagType, 0, Moves.NONE, pokemon.id, this.side);
   }
@@ -4242,15 +4251,19 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.VESSEL_OF_RUIN, 9)
       .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.VESSEL_OF_RUIN, ArenaTagSide.BOTH, true)
+      .attr(UnsuppressableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.SWORD_OF_RUIN, 9)
       .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.SWORD_OF_RUIN, ArenaTagSide.BOTH, true)
+      .attr(UnsuppressableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.TABLETS_OF_RUIN, 9)
       .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.TABLETS_OF_RUIN, ArenaTagSide.BOTH, true)
+      .attr(UnsuppressableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.BEADS_OF_RUIN, 9)
       .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.BEADS_OF_RUIN, ArenaTagSide.BOTH, true)
+      .attr(UnsuppressableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.ORICHALCUM_PULSE, 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)

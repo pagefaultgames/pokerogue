@@ -582,7 +582,7 @@ export class Arena {
       if (!(t as AbArenaTag).isActive(this)) {
         this.removeTag(t.tagType);
       }
-    })
+    });
   }
 
   removeTag(tagType: ArenaTagType): boolean {

@@ -9,7 +9,7 @@ import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ProtectStatAbAttr, allAbilities, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ProtectStatAbAttr, SuppressFieldAbilitiesAbAttr, allAbilities, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { Abilities } from "./enums/abilities";
@@ -634,6 +634,11 @@ class TailwindTag extends ArenaTag {
   }
 }
 
+/**
+ * Abstract class for arena tags created by abilities
+ * @param sourceAbility The Ability that created this tag
+ * @param isIgnorable   Signals whether or not this tag's effects can be ignored (e.g. by a Pokemon with Mold Breaker)
+ */
 export abstract class AbArenaTag extends ArenaTag {
   public sourceAbility: Abilities;
   public isIgnorable: boolean;
@@ -648,12 +653,18 @@ export abstract class AbArenaTag extends ArenaTag {
   // Removes default message for arena tag removal
   onRemove(arena: Arena): void { }
 
+  /** getAbilityName: returns the name of the source Ability as a string */
   getAbilityName(): string {
     return this.sourceAbility ?
       allAbilities[this.sourceAbility].name :
       null;
   }
 
+  /**
+   * isActive: Determines if this tag is in effect based on its source Ability
+   * @param arena (Arena) The arena containing this tag
+   * @returns true if a Pokemon on the field has the source Ability, false otherwise.
+   */
   isActive(arena: Arena): boolean {
     const playField = arena.scene.getField(true);
 
@@ -666,15 +677,34 @@ export abstract class AbArenaTag extends ArenaTag {
   }
 
   /**
-   * apply:
+   * isSuppressed: Determines if this tag is currently suppressed by another Ability
+   * @param arena (Arena) The arena containing this tag
+   * @returns true if a Pokemon on the field has a suppressing Ability, false otherwise.
+   */
+  isSuppressed(arena: Arena): boolean {
+    const playField = arena.scene.getField(true);
+
+    for (const p of playField) {
+      if (p.hasAbilityWithAttr(SuppressFieldAbilitiesAbAttr)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * apply: Applies the effects of this tag to a given target.
    * @param arena   (Arena) The arena containing this tag
    * @param args[0] (Pokemon) The Pokemon to which this tag is applied
-   * @returns true if this tag can be applied, false otherwise
+   * @returns true if this tag can be applied, false otherwise.
+   * Subclasses should call super.apply() to check for Ability bypass or suppression
+   * before applying their own effects.
    */
   apply(arena: Arena, ...args: any[]): boolean {
     const target = args[0] as Pokemon;
 
-    return !this.isIgnorable || !target.hasAbilityWithAttr(MoveAbilityBypassAbAttr);
+    return !this.isSuppressed(arena) &&
+      (!this.isIgnorable || !target.hasAbilityWithAttr(MoveAbilityBypassAbAttr));
   }
 }
 
@@ -693,6 +723,10 @@ export class TreasureOfRuinTag extends AbArenaTag {
   }
 
   onAdd(arena: Arena): void {
+    if (super.isSuppressed(arena)) {
+      return;
+    }
+
     const user: Pokemon = arena.scene.getPokemonById(this.sourceId);
     const statName: string = getStatName(this.stat);
 
