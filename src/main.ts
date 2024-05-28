@@ -26,9 +26,9 @@ window.addEventListener("unhandledrejection", (event) => {
   //alert(errorString);
 });
 
-//catch all touch events at the top level and perform a check on whether or not the touch controls are already visible.
-//If they are already visible, ignore the event, but otherwise, show the touch controls. This should allow for both gamepad and mobile support
-//without the need for the touch and gamepad settings.
+// Catch all touch events at the top level and perform a check on whether or not the touch controls are already visible.
+// If they are already visible, ignore the event, but otherwise, show the touch controls. This should allow for both gamepad and mobile support
+// without the need for the touch and gamepad settings.
 window.addEventListener("touchstart", (event) => {
   const touchControls = document.getElementById("touchControls");
   if (touchControls && !touchControls.classList.contains("visible")) {
