@@ -69,4 +69,4 @@ export const koConfig = {
   tutorial,
   voucher,
   weather,
-}
+};

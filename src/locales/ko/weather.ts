@@ -34,7 +34,7 @@ export const weather: SimpleTranslationEntries = {
   "heavyRainStartMessage": "강한 비가 내리기 시작했다!",
   "heavyRainLapseMessage": "강한 비가 계속 내리고 있다",
   "heavyRainClearMessage": "강한 비가 그쳤다!",
-  
+
   "harshSunStartMessage": "햇살이 아주 강해졌다!",
   "harshSunLapseMessage": "햇살이 아주 강하다",
   "harshSunClearMessage": "햇살이 원래대로 되돌아왔다!",
@@ -42,4 +42,4 @@ export const weather: SimpleTranslationEntries = {
   "strongWindsStartMessage": "수수께끼의 난기류가\n비행포켓몬을 지킨다!",
   "strongWindsLapseMessage": "수수께끼의 난기류가 강렬하게 불고 있다",
   "strongWindsClearMessage": "수수께끼의 난기류가 멈췄다!" // 임의번역
-}
+};

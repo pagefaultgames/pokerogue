@@ -84,20 +84,26 @@ export interface Localizable {
 }
 
 const alternativeFonts = {
-  'ko': [
+  "ko": [
     new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)")
   ],
-}
+};
 
 function loadFont(language: string) {
-  let altFontLanguages = Object.keys(alternativeFonts);
-  if (!alternativeFonts[language]) { language = language.split(/[-_/]/)[0]; }
+  const altFontLanguages = Object.keys(alternativeFonts);
+  if (!alternativeFonts[language]) {
+    language = language.split(/[-_/]/)[0];
+  }
   if (alternativeFonts[language]) {
-    alternativeFonts[language].forEach(f => { document.fonts.add(f); });
+    alternativeFonts[language].forEach(f => {
+      document.fonts.add(f);
+    });
     altFontLanguages.splice(altFontLanguages.indexOf(language), 0);
   }
   altFontLanguages.forEach(f=> {
-    if (f && f.status == "loaded") { document.fonts.delete(f); }
+    if (f && f.status === "loaded") {
+      document.fonts.delete(f);
+    }
   });
 }
 
@@ -137,8 +143,8 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     nonExplicitSupportedLngs: true,
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh', 'pt', 'ko'],
+    fallbackLng: "en",
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
     debug: true,
     interpolation: {
       escapeValue: false,

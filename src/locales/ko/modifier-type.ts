@@ -139,10 +139,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "고급상처약" },
     "MAX_POTION": { name: "풀회복약" },
     "FULL_RESTORE": { name: "회복약" },
-    
+
     "REVIVE": { name: "기력의조각" },
     "MAX_REVIVE": { name: "기력의덩어리" },
-    
+
     "FULL_HEAL": { name: "만병통치제" },
 
     "SACRED_ASH": { name: "성스러운분말" },
@@ -187,12 +187,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "부적금화", description: "받는 돈이 20% 증가" },
     "GOLDEN_PUNCH": { name: "골든펀치", description: "주는 데미지의 50%만큼 돈을 획득" },
     "COIN_CASE": { name: "동전케이스", description: "매 열 번째 배틀마다, 가진 돈의 10%를 이자로 획득" },
-    
+
     "LOCK_CAPSULE": { name: "록캡슐", description: "받을 아이템을 갱신할 때 희귀도를 고정 가능" },
 
     "GRIP_CLAW": { name: "끈기갈고리손톱" },
     "WIDE_LENS": { name: "광각렌즈" },
-    
+
     "MULTI_LENS": { name: "멀티렌즈" },
 
     "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술을 썼을 때 효율이 10% 증가 (부활 제외)" },
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "새콤한사과",
     "STRAWBERRY_SWEET": "딸기사탕공예",
     "UNREMARKABLE_TEACUP": "범작찻잔",
-  
+
     "CHIPPED_POT": "이빠진포트",
     "BLACK_AUGURITE": "검은휘석",
     "GALARICA_CUFF": "가라두구팔찌",
