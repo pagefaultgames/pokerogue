@@ -1995,7 +1995,7 @@ export class BlockPoisonToxicDamageAbAttr extends BlockNonDirectDamageAbAttr {
     }
     return false;
   }
-  
+
 }
 
 export class BlockOneHitKOAbAttr extends AbAttr {
@@ -2316,16 +2316,17 @@ export class PostTurnPoisonHealAbAttr extends PostTurnAbAttr {
   /**
    * After the turn ends, if the ability Pokemon is either Toxic'd or Poisoned, it will heal 1/8 rather than damage the Pokemon.
    * @param {Pokemon} pokemon The pokemon with the ability Poison Heal
-   * @param {boolean} passive N/A 
-   * @param {any[]} args N/A 
+   * @param {boolean} passive N/A
+   * @param {any[]} args N/A
    * @returns Returns true if Poison Heal procs
    */
-  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> { 
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON) {
-      if (pokemon.getMaxHp() === pokemon.hp)
+      if (pokemon.getMaxHp() === pokemon.hp) {
         this.showAbility = false;
-      else
-        this.showAbility = true
+      } else {
+        this.showAbility = true;
+      }
       pokemon.heal(Math.max(Math.floor((pokemon.getMaxHp() / 8)), 1));
       pokemon.updateInfo();
       return true;

@@ -3280,7 +3280,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       pokemon.status.incrementTurn();
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
-      applyAbAttrs(BlockPoisonToxicDamageAbAttr, pokemon, cancelled)
+      applyAbAttrs(BlockPoisonToxicDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
         this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
