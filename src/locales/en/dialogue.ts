@@ -2316,6 +2316,8 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
         $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
         $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
         $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
+  "ending_endless": "Congratulations on reaching the current end!\nMore content is coming soon.",
+  "ending_name": "Devs"
 };
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
 export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
