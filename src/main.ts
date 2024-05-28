@@ -29,18 +29,17 @@ window.addEventListener("unhandledrejection", (event) => {
 // Catch all touch events at the top level and perform a check on whether or not the touch controls are already visible.
 // If they are already visible, ignore the event, but otherwise, show the touch controls. This should allow for both gamepad and mobile support
 // without the need for the touch and gamepad settings.
-let touchControlsActive;
 window.addEventListener("touchstart", (event) => {
-  if (isMobile() && touchControlsActive) {
+  let settings: object = {};
+  if (localStorage.hasOwnProperty("settings")) {
+    settings = JSON.parse(localStorage.getItem("settings"));
+  }
+  if (isMobile() && settings.TOUCH_CONTROLS === 0) {
     const touchControls = document.getElementById("touchControls");
     if (touchControls && !touchControls.classList.contains("visible")) {
       touchControls.classList.toggle("visible");
     }
   }
-});
-
-window.addEventListener("touchControlUpdate", (event) => {
-  touchControlsActive = event.detail;
 });
 
 const config: Phaser.Types.Core.GameConfig = {
