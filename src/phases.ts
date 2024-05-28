@@ -2315,6 +2315,12 @@ export class BattleEndPhase extends BattlePhase {
       this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
     }
 
+    // Endless graceful end
+    if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex >= 5850) {
+      this.scene.clearPhaseQueue();
+      this.scene.unshiftPhase(new GameOverPhase(this.scene, true));
+    }
+
     for (const pokemon of this.scene.getField()) {
       if (pokemon) {
         pokemon.resetBattleSummonData();
@@ -3887,7 +3893,9 @@ export class GameOverPhase extends BattlePhase {
       this.victory = true;
     }
 
-    if (this.victory || !this.scene.enableRetries) {
+    if (this.scene.gameMode.isEndless) {
+      this.scene.ui.showDialogue(i18next.t("PGMmiscDialogue:ending_endless"), i18next.t("PGMmiscDialogue:ending_name"), 0, () => this.handleGameOver());
+    } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
       this.scene.ui.showText("Would you like to retry from the start of the battle?", null, () => {
