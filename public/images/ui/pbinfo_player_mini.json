@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "pbinfo_player_mini.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 130,
+				"h": 84
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "normal",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 130,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 130,
+						"h": 42
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 130,
+						"h": 42
+					}
+				},
+				{
+					"filename": "reviver-seed",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 130,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 130,
+						"h": 42
+					},
+					"frame": {
+						"x": 0,
+						"y": 42,
+						"w": 130,
+						"h": 42
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:38e540ccb5c63da1ebec1acbf71f691e:0086e8a13120324b29c37336ee1e53d1:9863437373166ab9545f5c99d88f5cd6$"
+	}
+}

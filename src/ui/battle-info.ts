@@ -82,6 +82,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.box.setName("box");
     this.box.setOrigin(1, 0.5);
     this.add(this.box);
+    this.box.setFrame("normal"); // this is to set the frame of the pbinfo box to normal and not a revive seed - this is for debug purposes to make sure my atlas worked
 
     this.nameText = addTextObject(this.scene, player ? -115 : -124, player ? -15.2 : -11.2, "", TextStyle.BATTLE_INFO);
     this.nameText.setName("text_name");
@@ -262,6 +263,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
 
     const isFusion = pokemon.isFusion();
+    window.addEventListener("modifiersUpdated", () => {
+      this.doesPokemonHaveReviverSeed(pokemon, this.scene);
+    });
 
     this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 2.5);
     this.splicedIcon.setVisible(isFusion);
@@ -368,6 +372,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     return `pbinfo_${this.player ? "player" : "enemy"}${!this.player && this.boss ? "_boss" : this.mini ? "_mini" : ""}`;
   }
 
+  doesPokemonHaveReviverSeed(pokemon: Pokemon, scene: Phaser.Scene): void {
+    if (this.scene!==undefined) {
+	  console.log(pokemon.name);
+	  console.log((scene.modifiers.filter(m => (m["type"]["id"]==="REVIVER_SEED") && m["pokemonId"]===pokemon.id)).length > 0); // this spits out a boolean for whether the pokemon named above has a revive seed on them or not
+    }
+  }
+
   setMini(mini: boolean): void {
     if (this.mini === mini) {
       return;
@@ -376,6 +387,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.mini = mini;
 
     this.box.setTexture(this.getTextureName());
+    this.box.setFrame("reviver-seed"); // this is to set the frame of the mini pbinfo box to revive seed - this is for debug purposes to make sure my atlas worked
     this.statsBox.setTexture(`${this.getTextureName()}_stats`);
 
     if (this.player) {

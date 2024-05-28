@@ -51,9 +51,9 @@ export class LoadingScene extends SceneBase {
       }
     }
     this.loadAtlas("namebox", "ui");
-    this.loadImage("pbinfo_player", "ui");
+    this.loadAtlas("pbinfo_player", "ui");
     this.loadImage("pbinfo_player_stats", "ui");
-    this.loadImage("pbinfo_player_mini", "ui");
+    this.loadAtlas("pbinfo_player_mini", "ui");
     this.loadImage("pbinfo_player_mini_stats", "ui");
     this.loadAtlas("pbinfo_player_type", "ui");
     this.loadAtlas("pbinfo_player_type1", "ui");
