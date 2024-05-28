@@ -302,11 +302,12 @@ export class Arena {
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
 
     if (this.weather) {
-      this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
+      this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase, new WeatherEffectPhase(this.scene));
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
       this.scene.queueMessage(getWeatherStartMessage(weather));
     } else {
-      this.scene.tryRemovePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType);
+      // WeatherEffectPhase will do nothing
+      // this.scene.tryRemovePhase(phase => phase instanceof WeatherEffectPhase);
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
     }
 
