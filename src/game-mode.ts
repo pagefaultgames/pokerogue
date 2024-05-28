@@ -46,7 +46,7 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * @returns either: 
+   * @returns either:
    * - override from overrides.ts
    * - 20 for Daily Runs
    * - 5 for all other modes
@@ -132,7 +132,7 @@ export class GameMode implements GameModeConfig {
     }
     return false;
   }
-  
+
   isTrainerBoss(waveIndex: integer, biomeType: Biome, offsetGym: boolean): boolean {
     switch (this.modeId) {
     case GameModes.DAILY:

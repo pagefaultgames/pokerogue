@@ -44,7 +44,7 @@
 		"phaser3-rex-plugins": "^1.1.84"
 	},
 	"engines": {
-		"node": ">=18.0.0"
+		"node": ">=20.0.0"
 	},
 	"imports": {
 		"#app": "./src/main.js",
