@@ -11,10 +11,10 @@ export const titles: SimpleTranslationEntries = {
   "champion_female": "Campeona",
   "champion_double": "Campeones",
   "rival": "Rival",
-  "professor_female": "Professor", 
+  "professor_female": "Professor",
   "professor": "Profesor",
   "frontier_brain": "As del Frente Batalla",
-  
+
   // Special Trainers
   "pkm_trainer": "Pokémon Trainer",
   "pkm_trainer_female": "Pokémon Trainer",
