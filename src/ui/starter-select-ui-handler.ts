@@ -76,9 +76,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 2
   },
   "pt":{
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
-    starterInfoXPos: 32,
+    starterInfoTextSize: "48px",
+    instructionTextSize: "42px",
+    starterInfoXPos: 33,
   },
 };
 
