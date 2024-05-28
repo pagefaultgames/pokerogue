@@ -86,6 +86,10 @@ export enum MoveFlags {
   WIND_MOVE         = 1 << 14,
   TRIAGE_MOVE       = 1 << 15,
   IGNORE_ABILITIES  = 1 << 16,
+  /**
+   * Enables all hits of a multi-hit move to be accuracy checked individually
+   */
+  CHECK_ALL_HITS   = 1 << 17,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -343,6 +347,11 @@ export default class Move implements Localizable {
 
   ignoresAbilities(ignoresAbilities?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
+    return this;
+  }
+
+  checkAllHits(checkAllHits?: boolean): this {
+    this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
     return this;
   }
 
@@ -955,8 +964,7 @@ export enum MultiHitType {
   _2,
   _2_TO_5,
   _3,
-  _3_INCR,
-  _1_TO_10,
+  _10,
   BEAT_UP,
 }
 
@@ -1287,37 +1295,8 @@ export class MultiHitAttr extends MoveAttr {
     case MultiHitType._3:
       hitTimes = 3;
       break;
-    case MultiHitType._3_INCR:
-      hitTimes = 3;
-      // TODO: Add power increase for every hit
-      break;
-    case MultiHitType._1_TO_10:
-      {
-        const rand = user.randSeedInt(90);
-        const hitValue = new Utils.IntegerHolder(rand);
-        applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
-        if (hitValue.value >= 81) {
-          hitTimes = 1;
-        } else if (hitValue.value >= 73) {
-          hitTimes = 2;
-        } else if (hitValue.value >= 66) {
-          hitTimes = 3;
-        } else if (hitValue.value >= 60) {
-          hitTimes = 4;
-        } else if (hitValue.value >= 54) {
-          hitTimes = 5;
-        } else if (hitValue.value >= 49) {
-          hitTimes = 6;
-        } else if (hitValue.value >= 44) {
-          hitTimes = 7;
-        } else if (hitValue.value >= 40) {
-          hitTimes = 8;
-        } else if (hitValue.value >= 36) {
-          hitTimes = 9;
-        } else {
-          hitTimes = 10;
-        }
-      }
+    case MultiHitType._10:
+      hitTimes = 10;
       break;
     case MultiHitType.BEAT_UP:
       const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
@@ -2748,6 +2727,43 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
       return true;
     }
     return false;
+  }
+}
+
+/**
+ * Attribute used for multi-hit moves that increase power in increments of the
+ * move's base power for each hit, namely Triple Kick and Triple Axel.
+ * @extends VariablePowerAttr
+ * @see {@linkcode apply}
+ */
+export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
+  /** The max number of base power increments allowed for this move */
+  private maxHits: integer;
+
+  constructor(maxHits: integer) {
+    super();
+
+    this.maxHits = maxHits;
+  }
+
+  /**
+   * Increases power of move in increments of the base power for the amount of times
+   * the move hit. In the case that the move is extended, it will circle back to the
+   * original base power of the move after incrementing past the maximum amount of
+   * hits.
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target {@linkcode Pokemon} that the move was used on
+   * @param move {@linkcode Move} with this attribute
+   * @param args [0] {@linkcode Utils.NumberHolder} for final calculated power of move
+   * @returns true if attribute application succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
+    const power = args[0] as Utils.NumberHolder;
+
+    power.value = move.power * (1 + hitsTotal % this.maxHits);
+
+    return true;
   }
 }
 
@@ -5411,12 +5427,9 @@ export function initMoves() {
       .attr(SketchAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
-      .attr(MultiHitAttr, MultiHitType._3_INCR)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
-        user.turnData.hitsLeft = 1;
-        return true;
-      })
-      .partial(),
+      .attr(MultiHitAttr, MultiHitType._3)
+      .attr(MultiHitPowerIncrementAttr, 3)
+      .checkAllHits(),
     new AttackMove(Moves.THIEF, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
       .attr(StealHeldItemChanceAttr, 0.3),
     new StatusMove(Moves.SPIDER_WEB, Type.BUG, -1, 10, -1, 0, 2)
@@ -7268,12 +7281,9 @@ export function initMoves() {
     new AttackMove(Moves.FLIP_TURN, Type.WATER, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 8)
       .attr(ForceSwitchOutAttr, true, false),
     new AttackMove(Moves.TRIPLE_AXEL, Type.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 8)
-      .attr(MultiHitAttr, MultiHitType._3_INCR)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
-        user.turnData.hitsLeft = 1;
-        return true;
-      })
-      .partial(),
+      .attr(MultiHitAttr, MultiHitType._3)
+      .attr(MultiHitPowerIncrementAttr, 3)
+      .checkAllHits(),
     new AttackMove(Moves.DUAL_WINGBEAT, Type.FLYING, MoveCategory.PHYSICAL, 40, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.SCORCHING_SANDS, Type.GROUND, MoveCategory.SPECIAL, 70, 100, 10, 30, 0, 8)
@@ -7516,9 +7526,9 @@ export function initMoves() {
     new AttackMove(Moves.SPIN_OUT, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -2, true),
     new AttackMove(Moves.POPULATION_BOMB, Type.NORMAL, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 9)
-      .attr(MultiHitAttr, MultiHitType._1_TO_10)
+      .attr(MultiHitAttr, MultiHitType._10)
       .slicingMove()
-      .partial(),
+      .checkAllHits(),
     new AttackMove(Moves.ICE_SPINNER, Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
