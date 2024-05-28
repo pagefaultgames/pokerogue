@@ -702,6 +702,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     if (args.length >= 2 && args[0] instanceof Function && typeof args[1] === "number") {
       super.show(args);
+      this.starterSelectCallback = args[0] as StarterSelectCallback;
 
       this.starterSelectContainer.setVisible(true);
 
