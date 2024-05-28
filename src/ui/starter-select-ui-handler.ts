@@ -1,3 +1,4 @@
+import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -29,7 +30,6 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -860,10 +860,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.candyUpgradeOverlayIcon[index].setVisible(false);
 
       return;
-    }
-
-    if (!slotVisible) {
-      console.log("Yeah");
     }
 
     const passiveAvailable = this.isPassiveAvailable(species.speciesId);
