@@ -16,7 +16,7 @@ import { trainerConfigs } from "../data/trainer-config";
 import { Setting, setSetting, settingDefaults } from "./settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
-import { Egg } from "../data/egg";
+import { Egg, GachaType } from "../data/egg";
 import { VoucherType, vouchers } from "./voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
@@ -457,10 +457,25 @@ export class GameData {
           });
         }
 
-        this.eggs = systemData.eggs
-          ? systemData.eggs.map(e => e.toEgg())
-          : [];
+        // this.eggs = systemData.eggs
+        //   ? systemData.eggs.map(e => e.toEgg())
+        //   : [];
+        const eggsTestData = [
+          { id: 1, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625123456 },
+          { id: 2, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625124567 },
+          { id: 3, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625125678 },
+          { id: 4, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
+          { id: 5, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625127890 },
+          { id: 6, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625128901 },
+          { id: 7, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
+          { id: 8, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625130123 },
+          { id: 9, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
+          { id: 10, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 }
+        ];
 
+        const eggDataArray: EggData[] = eggsTestData.map(data => new EggData(data));
+
+        this.eggs = eggDataArray.map(eggData => eggData.toEgg());
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
         this.defaultDexData = null;

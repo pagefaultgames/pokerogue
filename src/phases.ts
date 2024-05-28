@@ -39,7 +39,7 @@ import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
-import { EggHatchPhase } from "./egg-hatch-phase";
+import { EggHatchPhase, EggSummaryPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
@@ -5000,6 +5000,9 @@ export class SelectModifierPhase extends BattlePhase {
 }
 
 export class EggLapsePhase extends Phase {
+  private pokemonSprite: Phaser.GameObjects.Sprite;
+  private starterSelectGenIconContainers: Phaser.GameObjects.Container[];
+  private starterSelectContainer: Phaser.GameObjects.Container;
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -5008,15 +5011,28 @@ export class EggLapsePhase extends Phase {
     super.start();
 
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
-      return --egg.hatchWaves < 1;
+      return --egg.hatchWaves < 10;
     });
 
     if (eggsToHatch.length) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
-
+      let pokemonHatched: PlayerPokemon[] = [];
       for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg));
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, pokemonHatched));
       }
+      this.scene.unshiftPhase(new EggSummaryPhase(this.scene, pokemonHatched));
+      // console.log(pokemonHatched);
+      // this.scene.queueMessage("you hatched " + eggsToHatch.length.toString() + " eggs");
+
+      // // test show sprite
+      // this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
+      // this.starterSelectContainer.setVisible(false);
+      // this.scene.ui.add(this.starterSelectContainer)
+
+      
+      // this.starterSelectGenIconContainers[g].add(icon);
+      // this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
+      console.log(pokemonHatched);
 
     }
     this.end();
