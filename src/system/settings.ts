@@ -166,7 +166,6 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     break;
   case Setting.Touch_Controls:
     scene.enableTouchControls = settingOptions[setting][value] !== "Disabled" && hasTouchscreen();
-
     const touchControls = document.getElementById("touchControls");
     if (touchControls) {
       touchControls.classList.toggle("visible", scene.enableTouchControls);
