@@ -66,7 +66,8 @@ export interface AchievementTranslationEntry {
 }
 
 export interface AchievementTranslationEntries {
-  [key: string]: AchievementTranslationEntry
+  [key: string]: AchievementTranslationEntry;
+}
 
 export interface DialogueTranslationEntry {
   [key: number]: string;
