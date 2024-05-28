@@ -1025,7 +1025,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cress": {
     "encounter": {
-      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Typen werden deine Gegner im Kampf sein!"
+      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Pokémon werden deine Gegner im Kampf sein!"
     },
     "victory": {
       1: "Verlieren? Ich? Das glaube ich nicht."
