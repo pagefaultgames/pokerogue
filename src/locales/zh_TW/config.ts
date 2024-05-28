@@ -21,7 +21,16 @@ import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { voucher } from "./voucher";
+import {
+  PGMdialogue,
+  PGFdialogue,
+  PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue,
+  PGMmiscDialogue,
+  PGFmiscDialogue, PGMdoubleBattleDialogue, PGFdoubleBattleDialogue
+} from "./dialogue";
 import { biome } from "./biome";
+import { pokemonInfoContainer } from "./pokemon-info-container";
 
 export const zhTWConfig = {
   ability: ability,
@@ -50,4 +59,13 @@ export const zhTWConfig = {
   berry: berry,
   voucher: voucher,
   biome: biome,
+  pokemonInfoContainer: pokemonInfoContainer,
+  PGMdialogue: PGMdialogue,
+  PGFdialogue: PGFdialogue,
+  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
+  PGMmiscDialogue: PGMmiscDialogue,
+  PGFmiscDialogue: PGFmiscDialogue,
+  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
 };

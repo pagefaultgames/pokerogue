@@ -214,7 +214,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "闪耀护符", description: "显著增加野生宝可梦的闪光概率" },
     "ABILITY_CHARM": { name: "特性护符", description: "显著增加野生宝可梦有隐藏特性的概率" },
 
-    "IV_SCANNER": { name: "个体值探测器", description: "允许扫描野生宝可梦的个体值。 每个次显示\n2个个体值. 最好的个体值优先显示" },
+    "IV_SCANNER": { name: "个体值探测器", description: "允许扫描野生宝可梦的个体值。可叠加，每多拥有一个多显示\n2项个体值. 最好的个体值优先显示" },
 
     "DNA_SPLICERS": { name: "基因之楔" },
 
