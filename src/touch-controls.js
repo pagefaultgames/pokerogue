@@ -139,5 +139,5 @@ function preventElementZoom(element) {
   });
 }
 
-const dPadCenterRect = document.querySelector("#dpadCenter");
-preventElementZoom(dPadCenterRect);
+const dpadDiv = document.querySelector("#dpad");
+preventElementZoom(dpadDiv);
