@@ -139,13 +139,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HYPER_POTION": { name: "Hyper Potion" },
     "MAX_POTION": { name: "Potion Max" },
     "FULL_RESTORE": { name: "Guérison" },
-    
+
     "REVIVE": { name: "Rappel" },
     "MAX_REVIVE": { name: "Rappel Max" },
-    
+
     "FULL_HEAL": { name: "Total Soin" },
 
-    "SACRED_ASH": { name: "Cendres Sacrées" },
+    "SACRED_ASH": { name: "Cendre Sacrée" },
 
     "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il tombe K.O." },
 
@@ -187,16 +187,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AMULET_COIN": { name: "Pièce Rune", description: "Augmente de 20% les gains d’argent" },
     "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent" },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts" },
-    
+
     "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés" },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
-    
-    "MULTI_LENS": { name: "Multi Loupe" },
+
+    "MULTI_LENS": { name: "Lentille Multi" },
 
     "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
-    "CANDY_JAR": { name: "Jarre de Bonbons", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
+    "CANDY_JAR": { name: "Bonbonnière", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
     "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 33% de chances qu’une Baie utilisée ne soit pas consommée" },
 
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TART_APPLE": "Pomme Acidulée",
     "STRAWBERRY_SWEET": "Fraise en Sucre",
     "UNREMARKABLE_TEACUP": "Bol Médiocre",
-  
+
     "CHIPPED_POT": "Théière Ébréchée",
     "BLACK_AUGURITE": "Obsidienne",
     "GALARICA_CUFF": "Bracelet Galanoa",
@@ -381,7 +381,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CORNERSTONE_MASK": "Masque de la Pierre",
     "SHOCK_DRIVE": "Module Choc",
     "BURN_DRIVE": "Module Pyro",
-    "CHILL_DRIVE": "Module Aqua",
-    "DOUSE_DRIVE": "Module Choc",
+    "CHILL_DRIVE": "Module Cryo",
+    "DOUSE_DRIVE": "Module Aqua",
   },
 } as const;

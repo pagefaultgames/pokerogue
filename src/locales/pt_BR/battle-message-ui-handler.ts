@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const battleMessageUiHandler: SimpleTranslationEntries = {
-  "ivBest": "Melhor",
+  "ivBest": "Perfeito",
   "ivFantastic": "Fantástico",
   "ivVeryGood": "Muito Bom",
   "ivPrettyGood": "Bom",
