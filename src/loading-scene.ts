@@ -18,6 +18,7 @@ import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
 import {initTrainerTypeDialogue} from "#app/data/dialogue";
 import i18next from "i18next";
+import { initStatsKeys } from "./ui/game-stats-ui-handler";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -309,6 +310,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
+    initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
     initEggMoves();
