@@ -28,4 +28,4 @@ jobs:
         run: npm ci  # Use 'npm ci' to install dependencies
 
       - name: eslint  # Step to run linters
-        uses: icrawl/action-eslint@v1
+        run: npm run eslint-ci

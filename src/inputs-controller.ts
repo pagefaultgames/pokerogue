@@ -6,6 +6,7 @@ import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
 import pad_dualshock from "./configs/inputs/pad_dualshock";
+import pad_procon from "./configs/pad_procon";
 import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
@@ -504,6 +505,8 @@ export class InputsController {
       return pad_xbox360;
     } else if (id.includes("054c")) {
       return pad_dualshock;
+    } else if (id.includes("057e") && id.includes("2009")) {
+      return pad_procon;
     }
 
     return pad_generic;
