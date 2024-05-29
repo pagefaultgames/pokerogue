@@ -3662,7 +3662,8 @@ export class PokemonSummonData {
   public fusionGender: Gender;
   public stats: integer[];
   public moveset: PokemonMove[];
-  public types: Type[];
+  // If not initialized this value will not be populated from save data.
+  public types: Type[] = null;
 }
 
 export class PokemonBattleData {

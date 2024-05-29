@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, OverrideMoveEffectAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -1015,10 +1015,17 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     if (
-      // If the user Terastallizes, the effect will be nullified.
       !pokemon.isTerastallized() &&
-      // When using a move that calls another move (such as Nature Power), the type of the called move will be considered.
-      !move.getMove().attrs.find((m) => m instanceof OverrideMoveEffectAttr)
+      /**
+       * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
+       * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
+       */
+      !move.getMove().findAttr((m) =>
+        m instanceof RandomMovesetMoveAttr ||
+        m instanceof RandomMoveAttr ||
+        m instanceof NaturePowerAttr ||
+        m instanceof CopyMoveAttr
+      )
     ) {
       const moveType = new Utils.IntegerHolder(move.getMove().type);
 
