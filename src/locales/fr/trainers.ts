@@ -18,8 +18,8 @@ export const titles: SimpleTranslationEntries = {
   // Special Trainers
   "pkm_trainer": "Pokémon Trainer",
   "pkm_trainer_female": "Pokémon Trainer",
-  "pkm_tamer": "Pokémon Tamer",
-  "pkm_tamer_female": "Pokémon Tamer",
+  "pkm_wielder": "Pokémon Wielder",
+  "pkm_wielder_female": "Pokémon Wielder",
 
   // Double Names
   "timespace_double": "Timespace Duo",
