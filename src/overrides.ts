@@ -56,7 +56,7 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 export const REWARD_AMOUNT_OVERRIDE: integer = 0;
 /**
  * Data for overriding the rewards in the post battle screen. Rewards overridden this way will appear as common tier regardless of its actual tier.
- * name: The name of the reward to use. Should match one of the values in modifierTypes in modifier-type.ts, 
+ * name: The name of the reward to use. Should match one of the values in modifierTypes in modifier-type.ts,
  *    with the exception of TM_COMMON, TM_GREAT or TM_ULTRA. For those, just use TM (any string starting with TM will work).
  * type: Some types of rewards need a subtype specified for generation, they are:
  * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
@@ -167,8 +167,7 @@ export function tryOverridePostBattleRewardOptions(options: ModifierTypeOption[]
         if (REWARD_OVERRIDES[i].type) {
           overriddenModifier = new TmModifierType(REWARD_OVERRIDES[i].type as Moves);
         }
-      }
-      else {  
+      } else {
         const modif: ModifierType = modifierTypes[name]();
         if (modif instanceof ModifierTypeGenerator) {
           overriddenModifier = modif.generateType(null, [REWARD_OVERRIDES[i].type]).withIdFromFunc(modifierTypes[name]);

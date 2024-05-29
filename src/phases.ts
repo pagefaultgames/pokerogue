@@ -4865,7 +4865,7 @@ export class SelectModifierPhase extends BattlePhase {
     }
 
     // Override the number of rewards to display, if applicable.
-    let rewardAmount: integer = Overrides.tryOverridePostBattleRewardAmount(modifierCount.value);
+    const rewardAmount: integer = Overrides.tryOverridePostBattleRewardAmount(modifierCount.value);
 
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(rewardAmount);
 
