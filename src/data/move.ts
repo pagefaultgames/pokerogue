@@ -1532,7 +1532,7 @@ export class EatBerryAttr extends MoveEffectAttr {
  * @param args Unused
  * @returns {boolean} true if the function succeeds
  */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
@@ -1586,7 +1586,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
  * @param {any[]} args Unused
  * @returns {boolean} true if the function succeeds
  */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
@@ -1597,15 +1597,16 @@ export class StealEatBerryAttr extends EatBerryAttr {
     const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
 
     if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
-      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+      const stolenItem = heldBerries[user.randSeedInt(heldBerries.length)];
 
-      if (this.chosenBerry.stackCount === 1) { // remove modifier if its the last berry
-        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
-      }
-      target.scene.updateModifiers(target.isPlayer());
+      user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => { // Steal the berry first, then try to eat it
+        const userBerries = this.getTargetHeldBerries(user).filter(i => i.getTransferrable(false));
 
-      user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
-      return super.apply(user, user, move, args);
+        this.chosenBerry = userBerries[userBerries.length - 1]; // most recent berry in user's berries
+        user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
+
+        super.apply(user, user, move, args);
+      });
     }
 
     return false;

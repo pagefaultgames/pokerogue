@@ -60,11 +60,11 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * default is 0 to not override
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
+export const STARTER_SPECIES_OVERRIDE: Species | integer = 12;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const MOVESET_OVERRIDE: Array<Moves> = [Moves.BUG_BITE];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -103,5 +103,5 @@ interface ModifierOverride {
 export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [{name: "BERRY_POUCH", count: 3}];
+export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [{name: "BERRY", count: 4, type: BerryType.SITRUS}];
