@@ -2313,7 +2313,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Blue: Ei Red, vamos mostrar do que somos feitos!
                   $Red: ...
-                  $Blue: Este é o poder de Pallet Town!`,
+                  $Blue: Este é o poder da Cidade de Pallet!`,
     },
     "victory": {
       1: `Blue: Essa foi uma ótima batalha!
@@ -2371,12 +2371,12 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Você tem algum pokémon raro?
-          $Wallace: Steven... Estamos aqui para uma batalha, não para mostrar nossos pokémon.
+      1: `Steven: Você tem algum Pokémon raro?
+          $Wallace: Steven... Estamos aqui para uma batalha, não para mostrar nossos Pokémon.
             $Steven: Ah... Entendi... Vamos lá então!`,
     },
     "victory": {
-      1: `Steven: Agora que terminamos a batalha, vamos mostrar nossos pokémon!
+      1: `Steven: Agora que terminamos a batalha, vamos mostrar nossos Pokémon!
             $Wallace: Steven...`,
     },
   },
