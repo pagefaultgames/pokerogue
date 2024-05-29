@@ -837,11 +837,11 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
     }
 
     return false;
-    
-    
-      
+
+
+
   }
-  
+
 }
 
 export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
