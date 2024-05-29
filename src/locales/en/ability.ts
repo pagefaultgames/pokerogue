@@ -439,7 +439,7 @@ export const ability: AbilityTranslationEntries = {
   },
   tintedLens: {
     name: "Tinted Lens",
-    description: 'The Pokémon can use "not very effective" moves to deal regular damage.',
+    description: "The Pokémon can use \"not very effective\" moves to deal regular damage.",
   },
   filter: {
     name: "Filter",
@@ -471,11 +471,11 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Honey Gather",
-    description: "The Pokémon may gather Honey after a battle.",
+    description: "The Pokémon gathers Honey after a battle. The Honey is then sold for money.",
   },
   frisk: {
     name: "Frisk",
-    description: "When it enters a battle, the Pokémon can check an opposing Pokémon's held item.",
+    description: "When it enters a battle, the Pokémon can check an opposing Pokémon's Ability.",
   },
   reckless: {
     name: "Reckless",
@@ -751,7 +751,7 @@ export const ability: AbilityTranslationEntries = {
   },
   auraBreak: {
     name: "Aura Break",
-    description: 'The effects of "Aura" Abilities are reversed to lower the power of affected moves.',
+    description: "The effects of \"Aura\" Abilities are reversed to lower the power of affected moves.",
   },
   primordialSea: {
     name: "Primordial Sea",

@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   zippyZap: {
     name: "Pikaturbo",
-    effect: "Ataque eléctrico a la velocidad del rayo. Este movimiento tiene prioridad alta y propina golpes críticos.",
+    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness.",
   },
   splishySplash: {
     name: "Salpikasurf",
