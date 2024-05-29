@@ -47,11 +47,11 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "it":{},
   "fr":{},
   "zh_CN":{
-          summaryFontSize:"70px",
-          battleInfoFontSize:"65px",
-	        partyFontSize:"50px",
-	        tooltipContentFontSize:"50px",
-	        moveInfoFontSize:"50px"
+    summaryFontSize:"70px",
+    battleInfoFontSize:"65px",
+    partyFontSize:"50px",
+    tooltipContentFontSize:"50px",
+    moveInfoFontSize:"50px"
   },
   "pt_BR":{},
 };
