@@ -126,7 +126,7 @@ export const achv: AchievementTranslationEntries = {
   },
   "CATCH_SUB_LEGENDARY": {
     name: "Quase Lendário",
-    description: "Capture um Pokémon Sumi-Lendário",
+    description: "Capture um Pokémon Semi-Lendário",
   },
   "CATCH_LEGENDARY": {
     name: "Lendário",
