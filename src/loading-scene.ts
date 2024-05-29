@@ -9,6 +9,16 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
+import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
+import {initBiomes} from "#app/data/biomes";
+import {initEggMoves} from "#app/data/egg-moves";
+import {initPokemonForms} from "#app/data/pokemon-forms";
+import {initSpecies} from "#app/data/pokemon-species";
+import {initMoves} from "#app/data/move";
+import {initAbilities} from "#app/data/ability";
+import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import i18next from "i18next";
+import { initStatsKeys } from "./ui/game-stats-ui-handler";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -196,6 +206,21 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("pb", "");
     this.loadAtlas("items", "");
     this.loadAtlas("types", "");
+
+    // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
+    const lang = i18next.language;
+    if (lang !== "en") {
+      if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`types_${lang}`, "");
+      } else {
+        // Fallback to English
+        this.loadAtlas("types", "");
+      }
+    } else {
+      this.loadAtlas("types", "");
+    }
+
+
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
 
@@ -284,6 +309,16 @@ export class LoadingScene extends SceneBase {
     this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
 
     this.loadLoadingScreen();
+
+    initStatsKeys();
+    initPokemonPrevolutions();
+    initBiomes();
+    initEggMoves();
+    initPokemonForms();
+    initTrainerTypeDialogue();
+    initSpecies();
+    initMoves();
+    initAbilities();
   }
 
   loadLoadingScreen() {
