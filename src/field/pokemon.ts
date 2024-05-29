@@ -1214,8 +1214,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  setMove(moveIndex: integer, moveId: Moves): void {
-    const move = moveId ? new PokemonMove(moveId) : null;
+  setMove(moveIndex: integer, moveId: Moves, ppUp?: integer): void {
+    const move = moveId ? new PokemonMove(moveId, undefined, ppUp) : null;
     this.moveset[moveIndex] = move;
     if (this.summonData?.moveset) {
       this.summonData.moveset[moveIndex] = move;
@@ -3166,7 +3166,7 @@ export class PlayerPokemon extends Pokemon {
           this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
           this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
           const newPartyMemberIndex = this.scene.getParty().indexOf(this);
-          pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m.getMove().id)));
+          pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m.getMove().id, m.ppUp)));
           pokemon.destroy();
           this.updateFusionPalette();
           resolve();
@@ -3769,7 +3769,7 @@ export class PokemonMove {
   }
 
   getMovePp(): integer {
-    return this.getMove().pp + this.ppUp * Math.max(Math.floor(this.getMove().pp / 5), 1);
+    return PokemonMove.getMovePp(this.getMove(), this.ppUp);
   }
 
   getPpRatio(): number {
@@ -3778,6 +3778,10 @@ export class PokemonMove {
 
   getName(): string {
     return this.getMove().name;
+  }
+
+  static getMovePp(move: Move, ppUp?: integer): integer {
+    return move.pp + (ppUp ?? 0) * Math.max(Math.floor(move.pp / 5), 1)
   }
 
   /**

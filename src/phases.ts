@@ -4324,11 +4324,13 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
+  private ppUpOverride: integer;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, ppUpOverride?: integer) {
     super(scene, partyMemberIndex);
 
     this.moveId = moveId;
+    this.ppUpOverride = ppUpOverride;
   }
 
   start() {
@@ -4340,6 +4342,11 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const existingMoveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === move.id);
 
     if (existingMoveIndex > -1) {
+      if (this.ppUpOverride) {
+        const existingMove = pokemon.moveset[existingMoveIndex];
+        existingMove.ppUp = Math.max(existingMove.ppUp, this.ppUpOverride);
+      }
+
       return this.end();
     }
 
@@ -4352,7 +4359,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       : Mode.MESSAGE;
 
     if (emptyMoveIndex > -1) {
-      pokemon.setMove(emptyMoveIndex, this.moveId);
+      pokemon.setMove(emptyMoveIndex, this.moveId, this.ppUpOverride);
       initMoveAnim(this.scene, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
@@ -4397,13 +4404,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                         this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: pokemon.name, moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
-                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId, this.ppUpOverride));
                             this.end();
                           }, null, true);
                         }, null, true);
                       }, null, true);
                     });
-                  });
+                  }, PokemonMove.getMovePp(move, this.ppUpOverride));
                 }, null, true);
               }, noHandler);
             });

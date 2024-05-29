@@ -92,6 +92,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   private pokemon: PlayerPokemon;
   private newMove: Move;
+  private newMovePpOverride: integer;
   private moveSelectFunction: Function;
   private transitioning: boolean;
   private statusVisible: boolean;
@@ -370,6 +371,9 @@ export default class SummaryUiHandler extends UiHandler {
     case SummaryUiMode.LEARN_MOVE:
       this.newMove = args[2] as Move;
       this.moveSelectFunction = args[3] as Function;
+      if (args.length > 4) {
+        this.newMovePpOverride = args[4];
+      }
 
       this.showMoveEffect(true);
       this.setCursor(Page.MOVES);
@@ -905,8 +909,9 @@ export default class SummaryUiHandler extends UiHandler {
         ppOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppOverlay);
 
-        const pp = Utils.padInt(this.newMove.pp, 2, "  ");
-        const ppText = addTextObject(this.scene, 173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
+        const ppNum = this.newMovePpOverride ?? this.newMove.pp;
+        const ppPadded = Utils.padInt(ppNum, 2, "  ");
+        const ppText = addTextObject(this.scene, 173, 1, `${ppPadded}/${ppPadded}`, TextStyle.WINDOW);
         ppText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppText);
       }
@@ -1067,6 +1072,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemon = null;
     this.cursor = -1;
     this.newMove = null;
+    this.newMovePpOverride = null;
     if (this.moveSelect) {
       this.moveSelect = false;
       this.moveSelectFunction = null;
