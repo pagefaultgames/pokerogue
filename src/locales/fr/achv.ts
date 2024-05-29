@@ -94,7 +94,7 @@ export const achv: AchievementTranslationEntries = {
   },
   "MAX_FRIENDSHIP": {
     name: "Copinage",
-    description: "Atteindre l’amitié maximale avec un Pokémon",
+    description: "Atteindre le niveau de bonheur maximal avec un Pokémon",
   },
   "MEGA_EVOLVE": {
     name: "Mégamorph",
@@ -138,7 +138,7 @@ export const achv: AchievementTranslationEntries = {
   },
   "SHINY_PARTY": {
     name: "Shasseur",
-    description: "Avoir une équipe exclusivement composée de Pokémon chromatique",
+    description: "Avoir une équipe exclusivement composée de Pokémon chromatiques",
   },
   "HATCH_MYTHICAL": {
     name: "Œuf fabuleux",
