@@ -48,7 +48,6 @@ import { BerryType } from "../data/berry";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { GameModes} from "../game-mode";
 
 export enum FieldPosition {
   CENTER,
@@ -1235,7 +1234,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   trySetShiny(thresholdOverride?: integer): boolean {
     // Shiny Pokemon should not spawn in the end biome in endless
-    if (this.scene.gameMode.modeId === GameModes.ENDLESS && this.scene.arena.biomeType === Biome.END) {
+    if (this.scene.gameMode.isEndless && this.scene.arena.biomeType === Biome.END) {
       return false;
     }
 
