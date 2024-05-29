@@ -234,6 +234,14 @@ export class PreDefendAbAttr extends AbAttr {
 }
 
 export class PowerSpotAbAttr extends AbAttr {
+  /**
+   *
+   * @param pokemon N/A
+   * @param passive N/A
+   * @param cancelled N/a
+   * @param args Utils.NumberHolder N/A
+   * @returns true if the function succeeds
+   */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return true;
   }
