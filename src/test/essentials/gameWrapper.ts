@@ -19,7 +19,7 @@ import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import {setPositionRelative, waitUntil} from "#app/test/essentials/utils";
 import NoAudioSound = Phaser.Sound.NoAudioSound;
-import {vi} from "vitest";
+import {expect, vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
 import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
 import MockLoader from "#app/test/essentials/mockLoader";
@@ -27,6 +27,12 @@ import {MockFetch} from "#app/test/essentials/mockFetch";
 import * as Utils from "#app/utils";
 import {Mode} from "#app/ui/ui";
 import {TitlePhase} from "#app/phases";
+import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import {getPokemonSpecies} from "#app/data/pokemon-species";
+import {Species} from "#app/data/enums/species";
+import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
+import {Button} from "#app/enums/buttons";
+import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -71,13 +77,35 @@ export default class GameWrapper {
     };
   }
 
-  newGame(scene, gameMode): Promise<void> {
+  newGame(scene, gameMode, starters?): Promise<void> {
     return new Promise(async (resolve) => {
       scene.ui.setMode(Mode.MESSAGE);
       const titlePhase = new TitlePhase(scene);
       titlePhase.setGameMode(gameMode);
       titlePhase.end();
       await waitUntil(() => scene.ui.getMode() === Mode.STARTER_SELECT);
+      if (!starters) {
+        return resolve();
+      }
+      let handler = scene.ui.getHandler() as StarterSelectUiHandler;
+      expect(handler).toBeInstanceOf(StarterSelectUiHandler);
+      handler.addToParty(getPokemonSpecies(Species.BULBASAUR));
+      handler.addToParty(getPokemonSpecies(Species.CHARMANDER));
+      handler.addToParty(getPokemonSpecies(Species.SQUIRTLE));
+      handler.tryStart(true);
+      await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+      let confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+      confirmHandler.processInput(Button.ACTION);
+      await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
+      const saveSlotHandler = scene.ui.getHandler() as SaveSlotSelectUiHandler;
+      saveSlotHandler.processInput(Button.ACTION);
+      await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+      confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+      confirmHandler.processInput(Button.ACTION);
+      await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+      confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+      confirmHandler.processInput(Button.CANCEL);
+      await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
       return resolve();
     });
   }

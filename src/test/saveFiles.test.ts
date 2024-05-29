@@ -169,6 +169,17 @@ describe("Session import/export", () => {
     // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
   }, 100000);
 
+  it('start battle in one-line', async() => {
+    await game.newGame(scene, GameModes.CLASSIC, [
+      Species.BULBASAUR,
+      Species.CHARMANDER,
+      Species.SQUIRTLE,
+    ]);
+    const mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.COMMAND);
+    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
+  }, 100000);
+
   it.skip('Reach title mode', async () => {
     // scene.pushPhase(new LoginPhase(scene));
     // scene.pushPhase(new TitlePhase(scene));
