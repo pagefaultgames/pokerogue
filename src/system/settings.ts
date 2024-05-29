@@ -5,6 +5,7 @@ import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
+import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 import { MoneyFormat } from "../enums/money-format";
 
 export enum Setting {
@@ -18,6 +19,8 @@ export enum Setting {
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
   Enable_Retries = "ENABLE_RETRIES",
+  Candy_Upgrade_Notification = "CANDY_UPGRADE_NOTIFICATION",
+  Candy_Upgrade_Display = "CANDY_UPGRADE_DISPLAY",
   Money_Format = "MONEY_FORMAT",
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
@@ -52,6 +55,8 @@ export const settingOptions: SettingOptions = {
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: ["Off", "On"],
   [Setting.Enable_Retries]: ["Off", "On"],
+  [Setting.Candy_Upgrade_Notification]: ["Off", "Passives Only", "On"],
+  [Setting.Candy_Upgrade_Display]: ["Icon", "Animation"],
   [Setting.Money_Format]: ["Normal", "Abbreviated"],
   [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
   [Setting.Move_Animations]: ["Off", "On"],
@@ -78,6 +83,8 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
   [Setting.Enable_Retries]: 0,
+  [Setting.Candy_Upgrade_Notification]: 0,
+  [Setting.Candy_Upgrade_Display]: 0,
   [Setting.Money_Format]: 0,
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
@@ -93,7 +100,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set];
+export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set, Setting.Candy_Upgrade_Display];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -127,6 +134,16 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
   case Setting.Enable_Retries:
     scene.enableRetries = settingOptions[setting][value] === "On";
     break;
+  case Setting.Candy_Upgrade_Notification:
+    if (scene.candyUpgradeNotification === value) {
+      break;
+    }
+
+    scene.candyUpgradeNotification = value;
+    scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
+    break;
+  case Setting.Candy_Upgrade_Display:
+    scene.candyUpgradeDisplay = value;
   case Setting.Money_Format:
     switch (settingOptions[setting][value]) {
     case "Normal":
