@@ -7,7 +7,7 @@ import UiHandler from "../ui-handler";
 import { addWindow } from "../ui-theme";
 import {Button} from "../../enums/buttons";
 import {InputsIcons} from "#app/ui/settings/abstract-settings-ui-handler";
-import NavigationMenu from "#app/ui/settings/navigationMenu";
+import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
@@ -151,6 +151,7 @@ export default class SettingsUiHandler extends UiHandler {
         this.navigationIcons[settingName].alpha = 0;
       }
     }
+    NavigationManager.getInstance().updateIcons();
   }
 
   show(args: any[]): boolean {

@@ -6,11 +6,12 @@ import {addWindow} from "#app/ui/ui-theme";
 import {Button} from "#app/enums/buttons";
 
 
-class NavigationManager {
+export class NavigationManager {
   private static instance: NavigationManager;
   public modes: Mode[];
   public selectedMode: Mode = Mode.SETTINGS;
   public navigationMenus: NavigationMenu[] = new Array<NavigationMenu>();
+  public labels: string[];
 
   constructor() {
     this.modes = [
@@ -18,6 +19,7 @@ class NavigationManager {
       Mode.SETTINGS_GAMEPAD,
       Mode.SETTINGS_KEYBOARD,
     ];
+    this.labels = ["General", "Gamepad", "Keyboard"];
   }
 
   public static getInstance(): NavigationManager {
@@ -53,7 +55,13 @@ class NavigationManager {
 
   public updateNavigationMenus() {
     for (const instance of this.navigationMenus) {
-      instance.updateHeaderTitles();
+      instance.update();
+    }
+  }
+
+  public updateIcons() {
+    for (const instance of this.navigationMenus) {
+      instance.updateIcons();
     }
   }
 
@@ -63,7 +71,6 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
   private navigationIcons: InputsIcons;
   public scene: BattleScene;
   protected headerTitles: Phaser.GameObjects.Text[] = new Array<Phaser.GameObjects.Text>();
-  public parentMode: Mode;
 
   constructor(scene: BattleScene, x: number, y: number) {
     super(scene, x, y);
@@ -76,6 +83,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
     const navigationManager = NavigationManager.getInstance();
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
+    this.add(headerBg);
     this.width = headerBg.width;
     this.height = headerBg.height;
 
@@ -91,37 +99,54 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
     iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
     this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
-    const headerText = addTextObject(this.scene, 0, 0, "General", TextStyle.SETTINGS_LABEL);
-    this.headerTitles.push(headerText);
-    headerText.setOrigin(0, 0);
-    headerText.setPositionRelative(headerBg, 18 + iconPreviousTab.width - 4, 4);
+    let relative: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text = iconPreviousTab;
+    let relativeWidth: number = iconPreviousTab.width*6;
+    for (const label of navigationManager.labels) {
+      const labelText = addTextObject(this.scene, 0, 0, label, TextStyle.SETTINGS_LABEL);
+      labelText.setOrigin(0, 0);
+      labelText.setPositionRelative(relative, 6 + relativeWidth/6, 0);
+      this.add(labelText);
+      this.headerTitles.push(labelText);
+      relative = labelText;
+      relativeWidth = labelText.width;
+    }
 
-    const gamepadText = addTextObject(this.scene, 0, 0, "Gamepad", TextStyle.SETTINGS_LABEL);
-    this.headerTitles.push(gamepadText);
-    gamepadText.setOrigin(0, 0);
-    gamepadText.setPositionRelative(headerBg, 60 + iconPreviousTab.width - 4, 4);
-
-    const keyboardText = addTextObject(this.scene, 0, 0, "Keyboard", TextStyle.SETTINGS_LABEL);
-    this.headerTitles.push(keyboardText);
-    keyboardText.setOrigin(0, 0);
-    keyboardText.setPositionRelative(headerBg, 107 + iconPreviousTab.width - 4, 4);
-
-    this.add(headerBg);
     this.add(iconPreviousTab);
     this.add(iconNextTab);
-    this.add(headerText);
-    this.add(gamepadText);
-    this.add(keyboardText);
     navigationManager.navigationMenus.push(this);
     navigationManager.updateNavigationMenus();
   }
 
-  updateHeaderTitles() {
+  update() {
     const navigationManager = NavigationManager.getInstance();
     const posSelected = navigationManager.modes.indexOf(navigationManager.selectedMode);
 
     for (const [index, title] of this.headerTitles.entries()) {
       setTextStyle(title, this.scene, index === posSelected ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
+    }
+  }
+
+  updateIcons() {
+    const specialIcons = {
+      "BUTTON_HOME": "HOME.png",
+      "BUTTON_DELETE": "DEL.png",
+    };
+    for (const settingName of Object.keys(this.navigationIcons)) {
+      if (Object.keys(specialIcons).includes(settingName)) {
+        this.navigationIcons[settingName].setTexture("keyboard");
+        this.navigationIcons[settingName].setFrame(specialIcons[settingName]);
+        this.navigationIcons[settingName].alpha = 1;
+        continue;
+      }
+      const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
+      if (icon) {
+        const type = this.scene.inputController?.getLastSourceType();
+        this.navigationIcons[settingName].setTexture(type);
+        this.navigationIcons[settingName].setFrame(icon);
+        this.navigationIcons[settingName].alpha = 1;
+      } else {
+        this.navigationIcons[settingName].alpha = 0;
+      }
     }
   }
 

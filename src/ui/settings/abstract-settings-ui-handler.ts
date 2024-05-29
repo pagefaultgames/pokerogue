@@ -6,7 +6,7 @@ import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
 import {getIconWithSettingName} from "#app/configs/inputs/configHandler";
-import NavigationMenu from "#app/ui/settings/navigationMenu";
+import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -336,6 +336,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       super.show(args);
 
       this.updateNavigationDisplay();
+      NavigationManager.getInstance().updateIcons();
       // Update the bindings for the current active gamepad configuration.
       this.updateBindings();
 
