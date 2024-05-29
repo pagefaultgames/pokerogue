@@ -54,7 +54,7 @@ export default class PokemonData {
   public summonData: PokemonSummonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
-    const sourcePokemon = source instanceof Pokemon ? source as Pokemon : null;
+    const sourcePokemon = source instanceof Pokemon ? source : null;
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;

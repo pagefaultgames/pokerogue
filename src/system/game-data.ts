@@ -633,7 +633,7 @@ export class GameData {
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime()
-    } as SessionSaveData;
+    } satisfies SessionSaveData;
   }
 
   getSession(slotId: integer): Promise<SessionSaveData> {
@@ -678,7 +678,7 @@ export class GameData {
   loadSession(scene: BattleScene, slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        const initSessionFromData = async sessionData => {
+        const initSessionFromData = async (sessionData: SessionSaveData) => {
           console.debug(sessionData);
 
           scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
