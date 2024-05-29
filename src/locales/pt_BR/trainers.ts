@@ -47,7 +47,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "dancer_female": "Dançarina",
   "depot_agent": "Ferroviário",
   "doctor": "Doutor",
-  "doctor_female": "Doutora",,
+  "doctor_female": "Doutora",
   "firebreather": "Firebreather",
   "fishermen": "Pescador",
   "fishermen_female": "Pescadora",
