@@ -6,7 +6,7 @@ import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
 import pad_dualshock from "./configs/inputs/pad_dualshock";
-import pad_procon from "./configs/pad_procon";
+import pad_procon from "./configs/inputs/pad_procon";
 import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
