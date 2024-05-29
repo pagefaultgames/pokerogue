@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { Achv } from "../system/achv";
+import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
 
