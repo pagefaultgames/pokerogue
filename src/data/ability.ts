@@ -1979,23 +1979,35 @@ export class BlockNonDirectDamageAbAttr extends AbAttr {
   }
 }
 
-export class BlockPoisonToxicDamageAbAttr extends BlockNonDirectDamageAbAttr {
+/**
+ * This attribute will block any status damage that you put in the parameter.
+ */
+export class BlockStatusDamageAbAttr extends BlockNonDirectDamageAbAttr {
+  private effects: StatusEffect[];
+
   /**
-   * This is so we don't have to edit each switch case in phase.ts, if the damage is Toxic or Poison, it will cancel.
-   * @param {Pokemon} pokemon The pokemon with the ability Poison Heal
+   * @param {StatusEffect[]} effects The status effect(s) that will be blocked from damaging the ability pokemon
+   */
+  constructor(...effects: StatusEffect[]) {
+    super(false);
+
+    this.effects = effects;
+  }
+
+  /**
+   * @param {Pokemon} pokemon The pokemon with the ability
    * @param {boolean} passive N/A
-   * @param {Utils.BooleanHolder} cancelled Whether to cancel the Toxic/Poison damage or not
+   * @param {Utils.BooleanHolder} cancelled Whether to cancel the status damage
    * @param {any[]} args N/A
-   * @returns Returns true if the damage from Toxic/Poison is blocked
+   * @returns Returns true if status damage is blocked
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON) {
+    if (this.effects.includes(pokemon.status.effect)) {
       cancelled.value = true;
       return true;
     }
     return false;
   }
-
 }
 
 export class BlockOneHitKOAbAttr extends AbAttr {
@@ -2312,23 +2324,38 @@ export class PostTurnAbAttr extends AbAttr {
   }
 }
 
-export class PostTurnPoisonHealAbAttr extends PostTurnAbAttr {
+/**
+ *
+ */
+export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
+  private effects: StatusEffect[];
+
   /**
-   * After the turn ends, if the ability Pokemon is either Toxic'd or Poisoned, it will heal 1/8 rather than damage the Pokemon.
-   * @param {Pokemon} pokemon The pokemon with the ability Poison Heal
-   * @param {boolean} passive N/A
-   * @param {any[]} args N/A
-   * @returns Returns true if Poison Heal procs
+   *
+   * @param {StatusEffect[]} effects
+   */
+  constructor(...effects: StatusEffect[]) {
+    super();
+
+    this.effects = effects;
+  }
+
+  /**
+   *
+   * @param pokemon
+   * @param passive
+   * @param args
+   * @returns
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    if (pokemon.status.effect === StatusEffect.TOXIC || pokemon.status.effect === StatusEffect.POISON) {
+    if (this.effects.includes(pokemon.status.effect)) {
       if (pokemon.getMaxHp() === pokemon.hp) {
         this.showAbility = false;
       } else {
         this.showAbility = true;
+        pokemon.heal(Math.max(Math.floor((pokemon.getMaxHp() / 8)), 1));
+        pokemon.updateInfo();
       }
-      pokemon.heal(Math.max(Math.floor((pokemon.getMaxHp() / 8)), 1));
-      pokemon.updateInfo();
       return true;
     }
     return false;
@@ -3578,8 +3605,8 @@ export function initAbilities() {
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, 4)
-      .attr(PostTurnPoisonHealAbAttr)
-      .attr(BlockPoisonToxicDamageAbAttr, false),
+      .attr(PostTurnStatusHealAbAttr, StatusEffect.TOXIC, StatusEffect.POISON)
+      .attr(BlockStatusDamageAbAttr, StatusEffect.TOXIC, StatusEffect.POISON),
     new Ability(Abilities.ADAPTABILITY, 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
