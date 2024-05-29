@@ -582,8 +582,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.ZYGARDE]: [
     new SpeciesFormChange(Species.ZYGARDE, "50-pc", "complete", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.ZYGARDE, "complete", "50-pc", new SpeciesFormChangeManualTrigger(), true),
-    new SpeciesFormChange(Species.ZYGARDE, "10-pc", "complete", new SpeciesFormChangeManualTrigger(), true),
-    new SpeciesFormChange(Species.ZYGARDE, "complete", "10-pc", new SpeciesFormChangeManualTrigger(), true)
+    new SpeciesFormChange(Species.ZYGARDE, "10-pc", "complete-10", new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.ZYGARDE, "complete-10", "10-pc", new SpeciesFormChangeManualTrigger(), true)
   ],
   [Species.DIANCIE]: [
     new SpeciesFormChange(Species.DIANCIE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))

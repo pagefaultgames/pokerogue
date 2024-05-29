@@ -3965,15 +3965,17 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
-    new Ability(Abilities.POWER_CONSTRUCT, 7) // TODO: 10% Power Construct Zygarde isn't accounted for yet. If changed, update Zygarde's getSpeciesFormIndex entry accordingly
-      .attr(PostBattleInitFormChangeAbAttr, () => 2)
-      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
-      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
+    new Ability(Abilities.POWER_CONSTRUCT, 7)
+      // Zygarde form indices: 2/3: base; 4/5: complete
+      // If Zygarde is in Complete Form after battle, revert to its original form (formIndex - 2)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.getFormKey().indexOf("complete") > -1 ? p.formIndex - 2 : p.formIndex)
+      // If Zygarde isn't in Complete Form and is below 50% health, change to Complete Form (formIndex + 2)
+      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 && p.getFormKey().indexOf("complete") === -1 ? p.formIndex + 2 : p.formIndex)
+      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 && p.getFormKey().indexOf("complete") === -1 ? p.formIndex + 2 : p.formIndex)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
-      .attr(NoFusionAbilityAbAttr)
-      .partial(),
+      .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.CORROSION, 7) // TODO: Test Corrosion against Magic Bounce once it is implemented
       .attr(IgnoreTypeStatusEffectImmunityAbAttr, [StatusEffect.POISON, StatusEffect.TOXIC], [Type.STEEL, Type.POISON])
       .partial(),
