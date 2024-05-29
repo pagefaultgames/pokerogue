@@ -1083,6 +1083,37 @@ export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   }
 }
 
+/**
+ * Abilities which cause a variable amount of power increase.
+ * @extends VariableMovePowerAbAttr
+ * @see {@link applyPreAttack}
+ */
+export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
+  private mult: (user: Pokemon, target: Pokemon, move: Move) => number;
+
+  /**
+   * @param mult A function which takes the user, target, and move, and returns the power multiplier. 1 means no multiplier.
+   * @param {boolean} showAbility Whether to show the ability when it activates.
+   */
+  constructor(mult: (user: Pokemon, target: Pokemon, move: Move) => number, showAbility: boolean = true) {
+    super(showAbility);
+    this.mult = mult;
+  }
+
+  /**
+   * @override
+   */
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    const multiplier = this.mult(pokemon, defender, move.getMove());
+    if (multiplier !== 1) {
+      (args[0] as Utils.NumberHolder).value *= multiplier;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class FieldVariableMovePowerAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     //const power = args[0] as Utils.NumberHolder;
@@ -4251,7 +4282,8 @@ export function initAbilities() {
     new Ability(Abilities.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, 9)
-      .unimplemented(),
+      .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 5))
+      .partial(),
     new Ability(Abilities.COSTAR, 9)
       .unimplemented(),
     new Ability(Abilities.TOXIC_DEBRIS, 9)
