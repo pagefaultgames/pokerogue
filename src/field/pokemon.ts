@@ -96,7 +96,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   public summonData: PokemonSummonData;
   public battleData: PokemonBattleData;
-  /** Variables that are tracked during battle but get reset when switching */
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
 
