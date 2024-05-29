@@ -12,7 +12,7 @@ import { Stat } from "./data/pokemon-stat";
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import {TimeOfDay} from "#app/data/enums/time-of-day";
-import {Gender} from "pokenode-ts";
+import { Gender } from "./data/gender";
 
 /**
  * Overrides for testing different in game situations
@@ -73,6 +73,7 @@ export const VARIANT_OVERRIDE: Variant = 0;
  */
 
 export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
+export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_GENDER_OVERRIDE: Gender = null;

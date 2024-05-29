@@ -32,6 +32,7 @@ import {
 } from "./dialogue";
 import { biome } from "./biome";
 import { challenges, challengeUiHandler } from "./challenges";
+import { pokemonInfoContainer } from "./pokemon-info-container";
 
 export const enConfig = {
   ability: ability,
@@ -63,6 +64,7 @@ export const enConfig = {
   biome: biome,
   challengeUiHandler: challengeUiHandler,
   challenges: challenges,
+  pokemonInfoContainer: pokemonInfoContainer,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
   PGMbattleSpecDialogue: PGMbattleSpecDialogue,
