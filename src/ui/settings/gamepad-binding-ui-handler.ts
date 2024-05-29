@@ -17,7 +17,6 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
 
     // New button icon setup.
     this.newButtonIcon = this.scene.add.sprite(0, 0, "xbox");
-    this.newButtonIcon.setScale(0.15);
     this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 16);
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
@@ -28,7 +27,6 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     this.swapText.setVisible(false);
 
     this.targetButtonIcon = this.scene.add.sprite(0, 0, "xbox");
-    this.targetButtonIcon.setScale(0.15);
     this.targetButtonIcon.setPositionRelative(this.optionSelectBg, 78, 48);
     this.targetButtonIcon.setOrigin(0.5);
     this.targetButtonIcon.setVisible(false);

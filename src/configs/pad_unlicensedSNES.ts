@@ -6,7 +6,7 @@ import {Button} from "../enums/buttons";
  */
 const pad_unlicensedSNES = {
   padID: "081f-e401",
-  padType: "snes",
+  padType: "xbox",
   deviceMapping : {
     RC_S: 2,
     RC_E: 1,
@@ -22,18 +22,18 @@ const pad_unlicensedSNES = {
     LC_E: 15
   },
   icons: {
-    RC_S: "T_X_B_White_Alt.png",
-    RC_E: "T_X_A_White_Alt.png",
-    RC_W: "T_X_Y_White_Alt.png",
-    RC_N: "T_X_X_White_Alt.png",
-    START: "start.png",
-    SELECT: "select.png",
-    LB: "T_X_LB_Alt.png",
-    RB: "T_X_RB_Alt.png",
-    LC_N: "T_X_Dpad_Up_Alt.png",
-    LC_S: "T_X_Dpad_Down_Alt.png",
-    LC_W: "T_X_Dpad_Left_Alt.png",
-    LC_E: "T_X_Dpad_Right_Alt.png",
+    RC_S: "XB_Letter_A_OL.png",
+    RC_E: "XB_Letter_B_OL.png",
+    RC_W: "XB_Letter_X_OL.png",
+    RC_N: "XB_Letter_Y_OL.png",
+    START: "START.png",
+    SELECT: "SELECT.png",
+    LB: "Bumper_L.png",
+    RB: "Bumper_R.png",
+    LC_N: "UP.png",
+    LC_S: "DOWN.png",
+    LC_W: "LEFT.png",
+    LC_E: "RIGHT.png",
   },
   settings: {
     [SettingGamepad.Button_Up]: Button.UP,
