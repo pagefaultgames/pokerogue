@@ -1281,7 +1281,7 @@ export const trainerConfigs: TrainerConfigs = {
 
   // Special Trainers
   [TrainerType.HOP]: new TrainerConfig((t=TrainerType.HOP)).initForSpecial(signatureSpecies["HOP"],"pkm_trainer").setHasDouble("hop_leon_double").setDoubleTrainerType(TrainerType.LEON).setDoubleTitle("sibling_double"),
-  [TrainerType.VOLO]: new TrainerConfig(++t).initForSpecial(signatureSpecies["VOLO"],"pkm_tamer").setBattleBgm("battle_sinnoh_champion").setHasDouble("volo_cynthia_double").setDoubleTrainerType(TrainerType.CYNTHIA).setDoubleTitle("timespace_double"),
+  [TrainerType.VOLO]: new TrainerConfig(++t).initForSpecial(signatureSpecies["VOLO"],"pkm_wielder").setBattleBgm("battle_sinnoh_champion").setHasDouble("volo_cynthia_double").setDoubleTrainerType(TrainerType.CYNTHIA).setDoubleTitle("timespace_double"),
   [TrainerType.CARMINE]: new TrainerConfig(++t).initForSpecial(signatureSpecies["CARMINE"],"pkm_trainer_female").setHasDouble("carmine_kieran_double").setDoubleTrainerType(TrainerType.KIERAN).setDoubleTitle("sibling_double"),
   [TrainerType.KUKUI]: new TrainerConfig(++t).initForSpecial(signatureSpecies["KUKUI"],"professor").setHasDouble("kukui_hau_double").setDoubleTrainerType(TrainerType.HAU).setDoubleTitle("alola_legends_double"),
 
