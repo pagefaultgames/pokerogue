@@ -8,9 +8,9 @@
 		"start:dev": "vite --mode development",
 		"build": "vite build",
 		"preview": "vite preview",
-		"test": "vitest run",
-		"test:cov": "vitest run --coverage",
-		"test:watch": "vitest watch --coverage",
+		"test": "vitest run --mode development",
+		"test:cov": "vitest run --coverage --mode development",
+		"test:watch": "vitest watch --coverage --mode development",
 		"eslint": "eslint --fix ."
 	},
 	"devDependencies": {

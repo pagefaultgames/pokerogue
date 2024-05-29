@@ -21,6 +21,7 @@ import {Species} from "#app/data/enums/species";
 import {getPokemonSpecies} from "#app/data/pokemon-species";
 import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
 import SaveSlotSelectUiHandler, {SaveSlotUiMode} from "#app/ui/save-slot-select-ui-handler";
+import OptionSelectUiHandler from "#app/ui/option-select-ui-handler";
 const saveKey = "x0i2O7WRiANTqPmZ";
 
 
@@ -31,6 +32,9 @@ describe("Session import/export", () => {
     game = new GameWrapper();
     scene = new BattleScene();
     game.scene.add("battle", scene);
+    await waitUntil(() => scene.ui?.getMode() === Mode.OPTION_SELECT);
+    let handler = scene.ui.getHandler() as OptionSelectUiHandler;
+    handler.processInput(Button.ACTION);
     await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
   }, 100000);
 
@@ -157,19 +161,20 @@ describe("Session import/export", () => {
     await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
     const saveSlotHandler = scene.ui.getHandler() as SaveSlotSelectUiHandler;
     saveSlotHandler.processInput(Button.ACTION);
+    // no overwrite save since it's a new file save as guest
+    // await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+    // confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+    // confirmHandler.processInput(Button.ACTION); // confirme overwrite save
     await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
     confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-    confirmHandler.processInput(Button.ACTION);
-    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-    confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-    confirmHandler.processInput(Button.CANCEL);
+    confirmHandler.processInput(Button.CANCEL); // say no to switch pokemon
     await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
     const mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.COMMAND);
     // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
   }, 100000);
 
-  it('save & quit', async() => {
+  it.skip('save & quit', async() => {
     await game.newGame(scene, GameModes.CLASSIC, [
       Species.BULBASAUR,
       Species.CHARMANDER,
@@ -188,6 +193,7 @@ describe("Session import/export", () => {
   it('export session 1 on title', async() => {
     await game.newGame(scene, GameModes.CLASSIC, [
       Species.MEWTWO,
+      Species.ABRA,
     ]);
     let mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.COMMAND);

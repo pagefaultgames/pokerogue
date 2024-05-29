@@ -100,9 +100,9 @@ export default class GameWrapper {
       }
       let handler = scene.ui.getHandler() as StarterSelectUiHandler;
       expect(handler).toBeInstanceOf(StarterSelectUiHandler);
-      handler.addToParty(getPokemonSpecies(Species.BULBASAUR));
-      handler.addToParty(getPokemonSpecies(Species.CHARMANDER));
-      handler.addToParty(getPokemonSpecies(Species.SQUIRTLE));
+      for (const starter of starters) {
+        handler.addToParty(getPokemonSpecies(starter));
+      }
       handler.tryStart(true);
       await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
       let confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
@@ -110,9 +110,10 @@ export default class GameWrapper {
       await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
       const saveSlotHandler = scene.ui.getHandler() as SaveSlotSelectUiHandler;
       saveSlotHandler.processInput(Button.ACTION);
-      await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-      confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-      confirmHandler.processInput(Button.ACTION);
+      // no overwrite save since it's a new file save as guest
+      // await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+      // confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+      // confirmHandler.processInput(Button.ACTION);
       await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
       confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
       confirmHandler.processInput(Button.CANCEL);
