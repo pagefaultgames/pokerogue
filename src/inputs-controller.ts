@@ -444,7 +444,7 @@ export class InputsController {
       return;
     }
     this.lastSource = "gamepad";
-    if (!this.selectedDevice[Device.GAMEPAD]) {
+    if (!this.selectedDevice[Device.GAMEPAD] || this.selectedDevice[Device.GAMEPAD] !== pad.id.toLowerCase()) {
       this.setChosenGamepad(pad.id);
     }
     if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD].toLowerCase()) {
