@@ -906,7 +906,144 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Fufufu... Nada mal.\nDesafiantes que derrotam a Elite Four são dignos de notar."
     }
   },
-  "sydney": {
+  "drayton": {
+    "encounter": {
+      1: `Cara, eu amo cadeiras. Você não ama cadeiras? Que salva-vidas.
+                $Não entendo por que todo mundo não fica sentado o tempo todo. Ficar de pé é cansativo!`,
+    },
+    "victory": {
+      1: "Acho que deveria ter esperado por isso!"
+    },
+    "defeat": {
+      1: "Heh heh! Não ligue para mim, só pegando uma vitória aqui. Entendo se você estiver chateado, mas não vá dar uma de Kieran comigo, OK?"
+    }
+  },
+  "ramos": {
+    "encounter": {
+      1: `Você gostou do jardim de diversão que fiz com todas essas plantas resistentes minhas?
+                $A força delas é um sinal da minha força como jardineiro e Líder de Ginásio! Você tem certeza de que está pronto para enfrentar tudo isso?`,
+    },
+    "victory": {
+      1: "Você acredita nos seus Pokémon... E eles acreditam em você também... Foi uma boa batalha, broto."
+    },
+    "defeat": {
+      1: "Hohoho... De fato. Pequenas lâminas frágeis de grama conseguem quebrar até mesmo concreto."
+    }
+  },
+  "viola": {
+    "encounter": {
+      1: `Seja as lágrimas de frustração que seguem uma derrota ou o florescer da alegria que vem com a vitória…
+                $Ambos são ótimos temas para minha câmera! Fantástico! Isso vai ser simplesmente fantástico!
+                $Agora venha para cima de mim!`,
+      2: "Minha lente está sempre focada na vitória – não vou deixar nada estragar esta foto!"
+    },
+    "victory": {
+      1: "Você e seus Pokémon me mostraram uma nova profundidade de campo! Fantástico! Simplesmente fantástico!",
+      2: `O mundo que você vê através de uma lente, e o mundo que você vê com um Pokémon ao seu lado…
+                $O mesmo mundo pode parecer completamente diferente dependendo do seu ponto de vista.`
+    },
+    "defeat": {
+      1: "A foto do momento da minha vitória vai ser um verdadeiro sucesso!",
+      2: "Sim! Tirei ótimas fotos!"
+    }
+  },
+  "candice": {
+    "encounter": {
+      1: `Você quer desafiar a Candice? Com certeza! Eu estava esperando por alguém forte!
+                $Mas devo te avisar, sou forte porque sei como focar.`,
+      2: `Pokémon, moda, romance… É tudo uma questão de foco!
+                $Vou te mostrar exatamente o que quero dizer. Prepare-se para perder!`
+    },
+    "victory": {
+      1: "Devo dizer, estou aquecida para você! Posso até te admirar um pouco.",
+      2: `Uau! Você é ótimo! Ganhou meu respeito!
+                $Acho que seu foco e vontade nos derrubaram totalmente.`
+    },
+    "defeat": {
+      1: "Eu senti sua vontade de vencer, mas eu não perco!",
+      2: "Viu? O foco da Candice! O foco dos meus Pokémon também é ótimo!"
+    }
+  },
+  "gardenia": {
+    "encounter": {
+      1: "Você tem uma aura vencedora. Então, de qualquer forma, isso vai ser divertido. Vamos ter nossa batalha!"
+    },
+    "victory": {
+      1: "Incrível! Você é muito bom, não é?"
+    },
+    "defeat": {
+      1: "Sim! Meus Pokémon e eu somos perfeitamente bons!"
+    }
+  },
+  "aaron": {
+    "encounter": {
+      1: "Ok! Deixe-me enfrentar você!"
+    },
+    "victory": {
+      1: "Batalhar é um assunto profundo e complexo..."
+    },
+    "defeat": {
+      1: "Vencer um membro da Elite Four não é fácil."
+    }
+  },
+  "cress": {
+    "encounter": {
+      1: "Isso mesmo! Serei eu e meus estimados tipos Água que você deve enfrentar na batalha!"
+    },
+    "victory": {
+      1: "Perder? Eu? Não acredito nisso."
+    },
+    "defeat": {
+      1: "Este é o resultado apropriado quando eu sou seu oponente."
+    }
+  },
+  "allister": {
+    "encounter": {
+      1: "'M Allister.\nA-aqui... vou eu..."
+    },
+    "victory": {
+      1: `Quase perdi minha máscara de tanto choque... Isso foi…
+                $Uau. Posso ver sua habilidade pelo que ela é.`,
+    },
+    "defeat": {
+      1: "I-isso foi incrível!"
+    }
+  },
+  "clay": {
+    "encounter": {
+      1: "Harrumph! Me deixou esperando, não foi, garoto? Tudo bem, hora de ver o que você pode fazer!"
+    },
+    "victory": {
+      1: "Cara, como é bom dar tudo de si e ainda assim ser derrotado!"
+    },
+    "defeat": {
+      1: `O que importa é como você reage à derrota.
+                $É por isso que as pessoas que usam a derrota como combustível para melhorar são duras.`,
+    }
+  },
+  "kofu": {
+    "encounter": {
+      1: "Vou te servir um prato completo de Pokémon do tipo Água! Mas não tente comê-los!"
+    },
+    "victory": {
+      1: "Vaultin' Veluza! Você é animado, não é! Um pouco ANIMADO DEMAIS, se me permite dizer!"
+    },
+    "defeat": {
+      1: "Volte para me ver novamente, ouviu?"
+    }
+  },
+  "tulip": {
+    "encounter": {
+      1: "Permita-me usar minhas habilidades para deixar seus lindos Pokémon ainda mais bonitos!"
+    },
+    "victory": {
+      1: "Sua força tem uma magia que não pode ser apagada."
+    },
+    "defeat": {
+      1: "Você sabe, na minha linha de trabalho, pessoas que carecem de talento em uma área ou outra frequentemente desaparecem rapidamente - nunca mais se ouve falar delas."
+    }
+  },
+  "sidney": {
     "encounter": {
       1: "Muito bem! Você gosta de batalhas Pokémon?",
       2: "Assim que terminei a Liga Pokémon, comecei a viajar para aprimorar minhas habilidades.",
