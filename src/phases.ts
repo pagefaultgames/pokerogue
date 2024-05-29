@@ -5036,11 +5036,16 @@ export class EggLapsePhase extends Phase {
       return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    if (eggsToHatch.length) {
+    let eggsToHatchCount: integer = eggsToHatch.length;
+
+    if (eggsToHatchCount) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
 
       for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg));
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggsToHatchCount));
+        if (eggsToHatchCount > 0) {
+          eggsToHatchCount--;
+        }
       }
 
     }
