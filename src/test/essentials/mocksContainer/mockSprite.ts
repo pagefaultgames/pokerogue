@@ -20,27 +20,13 @@ export default class MockSprite {
     Phaser.GameObjects.Sprite.prototype.setSizeToFrame = this.setSizeToFrame;
     Phaser.GameObjects.Sprite.prototype.setFrame = this.setFrame;
     Phaser.GameObjects.Sprite.prototype.disable = this.disable;
+
     // Phaser.GameObjects.Sprite.prototype.texture = { frameTotal: 1, get: () => null };
     this.phaserSprite = new Phaser.GameObjects.Sprite(textureManager.scene, x, y, texture);
     this.pipelineData = {};
     this.texture = {
       key: texture || "",
     };
-    const blacklist = ["bg", "pb", "items", "_a", "_b", "_c", "_d", "cursor", "prompt", "types", "categories",
-      "tabs", "pkmn_", "icon", "candy", "status", "categories", "summary", "profile", "gacha", "shiny", "egg", "logo", "champion_", "ability_",
-      "overlay_", "numbers"
-    ];
-    const whitelist = ["exeggcute"];
-    let found = false;
-    for (const elm of blacklist) {
-      if (this.texture.key.includes(elm) && !whitelist.includes(this.texture.key)) {
-        found = true;
-        break;
-      }
-    }
-    if (!found && texture) {
-      textureManager.containers.push(this);
-    }
   }
 
   setTexture(key: string, frame?: string | number): Sprite {

@@ -139,6 +139,11 @@ export default class MockContainer {
 
   add(obj) {
     // Adds a child to this Game Object.
+    const whitelist = ["ArenaBase", "PlayerPokemon"];
+    const key = obj.constructor.name;
+    if (whitelist.includes(key) || obj.texture?.key?.includes("trainer_")) {
+      this.textureManager.containers.push(obj);
+    }
   }
 
   getAt(index) {
@@ -162,6 +167,12 @@ export default class MockContainer {
   }
 
   getIndex(obj) {
+    for (const [index, texture] of this.textureManager.containers.entries()) {
+      if (texture?.name === obj.name) {
+        return index;
+      }
+    }
+    return -1;
   }
 
   getAt(index) {
@@ -169,7 +180,7 @@ export default class MockContainer {
   }
 
   getAll() {
-    return [];
+    return this.textureManager.containers;
   }
 
   sendToBack() {

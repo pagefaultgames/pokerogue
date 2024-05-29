@@ -160,11 +160,13 @@ describe("Session import/export", () => {
     await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
     confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
     confirmHandler.processInput(Button.ACTION);
-
-    // Need to find a way to mock correctly isOnField from pokemon.ts called there:
-    // src/phases.ts ln 1005 & 1017
-    // src/field/pokemon.ts ln 979
-
+    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
+    confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+    confirmHandler.processInput(Button.CANCEL);
+    await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
+    const mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.COMMAND);
+    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
   }, 100000);
 
   it.skip('Reach title mode', async () => {
