@@ -1801,11 +1801,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           damage.value = 0;
         }
 
-        // If ally has Abilities.STEELY_SPIRIT, steel moves are boosted.
+        // If ally has ability with attribute SteelySpiritAbAttr, steel moves are boosted.
         if (this.scene.currentBattle.double &&
           move.type === Type.STEEL &&
-          !source.hasAbility(Abilities.STEELY_SPIRIT) &&
-          source.getAlly().hasAbility(Abilities.STEELY_SPIRIT)
+          !source.getAbility().hasAttr(SteelySpiritAbAttr) &&
+          source.getAlly().getAbility().hasAttr(SteelySpiritAbAttr)
         ) {
           power.value *= 1.5;
         }
