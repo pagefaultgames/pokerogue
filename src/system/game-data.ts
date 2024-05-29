@@ -180,7 +180,7 @@ export interface StarterMoveData {
 }
 
 export interface StarterDataEntry {
-  moveset: StarterMoveset | StarterFormMoveData; 
+  moveset: StarterMoveset | StarterFormMoveData;
   eggMoves: integer;
   candyCount: integer;
   friendship: integer;
@@ -223,7 +223,7 @@ export class GameData {
   public secretId: integer;
 
   public gender: PlayerGender;
-  
+
   public dexData: DexData;
   private defaultDexData: DexData;
 
@@ -372,7 +372,7 @@ export class GameData {
         localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
 
         /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
-        
+
         if (versions[0] !== versions[1]) {
           const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
         }*/
@@ -439,7 +439,7 @@ export class GameData {
             if (achvs.hasOwnProperty(a)) {
               this.achvUnlocks[a] = systemData.achvUnlocks[a];
             }
-          } 
+          }
         }
 
         if (systemData.voucherUnlocks) {
@@ -908,7 +908,7 @@ export class GameData {
           v = [];
         }
         for (const md of v) {
-          if(md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
+          if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
           ret.push(new PersistentModifierData(md, player));
@@ -1029,7 +1029,7 @@ export class GameData {
     if (saveFile) {
       saveFile.remove();
     }
-  
+
     saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";
@@ -1084,6 +1084,7 @@ export class GameData {
             if (!valid) {
               return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
             }
+            this.scene.ui.revertMode();
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
@@ -1218,7 +1219,7 @@ export class GameData {
           : AbilityAttr.ABILITY_HIDDEN;
       }
       dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
-      
+
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       const newCatch = !caughtAttr;
       const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
@@ -1256,7 +1257,7 @@ export class GameData {
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
         }
       }
-    
+
       const checkPrevolution = () => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
@@ -1281,7 +1282,7 @@ export class GameData {
     if (!this.starterData[speciesIdToIncrement].classicWinCount) {
       this.starterData[speciesIdToIncrement].classicWinCount = 0;
     }
-    
+
     if (!this.starterData[speciesIdToIncrement].classicWinCount) {
       this.scene.gameData.gameStats.ribbonsOwned++;
     }
@@ -1473,7 +1474,7 @@ export class GameData {
   getFormAttr(formIndex: integer): bigint {
     return BigInt(Math.pow(2, 7 + formIndex));
   }
-  
+
   consolidateDexData(dexData: DexData): void {
     for (const k of Object.keys(dexData)) {
       const entry = dexData[k] as DexEntry;
@@ -1554,7 +1555,7 @@ export class GameData {
       }
     }
   }
-  
+
   fixStarterData(systemData: SystemSaveData): void {
     for (const starterId of defaultStarterSpecies) {
       systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;

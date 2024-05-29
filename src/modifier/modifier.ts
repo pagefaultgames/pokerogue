@@ -364,7 +364,7 @@ export class MapModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
-  
+
   clone(): MapModifier {
     return new MapModifier(this.type, this.stackCount);
   }
@@ -382,7 +382,7 @@ export class MegaEvolutionAccessModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
-  
+
   clone(): MegaEvolutionAccessModifier {
     return new MegaEvolutionAccessModifier(this.type, this.stackCount);
   }
@@ -400,7 +400,7 @@ export class GigantamaxAccessModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
-  
+
   clone(): GigantamaxAccessModifier {
     return new GigantamaxAccessModifier(this.type, this.stackCount);
   }
@@ -418,7 +418,7 @@ export class TerastallizeAccessModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
-  
+
   clone(): TerastallizeAccessModifier {
     return new TerastallizeAccessModifier(this.type, this.stackCount);
   }
@@ -596,7 +596,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     }
     return ret;
   }
-  
+
   getTransferrable(withinParty: boolean): boolean {
     return false;
   }
@@ -692,7 +692,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 
   /**
- * @param {Array<any>} args Array 
+ * @param {Array<any>} args Array
  *                          - Index 0: {Pokemon} Pokemon
  *                          - Index 1: {number} Move type
  *                          - Index 2: {Utils.NumberHolder} Move power
@@ -1062,7 +1062,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         pokemon.resetStatus();
       }
       pokemon.hp = Math.min(pokemon.hp + Math.max(Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), 1), pokemon.getMaxHp());
-      
+
       return true;
     }
 
@@ -1466,7 +1466,7 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   clone(): PersistentModifier {
     return new PokemonFriendshipBoosterModifier(this.type as ModifierTypes.PokemonFriendshipBoosterModifierType, this.pokemonId, this.stackCount);
   }
-  
+
   apply(args: any[]): boolean {
     const friendship = args[1] as Utils.IntegerHolder;
     friendship.value = Math.floor(friendship.value * (1 + 0.5 * this.getStackCount()));
@@ -1491,7 +1491,7 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   clone(): PersistentModifier {
     return new PokemonNatureWeightModifier(this.type, this.pokemonId, this.stackCount);
   }
-  
+
   apply(args: any[]): boolean {
     const multiplier = args[1] as Utils.IntegerHolder;
     if (multiplier.value !== 1) {
@@ -1559,7 +1559,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   clone(): PersistentModifier {
     return new PokemonMultiHitModifier(this.type as ModifierTypes.PokemonMultiHitModifierType, this.pokemonId, this.stackCount);
   }
-  
+
   apply(args: any[]): boolean {
     (args[1] as Utils.IntegerHolder).value *= (this.getStackCount() + 1);
 
@@ -1648,7 +1648,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
     const moneyAmount = new Utils.IntegerHolder(scene.getWaveMoneyAmount(this.moneyMultiplier));
 
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    
+
     scene.addMoney(moneyAmount.value);
 
     return true;
@@ -1856,7 +1856,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
 
     const heldItemTransferPromises: Promise<void>[] = [];
-    
+
     for (let i = 0; i < transferredItemCount; i++) {
       if (!tierItemModifiers.length) {
         while (highestItemTier-- && !tierItemModifiers.length) {
@@ -2210,7 +2210,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
     if (target.battleData.endured || Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount())) {
       return false;
     }
-    
+
     target.addTag(BattlerTagType.ENDURING, 1);
 
     target.battleData.endured = true;

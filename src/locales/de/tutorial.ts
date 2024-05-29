@@ -7,14 +7,15 @@ export const tutorial: SimpleTranslationEntries = {
     $Das Spiel befindet sich noch in der Entwicklung, ist aber voll spielbar.
     $Für Fehlerberichte nutze bitte den PokéRogue Discord-Server.
     $Sollte das Spiel langsam laufen, überprüfe, ob in deinem Browser "Hardwarebeschleunigung" aktiviert ist.`,
-    
+
   "accessMenu": "Nutze M oder Esc, um das Menü zu öffnen. Dort hast du Zugriff auf die Einstellungen und andere Funktionen.",
-    
+
   "menu": `In diesem Menü hast du Zugriff auf die Einstellungen.
     $Dort kannst du u. A. die Spielgeschwin-\ndigkeit und das Fensterdesign ändern.
     $Das Menü verbirgt noch andere Funktionen - probier' sie gerne aus!`,
 
-  "starterSelect": `Hier kannst du deine Starter-Pokémon auswählen.\nSie begleiten dich am Anfang deines Abenteuers.
+  "starterSelect": `In diesem Bildschirm kannst du mit Z oder Leertaste deine\nStarter auswählen.
+    $Sie begleiten dich am Anfang deines Abenteuers.
     $Jeder Starter hat einen Preis. Dein Team kann bis zu sechs\nMitglieder haben, solange der Gesamtpreis max. 10 beträgt.
     $Du kannst Geschlecht, Fähigkeit und Form beliebig auswählen,\nsobald du sie mindestens einmal gefangen hast.
     $Die DVs ergeben sich aus den Höchstwerten aller Pokémon,\ndie du bereits gefangen hast. 

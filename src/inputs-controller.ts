@@ -1,11 +1,13 @@
-import Phaser, {Time} from "phaser";
+import Phaser from "phaser";
 import * as Utils from "./utils";
 import {initTouchControls} from "./touch-controls";
 import pad_generic from "./configs/pad_generic";
 import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
+import pad_procon from "./configs/pad_procon";
 import {Button} from "./enums/buttons";
+import BattleScene from "./battle-scene";
 
 export interface GamepadMapping {
     [key: string]: number;
@@ -47,16 +49,17 @@ const repeatInputDelayMillis = 250;
  */
 export class InputsController {
   private buttonKeys: Phaser.Input.Keyboard.Key[][];
-  private gamepads: Array<string> = new Array();
-  private scene: Phaser.Scene;
+  private gamepads: Phaser.Input.Gamepad.Gamepad[] = new Array();
+  private scene: BattleScene;
 
   private buttonLock: Button;
   private buttonLock2: Button;
   private interactions: Map<Button, Map<string, boolean>> = new Map();
-  private time: Time;
-  private player: Map<String, GamepadMapping> = new Map();
+  private time: Phaser.Time.Clock;
+  private player: GamepadMapping;
 
   private gamepadSupport: boolean = true;
+  public events: Phaser.Events.EventEmitter;
 
   /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
@@ -69,7 +72,7 @@ export class InputsController {
      * Specific buttons like MENU and STATS are set not to repeat their actions.
      * It concludes by calling the `init` method to complete the setup.
      */
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: BattleScene) {
     this.scene = scene;
     this.time = this.scene.time;
     this.buttonKeys = [];
@@ -108,7 +111,6 @@ export class InputsController {
       }, this);
 
       // Check to see if the gamepad has already been setup by the browser
-      this.scene.input.gamepad.refreshPads();
       if (this.scene.input.gamepad.total) {
         this.refreshGamepads();
         for (const thisGamepad of this.gamepads) {
@@ -201,7 +203,7 @@ export class InputsController {
   setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
     const gamepadID = thisGamepad.id.toLowerCase();
     const mappedPad = this.mapGamepad(gamepadID);
-    this.player["mapping"] = mappedPad.gamepadMapping;
+    this.player = mappedPad.gamepadMapping;
   }
 
   /**
@@ -236,26 +238,26 @@ export class InputsController {
      */
   getActionGamepadMapping(): ActionGamepadMapping {
     const gamepadMapping = {};
-    if (!this.player?.mapping) {
+    if (!this?.player) {
       return gamepadMapping;
     }
-    gamepadMapping[this.player.mapping.LC_N] = Button.UP;
-    gamepadMapping[this.player.mapping.LC_S] = Button.DOWN;
-    gamepadMapping[this.player.mapping.LC_W] = Button.LEFT;
-    gamepadMapping[this.player.mapping.LC_E] = Button.RIGHT;
-    gamepadMapping[this.player.mapping.TOUCH] = Button.SUBMIT;
-    gamepadMapping[this.player.mapping.RC_S] = this.scene.abSwapped ? Button.CANCEL : Button.ACTION;
-    gamepadMapping[this.player.mapping.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
-    gamepadMapping[this.player.mapping.SELECT] = Button.STATS;
-    gamepadMapping[this.player.mapping.START] = Button.MENU;
-    gamepadMapping[this.player.mapping.RB] = Button.CYCLE_SHINY;
-    gamepadMapping[this.player.mapping.LB] = Button.CYCLE_FORM;
-    gamepadMapping[this.player.mapping.LT] = Button.CYCLE_GENDER;
-    gamepadMapping[this.player.mapping.RT] = Button.CYCLE_ABILITY;
-    gamepadMapping[this.player.mapping.RC_W] = Button.CYCLE_NATURE;
-    gamepadMapping[this.player.mapping.RC_N] = Button.CYCLE_VARIANT;
-    gamepadMapping[this.player.mapping.LS] = Button.SPEED_UP;
-    gamepadMapping[this.player.mapping.RS] = Button.SLOW_DOWN;
+    gamepadMapping[this.player.LC_N] = Button.UP;
+    gamepadMapping[this.player.LC_S] = Button.DOWN;
+    gamepadMapping[this.player.LC_W] = Button.LEFT;
+    gamepadMapping[this.player.LC_E] = Button.RIGHT;
+    gamepadMapping[this.player.TOUCH] = Button.SUBMIT;
+    gamepadMapping[this.player.RC_S] = this.scene.abSwapped ? Button.CANCEL : Button.ACTION;
+    gamepadMapping[this.player.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
+    gamepadMapping[this.player.SELECT] = Button.STATS;
+    gamepadMapping[this.player.START] = Button.MENU;
+    gamepadMapping[this.player.RB] = Button.CYCLE_SHINY;
+    gamepadMapping[this.player.LB] = Button.CYCLE_FORM;
+    gamepadMapping[this.player.LT] = Button.CYCLE_GENDER;
+    gamepadMapping[this.player.RT] = Button.CYCLE_ABILITY;
+    gamepadMapping[this.player.RC_W] = Button.CYCLE_NATURE;
+    gamepadMapping[this.player.RC_N] = Button.CYCLE_VARIANT;
+    gamepadMapping[this.player.LS] = Button.SPEED_UP;
+    gamepadMapping[this.player.RS] = Button.SLOW_DOWN;
 
     return gamepadMapping;
   }
@@ -421,6 +423,7 @@ export class InputsController {
      * - If the ID includes both '081f' and 'e401', it is identified as an unlicensed SNES gamepad.
      * - If the ID contains 'xbox' and '360', it is identified as an Xbox 360 gamepad.
      * - If the ID contains '054c', it is identified as a DualShock gamepad.
+     * - If the ID includes both '057e' and '2009', it is identified as a Pro controller gamepad.
      * If no specific identifiers are recognized, a generic gamepad configuration is returned.
      */
   mapGamepad(id: string): GamepadConfig {
@@ -432,6 +435,8 @@ export class InputsController {
       return pad_xbox360;
     } else if (id.includes("054c")) {
       return pad_dualshock;
+    } else if (id.includes("057e") && id.includes("2009")) {
+      return pad_procon;
     }
 
     return pad_generic;

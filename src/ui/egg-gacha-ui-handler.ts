@@ -61,16 +61,20 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(bg);
 
     const hatchFrameNames = this.scene.anims.generateFrameNames("gacha_hatch", { suffix: ".png", start: 1, end: 4 });
-    this.scene.anims.create({
-      key: "open",
-      frames: hatchFrameNames,
-      frameRate: 12
-    });
-    this.scene.anims.create({
-      key: "close",
-      frames: hatchFrameNames.reverse(),
-      frameRate: 12
-    });
+    if (!(this.scene.anims.exists("open"))) {
+      this.scene.anims.create({
+        key: "open",
+        frames: hatchFrameNames,
+        frameRate: 12
+      });
+    }
+    if (!(this.scene.anims.exists("close"))) {
+      this.scene.anims.create({
+        key: "close",
+        frames: hatchFrameNames.reverse(),
+        frameRate: 12
+      });
+    }
 
     Utils.getEnumValues(GachaType).forEach((gachaType, g) => {
       const gachaTypeKey = GachaType[gachaType].toString().toLowerCase();
@@ -213,13 +217,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaOverlay = this.scene.add.rectangle(0, 0, bg.displayWidth, bg.displayHeight, 0x000000);
     this.eggGachaOverlay.setOrigin(0, 0);
     this.eggGachaOverlay.setAlpha(0);
-    
+
     this.eggGachaContainer.add(this.eggGachaOverlay);
 
     this.eggGachaSummaryContainer = this.scene.add.container(0, 0);
     this.eggGachaSummaryContainer.setVisible(false);
     this.eggGachaContainer.add(this.eggGachaSummaryContainer);
-    
+
     const gachaMessageBoxContainer = this.scene.add.container(0, 148);
     this.eggGachaContainer.add(gachaMessageBoxContainer);
 
@@ -505,7 +509,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     if (!text) {
       text = this.defaultText;
     }
-    
+
     if (text?.indexOf("\n") === -1) {
       this.eggGachaMessageBox.setSize(320, 32);
       this.eggGachaMessageBox.setY(0);
@@ -545,7 +549,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         return false;
       }
     } else {
-      
+
       if (this.eggGachaSummaryContainer.visible) {
         if (button === Button.ACTION || button === Button.CANCEL) {
           this.hideSummary();
@@ -646,7 +650,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         }
       }
     }
-  
+
     if (success) {
       ui.playSelect();
     } else if (error) {

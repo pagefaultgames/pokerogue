@@ -20,9 +20,20 @@ import { tutorial } from "./tutorial";
 import { weather } from "./weather";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { voucher } from "./voucher";
+import {
+  PGMdialogue,
+  PGFdialogue,
+  PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue,
+  PGMmiscDialogue,
+  PGFmiscDialogue, PGMdoubleBattleDialogue, PGFdoubleBattleDialogue
+} from "./dialogue";
+import { biome } from "./biome";
+import { pokemonInfoContainer } from "./pokemon-info-container";
 
-export const enConfig = {    
+export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
@@ -47,5 +58,16 @@ export const enConfig = {
   weather: weather,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
+  gameStatsUiHandler: gameStatsUiHandler,
   voucher: voucher,
+  biome: biome,
+  pokemonInfoContainer: pokemonInfoContainer,
+  PGMdialogue: PGMdialogue,
+  PGFdialogue: PGFdialogue,
+  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
+  PGMmiscDialogue: PGMmiscDialogue,
+  PGFmiscDialogue: PGFmiscDialogue,
+  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
 };

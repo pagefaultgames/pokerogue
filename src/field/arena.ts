@@ -106,7 +106,7 @@ export class Arena {
           }
         }
       }
-      
+
       ret = getPokemonSpecies(species);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
@@ -292,7 +292,7 @@ export class Arena {
     if (Overrides.WEATHER_OVERRIDE) {
       return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     }
-    
+
     if (this.weather?.weatherType === (weather || undefined)) {
       return false;
     }
@@ -300,7 +300,7 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
-    
+
     if (this.weather) {
       this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -314,7 +314,7 @@ export class Arena {
       pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
       applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
     });
-    
+
     return true;
   }
 
@@ -326,7 +326,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    
+
     if (this.terrain) {
       if (!ignoreAnim) {
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
@@ -340,7 +340,7 @@ export class Arena {
       pokemon.findAndRemoveTags(t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
       applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
     });
-    
+
     return true;
   }
 
@@ -455,7 +455,26 @@ export class Arena {
     }
   }
 
+  overrideTint(): [integer, integer, integer] {
+    switch (Overrides.ARENA_TINT_OVERRIDE) {
+    case TimeOfDay.DUSK:
+      return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
+      break;
+    case (TimeOfDay.NIGHT):
+      return [ 64, 64, 64 ];
+      break;
+    case TimeOfDay.DAWN:
+    case TimeOfDay.DAY:
+    default:
+      return [ 128, 128, 128 ];
+      break;
+    }
+  }
+
   getDayTint(): [integer, integer, integer] {
+    if (Overrides.ARENA_TINT_OVERRIDE !== null) {
+      return this.overrideTint();
+    }
     switch (this.biomeType) {
     case Biome.ABYSS:
       return [ 64, 64, 64 ];
@@ -465,6 +484,9 @@ export class Arena {
   }
 
   getDuskTint(): [integer, integer, integer] {
+    if (Overrides.ARENA_TINT_OVERRIDE) {
+      return this.overrideTint();
+    }
     if (!this.isOutside()) {
       return [ 0, 0, 0 ];
     }
@@ -476,6 +498,9 @@ export class Arena {
   }
 
   getNightTint(): [integer, integer, integer] {
+    if (Overrides.ARENA_TINT_OVERRIDE) {
+      return this.overrideTint();
+    }
     switch (this.biomeType) {
     case Biome.ABYSS:
     case Biome.SPACE:
@@ -506,7 +531,7 @@ export class Arena {
     }
     tags.forEach(t => t.apply(this, args));
   }
-  
+
   applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
@@ -568,8 +593,8 @@ export class Arena {
     }
     return !!tag;
   }
-  
-  
+
+
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);
@@ -720,18 +745,20 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
     const baseKey = `${biomeKey}_${this.player ? "a" : "b"}`;
-    
+
     if (biome !== this.biome) {
       this.base.setTexture(baseKey);
 
       if (this.base.texture.frameTotal > 1) {
         const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
-        this.scene.anims.create({
-          key: baseKey,
-          frames: baseFrameNames,
-          frameRate: 12,
-          repeat: -1
-        });
+        if (!(this.scene.anims.exists(baseKey))) {
+          this.scene.anims.create({
+            key: baseKey,
+            frames: baseFrameNames,
+            frameRate: 12,
+            repeat: -1
+          });
+        }
         this.base.play(baseKey);
       } else {
         this.base.stop();
@@ -751,12 +778,14 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
           if (hasProps && prop.texture.frameTotal > 1) {
             const propFrameNames = this.scene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
-            this.scene.anims.create({
-              key: propKey,
-              frames: propFrameNames,
-              frameRate: 12,
-              repeat: -1
-            });
+            if (!(this.scene.anims.exists(propKey))) {
+              this.scene.anims.create({
+                key: propKey,
+                frames: propFrameNames,
+                frameRate: 12,
+                repeat: -1
+              });
+            }
             prop.play(propKey);
           } else {
             prop.stop();

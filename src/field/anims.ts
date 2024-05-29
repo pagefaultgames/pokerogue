@@ -24,12 +24,14 @@ export function addPokeballOpenParticles(scene: BattleScene, x: number, y: numbe
 
 function doDefaultPbOpenParticles(scene: BattleScene, x: number, y: number, radius: number) {
   const pbOpenParticlesFrameNames = scene.anims.generateFrameNames("pb_particles", { start: 0, end: 3, suffix: ".png" });
-  scene.anims.create({
-    key: "pb_open_particle",
-    frames: pbOpenParticlesFrameNames,
-    frameRate: 16,
-    repeat: -1
-  });
+  if (!(scene.anims.exists("pb_open_particle"))) {
+    scene.anims.create({
+      key: "pb_open_particle",
+      frames: pbOpenParticlesFrameNames,
+      frameRate: 16,
+      repeat: -1
+    });
+  }
 
   const addParticle = (index: integer) => {
     const particle = scene.add.sprite(x, y, "pb_open_particle");
@@ -108,11 +110,11 @@ function doMbOpenParticles(scene: BattleScene, x: number, y: number) {
 }
 
 function doFanOutParticle(scene: BattleScene, trigIndex: integer, x: integer, y: integer, xSpeed: integer, ySpeed: integer, angle: integer, frameIndex: integer): Phaser.GameObjects.Image {
-  let f = 0; 
+  let f = 0;
 
   const particle = scene.add.image(x, y, "pb_particles", `${frameIndex}.png`);
   scene.field.add(particle);
-  
+
   const updateParticle = () => {
     if (!particle.scene) {
       return particleTimer.remove();
