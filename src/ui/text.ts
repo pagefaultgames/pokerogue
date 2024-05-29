@@ -22,6 +22,8 @@ export enum TextStyle {
   SUMMARY_GRAY,
   SUMMARY_GREEN,
   MONEY,
+  STATS_LABEL,
+  STATS_VALUE,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
   TOOLTIP_TITLE,
@@ -85,7 +87,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
   return ret;
 }
 
-function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
+function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
   const lang = i18next.language;
   let shadowXpos = 4;
   let shadowYpos = 5;
@@ -112,6 +114,33 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   case TextStyle.WINDOW_ALT:
     shadowXpos = 3;
     shadowYpos = 3;
+    break;
+  case TextStyle.STATS_LABEL:
+    let fontSizeLabel = "96px";
+    switch (lang) {
+    case "de":
+      fontSizeLabel = "80px";
+      break;
+    default:
+      fontSizeLabel = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeLabel;
+    break;
+  case TextStyle.STATS_VALUE:
+    shadowXpos = 3;
+    shadowYpos = 3;
+    let fontSizeValue = "96px";
+    switch (lang) {
+    case "de":
+      fontSizeValue = "80px";
+      break;
+    default:
+      fontSizeValue = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeValue;
+    break;
   case TextStyle.MESSAGE:
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_SELECTED:
@@ -199,6 +228,10 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#e8e8a8" : "#a0a060";
   case TextStyle.SUMMARY_GRAY:
     return !shadow ? "#a0a0a0" : "#636363";
+  case TextStyle.STATS_LABEL:
+    return !shadow ? "#f8b050" : "#c07800";
+  case TextStyle.STATS_VALUE:
+    return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.SUMMARY_GREEN:
     return !shadow ? "#78c850" : "#306850";
   case TextStyle.SETTINGS_LABEL:
