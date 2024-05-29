@@ -123,7 +123,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
       const iconAction = this.scene.add.sprite(0, 0, "keyboard");
       iconAction.setOrigin(0, -0.1);
-      iconAction.setPositionRelative(this.actionsBg, this.headerBg.width - 20, 4);
+      iconAction.setPositionRelative(this.actionsBg, this.headerBg.width - 32, 4);
       this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
       const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
@@ -331,8 +331,8 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
     updateNavigationDisplay() {
       const specialIcons = {
-        "BUTTON_HOME": "T_Home_Key_Dark.png",
-        "BUTTON_DELETE": "T_Del_Key_Dark.png",
+        "BUTTON_HOME": "HOME.png",
+        "BUTTON_DELETE": "DEL.png",
       };
       for (const settingName of Object.keys(this.navigationIcons)) {
         if (Object.keys(specialIcons).includes(settingName)) {

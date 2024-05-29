@@ -67,7 +67,7 @@ export default class SettingsUiHandler extends UiHandler {
 
     const iconAction = this.scene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
-    iconAction.setPositionRelative(actionsBg, headerBg.width - 20, 4);
+    iconAction.setPositionRelative(actionsBg, headerBg.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
     const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
@@ -163,7 +163,7 @@ export default class SettingsUiHandler extends UiHandler {
     for (const settingName of Object.keys(this.navigationIcons)) {
       if (settingName === "BUTTON_HOME") {
         this.navigationIcons[settingName].setTexture("keyboard");
-        this.navigationIcons[settingName].setFrame("T_Home_Key_Dark.png");
+        this.navigationIcons[settingName].setFrame("HOME.png");
         this.navigationIcons[settingName].alpha = 1;
         continue;
       }
