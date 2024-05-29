@@ -3781,7 +3781,7 @@ export class PokemonMove {
   }
 
   static getMovePp(move: Move, ppUp?: integer): integer {
-    return move.pp + (ppUp ?? 0) * Math.max(Math.floor(move.pp / 5), 1)
+    return move.pp + (ppUp ?? 0) * Math.max(Math.floor(move.pp / 5), 1);
   }
 
   /**
