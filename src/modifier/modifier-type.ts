@@ -1,6 +1,7 @@
 import * as Modifiers from "./modifier";
 import { AttackMove, allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
+import { Abilities } from "../data/enums/abilities";
 import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
@@ -1182,6 +1183,9 @@ export const modifierTypes = {
   LEFTOVERS: () => new PokemonHeldItemModifierType("modifierType:ModifierType.LEFTOVERS", "leftovers", (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
   SHELL_BELL: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SHELL_BELL", "shell_bell", (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
 
+  TOXIC_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.TOXIC_ORB", "toxic_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id, StatusEffect.TOXIC)),
+  FLAME_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.FLAME_ORB", "flame_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id, StatusEffect.BURN)),
+
   BATON: () => new PokemonHeldItemModifierType("modifierType:ModifierType.BATON", "stick", (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id)),
 
   SHINY_CHARM: () => new ModifierType("modifierType:ModifierType.SHINY_CHARM", "shiny_charm", (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
@@ -1312,6 +1316,30 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
+    new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
+      const qualifiedAbilities = [Abilities.MARVEL_SCALE, Abilities.GUTS, Abilities.QUICK_FEET, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL];
+      const thresholdPartyMemberCount = Math.min(party.filter(p => {
+        for (const ability of qualifiedAbilities) {
+          if (p.hasAbility(ability)) {
+            return true;
+          }
+        }
+        return false;
+      }).length, 3);
+      return thresholdPartyMemberCount * 3;
+    }, 9),
+    new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
+      const qualifiedAbilities = [Abilities.MARVEL_SCALE, Abilities.GUTS, Abilities.QUICK_FEET, Abilities.FLARE_BOOST];
+      const thresholdPartyMemberCount = Math.min(party.filter(p => {
+        for (const ability of qualifiedAbilities) {
+          if (p.hasAbility(ability)) {
+            return true;
+          }
+        }
+        return false;
+      }).length, 3);
+      return thresholdPartyMemberCount * 3;
+    }, 9),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),

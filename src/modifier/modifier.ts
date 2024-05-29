@@ -851,6 +851,55 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
+ * set {@linkcode StatusEffect} at the end of a turn.
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
+  /** The status effect to be applied by the held item */
+  private effect: StatusEffect;
+
+  constructor(type: ModifierType, pokemonId: integer, effect: StatusEffect, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.effect = effect;
+  }
+
+  /**
+   * Checks if {@linkcode modifier} is an instance of this class,
+   * intentionally ignoring potentially different {@linkcode effect}s
+   * to prevent held item stockpiling since the item obtained first
+   * would be the only item able to {@linkcode apply} successfully.
+   * @override
+   * @param modifier {@linkcode Modifier} being type tested
+   * @return true if {@linkcode modifier} is an instance of
+   * TurnStatusEffectModifier, false otherwise
+   */
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof TurnStatusEffectModifier;
+  }
+
+  clone() {
+    return new TurnStatusEffectModifier(this.type, this.pokemonId, this.effect, this.stackCount);
+  }
+
+  /**
+   * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   * @returns true if the status effect was applied successfully, false if
+   * otherwise
+   */
+  apply(args: any[]): boolean {
+    return (args[0] as Pokemon).trySetStatus(this.effect, true, undefined, undefined, this.type.name);
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+}
+
 export class HitHealModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
