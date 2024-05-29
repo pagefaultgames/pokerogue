@@ -1,7 +1,7 @@
 import {
   getIconForLatestInput,
   getSettingNameWithKeycode
-} from "#app/configs/configHandler";
+} from "#app/configs/inputs/configHandler";
 import {expect} from "vitest";
 import {SettingInterface} from "#app/test/cfg_keyboard.example";
 

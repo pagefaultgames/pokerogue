@@ -1,21 +1,25 @@
-import {SettingGamepad} from "../system/settings-gamepad";
-import {Button} from "../enums/buttons";
+import {SettingGamepad} from "../../system/settings-gamepad";
+import {Button} from "#app/enums/buttons";
 
 /**
- * 081f-e401 - UnlicensedSNES
+ * Generic pad mapping
  */
-const pad_unlicensedSNES = {
-  padID: "081f-e401",
+const pad_xbox360 = {
+  padID: "Xbox 360 controller (XInput STANDARD GAMEPAD)",
   padType: "xbox",
-  deviceMapping : {
-    RC_S: 2,
+  deviceMapping: {
+    RC_S: 0,
     RC_E: 1,
-    RC_W: 3,
-    RC_N: 0,
+    RC_W: 2,
+    RC_N: 3,
     START: 9,
     SELECT: 8,
     LB: 4,
     RB: 5,
+    LT: 6,
+    RT: 7,
+    LS: 10,
+    RS: 11,
     LC_N: 12,
     LC_S: 13,
     LC_W: 14,
@@ -30,6 +34,10 @@ const pad_unlicensedSNES = {
     SELECT: "SELECT.png",
     LB: "Bumper_L.png",
     RB: "Bumper_R.png",
+    LT: "Trigger_L.png",
+    RT: "Trigger_R.png",
+    LS: "LS.png",
+    RS: "RS.png",
     LC_N: "UP.png",
     LC_S: "DOWN.png",
     LC_W: "LEFT.png",
@@ -66,11 +74,11 @@ const pad_unlicensedSNES = {
     SELECT: SettingGamepad.Button_Stats,
     LB: SettingGamepad.Button_Cycle_Form,
     RB: SettingGamepad.Button_Cycle_Shiny,
-    LT: -1,
-    RT: -1,
-    LS: -1,
-    RS: -1
+    LT: SettingGamepad.Button_Cycle_Gender,
+    RT: SettingGamepad.Button_Cycle_Ability,
+    LS: SettingGamepad.Button_Speed_Up,
+    RS: SettingGamepad.Button_Slow_Down
   },
 };
 
-export default pad_unlicensedSNES;
+export default pad_xbox360;

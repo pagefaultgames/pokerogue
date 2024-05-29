@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
 import {Mode} from "../ui";
-import cfg_keyboard_azerty from "#app/configs/cfg_keyboard_azerty";
+import cfg_keyboard_azerty from "#app/configs/inputs/cfg_keyboard_azerty";
 import {
   setSettingKeyboard,
   SettingKeyboard,
@@ -12,7 +12,7 @@ import {reverseValueToKeySetting, truncateString} from "#app/utils";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {InterfaceConfig} from "#app/inputs-controller";
 import {addTextObject, TextStyle} from "#app/ui/text";
-import {deleteBind} from "#app/configs/configHandler";
+import {deleteBind} from "#app/configs/inputs/configHandler";
 import {Device} from "#app/enums/devices";
 
 /**

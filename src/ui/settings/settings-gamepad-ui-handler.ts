@@ -8,9 +8,9 @@ import {
   settingGamepadDefaults,
   settingGamepadOptions
 } from "../../system/settings-gamepad";
-import pad_xbox360 from "#app/configs/pad_xbox360";
-import pad_dualshock from "#app/configs/pad_dualshock";
-import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
+import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
+import pad_dualshock from "#app/configs/inputs/pad_dualshock";
+import pad_unlicensedSNES from "#app/configs/inputs/pad_unlicensedSNES";
 import {InterfaceConfig} from "#app/inputs-controller";
 import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
 import {Device} from "#app/enums/devices";

@@ -1,11 +1,11 @@
-import {SettingGamepad} from "../system/settings-gamepad";
-import {Button} from "#app/enums/buttons";
+import {SettingGamepad} from "../../system/settings-gamepad";
+import {Button} from "../../enums/buttons";
 
 /**
  * Generic pad mapping
  */
-const pad_xbox360 = {
-  padID: "Xbox 360 controller (XInput STANDARD GAMEPAD)",
+const pad_generic = {
+  padID: "Generic",
   padType: "xbox",
   deviceMapping: {
     RC_S: 0,
@@ -79,6 +79,12 @@ const pad_xbox360 = {
     LS: SettingGamepad.Button_Speed_Up,
     RS: SettingGamepad.Button_Slow_Down
   },
+  blacklist: [
+    "LC_N",
+    "LC_S",
+    "LC_W",
+    "LC_E",
+  ]
 };
 
-export default pad_xbox360;
+export default pad_generic;

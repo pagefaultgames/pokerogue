@@ -5,7 +5,7 @@ import {InterfaceConfig} from "../../inputs-controller";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
-import {getIconWithSettingName} from "#app/configs/configHandler";
+import {getIconWithSettingName} from "#app/configs/inputs/configHandler";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;

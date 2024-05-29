@@ -2,21 +2,21 @@ import Phaser from "phaser";
 import * as Utils from "./utils";
 import {deepCopy} from "./utils";
 import {initTouchControls} from "./touch-controls";
-import pad_generic from "./configs/pad_generic";
-import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
-import pad_xbox360 from "./configs/pad_xbox360";
-import pad_dualshock from "./configs/pad_dualshock";
+import pad_generic from "./configs/inputs/pad_generic";
+import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
+import pad_xbox360 from "./configs/inputs/pad_xbox360";
+import pad_dualshock from "./configs/inputs/pad_dualshock";
 import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
-import cfg_keyboard_azerty from "./configs/cfg_keyboard_azerty";
+import cfg_keyboard_azerty from "./configs/inputs/cfg_keyboard_azerty";
 import {Device} from "#app/enums/devices";
 import {
   assign,
   getButtonWithKeycode,
   getIconForLatestInput, swap,
-} from "#app/configs/configHandler";
+} from "#app/configs/inputs/configHandler";
 import BattleScene from "./battle-scene";
 
 export interface DeviceMapping {

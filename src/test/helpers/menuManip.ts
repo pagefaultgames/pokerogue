@@ -9,7 +9,7 @@ import {
   getKeyWithSettingName,
   assign,
   getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey, canIOverrideThisSetting
-} from "#app/configs/configHandler";
+} from "#app/configs/inputs/configHandler";
 
 export class MenuManip {
   private config;
