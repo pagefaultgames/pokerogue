@@ -1474,29 +1474,50 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * An attribute that will cause an item held by the target do be dropped on hit.
+ */
 export class RemoveHeldItemAttr extends MoveEffectAttr {
   private chance: number;
+  private effectText: string;
+  private onlyBerries: boolean;
 
-  constructor(chance: number) {
+  /**
+   * @param chance How likely the drop should happen. Should be a number between 0 and 1, where 0 will never happen and a 1 will always happen.
+   * @param effectText The text to describe how the item was removed, result will be USER {effectText} TARGET's ITEM.
+   * @param onlyBerries If true, will only be able to remove a berry item. False will be able to remove any item that is allowed be removed.
+   */
+  constructor(chance: number, effectText: string, onlyBerries: boolean) {
     super(false, MoveEffectTrigger.HIT);
     this.chance = chance;
+    this.effectText = effectText;
+    this.onlyBerries = onlyBerries;
   }
 
+  /**
+   * Causes the target to have a held item to be removed.
+   * @param user {@linkcode Pokemon} Pokemon that used the move.
+   * @param target {@linkcode Pokemon} Pokemon that is being affected by the move.
+   * @param move {@linkcode Move} The move being used.
+   * @param args Not used by this attribute.
+   * @returns True if an item was removed, false otherwise.
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const rand = Phaser.Math.RND.realInRange(0, 1);
       if (rand >= this.chance) {
         return resolve(false);
       }
+
       const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
       if (heldItems.length) {
         const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
         const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
         const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-        user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
+        user.scene.tryRemoveHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
-            user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${stolenItem.type.name}!`));
+            user.scene.queueMessage(getPokemonMessage(user, ` ${this.effectText}\n${target.name}'s ${stolenItem.type.name}!`));
           }
           resolve(success);
         });
@@ -1507,8 +1528,13 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     });
   }
 
+  /**
+   * Gets a list of berries or all items that are held by the target, depending on whether onlyBerries is true.
+   * @param target The target to get the held items from.
+   * @returns The list containing either all berries or all items held by the target.
+   */
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    return target.scene.findModifiers(m => this.onlyBerries ? m instanceof BerryModifier : m instanceof PokemonHeldItemModifier
       && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
   }
 
@@ -5823,7 +5849,7 @@ export function initMoves() {
       .condition((user, target, move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(KnockOffPowerAttr)
-      .partial(),
+      .attr(RemoveHeldItemAttr, 1, "knocked off", false),
     new AttackMove(Moves.ENDEAVOR, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
       .condition(failOnBossCondition),
@@ -6452,7 +6478,7 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr),
     new AttackMove(Moves.INCINERATE, Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(RemoveHeldItemAttr, 1, "incinerated", true),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .unimplemented(),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)

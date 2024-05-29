@@ -1877,6 +1877,54 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Tries to remove a given held item from the target pokemon.
+   * @param itemModifier The type of held item to try removing.
+   * @param target The Pokemon the held item should be removed from.
+   * @param removeStack If true, the full stack of the held item should be removed. If false, only one of that item should be removed.
+   * @param instant Whether the modifiers should be updated instantly.
+   * @returns A promise where the resolve boolean is if the remove action successfully removed the specified item.
+   */
+  tryRemoveHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, removeStack: boolean, instant?: boolean): Promise<boolean> {
+    return new Promise(resolve => {
+      const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
+      const cancelled = new Utils.BooleanHolder(false);
+      Utils.executeIf(source && source.isPlayer() !== target.isPlayer(), () => applyAbAttrs(BlockItemTheftAbAttr, source, cancelled)).then(() => {
+        if (cancelled.value) {
+          return resolve(false);
+        }
+        const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+        newItemModifier.pokemonId = target.id;
+        const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
+					&& (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
+        let removeOld = true;
+        if (matchingModifier) {
+          const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
+          if (matchingModifier.stackCount >= maxStackCount) {
+            return resolve(false);
+          }
+          const countTaken = removeStack ? Math.min(itemModifier.stackCount, maxStackCount - matchingModifier.stackCount) : 1;
+          itemModifier.stackCount -= countTaken;
+          newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+          removeOld = !itemModifier.stackCount;
+        } else if (!removeStack) {
+          newItemModifier.stackCount = 1;
+          removeOld = !(--itemModifier.stackCount);
+        }
+
+        if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
+          if (source && source.isPlayer() !== target.isPlayer()) {
+            this.updateModifiers(source.isPlayer(), instant).then(() => resolve(true));
+          } else {
+            resolve(true);
+          }
+          return;
+        }
+        resolve(false);
+      });
+    });
+  }
+
+  /**
    * Try to transfer a held item to another pokemon.
    * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
    * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
