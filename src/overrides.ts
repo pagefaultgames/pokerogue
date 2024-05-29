@@ -45,8 +45,6 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
     [PokeballType.MASTER_BALL]: 0,
   }
 };
-export const BASE_HIDDEN_ABILITY_CHANCE_OVERRIDE: integer = 256;
-export const UP_HIDDEN_ABILITY_CHANCE_OVERRIDE: integer = 128;
 
 /**
  * PLAYER OVERRIDES
