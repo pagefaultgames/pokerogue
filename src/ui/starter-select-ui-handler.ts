@@ -652,11 +652,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
-    const overlayScale = .5;
+    const overlayScale = .5; // scale for the move info. "2/3" might be another good option...
     this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
       scale: overlayScale,
       top: true,
-      //right: true,
       x: 1,
       y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
     });

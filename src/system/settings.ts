@@ -18,6 +18,7 @@ export enum Setting {
   UI_Theme = "UI_THEME",
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
+  Move_Info = "MOVE_INFO",
   Enable_Retries = "ENABLE_RETRIES",
   Candy_Upgrade_Notification = "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display = "CANDY_UPGRADE_DISPLAY",
@@ -54,6 +55,7 @@ export const settingOptions: SettingOptions = {
   [Setting.UI_Theme]: ["Default", "Legacy"],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: ["Off", "On"],
+  [Setting.Move_Info]: ["Off", "On"],
   [Setting.Enable_Retries]: ["Off", "On"],
   [Setting.Candy_Upgrade_Notification]: ["Off", "Passives Only", "On"],
   [Setting.Candy_Upgrade_Display]: ["Icon", "Animation"],
@@ -82,6 +84,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.UI_Theme]: 0,
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
+  [Setting.Move_Info]: 1,
   [Setting.Enable_Retries]: 0,
   [Setting.Candy_Upgrade_Notification]: 0,
   [Setting.Candy_Upgrade_Display]: 0,
@@ -130,6 +133,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     break;
   case Setting.Tutorials:
     scene.enableTutorials = settingOptions[setting][value] === "On";
+    break;
+  case Setting.Move_Info:
+    scene.enableMoveInfo = settingOptions[setting][value] === "On";
     break;
   case Setting.Enable_Retries:
     scene.enableRetries = settingOptions[setting][value] === "On";

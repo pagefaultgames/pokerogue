@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, {InfoToggle} from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
@@ -7,20 +7,26 @@ import { Type } from "../data/type";
 import i18next from "i18next";
 
 export interface MoveInfoOverlaySettings {
+    delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
     scale?:number; // scale the box? A scale of 0.5 is recommended
     top?: boolean; // should the effect box be on top?
     right?: boolean; // should the effect box be on the right?
-    //location of the component, unaffected by scaling
+    //location and width of the component; unaffected by scaling
     x?: number;
     y?: number;
+    width?: number; // default is always half the screen, regardless of scale
 }
 
 const EFF_HEIGHT = 82;
 const EFF_WIDTH = 110;
 const DESC_HEIGHT = 62;
+const BORDER = 8;
+const GLOBAL_SCALE = 6;
 
-export default class MoveInfoOverlay extends Phaser.GameObjects.Container {
-  private move:Move;
+export default class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
+  public active: boolean = false;
+
+  private move: Move;
 
   private desc: Phaser.GameObjects.Text;
   private descScroll : Phaser.Tweens.Tween = null;
@@ -31,32 +37,50 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container {
   private typ: Phaser.GameObjects.Sprite;
   private cat: Phaser.GameObjects.Sprite;
 
+  private options : MoveInfoOverlaySettings;
+
   constructor(scene: BattleScene, options?: MoveInfoOverlaySettings) {
+    //options.x = 10, options.y = 10;
+    //options.scale = 1;
     super(scene, options?.x, options?.y);
     const scale = options?.scale || 1; // set up the scale
     this.setScale(scale);
+    this.options = options || {};
 
     // prepare the description box
-    const descBg = addWindow(this.scene, 0, options?.top ? EFF_HEIGHT : 0, this.scene.game.canvas.height / (6 * scale), DESC_HEIGHT);
+    const width = (options?.width || MoveInfoOverlay.getWidth(scale, this.scene)) / scale; // divide by scale as we always want this to be half a window wide
+    const descBg = addWindow(this.scene, 0, options?.top ? EFF_HEIGHT : 0, width, DESC_HEIGHT);
     descBg.setOrigin(0, 0);
     this.add(descBg);
 
-    this.desc = addTextObject(this.scene, 8, (options?.top ? EFF_HEIGHT : 0) + 8, "", TextStyle.WINDOW, { wordWrap: { width: 1000/scale } });
-    this.add(this.desc);
+    // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
+    this.desc = addTextObject(this.scene, BORDER, (options?.top ? EFF_HEIGHT : 0) + BORDER, "", TextStyle.WINDOW, { wordWrap: { width: (width * GLOBAL_SCALE) - (BORDER * GLOBAL_SCALE * 2) } });
 
     // limit the text rendering, required for scrolling later on
-    const moveDescriptionTextMaskRect = this.scene.make.graphics({});
+    const maskPointOrigin = {
+      x: (options?.x || 0),
+      y: (options?.y || 0),
+    };
+    if (maskPointOrigin.x < 0) {
+      maskPointOrigin.x += this.scene.game.canvas.width / GLOBAL_SCALE;
+    }
+    if (maskPointOrigin.y < 0) {
+      maskPointOrigin.y += this.scene.game.canvas.height / GLOBAL_SCALE;
+    }
+
+    const moveDescriptionTextMaskRect = this.scene.make.graphics();
+    moveDescriptionTextMaskRect.fillStyle(0xFF0000);
+    moveDescriptionTextMaskRect.fillRect(
+      maskPointOrigin.x + BORDER * scale, maskPointOrigin.y + ((options?.top ? EFF_HEIGHT : 0) + BORDER) * scale,
+      width - (BORDER * 2) * scale, (DESC_HEIGHT - BORDER * 2) * scale);
     moveDescriptionTextMaskRect.setScale(6);
-    moveDescriptionTextMaskRect.fillStyle(0xFFFFFF);
-    moveDescriptionTextMaskRect.beginPath();
-    moveDescriptionTextMaskRect.fillRect(8*scale, ((options?.top ? EFF_HEIGHT + 8 : 0)) + 8*scale, this.scene.game.canvas.height / (6 * scale) - (16*scale), DESC_HEIGHT-(16*scale));
+    const moveDescriptionTextMask = this.createGeometryMask(moveDescriptionTextMaskRect);
 
-    const moveDescriptionTextMask = moveDescriptionTextMaskRect.createGeometryMask();
-
+    this.add(this.desc);
     this.desc.setMask(moveDescriptionTextMask);
 
     // prepare the effect box
-    this.val = new Phaser.GameObjects.Container(scene, options?.right ? this.scene.game.canvas.height / (6 * scale) - EFF_WIDTH : 0,  options?.top ? 0 : DESC_HEIGHT);
+    this.val = new Phaser.GameObjects.Container(scene, options?.right ? width - EFF_WIDTH : 0,  options?.top ? 0 : DESC_HEIGHT);
     this.add(this.val);
 
     const valuesBg = addWindow(this.scene, 0, 0, EFF_WIDTH, EFF_HEIGHT);
@@ -97,6 +121,9 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container {
 
   // show this component with infos for the specific move
   show(move : Move):boolean {
+    if (!this.scene.enableMoveInfo) {
+      return; // move infos have been disabled
+    }
     this.move = move;
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");
     this.acc.setText(move.accuracy >= 0 ? move.accuracy.toString() : "---");
@@ -126,21 +153,33 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container {
       });
     }
 
-    this.setVisible(true);
+    if (!this.options.delayVisibility) {
+      this.setVisible(true);
+    }
+    this.active = true;
     return true;
   }
 
+  clear() {
+    this.setVisible(false);
+    this.active = false;
+  }
+
+  toggleInfo(force?: boolean): void {
+    this.setVisible(force ?? !this.visible);
+  }
+
+  isActive(): boolean {
+    return this.active;
+  }
+
   // width of this element
-  static getWidth(scale:number):number {
-    return this.scene.game.canvas.height / 6;
+  static getWidth(scale:number, scene: BattleScene):number {
+    return scene.game.canvas.width / GLOBAL_SCALE / 2;
   }
 
   // height of this element
   static getHeight(scale:number):number {
     return (EFF_HEIGHT + DESC_HEIGHT) * scale;
-  }
-
-  clear() {
-    this.setVisible(false);
   }
 }

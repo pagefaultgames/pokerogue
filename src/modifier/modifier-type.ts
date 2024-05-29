@@ -719,7 +719,7 @@ export class TmModifierType extends PokemonModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
+    return i18next.t("modifierType:ModifierType.TmModifierType.description" + (scene.enableMoveInfo ? "WithInfo" : ""), { moveName: allMoves[this.moveId].name });
   }
 }
 

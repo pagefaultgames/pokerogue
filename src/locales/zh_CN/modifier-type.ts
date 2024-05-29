@@ -98,6 +98,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TmModifierType": {
       name: "招式学习器 {{moveId}} - {{moveName}}",
       description: "教会一只宝可梦{{moveName}}",
+      descriptionWithInfo: "教会一只宝可梦{{moveName}}\n(Hold C or Shift for more info)",
     },
     "EvolutionItemModifierType": {
       description: "使某些宝可梦进化",
