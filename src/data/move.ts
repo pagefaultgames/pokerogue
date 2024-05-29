@@ -2051,6 +2051,31 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
   }
 }
 
+export class TailwindStatChangeAttr extends StatChangeAttr {
+  constructor(stats: BattleStat | BattleStat[], levels: integer) {
+    super(stats, levels);
+  }
+
+  apply(user: Pokemon): boolean {
+    const side = user.getAlly();
+
+    if (side && side.hasAbility(Abilities.WIND_RIDER)) {
+      side.scene.unshiftPhase(new StatChangePhase(side.scene, side.getBattlerIndex(), true, this.stats, this.levels, false));
+      side.scene.queueMessage(`${side.name}'s wind rider raised its attack!`);
+    }
+
+    const party = user.isPlayer() ? user.scene.getPlayerField() : user.scene.getEnemyField();
+
+    for (const pokemon of party) {
+      if (pokemon.hasAbility(Abilities.WIND_POWER)) {
+        pokemon.addTag(BattlerTagType.CHARGED);
+      }
+    }
+
+    return true;
+  }
+}
+
 export class HalfHpStatMaxAttr extends StatChangeAttr {
   constructor(stat: BattleStat) {
     super(stat, 12, true, null, false);
@@ -5982,7 +6007,8 @@ export function initMoves() {
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
       .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
-      .target(MoveTarget.USER_SIDE),
+      .target(MoveTarget.USER_SIDE)
+      .attr(TailwindStatChangeAttr, [BattleStat.ATK], 1),
     new StatusMove(Moves.ACUPRESSURE, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(AcupressureStatChangeAttr)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
