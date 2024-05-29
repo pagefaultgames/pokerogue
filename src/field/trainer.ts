@@ -421,7 +421,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
       }
       return [party.indexOf(p), score];
-    });
+    }) as [integer, integer][];
 
     return partyMemberScores;
   }
