@@ -62,7 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-
+import { DamagePhase } from "./phases/DamagePhase";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
