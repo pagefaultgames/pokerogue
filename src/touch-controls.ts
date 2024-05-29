@@ -1,4 +1,9 @@
-type ButtonMap = Map<string, any>;
+interface ButtonKey {
+  onDown: (opt: object) => void;
+  onUp: (opt: object) => void;
+}
+
+type ButtonMap = Map<string, ButtonKey>;
 
 export const keys = new Map();
 export const keysDown = new Map();
@@ -10,6 +15,8 @@ let lastTouchedId: string;
  * @param buttonMap Map of buttons to key objects
  */
 export function initTouchControls(buttonMap: ButtonMap) {
+  preventElementZoom(document.querySelector("#dpad"));
+
   for (const button of document.querySelectorAll<HTMLElement>("[data-key]")) {
     bindKey(button, button.dataset.key, buttonMap);
   }
@@ -128,6 +135,38 @@ function bindKey(node: Element, key: string, buttonMap: ButtonMap) {
       keysDown.set(target.id, nextTargetId);
       lastTouchedId = nextTargetId;
       document.getElementById(nextTargetId).classList.add("active");
+    }
+  });
+}
+
+/**
+ * Prevent zoom on specified element
+ *
+ * {@link https://stackoverflow.com/a/39778831/4622620|Source}
+ *
+ * @param element The element to prevent zoom on
+ */
+function preventElementZoom(element: HTMLElement) {
+  element.addEventListener("touchstart", (event: TouchEvent) => {
+
+    if (!(event.currentTarget instanceof HTMLElement)) {
+      return;
+    }
+
+    const currentTouchTimeStamp = event.timeStamp;
+    const previousTouchTimeStamp = Number(event.currentTarget.dataset.lastTouchTimeStamp) || currentTouchTimeStamp;
+    const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
+    const fingers = event.touches.length;
+    event.currentTarget.dataset.lastTouchTimeStamp = String(currentTouchTimeStamp);
+
+    if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
+      return;
+    } // not double-tap
+
+    event.preventDefault();
+
+    if (event.target instanceof HTMLElement) {
+      event.target.click();
     }
   });
 }

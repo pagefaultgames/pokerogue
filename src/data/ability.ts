@@ -1573,18 +1573,41 @@ export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Download raises either the Attack stat or Special Attack stat by one stage depending on the foe's currently lowest defensive stat:
+ * it will raise Attack if the foe's current Defense is lower than its current Special Defense stat;
+ * otherwise, it will raise Special Attack.
+ * @extends PostSummonAbAttr
+ * @see {applyPostSummon}
+ */
 export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: integer;
   private enemySpDef: integer;
+  private enemyCountTally: integer;
   private stats: BattleStat[];
 
+  // TODO: Implement the Substitute feature(s) once move is implemented.
+  /**
+   * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account
+   * vitamins and items, so it needs to use the BattleStat and the stat alone.
+   * @param {Pokemon} pokemon Pokemon that is using the move, as well as seeing the opposing pokemon.
+   * @param {boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns Returns true if ability is used successful, false if not.
+   */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     this.enemyDef = 0;
     this.enemySpDef = 0;
+    this.enemyCountTally = 0;
 
-    for (const opponent of pokemon.getOpponents()) {
-      this.enemyDef += opponent.stats[BattleStat.DEF];
-      this.enemySpDef += opponent.stats[BattleStat.SPDEF];
+    if (pokemon.getOpponents()[0].summonData !== undefined) {
+      for (const opponent of pokemon.getOpponents()) {
+        this.enemyCountTally++;
+        this.enemyDef += opponent.getBattleStat(Stat.DEF);
+        this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
+      }
+      this.enemyDef = Math.round(this.enemyDef / this.enemyCountTally);
+      this.enemySpDef = Math.round(this.enemySpDef / this.enemyCountTally);
     }
 
     if (this.enemyDef < this.enemySpDef) {
