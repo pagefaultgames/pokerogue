@@ -670,7 +670,7 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
-    if (Overrides.OPP_LEVEL_OVERRIDE !== null) {
+    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
       pokemon.level = Overrides.OPP_LEVEL_OVERRIDE;
     }
 
