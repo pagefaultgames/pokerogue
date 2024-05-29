@@ -1570,14 +1570,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "geeta": {
     "encounter": {
       1: "我决定再次参加比赛。\n来吧……让我看看你训练的成果。",
-            },
-      "victory": {
-        1: "我热切期待听到你所有的成就！"
-      },
-      "defeat": {
-        1: "怎么了？这还不是你的全部，对吧？"
-      }
     },
+    "victory": {
+      1: "我热切期待听到你所有的成就！"
+    },
+    "defeat": {
+      1: "怎么了？这还不是你的全部，对吧？"
+    }
+  },
 
   "nemona": {
     "encounter": {
