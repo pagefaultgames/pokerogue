@@ -6,7 +6,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -45,7 +45,7 @@ import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { PlayerGender, SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 import { Setting } from "./system/settings";
@@ -3355,104 +3355,6 @@ export class MessagePhase extends Phase {
   end() {
     if (this.scene.abilityBar.shown) {
       this.scene.abilityBar.hide();
-    }
-
-    super.end();
-  }
-}
-
-export class DamagePhase extends PokemonPhase {
-  private amount: integer;
-  private damageResult: DamageResult;
-  private critical: boolean;
-
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, amount: integer, damageResult?: DamageResult, critical: boolean = false) {
-    super(scene, battlerIndex);
-
-    this.amount = amount;
-    this.damageResult = damageResult || HitResult.EFFECTIVE;
-    this.critical = critical;
-  }
-
-  start() {
-    super.start();
-
-    if (this.damageResult === HitResult.ONE_HIT_KO) {
-      this.scene.toggleInvert(true);
-      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
-        this.scene.toggleInvert(false);
-        this.applyDamage();
-      });
-      return;
-    }
-
-    this.applyDamage();
-  }
-
-  updateAmount(amount: integer): void {
-    this.amount = amount;
-  }
-
-  applyDamage() {
-    switch (this.damageResult) {
-    case HitResult.EFFECTIVE:
-      this.scene.playSound("hit");
-      break;
-    case HitResult.SUPER_EFFECTIVE:
-    case HitResult.ONE_HIT_KO:
-      this.scene.playSound("hit_strong");
-      break;
-    case HitResult.NOT_VERY_EFFECTIVE:
-      this.scene.playSound("hit_weak");
-      break;
-    }
-
-    if (this.amount) {
-      this.scene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
-    }
-
-    if (this.damageResult !== HitResult.OTHER) {
-      const flashTimer = this.scene.time.addEvent({
-        delay: 100,
-        repeat: 5,
-        startAt: 200,
-        callback: () => {
-          this.getPokemon().getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
-          if (!flashTimer.repeatCount) {
-            this.getPokemon().updateInfo().then(() => this.end());
-          }
-        }
-      });
-    } else {
-      this.getPokemon().updateInfo().then(() => this.end());
-    }
-  }
-
-  end() {
-    switch (this.scene.currentBattle.battleSpec) {
-    case BattleSpec.FINAL_BOSS:
-      const pokemon = this.getPokemon();
-      if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
-        this.scene.fadeOutBgm(Utils.fixedInt(2000), false);
-        this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, null, () => {
-          this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
-          pokemon.generateAndPopulateMoveset(1);
-          this.scene.setFieldScale(0.75);
-          this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-          this.scene.currentBattle.double = true;
-          const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
-          if (availablePartyMembers.length > 1) {
-            this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
-            if (!availablePartyMembers[1].isOnField()) {
-              this.scene.pushPhase(new SummonPhase(this.scene, 1));
-            }
-          }
-
-          super.end();
-        });
-        return;
-      }
-      break;
     }
 
     super.end();
