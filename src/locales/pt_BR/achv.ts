@@ -126,7 +126,7 @@ export const achv: AchievementTranslationEntries = {
   },
   "CATCH_SUB_LEGENDARY": {
     name: "Quase Lendário",
-    description: "Capture um Pokémon Sub-Lendário",
+    description: "Capture um Pokémon Sumi-Lendário",
   },
   "CATCH_LEGENDARY": {
     name: "Lendário",
@@ -145,8 +145,8 @@ export const achv: AchievementTranslationEntries = {
     description: "Choque um Pokémon Mítico",
   },
   "HATCH_SUB_LEGENDARY": {
-    name: "Ovo Sub-Lendário",
-    description: "Choque um Pokémon Sub-Lendário",
+    name: "Ovo Semi-Lendário",
+    description: "Choque um Pokémon Semi-Lendário",
   },
   "HATCH_LEGENDARY": {
     name: "Ovo Lendário",
