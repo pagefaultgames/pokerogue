@@ -453,7 +453,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const getShinyStar = (i: integer, v: integer): Phaser.GameObjects.Image => {
       const position = calcIconPosition(i);
-      const ret = this.scene.add.image(position.x + 163, position.y + 11, "shiny_star_small");
+      const ret = this.scene.add.image((position.x - v * 3) + 163, position.y + 11, "shiny_star_small");
       ret.setOrigin(0, 0);
       ret.setScale(0.5);
       ret.setVisible(false);
@@ -855,7 +855,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (!species // No Pokemon exists at that UI index
       || this.scene.candyUpgradeNotification === 0 // Notification setting is 'Off'
-      || species?.getRootSpeciesId(false) !== species?.speciesId) { // Pokemon is not the base evolution and can't use candy
+      || species.speciesId !== species.getRootSpeciesId(false)) { // Pokemon is not the base evolution and can't use candy
       // Set all icons as hidden and exit early
       this.candyUpgradeIcon[index].setVisible(false);
       this.candyUpgradeOverlayIcon[index].setVisible(false);
@@ -1516,9 +1516,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
-        const species = this.genSpecies[genCursorWithScroll][s];
         // 'Candy Icon' mode
-        if (this.scene.candyUpgradeDisplay === 0 && species?.getRootSpeciesId(false) === species?.speciesId) {
+        if (this.scene.candyUpgradeDisplay === 0) {
 
           if (!starterColors[speciesId]) {
             // Default to white if no colors are found

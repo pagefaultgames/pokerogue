@@ -13,6 +13,8 @@ let lastTouchedId;
  * @param events - The event emitter for handling input events.
  */
 export function initTouchControls(events) {
+  const dpadDiv = document.querySelector("#dpad");
+  preventElementZoom(dpadDiv);
   // Select all elements with the 'data-key' attribute and bind keys to them
   for (const button of document.querySelectorAll("[data-key]")) {
     // @ts-ignore - Bind the key to the button using the dataset key
@@ -116,5 +118,28 @@ function bindKey(node, key, events) {
     if (lastTouchedId) {
       document.getElementById(lastTouchedId).classList.remove("active");
     }
+  });
+}
+
+/**
+ * {@link https://stackoverflow.com/a/39778831/4622620|Source}
+ *
+ * Prevent zoom on specified element
+ * @param {HTMLElement} element
+ */
+function preventElementZoom(element) {
+  element.addEventListener("touchstart", (event) => {
+    const currentTouchTimeStamp = event.timeStamp;
+    const previousTouchTimeStamp = event.currentTarget.dataset.lastTouchTimeStamp || currentTouchTimeStamp;
+    const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
+    const fingers = event.touches.length;
+    event.currentTarget.dataset.lastTouchTimeStamp = currentTouchTimeStamp;
+
+    if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
+      return;
+    } // not double-tap
+
+    event.preventDefault();
+    event.target.click();
   });
 }

@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import * as Utils from "./utils";
 import {deepCopy} from "./utils";
 import {initTouchControls} from "./touch-controls";
@@ -16,6 +17,7 @@ import {
   getButtonWithKeycode,
   getIconForLatestInput, swap,
 } from "#app/configs/configHandler";
+import BattleScene from "./battle-scene";
 
 export interface DeviceMapping {
     [key: string]: number;
@@ -72,7 +74,7 @@ const repeatInputDelayMillis = 250;
 export class InputsController {
   private buttonKeys: Phaser.Input.Keyboard.Key[][];
   private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = new Array();
-  private scene: Phaser.Scene;
+  private scene: BattleScene;
   private events: Phaser.Events.EventEmitter;
 
   private buttonLock: Button;
@@ -103,7 +105,7 @@ export class InputsController {
      * It concludes by calling the `init` method to complete the setup.
      */
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.BattleScene) {
     this.scene = scene;
     this.time = this.scene.time;
     this.buttonKeys = [];
