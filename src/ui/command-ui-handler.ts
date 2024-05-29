@@ -66,10 +66,11 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: commandPhase.getPokemon().name}), 0);
 
-    if (this.scene.cursorMemory & CursorMemory.Command)
+    if (this.scene.cursorMemory & CursorMemory.Command) {
       this.setCursor(this.getCursor());
-    else
-      this.setCursor(0)
+    } else {
+      this.setCursor(0);
+    }
 
     return true;
   }

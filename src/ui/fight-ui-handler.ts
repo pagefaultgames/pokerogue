@@ -87,10 +87,11 @@ export default class FightUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
 
-    if (this.scene.cursorMemory & CursorMemory.Move)
+    if (this.scene.cursorMemory & CursorMemory.Move) {
       this.setCursor(this.getCursor());
-    else
-      this.setCursor(0)
+    } else {
+      this.setCursor(0);
+    }
 
     this.displayMoves();
 
