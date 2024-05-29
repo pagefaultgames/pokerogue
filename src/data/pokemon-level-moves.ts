@@ -780,6 +780,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 43, Moves.AROMATHERAPY ],
     [ 49, Moves.RAGE_POWDER ],
     [ 54, Moves.X_SCISSOR ],
+    [ 59, Moves.LEECH_LIFE ], //LGPE
   ],
   [Species.PARASECT]: [
     [ 1, Moves.SCRATCH ],
@@ -798,6 +799,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 51, Moves.AROMATHERAPY ],
     [ 59, Moves.RAGE_POWDER ],
     [ 66, Moves.X_SCISSOR ],
+    [ 73, Moves.LEECH_LIFE ], //LGPE
   ],
   [Species.VENONAT]: [
     [ 1, Moves.TACKLE ],
