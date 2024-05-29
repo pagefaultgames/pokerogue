@@ -57,7 +57,7 @@ export const achv: AchievementTranslationEntries = {
   },
 
   "LevelAchv": {
-    description: "Eleve um Pokémon para o Nv{{level}}",
+    description: "Aumente o nível de um Pokémon para o Nv{{level}}",
   },
   "LV_100": {
     name: "Calma Que Tem Mais!",
@@ -138,7 +138,7 @@ export const achv: AchievementTranslationEntries = {
   },
   "SHINY_PARTY": {
     name: "Tá Todo Mundo Brilhando!",
-    description: "Tenha uma equipe formada somente por Pokémon Shiny",
+    description: "Tenha uma equipe formada por 6 Pokémon Shiny",
   },
   "HATCH_MYTHICAL": {
     name: "Ovo Mítico",
