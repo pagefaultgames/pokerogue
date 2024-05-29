@@ -79,7 +79,7 @@ export const OPP_GENDER_OVERRIDE: Gender = null;
 export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
-export const OPP_LEVEL_OVERRIDE: number | null = null;
+export const OPP_LEVEL_OVERRIDE: number = 0;
 
 /**
  * MODIFIER / ITEM OVERRIDES
