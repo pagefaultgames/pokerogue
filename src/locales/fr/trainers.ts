@@ -11,8 +11,8 @@ export const titles: SimpleTranslationEntries = {
   "champion_female": "Maitresse",
   "champion_double": "Duo de Maitres",
   "rival": "Rival·e", //Written in gender-inclusive language in wait of a potential split of the entry
-  "professor": "Professeur·e", //Written in gender-inclusive language in wait of a potential split of the entry
-  "professor_female": "Professor",
+  "professor": "Professeur",
+  "professor_female": "Professeure",
   "frontier_brain": "Meneur·euse de Zone", //Written in gender-inclusive language in wait of a potential split of the entry
 
   // Special Trainers
@@ -45,7 +45,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "baker": "Boulangère",
   "battle_girl": "Combattante",
   "beauty": "Canon",
-  "beginners": "Beginners",
+  "beginners": "Novices",
   "biker": "Motard",
   "black_belt": "Karatéka",
   "breeder": "Éleveur",
