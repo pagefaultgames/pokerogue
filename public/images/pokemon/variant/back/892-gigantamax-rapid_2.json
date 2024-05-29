@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "892-gigantamax-rapid_2.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 96,
+				"h": 96
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 0,
+						"w": 67,
+						"h": 96
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 96
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:736d07deb80a3328a1571e727e8ea5ed:7ed6c2fa71d6be32c1e283de36508049:287e897b355e01e66cedccbfc88ea1ed$"
+	}
+}

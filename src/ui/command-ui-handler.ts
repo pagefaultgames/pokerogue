@@ -4,7 +4,7 @@ import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import i18next from '../plugins/i18n';
+import i18next from "../plugins/i18n";
 import {Button} from "../enums/buttons";
 
 export enum Command {
@@ -12,7 +12,7 @@ export enum Command {
   BALL,
   POKEMON,
   RUN
-};
+}
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
@@ -27,11 +27,11 @@ export default class CommandUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    const commands = [ 
-      i18next.t('commandUiHandler:fight'), 
-      i18next.t('commandUiHandler:ball'), 
-      i18next.t('commandUiHandler:pokemon'), 
-      i18next.t('commandUiHandler:run') 
+    const commands = [
+      i18next.t("commandUiHandler:fight"),
+      i18next.t("commandUiHandler:ball"),
+      i18next.t("commandUiHandler:pokemon"),
+      i18next.t("commandUiHandler:run")
     ];
 
     this.commandsContainer = this.scene.add.container(216, -38.7);
@@ -52,17 +52,18 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(true);
 
     let commandPhase: CommandPhase;
-    let currentPhase = this.scene.getCurrentPhase();
-    if (currentPhase instanceof CommandPhase)
+    const currentPhase = this.scene.getCurrentPhase();
+    if (currentPhase instanceof CommandPhase) {
       commandPhase = currentPhase;
-    else
+    } else {
       commandPhase = this.scene.getStandbyPhase() as CommandPhase;
+    }
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(i18next.t('commandUiHandler:actionMessage', {pokemonName: commandPhase.getPokemon().name}), 0);
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: commandPhase.getPokemon().name}), 0);
     this.setCursor(this.getCursor());
 
     return true;
@@ -76,57 +77,64 @@ export default class CommandUiHandler extends UiHandler {
     const cursor = this.getCursor();
 
     if (button === Button.CANCEL || button === Button.ACTION) {
-      
+
       if (button === Button.ACTION) {
         switch (cursor) {
-          // Fight
-          case 0:
-            if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride())
-              return true;
-            ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-            success = true;
-            break;
+        // Fight
+        case 0:
+          if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
+            return true;
+          }
+          ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+          success = true;
+          break;
           // Ball
-          case 1:
-            ui.setModeWithoutClear(Mode.BALL);
-            success = true;
-            break;
+        case 1:
+          ui.setModeWithoutClear(Mode.BALL);
+          success = true;
+          break;
           // Pokemon
-          case 2:
-            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
-            success = true;
-            break;
+        case 2:
+          ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+          success = true;
+          break;
           // Run
-          case 3:
-            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
-            success = true;
-            break;
+        case 3:
+          (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
+          success = true;
+          break;
         }
-      } else
+      } else {
         (this.scene.getCurrentPhase() as CommandPhase).cancel();
+      }
     } else {
       switch (button) {
-        case Button.UP:
-          if (cursor >= 2)
-            success = this.setCursor(cursor - 2);
-          break;
-        case Button.DOWN:
-          if (cursor < 2)
-            success = this.setCursor(cursor + 2);
-          break;
-        case Button.LEFT:
-          if (cursor % 2 === 1)
-            success = this.setCursor(cursor - 1);
-          break;
-        case Button.RIGHT:
-          if (cursor % 2 === 0)
-            success = this.setCursor(cursor + 1);
-          break;
+      case Button.UP:
+        if (cursor >= 2) {
+          success = this.setCursor(cursor - 2);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor < 2) {
+          success = this.setCursor(cursor + 2);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor % 2 === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor % 2 === 0) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -138,14 +146,15 @@ export default class CommandUiHandler extends UiHandler {
   setCursor(cursor: integer): boolean {
     const changed = this.getCursor() !== cursor;
     if (changed) {
-      if (!this.fieldIndex)
+      if (!this.fieldIndex) {
         this.cursor = cursor;
-      else
+      } else {
         this.cursor2 = cursor;
+      }
     }
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, 'cursor');
+      this.cursorObj = this.scene.add.image(0, 0, "cursor");
       this.commandsContainer.add(this.cursorObj);
     }
 
@@ -163,8 +172,9 @@ export default class CommandUiHandler extends UiHandler {
   }
 
   eraseCursor(): void {
-    if (this.cursorObj)
+    if (this.cursorObj) {
       this.cursorObj.destroy();
+    }
     this.cursorObj = null;
   }
 }

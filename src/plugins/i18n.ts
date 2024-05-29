@@ -1,13 +1,14 @@
-import i18next from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18next from "i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
-import { deConfig } from '#app/locales/de/config.js';
-import { enConfig } from '#app/locales/en/config.js';
-import { esConfig } from '#app/locales/es/config.js';
-import { frConfig } from '#app/locales/fr/config.js';
-import { itConfig } from '#app/locales/it/config.js';
-import { ptBrConfig } from '#app/locales/pt_BR/config.js';
-import { zhCnConfig } from '#app/locales/zh_CN/config.js';
+import { deConfig } from "#app/locales/de/config.js";
+import { enConfig } from "#app/locales/en/config.js";
+import { esConfig } from "#app/locales/es/config.js";
+import { frConfig } from "#app/locales/fr/config.js";
+import { itConfig } from "#app/locales/it/config.js";
+import { ptBrConfig } from "#app/locales/pt_BR/config.js";
+import { zhCnConfig } from "#app/locales/zh_CN/config.js";
+import { zhTWConfig } from "#app/locales/zh_TW/config.js";
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -44,18 +45,51 @@ export interface ModifierTypeTranslationEntries {
   BaseStatBoosterItem: SimpleTranslationEntries,
   EvolutionItem: SimpleTranslationEntries,
   FormChangeItem: SimpleTranslationEntries,
-  TeraType: SimpleTranslationEntries,
 }
+export interface PokemonInfoTranslationEntries {
+  Stat: SimpleTranslationEntries,
+  Type: SimpleTranslationEntries,
+}
+
+export interface BerryTranslationEntry {
+  name: string,
+  effect: string
+}
+
+export interface BerryTranslationEntries {
+  [key: string]: BerryTranslationEntry
+}
+
+export interface DialogueTranslationEntry {
+  [key: number]: string;
+}
+
+export interface DialogueTranslationCategory {
+  [category: string]: DialogueTranslationEntry;
+}
+
+export interface DialogueTranslationEntries {
+  [trainertype: string]: DialogueTranslationCategory;
+}
+
 
 export interface Localizable {
   localize(): void;
 }
 
 export function initI18n(): void {
-  let lang = '';
+  // Prevent reinitialization
+  if (isInitialized) {
+    return;
+  }
+  isInitialized = true;
+  let lang = "";
 
-  if (localStorage.getItem('prLang'))
-    lang = localStorage.getItem('prLang');
+  if (localStorage.getItem("prLang")) {
+    lang = localStorage.getItem("prLang");
+  }
+
+
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -75,8 +109,9 @@ export function initI18n(): void {
 
   i18next.use(LanguageDetector).init({
     lng: lang,
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'zh_CN','pt_BR'],
+    nonExplicitSupportedLngs: true,
+    fallbackLng: "en",
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt"],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -102,13 +137,16 @@ export function initI18n(): void {
       },
       zh_CN: {
         ...zhCnConfig
+      },
+      zh_TW: {
+        ...zhTWConfig
       }
     },
   });
 }
 
 // Module declared to make referencing keys in the localization files type-safe.
-declare module 'i18next' {
+declare module "i18next" {
   interface CustomTypeOptions {
     resources: {
       menu: SimpleTranslationEntries;
@@ -119,9 +157,12 @@ declare module 'i18next' {
       ability: AbilityTranslationEntries;
       pokeball: SimpleTranslationEntries;
       pokemon: SimpleTranslationEntries;
-      pokemonStat: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
       splashMessages: SimpleTranslationEntries;
@@ -130,8 +171,28 @@ declare module 'i18next' {
       egg: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
       modifierType: ModifierTypeTranslationEntries;
+      battleMessageUiHandler: SimpleTranslationEntries;
+      berry: BerryTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
+      biome: SimpleTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
     };
   }
 }
 
 export default i18next;
+
+export function getIsInitialized(): boolean {
+  return isInitialized;
+}
+
+let isInitialized = false;
