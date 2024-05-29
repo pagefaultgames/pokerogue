@@ -16,6 +16,7 @@ class NavigationManager {
     this.modes = [
       Mode.SETTINGS,
       Mode.SETTINGS_GAMEPAD,
+      Mode.SETTINGS_KEYBOARD,
     ];
   }
 
