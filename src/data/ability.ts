@@ -233,6 +233,12 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
+export class PowerSpotAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    return true;
+  }
+}
+
 export class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
   private formFunc: (p: Pokemon) => integer;
 
@@ -4002,7 +4008,8 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .ignorable()
       .unimplemented(),
-    new Ability(Abilities.POWER_SPOT, 8),
+    new Ability(Abilities.POWER_SPOT, 8)
+      .attr(PowerSpotAbAttr),
     new Ability(Abilities.MIMICRY, 8)
       .unimplemented(),
     new Ability(Abilities.SCREEN_CLEANER, 8)
