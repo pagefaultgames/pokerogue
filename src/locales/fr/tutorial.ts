@@ -16,7 +16,7 @@ export const tutorial: SimpleTranslationEntries = {
     $Il y a également toute une variété d’autres fonctionnalités,
     $jetez-y un œil !`,
 
-  "starterSelect": `Choisissez vos starters depuis cet écran.\nIls formeront votre équipe de départ.
+  "starterSelect": `Choisissez vos starters depuis cet écran avec Z ou Espace.\nIls formeront votre équipe de départ.
     $Chacun possède une valeur. Votre équipe peut avoir jusqu’à\n6 membres, tant que vous ne dépassez pas un cout de 10.
     $Vous pouvez aussi choisir le sexe, le talent et la forme en\nfonction des variants déjà capturés ou éclos.
     $Les IVs d’un starter sont les meilleurs de tous ceux de son\nespèce déjà obtenus. Essayez donc d’en obtenir plusieurs !`,
