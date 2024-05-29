@@ -267,6 +267,8 @@ export const trainerNames: SimpleTranslationEntries = {
   "carmine": "Roseille",
 
   // Double Names
+  "blue_red_double": "Blue & Red",
+  "red_blue_double": "Red & Blue",
   "tate_liza_double": "Lévy & Tatia",
   "liza_tate_double": "Tatia & Lévy",
   "steven_wallace_double": "Pierre R. & Marc",
