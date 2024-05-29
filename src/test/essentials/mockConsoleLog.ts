@@ -6,9 +6,6 @@ const MockConsoleLog = () => {
   return ({
     log(msg) {
       logs.push(msg);
-      if (msg.includes("phase")) {
-        originalLog(msg);
-      }
     },
     error(msg) {
       logs.push(msg);

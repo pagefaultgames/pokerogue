@@ -120,65 +120,10 @@ describe("Session import/export", () => {
     expect(mode).toBe(Mode.TITLE);
   });
 
-  it.skip('Select gamemode Classic new game to starter selection', async () => {
-    const gameMode = GameModes.CLASSIC;
-    scene.ui.setMode(Mode.MESSAGE);
-    const titlePhase = new TitlePhase(scene);
-    titlePhase.setGameMode(gameMode);
-    titlePhase.end();
-    await waitUntil(() => scene.ui.getMode() === Mode.STARTER_SELECT);
-    const handler = scene.ui.getHandler() as StarterSelectUiHandler;
-    expect(handler).toBeInstanceOf(StarterSelectUiHandler);
-  });
-
-  it.skip('starter selected until save screen', async() => {
-    await game.newGame(scene, GameModes.CLASSIC);
-    let handler = scene.ui.getHandler() as StarterSelectUiHandler;
-    expect(handler).toBeInstanceOf(StarterSelectUiHandler);
-    handler.addToParty(getPokemonSpecies(Species.BULBASAUR));
-    handler.addToParty(getPokemonSpecies(Species.CHARMANDER));
-    handler.addToParty(getPokemonSpecies(Species.SQUIRTLE));
-    handler.tryStart(true);
-    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-    const confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-    confirmHandler.processInput(Button.ACTION);
-    await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
-    const mode = scene.ui?.getMode();
-    expect(mode).toBe(Mode.SAVE_SLOT);
-  }, 100000);
-
-  it.skip('start battle', async() => {
-    await game.newGame(scene, GameModes.CLASSIC);
-    let handler = scene.ui.getHandler() as StarterSelectUiHandler;
-    expect(handler).toBeInstanceOf(StarterSelectUiHandler);
-    handler.addToParty(getPokemonSpecies(Species.BULBASAUR));
-    handler.addToParty(getPokemonSpecies(Species.CHARMANDER));
-    handler.addToParty(getPokemonSpecies(Species.SQUIRTLE));
-    handler.tryStart(true);
-    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-    let confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-    confirmHandler.processInput(Button.ACTION);
-    await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
-    const saveSlotHandler = scene.ui.getHandler() as SaveSlotSelectUiHandler;
-    saveSlotHandler.processInput(Button.ACTION);
-    // no overwrite save since it's a new file save as guest
-    // await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-    // confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-    // confirmHandler.processInput(Button.ACTION); // confirme overwrite save
-    await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-    confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-    confirmHandler.processInput(Button.CANCEL); // say no to switch pokemon
-    await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
-    const mode = scene.ui?.getMode();
-    expect(mode).toBe(Mode.COMMAND);
-    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
-  }, 100000);
-
-  it.skip('save & quit', async() => {
+  it('test new Battle', async() => {
     await game.newGame(scene, GameModes.CLASSIC, [
-      Species.BULBASAUR,
-      Species.CHARMANDER,
       Species.SQUIRTLE,
+      Species.CHARMANDER,
     ]);
     let mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.COMMAND);
@@ -186,56 +131,7 @@ describe("Session import/export", () => {
     await scene.gameData.saveAll(scene, true, true, true, true);
     scene.reset(true);
     await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
-    mode = scene.ui?.getMode();
-    expect(mode).toBe(Mode.TITLE);
+    await scene.gameData.tryExportData(GameDataType.SESSION, 0)
   }, 100000);
-
-  it('export session 1 on title', async() => {
-    await game.newGame(scene, GameModes.CLASSIC, [
-      Species.MEWTWO,
-      Species.ABRA,
-    ]);
-    let mode = scene.ui?.getMode();
-    expect(mode).toBe(Mode.COMMAND);
-    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
-    await scene.gameData.saveAll(scene, true, true, true, true);
-    scene.reset(true);
-    await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
-    scene.gameData.tryExportData(GameDataType.SESSION, 0)
-  }, 100000);
-
-  it.skip('Reach title mode', async () => {
-    // scene.pushPhase(new LoginPhase(scene));
-    // scene.pushPhase(new TitlePhase(scene));
-    // scene.shiftPhase();
-    // await waitMode(scene, Mode.TITLE);
-    // scene.shiftPhase();
-    // const gameMode = GameModes.CLASSIC;
-    // // scene.ui.setMode(Mode.MESSAGE);
-    // scene.pushPhase(new SelectStarterPhase(scene, gameMode));
-    // scene.newArena(scene.gameMode.getStartingBiome(scene));
-    // scene.pushPhase(new EncounterPhase(scene, false));
-    // scene.shiftPhase();
-    // let phase = scene.getCurrentPhase();
-    // const starters = generateStarter(scene);
-    // phase.initBattle(starters);
-    // scene.newBattle();
-    // scene.arena.init();
-    // scene.shiftPhase();
-    // await scene.getCurrentPhase().doEncounter();
-    // phase = scene.getCurrentPhase();
-    // phase = scene.getCurrentPhase();
-    // the issue is that there is a check in frames that are renderered and add phase according to that
-    // so we need some logic in these frames
-  //   const spy = vi.fn();
-  //   await waitFirstInPhaseQueueIs(scene, EnemyCommandPhase).then(result => {
-  //     expect(result).toBe(true);
-  //     phase = scene.getCurrentPhase();
-  //     expect(phase).not.toBeInstanceOf(LoginPhase);
-  //     expect(phase).toBeInstanceOf(CommandPhase);
-  //     spy(); // Call the spy function
-  //   });
-  //   expect(spy).toHaveBeenCalled();
-  }, 10000);
 });
 

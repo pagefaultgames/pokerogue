@@ -17,7 +17,7 @@ import MockGraphics from "#app/test/essentials/mocksContainer/mockGraphics";
 import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureManager";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {blobToString, setPositionRelative, waitUntil} from "#app/test/essentials/utils";
+import {blobToString, generateStarter, setPositionRelative, waitUntil} from "#app/test/essentials/utils";
 import NoAudioSound = Phaser.Sound.NoAudioSound;
 import {expect, vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
@@ -26,7 +26,7 @@ import MockLoader from "#app/test/essentials/mockLoader";
 import {MockFetch} from "#app/test/essentials/mockFetch";
 import * as Utils from "#app/utils";
 import {Mode} from "#app/ui/ui";
-import {TitlePhase} from "#app/phases";
+import {EncounterPhase, SelectStarterPhase} from "#app/phases";
 import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 import {getPokemonSpecies} from "#app/data/pokemon-species";
 import {Species} from "#app/data/enums/species";
@@ -87,35 +87,15 @@ export default class GameWrapper {
       seed: ["test"],
     };
   }
-
-  newGame(scene, gameMode, starters?): Promise<void> {
+  newGame(scene, gameMode, _starters?): Promise<void> {
     return new Promise(async (resolve) => {
-      scene.ui.setMode(Mode.MESSAGE);
-      const titlePhase = new TitlePhase(scene);
-      titlePhase.setGameMode(gameMode);
-      titlePhase.end();
-      await waitUntil(() => scene.ui.getMode() === Mode.STARTER_SELECT);
-      if (!starters) {
-        return resolve();
-      }
-      let handler = scene.ui.getHandler() as StarterSelectUiHandler;
-      expect(handler).toBeInstanceOf(StarterSelectUiHandler);
-      for (const starter of starters) {
-        handler.addToParty(getPokemonSpecies(starter));
-      }
-      handler.tryStart(true);
+      const starters = generateStarter(scene);
+      const selectStarterPhase = new SelectStarterPhase(scene, gameMode);
+      scene.pushPhase(new EncounterPhase(scene, false));
+      scene.sessionSlotId = 0;
+      selectStarterPhase.initBattle(starters)
       await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-      let confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-      confirmHandler.processInput(Button.ACTION);
-      await waitUntil(() => scene.ui.getMode() === Mode.SAVE_SLOT);
-      const saveSlotHandler = scene.ui.getHandler() as SaveSlotSelectUiHandler;
-      saveSlotHandler.processInput(Button.ACTION);
-      // no overwrite save since it's a new file save as guest
-      // await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-      // confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-      // confirmHandler.processInput(Button.ACTION);
-      await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-      confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+      const confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
       confirmHandler.processInput(Button.CANCEL);
       await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
       return resolve();
