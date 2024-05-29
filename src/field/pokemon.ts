@@ -1225,8 +1225,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
-   * Uncatchable Pokemon are unable to be set to shiny
-   * 
+   * Endless Pokemon in the end biome are unable to be set to shiny
+   *
    * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID
    * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits
    * The XOR of E and F are then compared to the thresholdOverride (default case 32) to see whether or not to generate a shiny
@@ -1234,16 +1234,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
   trySetShiny(thresholdOverride?: integer): boolean {
-    // Opponent trainers cannot have shinies
-    if (!this.isPlayer() && this.hasTrainer()) {
-      return false;
-    }
     // Shiny Pokemon should not spawn in the end biome in endless
-    if (!(this.scene.gameMode.modeId === GameModes.CLASSIC) && this.scene.arena.biomeType === Biome.END) {
-      return false;
-    }
-    // Unowned paradox pokemon are also shinylocked in classic
-    if (this.scene.gameMode.modeId === GameModes.CLASSIC && !this.scene.gameData.dexData[this.species.speciesId].caughtAttr) {
+    if (this.scene.gameMode.modeId === GameModes.ENDLESS && this.scene.arena.biomeType === Biome.END) {
       return false;
     }
 
