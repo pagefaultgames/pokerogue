@@ -1595,13 +1595,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -2244,7 +2244,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?
 				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.
 				$@c{serious_smile_fists}Difficile de comprendre le sens de tout ça, je sais juste que c’est la réalité.
-				$@c{serious_mopen_fists}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance.`
+				$@c{serious_mopen_fists}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
       1: `@c{smile_eclosed}J'ai fait ce que je j'avais à faire.
@@ -2266,7 +2266,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{smile_ehalf}Ont-ils au moins été réels ? Tout semble si loin maintenant…
                 $@c{angry_mopen}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es le seul à en être capable.
                 $@c{smile_ehalf}Je… j’ignore le sens de tout ça… Mais je sais que c’est la réalité.
-                $@c{neutral}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance.`
+                $@c{neutral}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
       1: `@c{smile_ehalf}Je… Je crois que j'ai rempli ma mission…
@@ -3873,13 +3873,13 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -4564,7 +4564,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
 			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
-  "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
+  "firstStageWin": `Je vois. Cette présence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
   "secondStageWin": "… Magnifique."
 };
@@ -4579,7 +4579,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
 			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
-  "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
+  "firstStageWin": `Je vois. Cette présence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
   "secondStageWin": "… Magnifique."
 };

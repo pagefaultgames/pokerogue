@@ -5,7 +5,6 @@ import { version } from "../package.json";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
 
@@ -72,23 +71,82 @@ const config: Phaser.Types.Core.GameConfig = {
   version: version
 };
 
+/**
+ * Sets this object's position relative to another object with a given offset
+ * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+ * @param x The relative x position
+ * @param y The relative y position
+ */
 const setPositionRelative = function (guideObject: any, x: number, y: number) {
-  if (guideObject && guideObject instanceof Phaser.GameObjects.GameObject) {
-    const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
-    const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-    this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
-    return;
-  }
-
-  this.setPosition(x, y);
+  const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
+  const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
+  this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
 };
+
+declare module "phaser" {
+	namespace GameObjects {
+		interface Container {
+      /**
+       * Sets this object's position relative to another object with a given offset
+       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+       * @param x The relative x position
+       * @param y The relative y position
+       */
+			setPositionRelative(guideObject: any, x: number, y: number): void;
+		}
+		interface Sprite {
+      /**
+       * Sets this object's position relative to another object with a given offset
+       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+       * @param x The relative x position
+       * @param y The relative y position
+       */
+			setPositionRelative(guideObject: any, x: number, y: number): void;
+		}
+		interface Image {
+      /**
+       * Sets this object's position relative to another object with a given offset
+       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+       * @param x The relative x position
+       * @param y The relative y position
+       */
+			setPositionRelative(guideObject: any, x: number, y: number): void;
+		}
+		interface NineSlice {
+      /**
+       * Sets this object's position relative to another object with a given offset
+       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+       * @param x The relative x position
+       * @param y The relative y position
+       */
+			setPositionRelative(guideObject: any, x: number, y: number): void;
+		}
+		interface Text {
+      /**
+       * Sets this object's position relative to another object with a given offset
+       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+       * @param x The relative x position
+       * @param y The relative y position
+       */
+			setPositionRelative(guideObject: any, x: number, y: number): void;
+		}
+		interface Rectangle {
+      /**
+       * Sets this object's position relative to another object with a given offset
+       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+       * @param x The relative x position
+       * @param y The relative y position
+       */
+			setPositionRelative(guideObject: any, x: number, y: number): void;
+		}
+	}
+}
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
-BBCodeText.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
