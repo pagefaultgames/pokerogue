@@ -38,6 +38,7 @@ import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import {Button} from "../enums/buttons";
 import i18next, {ParseKeys} from "i18next";
 import {PlayerGender} from "#app/system/game-data";
+import PrestigeLevelSelectUiHandler from "./prestige-level-select-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -55,6 +56,7 @@ export enum Mode {
   EGG_HATCH_SCENE,
   CONFIRM,
   OPTION_SELECT,
+  PRESTIGE_LEVEL_SELECT,
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
@@ -86,6 +88,7 @@ const noTransitionModes = [
   Mode.TITLE,
   Mode.CONFIRM,
   Mode.OPTION_SELECT,
+  Mode.PRESTIGE_LEVEL_SELECT,
   Mode.MENU,
   Mode.MENU_OPTION_SELECT,
   Mode.SETTINGS,
@@ -136,6 +139,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new EggHatchSceneHandler(scene),
       new ConfirmUiHandler(scene),
       new OptionSelectUiHandler(scene),
+      new PrestigeLevelSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
