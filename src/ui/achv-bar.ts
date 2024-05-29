@@ -71,7 +71,12 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.bg.width = achv.getName().length*FONT_SIZE-50;
 
     // The description text is decides the height of the achievement bar
-    this.descriptionText.setText(getAchievementDescription((achv as Achv).localizationKey));
+    if (achv instanceof Achv) {
+      this.descriptionText.setText(getAchievementDescription((achv as Achv).localizationKey));
+    } else if (achv instanceof Voucher) {
+      this.descriptionText.setText((achv as Voucher).description);
+    }
+
     this.descriptionText.x = this.titleText.x+3;
     if (this.descriptionText.getBounds().height > ACHEIVEMENT_BAR_MIN_HEIGHT) {
       if (this.descriptionText.getBounds().height/2 < ACHEIVEMENT_BAR_MIN_HEIGHT) {
