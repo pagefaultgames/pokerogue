@@ -53,7 +53,7 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
  * REWARD SELECTION OVERRIDES
  */
 // How many rewards to select from if not 0, will be constrained to between 3 and 6.
-export const REWARD_AMOUNT_OVERRIDE: integer = 5;
+export const REWARD_AMOUNT_OVERRIDE: integer = 0;
 /**
  * Data for overriding the rewards in the post battle screen. Rewards overridden this way will appear as common tier regardless of its actual tier.
  * name: The name of the reward to use. Should match one of the values in modifierTypes in modifier-type.ts, 
@@ -70,7 +70,7 @@ interface RewardOverride {
   name: string
   type?: TempBattleStat|Stat|Nature|Type|BerryType|Moves
 }
-export const REWARD_OVERRIDES: Array<RewardOverride> = [{name:"TM", type:Moves.ACROBATICS},{name:"BERRY", type:BerryType.LUM}];
+export const REWARD_OVERRIDES: Array<RewardOverride> = [];
 
 /**
  * PLAYER OVERRIDES
