@@ -12,7 +12,9 @@ import { achvs } from "./system/achv";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import { EggTier } from "./data/enums/egg-type";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import { BASE_HIDDEN_ABILITY_CHANCE_OVERRIDE, UP_HIDDEN_ABILITY_CHANCE_OVERRIDE } from "./overrides";
+
+const BASE_HIDDEN_ABILITY_CHANCE: integer = 256;
+const UP_HIDDEN_ABILITY_CHANCE: integer = 128;
 
 export class EggHatchPhase extends Phase {
   private egg: Egg;
@@ -441,11 +443,11 @@ export class EggHatchPhase extends Phase {
 
         const pokemonSpecies = getPokemonSpecies(species);
 
-        const hiddenAbilityChance = this.egg.gachaType === GachaType.HIDDEN_ABILITY ? BASE_HIDDEN_ABILITY_CHANCE_OVERRIDE : UP_HIDDEN_ABILITY_CHANCE_OVERRIDE;
-        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false, undefined, undefined, undefined, undefined, hiddenAbilityChance);
+        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
       }
 
       ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
+      ret.trySetAbility(this.egg.gachaType === GachaType.HIDDEN_ABILITY ? UP_HIDDEN_ABILITY_CHANCE : BASE_HIDDEN_ABILITY_CHANCE);
       ret.variant = ret.shiny ? ret.generateVariant() : 0;
 
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));

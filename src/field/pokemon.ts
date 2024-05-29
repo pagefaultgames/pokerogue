@@ -48,7 +48,8 @@ import { BerryType } from "../data/berry";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { BASE_HIDDEN_ABILITY_CHANCE_OVERRIDE } from "../overrides";
+
+const BASE_HIDDEN_ABILITY_CHANCE: integer = 256;
 
 export enum FieldPosition {
   CENTER,
@@ -107,27 +108,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, hiddenAbilityChance?: integer) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
       throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
     }
-
-    const hiddenAbilityChanceHolder = hiddenAbilityChance ? new Utils.IntegerHolder(hiddenAbilityChance) : new Utils.IntegerHolder(BASE_HIDDEN_ABILITY_CHANCE_OVERRIDE);
-    if (!this.hasTrainer()) {
-      this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChanceHolder);
-    }
-
-    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChanceHolder.value);
-    const randAbilityIndex = Utils.randSeedInt(2);
-
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
-    this.abilityIndex = abilityIndex !== undefined
-      ? abilityIndex
-      : (species.abilityHidden && hasHiddenAbility ? species.ability2 ? 2 : 1 : species.ability2 ? randAbilityIndex : 0);
+    this.trySetAbility(abilityIndex);
     if (formIndex !== undefined) {
       this.formIndex = formIndex;
     }
@@ -1251,6 +1241,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.shiny;
   }
 
+  trySetAbility(abilityIndex?: integer, hiddenAbilityChanceOverride?: integer): integer {
+    const hiddenAbilityChanceHolder = hiddenAbilityChanceOverride ? new Utils.IntegerHolder(hiddenAbilityChanceOverride) : new Utils.IntegerHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    if (!this.hasTrainer()) {
+      this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChanceHolder);
+    }
+
+    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChanceHolder.value);
+    const randAbilityIndex = Utils.randSeedInt(2);
+
+    this.abilityIndex = abilityIndex !== undefined
+      ? abilityIndex
+      : (this.species.abilityHidden && hasHiddenAbility
+        ? this.species.ability2 ? 2 : 1
+        : this.species.ability2 ? randAbilityIndex : 0
+      );
+
+    return this.abilityIndex;
+  }
+
   generateVariant(): Variant {
     if (!this.shiny || !variantData.hasOwnProperty(this.species.speciesId)) {
       return 0;
@@ -1266,7 +1275,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   generateFusionSpecies(forStarter?: boolean): void {
-    const hiddenAbilityChance = new Utils.IntegerHolder(BASE_HIDDEN_ABILITY_CHANCE_OVERRIDE);
+    const hiddenAbilityChance = new Utils.IntegerHolder(BASE_HIDDEN_ABILITY_CHANCE);
     if (!this.hasTrainer()) {
       this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
@@ -2798,8 +2807,8 @@ export default interface Pokemon {
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData, hiddenAbilityChance?: integer) {
-    super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource, hiddenAbilityChance);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
+    super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
     if (Overrides.SHINY_OVERRIDE) {
       this.shiny = true;

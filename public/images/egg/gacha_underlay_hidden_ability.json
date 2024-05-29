@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "gacha_underlay_shiny.png",
+			"image": "gacha_underlay_hidden_ability.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 25,
