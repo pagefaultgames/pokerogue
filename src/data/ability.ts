@@ -3204,6 +3204,9 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1, false, true),
     new Ability(Abilities.SHADOW_TAG, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
+        if (target.hasAbility(Abilities.SHADOW_TAG)) {
+          return false;
+        }
         return true;
       }),
     new Ability(Abilities.ROUGH_SKIN, 3)
