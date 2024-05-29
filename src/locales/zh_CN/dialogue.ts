@@ -128,7 +128,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "后浪死在沙滩上，我猜。",
     },
   },
-"backpacker": {
+  "backpacker": {
     "encounter": {
       1: "打包好，游戏开始！",
       2: "让我们看看你是否能跟上！",
@@ -376,7 +376,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "哈哈，我在各个地区的旅行正在得到回报！",
     }
   },
-    "misty": {
+  "misty": {
     "encounter": {
       1: "我的战策就是全面进攻，使用水属性宝可梦！",
       2: "嗨，我会让你见识我的水宝可梦的力量！",
@@ -410,7 +410,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "一场宝可梦战斗就是战争，我已经向你展示了第一手的战斗！"
     }
   },
-   "erika": {
+  "erika": {
     "encounter": {
       1: "啊，这里天气真好…\n哦，战斗？那好吧。",
       2: "我在宝可梦战斗技能上可以与我的插花技巧相媲美。",
@@ -447,7 +447,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "父亲对我的信任并没有被辜负。"
     }
   },
-   "sabrina": {
+  "sabrina": {
     "encounter": {
       1: "通过我的超能力，我预见了你的到来！",
       2: "我不喜欢战斗，但如果你想要的话，我会展示我的力量！",
@@ -481,7 +481,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "哈！我的热情比你的更炽热！"
     }
   },
-   "giovanni": {
+  "giovanni": {
     "encounter": {
       1: "我，火箭队的领袖，将让你的世界充满无尽的痛苦！",
       2: "我在这里的训练，在我再次面对我的旧同事之前将是至关重要的。",
@@ -549,7 +549,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "你没想到我赢了吧？\n哈哈哈！"
     }
   },
-   "flannery": {
+  "flannery": {
     "encounter": {
       1: "很高兴见到你！等等，不对……\n我要打败你！",
       2: "我作为道馆主只有一段时间，但我会让你灰飞烟灭！",
@@ -1202,7 +1202,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `让我展示一下我从学习中获得的知识。`
+      1: "让我展示一下我从学习中获得的知识。"
     },
     "victory": {
       1: "哇，太棒了！你是个宝可梦专家！\n我的研究还没有完成。好吧，你赢了。"
@@ -1327,7 +1327,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "caitlin": {
     "encounter": {
-      1: `当花儿绽开时、我便出现。成为你在等待的人……\n你看起来像是一个拥有实力和善良的宝可梦训练师。\n我所寻找的是拥有卓越力量的对手……\n请毫无保留地释放吧！`,
+      1: "当花儿绽开时、我便出现。成为你在等待的人……\n你看起来像是一个拥有实力和善良的宝可梦训练师。\n我所寻找的是拥有卓越力量的对手……\n请毫无保留地释放吧！",
     },
     "victory": {
       1: "我的宝可梦和我学到了很多！我向你表示感谢。"
@@ -1338,7 +1338,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "diantha": {
     "encounter": {
-      1: `与你和你充满希望的宝可梦战斗……\n老实说，这真是充满正能量呢，我需要这种力量来面对每一个新的一天！就是这样哦！`,
+      1: "与你和你充满希望的宝可梦战斗……\n老实说，这真是充满正能量呢，我需要这种力量来面对每一个新的一天！就是这样哦！",
     },
     "victory": {
       1: "见证你和你的宝可梦在战斗中的高尚精神，真的触动了我的心……"
@@ -1373,7 +1373,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "larry_elite": {
     "encounter": {
-      1: `你好……是我，青木。\n我是四天王的成员，对……真不走运。`,
+      1: "你好……是我，青木。\n我是四天王的成员，对……真不走运。",
     },
     "victory": {
       1: "好吧，我们翅膀下的疾风止于你这了啊…"
@@ -1415,7 +1415,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "milo": {
     "encounter": {
-      1: `当然看起来你真的很了解宝可梦。\n这将是一场激烈的战斗！\n如果我想赢，我得让我的宝可梦极巨化！`,
+      1: "当然看起来你真的很了解宝可梦。\n这将是一场激烈的战斗！\n如果我想赢，我得让我的宝可梦极巨化！",
     },
     "victory": {
       1: "草的力量已经凋谢了……多么不可思议的挑战者！"
@@ -1426,7 +1426,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lucian": {
     "encounter": {
-      1: `请稍等，我正在阅读的书即将达到其激动人心的高潮……\n英雄获得了一把神秘的剑，即将面对他们的最终考验……啊，算了。\n既然你已经走到这里，我会把它放在一边和你战斗。\n让我看看你是否能达到我书中英雄的荣耀！`
+      1: "请稍等，我正在阅读的书即将达到其激动人心的高潮……\n英雄获得了一把神秘的剑，即将面对他们的最终考验……啊，算了。\n既然你已经走到这里，我会把它放在一边和你战斗。\n让我看看你是否能达到我书中英雄的荣耀！"
     },
     "victory": {
       1: "`我明白了……看来你已经将我置于死地。"
@@ -1437,7 +1437,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "drasna": {
     "encounter": {
-      1: `你一定是一个很强大的训练师。是的，非常强大……\n这是个好消息！面对像你这样的对手和你的队伍将使我的宝可梦像野草般茁壮成长！`
+      1: "你一定是一个很强大的训练师。是的，非常强大……\n这是个好消息！面对像你这样的对手和你的队伍将使我的宝可梦像野草般茁壮成长！"
     },
     "victory": {
       1: "哦，天哪。好快速的一场战斗……我希望你能再次回来！"
@@ -1462,7 +1462,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "准备亲身体验一下凶猛战斗中炽热呼吸的感觉吧！"
     },
     "victory": {
-      1: `这次幸运之神对我微笑了，但是……\n谁知道我下次会不会这么幸运。`,
+      1: "这次幸运之神对我微笑了，但是……\n谁知道我下次会不会这么幸运。",
     },
     "defeat": {
       1: "真是不错"
@@ -1525,7 +1525,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "steven": {
     "encounter": {
-      1: `告诉我……你和你的宝可梦在旅途中看到了什么？\n你感受到了什么，遇见了那么多其他的训练师？\n旅行在这片富饶的土地上……它在你内心唤醒了什么？\n我想要你用你所学到的一切来击败我。\n我的宝可梦和我将用我们所知道的一切来回应！`,
+      1: "告诉我……你和你的宝可梦在旅途中看到了什么？\n你感受到了什么，遇见了那么多其他的训练师？\n旅行在这片富饶的土地上……它在你内心唤醒了什么？\n我想要你用你所学到的一切来击败我。\n我的宝可梦和我将用我们所知道的一切来回应！",
     },
     "victory": {
       1: "所以，作为冠军的我，败北了……"
@@ -1547,7 +1547,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "iris": {
     "encounter": {
-      1: `你知道吗？我真的很期待和强大的训练师进行认真的战斗！\n我的意思是，来吧！到达这里的是那些渴望胜利的训练师，\n#他们与经历过无数艰难战斗的宝可梦一起战斗！\n如果我和那样的人战斗，不仅我会变得更强，我的宝可梦也会！\n我们也会更好地了解彼此！好！做好准备吧！\n我是艾莉丝，宝可梦联盟冠军，我将打败你！`,
+      1: "你知道吗？我真的很期待和强大的训练师进行认真的战斗！\n我的意思是，来吧！到达这里的是那些渴望胜利的训练师，\n#他们与经历过无数艰难战斗的宝可梦一起战斗！\n如果我和那样的人战斗，不仅我会变得更强，我的宝可梦也会！\n我们也会更好地了解彼此！好！做好准备吧！\n我是艾莉丝，宝可梦联盟冠军，我将打败你！",
     },
     "victory": {
       1: "啊……我尽力了，但我们输了……"
@@ -1558,7 +1558,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hau": {
     "encounter": {
-      1: `我想知道，训练师是否会根据他们是来自温暖地区还是寒冷地区而以不同的方式战斗。\n让我们来测试一下！`,
+      1: "我想知道，训练师是否会根据他们是来自温暖地区还是寒冷地区而以不同的方式战斗。\n让我们来测试一下！",
     },
     "victory": {
       1: "那太棒了！我觉得我现在有点了解你的感觉了！"
@@ -1569,7 +1569,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "geeta": {
     "encounter": {
-      1: `我决定再次参加比赛。\n来吧……让我看看你训练的成果。`,
+      1: "我决定再次参加比赛。\n来吧……让我看看你训练的成果。",
       "victory": {
         1: "我热切期待听到你所有的成就！"
       },
@@ -1594,7 +1594,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "来享受一段冠军级的时刻吧！"
     },
     "victory": {
-      1: `我的冠军生涯结束了……\n但这是一场多么冠军级的时刻！\n谢谢你给了我我经历过的最棒的战斗！`,
+      1: "我的冠军生涯结束了……\n但这是一场多么冠军级的时刻！\n谢谢你给了我我经历过的最棒的战斗！",
     },
     "defeat": {
       1: "那就是，冠军级的一战！"
@@ -1657,7 +1657,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "maylene": {
     "encounter": {
-      1: `我现在要挑战你，我不会保留任何实力。\n请为战斗做好准备！`,
+      1: "我现在要挑战你，我不会保留任何实力。\n请为战斗做好准备！",
     },
     "victory": {
       1: "我承认我输了……"
@@ -1668,7 +1668,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "fantina": {
     "encounter": {
-      1: `你将挑战我，对吗？但我会赢。\n这是家缘道馆馆主的工作，不是吗？`,
+      1: "你将挑战我，对吗？但我会赢。\n这是家缘道馆馆主的工作，不是吗？",
     },
     "victory": {
       1: "你是如此惊人的强大。我知道我为什么会输了。"
@@ -1679,7 +1679,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "byron": {
     "encounter": {
-      1: `训练师！你很年轻，就像我的儿子瓢太一样。\n随着更多年轻人到来，宝可梦的未来是光明的！\n所以，作为年轻人的那堵高墙，我将接受你的挑战！`,
+      1: "训练师！你很年轻，就像我的儿子瓢太一样。\n随着更多年轻人到来，宝可梦的未来是光明的！\n所以，作为年轻人的那堵高墙，我将接受你的挑战！",
     },
     "victory": {
       1: "嗯！我坚固的宝可梦——被击败了！"
@@ -1701,13 +1701,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "volkner": {
     "encounter": {
-      1: `既然你已经走到这里，你一定非常强大…\n我希望你是那个能让我想起战斗有多有趣的训练师！`,
+      1: "既然你已经走到这里，你一定非常强大…\n我希望你是那个能让我想起战斗有多有趣的训练师！",
     },
     "victory": {
-      1: `你打败我了…\n你的渴望和你宝可梦为你战斗的高贵方式…\n我甚至在比赛过程中感到兴奋。一场非常好的战斗。`,
+      1: "你打败我了…\n你的渴望和你宝可梦为你战斗的高贵方式…\n我甚至在比赛过程中感到兴奋。一场非常好的战斗。",
     },
     "defeat": {
-      1: `这一点也不刺激…\n这不是我想要的！`,
+      1: "这一点也不刺激…\n这不是我想要的！",
     }
   },
   "burgh": {
@@ -1723,7 +1723,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "哇……某种程度上方式很美，不是吗…",
-      2: `有时我听人说有些战斗耻辱而丢人。\n我认为只要你尽了最大努力，任何胜利都是美丽的。`
+      2: "有时我听人说有些战斗耻辱而丢人。\n我认为只要你尽了最大努力，任何胜利都是美丽的。"
     }
   },
   "elesa": {
@@ -1753,7 +1753,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brycen": {
     "encounter": {
-      1: `与你的宝可梦在一起也有力量。\n接受他们的支持，会让你变得更强。我会向你展示这种力量！`,
+      1: "与你的宝可梦在一起也有力量。\n接受他们的支持，会让你变得更强。我会向你展示这种力量！",
     },
     "victory": {
       1: "你和你的宝可梦的美妙组合！多么美丽的友谊！"
@@ -1783,7 +1783,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "你是一堵我无法逾越的墙！"
     },
     "defeat": {
-      1: `不要放弃。\n这就是真正重要的。\n生活中的重要的道理都是简单的。`,
+      1: "不要放弃。\n这就是真正重要的。\n生活中的重要的道理都是简单的。",
     }
   },
   "korrina": {
