@@ -167,6 +167,7 @@ declare module "i18next" {
       starterSelectUiHandler: SimpleTranslationEntries;
       splashMessages: SimpleTranslationEntries;
       nature: SimpleTranslationEntries;
+      phases: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
       egg: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
