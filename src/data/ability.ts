@@ -1025,17 +1025,17 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
        * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
        * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
        */
-      !move.getMove().findAttr((m) =>
-        m instanceof RandomMovesetMoveAttr ||
-        m instanceof RandomMoveAttr ||
-        m instanceof NaturePowerAttr ||
-        m instanceof CopyMoveAttr
+      !move.getMove().findAttr((attr) =>
+        attr instanceof RandomMovesetMoveAttr ||
+        attr instanceof RandomMoveAttr ||
+        attr instanceof NaturePowerAttr ||
+        attr instanceof CopyMoveAttr
       )
     ) {
       const moveType = new Utils.IntegerHolder(move.getMove().type);
 
       // Moves like Weather Ball ignore effects of abilities like Normalize and Refrigerate
-      if (move.getMove().attrs.some(attr => attr instanceof VariableMoveTypeAttr)) {
+      if (move.getMove().findAttr(attr => attr instanceof VariableMoveTypeAttr)) {
         // Moves that have variable types
         applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, move.getMove(), moveType);
       } else {
