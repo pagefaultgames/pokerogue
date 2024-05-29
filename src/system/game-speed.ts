@@ -19,27 +19,33 @@ export function initGameSpeed() {
 
   const originalAddEvent = this.time.addEvent;
   this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
-    if (config.delay) {
+    if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
       config.delay = transformValue(config.delay);
     }
     return originalAddEvent.apply(this, [ config ]);
   };
   const originalTweensAdd = this.tweens.add;
   this.tweens.add = function (config: Phaser.Types.Tweens.TweenBuilderConfig | Phaser.Types.Tweens.TweenChainBuilderConfig | Phaser.Tweens.Tween | Phaser.Tweens.TweenChain) {
-    if (config.duration) {
-      config.duration = transformValue(config.duration);
-    }
-    if (config.delay) {
-      config.delay = transformValue(config.delay);
-    }
-    if (config.repeatDelay) {
-      config.repeatDelay = transformValue(config.repeatDelay);
-    }
     if (config.loopDelay) {
-      config.loopDelay = transformValue(config.loopDelay);
+      config.loopDelay = transformValue(config.loopDelay as number);
     }
-    if (config.hold) {
-      config.hold = transformValue(config.hold);
+
+    if (!(config instanceof Phaser.Tweens.TweenChain) ) {
+      if (config.duration) {
+        config.duration = transformValue(config.duration);
+      }
+
+      if (!(config instanceof Phaser.Tweens.Tween)) {
+        if (config.delay) {
+          config.delay = transformValue(config.delay as number);
+        }
+        if (config.repeatDelay) {
+          config.repeatDelay = transformValue(config.repeatDelay);
+        }
+        if (config.hold) {
+          config.hold = transformValue(config.hold);
+        }
+      }
     }
     return originalTweensAdd.apply(this, [ config ]);
   };
@@ -51,13 +57,13 @@ export function initGameSpeed() {
           t.duration = transformValue(t.duration);
         }
         if (t.delay) {
-          t.delay = transformValue(t.delay);
+          t.delay = transformValue(t.delay as number);
         }
         if (t.repeatDelay) {
           t.repeatDelay = transformValue(t.repeatDelay);
         }
         if (t.loopDelay) {
-          t.loopDelay = transformValue(t.loopDelay);
+          t.loopDelay = transformValue(t.loopDelay as number);
         }
         if (t.hold) {
           t.hold = transformValue(t.hold);
@@ -78,7 +84,7 @@ export function initGameSpeed() {
       config.repeatDelay = transformValue(config.repeatDelay);
     }
     if (config.loopDelay) {
-      config.loopDelay = transformValue(config.loopDelay);
+      config.loopDelay = transformValue(config.loopDelay as number);
     }
     if (config.hold) {
       config.hold = transformValue(config.hold);

@@ -65,18 +65,13 @@ export interface DialogueTranslationEntry {
 }
 
 export interface DialogueTranslationCategory {
-  encounter: DialogueTranslationEntry;
-  victory: DialogueTranslationEntry;
-  defeat?: DialogueTranslationEntry;
-}
-
-export interface DialogueTranslationTrainerClass {
-  [key: string]: DialogueTranslationCategory;
+  [category: string]: DialogueTranslationEntry;
 }
 
 export interface DialogueTranslationEntries {
-  [key: string]: DialogueTranslationTrainerClass;
+  [trainertype: string]: DialogueTranslationCategory;
 }
+
 
 export interface Localizable {
   localize(): void;
@@ -181,6 +176,7 @@ declare module "i18next" {
       gameStatsUiHandler: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
       PGMmiscDialogue: SimpleTranslationEntries;
