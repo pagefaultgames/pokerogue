@@ -17,7 +17,7 @@ import MockGraphics from "#app/test/essentials/mocksContainer/mockGraphics";
 import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureManager";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {setPositionRelative, waitUntil} from "#app/test/essentials/utils";
+import {blobToString, setPositionRelative, waitUntil} from "#app/test/essentials/utils";
 import NoAudioSound = Phaser.Sound.NoAudioSound;
 import {expect, vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
@@ -33,6 +33,8 @@ import {Species} from "#app/data/enums/species";
 import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
 import {Button} from "#app/enums/buttons";
 import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
+import MockText from "#app/test/essentials/mocksContainer/mockText";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -48,6 +50,14 @@ Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 BBCodeText.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
+InputText.prototype.setElement = () => null;
+InputText.prototype.resize = () => null;
+window.URL.createObjectURL = (blob: Blob) => {
+  blobToString(blob).then((data) => {
+    const b = data;
+  })
+  return null;
+};
 navigator.getGamepads = vi.fn().mockReturnValue([]);
 global.fetch = vi.fn(MockFetch);
 Utils.setCookie(Utils.sessionIdKey, 'fake_token');
@@ -64,6 +74,7 @@ export default class GameWrapper {
     this.gameObj.renderer.maxTextures = -1;
     this.gameObj.manager = new InputManager(this.gameObj, {});
     this.gameObj.pluginEvents = new EventEmitter();
+    this.gameObj.domContainer = {} as HTMLDivElement;
 
 
     window.matchMedia = () => ({
@@ -114,6 +125,9 @@ export default class GameWrapper {
 
     _scene.game = this.gameObj;
     _scene.scene = _scene;
+    _scene.children = {
+      removeAll: () => null,
+    }
     _scene.sys = {
       queueDepthSort: () => null,
       game: this.gameObj,

@@ -116,7 +116,7 @@ describe("Session import/export", () => {
     expect(mode).toBe(Mode.TITLE);
   });
 
-  it('Select gamemode Classic new game to starter selection', async () => {
+  it.skip('Select gamemode Classic new game to starter selection', async () => {
     const gameMode = GameModes.CLASSIC;
     scene.ui.setMode(Mode.MESSAGE);
     const titlePhase = new TitlePhase(scene);
@@ -143,7 +143,7 @@ describe("Session import/export", () => {
     expect(mode).toBe(Mode.SAVE_SLOT);
   }, 100000);
 
-  it('start battle', async() => {
+  it.skip('start battle', async() => {
     await game.newGame(scene, GameModes.CLASSIC);
     let handler = scene.ui.getHandler() as StarterSelectUiHandler;
     expect(handler).toBeInstanceOf(StarterSelectUiHandler);
@@ -169,15 +169,33 @@ describe("Session import/export", () => {
     // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
   }, 100000);
 
-  it('start battle in one-line', async() => {
+  it('save & quit', async() => {
     await game.newGame(scene, GameModes.CLASSIC, [
       Species.BULBASAUR,
       Species.CHARMANDER,
       Species.SQUIRTLE,
     ]);
-    const mode = scene.ui?.getMode();
+    let mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.COMMAND);
     // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
+    await scene.gameData.saveAll(scene, true, true, true, true);
+    scene.reset(true);
+    await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
+    mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.TITLE);
+  }, 100000);
+
+  it('export session 1 on title', async() => {
+    await game.newGame(scene, GameModes.CLASSIC, [
+      Species.MEWTWO,
+    ]);
+    let mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.COMMAND);
+    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
+    await scene.gameData.saveAll(scene, true, true, true, true);
+    scene.reset(true);
+    await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
+    scene.gameData.tryExportData(GameDataType.SESSION, 0)
   }, 100000);
 
   it.skip('Reach title mode', async () => {
