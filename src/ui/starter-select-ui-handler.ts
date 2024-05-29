@@ -1901,7 +1901,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr) {
-        const ability = this.lastSpecies.getAbility(abilityIndex);
+        const ability = getPokemonSpeciesForm(species.speciesId, formIndex).getAbility(abilityIndex);
         this.pokemonAbilityText.setText(allAbilities[ability].name);
 
         const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
