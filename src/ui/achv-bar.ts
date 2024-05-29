@@ -4,6 +4,9 @@ import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
+  private defaultWidth: number;
+  private defaultHeight: number;
+
   private bg: Phaser.GameObjects.NineSlice;
   private icon: Phaser.GameObjects.Sprite;
   private titleText: Phaser.GameObjects.Text;
@@ -19,7 +22,10 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", null, 160, 40, 41, 6, 16, 4);
+    this.defaultWidth = 160;
+    this.defaultHeight = 40;
+
+    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", null, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -66,11 +72,22 @@ export default class AchvBar extends Phaser.GameObjects.Container {
       this.scoreText.setText(`+${(achv as Achv).score}pt`);
     }
 
+    // Take the width of the default interface or the title if longest
+    this.bg.width = Math.max(this.defaultWidth, this.icon.displayWidth + this.titleText.displayWidth + this.scoreText.displayWidth + 16);
+
+    this.scoreText.x = this.bg.width - 2;
+    this.descriptionText.width = this.bg.width - this.icon.displayWidth - 16;
+    this.descriptionText.setWordWrapWidth(this.descriptionText.width * 6);
+
+    // Take the height of the default interface or the description if longest
+    this.bg.height = Math.max(this.defaultHeight, this.titleText.displayHeight + this.descriptionText.displayHeight + 8);
+    this.icon.y = (this.bg.height / 2) - (this.icon.height / 2);
+
     (this.scene as BattleScene).playSound("achv");
 
     this.scene.tweens.add({
       targets: this,
-      x: (this.scene.game.canvas.width / 6) - 76,
+      x: (this.scene.game.canvas.width / 6) - (this.bg.width / 2),
       duration: 500,
       ease: "Sine.easeOut"
     });
