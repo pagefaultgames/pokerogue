@@ -4793,7 +4793,6 @@ export class ConfuseIfBoostedAttr extends AddBattlerTagAttr {
     ) {
       super.apply(user, target, move, args);
     }
-    console.log('alluring', user, target);
     return true;
   }
 }
@@ -4810,12 +4809,11 @@ export class BurnIfBoostedAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (
-      target.turnData.statsBoosted || 
+      target.turnData.statsBoosted ||
       (user.scene.currentBattle.turn === 1 && target.battleSummonData.statsBoostedOnFirstTurn)
     ) {
       target.trySetStatus(StatusEffect.BURN, true, user);
     }
-    console.log('burning', user, target);
     return true;
   }
 }

@@ -3052,13 +3052,16 @@ export class StatChangePhase extends PokemonPhase {
 
       for (const stat of filteredStats) {
         if (levels.value > 0 && pokemon.summonData.battleStats[stat] + levels.value <= 6) {
-          // if TurnInitPhase hasn't been started, set statsBoostedOnFirstTurn instead to handle turn 1 edge cases
-          pokemon.turnData ? pokemon.turnData.statsBoosted = true : pokemon.battleSummonData.statsBoostedOnFirstTurn = true;
+          if (pokemon.turnData) {
+            pokemon.turnData.statsBoosted = true;
+          }
+          if (pokemon.battleSummonData.turnCount === 1) {
+            pokemon.battleSummonData.statsBoostedOnFirstTurn = true;
+          }
         }
 
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       }
-      console.log('stats raised?:', pokemon?.turnData?.statsBoosted, pokemon);
 
       if (levels.value > 0 && this.canBeCopied) {
         for (const opponent of pokemon.getOpponents()) {
