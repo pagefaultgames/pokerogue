@@ -49,7 +49,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup(this.scene);
 
-    this.eggNameText = addTextObject(this.scene, 8, 66, "", TextStyle.SUMMARY);
+    this.eggNameText = addTextObject(this.scene, 8, 68, "", TextStyle.SUMMARY);
     this.eggNameText.setOrigin(0, 0);
     this.eggListContainer.add(this.eggNameText);
 

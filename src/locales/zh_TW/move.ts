@@ -34,8 +34,8 @@ export const move: MoveTranslationEntries = {
   scratch: { name: "抓", effect: "用堅硬且無比鋒利的爪子抓\n對手進行攻擊" },
   viseGrip: { name: "夾住", effect: "將對手從兩側夾住，給予傷\n害" },
   guillotine: {
-    name: "極落鉗",
-    effect: "用大鉗子或剪刀等夾斷對手\n進行攻擊。只要命中就會一\n擊昏厥",
+    name: "斷頭鉗",
+    effect: "用大鉗子或剪刀等夾斷對手\n進行攻擊。只要命中就會一\n擊瀕死",
   },
   razorWind: {
     name: "旋風刀",
@@ -45,7 +45,7 @@ export const move: MoveTranslationEntries = {
     name: "劍舞",
     effect: "激烈地跳起戰舞提高氣勢。\n大幅提高自己的攻擊",
   },
-  cut: { name: "居合劈", effect: "用鐮刀或爪子等切斬對手進\n行攻擊" },
+  cut: { name: "居合斬", effect: "用鐮刀或爪子等切斬對手進\n行攻擊" },
   gust: { name: "起風", effect: "用翅膀將颳起的狂風襲向對\n手進行攻擊" },
   wingAttack: {
     name: "翅膀攻擊",
@@ -217,7 +217,7 @@ export const move: MoveTranslationEntries = {
     effect: "一邊旋轉，一邊將尖喙刺入\n對手進行攻擊",
   },
   submission: {
-    name: "深淵翻滾",
+    name: "地獄翻滾",
     effect: "將對手連同自己一起摔向地\n面進行攻擊。自己也會受到\n少許傷害",
   },
   lowKick: {
@@ -305,7 +305,7 @@ export const move: MoveTranslationEntries = {
   },
   fissure: {
     name: "地裂",
-    effect: "讓對手掉落於地裂的裂縫中\n進行攻擊。只要命中就會一\n擊昏厥",
+    effect: "讓對手掉落於地裂的裂縫中\n進行攻擊。只要命中就會一\n擊瀕死",
   },
   dig: { name: "挖洞", effect: "第１回合鑽入地底，第２回\n合攻擊對手" },
   toxic: {
@@ -421,8 +421,8 @@ export const move: MoveTranslationEntries = {
     effect: "模仿對手使用的招式，自己\n也使用相同招式",
   },
   selfDestruct: {
-    name: "玉石俱碎",
-    effect: "引發爆炸，攻擊自己周圍所\n有的寶可夢。使用後陷入昏\n厥",
+    name: "自爆",
+    effect: "引發爆炸，攻擊自己周圍所\n有的寶可夢。使用後陷入瀕\n死",
   },
   eggBomb: { name: "炸蛋", effect: "向對手用力投擲大大的蛋進\n行攻擊" },
   lick: {
@@ -548,7 +548,7 @@ export const move: MoveTranslationEntries = {
   },
   explosion: {
     name: "大爆炸",
-    effect: "引發大爆炸，攻擊自己周圍\n所有的寶可夢。使用後自己\n會陷入昏厥",
+    effect: "引發大爆炸，攻擊自己周圍\n所有的寶可夢。使用後自己\n會陷入瀕死",
   },
   furySwipes: {
     name: "亂抓",
@@ -563,15 +563,15 @@ export const move: MoveTranslationEntries = {
     effect: "連續睡上２回合。回覆自己\n的全部ＨＰ以及治癒所有異\n常狀態",
   },
   rockSlide: {
-    name: "巖崩",
+    name: "岩崩",
     effect: "將大岩石猛烈地撞向對手進\n行攻擊。有時會使對手畏縮",
   },
   hyperFang: {
-    name: "終結門牙",
+    name: "必殺門牙",
     effect: "用鋒利的門牙牢牢地咬住對\n手進行攻擊。有時會使對手\n畏縮",
   },
   sharpen: {
-    name: "棱角化",
+    name: "稜角化",
     effect: "增加身體的角，變得棱棱角\n角，從而提高自己的攻擊",
   },
   conversion: {
@@ -651,7 +651,7 @@ export const move: MoveTranslationEntries = {
     effect: "將棉花般柔軟的孢子緊貼對\n手，從而大幅降低對手的速\n度",
   },
   reversal: {
-    name: "絕處逢生",
+    name: "起死回生",
     effect: "竭盡全力進行攻擊。自己的\nＨＰ越少，招式的威力越大",
   },
   spite: {
@@ -671,7 +671,7 @@ export const move: MoveTranslationEntries = {
     effect: "以迅雷不及掩耳之勢出拳。\n必定能夠先制攻擊",
   },
   scaryFace: {
-    name: "可怕面孔",
+    name: "鬼面",
     effect: "用恐怖的表情瞪着對手，使\n其害怕，從而大幅降低對手\n的速度",
   },
   feintAttack: {
@@ -712,11 +712,11 @@ export const move: MoveTranslationEntries = {
   },
   destinyBond: {
     name: "同命",
-    effect: "使出招式後，當受到對手攻\n擊陷入昏厥時，對手也會一\n同昏厥。連續使出則會失敗",
+    effect: "使出招式後，當受到對手攻\n擊陷入瀕死時，對手也會一\n同瀕死。連續使出則會失敗",
   },
   perishSong: {
-    name: "終焉之歌",
-    effect: "傾聽歌聲的寶可夢經過３回\n合陷入昏厥。替換後效果消\n失",
+    name: "滅亡之歌",
+    effect: "傾聽歌聲的寶可夢經過３回\n合陷入瀕死。替換後效果消\n失",
   },
   icyWind: {
     name: "冰凍之風",
@@ -922,7 +922,7 @@ export const move: MoveTranslationEntries = {
     effect: "在使用招式２回合後，向對\n手發送一團念力進行攻擊",
   },
   rockSmash: {
-    name: "碎巖",
+    name: "碎岩",
     effect: "用拳頭進行攻擊。有時會降\n低對手的防禦",
   },
   whirlpool: {
@@ -970,7 +970,7 @@ export const move: MoveTranslationEntries = {
     effect: "吹捧對手，使其混亂。同時\n還會提高對手的特攻",
   },
   willOWisp: {
-    name: "磷火",
+    name: "鬼火",
     effect: "放出怪異的火焰，從而讓對\n手陷入灼傷狀態",
   },
   memento: {
@@ -1023,8 +1023,8 @@ export const move: MoveTranslationEntries = {
     effect: "向同伴緊急求助，從我方寶\n可夢已學會的招式中隨機使\n用１個",
   },
   ingrain: {
-    name: "紮根",
-    effect: "在大地上紮根，每回合回覆\n自己的ＨＰ。因爲紮根了，\n所以不能替換寶可夢",
+    name: "扎根",
+    effect: "在大地上扎根，每回合回覆\n自己的ＨＰ。因爲扎根了，\n所以不能替換寶可夢",
   },
   superpower: {
     name: "蠻力",
@@ -1201,8 +1201,8 @@ export const move: MoveTranslationEntries = {
     effect: "讓對手聽舒適的笛聲，從而\n陷入睡眠狀態",
   },
   tickle: {
-    name: "撓癢",
-    effect: "給對手撓癢，使其發笑，從\n而降低對手的攻擊和防禦",
+    name: "搔癢",
+    effect: "給對手搔癢，使其發笑，從\n而降低對手的攻擊和防禦",
   },
   cosmicPower: {
     name: "宇宙力量",
@@ -1222,16 +1222,16 @@ export const move: MoveTranslationEntries = {
     effect: "發出看不見的神奇力量進行\n攻擊。有時會使對手畏縮",
   },
   skyUppercut: {
-    name: "沖天拳",
+    name: "衝天拳",
     effect: "用衝向天空般高高的上勾拳\n頂起對手進行攻擊",
   },
   sandTomb: {
-    name: "流沙深淵",
+    name: "流沙地獄",
     effect: "將對手困在鋪天蓋地的沙暴\n中，在４～５回合內進行攻\n擊",
   },
   sheerCold: {
     name: "絕對零度",
-    effect: "給對手一擊昏厥。如果是冰\n屬性以外的寶可夢使用，就\n會難以打中",
+    effect: "給對手一擊瀕死。如果是冰\n屬性以外的寶可夢使用，就\n會難以打中",
   },
   muddyWater: {
     name: "濁流",
@@ -1353,7 +1353,7 @@ export const move: MoveTranslationEntries = {
   },
   healingWish: {
     name: "治癒之願",
-    effect: "雖然自己陷入昏厥，但可以\n治癒後備上場的寶可夢的異\n常狀態以及回覆ＨＰ",
+    effect: "雖然自己陷入瀕死，但可以\n治癒後備上場的寶可夢的異\n常狀態以及回覆ＨＰ",
   },
   brine: {
     name: "鹽水",
@@ -1519,7 +1519,7 @@ export const move: MoveTranslationEntries = {
     effect: "將外殼堅硬的大種子，從上\n方砸下攻擊對手",
   },
   airSlash: {
-    name: "空氣之刃",
+    name: "空氣斬",
     effect: "用連天空也能劈開的空氣之\n刃進行攻擊。有時會使對手\n畏縮",
   },
   xScissor: {
@@ -1630,7 +1630,7 @@ export const move: MoveTranslationEntries = {
     effect: "將身體的光芒聚集在一點釋\n放出去。有時會降低對手的\n特防",
   },
   rockClimb: {
-    name: "攀巖",
+    name: "攀岩",
     effect: "發動猛撞攻擊，有時會使對\n手混亂。是寶可表的祕傳招\n式之一",
   },
   defog: {
@@ -1642,7 +1642,7 @@ export const move: MoveTranslationEntries = {
     effect: "製造出離奇的空間。在５回\n合內速度慢的寶可夢可以先\n行動",
   },
   dracoMeteor: {
-    name: "流星羣",
+    name: "流星群",
     effect: "從天空中向對手落下隕石。\n使用之後因爲反作用力，自\n己的特攻會大幅降低",
   },
   discharge: {
@@ -1690,7 +1690,7 @@ export const move: MoveTranslationEntries = {
     effect: "♂誘惑♀或♀誘惑♂，從而\n大幅降低對手的特攻",
   },
   stealthRock: {
-    name: "隱形巖",
+    name: "隱形岩",
     effect: "將無數岩石懸浮在對手的周\n圍，從而對替換出場的對手\n的寶可夢給予傷害",
   },
   grassKnot: {
@@ -1893,7 +1893,7 @@ export const move: MoveTranslationEntries = {
     effect: "用歌聲攻擊對手。大家一起\n輪唱便可以接連使出，威力\n也會提高",
   },
   echoedVoice: {
-    name: "回聲",
+    name: "迴聲",
     effect: "用回聲攻擊對手。如果每回\n合都有寶可夢接着使用該招\n式，威力就會提高",
   },
   chipAway: {
@@ -1945,7 +1945,7 @@ export const move: MoveTranslationEntries = {
     effect: "扔飛對手，強制拉後備寶可\n夢上場。如果對手爲野生寶\n可夢，戰鬥將直接結束",
   },
   incinerate: {
-    name: "燒淨",
+    name: "燒盡",
     effect: "用火焰攻擊對手。對手攜帶\n樹果等時，會燒掉，使其不\n能使用",
   },
   quash: {
@@ -1972,8 +1972,8 @@ export const move: MoveTranslationEntries = {
     effect: "當對手未攜帶道具時，能夠\n將自己攜帶的道具交給對手",
   },
   inferno: {
-    name: "烈火深淵",
-    effect: "用烈焰包裹住對手進行攻擊。\n讓對手陷入灼傷狀態",
+    name: "煉獄",
+    effect: "用猛烈的火焰包圍對手進行\n攻擊。讓對手陷入灼傷狀態",
   },
   waterPledge: {
     name: "水之誓約",
