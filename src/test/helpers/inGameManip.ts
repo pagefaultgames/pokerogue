@@ -3,7 +3,7 @@ import {
   getSettingNameWithKeycode
 } from "#app/configs/inputs/configHandler";
 import {expect} from "vitest";
-import {SettingInterface} from "#app/test/cfg_keyboard.example";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 export class InGameManip {
   private config;
@@ -39,7 +39,7 @@ export class InGameManip {
     if (!settingName.includes("Button_")) {
       settingName = "Button_" + settingName;
     }
-    this.settingName = SettingInterface[settingName];
+    this.settingName = SettingKeyboard[settingName];
     return this;
   }
 
@@ -72,7 +72,7 @@ export class InGameManip {
     if (!settingName.includes("Button_")) {
       settingName = "Button_" + settingName;
     }
-    this.settingName = SettingInterface[this.normalizeSettingNameString(settingName)];
+    this.settingName = SettingKeyboard[this.normalizeSettingNameString(settingName)];
     expect(getSettingNameWithKeycode(this.config, this.keycode)).toEqual(this.settingName);
     return this;
   }

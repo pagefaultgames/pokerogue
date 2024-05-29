@@ -1,4 +1,3 @@
-import {SettingInterface} from "#app/test/cfg_keyboard.example";
 import {expect} from "vitest";
 import {Button} from "#app/enums/buttons";
 import {
@@ -10,6 +9,7 @@ import {
   assign,
   getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey, canIOverrideThisSetting
 } from "#app/configs/inputs/configHandler";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 export class MenuManip {
   private config;
@@ -47,7 +47,7 @@ export class MenuManip {
     if (!settingName.includes("Button_")) {
       settingName = "Button_" + settingName;
     }
-    this.settingName = SettingInterface[settingName];
+    this.settingName = SettingKeyboard[settingName];
     const isAlt = settingName.includes("ALT_");
     const buttonName = isAlt ? settingName.toUpperCase().split("ALT_BUTTON_").splice(1)[0] : settingName.toUpperCase().split("BUTTON_").splice(1)[0];
     expect(this.config.settings[this.settingName]).toEqual(Button[buttonName]);
@@ -90,7 +90,7 @@ export class MenuManip {
   }
 
   whenWeDelete(settingName?: string) {
-    this.settingName = SettingInterface[settingName] || this.settingName;
+    this.settingName = SettingKeyboard[settingName] || this.settingName;
     // const key = getKeyWithSettingName(this.config, this.settingName);
     deleteBind(this.config, this.settingName);
     // expect(this.config.custom[key]).toEqual(-1);
@@ -98,7 +98,7 @@ export class MenuManip {
   }
 
   whenWeTryToDelete(settingName?: string) {
-    this.settingName = SettingInterface[settingName] || this.settingName;
+    this.settingName = SettingKeyboard[settingName] || this.settingName;
     deleteBind(this.config, this.settingName);
     return this;
   }

@@ -1,6 +1,4 @@
 import {beforeEach, describe, expect, it} from "vitest";
-import cfg_keyboard_azerty from "#app/test/cfg_keyboard.example";
-import {SettingInterface} from "#app/test/cfg_keyboard.example";
 import {Button} from "#app/enums/buttons";
 import {deepCopy} from "#app/utils";
 import {
@@ -11,6 +9,8 @@ import {MenuManip} from "#app/test/helpers/menuManip";
 import {InGameManip} from "#app/test/helpers/inGameManip";
 import {Device} from "#app/enums/devices";
 import {InterfaceConfig} from "#app/inputs-controller";
+import cfg_keyboard_azerty from "#app/configs/inputs/cfg_keyboard_azerty";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 
 describe("Test Rebinding", () => {
@@ -35,7 +35,7 @@ describe("Test Rebinding", () => {
     expect(config).not.toBeNull();
   });
   it("Check button for setting name", () => {
-    const settingName = SettingInterface.Button_Left;
+    const settingName = SettingKeyboard.Button_Left;
     const button = config.settings[settingName];
     expect(button).toEqual(Button.LEFT);
   });
@@ -53,12 +53,12 @@ describe("Test Rebinding", () => {
   });
 
   it("Check key for currenly Assigned to setting name", () => {
-    const settingName = SettingInterface.Button_Left;
+    const settingName = SettingKeyboard.Button_Left;
     const key = getKeyWithSettingName(config, settingName);
     expect(key).toEqual("KEY_ARROW_LEFT");
   });
   it("Check key for currenly Assigned to setting name alt", () => {
-    const settingName = SettingInterface.Alt_Button_Left;
+    const settingName = SettingKeyboard.Alt_Button_Left;
     const key = getKeyWithSettingName(config, settingName);
     expect(key).toEqual("KEY_Q");
   });
@@ -71,25 +71,25 @@ describe("Test Rebinding", () => {
     const keycode = Phaser.Input.Keyboard.KeyCodes.LEFT;
     const key = getKeyWithKeycode(config, keycode);
     const icon = config.icons[key];
-    expect(icon).toEqual("T_Left_Key_Dark.png");
+    expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to key code", () => {
     const keycode = Phaser.Input.Keyboard.KeyCodes.Q;
     const key = getKeyWithKeycode(config, keycode);
     const icon = config.icons[key];
-    expect(icon).toEqual("T_Q_Key_Dark.png");
+    expect(icon).toEqual("Q.png");
   });
   it("Check icon for currenly Assigned to setting name", () => {
-    const settingName = SettingInterface.Button_Left;
+    const settingName = SettingKeyboard.Button_Left;
     const key = getKeyWithSettingName(config, settingName);
     const icon = config.icons[key];
-    expect(icon).toEqual("T_Left_Key_Dark.png");
+    expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to setting name alt", () => {
-    const settingName = SettingInterface.Alt_Button_Left;
+    const settingName = SettingKeyboard.Alt_Button_Left;
     const key = getKeyWithSettingName(config, settingName);
     const icon = config.icons[key];
-    expect(icon).toEqual("T_Q_Key_Dark.png");
+    expect(icon).toEqual("Q.png");
   });
 
   it("Check if is working", () => {
