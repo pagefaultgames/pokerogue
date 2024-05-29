@@ -23,7 +23,7 @@ export const titles: SimpleTranslationEntries = {
 
   // Double Names
   "timespace_double": "Duo Spatio-Temporel",
-  "sibling_double": "Fraterie",
+  "sibling_double": "Fratrie",
   "ninja_double": "Duo de Ninjas",
   "dragon_tamer_double": "Duo de Dracologues",
   "kalos_legends_double": "Légendes de Kalos",
