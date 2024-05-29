@@ -271,8 +271,28 @@ export abstract class PokemonSpeciesForm {
 
   abstract getFormSpriteKey(formIndex?: integer): string;
 
+
+  /**
+   * Variant Data key/index is either species id or species id followed by -formkey
+   * @param formIndex optional form index for pokemon with different forms
+   * @returns species id if no additional forms, index with formkey if a pokemon with a form
+   */
+  getVariantDataIndex(formIndex?: integer) {
+    let formkey = null;
+    let variantDataIndex: integer|string = this.speciesId;
+    const species = getPokemonSpecies(this.speciesId);
+    if (species.forms.length > 0) {
+      formkey = species.forms[formIndex]?.formKey;
+      if (formkey) {
+        variantDataIndex = `${this.speciesId}-${formkey}`;
+      }
+    }
+    return variantDataIndex;
+  }
+
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
-    const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
+    const variantDataIndex = this.getVariantDataIndex(formIndex);
+    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
@@ -281,9 +301,11 @@ export abstract class PokemonSpeciesForm {
       formIndex = this.formIndex;
     }
 
+    const variantDataIndex = this.getVariantDataIndex(formIndex);
+
     let ret = this.speciesId.toString();
 
-    const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
 
     if (shiny && !isVariant) {
       ret += "s";
@@ -736,7 +758,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
       for (const e of pokemonEvolutions[p]) {
-        if (e.speciesId === this.speciesId && (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey)) {
+        if (e.speciesId === this.speciesId && (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey) && prevolutionLevels.every(pe => pe[0] !== parseInt(p))) {
           const speciesId = parseInt(p) as Species;
           const level = e.level;
           prevolutionLevels.push([ speciesId, level ]);
@@ -892,8 +914,15 @@ export function initSpecies() {
     new PokemonSpecies(Species.EKANS, 1, false, false, false, "Snake Pokémon", Type.POISON, null, 2, 6.9, Abilities.INTIMIDATE, Abilities.SHED_SKIN, Abilities.UNNERVE, 288, 35, 60, 44, 40, 54, 55, 255, 70, 58, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ARBOK, 1, false, false, false, "Cobra Pokémon", Type.POISON, null, 3.5, 65, Abilities.INTIMIDATE, Abilities.SHED_SKIN, Abilities.UNNERVE, 448, 60, 95, 69, 65, 79, 80, 90, 70, 157, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.PIKACHU, 1, false, false, false, "Mouse Pokémon", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, GrowthRate.MEDIUM_FAST, 50, true, true,
-      new PokemonForm("Normal", "", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.ELECTRIC, null, 21, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 420, 45, 60, 65, 100, 75, 75, 190, 50, 112, true),
+      new PokemonForm("Normal", "", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("Partner", "partner", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, "", true),
+      new PokemonForm("Cosplay", "cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("Cool Cosplay", "cool-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("Beauty Cosplay", "beauty-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("Cute Cosplay", "cute-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("Smart Cosplay", "smart-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("Tough Cosplay", "tough-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.ELECTRIC, null, 21, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 420, 45, 60, 65, 100, 75, 75, 190, 50, 112),
     ),
     new PokemonSpecies(Species.RAICHU, 1, false, false, false, "Mouse Pokémon", Type.ELECTRIC, null, 0.8, 30, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 485, 60, 90, 55, 90, 80, 110, 75, 50, 243, GrowthRate.MEDIUM_FAST, 50, true),
     new PokemonSpecies(Species.SANDSHREW, 1, false, false, false, "Mouse Pokémon", Type.GROUND, null, 0.6, 12, Abilities.SAND_VEIL, Abilities.NONE, Abilities.SAND_RUSH, 300, 50, 75, 85, 20, 30, 40, 255, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
@@ -1034,7 +1063,8 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.DITTO, 1, false, false, false, "Transform Pokémon", Type.NORMAL, null, 0.3, 4, Abilities.LIMBER, Abilities.NONE, Abilities.IMPOSTER, 288, 48, 48, 48, 48, 48, 48, 35, 50, 101, GrowthRate.MEDIUM_FAST, null, false),
     new PokemonSpecies(Species.EEVEE, 1, false, false, false, "Evolution Pokémon", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, GrowthRate.MEDIUM_FAST, 87.5, false, true,
-      new PokemonForm("Normal", "", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65),
+      new PokemonForm("Normal", "", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, false, null, true),
+      new PokemonForm("Partner", "partner", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 435, 65, 75, 70, 65, 85, 75, 45, 50, 65, false, "", true),
       new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.NORMAL, null, 18, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 425, 70, 75, 80, 60, 95, 45, 45, 50, 65),
     ),
     new PokemonSpecies(Species.VAPOREON, 1, false, false, false, "Bubble Jet Pokémon", Type.WATER, null, 1, 29, Abilities.WATER_ABSORB, Abilities.NONE, Abilities.HYDRATION, 525, 130, 65, 60, 110, 95, 65, 45, 50, 184, GrowthRate.MEDIUM_FAST, 87.5, false),
@@ -1372,7 +1402,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.WYNAUT, 3, false, false, false, "Bright Pokémon", Type.PSYCHIC, null, 0.6, 14, Abilities.SHADOW_TAG, Abilities.NONE, Abilities.TELEPATHY, 260, 95, 23, 48, 23, 48, 23, 125, 50, 52, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.SNORUNT, 3, false, false, false, "Snow Hat Pokémon", Type.ICE, null, 0.7, 16.8, Abilities.INNER_FOCUS, Abilities.ICE_BODY, Abilities.MOODY, 300, 50, 50, 50, 50, 50, 50, 190, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.GLALIE, 3, false, false, false, "Face Pokémon", Type.ICE, null, 1.5, 256.5, Abilities.INNER_FOCUS, Abilities.ICE_BODY, Abilities.MOODY, 480, 80, 80, 80, 80, 80, 80, 75, 50, 168, GrowthRate.MEDIUM_FAST, 50, false, true,
+    new PokemonSpecies(Species.GLALIE, 3, false, false, false, "Face Pokémon", Type.ICE, null, 1.5, 256.5, Abilities.INNER_FOCUS, Abilities.ICE_BODY, Abilities.MOODY, 480, 80, 80, 80, 80, 80, 80, 75, 50, 168, GrowthRate.MEDIUM_FAST, 100, false, true,
       new PokemonForm("Normal", "", Type.ICE, null, 1.5, 256.5, Abilities.INNER_FOCUS, Abilities.ICE_BODY, Abilities.MOODY, 480, 80, 80, 80, 80, 80, 80, 75, 50, 168),
       new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.ICE, null, 2.1, 350.2, Abilities.REFRIGERATE, Abilities.REFRIGERATE, Abilities.REFRIGERATE, 580, 80, 120, 80, 120, 80, 100, 75, 50, 168),
     ),
