@@ -4564,7 +4564,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
 			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
-  "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
+  "firstStageWin": `Je vois. Cette présence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
   "secondStageWin": "… Magnifique."
 };
@@ -4579,7 +4579,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
 			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
-  "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
+  "firstStageWin": `Je vois. Cette présence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
   "secondStageWin": "… Magnifique."
 };
