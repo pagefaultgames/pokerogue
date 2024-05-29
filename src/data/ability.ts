@@ -1107,6 +1107,37 @@ export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   }
 }
 
+/**
+ * Abilities which cause a variable amount of power increase.
+ * @extends VariableMovePowerAbAttr
+ * @see {@link applyPreAttack}
+ */
+export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
+  private mult: (user: Pokemon, target: Pokemon, move: Move) => number;
+
+  /**
+   * @param mult A function which takes the user, target, and move, and returns the power multiplier. 1 means no multiplier.
+   * @param {boolean} showAbility Whether to show the ability when it activates.
+   */
+  constructor(mult: (user: Pokemon, target: Pokemon, move: Move) => number, showAbility: boolean = true) {
+    super(showAbility);
+    this.mult = mult;
+  }
+
+  /**
+   * @override
+   */
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    const multiplier = this.mult(pokemon, defender, move.getMove());
+    if (multiplier !== 1) {
+      (args[0] as Utils.NumberHolder).value *= multiplier;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class FieldVariableMovePowerAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     //const power = args[0] as Utils.NumberHolder;
@@ -2749,14 +2780,20 @@ export class RunSuccessAbAttr extends AbAttr {
   }
 }
 
+type ArenaTrapCondition = (user: Pokemon, target: Pokemon) => boolean;
+
 /**
  * Base class for checking if a Pokemon is trapped by arena trap
  * @extends AbAttr
+ * @field {@linkcode arenaTrapCondition} Conditional for trapping abilities.
+ * For example, Magnet Pull will only activate if opponent is Steel type.
  * @see {@linkcode applyCheckTrapped}
  */
 export class CheckTrappedAbAttr extends AbAttr {
-  constructor() {
+  protected arenaTrapCondition: ArenaTrapCondition;
+  constructor(condition: ArenaTrapCondition) {
     super(false);
+    this.arenaTrapCondition = condition;
   }
 
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
@@ -2773,6 +2810,9 @@ export class CheckTrappedAbAttr extends AbAttr {
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   /**
    * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * If the enemy is a Ghost type, it is not trapped
+   * If the user has Magnet Pull and the enemy is not a Steel type, it is not trapped.
+   * If the user has Arena Trap and the enemy is not grounded, it is not trapped.
    * @param pokemon The {@link Pokemon} with this {@link AbAttr}
    * @param passive N/A
    * @param trapped {@link Utils.BooleanHolder} indicating whether the other Pokemon is trapped or not
@@ -2781,12 +2821,16 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
    * @returns if enemy Pokemon is trapped or not
    */
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
-    if (otherPokemon.getTypes().includes(Type.GHOST)) {
-      trapped.value = false;
-      return false;
+    if (this.arenaTrapCondition(pokemon, otherPokemon)) {
+      if (otherPokemon.getTypes(true).includes(Type.GHOST) || (otherPokemon.getTypes(true).includes(Type.STELLAR) && otherPokemon.getTypes().includes(Type.GHOST))) {
+        trapped.value = false;
+        return false;
+      }
+      trapped.value = true;
+      return true;
     }
-    trapped.value = true;
-    return true;
+    trapped.value = false;
+    return false;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -3426,7 +3470,12 @@ export function initAbilities() {
     new Ability(Abilities.INTIMIDATE, 3)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1, false, true),
     new Ability(Abilities.SHADOW_TAG, 3)
-      .attr(ArenaTrapAbAttr),
+      .attr(ArenaTrapAbAttr, (user, target) => {
+        if (target.hasAbility(Abilities.SHADOW_TAG)) {
+          return false;
+        }
+        return true;
+      }),
     new Ability(Abilities.ROUGH_SKIN, 3)
       .attr(PostDefendContactDamageAbAttr, 8)
       .bypassFaint(),
@@ -3483,9 +3532,12 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
-      /*.attr(ArenaTrapAbAttr)
-      .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL))*/
-      .unimplemented(),
+      .attr(ArenaTrapAbAttr, (user, target) => {
+        if (target.getTypes(true).includes(Type.STEEL) || (target.getTypes(true).includes(Type.STELLAR) && target.getTypes().includes(Type.STEEL))) {
+          return true;
+        }
+        return false;
+      }),
     new Ability(Abilities.SOUNDPROOF, 3)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.SOUND_BASED))
       .ignorable(),
@@ -3562,7 +3614,12 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(Abilities.ARENA_TRAP, 3)
-      .attr(ArenaTrapAbAttr)
+      .attr(ArenaTrapAbAttr, (user, target) => {
+        if (target.isGrounded()) {
+          return true;
+        }
+        return false;
+      })
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -4275,7 +4332,8 @@ export function initAbilities() {
     new Ability(Abilities.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, 9)
-      .unimplemented(),
+      .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 5))
+      .partial(),
     new Ability(Abilities.COSTAR, 9)
       .unimplemented(),
     new Ability(Abilities.TOXIC_DEBRIS, 9)
