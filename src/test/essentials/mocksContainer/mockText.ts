@@ -198,4 +198,8 @@ export default class MockText {
   setAlpha(alpha) {
     // return this.phaserText.setAlpha(alpha);
   }
+
+  setName(name) {
+    // return this.phaserText.setName(name);
+  }
 }

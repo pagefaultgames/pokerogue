@@ -125,6 +125,9 @@ function bindKey(node, key, buttonMap) {
  * @param {HTMLElement} element
  */
 function preventElementZoom(element) {
+  if (!element) {
+    return;
+  }
   element.addEventListener("touchstart", (event) => {
     const currentTouchTimeStamp = event.timeStamp;
     const previousTouchTimeStamp = event.currentTarget.dataset.lastTouchTimeStamp || currentTouchTimeStamp;

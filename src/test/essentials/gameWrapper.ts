@@ -129,6 +129,8 @@ export default class GameWrapper {
           data.onComplete();
         }
       },
+      getTweensOf: () => ([]),
+      killTweensOf: () => ([]),
       chain: () => null,
       addCounter: (data) => {
         if (data.onComplete) {

@@ -162,6 +162,9 @@ export default class MockSprite {
     return this.phaserSprite.destroy();
   }
 
+  setName(name) {
+    return this.phaserSprite.setName(name);
+  }
 
 
 

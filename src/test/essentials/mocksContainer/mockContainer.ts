@@ -180,4 +180,8 @@ export default class MockContainer {
     // Moves this Game Object to be above the given Game Object in the display list.
   }
 
+  setName(name) {
+    // return this.phaserSprite.setName(name);
+  }
+
 }

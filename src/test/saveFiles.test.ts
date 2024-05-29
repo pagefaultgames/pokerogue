@@ -161,6 +161,10 @@ describe("Session import/export", () => {
     confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
     confirmHandler.processInput(Button.ACTION);
 
+    // Need to find a way to mock correctly isOnField from pokemon.ts called there:
+    // src/phases.ts ln 1005 & 1017
+    // src/field/pokemon.ts ln 979
+
   }, 100000);
 
   it.skip('Reach title mode', async () => {
