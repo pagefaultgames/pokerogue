@@ -1116,10 +1116,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "olivia": {
     "encounter": {
-      1: "No introduction needed here. Time to battle me, Olivia!"
+      1: "Dispensa apresentações. Hora de lutar comigo, Olivia!"
     },
     "victory": {
-      1: "Really lovely… Both you and your Pokémon…"
+      1: "Realmente adorável... Tanto você quanto seu Pokémon..."
     },
     "defeat": {
       1: "Mmm-hmm."
@@ -1127,224 +1127,209 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "poppy": {
     "encounter": {
-      1: "Oooh! Do you wanna have a Pokémon battle with me?"
+      1: "Oooh! Você quer batalhar Pokémon comigo?"
     },
     "victory": {
-      1: "Uagh?! Mmmuuuggghhh…"
+      1: "Uagh?! Mmmuuuggghhh..."
     },
     "defeat": {
-      1: `Yaaay! I did it! I de-feet-ed you! You can come for… For… An avenge match? 
-                $Come for an avenge match anytime you want!`,
+      1: "Yaaay! Eu consegui! Eu de-rotei você! Você pode vir para... Para... Uma revanche? $Venha para uma revanche quando quiser!",
     }
   },
   "agatha": {
     "encounter": {
-      1: "Pokémon are for battling! I'll show you how a real Trainer battles!"
+      1: "Pokémons são para batalhar! Vou te mostrar como um verdadeiro Treinador batalha!"
     },
     "victory": {
-      1: "Oh my! You're something special, child!"
+      1: "Oh meu! Você é algo especial, criança!"
     },
     "defeat": {
-      1: "Bahaha. That's how a proper battle's done!"
+      1: "Bahaha. É assim que uma batalha adequada é feita!"
     }
   },
   "flint": {
     "encounter": {
-      1: "Hope you're warmed up, cause here comes the Big Bang!"
+      1: "Espero que esteja aquecido, porque vem aí o Big Bang!"
     },
     "victory": {
-      1: "Incredible! Your moves are so hot, they make mine look lukewarm!"
+      1: "Incrível! Seus movimentos são tão quentes que fazem os meus parecerem mornos!"
     },
     "defeat": {
-      1: "Huh? Is that it? I think you need a bit more passion."
+      1: "Huh? É só isso? Acho que você precisa de um pouco mais de paixão."
     }
   },
   "grimsley": {
     "encounter": {
-      1: "The winner takes everything, and there's nothing left for the loser."
+      1: "O vencedor leva tudo, e não sobra nada para o perdedor."
     },
     "victory": {
-      1: "When one loses, they lose everything… The next thing I'll look for will be victory, too!"
+      1: "Quando alguém perde, perde tudo... A próxima coisa que procurarei será a vitória também!"
     },
     "defeat": {
-      1: "If somebody wins, the person who fought against that person will lose."
+      1: "Se alguém ganha, a pessoa que lutou contra essa pessoa vai perder."
     }
   },
   "caitlin": {
     "encounter": {
-      1: `It's me who appeared when the flower opened up. You who have been waiting…
-                $You look like a Pokémon Trainer with refined strength and deepened kindness. 
-                $What I look for in my opponent is superb strength… 
-                $Please unleash your power to the fullest!`,
+      1: "Sou eu quem apareceu quando a flor se abriu. Você que estava esperando... $Você parece um Treinador de Pokémon com força refinada e bondade aprofundada. $O que procuro em meu oponente é uma força soberba... $Por favor, libere seu poder ao máximo!",
     },
     "victory": {
-      1: "My Pokémon and I learned so much! I offer you my thanks."
+      1: "Meus Pokémon e eu aprendemos tanto! Agradeço a você."
     },
     "defeat": {
-      1: "I aspire to claim victory with elegance and grace."
+      1: "Aspiro a conquistar a vitória com elegância e graça."
     }
   },
   "diantha": {
     "encounter": {
-      1: `Battling against you and your Pokémon, all of you brimming with hope for the future… 
-                $Honestly, it just fills me up with energy I need to keep facing each new day! It does!`,
+      1: "Batalhar contra você e seu Pokémon, todos cheios de esperança para o futuro... $Honestamente, isso me enche de energia para continuar enfrentando cada novo dia! Enche mesmo!",
     },
     "victory": {
-      1: "Witnessing the noble spirits of you and your Pokémon in battle has really touched my heart…"
+      1: "Testemunhar os espíritos nobres de você e seu Pokémon na batalha realmente tocou meu coração..."
     },
     "defeat": {
-      1: "Oh, fantastic! What did you think? My team was pretty cool, right?"
+      1: "Oh, fantástico! O que achou? Minha equipe foi bem legal, né?"
     }
   },
   "wikstrom": {
     "encounter": {
-      1: `Well met, young challenger! Verily am I the famed blade of hardened steel, Duke Wikstrom! 
-                $Let the battle begin! En garde!`,
+      1: "Prazer em conhecê-lo, jovem desafiador! Sou a famosa lâmina de aço endurecido, Duque Wikstrom! $Que a batalha comece! En garde!",
     },
     "victory": {
-      1: "Glorious! The trust that you share with your honorable Pokémon surpasses even mine!"
+      1: "Glorioso! A confiança que você compartilha com seu honrado Pokémon supera até a minha!"
     },
     "defeat": {
-      1: `What manner of magic is this? My heart, it doth hammer ceaselessly in my breast! 
-                $Winning against such a worthy opponent doth give my soul wings--thus do I soar!`,
+      1: "Que tipo de magia é essa? Meu coração bate incessantemente no peito! $Vencer contra um oponente tão digno dá asas à minha alma—assim eu voo!",
     }
   },
   "acerola": {
     "encounter": {
-      1: "Battling is just plain fun! Come on, I can take you!"
+      1: "Batalhar é simplesmente divertido! Vamos lá, posso enfrentar você!"
     },
     "victory": {
-      1: "I'm… I'm speechless! How did you do it?!"
+      1: "Estou... Estou sem palavras! Como você fez isso?!"
     },
     "defeat": {
-      1: "Ehaha! What an amazing victory!"
+      1: "Ehaha! Que vitória incrível!"
     }
   },
   "larry_elite": {
     "encounter": {
-      1: `Hello there… It's me, Larry.
-                $I serve as a member of the Elite Four too, yes… Unfortunately for me.`,
+      1: "Olá... Sou eu, Larry. $Eu também sirvo como membro da Elite dos Quatro, sim... Infelizmente para mim.",
     },
     "victory": {
-      1: "Well, that took the wind from under our wings…"
+      1: "Bem, isso tirou o vento de nossas velas..."
     },
     "defeat": {
-      1: "It's time for a meeting with the boss."
+      1: "É hora de uma reunião com o chefe."
     }
   },
   "lance": {
     "encounter": {
-      1: "I've been waiting for you. Allow me to test your skill.",
-      2: "I thought that you would be able to get this far. Let's get this started."
+      1: "Eu estava esperando por você. Permita-me testar sua habilidade.",
+      2: "Eu pensei que você seria capaz de chegar até aqui. Vamos começar."
     },
     "victory": {
-      1: "You got me. You are magnificent!",
-      2: "I never expected another trainer to beat me… I'm surprised."
+      1: "Você me pegou. Você é magnífico!",
+      2: "Eu nunca esperava que outro treinador me derrotasse... Estou surpreso."
     },
     "defeat": {
-      1: "That was close. Want to try again?",
-      2: "It's not that you are weak. Don't let it bother you."
+      1: "Isso foi por pouco. Quer tentar novamente?",
+      2: "Não é que você seja fraco. Não deixe isso te aborrecer."
     }
   },
   "karen": {
     "encounter": {
-      1: "I am Karen. Would you care for a showdown with my Dark-type Pokémon?",
-      2: "I am unlike those you've already met.",
-      3: "You've assembled a charming team. Our battle should be a good one."
+      1: "Eu sou Karen. Gostaria de um confronto com meus Pokémon do tipo Sombrio?",
+      2: "Sou diferente daqueles que você já encontrou.",
+      3: "Você montou uma equipe encantadora. Nossa batalha deve ser boa."
     },
     "victory": {
-      1: "No! I can't win. How did you become so strong?",
-      2: "I will not stray from my chosen path.",
-      3: "The Champion is looking forward to meeting you."
+      1: "Não! Eu não posso vencer. Como você ficou tão forte?",
+      2: "Eu não vou me desviar do caminho que escolhi.",
+      3: "O Campeão está ansioso para conhecê-lo."
     },
     "defeat": {
-      1: "That's about what I expected.",
-      2: "Well, that was relatively entertaining.",
-      3: "Come visit me anytime."
+      1: "Era o que eu esperava.",
+      2: "Bem, isso foi relativamente divertido.",
+      3: "Venha me visitar a qualquer hora."
     }
   },
   "milo": {
     "encounter": {
-      1: `Sure seems like you understand Pokémon real well. 
-               $This is gonna be a doozy of a battle! 
-               $I'll have to Dynamax my Pokémon if I want to win!`,
+      1: "Parece que você entende bem de Pokémon. $Esta vai ser uma batalha difícil! $Vou ter que Dynamax meu Pokémon se quiser vencer!",
     },
     "victory": {
-      1: "The power of Grass has wilted… What an incredible Challenger!"
+      1: "O poder da Grama murchou... Que desafiante incrível!"
     },
     "defeat": {
-      1: "This'll really leave you in shock and awe."
+      1: "Isso vai realmente te deixar em choque e admiração."
     }
   },
   "lucian": {
     "encounter": {
-      1: `Just a moment, please. The book I'm reading has nearly reached its thrilling climax… 
-                $The hero has obtained a mystic sword and is about to face their final trial… Ah, never mind. 
-                $Since you've made it this far, I'll put that aside and battle you. 
-                $Let me see if you'll achieve as much glory as the hero of my book!,`
+      1: "Só um momento, por favor. O livro que estou lendo está quase chegando ao clímax emocionante... $O herói obteve uma espada mística e está prestes a enfrentar sua prova final... Ah, deixa pra lá. $Já que você chegou até aqui, vou deixar isso de lado e lutar com você. $Deixe-me ver se você alcançará tanta glória quanto o herói do meu livro!",
     },
     "victory": {
-      1: "I see… It appears you've put me in checkmate."
+      1: "Entendo... Parece que você me colocou em xeque-mate."
     },
     "defeat": {
-      1: "I have a reputation to uphold."
+      1: "Tenho uma reputação a manter."
     }
   },
   "drasna": {
     "encounter": {
-      1: `You must be a strong Trainer. Yes, quite strong indeed…
-                $That's just wonderful news! Facing opponents like you and your team will make my Pokémon grow like weeds!`
+      1: "Você deve ser um Treinador forte. Sim, bastante forte... $Isso é uma ótima notícia! Enfrentar oponentes como você e sua equipe fará meus Pokémon crescerem como ervas daninhas!"
     },
     "victory": {
-      1: "Oh, dear me. That sure was a quick battle… I do hope you'll come back again sometime!"
+      1: "Oh, céus. Essa foi uma batalha rápida... Espero que volte novamente algum dia!"
     },
     "defeat": {
-      1: "How can this be?"
+      1: "Como isso é possível?"
     }
   },
   "kahili": {
     "encounter": {
-      1: "So, here you are… Why don't we see who the winds favor today, you… Or me?"
+      1: "Então, aqui está você... Por que não vemos para quem os ventos favorecem hoje, você... Ou eu?"
     },
     "victory": {
-      1: "It's frustrating to me as a member of the Elite Four, but it seems your strength is the real deal."
+      1: "É frustrante para mim, como membro da Elite dos Quatro, mas parece que sua força é real."
     },
     "defeat": {
-      1: "That was an ace!"
+      1: "Isso foi um ás!"
     }
   },
   "hassel": {
     "encounter": {
-      1: "Prepare to learn firsthand how the fiery breath of ferocious battle feels!"
+      1: "Prepare-se para aprender em primeira mão como é o sopro ardente de uma batalha feroz!"
     },
     "victory": {
-      1: `Fortune smiled on me this time, but… 
-                $Judging from how the match went, who knows if I will be so lucky next time.`,
+      1: "A fortuna sorriu para mim desta vez, mas... $Julgar pelo modo como a luta foi, quem sabe se serei tão sortudo da próxima vez.",
     },
     "defeat": {
-      1: "That was an ace!"
+      1: "Isso foi um ás!"
     }
   },
   "blue": {
     "encounter": {
-      1: "You must be pretty good to get this far."
+      1: "Você deve ser muito bom para chegar tão longe."
     },
     "victory": {
-      1: "I've only lost to him and now to you… Him? Hee, hee…"
+      1: "Eu só perdi para ele e agora para você... Ele? Hee, hee..."
     },
     "defeat": {
-      1: "See? My power is what got me here."
+      1: "Viu? Meu poder é o que me trouxe até aqui."
     }
   },
   "piers": {
     "encounter": {
-      1: "Get ready for a mosh pit with me and my party! Spikemuth, it's time to rock!"
+      1: "Prepare-se para um mosh pit comigo e minha turma! Spikemuth, é hora de rockar!"
     },
     "victory": {
-      1: "Me an' my team gave it our best. Let's meet up again for a battle some time…"
+      1: "Eu e minha equipe demos o nosso melhor. Vamos nos encontrar novamente para uma batalha algum dia..."
     },
     "defeat": {
-      1: "My throat's ragged from shoutin'… But 'at was an excitin' battle!"
+      1: "Minha garganta está desgastada de tanto gritar... Mas foi uma batalha emocionante!"
     }
   },
   "red": {
@@ -1360,696 +1345,649 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "jasmine": {
     "encounter": {
-      1: "Oh… Your Pokémon are impressive. I think I will enjoy this."
+      1: "Oh... Seus Pokémon são impressionantes. Acho que vou gostar disso."
     },
     "victory": {
-      1: "You are truly strong. I'll have to try much harder, too."
+      1: "Você é realmente forte. Vou ter que me esforçar muito mais também."
     },
     "defeat": {
-      1: "I never expected to win."
+      1: "Eu nunca esperava vencer."
     }
   },
   "lance_champion": {
     "encounter": {
-      1: "I am still the Champion. I won't hold anything back."
+      1: "Ainda sou o Campeão. Não vou me segurar."
     },
     "victory": {
-      1: "This is the emergence of a new Champion."
+      1: "Este é o surgimento de um novo Campeão."
     },
     "defeat": {
-      1: "I successfully defended my Championship."
+      1: "Defendi com sucesso meu Campeonato."
     }
   },
   "steven": {
     "encounter": {
-      1: `Tell me… What have you seen on your journey with your Pokémon? 
-                $What have you felt, meeting so many other Trainers out there? 
-                $Traveling this rich land… Has it awoken something inside you? 
-                $I want you to come at me with all that you've learned. 
-                $My Pokémon and I will respond in turn with all that we know!`,
+      1: "Diga-me... O que você viu em sua jornada com seu Pokémon? $O que você sentiu ao encontrar tantos outros Treinadores por aí? $Viajar por esta rica terra... Despertou algo dentro de você? $Quero que você venha com tudo o que aprendeu. $Meu Pokémon e eu responderemos com tudo o que sabemos!",
     },
     "victory": {
-      1: "So I, the Champion, fall in defeat…"
+      1: "Então eu, o Campeão, caio em derrota..."
     },
     "defeat": {
-      1: "That was time well spent! Thank you!"
+      1: "Foi um tempo bem gasto! Obrigado!"
     }
   },
   "cynthia": {
     "encounter": {
-      1: "I, Cynthia, accept your challenge! There won't be any letup from me!"
+      1: "Eu, Cynthia, aceito seu desafio! Não vou pegar leve!"
     },
     "victory": {
-      1: "No matter how fun the battle is, it will always end sometime…"
+      1: "Não importa o quão divertida a batalha seja, ela sempre terminará em algum momento..."
     },
     "defeat": {
-      1: "Even if you lose, never lose your love of Pokémon."
+      1: "Mesmo se você perder, nunca perca seu amor por Pokémon."
     }
   },
   "iris": {
     "encounter": {
-      1: `Know what? I really look forward to having serious battles with strong Trainers! 
-                $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being! 
-                #And they are battling alongside Pokémon that have been through countless difficult battles! 
-                $If I battle with people like that, not only will I get stronger, my Pokémon will, too! 
-                $And we'll get to know each other even better! OK! Brace yourself! 
-                $I'm Iris, the Pokémon League Champion, and I'm going to defeat you!`,
+      1: "Sabe de uma coisa? Estou realmente ansiosa para ter batalhas sérias com Treinadores fortes! $Quer dizer, vamos lá! Os Treinadores que chegam aqui são Treinadores que desejam a vitória com cada fibra do seu ser! $E eles estão batalhando ao lado de Pokémon que passaram por inúmeras batalhas difíceis! $Se eu batalhar com pessoas assim, não só vou ficar mais forte, meus Pokémon também! $E vamos nos conhecer ainda melhor! OK! Prepare-se! $Eu sou Iris, a Campeã da Liga Pokémon, e vou te derrotar!",
     },
     "victory": {
-      1: "Aghhhh… I did my best, but we lost…"
+      1: "Aghhhh... Eu dei o meu melhor, mas perdemos..."
     },
     "defeat": {
-      1: "Yay! We won!"
+      1: "Yay! Nós ganhamos!"
     }
   },
   "hau": {
     "encounter": {
-      1: `I wonder if a Trainer battles differently depending on whether they're from a warm region or a cold region.
-                $Let's test it out!`,
+      1: "Me pergunto se um Treinador batalha de forma diferente dependendo de estar em uma região quente ou fria. $Vamos testar isso!",
     },
     "victory": {
-      1: "That was awesome! I think I kinda understand your vibe a little better now!"
+      1: "Isso foi incrível! Acho que entendi um pouco melhor seu estilo agora!"
     },
     "defeat": {
-      1: "Ma-an, that was some kinda battle!"
+      1: "Ma-an, isso foi algum tipo de batalha!"
     }
   },
   "geeta": {
     "encounter": {
-      1: `I decided to throw my hat in the ring once more. 
-                $Come now… Show me the fruits of your training.`,
+      1: "Decidi entrar na disputa mais uma vez. $Venha agora... Mostre-me os frutos do seu treinamento.",
     },
     "victory": {
-      1: "I eagerly await news of all your achievements!"
+      1: "Estou ansiosa para ouvir sobre todas as suas conquistas!"
     },
     "defeat": {
-      1: "What's the matter? This isn't all, is it?"
+      1: "O que houve? Isso é tudo?"
     }
   },
   "nemona": {
     "encounter": {
-      1: "Yesss! I'm so psyched! Time for us to let loose!"
+      1: "Sim! Estou tão animada! Hora de nos soltar!"
     },
     "victory": {
-      1: "Well, that stinks, but I still had fun! I'll getcha next time!"
+      1: "Bem, isso é uma pena, mas ainda me diverti! Vou te pegar na próxima!"
     },
     "defeat": {
-      1: "Well, that was a great battle! Fruitful for sure."
+      1: "Bem, essa foi uma ótima batalha! Frutífera com certeza."
     }
   },
   "leon": {
     "encounter": {
-      1: "We're gonna have an absolutely champion time!"
+      1: "Vamos ter um tempo absolutamente campeão!"
     },
     "victory": {
-      1: `My time as Champion is over… 
-                $But what a champion time it's been! 
-                $Thank you for the greatest battle I've ever had!`,
+      1: "Meu tempo como Campeão acabou... $Mas que tempo campeão foi! $Obrigado pela melhor batalha que já tive!",
     },
     "defeat": {
-      1: "An absolute champion time, that was!"
+      1: "Foi um tempo campeão absoluto!"
     }
   },
   "whitney": {
     "encounter": {
-      1: "Hey! Don't you think Pokémon are, like, super cute?"
+      1: "Ei! Você não acha que Pokémon são, tipo, super fofos?"
     },
     "victory": {
-      1: "Waaah! Waaah! You're so mean!"
+      1: "Waaah! Waaah! Você é tão mau!"
     },
     "defeat": {
-      1: "And that's that!"
+      1: "E é isso!"
     }
   },
   "chuck": {
     "encounter": {
-      1: "Hah! You want to challenge me? Are you brave or just ignorant?"
+      1: "Hah! Você quer me desafiar? Você é corajoso ou apenas ignorante?"
     },
     "victory": {
-      1: "You're strong! Would you please make me your apprentice?"
+      1: "Você é forte! Por favor, me faça seu aprendiz?"
     },
     "defeat": {
-      1: "There. Do you realize how much more powerful I am than you?"
+      1: "Aí está. Você percebeu o quanto sou mais poderoso que você?"
     }
   },
   "katy": {
     "encounter": {
-      1: "Don't let your guard down unless you would like to find yourself knocked off your feet!"
+      1: "Não baixe a guarda, a menos que queira se ver jogado ao chão!"
     },
     "victory": {
-      1: "All of my sweet little Pokémon dropped like flies!"
+      1: "Todos os meus adoráveis Pokémon caíram como moscas!"
     },
     "defeat": {
-      1: "Eat up, my cute little Vivillon!"
+      1: "Coma, meu adorável Vivillon!"
     }
   },
   "pryce": {
     "encounter": {
-      1: "Youth alone does not ensure victory! Experience is what counts."
+      1: "A juventude por si só não garante a vitória! A experiência é o que conta."
     },
     "victory": {
-      1: "Outstanding! That was perfect. Try not to forget what you feel now."
+      1: "Excelente! Isso foi perfeito. Tente não esquecer o que você sente agora."
     },
     "defeat": {
-      1: "Just as I envisioned."
+      1: "Exatamente como eu imaginei."
     }
   },
   "clair": {
     "encounter": {
-      1: "Do you know who I am? And you still dare to challenge me?"
+      1: "Você sabe quem eu sou? E ainda se atreve a me desafiar?"
     },
     "victory": {
-      1: "I wonder how far you can get with your skill level. This should be fascinating."
+      1: "Me pergunto até onde você pode chegar com seu nível de habilidade. Isso deve ser fascinante."
     },
     "defeat": {
-      1: "That's that."
+      1: "E é isso."
     }
   },
   "maylene": {
     "encounter": {
-      1: `I've come to challenge you now, and I won't hold anything back. 
-                    $Please prepare yourself for battle!`,
+      1: "Eu vim desafiar você agora, e não vou segurar nada. $Por favor, prepare-se para a batalha!",
     },
     "victory": {
-      1: "I admit defeat…"
+      1: "Admito a derrota..."
     },
     "defeat": {
-      1: "That was awesome."
+      1: "Isso foi incrível."
     }
   },
   "fantina": {
     "encounter": {
-      1: `You shall challenge me, yes? But I shall win. 
-                    $That is what the Gym Leader of Hearthome does, non?`,
+      1: "Você deve me desafiar, sim? Mas eu vou vencer. $É isso que o Líder de Ginásio de Hearthome faz, non?",
     },
     "victory": {
-      1: "You are so fantastically strong. I know why I have lost."
+      1: "Você é tão incrivelmente forte. Eu sei por que perdi."
     },
     "defeat": {
-      1: "I am so, so, very happy!"
+      1: "Estou tão, tão, muito feliz!"
     }
   },
   "byron": {
     "encounter": {
-      1: `Trainer! You're young, just like my son, Roark. 
-                    $With more young Trainers taking charge, the future of Pokémon is bright! 
-                    $So, as a wall for young people, I'll take your challenge!`,
+      1: "Treinador! Você é jovem, assim como meu filho, Roark. $Com mais jovens treinadores assumindo a liderança, o futuro dos Pokémon é brilhante! $Então, como uma barreira para os jovens, aceitarei seu desafio!",
     },
     "victory": {
-      1: "Hmm! My sturdy Pokémon--defeated!"
+      1: "Hmm! Meus Pokémon robustos—derrotados!"
     },
     "defeat": {
-      1: "Gwahahaha! How were my sturdy Pokémon?!"
+      1: "Gwahahaha! Como foram meus Pokémon robustos?!"
     }
   },
   "olympia": {
     "encounter": {
-      1: "An ancient custom deciding one's destiny. The battle begins!"
+      1: "Um costume antigo que decide o destino. A batalha começa!"
     },
     "victory": {
-      1: "Create your own path. Let nothing get in your way. Your fate, your future."
+      1: "Crie seu próprio caminho. Não deixe nada atrapalhar. Seu destino, seu futuro."
     },
     "defeat": {
-      1: "Our path is clear now."
+      1: "Nosso caminho está claro agora."
     }
   },
   "volkner": {
     "encounter": {
-      1: `Since you've come this far, you must be quite strong…
-                    $I hope you're the Trainer who'll make me remember how fun it is to battle!`,
+      1: "Desde que você chegou tão longe, você deve ser bem forte... $Espero que você seja o Treinador que me fará lembrar como é divertido batalhar!",
     },
     "victory": {
-      1: `You've got me beat…
-                    $Your desire and the noble way your Pokémon battled for you… 
-                    $I even felt thrilled during our match. That was a very good battle.`,
+      1: "Você me venceu... $Seu desejo e a maneira nobre como seus Pokémon lutaram por você... $Eu até me senti emocionado durante nossa batalha. Foi uma batalha muito boa.",
     },
     "defeat": {
-      1: `It was not shocking at all… 
-                    $That is not what I wanted!`,
+      1: "Não foi nada chocante... $Isso não é o que eu queria!",
     }
   },
   "burgh": {
     "encounter": {
-      1: `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it. 
-                    $OK! I can hear my battle muse loud and clear. Let's get straight to it!`,
-      2: `Of course, I'm really proud of all of my Pokémon! 
-                    $Well now… Let's get right to it!`
+      1: "M'hm... Se eu ganhar esta batalha, sinto que posso desenhar uma imagem diferente de qualquer outra. $OK! Posso ouvir minha musa da batalha alto e claro. Vamos direto ao assunto!",
+      2: "Claro, estou muito orgulhoso de todos os meus Pokémon! $Bem, então... Vamos direto ao assunto!"
     },
     "victory": {
-      1: "Is it over? Has my muse abandoned me?",
-      2: "Hmm… It's over! You're incredible!"
+      1: "Está acabado? Minha musa me abandonou?",
+      2: "Hmm... Está acabado! Você é incrível!"
     },
     "defeat": {
-      1: "Wow… It's beautiful somehow, isn't it…",
-      2: `Sometimes I hear people say something was an ugly win. 
-                    $I think if you're trying your best, any win is beautiful.`
+      1: "Uau... É bonito de alguma forma, não é...",
+      2: "Às vezes ouço as pessoas dizerem que algo foi uma vitória feia. $Acho que se você está dando o seu melhor, qualquer vitória é linda."
     }
   },
   "elesa": {
     "encounter": {
-      1: `C'est fini! When I'm certain of that, I feel an electric jolt run through my body! 
-                    $I want to feel the sensation, so now my beloved Pokémon are going to make your head spin!`,
+      1: "C'est fini! Quando estou certa disso, sinto uma descarga elétrica percorrer meu corpo! $Quero sentir a sensação, então agora meus Pokémon amados vão fazer sua cabeça girar!",
     },
     "victory": {
-      1: "I meant to make your head spin, but you shocked me instead."
+      1: "Pretendia fazer sua cabeça girar, mas você me chocou em vez disso."
     },
     "defeat": {
-      1: "That was unsatisfying somehow… Will you give it your all next time?"
+      1: "Isso foi insatisfatório de alguma forma... Você vai dar tudo de si da próxima vez?"
     }
   },
   "skyla": {
     "encounter": {
-      1: `It's finally time for a showdown! That means the Pokémon battle that decides who's at the top, right? 
-                    $I love being on the summit! 'Cause you can see forever and ever from high places! 
-                    $So, how about you and I have some fun?`,
+      1: "Finalmente é hora de um confronto! Isso significa a batalha de Pokémon que decide quem está no topo, certo? $Adoro estar no topo! Porque você pode ver para sempre e sempre de lugares altos! $Então, que tal você e eu nos divertirmos?",
     },
     "victory": {
-      1: "Being your opponent in battle is a new source of strength to me. Thank you!"
+      1: "Ser seu oponente na batalha é uma nova fonte de força para mim. Obrigado!"
     },
     "defeat": {
-      1: "Win or lose, you always gain something from a battle, right?"
+      1: "Ganhar ou perder, você sempre ganha algo de uma batalha, certo?"
     }
   },
   "brycen": {
     "encounter": {
-      1: `There is also strength in being with other people and Pokémon. 
-                    $Receiving their support makes you stronger. I'll show you this power!`,
+      1: "Também existe força em estar com outras pessoas e Pokémon. $Receber seu apoio te torna mais forte. Vou te mostrar esse poder!",
     },
     "victory": {
-      1: "The wonderful combination of you and your Pokémon! What a beautiful friendship!"
+      1: "A maravilhosa combinação de você e seu Pokémon! Que bela amizade!"
     },
     "defeat": {
-      1: "Extreme conditions really test you and train you!"
+      1: "Condições extremas realmente te testam e te treinam!"
     }
   },
   "drayden": {
     "encounter": {
-      1: `What I want to find is a young Trainer who can show me a bright future. 
-                    $Let's battle with everything we have: your skill, my experience, and the love we've raised our Pokémon with!`,
+      1: "O que eu quero encontrar é um jovem Treinador que possa me mostrar um futuro brilhante. $Vamos lutar com tudo o que temos: sua habilidade, minha experiência e o amor com que criamos nossos Pokémon!",
     },
     "victory": {
-      1: "This intense feeling that floods me after a defeat… I don't know how to describe it."
+      1: "Esse sentimento intenso que me inunda após uma derrota... Não sei como descrever."
     },
     "defeat": {
-      1: "Harrumph! I know your ability is greater than that!"
+      1: "Harrumph! Eu sei que sua habilidade é maior do que isso!"
     }
   },
   "grant": {
     "encounter": {
-      1: `There is only one thing I wish for. 
-                    $That by surpassing one another, we find a way to even greater heights.`,
+      1: "Há apenas uma coisa que desejo. $Que, ao superar um ao outro, encontremos um caminho para alturas ainda maiores.",
     },
     "victory": {
-      1: "You are a wall that I am unable to surmount!"
+      1: "Você é uma parede que eu não consigo superar!"
     },
     "defeat": {
-      1: `Do not give up. 
-                    $That is all there really is to it. 
-                    $The most important lessons in life are simple.`,
+      1: "Não desista. $Isso é tudo o que realmente existe. $As lições mais importantes da vida são simples.",
     }
   },
   "korrina": {
     "encounter": {
-      1: "Time for Lady Korrina's big appearance!"
+      1: "Hora da grande aparição da Lady Korrina!"
     },
     "victory": {
-      1: "It's your very being that allows your Pokémon to evolve!"
+      1: "É a sua própria essência que permite que seus Pokémon evoluam!"
     },
     "defeat": {
-      1: "What an explosive battle!"
+      1: "Que batalha explosiva!"
     }
   },
   "clemont": {
     "encounter": {
-      1: "Oh! I'm glad that we got to meet!"
+      1: "Oh! Estou feliz que nos encontramos!"
     },
     "victory": {
-      1: "Your passion for battle inspires me!"
+      1: "Sua paixão pela batalha me inspira!"
     },
     "defeat": {
-      1: "Looks like my Trainer-Grow-Stronger Machine, Mach 2 is really working!"
+      1: "Parece que minha Máquina-Para-Fazer-O-Treinador-Ficar-Mais-Forte, Mach 2, está realmente funcionando!"
     }
   },
   "valerie": {
     "encounter": {
-      1: `Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. 
-                    $Then I suppose you have earned yourself the right to a battle, as a reward for your efforts. 
-                    $The elusive Fairy may appear frail as the breeze and delicate as a bloom, but it is strong.`,
+      1: "Oh, se não é um jovem Treinador... É adorável conhecê-lo assim. $Então, suponho que você tenha conquistado o direito a uma batalha, como recompensa por seus esforços. $A esquiva Fada pode parecer frágil como a brisa e delicada como uma flor, mas é forte.",
     },
     "victory": {
-      1: "I hope that you will find things worth smiling about tomorrow…"
+      1: "Espero que você encontre coisas que valham a pena sorrir amanhã..."
     },
     "defeat": {
-      1: "Oh goodness, what a pity…"
+      1: "Oh, céus, que pena..."
     }
   },
   "wulfric": {
     "encounter": {
-      1: `You know what? We all talk big about what you learn from battling and bonds and all that…
-                    $But really, I just do it 'cause it's fun. 
-                    $Who cares about the grandstanding? Let's get to battling!`,
+      1: "Sabe de uma coisa? Todos falamos muito sobre o que você aprende ao lutar e sobre os laços e tudo mais... $Mas, na verdade, eu só faço isso porque é divertido. $Quem se importa com a grandiloquência? Vamos à batalha!",
     },
     "victory": {
-      1: "Outstanding! I'm tough as an iceberg, but you smashed me through and through!"
+      1: "Incrível! Sou duro como um iceberg, mas você me quebrou de cima a baixo!"
     },
     "defeat": {
-      1: "Tussle with me and this is what happens!"
+      1: "Lute comigo e é isso que acontece!"
     }
   },
   "kabu": {
     "encounter": {
-      1: `Every Trainer and Pokémon trains hard in pursuit of victory. 
-                    $But that means your opponent is also working hard to win. 
-                    $In the end, the match is decided by which side is able to unleash their true potential.`,
+      1: "Todo Treinador e Pokémon treinam arduamente em busca da vitória. $Mas isso significa que seu oponente também está se esforçando para vencer. $No final, a partida é decidida por qual lado consegue liberar seu verdadeiro potencial.",
     },
     "victory": {
-      1: "I'm glad I could battle you today!"
+      1: "Estou feliz por poder lutar com você hoje!"
     },
     "defeat": {
-      1: "That's a great way for me to feel my own growth!"
+      1: "Essa é uma ótima maneira de sentir meu próprio crescimento!"
     }
   },
   "bea": {
     "encounter": {
-      1: `Do you have an unshakable spirit that won't be moved, no matter how you are attacked? 
-                    $I think I'll just test that out, shall I?`,
+      1: "Você tem um espírito inabalável que não será movido, não importa como seja atacado? $Acho que vou testar isso, certo?",
     },
     "victory": {
-      1: "I felt the fighting spirit of your Pokémon as you led them in battle."
+      1: "Senti o espírito de luta do seu Pokémon enquanto você os liderava na batalha."
     },
     "defeat": {
-      1: "That was the best sort of match anyone could ever hope for."
+      1: "Essa foi a melhor batalha que alguém poderia esperar."
     }
   },
   "opal": {
     "encounter": {
-      1: "Let me have a look at how you and your partner Pokémon behave!"
+      1: "Deixe-me ver como você e seu parceiro Pokémon se comportam!"
     },
     "victory": {
-      1: "Your pink is still lacking, but you're an excellent Trainer with excellent Pokémon."
+      1: "Seu rosa ainda está faltando, mas você é um excelente Treinador com excelentes Pokémon."
     },
     "defeat": {
-      1: "Too bad for you, I guess."
+      1: "Muito ruim para você, eu acho."
     }
   },
   "bede": {
     "encounter": {
-      1: "I suppose I should prove beyond doubt just how pathetic you are and how strong I am."
+      1: "Acho que devo provar além de qualquer dúvida o quão patético você é e o quão forte eu sou."
     },
     "victory": {
-      1: "I see… Well, that's fine. I wasn't really trying all that hard anyway."
+      1: "Entendo... Bem, está bem. Eu realmente não estava me esforçando tanto assim."
     },
     "defeat": {
-      1: "Not a bad job, I suppose."
+      1: "Nada mal, eu acho."
     }
   },
   "gordie": {
     "encounter": {
-      1: "So, let's get this over with."
+      1: "Então, vamos acabar logo com isso."
     },
     "victory": {
-      1: "I just want to climb into a hole… Well, I guess it'd be more like falling from here."
+      1: "Só quero me enterrar em um buraco... Bem, acho que seria mais como cair daqui."
     },
     "defeat": {
-      1: "Battle like you always do, victory will follow!"
+      1: "Lute como sempre, a vitória virá!"
     }
   },
   "marnie": {
     "encounter": {
-      1: `The truth is, when all's said and done… I really just wanna become Champion for myself! 
-                    $So don't take it personal when I kick your butt!`,
+      1: "A verdade é que, quando tudo está dito e feito... Eu realmente só quero me tornar Campeã por mim mesma! $Então não leve para o lado pessoal quando eu chutar seu traseiro!",
     },
     "victory": {
-      1: "OK, so I lost… But I got to see a lot of the good points of you and your Pokémon!"
+      1: "OK, então eu perdi... Mas eu vi muitos dos pontos positivos de você e seu Pokémon!"
     },
     "defeat": {
-      1: "Hope you enjoyed our battle tactics."
+      1: "Espero que tenha gostado de nossas táticas de batalha."
     }
   },
   "raihan": {
     "encounter": {
-      1: "I'm going to defeat the Champion, win the whole tournament, and prove to the world just how strong the great Raihan really is!"
+      1: "Vou derrotar o Campeão, ganhar o torneio inteiro e provar ao mundo o quão forte o grande Raihan realmente é!"
     },
     "victory": {
-      1: `I look this good even when I lose. 
-                    $It's a real curse. 
-                    $Guess it's time for another selfie!`,
+      1: "Eu pareço bem mesmo quando perco. $É uma verdadeira maldição. $Acho que é hora de outra selfie!",
     },
     "defeat": {
-      1: "Let's take a selfie to remember this."
+      1: "Vamos tirar uma selfie para lembrar disso."
     }
   },
   "brassius": {
     "encounter": {
-      1: "I assume you are ready? Let our collaborative work of art begin!"
+      1: "Presumo que esteja pronto? Vamos começar nossa obra de arte colaborativa!"
     },
     "victory": {
-      1: "Ahhh…vant-garde!"
+      1: "Ahhh... avant-garde!"
     },
     "defeat": {
-      1: "I will begin on a new piece at once!"
+      1: "Vou começar uma nova peça imediatamente!"
     }
   },
   "iono": {
     "encounter": {
-      1: `How're ya feelin' about this battle?
-                    $...
-                    $Let's get this show on the road! How strong is our challenger? 
-                    $I 'unno! Let's find out together!`,
+      1: "Como você está se sentindo sobre esta batalha? $... $Vamos colocar o show na estrada! Quão forte é o nosso desafiador? $Eu não sei! Vamos descobrir juntos!",
     },
     "victory": {
-      1: "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
+      1: "Você é tão chamativo e brilhante quanto um Raio de 10.000.000 volts, amigão!"
     },
     "defeat": {
-      1: "Your eyeballs are MINE!"
+      1: "Seus olhos são MEUS!"
     }
   },
   "larry": {
     "encounter": {
-      1: "When all's said and done, simplicity is strongest."
+      1: "Quando tudo está dito e feito, a simplicidade é mais forte."
     },
     "victory": {
-      1: "A serving of defeat, huh?"
+      1: "Uma porção de derrota, hein?"
     },
     "defeat": {
-      1: "I'll call it a day."
+      1: "Vou encerrar o dia."
     }
   },
   "ryme": {
     "encounter": {
-      1: "Come on, baby! Rattle me down to the bone!"
+      1: "Vamos lá, baby! Me agite até os ossos!"
     },
     "victory": {
-      1: "You're cool, my friend—you move my SOUL!"
+      1: "Você é legal, meu amigo—você move minha ALMA!"
     },
     "defeat": {
-      1: "Later, baby!"
+      1: "Até mais, baby!"
     }
   },
   "grusha": {
     "encounter": {
-      1: "All I need to do is make sure the power of my Pokémon chills you to the bone!"
+      1: "Tudo o que preciso fazer é garantir que o poder do meu Pokémon te arrependa até os ossos!"
     },
     "victory": {
-      1: "Your burning passion… I kinda like it, to be honest."
+      1: "Sua paixão ardente... Eu meio que gosto, para ser honesto."
     },
     "defeat": {
-      1: "Things didn't heat up for you."
+      1: "As coisas não esquentaram para você."
     }
   },
   "marnie_elite": {
     "encounter": {
-      1: "You've made it this far, huh? Let's see if you can handle my Pokémon!",
-      2: "I'll give it my best shot, but don't think I'll go easy on you!"
+      1: "Você chegou até aqui, hein? Vamos ver se você pode lidar com meus Pokémon!",
+      2: "Vou dar o meu melhor, mas não pense que vou pegar leve com você!"
     },
     "victory": {
-      1: "I can't believe I lost... But you deserved that win. Well done!",
-      2: "Looks like I've still got a lot to learn. Great battle, though!"
+      1: "Não acredito que perdi... Mas você mereceu essa vitória. Bem feito!",
+      2: "Parece que ainda tenho muito a aprender. Grande batalha, porém!"
     },
     "defeat": {
-      1: "You put up a good fight, but I've got the edge! Better luck next time!",
-      2: "Seems like my training's paid off. Thanks for the battle!"
+      1: "Você lutou bem, mas eu tenho a vantagem! Melhor sorte na próxima vez!",
+      2: "Parece que meu treinamento valeu a pena. Obrigado pela batalha!"
     }
   },
   "nessa_elite": {
     "encounter": {
-      1: "The tides are turning in my favor. Ready to get swept away?",
-      2: "Let's make some waves with this battle! I hope you're prepared!"
+      1: "As marés estão mudando a meu favor. Pronto para ser levado pela corrente?",
+      2: "Vamos fazer ondas com esta batalha! Espero que esteja preparado!"
     },
     "victory": {
-      1: "You navigated those waters perfectly... Well done!",
-      2: "Looks like my currents were no match for you. Great job!"
+      1: "Você navegou nessas águas perfeitamente... Bem feito!",
+      2: "Parece que minhas correntes não foram páreo para você. Bom trabalho!"
     },
     "defeat": {
-      1: "Water always finds a way. That was a refreshing battle!",
-      2: "You fought well, but the ocean's power is unstoppable!"
+      1: "A água sempre encontra um caminho. Essa foi uma batalha refrescante!",
+      2: "Você lutou bem, mas o poder do oceano é imparável!"
     }
   },
   "bea_elite": {
     "encounter": {
-      1: "Prepare yourself! My fighting spirit burns bright!",
-      2: "Let's see if you can keep up with my relentless pace!"
+      1: "Prepare-se! Meu espírito de luta brilha intensamente!",
+      2: "Vamos ver se você consegue acompanhar meu ritmo implacável!"
     },
     "victory": {
-      1: "Your strength... It's impressive. You truly deserve this win.",
-      2: "I've never felt this intensity before. Amazing job!"
+      1: "Sua força... É impressionante. Você realmente merece essa vitória.",
+      2: "Nunca senti essa intensidade antes. Trabalho incrível!"
     },
     "defeat": {
-      1: "Another victory for my intense training regimen! Well done!",
-      2: "You've got strength, but I trained harder. Great battle!"
+      1: "Outra vitória para meu rigoroso regime de treinamento! Bem feito!",
+      2: "Você tem força, mas eu treinei mais. Grande batalha!"
     }
   },
   "allister_elite": {
     "encounter": {
-      1: "Shadows fall... Are you ready to face your fears?",
-      2: "Let's see if you can handle the darkness that I command."
+      1: "As sombras caem... Você está pronto para enfrentar seus medos?",
+      2: "Vamos ver se você pode lidar com a escuridão que eu comando."
     },
     "victory": {
-      1: "You've dispelled the shadows... For now. Well done.",
-      2: "Your light pierced through my darkness. Great job."
+      1: "Você dissipou as sombras... Por enquanto. Bem feito.",
+      2: "Sua luz atravessou minha escuridão. Ótimo trabalho."
     },
     "defeat": {
-      1: "The shadows have spoken... Your strength isn't enough.",
-      2: "Darkness triumphs... Maybe next time you'll see the light."
+      1: "As sombras falaram... Sua força não é suficiente.",
+      2: "A escuridão triunfa... Talvez na próxima vez você veja a luz."
     }
   },
   "raihan_elite": {
     "encounter": {
-      1: "Storm's brewing! Let's see if you can weather this fight!",
-      2: "Get ready to face the eye of the storm!"
+      1: "Tempestade se formando! Vamos ver se você aguenta essa luta!",
+      2: "Prepare-se para enfrentar o olho da tempestade!"
     },
     "victory": {
-      1: "You've bested the storm... Incredible job!",
-      2: "You rode the winds perfectly... Great battle!"
+      1: "Você enfrentou a tempestade... Trabalho incrível!",
+      2: "Você navegou nos ventos perfeitamente... Grande batalha!"
     },
     "defeat": {
-      1: "Another storm weathered, another victory claimed! Well fought!",
-      2: "You got caught in my storm! Better luck next time!"
+      1: "Outra tempestade enfrentada, outra vitória conquistada! Bem lutado!",
+      2: "Você foi pego na minha tempestade! Melhor sorte na próxima vez!"
     }
   },
   "rival": {
     "encounter": {
-      1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
-                    $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
-                    $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
-                    $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
+      1: `@c{smile}Eai, estava procurando você! Sabia que você estava ansioso para começar, mas esperava pelo menos um tchau…
+                $@c{smile_eclosed}Então você está realmente perseguindo seu sonho, hein?\n Quase não consigo acreditar.
+                $@c{serious_smile_fists}Já que estamos aqui, que tal uma batalha?\nAfinal, quero ter certeza de que você está pronto.
+                $@c{serious_mopen_fists}Não se segure, quero que você dê tudo de si!`
     },
     "victory": {
-      1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
-                   $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
-                   $By the way, the professor asked me to give you these items. They look pretty cool.
-                   $@c{serious_smile_fists}Good luck out there!`
+      1: `@c{shock}Caramba… Você me limpou.\nVocê é mesmo um novato?
+                $@c{smile}Talvez tenha sido um pouco de sorte, mas…\nQuem sabe você consiga chegar até o fim.
+                $Aliás, o professor me pediu para te dar esses itens. Eles parecem bem legais.
+                $@c{serious_smile_fists}Boa sorte lá fora!`
     },
   },
   "rival_female": {
     "encounter": {
-      1: `@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?
-                    $@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…
-                    $@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!
-                    $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
+      1: `@c{smile_wave}Aí está você! Procurei você em todo lugar!\n@c{angry_mopen}Esqueceu de se despedir da sua melhor amiga?
+                $@c{smile_ehalf}Você está indo atrás do seu sonho, né?\nEsse dia realmente chegou, não é…
+                $@c{smile}Enfim, vou te perdoar por ter me esquecido, mas com uma condição. @c{smile_wave_wink}Você tem que lutar comigo!
+                $@c{angry_mopen}Dê o seu melhor! Não quer que sua aventura acabe antes de começar, né?`
     },
     "victory": {
-      1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
-                    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
-                    $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
-                    $@c{smile_wave}Do your best like always! I believe in you!`
+      1: `@c{shock}Você acabou de começar e já está tão forte?!@d{96}\n@c{angry}Você trapaceou, não foi?
+                $@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile_eclosed}Eu perdi de forma justa… Tenho a sensação de que você vai se sair muito bem lá fora.
+                $@c{smile}Aliás, o professor pediu para eu te dar alguns itens. Espero que sejam úteis!
+                $@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!`
     },
   },
   "rival_2": {
     "encounter": {
-      1: `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
-                $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
-                $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
-                $I've been doing a lot of my own training so I'll definitely put up a fight this time.
-                $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
+      1: `@c{smile}Eai, você também está aqui?\n@c{smile_eclosed}Ainda com um recorde perfeito, hein…?
+            $@c{serious_mopen_fists}Sei que parece que eu te segui até aqui, mas isso não é totalmente verdade.
+            $@c{serious_smile_fists}Sinceramente, tenho estado ansioso por uma revanche desde que você me venceu em casa.
+            $Tenho treinado bastante, então vou dar uma luta difícil desta vez.
+            $@c{serious_mopen_fists}Não se segure, assim como antes!\nVamos lá!`
     },
     "victory": {
-      1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
-                $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
-                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
-                $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
-                $@c{smile}Anyway, take care!`
+      1: `@c{neutral_eclosed}Ah. Acho que fui confiante demais.
+            $@c{smile}Tudo bem, no entanto. Eu imaginei que isso poderia acontecer.\n@c{serious_mopen_fists}Isso só significa que preciso me esforçar mais para a próxima vez!\n
+            $@c{smile}Ah, não que você precise realmente de ajuda, mas eu tinha um extra desses itens e pensei que você poderia querer.
+            $@c{serious_smile_fists}Não espere outro depois deste!\nNão posso continuar dando vantagem ao meu oponente.
+            $@c{smile}Enfim, cuide-se!`
     },
   },
   "rival_2_female": {
     "encounter": {
-      1: `@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!
-                $@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.
-                $@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.
-                $@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.
-                $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
+      1: `@c{smile_wave}Oh, que surpresa te encontrar aqui. Parece que você ainda está invicto. @c{angry_mopen}Hum… Nada mal!
+            $@c{angry_mopen}Eu sei o que você está pensando, e não, eu não estava te espionando. @c{smile_eclosed}Acontece que eu estava na área.
+            $@c{smile_ehalf}Estou feliz por você, mas só quero te avisar que está tudo bem perder às vezes.
+            $@c{smile}Aprendemos com nossos erros, muitas vezes mais do que se continuássemos vencendo.
+            $@c{angry_mopen}De qualquer forma, tenho treinado duro para nossa revanche, então é melhor você dar o seu melhor!`
     },
     "victory": {
-      1: `@c{neutral}I… wasn't supposed to lose that time…
-                $@c{smile}Aw well. That just means I'll have to train even harder for next time!
-                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
-                $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
-                $@c{smile_wave}Keep at it!`
+      1: `@c{neutral}Eu… não era para eu perder dessa vez…
+            $@c{smile}Ah bem. Isso só significa que vou ter que treinar ainda mais para a próxima vez!
+            $@c{smile_wave}Também consegui mais um desses para você!\n@c{smile_wave_wink}Não precisa me agradecer~.
+            $@c{angry_mopen}Este é o último, hein! Você não vai ganhar mais nenhum presente de mim depois desse!
+            $@c{smile_wave}Continue assim!`
     },
     "defeat": {
-      1: "It's OK to lose sometimes…"
+      1: "Está tudo bem perder às vezes…"
     }
   },
   "rival_3": {
     "encounter": {
-      1: `@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.
-                $@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.
-                $@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.
-                $@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
-                $@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?
-                $@c{serious_mopen_fists}If so, prove it to me.`
+      1: `@c{smile}Eai, olha quem é! Faz um tempo.\n@c{neutral}Você… ainda está invicto? Hum.
+            $@c{neutral_eclosed}As coisas têm sido meio… estranhas.\nNão é a mesma coisa em casa sem você.
+            $@c{serious}Eu sei que é egoísta, mas preciso desabafar.\n@c{neutral_eclosed}Acho que você está se metendo em algo grande demais aqui.
+            $@c{serious}Nunca perder é irrealista.\nPrecisamos perder às vezes para crescer.
+            $@c{neutral_eclosed}Você teve uma grande jornada, mas ainda há muito pela frente, e só vai ficar mais difícil. @c{neutral}Você está preparado para isso?
+            $@c{serious_mopen_fists}Se sim, prove para mim.`
     },
     "victory": {
-      1: "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
+      1: "@c{angry_mhalf}Isso é ridículo… Eu mal parei de treinar…\nComo ainda estamos tão distantes?"
     },
   },
   "rival_3_female": {
     "encounter": {
-      1: `@c{smile_wave}Long time no see! Still haven't lost, huh.\n@c{angry}You're starting to get on my nerves. @c{smile_wave_wink}Just kidding!
-                $@c{smile_ehalf}But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.
-                $@c{smile_eclosed}I support you in your dream and everything, but the reality is you're going to lose sooner or later.
-                $@c{smile}And when you do, I'll be there for you like always.\n@c{angry_mopen}Now, let me show you how strong I've become!`
+      1: `@c{smile_wave}Quanto tempo! Ainda não perdeu, né.\n@c{angry}Você está começando a me irritar. @c{smile_wave_wink}Brincadeirinha!
+            $@c{smile_ehalf}Mas sério, você não sente saudades de casa? Ou… de mim?\nEu… Eu quero dizer, sentimos muito a sua falta.
+            $@c{smile_eclosed}Eu apoio o seu sonho e tudo mais, mas a realidade é que você vai perder mais cedo ou mais tarde.
+            $@c{smile}E quando isso acontecer, estarei lá para você, como sempre.\n@c{angry_mopen}Agora, deixe-me mostrar o quão forte eu me tornei!`
     },
     "victory": {
-      1: "@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…"
-
+      1: "@c{shock}Depois de tudo isso… não foi o suficiente…?\nVocê nunca vai voltar a esse ritmo…"
     },
     "defeat": {
-      1: "You gave it your best, now let's go home."
+      1: "Você deu o seu melhor, agora vamos para casa."
     }
   },
   "rival_4": {
     "encounter": {
-      1: `@c{neutral}Hey.
-                $I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.
-                $@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.
-                $@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
-                $@c{serious_mopen_fists}None of that matters anymore, not until I win.
-                $@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.
-                $@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.
-                $@c{serious_mopen_fists}Prepare yourself.`
+      1: `@c{neutral}Oi.
+            $Não vou enrolar com você.\n@c{neutral_eclosed}Estou aqui para vencer, simples assim.
+            $@c{serious_mhalf_fists}Aprendi a maximizar meu potencial dedicando todo o meu tempo ao treino.
+            $@c{smile}Você ganha muito tempo extra quando corta o sono e a interação social desnecessários.
+            $@c{serious_mopen_fists}Nada disso importa mais, não até eu vencer.
+            $@c{neutral_eclosed}Cheguei ao ponto de não perder mais.\n@c{smile_eclosed}Acho que sua filosofia não estava tão errada afinal.
+            $@c{angry_mhalf}Perder é para os fracos, e eu não sou mais fraco.
+            $@c{serious_mopen_fists}Prepare-se.`
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
+      1: "@c{neutral}O que…@d{64} O que você é?"
     },
   },
   "rival_4_female": {
     "encounter": {
-      1: `@c{neutral}It's me! You didn't forget about me again… did you?
-                $@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
-                $@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
-                $@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
-                $@c{neutral}In fact, I… hardly recognize myself.
-                $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
-                $And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.
-                $@c{angry_mopen}Prepare yourself.`
+      1: `@c{neutral}Sou eu! Você não esqueceu de mim de novo… esqueceu?
+            $@c{smile}Você deveria se orgulhar de até onde chegou. Parabéns!\nMas parece que é o fim da sua jornada.
+            $@c{smile_eclosed}Você despertou algo em mim que eu nunca soube que existia.\nParece que agora tudo o que faço é treinar.
+            $@c{smile_ehalf}Eu mal como ou durmo agora, só treino meus Pokémon o dia todo, ficando mais forte a cada vez.
+            $@c{neutral}Na verdade, eu… mal me reconheço.
+            $E agora, finalmente atingi o desempenho máximo.\nNão acho que alguém poderia me vencer agora.
+            $E sabe de uma coisa? É tudo por sua causa.\n@c{smile_ehalf}Eu não sei se te agradeço ou te odeio.
+            $@c{angry_mopen}Prepare-se.`
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
-
+      1: "@c{neutral}O que…@d{64} O que você é?"
     },
     "defeat": {
-      1: "$@c{smile}You should be proud of how far you made it."
+      1: "$@c{smile}Você deveria se orgulhar de até onde chegou."
     }
   },
   "rival_5": {
@@ -2066,7 +2004,6 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "@c{neutral}…"
-
     },
     "defeat": {
       1: "$@c{smile_ehalf}…"
@@ -2074,210 +2011,211 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6": {
     "encounter": {
-      1: `@c{smile_eclosed}We meet again.
-                $@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
-                $@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.
-                $@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.
-                $@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
-                $@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
-                $@c{serious_mhalf_fists}You feel the same, don't you?
-                $@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
-                $Those times we cherished together that seem so recent are nothing but a distant memory.
-                $@c{neutral_eclosed}Who can say whether they were ever even real in the first place.
-                $@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.
-                $@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance.`
+      1: `@c{smile_eclosed}Nos encontramos de novo.
+            $@c{neutral}Tive um tempo para refletir sobre tudo isso.\nHá uma razão para tudo isso parecer tão estranho.
+            $@c{neutral_eclosed}Seu sonho, minha vontade de te vencer…\nTudo faz parte de algo maior.
+            $@c{serious}Isso não é sobre mim, nem sobre você… É sobre o mundo, @c{serious_mhalf_fists}e é meu propósito te levar ao limite.
+            $@c{neutral_eclosed}Se cumpri esse propósito, não posso dizer, mas fiz tudo ao meu alcance.
+            $@c{neutral}Este lugar em que acabamos é assustador… Mas de alguma forma me sinto indiferente, como se já tivesse estado aqui antes.
+            $@c{serious_mhalf_fists}Você sente o mesmo, não sente?
+            $@c{serious}…é como se algo aqui estivesse falando comigo.\nIsso é tudo o que o mundo conhece há muito tempo.
+            $Aqueles momentos que apreciamos juntos que parecem tão recentes não passam de uma memória distante.
+            $@c{neutral_eclosed}Quem pode dizer se eles foram realmente reais em primeiro lugar.
+            $@c{serious_mopen_fists}Você precisa continuar empurrando, porque se não o fizer, isso nunca vai acabar. Você é o único que pode fazer isso.
+            $@c{serious_smile_fists}Eu mal sei o que tudo isso significa, só sei que é verdade.
+            $@c{serious_mopen_fists}Se você não pode me derrotar aqui e agora, você não terá chance.`
     },
     "victory": {
-      1: `@c{smile_eclosed}It looks like my work is done here.
-                $I want you to promise me one thing.\n@c{smile}After you heal the world, please come home.`
+      1: `@c{smile_eclosed}Parece que meu trabalho aqui está feito.
+            $Quero que você me prometa uma coisa.\n@c{smile}Depois que curar o mundo, por favor, volte para casa.`
     },
   },
   "rival_6_female": {
     "encounter": {
-      1: `@c{smile_ehalf}So it's just us again.
-                $@c{smile_eclosed}You know, I keep going around and around in my head…
-                $@c{smile_ehalf}There's something to all this, why everything seems so strange now…
-                $@c{smile}You have your dream, and I have this ambition in me…
-                $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
-                $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
-                $@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
-                $It's something about this strange and dreadful place… Everything seems so clear…
-                $This… is all the world's known for a long time now.
-                $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
-                $@c{smile_ehalf}Were they even real? They seem so far away now…
-                $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
-                $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
+      1: `@c{smile_ehalf}Então somos só nós de novo.
+            $@c{smile_eclosed}Sabe, continuo pensando nisso…
+            $@c{smile_ehalf}Há algo nisso tudo, por que tudo parece tão estranho agora…
+            $@c{smile}Você tem seu sonho, e eu tenho essa ambição em mim…
+            $Não consigo evitar sentir que há um propósito maior em tudo isso, no que estamos fazendo, você e eu.
+            $@c{smile_eclosed}Acho que devo te levar ao limite.
+            $@c{smile_ehalf}Não tenho certeza se estou fazendo um bom trabalho nisso, mas tentei meu melhor até agora.
+            $Há algo neste lugar estranho e terrível… Tudo parece tão claro…
+            $Isso… é tudo o que o mundo conhece há muito tempo.
+            $@c{smile_eclosed}É como se eu mal pudesse lembrar das memórias que apreciamos juntos.
+            $@c{smile_ehalf}Elas foram reais? Elas parecem tão distantes agora…
+            $@c{angry_mopen}Você precisa continuar empurrando, porque se não o fizer, isso nunca vai acabar. Você é o único que pode fazer isso.
+            $@c{smile_ehalf}Eu… não sei o que tudo isso significa… mas sinto que é verdade.
+            $@c{neutral}Se você não pode me derrotar aqui e agora, você não terá chance.`
     },
     "victory": {
-      1: `@c{smile_ehalf}I… I think I fulfilled my purpose…
-                $@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.
-                $@c{smile_ehalf}…Thank you.`
-
+      1: `@c{smile_ehalf}Eu… acho que cumpri meu propósito…
+            $@c{smile_eclosed}Prometa-me… Depois que curar o mundo… Por favor… volte para casa.
+            $@c{smile_ehalf}…Obrigada.`
     },
   },
 };
 
 
-// Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
+// Diálogo dos NPCs no jogo quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMdialogue.
 export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
-// Dialogue of the endboss of the game when the player character is male (Or unset)
+// Diálogo do chefe final do jogo quando o personagem do jogador é masculino (ou não definido)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
-  "encounter": `It appears the time has finally come once again.\nYou know why you have come here, do you not?
-               $You were drawn here, because you have been here before.\nCountless times.
-               $Though, perhaps it can be counted.\nTo be precise, this is in fact your 5,643,853rd cycle.
-               $Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.
-               $Until now you have yet to succeed, but I sense a different presence in you this time.\n
-               $You are the only one here, though it is as if there is… another.
-               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millennia?
-               $We begin.`,
-  "firstStageWin": `I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.
-                    $Do not disappoint me.`,
-  "secondStageWin": "…Magnificent."
+  "encounter": `Parece que a hora finalmente chegou novamente.\nVocê sabe por que veio aqui, não sabe?
+               $Você foi atraído para cá, porque já esteve aqui antes.\nInúmeras vezes.
+               $Embora, talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu 5.643.853º ciclo.
+               $A cada ciclo, sua mente retorna ao seu estado anterior.\nMesmo assim, de alguma forma, vestígios de seus antigos "eus" permanecem.
+               $Até agora, você ainda não conseguiu, mas sinto uma presença diferente em você desta vez.\n
+               $Você é o único aqui, embora pareça haver... outro.
+               $Você finalmente vai se mostrar um desafio formidável para mim?\nO desafio que anseio há milênios?
+               $Vamos começar.`,
+  "firstStageWin": `Entendo. A presença que senti era realmente real.\nParece que não preciso mais me segurar.
+                    $Não me decepcione.`,
+  "secondStageWin": "…Magnífico."
 };
 
-// Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
+// Diálogo do chefe final do jogo quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMbattleSpecDialogue.
 export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDialogue;
 
-// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
+// Diálogo que não se enquadra em nenhuma outra categoria (por exemplo, mensagens de tutorial ou o final do jogo). Para quando o personagem do jogador é masculino
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
-        $@c{smile}It's over.@d{64} You ended the loop.
-        $@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?
-        $@c{serious_smile_fists}Your legend will always live on in our hearts.
-        $@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.
-        $@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.`,
+      `@c{smile}Oh? Você venceu?@d{96} @c{smile_eclosed}Acho que eu deveria saber.\nMas, você está de volta agora.
+        $@c{smile}Acabou.@d{64} Você quebrou o ciclo.
+        $@c{serious_smile_fists}Você também realizou seu sonho, não é?\nVocê não perdeu nenhuma vez.
+        $@c{neutral}Eu sou o único que vai lembrar o que você fez.@d{96}\nAcho que está tudo bem, não é?
+        $@c{serious_smile_fists}Sua lenda sempre viverá em nossos corações.
+        $@c{smile_eclosed}Enfim, já tive o suficiente deste lugar, não é? Vamos para casa.
+        $@c{serious_smile_fists}Talvez quando voltarmos, possamos ter outra batalha?\nSe você estiver disposto.`,
   "ending_female":
-      `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
-        $@c{smile_eclosed}Of course… I always had that feeling.\n@c{smile}It's over now, right? You ended the loop.
-        $@c{smile_ehalf}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $I'll be the only one to remember what you did.\n@c{angry_mopen}I'll try not to forget!
-        $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
-        $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
-        $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
+      `@c{shock}Você está de volta?@d{32} Isso significa que…@d{96} você venceu?!\n@c{smile_ehalf}Eu deveria saber que você conseguiria.
+        $@c{smile_eclosed}Claro… Eu sempre tive essa sensação.\n@c{smile}Acabou agora, certo? Você quebrou o ciclo.
+        $@c{smile_ehalf}Você também realizou seu sonho, não foi?\nVocê não perdeu nenhuma vez.
+        $Eu serei a única a lembrar o que você fez.\n@c{angry_mopen}Eu tentarei não esquecer!
+        $@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile}Eu nunca esqueceria.@d{32}\nSua lenda viverá em nossos corações.
+        $@c{smile_wave}De qualquer forma,@d{64} está ficando tarde…@d{96} Eu acho?\nÉ difícil dizer neste lugar.
+        $Vamos para casa. @c{smile_wave_wink}Talvez amanhã possamos ter outra batalha, pelos velhos tempos?`,
 };
-// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
+
+// Diálogo que não se enquadra em nenhuma outra categoria (por exemplo, mensagens de tutorial ou o final do jogo). Para quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMmiscDialogue.
 export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
 
 
-// Dialogue of the named double battles in the game. For when the player is male (or unset).
+// Diálogo das batalhas duplas nomeadas no jogo. Para quando o jogador é masculino (ou não definido).
 export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
-      1: `Blue: Hey Red, let's show them what we're made of!
+      1: `Blue: Ei Red, vamos mostrar do que somos feitos!
                   $Red: ...
-                  $Blue: This is Pallet Town Power!`,
+                  $Blue: Este é o poder de Pallet Town!`,
     },
     "victory": {
-      1: `Blue: That was a great battle!
+      1: `Blue: Essa foi uma ótima batalha!
               $Red: ...`,
     },
   },
   "red_blue_double": {
     "encounter": {
       1: `Red: ...!
-                  $Blue: He never talks much.
-                    $Blue: But dont let that fool you! He is a champ after all!`,
+                  $Blue: Ele nunca fala muito.
+                    $Blue: Mas não se deixe enganar! Ele é um campeão, afinal!`,
     },
     "victory": {
       1: `Red: ...!
-                $Blue: Next time we will beat you!`,
+                $Blue: Da próxima vez, vamos vencer você!`,
     },
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Tate: Are you suprised?
-                  $Liza: We are two gym leaders at once!
-                  $Tate: We are twins!
-                  $Liza: We dont need to talk to understand each other!
-                  $Tate: Twice the power...
-                  $Liza: Can you handle it?`,
+      1: `Tate: Está surpreso?
+                  $Liza: Somos dois líderes de ginásio ao mesmo tempo!
+                  $Tate: Somos gêmeos!
+                  $Liza: Não precisamos falar para nos entender!
+                  $Tate: Duas vezes o poder...
+                  $Liza: Você consegue lidar com isso?`,
     },
     "victory": {
-      1: `Tate: What? Our combination was perfect!
-                  $Liza: Looks like we need to train more...`,
+      1: `Tate: O quê? Nossa combinação foi perfeita!
+                  $Liza: Parece que precisamos treinar mais...`,
     },
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Liza: Hihihi... Are you suprised?
-                  $Tate: Yes, we are really two gym leaders at once!
-                  $Liza: This is my twin brother Tate!
-                  $Tate: And this is my twin sister Liza!
-                  $Liza: Don't you think we are a perfect combination?`
+      1: `Liza: Hihihi... Está surpreso?
+                  $Tate: Sim, somos realmente dois líderes de ginásio ao mesmo tempo!
+                  $Liza: Este é meu irmão gêmeo Tate!
+                  $Tate: E esta é minha irmã gêmea Liza!
+                  $Liza: Não acha que somos uma combinação perfeita?`
     },
     "victory": {
-      1: `Liza: Are we...
-                  $Tate: ...not as strong as we thought?`,
+      1: `Liza: Nós somos...
+                  $Tate: ...não tão fortes quanto pensávamos?`,
     },
   },
   "wallace_steven_double": {
     "encounter": {
-      1: `Steven: Wallace, let's show them the power of the champions!
-                  $Wallace: We will show you the power of Hoenn!
-                  $Steven: Let's go!`,
+      1: `Steven: Wallace, vamos mostrar a eles o poder dos campeões!
+                  $Wallace: Vamos mostrar o poder de Hoenn!
+                  $Steven: Vamos lá!`,
     },
     "victory": {
-      1: `Steven: That was a great battle!
-                  $Wallace: We will win next time!`,
+      1: `Steven: Essa foi uma ótima batalha!
+                  $Wallace: Vamos vencer da próxima vez!`,
     },
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
-            $Steven: Oh... I see... Let's go then!`,
+      1: `Steven: Você tem algum pokémon raro?
+          $Wallace: Steven... Estamos aqui para uma batalha, não para mostrar nossos pokémon.
+            $Steven: Ah... Entendi... Vamos lá então!`,
     },
     "victory": {
-      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
+      1: `Steven: Agora que terminamos a batalha, vamos mostrar nossos pokémon!
             $Wallace: Steven...`,
     },
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Alder: We are the strongest trainers in Unova!
-                  $Iris: Fights against strong trainers are the best!`,
+      1:  `Alder: Somos os treinadores mais fortes de Unova!
+                  $Iris: Lutas contra treinadores fortes são as melhores!`,
     },
     "victory": {
-      1:   `Alder: Wow! You are super strong!
-                  $Iris: We will win next time!`,
+      1:   `Alder: Uau! Você é super forte!
+                  $Iris: Vamos vencer da próxima vez!`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris: Welcome Challenger! I am THE Unova Champion!
-                  $Alder: Iris, aren't you a bit too excited?`,
+      1:   `Iris: Bem-vindo, Desafiante! Eu sou A Campeã de Unova!
+                  $Alder: Iris, você não está um pouco empolgada demais?`,
     },
     "victory": {
-      1:    `Iris: A loss like this is not easy to take...
-                  $Alder: But we will only get stronger with every loss!`,
+      1:    `Iris: Uma derrota como essa não é fácil de engolir...
+                  $Alder: Mas só ficaremos mais fortes a cada derrota!`,
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Marnie: Brother, let's show them the power of Spikemuth!
-                  $Piers: We bring darkness!`,
+      1:   `Marnie: Irmão, vamos mostrar a eles o poder de Spikemuth!
+                  $Piers: Nós trazemos a escuridão!`,
     },
     "victory": {
-      1:  `Marnie: You brought light to our darkness!
-                  $Piers: Its too bright...`,
+      1:  `Marnie: Você trouxe luz para nossa escuridão!
+                  $Piers: Está muito claro...`,
     },
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `Piers: Ready for a concert?
-                    $Marnie: Brother... They are here to fight, not to sing...`,
+      1:  `Piers: Prontos para um show?
+                    $Marnie: Irmão... Eles estão aqui para lutar, não para cantar...`,
     },
     "victory": {
-      1:  `Piers: Now that was a great concert!
-                    $Marnie: Brother...`,
+      1:  `Piers: Agora esse foi um ótimo show!
+                    $Marnie: Irmão...`,
     },
   },
 };
+
 
 // Dialogue of the named double battles in the game. For when the player is female. For languages that do not have gendered pronouns, this can be set to PGMdoubleBattleDialogue.
 export const PGFdoubleBattleDialogue: DialogueTranslationEntries = PGMdoubleBattleDialogue;
