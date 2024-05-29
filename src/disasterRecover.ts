@@ -6,7 +6,6 @@ let instance;
 const properties = {
   reconnectTimer: null,
   reconnectInterval: 1000 * 5,
-  banner: null,
   minTime: 1000 * 5,
   maxTime: 1000 * 60 * 5,
   randVarianceTime: 1 * 10,
@@ -26,23 +25,15 @@ class DisasterRecover {
     return properties[key];
   }
   createOfflineBanner() {
-    const banner = document.createElement("div");
-    banner.id = "offline-banner";
-    banner.textContent  = "You are currently playing offline";
+    const banner = document.getElementById("banner");
     banner.style.display = "block";
-    banner.style.position = "absolute";
-    this.setProperties("banner", banner);
-
-    document.body.insertBefore(banner, document.body.firstChild);
   }
 
   deleteOfflineBanner() {
-    const banner = this.getProperties("banner");
-    if (banner) {
-      banner.style.display = "none";
-      this.setProperties("banner", banner);
-    }
+    const banner = document.getElementById("banner");
+    banner.style.display = "none";
   }
+
   startInterval() {
     LoginBypass.bypassLogin = true;
     LoginBypass.isDisasterMode = true;

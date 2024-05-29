@@ -177,6 +177,7 @@ input:-internal-autofill-selected {
   background-clip: text;
 }
 #banner {
+  display: none;
   position: absolute;
   top: 33.2%;
   left: 0;

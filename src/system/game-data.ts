@@ -951,7 +951,7 @@ export class GameData {
         localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData)));
 
         console.debug("Session data saved");
-        if (!LoginBypass.bypassLogin && sync) {
+        if (!LoginBypass.bypassLogin && sync && !LoginBypass.isDisasterMode) {
           Utils.apiPost("savedata/updateall", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
             .then(response => response.text())
             .then(error => {
@@ -971,6 +971,10 @@ export class GameData {
                 return resolve(false);
               }
               resolve(true);
+            }).catch((error) => {
+              disasterRecoveryInstance.startInterval();
+              this.scene.ui.savingIcon.hide();
+              return resolve(true);
             });
         } else {
           this.verify().then(success => {
