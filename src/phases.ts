@@ -4863,7 +4863,11 @@ export class SelectModifierPhase extends BattlePhase {
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
+
+    // Override the number of rewards to display, if applicable.
+    let rewardAmount: integer = Overrides.tryOverridePostBattleRewardAmount(modifierCount.value);
+
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(rewardAmount);
 
     const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
       if (rowCursor < 0 || cursor < 0) {
@@ -5032,7 +5036,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined);
+    return Overrides.tryOverridePostBattleRewardOptions(getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined));
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
