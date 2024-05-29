@@ -1,5 +1,5 @@
 import BattleScene from "../../battle-scene";
-import AbstractBindingUiHandler from "../settings/abrast-binding-ui-handler";
+import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
 import {Mode} from "../ui";
 import { getKeyWithKeycode} from "#app/configs/configHandler";
 import {Device} from "#app/enums/devices";
