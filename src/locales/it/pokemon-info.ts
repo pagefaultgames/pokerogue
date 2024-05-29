@@ -38,4 +38,9 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "FAIRY": "Folletto",
     "STELLAR": "Astrale",
   },
+  Prefix: {
+    "Foe": "Foe ",
+    "Wild": "Wild ",
+    "Default": "",
+  },
 } as const;

@@ -49,6 +49,7 @@ export interface ModifierTypeTranslationEntries {
 export interface PokemonInfoTranslationEntries {
   Stat: SimpleTranslationEntries,
   Type: SimpleTranslationEntries,
+  Prefix: SimpleTranslationEntries,
 }
 
 export interface BerryTranslationEntry {
