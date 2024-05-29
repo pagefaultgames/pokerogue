@@ -6,6 +6,7 @@ import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
 import {getIconWithSettingName} from "#app/configs/inputs/configHandler";
+import NavigationMenu from "#app/ui/settings/navigationMenu";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -26,12 +27,12 @@ export interface LayoutConfig {
 export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
   protected settingsContainer: Phaser.GameObjects.Container;
   protected optionsContainer: Phaser.GameObjects.Container;
+  protected navigationContainer: NavigationMenu;
 
   protected scrollCursor: integer;
   protected optionCursors: integer[];
   protected cursorObj: Phaser.GameObjects.NineSlice;
 
-  protected headerBg: Phaser.GameObjects.NineSlice;
   protected optionsBg: Phaser.GameObjects.NineSlice;
   protected actionsBg: Phaser.GameObjects.NineSlice;
 
@@ -83,47 +84,24 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
      */
     setup() {
       const ui = this.getUi();
+      this.navigationIcons = {};
 
       this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
       this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-      this.headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
-      this.headerBg.setOrigin(0, 0);
+      this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
 
-      this.navigationIcons = {};
-
-      const iconPreviousTab = this.scene.add.sprite(0, 0, "keyboard");
-      iconPreviousTab.setOrigin(0, -0.1);
-      iconPreviousTab.setPositionRelative(this.headerBg, 8, 4);
-      this.navigationIcons["BUTTON_CYCLE_FORM"] = iconPreviousTab;
-
-      const iconNextTab = this.scene.add.sprite(0, 0, "keyboard");
-      iconNextTab.setOrigin(0, -0.1);
-      iconNextTab.setPositionRelative(this.headerBg, this.headerBg.width - 20, 4);
-      this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
-
-      const headerText = addTextObject(this.scene, 0, 0, "General", TextStyle.SETTINGS_LABEL);
-      headerText.setOrigin(0, 0);
-      headerText.setPositionRelative(this.headerBg, 18 + iconPreviousTab.width - 4, 4);
-
-      const gamepadText = addTextObject(this.scene, 0, 0, "Gamepad", this.titleSelected === "Gamepad" ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
-      gamepadText.setOrigin(0, 0);
-      gamepadText.setPositionRelative(this.headerBg, 60 + iconPreviousTab.width - 4, 4);
-
-      const keyboardText = addTextObject(this.scene, 0, 0, "Keyboard", this.titleSelected === "Keyboard" ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
-      keyboardText.setOrigin(0, 0);
-      keyboardText.setPositionRelative(this.headerBg, 107 + iconPreviousTab.width - 4, 4);
-
-      this.optionsBg = addWindow(this.scene, 0, this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.headerBg.height - 2);
+      this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
       this.optionsBg.setOrigin(0, 0);
 
-      this.actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, 22);
+
+      this.actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, 22);
       this.actionsBg.setOrigin(0, 0);
 
       const iconAction = this.scene.add.sprite(0, 0, "keyboard");
       iconAction.setOrigin(0, -0.1);
-      iconAction.setPositionRelative(this.actionsBg, this.headerBg.width - 32, 4);
+      iconAction.setPositionRelative(this.actionsBg, this.navigationContainer.width - 32, 4);
       this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
       const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
@@ -132,7 +110,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
       const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
       iconCancel.setOrigin(0, -0.1);
-      iconCancel.setPositionRelative(this.actionsBg, this.headerBg.width - 100, 4);
+      iconCancel.setPositionRelative(this.actionsBg, this.navigationContainer.width - 100, 4);
       this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
       const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
@@ -141,21 +119,16 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
       const iconReset = this.scene.add.sprite(0, 0, "keyboard");
       iconReset.setOrigin(0, -0.1);
-      iconReset.setPositionRelative(this.actionsBg, this.headerBg.width - 180, 4);
+      iconReset.setPositionRelative(this.actionsBg, this.navigationContainer.width - 180, 4);
       this.navigationIcons["BUTTON_HOME"] = iconReset;
 
       const resetText = addTextObject(this.scene, 0, 0, "Reset all", TextStyle.SETTINGS_LABEL);
       resetText.setOrigin(0, 0.15);
       resetText.setPositionRelative(iconReset, -resetText.width/6-2, 0);
 
-      this.settingsContainer.add(this.headerBg);
-      this.settingsContainer.add(headerText);
-      this.settingsContainer.add(gamepadText);
-      this.settingsContainer.add(keyboardText);
       this.settingsContainer.add(this.optionsBg);
-      this.settingsContainer.add(iconNextTab);
-      this.settingsContainer.add(iconPreviousTab);
       this.settingsContainer.add(this.actionsBg);
+      this.settingsContainer.add(this.navigationContainer);
       this.settingsContainer.add(iconAction);
       this.settingsContainer.add(iconCancel);
       this.settingsContainer.add(iconReset);
@@ -506,10 +479,8 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
           }
           break;
         case Button.CYCLE_FORM:
-          success = this.navigateMenuLeft();
-          break;
         case Button.CYCLE_SHINY:
-          success = this.navigateMenuRight();
+          success = this.navigationContainer.navigate(button);
           break;
         }
       }

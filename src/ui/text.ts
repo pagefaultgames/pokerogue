@@ -64,6 +64,15 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   return ret;
 }
 
+export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
+  const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  obj.setScale(0.1666666667);
+  obj.setShadow(shadowXpos, shadowYpos, shadowColor);
+  if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
+    obj.setLineSpacing(5);
+  }
+}
+
 export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
   const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 

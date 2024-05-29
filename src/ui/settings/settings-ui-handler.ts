@@ -7,10 +7,12 @@ import UiHandler from "../ui-handler";
 import { addWindow } from "../ui-theme";
 import {Button} from "../../enums/buttons";
 import {InputsIcons} from "#app/ui/settings/abstract-settings-ui-handler";
+import NavigationMenu from "#app/ui/settings/navigationMenu";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
+  private navigationContainer: NavigationMenu;
 
   private scrollCursor: integer;
 
@@ -46,28 +48,17 @@ export default class SettingsUiHandler extends UiHandler {
 
     this.navigationIcons = {};
 
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
-    headerBg.setOrigin(0, 0);
+    this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
 
-    this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - headerBg.height - 2);
+    this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
     this.optionsBg.setOrigin(0, 0);
 
-    const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - headerBg.height, (this.scene.game.canvas.width / 6) - 2, 22);
+    const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, 22);
     actionsBg.setOrigin(0, 0);
-
-    const iconPreviousTab = this.scene.add.sprite(0, 0, "keyboard");
-    iconPreviousTab.setOrigin(0, -0.1);
-    iconPreviousTab.setPositionRelative(headerBg, 8, 4);
-    this.navigationIcons["BUTTON_CYCLE_FORM"] = iconPreviousTab;
-
-    const iconNextTab = this.scene.add.sprite(0, 0, "keyboard");
-    iconNextTab.setOrigin(0, -0.1);
-    iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
-    this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
     const iconAction = this.scene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
-    iconAction.setPositionRelative(actionsBg, headerBg.width - 32, 4);
+    iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
     const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
@@ -76,24 +67,12 @@ export default class SettingsUiHandler extends UiHandler {
 
     const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
-    iconCancel.setPositionRelative(actionsBg, headerBg.width - 100, 4);
+    iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
     const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
-
-    const headerText = addTextObject(this.scene, 0, 0, "General", TextStyle.SETTINGS_SELECTED);
-    headerText.setOrigin(0, 0);
-    headerText.setPositionRelative(headerBg, 18 + iconPreviousTab.width - 4, 4);
-
-    const gamepadText = addTextObject(this.scene, 0, 0, "Gamepad", TextStyle.SETTINGS_LABEL);
-    gamepadText.setOrigin(0, 0);
-    gamepadText.setPositionRelative(headerBg, 60 + iconPreviousTab.width - 4, 4);
-
-    const keyboardText = addTextObject(this.scene, 0, 0, "Keyboard", TextStyle.SETTINGS_LABEL);
-    keyboardText.setOrigin(0, 0);
-    keyboardText.setPositionRelative(headerBg, 107 + iconPreviousTab.width - 4, 4);
 
     this.optionsContainer = this.scene.add.container(0, 0);
 
@@ -137,17 +116,12 @@ export default class SettingsUiHandler extends UiHandler {
 
     this.optionCursors = Object.values(settingDefaults);
 
-    this.settingsContainer.add(headerBg);
-    this.settingsContainer.add(headerText);
-    this.settingsContainer.add(gamepadText);
-    this.settingsContainer.add(keyboardText);
     this.settingsContainer.add(this.optionsBg);
+    this.settingsContainer.add(this.navigationContainer);
     this.settingsContainer.add(actionsBg);
     this.settingsContainer.add(this.optionsContainer);
-    this.settingsContainer.add(iconNextTab);
     this.settingsContainer.add(iconAction);
     this.settingsContainer.add(iconCancel);
-    this.settingsContainer.add(iconPreviousTab);
     this.settingsContainer.add(actionText);
     this.settingsContainer.add(cancelText);
 
@@ -262,13 +236,9 @@ export default class SettingsUiHandler extends UiHandler {
           success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
         }
         break;
-      case Button.CYCLE_FORM: // to the left
-        this.scene.ui.setMode(Mode.SETTINGS_KEYBOARD);
-        success = true;
-        break;
-      case Button.CYCLE_SHINY: // to the right
-        this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD);
-        success = true;
+      case Button.CYCLE_FORM:
+      case Button.CYCLE_SHINY:
+        success = this.navigationContainer.navigate(button);
         break;
       }
     }
