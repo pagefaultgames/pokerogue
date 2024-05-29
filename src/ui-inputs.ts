@@ -6,17 +6,16 @@ import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, settingOptions} from "./system/settings";
 import SettingsUiHandler from "./ui/settings-ui-handler";
 import {Button} from "./enums/buttons";
+import BattleScene from "./battle-scene";
 
-export interface ActionKeys {
-    [key in Button]: () => void;
-}
+type ActionKeys = Record<Button, () => void>;
 
 export class UiInputs {
-  private scene: Phaser.Scene;
-  private events: Phaser.Events;
+  private scene: BattleScene;
+  private events: Phaser.Events.EventEmitter;
   private inputsController: InputsController;
 
-  constructor(scene: Phaser.Scene, inputsController: InputsController) {
+  constructor(scene: BattleScene, inputsController: InputsController) {
     this.scene = scene;
     this.inputsController = inputsController;
     this.init();
@@ -52,30 +51,48 @@ export class UiInputs {
   }
 
   getActionsKeyDown(): ActionKeys {
-    const actions = {};
-    actions[Button.UP] = () => this.buttonDirection(Button.UP);
-    actions[Button.DOWN] = () => this.buttonDirection(Button.DOWN);
-    actions[Button.LEFT] = () => this.buttonDirection(Button.LEFT);
-    actions[Button.RIGHT] = () => this.buttonDirection(Button.RIGHT);
-    actions[Button.SUBMIT] = () => this.buttonTouch();
-    actions[Button.ACTION] = () => this.buttonAb(Button.ACTION);
-    actions[Button.CANCEL] = () => this.buttonAb(Button.CANCEL);
-    actions[Button.MENU] = () => this.buttonMenu();
-    actions[Button.STATS] = () => this.buttonStats(true);
-    actions[Button.CYCLE_SHINY] = () => this.buttonCycleOption(Button.CYCLE_SHINY);
-    actions[Button.CYCLE_FORM] = () => this.buttonCycleOption(Button.CYCLE_FORM);
-    actions[Button.CYCLE_GENDER] = () => this.buttonCycleOption(Button.CYCLE_GENDER);
-    actions[Button.CYCLE_ABILITY] = () => this.buttonCycleOption(Button.CYCLE_ABILITY);
-    actions[Button.CYCLE_NATURE] = () => this.buttonCycleOption(Button.CYCLE_NATURE);
-    actions[Button.CYCLE_VARIANT] = () => this.buttonCycleOption(Button.CYCLE_VARIANT);
-    actions[Button.SPEED_UP] = () => this.buttonSpeedChange();
-    actions[Button.SLOW_DOWN] = () => this.buttonSpeedChange(false);
+    const actions: ActionKeys = {
+      [Button.UP]:              () => this.buttonDirection(Button.UP),
+      [Button.DOWN]:            () => this.buttonDirection(Button.DOWN),
+      [Button.LEFT]:            () => this.buttonDirection(Button.LEFT),
+      [Button.RIGHT]:           () => this.buttonDirection(Button.RIGHT),
+      [Button.SUBMIT]:          () => this.buttonTouch(),
+      [Button.ACTION]:          () => this.buttonAb(Button.ACTION),
+      [Button.CANCEL]:          () => this.buttonAb(Button.CANCEL),
+      [Button.MENU]:            () => this.buttonMenu(),
+      [Button.STATS]:           () => this.buttonStats(true),
+      [Button.CYCLE_SHINY]:     () => this.buttonCycleOption(Button.CYCLE_SHINY),
+      [Button.CYCLE_FORM]:      () => this.buttonCycleOption(Button.CYCLE_FORM),
+      [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
+      [Button.CYCLE_ABILITY]:   () => this.buttonCycleOption(Button.CYCLE_ABILITY),
+      [Button.CYCLE_NATURE]:    () => this.buttonCycleOption(Button.CYCLE_NATURE),
+      [Button.CYCLE_VARIANT]:   () => this.buttonCycleOption(Button.CYCLE_VARIANT),
+      [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
+      [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
+    };
     return actions;
   }
 
   getActionsKeyUp(): ActionKeys {
-    const actions = {};
-    actions[Button.STATS] = () => this.buttonStats(false);
+    const actions: ActionKeys = {
+      [Button.UP]:              () => undefined,
+      [Button.DOWN]:            () => undefined,
+      [Button.LEFT]:            () => undefined,
+      [Button.RIGHT]:           () => undefined,
+      [Button.SUBMIT]:          () => undefined,
+      [Button.ACTION]:          () => undefined,
+      [Button.CANCEL]:          () => undefined,
+      [Button.MENU]:            () => undefined,
+      [Button.STATS]:           () => this.buttonStats(false),
+      [Button.CYCLE_SHINY]:     () => undefined,
+      [Button.CYCLE_FORM]:      () => undefined,
+      [Button.CYCLE_GENDER]:    () => undefined,
+      [Button.CYCLE_ABILITY]:   () => undefined,
+      [Button.CYCLE_NATURE]:    () => undefined,
+      [Button.CYCLE_VARIANT]:   () => undefined,
+      [Button.SPEED_UP]:        () => undefined,
+      [Button.SLOW_DOWN]:       () => undefined,
+    };
     return actions;
   }
 

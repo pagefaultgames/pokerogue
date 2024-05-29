@@ -233,7 +233,8 @@ export class TrainerConfig {
     }
     // If a special double trainer class was set, set it as the sprite key
     if (this.trainerTypeDouble && female && isDouble) {
-      ret = TrainerType[this.trainerTypeDouble].toString().toLowerCase();
+      // Get the derived type for the double trainer since the sprite key is based on the derived type
+      ret = TrainerType[this.getDerivedType(this.trainerTypeDouble)].toString().toLowerCase();
     }
     return ret;
   }
@@ -271,9 +272,13 @@ export class TrainerConfig {
   }
 
 
-
-  getDerivedType(): TrainerType {
-    let trainerType = this.trainerType;
+  /**
+   * Returns the derived trainer type for a given trainer type.
+   * @param trainerTypeToDeriveFrom - The trainer type to derive from. (If null, the this.trainerType property will be used.)
+   * @returns {TrainerType} - The derived trainer type.
+   */
+  getDerivedType(trainerTypeToDeriveFrom: TrainerType = null): TrainerType {
+    let trainerType = trainerTypeToDeriveFrom ? trainerTypeToDeriveFrom : this.trainerType;
     switch (trainerType) {
     case TrainerType.RIVAL_2:
     case TrainerType.RIVAL_3:
@@ -686,7 +691,7 @@ export class TrainerConfig {
             initI18n();
           }
           // Check if the female version exists in the i18n file
-          if (i18next.exists(`trainerClasses:${this.name.toLowerCase().replace()}`)) {
+          if (i18next.exists(`trainerClasses:${this.name.toLowerCase()}`)) {
           // If it does, return
             return ret + "_female";
           } else {
