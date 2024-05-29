@@ -60,11 +60,6 @@ input:-internal-autofill-selected {
   --small-control-size: calc(var(--controls-size) / 3);
   --rect-control-size: calc(var(--controls-size) * 0.74);
 
-  /* --right-small-control-align: var(--controls-padding) + var(--controls-size) / 2 - calc(var(--small-control-size) / 2);
-  --right-rect-control-align: calc(var(--controls-padding) + var(--controls-size) / 2 - calc(var(--rect-control-size) / 2)); */
-
-  /* --small-button-offset: 2vh; */
-
   font-family: 'emerald';
   font-size: var(--controls-size);
   text-shadow: var(--color-dark) var(--text-shadow-size) var(--text-shadow-size);
