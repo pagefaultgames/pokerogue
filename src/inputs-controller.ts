@@ -255,7 +255,7 @@ export class InputsController {
     gamepadMapping[this.player.LT] = Button.CYCLE_GENDER;
     gamepadMapping[this.player.RT] = Button.CYCLE_ABILITY;
     gamepadMapping[this.player.RC_W] = Button.CYCLE_NATURE;
-    gamepadMapping[this.player.RC_N] = Button.CYCLE_VARIANT;
+    gamepadMapping[this.player.RC_N] = Button.V;
     gamepadMapping[this.player.LS] = Button.SPEED_UP;
     gamepadMapping[this.player.RS] = Button.SLOW_DOWN;
 
@@ -353,7 +353,7 @@ export class InputsController {
       [Button.CYCLE_GENDER]: [keyCodes.G],
       [Button.CYCLE_ABILITY]: [keyCodes.E],
       [Button.CYCLE_NATURE]: [keyCodes.N],
-      [Button.CYCLE_VARIANT]: [keyCodes.V],
+      [Button.V]: [keyCodes.V],
       [Button.SPEED_UP]: [keyCodes.PLUS],
       [Button.SLOW_DOWN]: [keyCodes.MINUS]
     };

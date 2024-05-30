@@ -328,11 +328,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
 
       // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
-      const species = useNewSpeciesPool
+      let species = useNewSpeciesPool
         ? getPokemonSpecies(newSpeciesPool[Math.floor(Math.random() * newSpeciesPool.length)])
         : template.isSameSpecies(index) && index > offset
           ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset)))
           : this.genNewPartyMemberSpecies(level, strength);
+
+      // If the species is from newSpeciesPool, we need to adjust it based on the level and strength
+      if (newSpeciesPool) {
+        species = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, strength));
+      }
 
       ret = this.scene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
     }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
@@ -416,7 +421,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
       }
       return [party.indexOf(p), score];
-    });
+    }) as [integer, integer][];
 
     return partyMemberScores;
   }
