@@ -3494,6 +3494,13 @@ export class FaintPhase extends PokemonPhase {
   doFaint(): void {
     const pokemon = this.getPokemon();
 
+    // Track total times pokemon have been KO'd for supreme overlord/last respects
+    if (pokemon.isPlayer()) {
+      this.scene.currentBattle.playerFaints += 1;
+    } else {
+      this.scene.currentBattle.enemyFaints += 1;
+    }
+
     this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
@@ -5032,11 +5039,16 @@ export class EggLapsePhase extends Phase {
       return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    if (eggsToHatch.length) {
+    let eggsToHatchCount: integer = eggsToHatch.length;
+
+    if (eggsToHatchCount) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
 
       for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg));
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggsToHatchCount));
+        if (eggsToHatchCount > 0) {
+          eggsToHatchCount--;
+        }
       }
 
     }
