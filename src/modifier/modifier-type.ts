@@ -1329,7 +1329,7 @@ const modifierPool: ModifierPool = {
           weight = 1;
         }
       }
-      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 32);
+      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 8 * weight);
     }, 32),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       let weight = 0;
@@ -1344,7 +1344,7 @@ const modifierPool: ModifierPool = {
           weight = 1;
         }
       }
-      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 32);
+      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 8 * weight);
     }, 32),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
