@@ -90,6 +90,7 @@ export default class BattleScene extends SceneBase {
   public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
+  public reroll: boolean = false;
   public showMovesetFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
@@ -1311,6 +1312,7 @@ export default class BattleScene extends SceneBase {
     const formattedMoney =
 			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
     this.moneyText.setText(`₽${formattedMoney}`);
+    this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
       this.moneyText.setVisible(true);
     }
@@ -1322,12 +1324,8 @@ export default class BattleScene extends SceneBase {
   }
 
   updateAndShowText(duration: integer): void {
-    this.fieldUI.moveBelow(this.moneyText, this.luckText);
     const labels = [ this.luckLabelText, this.luckText ];
-    labels.map(t => {
-      t.setAlpha(0);
-      t.setVisible(true);
-    });
+    labels.forEach(t => t.setAlpha(0));
     const luckValue = getPartyLuckValue(this.getParty());
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
@@ -1339,18 +1337,24 @@ export default class BattleScene extends SceneBase {
     this.tweens.add({
       targets: labels,
       duration: duration,
-      alpha: 1
+      alpha: 1,
+      onComplete: () => {
+        labels.forEach(t => t.setVisible(true));
+      }
     });
   }
 
   hideLuckText(duration: integer): void {
+    if (this.reroll) {
+      return;
+    }
     const labels = [ this.luckLabelText, this.luckText ];
     this.tweens.add({
       targets: labels,
       duration: duration,
       alpha: 0,
       onComplete: () => {
-        labels.map(l => l.setVisible(false));
+        labels.forEach(l => l.setVisible(false));
       }
     });
   }
