@@ -819,6 +819,39 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nhurt its attacker!`);
   }
 }
+/**
+ * @description: This ability applies the Perish Song tag to the attacking pokemon
+ * and the defending pokemon if the move makes physical contact and neither pokemon
+ * already has the Perish Song tag.
+ * @class PostDefendPerishSongAbAttr
+ * @extends {PostDefendAbAttr}
+ */
+export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
+  private turns: integer;
+
+  constructor(turns: integer) {
+    super();
+
+    this.turns = turns;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      if (pokemon.getTag(BattlerTagType.PERISH_SONG) || attacker.getTag(BattlerTagType.PERISH_SONG)) {
+        return false;
+      } else {
+        attacker.addTag(BattlerTagType.PERISH_SONG, this.turns);
+        pokemon.addTag(BattlerTagType.PERISH_SONG, this.turns);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:perishBody", {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
+  }
+}
 
 export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
   private weatherType: WeatherType;
@@ -4164,7 +4197,7 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
       .partial(),
     new Ability(Abilities.PERISH_BODY, 8)
-      .unimplemented(),
+      .attr(PostDefendPerishSongAbAttr, 4),
     new Ability(Abilities.WANDERING_SPIRIT, 8)
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint()
