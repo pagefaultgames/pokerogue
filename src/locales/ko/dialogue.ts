@@ -2086,127 +2086,125 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival": {
     "encounter": {
-      1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
-                    $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
-                    $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
-                    $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
+      1: `@c{smile}오, 찾았다! 떠나려는 건 알고 있었지만\n인사정도는 해줄 줄 알았는데…
+                    $@c{smile_eclosed}그러니까 정말로 꿈을 좇겠다는 거지?\n듣고도 못 믿었다니까.
+                    $@c{serious_smile_fists}여기까지 온 김에, 배틀은 어때?\n준비가 됐나 보자구.
+                    $@c{serious_mopen_fists}망설이지 말고,\n너의 진면목을 보여봐!`
     },
     "victory": {
-      1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
-                   $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
-                   $By the way, the professor asked me to give you these items. They look pretty cool.
-                   $@c{serious_smile_fists}Good luck out there!`
+      1: `@c{shock}와… 정말 깔끔하게 당했네.\n초보자 맞아?
+                   $@c{smile}운이 따른 건지도 모르겠지만…\n그래도 정말 꿈을 이룰 지도.
+                   $그나저나, 박사님께서 이걸 전해달라고 하시더라.\n좋아 보이던데.
+                   $@c{serious_smile_fists}아무튼, 힘 내는거야!`
     },
   },
   "rival_female": {
     "encounter": {
-      1: `@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?
-                    $@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…
-                    $@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!
-                    $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
+      1: `@c{smile_wave}여깄구나! 찾고 있었어!\n@c{angry_mopen}절친한테 작별인사도 안 하는거야?
+                    $@c{smile_ehalf}꿈을 향해 떠나는거구나. 그렇지?\n이런 날이 오긴 하네…
+                    $@c{smile}아무튼, 날 까먹고 가버린 건 용서해주겠어.\n@c{smile_wave_wink}배틀을 해준다면 말야!
+                    $@c{angry_mopen}최선을 다 해 봐.\n모험을 시작과 동시에 끝내고 싶지 않다면!`
     },
     "victory": {
-      1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
-                    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
-                    $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
-                    $@c{smile_wave}Do your best like always! I believe in you!`
+      1: `@c{shock}왜 벌써 이렇게 센 건데?!@d{96}\n@c{angry}아니면 뭔가 속임수, 그런 거?
+                    $@c{smile_wave_wink}농담, 농담!@d{64} @c{smile_eclosed}내가 진 거 맞아…\n너 정말 앞으로도 잘 하겠는데.
+                    $@c{smile}아 그래, 박사님께서 전해달라던 물건.\n도움이 되면 좋겠어!
+                    $@c{smile_wave}항상 최선을 다 하라구! 믿고 있을게!`
     },
   },
   "rival_2": {
     "encounter": {
-      1: `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
-                $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
-                $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
-                $I've been doing a lot of my own training so I'll definitely put up a fight this time.
-                $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
+      1: `@c{smile}어라, 너 여깄었구나?\n@c{smile_eclosed}아직도 전승 중이라, 이거지…?
+                $@c{serious_mopen_fists}널 쫓아서 온 것 같아 보이겠지만, 오해야.
+                $@c{serious_smile_fists}그래도 솔직히 그 때부터 쭉 재대결이 간절했어.
+                $그 동안의 훈련도 있겠다 마침 좋은 기회같지?
+                $@c{serious_mopen_fists}자, 전처럼!\n배틀이야!`
     },
     "victory": {
-      1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
-                $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
-                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
-                $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
-                $@c{smile}Anyway, take care!`
+      1: `@c{neutral_eclosed}이런. 자신감이 과했나봐.
+                $@c{smile}그래, 또 지고 말았네.\n@c{serious_mopen_fists}좀 더 열심히 훈련을 해야겠어!\n
+                $@c{smile}너한테 도움이 필요할 것 같지는 않지만, 이거.\n남는 게 있어서 말이야.
+                $@c{serious_smile_fists}물론 이번이 마지막이야, 알겠지?\n공평하게 하지 않으면 그게 내 핑계거리가 되고 말거야.
+                $@c{smile}이제 갈게. 앞으로도 조심하고!`
     },
   },
   "rival_2_female": {
     "encounter": {
-      1: `@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!
-                $@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.
-                $@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.
-                $@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.
-                $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
+      1: `@c{smile_wave}우연이네, 이런 곳에서 만나고.\n아직 연전연승이구나? @c{angry_mopen}나쁘지 않아!
+                $@c{angry_mopen}무슨 생각하고있는지 알겠어, 하지만 아냐.\n@c{smile_eclosed}우연히 근처에 있었을 뿐이라구.
+                $@c{smile_ehalf}그래도 마침, 가끔은 지는것도 괜찮다고 알려주고 싶었는데.
+                $@c{smile}우린 실수를 통해서도 성장할 수 있잖아.\n때로는 성공을 반복할 때보다도 더 많이 말야.
+                $@c{angry_mopen}어쨌든간에, 나도 이런 때를 위해 훈련해왔으니까,\n너도 최선을 다 하는게 좋을 거야!`
     },
     "victory": {
-      1: `@c{neutral}I… wasn't supposed to lose that time…
-                $@c{smile}Aw well. That just means I'll have to train even harder for next time!
-                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
-                $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
-                $@c{smile_wave}Keep at it!`
+      1: `@c{neutral}이… 번에도 져버릴 줄이야…
+                $@c{smile}으, 그래. 더 열심히 훈련하면 되겠지!
+                $@c{smile_wave}이것도 하나 더 챙겨왔으니 받아!\n@c{smile_wave_wink}감사 인사는 됐다구~.
+                $@c{angry_mopen}하지만, 마지막이야!\n또 이렇게 공짜로 나눠주진 않을 테니까!
+                $@c{smile_wave}그럼!`
     },
     "defeat": {
-      1: "It's OK to lose sometimes…"
+      1: "가끔은 지는 것도 괜찮아…"
     }
   },
   "rival_3": {
     "encounter": {
-      1: `@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.
-                $@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.
-                $@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.
-                $@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
-                $@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?
-                $@c{serious_mopen_fists}If so, prove it to me.`
+      1: `@c{smile}이게 누구야! 오랜만이야.\n@c{neutral}역시나… 쭉 이기고 있었구나?
+                $@c{neutral_eclosed}상황이 좀… 그렇더라. \n혼자 마을로 돌아가봤자 너 없인 예전같아질 수 없겠지.
+                $@c{serious}이기적인 이야기란건 알지만 말해야겠어.\n@c{neutral_eclosed}너 지금 좀 아닌 것 같아.
+                $@c{serious}계속 이기기만 하겠다는 건 너무 비현실적이야.\n사람은 원래 꺾여가며 성장하는 거라고.
+                $@c{neutral_eclosed}물론 지금까지는 잘 해왔다고 생각하겠지만,\n갈 길이 멀지. @c{neutral}대비는 되어 있어?
+                $@c{serious_mopen_fists}그렇다면, 내게 증명해 줘.`
     },
     "victory": {
-      1: "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
+      1: "@c{angry_mhalf}말도 안 돼… 한시도 쉬지 않고 훈련했는데…\n어째서 전혀 닿을 수 없는거야?"
     },
   },
   "rival_3_female": {
     "encounter": {
-      1: `@c{smile_wave}Long time no see! Still haven't lost, huh.\n@c{angry}You're starting to get on my nerves. @c{smile_wave_wink}Just kidding!
-                $@c{smile_ehalf}But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.
-                $@c{smile_eclosed}I support you in your dream and everything, but the reality is you're going to lose sooner or later.
-                $@c{smile}And when you do, I'll be there for you like always.\n@c{angry_mopen}Now, let me show you how strong I've become!`
+      1: `@c{smile_wave}오랜만이야! 아직도 안 졌구나.\n@c{angry}거슬리게 말야. @c{smile_wave_wink}농담이야!
+                $@c{smile_ehalf}하지만 진짜, 고향이 그립진 않아? 집이나… 나는?\n나… 나는, 네가 정말 그리웠어.
+                $@c{smile_eclosed}난 너의 꿈과 모든 것을 응원하지만,\n넌 언젠가 패배를 겪게 될 거야.
+                $@c{smile}그 땐 언제나처럼 내가 곁에 있어줄게.\n@c{angry_mopen}내가 얼마나 강해졌는지도, 지금 보여 줄 테니까!`
     },
     "victory": {
-      1: "@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…"
-
+      1: "@c{shock}이렇게까지 했는데도… 모자랐던 거야…?\n이러면 정말로 너는 이제 영영…"
     },
     "defeat": {
-      1: "You gave it your best, now let's go home."
+      1: "최선을 다 했지.\n집에 갈 시간이야."
     }
   },
   "rival_4": {
     "encounter": {
-      1: `@c{neutral}Hey.
-                $I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.
-                $@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.
-                $@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
-                $@c{serious_mopen_fists}None of that matters anymore, not until I win.
-                $@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.
-                $@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.
-                $@c{serious_mopen_fists}Prepare yourself.`
+      1: `@c{neutral}안녕.
+                $잡담은 넘어가자.\n@c{neutral_eclosed}너에게 이기기 위해 찾아왔어. 간단하지.
+                $@c{serious_mhalf_fists}이제 잠재력을 끌어내는 법은 확실히 알겠어.
+                $@c{smile}잠이나 사회적인 활동들.\n줄일 수 있는 불필요한 시간이 아주 많더라.
+                $@c{serious_mopen_fists}오직 승리 뿐이야.\n이제 아무것도 중요하지 않아.
+                $@c{neutral_eclosed}나도 이제 더 이상은 지지 않게 됐어.\n@c{smile_eclosed}네 그 철학이 완전히 틀린 건 아니었나봐.
+                $@c{angry_mhalf}패배는 약자에게 주어지는 것이고, 난 더 이상 약하지 않아.
+                $@c{serious_mopen_fists}준비해.`
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
+      1: "@c{neutral}너…@d{64} 너 대체 뭐야?"
     },
   },
   "rival_4_female": {
     "encounter": {
-      1: `@c{neutral}It's me! You didn't forget about me again… did you?
-                $@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
-                $@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
-                $@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
-                $@c{neutral}In fact, I… hardly recognize myself.
-                $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
-                $And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.
-                $@c{angry_mopen}Prepare yourself.`
+      1: `@c{neutral}나야! 날 잊어버리고 있던 건… 아니지?
+                $@c{smile}네 업적에 자랑스러워 할 때가 됐어. 축하해!\n하지만 네 여행도 여기까지야.
+                $@c{smile_eclosed}너는 나도 모르던 내 안의 무언가를 일깨웠어.\n이제 훈련 말고는 아무것도 하지 않아.
+                $@c{smile_ehalf}먹지도 자지도 않고, 그저 하루종일.\n더 강해지고 있어.
+                $@c{neutral}사실, 나… 이제 내가 뭔지도 잘 모르겠어.
+                $그렇지만 기량만은, 정점에 다다랐지.\n아무도 내게 이길 수 없을거야.
+                $그거 알아? 이게 전부 네 덕이야.\n@c{smile_ehalf}감사해야할지 증오해야할지 모르겠네.
+                $@c{angry_mopen}준비해.`
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
-
+      1: "@c{neutral}너…@d{64} 너 대체 뭐야?"
     },
     "defeat": {
-      1: "$@c{smile}You should be proud of how far you made it."
+      1: "$@c{smile}네가 키운 상대야. 자랑스럽지?"
     }
   },
   "rival_5": {
@@ -2231,47 +2229,46 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6": {
     "encounter": {
-      1: `@c{smile_eclosed}We meet again.
-                $@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
-                $@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.
-                $@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.
-                $@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
-                $@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
-                $@c{serious_mhalf_fists}You feel the same, don't you?
-                $@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
-                $Those times we cherished together that seem so recent are nothing but a distant memory.
-                $@c{neutral_eclosed}Who can say whether they were ever even real in the first place.
-                $@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.
-                $@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance.`
+      1: `@c{smile_eclosed}다시 만났구나.
+                $@c{neutral}모든 걸 되짚어 봤어.\n이 기이함에도 이유가 있더라.
+                $@c{neutral_eclosed}널 이기고자 하는 욕구, 아니면 네 꿈…\n이건 그저 더 큰 무언가의 일부일 뿐이었어.
+                $@c{serious}개인의 문제가 아니라 세계 전체가 엮인 일이었고…\n@c{serious_mhalf_fists}난 널 한계까지 밀어붙이기 위한 도구였던 거지.
+                $@c{neutral_eclosed}내가 잘 쓰였는진 모르겠지만 어쨌든 최선을 다 했고.
+                $@c{neutral}끝끝내 도착한 이곳은 끔찍하지만…\n언젠가 와 본 것 같아.
+                $@c{serious_mhalf_fists}너도 그렇게 느끼지?
+                $@c{serious}…그리고 무언가가 이야기하고 있어.\n오랫동안 세상에 알려져온 무언가가.
+                $우리가 함께했던 소중한 시간들은 이제 그저 아득해.
+                $@c{neutral_eclosed}실제로 일어난 일이긴 할까?
+                $@c{serious_mopen_fists}너는 계속 나아가야 해. 그렇지 않으면 끝나지 않아.\n오직 너만이 할 수 있어.
+                $@c{serious_smile_fists}잘 모르겠지만, 하나만은 확실해.
+                $@c{serious_mopen_fists}여기서 날 쓰러뜨리지 못한다면, 너에게 기회는 없을거란걸.`
     },
     "victory": {
-      1: `@c{smile_eclosed}It looks like my work is done here.
-                $I want you to promise me one thing.\n@c{smile}After you heal the world, please come home.`
+      1: `@c{smile_eclosed}내 역할은 여기까진 것 같아.
+                $하나만 약속해 줘.\n@c{smile}세상을 원래대로 되돌리고 나면, 집으로 돌아오는거야.`
     },
   },
   "rival_6_female": {
     "encounter": {
-      1: `@c{smile_ehalf}So it's just us again.
-                $@c{smile_eclosed}You know, I keep going around and around in my head…
-                $@c{smile_ehalf}There's something to all this, why everything seems so strange now…
-                $@c{smile}You have your dream, and I have this ambition in me…
-                $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
-                $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
-                $@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
-                $It's something about this strange and dreadful place… Everything seems so clear…
-                $This… is all the world's known for a long time now.
-                $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
-                $@c{smile_ehalf}Were they even real? They seem so far away now…
-                $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
-                $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
+      1: `@c{smile_ehalf}또 이렇게 만났네.
+                $@c{smile_eclosed}나 머릿속이 빙글빙글 도는 것 같아…
+                $@c{smile_ehalf}모든 것이 이상하게 보이는 이유.\n분명 뭔가가 있어…
+                $@c{smile}너는 너의 꿈이 있고,\n나는 나의 야망이 있지…
+                $이 모든것, 우리가 하고 있는 모든 일들이\n더 큰 무언가를 위한 것임을 느낄 수밖에 없어.
+                $@c{smile_eclosed}나는 아마 너를…\n한계까지 몰아붙여야 하는 거야.
+                $@c{smile_ehalf}잘 해왔는지는 모르겠는데, 최선은 다 했어.
+                $이 이상하고 무서운 곳…\n모든게 선명하게 보이고…
+                $이건… 오래전부터 세상에 알려져온 전부.
+                $@c{smile_eclosed}우리가 함께해온 추억들이, 이제는 거의 떠오르지 않아.
+                $@c{smile_ehalf}실제로 일어났던 일일까? 너무 멀게만 느껴지는데…
+                $@c{angry_mopen}계속 나아가야 해. 안 그러면, 영원히 끝나지 않을 거야. \n오직 너만이 할 수 있어.
+                $@c{smile_ehalf}난… 이 모든게 무슨 의미가 있는지는 잘 모르겠지만…\n이거 하나는 느끼고 있어.
+                $@c{neutral}여기서 날 쓰러뜨리지 못한다면, 너에게 기회는 없을거란걸.`
     },
     "victory": {
-      1: `@c{smile_ehalf}I… I think I fulfilled my purpose…
-                $@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.
-                $@c{smile_ehalf}…Thank you.`
-
+      1: `@c{smile_ehalf}나… 내 소임을 다 한 기분이야…
+                $@c{smile_eclosed}약속해 줘… 세상을 원래대로 되돌리고서… \n집으로… 무사히 돌아오는 거야.
+                $@c{smile_ehalf}…고마워.`
     },
   },
 };
@@ -2282,17 +2279,17 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
 // Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
-  "encounter": `It appears the time has finally come once again.\nYou know why you have come here, do you not?
-               $You were drawn here, because you have been here before.\nCountless times.
-               $Though, perhaps it can be counted.\nTo be precise, this is in fact your 5,643,853rd cycle.
-               $Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.
-               $Until now you have yet to succeed, but I sense a different presence in you this time.\n
-               $You are the only one here, though it is as if there is… another.
-               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millennia?
-               $We begin.`,
-  "firstStageWin": `I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.
-                    $Do not disappoint me.`,
-  "secondStageWin": "…Magnificent."
+  "encounter": `드디어 때가 다시 도래했다.\n당도한 연유를 아는가?
+               $이미 도달한 적이 있기에 이 자리에 있다.\n셀 수도 없이 많이.
+               $아니, 사실 셀 수는 있지.\n정확히 너의 5,643,853번째다.
+               $매 번 태초의 정신으로 되돌아갔을 뿐.\n하지만 어떻게든, 흔적은 남는다.
+               $실패만을 반복했을 뿐이지만,\n지금은 네 안에 무언가가 있구나.\n
+               $홀로 선 것처럼 보이나, 무언가 이질적인…
+               $마침내 그간의 갈망을 해소해주는가?\n수천 년 간 기다려온 도전을?
+               $시작하지.`,
+  "firstStageWin": `그렇군. 정말로 있었어.\n이제 주저할 필요는 없다.
+                    $실망시키지 않도록.`,
+  "secondStageWin": "…고무적이군."
 };
 
 // Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
@@ -2301,22 +2298,22 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDial
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-        `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
-        $@c{smile}It's over.@d{64} You ended the loop.
-        $@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?
-        $@c{serious_smile_fists}Your legend will always live on in our hearts.
-        $@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.
-        $@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.`,
+        `@c{smile}오? 이긴거야?@d{96} @c{smile_eclosed}진즉 알았어야 했는데.\n아무튼, 돌아왔구나.
+        $@c{smile}다 끝난거야.@d{64} 네가 굴레를 끝장냈어.
+        $@c{serious_smile_fists}네 꿈도 이뤄졌고말야.\n진짜로 한 번도 안 졌잖아.
+        $@c{neutral}기억하는 건 우리들 뿐일 모양이지만.@d{96}\n그래도, 괜찮지?
+        $@c{serious_smile_fists}오늘의 일은\n너와 나의 마음 속에 항상 함께할 거야.
+        $@c{smile_eclosed}여기 구경도 충분히 했으니\n이제 집에 가자.
+        $@c{serious_smile_fists}되돌아가서, 다시 배틀을 할 수도 있지 않을까?\n네가 원한다면 말야.`,
   "ending_female":
-        `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
-        $@c{smile_eclosed}Of course… I always had that feeling.\n@c{smile}It's over now, right? You ended the loop.
-        $@c{smile_ehalf}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $I'll be the only one to remember what you did.\n@c{angry_mopen}I'll try not to forget!
-        $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
-        $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
-        $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
-  "ending_endless": "Congratulations on reaching the current end!\nMore content is coming soon.",
+        `@c{shock}돌아왔구나?@d{32} 그 말은…@d{96} 이겼어?!\n@c{smile_ehalf}그럴 줄 알았다니까.
+        $@c{smile_eclosed}물론… 언제나 느껴왔지.\n@c{smile}끝난 거, 맞지? 이 굴레를 말이야.
+        $@c{smile_ehalf}네 꿈도 이뤘고 말이야.\n어떻게 한번도 안 졌대?
+        $네가 한 일은 나만 기억하게 될 모양이지만.\n@c{angry_mopen}나, 안 까먹어볼 테니까!
+        $@c{smile_wave_wink}농담이야!@d{64} @c{smile}절대로 안 잊어버릴 거야.@d{32}\n오늘 일은 우리의 마음 속에서 살아갈 야.
+        $@c{smile_wave}어쨌든,@d{64} 시간이 좀 늦었어…@d{96}\n이런 곳에서 할 말은 아닌가?
+        $집에 가자. @c{smile_wave_wink}아마 내일은,\n추억을 되짚어보기 위한 배틀을 해볼 수 있을 거야.`,
+  "ending_endless": "끝에 도달하신 것을 축하드립니다!\n더 많은 컨텐츠를 기다려주세요.",
   "ending_name": "Devs"
 };
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
