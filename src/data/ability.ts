@@ -1753,54 +1753,9 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
-/** Attempts to copy `copyTarget` after entering the battle  */
-export class PostSummonCopyAbAttr extends PostSummonAbAttr {
-  constructor(
-    /** The thing to attempt to copy. Extend this to add more options */
-    private copyTarget: "OPP_ABILITY" | "ALLY_STAT_CHANGES"
-  ) {
-    super();
-  }
-
+/** Attempts to copy a pokemon's ability */
+export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    switch (this.copyTarget) {
-    case "OPP_ABILITY":
-      return this.copyAbility(pokemon);
-    case "ALLY_STAT_CHANGES":
-      return this.copyAllyStatChanges(pokemon);
-    default:
-      return false;
-    }
-  }
-
-  /**
-   * Copy the stat changes on an ally pokemon
-   * @param pokemon {@linkcode Pokemon} that will receive the stat changes
-   * @returns true if successful
-   */
-  copyAllyStatChanges(pokemon: Pokemon): boolean {
-    if (!pokemon.scene.currentBattle.double) {
-      return false;
-    }
-
-    const ally = pokemon.getAlly();
-    if (!ally || ally.summonData.battleStats.every((change) => change === 0)) {
-      return false;
-    }
-
-    pokemon.summonData.battleStats = ally.summonData.battleStats;
-    pokemon.updateInfo();
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` copied ${ally.name}'s stat changes!`));
-
-    return true;
-  }
-
-  /**
-   * Copy the ability of an enemy pokemon post summon
-   * @param pokemon {@linkcode Pokemon} that will receive the ability
-   * @returns true if successful
-   */
-  copyAbility(pokemon: Pokemon): boolean {
     const targets = pokemon.getOpponents();
     if (!targets.length) {
       return false;
@@ -1824,6 +1779,27 @@ export class PostSummonCopyAbAttr extends PostSummonAbAttr {
     pokemon.summonData.ability = target.getAbility().id;
     pokemon.updateInfo();
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` traced ${target.name}'s\n${allAbilities[target.getAbility().id].name}!`));
+
+    return true;
+  }
+}
+
+
+/** Attempt to copy the stat changes on an ally pokemon */
+export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    if (!pokemon.scene.currentBattle.double) {
+      return false;
+    }
+
+    const ally = pokemon.getAlly();
+    if (!ally || ally.summonData.battleStats.every((change) => change === 0)) {
+      return false;
+    }
+
+    pokemon.summonData.battleStats = ally.summonData.battleStats;
+    pokemon.updateInfo();
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` copied ${ally.name}'s stat changes!`));
 
     return true;
   }
@@ -3585,7 +3561,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr)
       .ignorable(),
     new Ability(Abilities.TRACE, 3)
-      .attr(PostSummonCopyAbAttr, "OPP_ABILITY")
+      .attr(PostSummonCopyAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.HUGE_POWER, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
@@ -4406,7 +4382,7 @@ export function initAbilities() {
       .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 5))
       .partial(),
     new Ability(Abilities.COSTAR, 9)
-      .attr(PostSummonCopyAbAttr, "ALLY_STAT_CHANGES"),
+      .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(Abilities.TOXIC_DEBRIS, 9)
       .attr(PostDefendApplyArenaTrapTagAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, ArenaTagType.TOXIC_SPIKES)
       .bypassFaint(),
