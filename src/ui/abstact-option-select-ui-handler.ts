@@ -23,6 +23,7 @@ export interface OptionSelectItem {
   overrideSound?: boolean;
   item?: string;
   itemArgs?: any[]
+  value?: any;
 }
 
 const scrollUpLabel = "↑";
@@ -171,7 +172,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           return false;
         }
       }
-      const option = this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
+      const option = this.getCurrentSelectedOption();
       if (option?.handler()) {
         if (!option.keepOpen) {
           this.clear();
@@ -302,5 +303,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  protected getCurrentSelectedOption(): OptionSelectItem {
+    return this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
   }
 }

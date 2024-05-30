@@ -192,57 +192,7 @@ export class TitlePhase extends Phase {
     }
     options.push({
       label: i18next.t("menu:newGame"),
-      handler: () => {
-        const setModeAndEnd = (gameMode: GameModes) => {
-          this.gameMode = gameMode;
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.clearText();
-          this.end();
-        };
-        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-          const options: OptionSelectItem[] = [
-            {
-              label: gameModes[GameModes.CLASSIC].getName(),
-              handler: () => {
-                setModeAndEnd(GameModes.CLASSIC);
-                return true;
-              }
-            },
-            {
-              label: gameModes[GameModes.ENDLESS].getName(),
-              handler: () => {
-                setModeAndEnd(GameModes.ENDLESS);
-                return true;
-              }
-            }
-          ];
-          if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
-            options.push({
-              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
-              handler: () => {
-                setModeAndEnd(GameModes.SPLICED_ENDLESS);
-                return true;
-              }
-            });
-          }
-          options.push({
-            label: i18next.t("menu:cancel"),
-            handler: () => {
-              this.scene.clearPhaseQueue();
-              this.scene.pushPhase(new TitlePhase(this.scene));
-              super.end();
-              return true;
-            }
-          });
-          this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
-        } else {
-          this.gameMode = GameModes.CLASSIC;
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.clearText();
-          this.end();
-        }
-        return true;
-      }
+      handler: this.handlerNewGame.bind(this)
     },
     {
       label: i18next.t("menu:loadGame"),
@@ -279,6 +229,92 @@ export class TitlePhase extends Phase {
       yOffset: 47
     };
     this.scene.ui.setMode(Mode.TITLE, config);
+  }
+
+  private handlerNewGame(): boolean {
+    const setModeAndEnd = (gameMode: GameModes) => {
+      this.gameMode = gameMode;
+      this.scene.ui.setMode(Mode.MESSAGE);
+      this.scene.ui.clearText();
+      this.end();
+    };
+    const hasUnlockedOptions = this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE] || this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE] || (this.scene.gameData.unlocks[Unlockables.PRESTIGE_MODE] && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]);
+    if (hasUnlockedOptions) {
+      const options: OptionSelectItem[] = [
+        {
+          label: gameModes[GameModes.CLASSIC].getName(),
+          handler: () => {
+            if (this.scene.gameData.unlocks[Unlockables.PRESTIGE_MODE] && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+              const maxPrestigeLevel = this.scene.gameData.prestigeLevel;
+              const prestigeLevels = [...Array(Math.min(maxPrestigeLevel, Prestige.MAX_LEVEL)).keys()].map(i => i + 1);
+              const prestigeOptions: OptionSelectItem[] = prestigeLevels.map(prestigeLevel => ({
+                label: `Prestige ${prestigeLevel}`,
+                value: prestigeLevel,
+                handler: () => {
+                  this.scene.prestigeLevel = prestigeLevel;
+                  setModeAndEnd(GameModes.CLASSIC);
+                  return true;
+                }
+              }));
+              prestigeOptions.unshift({
+                label: "Normal",
+                value: 0,
+                handler: () => {
+                  this.scene.prestigeLevel = 0;
+                  setModeAndEnd(GameModes.CLASSIC);
+                  return true;
+                }
+              });
+              prestigeOptions.push({
+                label: i18next.t("menu:cancel"),
+                handler: this.handlerNewGame.bind(this)
+              });
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText("Select a prestige.", null, () => this.scene.ui.setOverlayMode(Mode.PRESTIGE_LEVEL_SELECT, { options: prestigeOptions, maxOptions: 7 }));
+            } else {
+              this.scene.prestigeLevel = 0;
+              setModeAndEnd(GameModes.CLASSIC);
+            }
+            return true;
+          }
+        }
+      ];
+      if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+        options.push(
+          {
+            label: gameModes[GameModes.ENDLESS].getName(),
+            handler: () => {
+              setModeAndEnd(GameModes.ENDLESS);
+              return true;
+            }
+          }
+        );
+      }
+      if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+        options.push(
+          {
+            label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
+            handler: () => {
+              setModeAndEnd(GameModes.SPLICED_ENDLESS);
+              return true;
+            }
+          }
+        );
+      }
+      options.push({
+        label: i18next.t("menu:cancel"),
+        handler: () => {
+          this.scene.clearPhaseQueue();
+          this.scene.pushPhase(new TitlePhase(this.scene));
+          super.end();
+          return true;
+        }
+      });
+      this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+    } else {
+      setModeAndEnd(GameModes.CLASSIC);
+    }
+    return true;
   }
 
   loadSaveSlot(slotId: integer): void {

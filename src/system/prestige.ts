@@ -42,6 +42,12 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   []
 ];
 
+class PrestigeModifierNameNotImplementedError extends Error {
+  constructor(attribute: PrestigeModifierAttribute) {
+    super(`Attribute ${attribute} is not implemented`);
+  }
+}
+
 export abstract class Prestige {
   public static readonly MAX_LEVEL = PRESTIGE_MODIFIERS.length - 1;
 
@@ -70,6 +76,17 @@ export abstract class Prestige {
   }
 
   /**
+   * Get the descriptions for the given prestige level
+   *
+   * @param prestigeLevel
+   * @returns the description
+   */
+  public static getLevelDescriptionsUntil(prestigeLevel: integer): string[] {
+    const modifiers = this.compileModifiers(this.getModifiersUntil(prestigeLevel));
+    return this.getDescriptionsForModifiers(modifiers);
+  }
+
+  /**
    * Get the modifiers until the given prestige level
    *
    * @param prestigeLevel
@@ -77,5 +94,82 @@ export abstract class Prestige {
    */
   private static getModifiersUntil(prestigeLevel: integer): PrestigeModifier[] {
     return PRESTIGE_MODIFIERS.slice(0, Math.min(prestigeLevel + 1, this.MAX_LEVEL + 1)).flat();
+  }
+
+  /**
+   * Compile the modifiers together to avoid attribute duplicates
+   *
+   * @param modifiers
+   * @returns the compiled modifiers
+   */
+  private static compileModifiers(modifiers: PrestigeModifier[]): PrestigeModifier[] {
+    return modifiers.reduce((acc, modifier) => {
+      if (acc.some(m => m.attribute === modifier.attribute && m.operation === modifier.operation)) {
+        return acc.map(m => {
+          if (m.attribute === modifier.attribute) {
+            switch (modifier.operation) {
+            case PrestigeModifierOperation.ADD:
+              return new PrestigeModifier(m.attribute, m.operation, m.value + modifier.value);
+            case PrestigeModifierOperation.MULTIPLY:
+              return new PrestigeModifier(m.attribute, m.operation, m.value * modifier.value);
+            }
+          }
+          return m;
+        });
+      } else {
+        return [...acc, modifier];
+      }
+    }, []);
+  }
+
+  /**
+   * Get the descriptions for the given modifiers
+   *
+   * @param modifiers
+   * @returns the descriptions
+   */
+  private static getDescriptionsForModifiers(modifiers: PrestigeModifier[]): string[] {
+    return modifiers.sort((a, b) => a.attribute - b.attribute)
+      .map(modifier => this.getDescriptionForModifier(modifier))
+      .filter(description => description !== undefined);
+  }
+
+  private static getDescriptionForModifier(modifier: PrestigeModifier): string | undefined {
+    switch (modifier.operation) {
+    case PrestigeModifierOperation.ADD:
+      if (modifier.value === 0) {
+        return undefined;
+      }
+      const roundedValue = Math.abs(Math.round(modifier.value));
+      if (modifier.value > 0) {
+        return `${this.getModifierAttributeName(modifier.attribute)} + ${roundedValue}`;
+      } else if (modifier.value < 0) {
+        return `${this.getModifierAttributeName(modifier.attribute)} - ${roundedValue} `;
+      }
+    case PrestigeModifierOperation.MULTIPLY:
+      if (modifier.value === 1) {
+        return undefined;
+      }
+      const roundedPercentageValue = Math.abs(Math.round((modifier.value - 1) * 100));
+      if (modifier.value > 1) {
+        return `${this.getModifierAttributeName(modifier.attribute)} + ${roundedPercentageValue}%`;
+      } else if (modifier.value < 1) {
+        return `${this.getModifierAttributeName(modifier.attribute)} - ${roundedPercentageValue}%`;
+      }
+    }
+  }
+
+  /**
+   * Get the attribute name for the given attribute
+   *
+   * @param attribute
+   * @throws PrestigeModifierNameNotImplementedError if the attribute is not implemented
+   * @returns the attribute name
+   */
+  private static getModifierAttributeName(attribute: PrestigeModifierAttribute): string {
+    switch (attribute) {
+    default:
+      throw new PrestigeModifierNameNotImplementedError(attribute);
+    }
   }
 }
