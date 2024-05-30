@@ -1203,8 +1203,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
@@ -1595,13 +1594,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -2278,7 +2277,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 
 
 // Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
-export const PGFdialogue: SimpleTranslationEntries = PGMdialogue;
+export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
 // Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
