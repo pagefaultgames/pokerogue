@@ -12,7 +12,8 @@
 		"test:cov": "vitest run --coverage",
 		"test:watch": "vitest watch --coverage",
 		"eslint": "eslint --fix .",
-		"eslint-ci": "eslint ."
+		"eslint-ci": "eslint .",
+		"docs": "typedoc"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
