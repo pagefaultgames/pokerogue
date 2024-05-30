@@ -14,7 +14,7 @@ export const biome: SimpleTranslationEntries = {
   "LAKE": "Lago",
   "SEABED": "Lecho marino",
   "MOUNTAIN": "Montaña",
-  "BADLANDS": "Meseta",
+  "BADLANDS": "Tierras Baldías",
   "CAVE": "Cueva",
   "DESERT": "Desierto",
   "ICE_CAVE": "Cueva Helada",
