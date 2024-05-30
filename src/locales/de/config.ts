@@ -31,6 +31,7 @@ import {
   PGFmiscDialogue, PGMdoubleBattleDialogue, PGFdoubleBattleDialogue
 } from "./dialogue";
 import { biome } from "./biome";
+import { pokemonInfoContainer } from "./pokemon-info-container";
 
 export const deConfig = {
   ability: ability,
@@ -60,6 +61,7 @@ export const deConfig = {
   gameStatsUiHandler: gameStatsUiHandler,
   voucher: voucher,
   biome: biome,
+  pokemonInfoContainer: pokemonInfoContainer,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
   PGMbattleSpecDialogue: PGMbattleSpecDialogue,
