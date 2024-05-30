@@ -3167,6 +3167,68 @@ export class MoneyAbAttr extends PostBattleAbAttr {
   }
 }
 
+/*
+Attribute for Abilities like Parental Bond
+*
+*@extends AbAttr
+*/
+export class PreHitAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return false;
+  }
+}
+
+/**
+   * Checks if Pokemon has extra hits
+   *
+   * @extneds PreHitAbAttr
+   *
+   * @param extraHits : number of extra hits allowed for by the ability
+   * @param powerMultiplier : reduced power of the extra hit
+   * @returns if the ability provides an extra hit
+*/
+export class ExtraHitMoveAbAttr extends PreHitAbAttr {
+  private extraHits: integer;
+  private powerMultiplier: number;
+
+  constructor(extraHits: integer, powerMultiplier: number) {
+    super(true);
+    this.extraHits = extraHits;
+    this.powerMultiplier = powerMultiplier;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const currentMove = pokemon.move.getMove();
+    const targets = pokemon.getOpponents().length;
+    const hits = (args[0] as number[]);
+    if (targets > 1) {
+      /*If a move could hit multiple targets (including allies), such as Earthquake and Rock Slide, it will not strike twice;
+      *however, if it can only hit a single Pokémon, such as in a Single Battle or if using a move that can hit multiple targets
+      *when only one target is in range, it will strike twice.
+      *If a move could hit multiple Pokémon but only hits one due to missing the other Pokémon, it will only strike once.*/
+      return false;
+    }
+    if (currentMove.MoveTarget === MoveTarget.USER) {
+      /*If Present heals the target it will only strike once,
+       *but if it damages the target it will strike twice (the second strike will always damage the target).*/
+      return false;
+    }
+    if (currentMove.FixedDamageAttr) {
+      /*Fixed-damage moves (such as Seismic Toss and Dragon Rage) deal the full amount of damage for both strikes.*/
+      this.powerMultiplier = 1;
+    }
+
+    if (this.extraHits > 0) {
+      for (let i = 0; i < this.extraHits; i++) {
+        hits.push(this.powerMultiplier);
+      }
+      return true;
+    }
+    return false;
+  }
+}
+
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -3931,7 +3993,7 @@ export function initAbilities() {
     new Ability(Abilities.AERILATE, 6)
       .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.FLYING, 1.2),
     new Ability(Abilities.PARENTAL_BOND, 6)
-      .unimplemented(),
+      .attr(ExtraHitMoveAbAttr, 1, 0.25),
     new Ability(Abilities.DARK_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a Dark Aura!"))
       .attr(FieldMoveTypePowerBoostAbAttr, Type.DARK, 4 / 3),
