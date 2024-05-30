@@ -62,7 +62,6 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-import MysteryEncounter, { OptionSelectMysteryEncounter } from "./data/mystery-encounter";
 
 
 export class LoginPhase extends Phase {
@@ -909,6 +908,11 @@ export class EncounterPhase extends BattlePhase {
       }
     }
 
+    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      const mysteryEncounterIndex: number = this.scene.currentBattle.mysteryEncounter.getMysteryEncounterIndex();
+      return i18next.t(`mysteryEncounter:encounter${mysteryEncounterIndex}`);
+    }
+
     return enemyField.length === 1
       ? i18next.t("battle:singleWildAppeared", {pokemonName: enemyField[0].name})
       : i18next.t("battle:multiWildAppeared", {pokemonName1: enemyField[0].name, pokemonName2: enemyField[1].name});
@@ -941,7 +945,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.currentBattle.started = true;
         this.scene.playBgm(undefined);
         this.scene.pbTray.showPbTray(this.scene.getParty());
-			  this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+        this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
           const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
@@ -966,7 +970,51 @@ export class EncounterPhase extends BattlePhase {
         const showDialogueAndSummon = () => {
           let message: string;
           this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
-          this.scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE,true), null, () => {
+          this.scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE, true), null, () => {
+            this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
+          });
+        };
+        if (this.scene.currentBattle.trainer.config.hasCharSprite) {
+          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon()));
+        } else {
+          showDialogueAndSummon();
+        }
+      }
+    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      const trainer = this.scene.currentBattle.trainer;
+      trainer.untint(100, "Sine.easeOut");
+      trainer.playAnim();
+
+      const doSummon = () => {
+        this.scene.currentBattle.started = true;
+        this.scene.playBgm(undefined);
+        this.scene.pbTray.showPbTray(this.scene.getParty());
+        this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+        const doTrainerSummon = () => {
+          this.hideEnemyTrainer();
+          const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
+          this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
+          if (this.scene.currentBattle.double && availablePartyMembers > 1) {
+            this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
+          }
+          this.end();
+        };
+        if (showEncounterMessage) {
+          this.scene.ui.showText(this.getEncounterMessage(), null, doTrainerSummon, 1500, true);
+        } else {
+          doTrainerSummon();
+        }
+      };
+
+      const encounterMessage = i18next.t("battle:mysteryEncounterAppeared");
+
+      if (!encounterMessage) {
+        doSummon();
+      } else {
+        const showDialogueAndSummon = () => {
+          // let message: string;
+          // this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+          this.scene.ui.showDialogue(encounterMessage, "???", null, () => {
             this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
           });
         };
@@ -1109,110 +1157,6 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
       targets: [ this.scene.arenaEnemy, enemyField ].flat(),
-      x: "+=300",
-      duration: 2000,
-      onComplete: () => {
-        if (!this.tryOverrideForBattleSpec()) {
-          this.doEncounterCommon();
-        }
-      }
-    });
-  }
-}
-
-export class MysteryEncounterPhase extends EncounterPhase {
-  constructor(scene: BattleScene) {
-    super(scene);
-  }
-
-  doEncounter(): void {
-    this.scene.playBgm(undefined, true);
-
-    for (const pokemon of this.scene.getParty()) {
-      if (pokemon) {
-        pokemon.resetBattleData();
-      }
-    }
-
-    this.scene.arenaNextEnemy.setBiome(this.scene.arena.biomeType);
-    this.scene.arenaNextEnemy.setVisible(true);
-
-    const enemyField = this.scene.getEnemyField();
-    this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer].flat(),
-      x: "+=300",
-      duration: 2000,
-      onComplete: () => {
-        this.scene.arenaEnemy.setBiome(this.scene.arena.biomeType);
-        this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
-        this.scene.arenaEnemy.setAlpha(1);
-        this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
-        this.scene.arenaNextEnemy.setVisible(false);
-        if (this.scene.lastEnemyTrainer) {
-          this.scene.lastEnemyTrainer.destroy();
-        }
-
-        if (!this.tryOverrideForBattleSpec()) {
-          this.doEncounterCommon();
-        }
-      }
-    });
-  }
-
-  getMysteryEncounter(scene: BattleScene): MysteryEncounter {
-    // Do some logic to figure out what encounter spawned
-
-    // Init and return encounter object
-
-    // This should be moved/serialized elsewhere, but sticking here for now
-    // Ideally, the OptionSelectMysteryEncounter should create its own options array on initialization based on the Encounter type
-    const options: OptionSelectItem[] = [
-      {
-        label: "Option 2",
-        handler: () => {
-          // Do stuff
-          return true;
-        }
-      },
-      {
-        label: "Option 2",
-        handler: () => {
-          // Do stuff
-          return true;
-        }
-      }
-    ];
-
-    const encounter = new OptionSelectMysteryEncounter(scene, options);
-
-    return encounter;
-  }
-
-  renderMysteryEncounter(scene: BattleScene, encounter: MysteryEncounter): void {
-    this.scene.ui.showText("render mystery encounter text here", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: encounter.options }));
-  }
-}
-
-
-export class NewBiomeMysteryEncounterPhase extends EncounterPhase {
-  doEncounter(): void {
-    this.scene.playBgm(undefined, true);
-
-    for (const pokemon of this.scene.getParty()) {
-      if (pokemon) {
-        pokemon.resetBattleData();
-      }
-    }
-
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
-
-    for (const pokemon of this.scene.getParty().filter(p => p.isOnField())) {
-      applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
-    }
-
-    const enemyField = this.scene.getEnemyField();
-    this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, enemyField].flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -3838,11 +3782,6 @@ export class VictoryPhase extends PokemonPhase {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, !(this.scene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS));
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
           }
-        }
-
-        // Mystery Encounters should not count as their own floors, they happen between floors (to maintain balance of access to wild/trainer battles per biome)
-        if (this.scene.gameMode.hasMysteryEncounters) {
-          this.scene.pushPhase(new MysteryEncounterPhase(this.scene));
         }
 
         this.scene.pushPhase(new NewBattlePhase(this.scene));

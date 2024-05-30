@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import UI  from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, MysteryEncounterPhase, NewBiomeMysteryEncounterPhase } from "./phases";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import * as Utils from "./utils";
@@ -58,6 +58,8 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import { MysteryEncounterPhase, NewBiomeMysteryEncounterPhase } from "./phases/mystery-encounter-phase";
+import MysteryEncounter, { OptionSelectMysteryEncounter } from "./data/mystery-encounter";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -890,6 +892,7 @@ export default class BattleScene extends SceneBase {
     let newDouble: boolean;
     let newBattleType: BattleType;
     let newTrainer: Trainer;
+    let newMysteryEncounter: MysteryEncounter;
 
     let battleConfig: FixedBattleConfig = null;
 
@@ -944,6 +947,9 @@ export default class BattleScene extends SceneBase {
           const trainerType = this.arena.randomTrainerType(newWaveIndex);
           newTrainer = !!trainerData ? trainerData.toTrainer(this) : new Trainer(this, trainerType, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
           this.field.add(newTrainer);
+
+          // Generate encounter
+          newMysteryEncounter = this.generateMysteryEncounter();
         }
       }
     }
@@ -976,7 +982,7 @@ export default class BattleScene extends SceneBase {
     this.lastEnemyTrainer = lastBattle?.trainer ?? null;
 
     this.executeWithSeedOffset(() => {
-      this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
+      this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble, newMysteryEncounter);
     }, newWaveIndex << 3, this.waveSeed);
     this.currentBattle.incrementTurn(this);
 
@@ -2194,5 +2200,16 @@ export default class BattleScene extends SceneBase {
       }) : []
     };
     (window as any).gameInfo = gameInfo;
+  }
+
+  generateMysteryEncounter(): MysteryEncounter {
+    // Do some logic to figure out what encounter spawned
+    const totalEncountersInGame = 1;
+    const encounterIndex = Utils.randSeedInt(totalEncountersInGame);
+
+    // Init and return encounter object
+    const encounter = new OptionSelectMysteryEncounter(this, encounterIndex);
+
+    return encounter;
   }
 }

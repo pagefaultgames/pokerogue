@@ -12,6 +12,7 @@ import { PlayerGender } from "./system/game-data";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
+import MysteryEncounter from "./data/mystery-encounter";
 
 export enum BattleType {
   WILD,
@@ -66,10 +67,11 @@ export default class Battle {
   public lastUsedPokeball: PokeballType;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
+  public mysteryEncounter: MysteryEncounter;
 
   private rngCounter: integer = 0;
 
-  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
+  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean, mysteryEncounter?: MysteryEncounter) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
@@ -94,6 +96,7 @@ export default class Battle {
     this.lastUsedPokeball = null;
     this.playerFaints = 0;
     this.enemyFaints = 0;
+    this.mysteryEncounter = mysteryEncounter;
   }
 
   private initBattleSpec(): void {
