@@ -12,7 +12,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   private abilityNameText: Phaser.GameObjects.Text;
 
   private tween: Phaser.Tweens.Tween;
-  private autoHideTimer: number;
+  private autoHideTimer: NodeJS.Timeout;
 
   public shown: boolean;
 

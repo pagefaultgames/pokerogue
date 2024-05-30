@@ -27,7 +27,9 @@ export const tutorial: SimpleTranslationEntries = {
 
   "statChange": `Les changements de stats restent à travers les combats tant que le Pokémon n’est pas rappelé.
     $Vos Pokémon sont rappelés avant un combat de Dresseur et avant d’entrer dans un nouveau biome.
-    $Vous pouvez également voir en combat les changements de stats d’un Pokémon en maintenant C ou Maj.`,
+    $Vous pouvez voir en combat les changements de stats d’un Pokémon en maintenant C ou Maj.
+    $Vous pouvez également voir les capacités de l’adversaire en maintenant V.
+    $Seules les capacités que le Pokémon a utilisées dans ce combat sont consultables.`,
 
   "selectItem": `Après chaque combat, vous avez le choix entre 3 objets\ntirés au sort. Vous ne pouvez en prendre qu’un.
     $Cela peut être des objets consommables, des objets à\nfaire tenir, ou des objets passifs aux effets permanents.

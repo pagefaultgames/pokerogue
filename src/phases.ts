@@ -2194,9 +2194,7 @@ export class TurnStartPhase extends FieldPhase {
     }
 
 
-    if (this.scene.arena.weather) {
-      this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
-    }
+    this.scene.pushPhase(new WeatherEffectPhase(this.scene));
 
     for (const o of order) {
       if (field[o].status && field[o].status.isPostTurn()) {
@@ -2377,6 +2375,10 @@ export class CommonAnimPhase extends PokemonPhase {
 
     this.anim = anim;
     this.targetIndex = targetIndex;
+  }
+
+  setAnimation(anim: CommonAnim) {
+    this.anim = anim;
   }
 
   start() {
@@ -3092,7 +3094,10 @@ export class StatChangePhase extends PokemonPhase {
       const tileWidth = 156 * this.scene.field.scale * pokemon.getSpriteScale();
       const tileHeight = 316 * this.scene.field.scale * pokemon.getSpriteScale();
 
-      const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", filteredStats.length > 1 ? "mix" : BattleStat[filteredStats[0]].toLowerCase());
+      // On increase, show the red sprite located at ATK
+      // On decrease, show the blue sprite located at SPD
+      const spriteColor = levels.value >= 1 ? BattleStat[BattleStat.ATK].toLowerCase() : BattleStat[BattleStat.SPD].toLowerCase();
+      const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
       statSprite.setPipeline(this.scene.fieldSpritePipeline);
       statSprite.setAlpha(0);
       statSprite.setScale(6);
@@ -3199,12 +3204,22 @@ export class StatChangePhase extends PokemonPhase {
 export class WeatherEffectPhase extends CommonAnimPhase {
   public weather: Weather;
 
-  constructor(scene: BattleScene, weather: Weather) {
-    super(scene, undefined, undefined, CommonAnim.SUNNY + (weather.weatherType - 1));
-    this.weather = weather;
+  constructor(scene: BattleScene) {
+    super(scene, undefined, undefined, CommonAnim.SUNNY + ((scene?.arena?.weather?.weatherType || WeatherType.NONE) - 1));
+    this.weather = scene?.arena?.weather;
   }
 
   start() {
+    // Update weather state with any changes that occurred during the turn
+    this.weather = this.scene?.arena?.weather;
+
+    if (!this.weather) {
+      this.end();
+      return;
+    }
+
+    this.setAnimation(CommonAnim.SUNNY + (this.weather.weatherType - 1));
+
     if (this.weather.isDamaging()) {
 
       const cancelled = new Utils.BooleanHolder(false);
