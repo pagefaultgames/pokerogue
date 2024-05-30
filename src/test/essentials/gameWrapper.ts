@@ -56,7 +56,7 @@ global.fetch = vi.fn(MockFetch);
 Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
 export default class GameWrapper {
-  private scenes: Map<string, Phaser.Scene> = new Map();
+  public scenes: Map<string, Phaser.Scene> = new Map();
   private gameObj = game;
   public scene: {
     add: (_key: string, scene: Phaser.Scene) => void
