@@ -16,6 +16,7 @@ let lastTouchedId: string;
  */
 export function initTouchControls(buttonMap: ButtonMap) {
   preventElementZoom(document.querySelector("#dpad"));
+  preventElementZoom(document.querySelector("#apad"));
 
   for (const button of document.querySelectorAll<HTMLElement>("[data-key]")) {
     bindKey(button, button.dataset.key, buttonMap);
