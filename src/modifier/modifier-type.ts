@@ -1318,14 +1318,14 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
       let weight = 0;
-      const filteredParty = party.filter(p => !p.getHeldItems().filter(i => i instanceof Modifiers.TurnStatusEffectModifier).length && !p.hasAbility(Abilities.FLARE_BOOST));
-      if (!!filteredParty.filter(p => p.hasAbility(Abilities.TOXIC_BOOST) || p.hasAbility(Abilities.POISON_HEAL)).length) {
+      const filteredParty = party.filter(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && !p.hasAbility(Abilities.FLARE_BOOST));
+      if (filteredParty.some(p => p.hasAbility(Abilities.TOXIC_BOOST) || p.hasAbility(Abilities.POISON_HEAL))) {
         weight = 4;
-      } else if (!!filteredParty.filter(p => p.hasAbility(Abilities.MARVEL_SCALE) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET)).length) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.MARVEL_SCALE) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET))) {
         weight = 2;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
-        if (!!filteredParty.filter(p => p.getMoveset().filter(m => moveList.includes(m.moveId))).length) {
+        if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
           weight = 1;
         }
       }
@@ -1333,14 +1333,14 @@ const modifierPool: ModifierPool = {
     }, 32),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       let weight = 0;
-      const filteredParty = party.filter(p => !p.getHeldItems().filter(i => i instanceof Modifiers.TurnStatusEffectModifier).length && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL));
-      if (!!filteredParty.filter(p => p.hasAbility(Abilities.FLARE_BOOST)).length) {
+      const filteredParty = party.filter(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL));
+      if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST))) {
         weight = 4;
-      } else if (!!filteredParty.filter(p => p.hasAbility(Abilities.MARVEL_SCALE) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET)).length) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.MARVEL_SCALE) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET))) {
         weight = 2;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
-        if (!!filteredParty.filter(p => p.getMoveset().filter(m => moveList.includes(m.moveId))).length) {
+        if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
           weight = 1;
         }
       }
