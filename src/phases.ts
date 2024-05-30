@@ -1513,7 +1513,7 @@ export class SwitchSummonPhase extends SummonPhase {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
           && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
         if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
-          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false, false);
+          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false);
         }
       }
     }
@@ -2194,9 +2194,7 @@ export class TurnStartPhase extends FieldPhase {
     }
 
 
-    if (this.scene.arena.weather) {
-      this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
-    }
+    this.scene.pushPhase(new WeatherEffectPhase(this.scene));
 
     for (const o of order) {
       if (field[o].status && field[o].status.isPostTurn()) {
@@ -2377,6 +2375,10 @@ export class CommonAnimPhase extends PokemonPhase {
 
     this.anim = anim;
     this.targetIndex = targetIndex;
+  }
+
+  setAnimation(anim: CommonAnim) {
+    this.anim = anim;
   }
 
   start() {
@@ -3202,12 +3204,22 @@ export class StatChangePhase extends PokemonPhase {
 export class WeatherEffectPhase extends CommonAnimPhase {
   public weather: Weather;
 
-  constructor(scene: BattleScene, weather: Weather) {
-    super(scene, undefined, undefined, CommonAnim.SUNNY + (weather.weatherType - 1));
-    this.weather = weather;
+  constructor(scene: BattleScene) {
+    super(scene, undefined, undefined, CommonAnim.SUNNY + ((scene?.arena?.weather?.weatherType || WeatherType.NONE) - 1));
+    this.weather = scene?.arena?.weather;
   }
 
   start() {
+    // Update weather state with any changes that occurred during the turn
+    this.weather = this.scene?.arena?.weather;
+
+    if (!this.weather) {
+      this.end();
+      return;
+    }
+
+    this.setAnimation(CommonAnim.SUNNY + (this.weather.weatherType - 1));
+
     if (this.weather.isDamaging()) {
 
       const cancelled = new Utils.BooleanHolder(false);
@@ -4841,6 +4853,8 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
+    } else {
+      this.scene.reroll = false;
     }
 
     const party = this.scene.getParty();
@@ -4872,6 +4886,7 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.ui.playError();
             return false;
           } else {
+            this.scene.reroll = true;
             this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier)));
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
@@ -4880,14 +4895,12 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.playSound("buy");
           }
         } else if (cursor === 1) {
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers)).then(() => {
-                const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+              const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
                     && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
-                const itemModifier = itemModifiers[itemIndex];
-                this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, true);
-              });
+              const itemModifier = itemModifiers[itemIndex];
+              this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
             } else {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }

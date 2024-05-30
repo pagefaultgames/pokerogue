@@ -68,7 +68,14 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       this.statsIvsCache = ivChartData.slice(0);
 
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
-        let label = ivs[i].toString();
+        let label = "";
+
+        // Check to see if IVs are 31, if so change the text style to gold, otherwise leave them be.
+        if (ivs[i] === 31) {
+          label += `[color=${getTextColor(TextStyle.SUMMARY_GOLD, false, (this.scene as BattleScene).uiTheme)}][shadow]${ivs[i].toString()}[/shadow][/color]`;
+        } else {
+          label = ivs[i].toString();
+        }
         if (this.showDiff && originalIvs) {
           if (originalIvs[i] < ivs[i]) {
             label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, (this.scene as BattleScene).uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, (this.scene as BattleScene).uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
