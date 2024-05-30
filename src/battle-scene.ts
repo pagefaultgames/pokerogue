@@ -58,7 +58,6 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
-import { FEATURE_FLAGS, FeatureFlag } from "./feature-flags";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -392,11 +391,9 @@ export default class BattleScene extends SceneBase {
     this.biomeWaveText.setOrigin(1, 0);
     this.fieldUI.add(this.biomeWaveText);
 
-    if (FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
-      this.prestigeLevelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.BATTLE_INFO);
-      this.prestigeLevelText.setOrigin(1, 0);
-      this.fieldUI.add(this.prestigeLevelText);
-    }
+    this.prestigeLevelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.BATTLE_INFO);
+    this.prestigeLevelText.setOrigin(1, 0);
+    this.fieldUI.add(this.prestigeLevelText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setName("text-money");
@@ -528,9 +525,7 @@ export default class BattleScene extends SceneBase {
       }
     });
 
-    if (FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
-      this.updatePrestigeLevelText();
-    }
+    this.updatePrestigeLevelText();
     this.updateBiomeWaveText();
     this.updateMoneyText();
     this.updateScoreText();
@@ -852,10 +847,9 @@ export default class BattleScene extends SceneBase {
 
     this.currentBattle = null;
 
-    if (FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
-      this.prestigeLevelText.setText(`Prestige ${this.prestigeLevel}`);
-      this.prestigeLevelText.setVisible(false);
-    }
+    this.prestigeLevelText.setText(`Prestige ${this.prestigeLevel}`);
+    this.prestigeLevelText.setVisible(false);
+
 
     this.biomeWaveText.setText(startingWave.toString());
     this.biomeWaveText.setVisible(false);
@@ -1314,9 +1308,6 @@ export default class BattleScene extends SceneBase {
   }
 
   updatePrestigeLevelText(): void {
-    if (!FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
-      return;
-    }
     if (!this.prestigeLevel || this.gameMode.modeId !== GameModes.CLASSIC) {
       this.prestigeLevelText.setVisible(false);
       return;
@@ -1392,7 +1383,7 @@ export default class BattleScene extends SceneBase {
     const baseY = -(this.game.canvas.height / 6);
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
     const offsetEnemyModifier = (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0);
-    if (this.gameMode?.modeId === GameModes.CLASSIC && this.prestigeLevel && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+    if (this.gameMode?.modeId === GameModes.CLASSIC && this.prestigeLevel) {
       this.prestigeLevelText.setY(baseY + offsetEnemyModifier);
       this.biomeWaveText.setY(this.prestigeLevelText.y + 10);
     } else {

@@ -31,7 +31,6 @@ import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { Prestige, PrestigeModifierAttribute } from "#app/system/prestige";
-import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -1462,10 +1461,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     case GameModes.SPLICED_ENDLESS:
       return 15;
     case GameModes.CLASSIC:
-      if (FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
-        return Prestige.getModifiedValue(this.scene.prestigeLevel, PrestigeModifierAttribute.STARTER_PARTY_POINTS, 10);
-      }
-      return 10;
+      return Prestige.getModifiedValue(this.scene.prestigeLevel, PrestigeModifierAttribute.STARTER_PARTY_POINTS, 10);
     default:
       return 10;
     }

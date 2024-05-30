@@ -63,7 +63,6 @@ import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 import { Prestige, PrestigeModifierAttribute } from "./system/prestige";
-import { FEATURE_FLAGS, FeatureFlag } from "./feature-flags";
 
 
 export class LoginPhase extends Phase {
@@ -238,13 +237,13 @@ export class TitlePhase extends Phase {
       this.scene.ui.clearText();
       this.end();
     };
-    const hasUnlockedOptions = this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE] || this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE] || (this.scene.gameData.unlocks[Unlockables.PRESTIGE_MODE] && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]);
+    const hasUnlockedOptions = this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE] || this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE] || (this.scene.gameData.unlocks[Unlockables.PRESTIGE_MODE]);
     if (hasUnlockedOptions) {
       const options: OptionSelectItem[] = [
         {
           label: gameModes[GameModes.CLASSIC].getName(),
           handler: () => {
-            if (this.scene.gameData.unlocks[Unlockables.PRESTIGE_MODE] && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+            if (this.scene.gameData.unlocks[Unlockables.PRESTIGE_MODE]) {
               const maxPrestigeLevel = this.scene.gameData.prestigeLevel;
               const prestigeLevels = [...Array(Math.min(maxPrestigeLevel, Prestige.MAX_LEVEL)).keys()].map(i => i + 1);
               const prestigeOptions: OptionSelectItem[] = prestigeLevels.map(prestigeLevel => ({
@@ -4094,7 +4093,7 @@ export class GameOverPhase extends BattlePhase {
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
         this.scene.unshiftPhase(UnlockPhaseFactory.get(this.scene, Unlockables.MINI_BLACK_HOLE));
       }
-      if (this.scene.gameData.prestigeLevel < Prestige.MAX_LEVEL && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+      if (this.scene.gameData.prestigeLevel < Prestige.MAX_LEVEL) {
         this.scene.unshiftPhase(UnlockPhaseFactory.get(this.scene, Unlockables.PRESTIGE_MODE));
       }
     }
@@ -4307,7 +4306,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    const rawExp = FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE] ? Prestige.getModifiedValue(this.scene.prestigeLevel, PrestigeModifierAttribute.POKEMON_EXP_GAIN, this.expValue) : this.expValue;
+    const rawExp = Prestige.getModifiedValue(this.scene.prestigeLevel, PrestigeModifierAttribute.POKEMON_EXP_GAIN, this.expValue);
     const exp = new Utils.NumberHolder(rawExp);
     this.scene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);

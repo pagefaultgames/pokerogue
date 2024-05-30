@@ -31,7 +31,6 @@ import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import { Prestige } from "./prestige";
-import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -1371,7 +1370,7 @@ export class GameData {
   }
 
   increasePrestigeLevel(): void {
-    if (this.scene.gameData.prestigeLevel <= Prestige.MAX_LEVEL && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+    if (this.scene.gameData.prestigeLevel <= Prestige.MAX_LEVEL) {
       this.scene.gameData.prestigeLevel++;
     }
   }

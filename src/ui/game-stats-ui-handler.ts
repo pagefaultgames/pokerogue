@@ -8,7 +8,6 @@ import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
-import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 interface DisplayStat {
   label_key?: string;
@@ -214,10 +213,6 @@ const displayStats: DisplayStats = {
     hidden: true
   },
 };
-
-if (!FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
-  delete displayStats.prestigeLevel;
-}
 
 export default class GameStatsUiHandler extends UiHandler {
   private gameStatsContainer: Phaser.GameObjects.Container;

@@ -49,7 +49,6 @@ import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { Prestige } from "#app/system/prestige";
-import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 export enum FieldPosition {
   CENTER,
@@ -3690,7 +3689,7 @@ export class EnemyPokemon extends Pokemon {
    */
   getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
     const rawBattleStat = super.getBattleStat(stat, opponent, move, isCritical);
-    if (stat === Stat.HP || this.scene.prestigeLevel === 0 || !FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+    if (stat === Stat.HP || this.scene.prestigeLevel === 0) {
       return rawBattleStat;
     }
     const isWildPokemon = this.trainerSlot === TrainerSlot.NONE;

@@ -22,7 +22,6 @@ import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature
 import i18next from "#app/plugins/i18n";
 import { getModifierTierTextTint } from "#app/ui/text";
 import { Prestige, PrestigeModifierAttribute } from "#app/system/prestige";
-import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -1650,7 +1649,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     return [];
   }
 
-  const cost = FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE] ? Prestige.getModifiedValue(prestigeLevel, PrestigeModifierAttribute.SHOP_ITEM_PRICES, baseCost) : baseCost;
+  const cost = Prestige.getModifiedValue(prestigeLevel, PrestigeModifierAttribute.SHOP_ITEM_PRICES, baseCost);
 
   const options = [
     [
@@ -1847,7 +1846,7 @@ export class ModifierTypeOption {
 
 export function getPartyLuckValue(party: Pokemon[]): integer {
   const basePartyLuck = party.map(p => p.isFainted() ? 0 : p.getLuck()).reduce((total: integer, value: integer) => total += value, 0);
-  const partyLuck = FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE] ? Prestige.getModifiedValue(party[0].scene.prestigeLevel, PrestigeModifierAttribute.PARTY_LUCK, basePartyLuck) : basePartyLuck;
+  const partyLuck = Prestige.getModifiedValue(party[0].scene.prestigeLevel, PrestigeModifierAttribute.PARTY_LUCK, basePartyLuck);
   return Phaser.Math.Clamp(Math.round(partyLuck), 0, 14);
 }
 

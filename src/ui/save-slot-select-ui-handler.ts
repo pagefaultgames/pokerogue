@@ -10,7 +10,6 @@ import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
-import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 const sessionSlotCount = 5;
 
@@ -267,7 +266,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
 
-    const gameModeLabelText = `${gameModes[data.gameMode]?.getName() || "Unknown"}${FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE] && data.gameMode === GameModes.CLASSIC && data.prestigeLevel ? ` P.${data.prestigeLevel}` : ""} - Wave ${data.waveIndex}`;
+    const gameModeLabelText = `${gameModes[data.gameMode]?.getName() || "Unknown"}${data.gameMode === GameModes.CLASSIC && data.prestigeLevel ? ` P.${data.prestigeLevel}` : ""} - Wave ${data.waveIndex}`;
     const gameModeLabel = addTextObject(this.scene, 8, 5, gameModeLabelText, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
