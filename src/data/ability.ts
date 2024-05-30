@@ -2325,38 +2325,35 @@ export class PostTurnAbAttr extends AbAttr {
 }
 
 /**
- *
+ * This attribute will heal 1/8th HP if the ability pokemon has the correct status.
  */
 export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
   private effects: StatusEffect[];
 
   /**
-   *
-   * @param {StatusEffect[]} effects
+   * @param {StatusEffect[]} effects The status effect(s) that will qualify healing the ability pokemon
    */
   constructor(...effects: StatusEffect[]) {
-    super();
+    super(false);
 
     this.effects = effects;
   }
 
   /**
-   *
-   * @param pokemon
-   * @param passive
-   * @param args
-   * @returns
+   * @param {Pokemon} pokemon The pokemon with the ability that will receive the healing
+   * @param {Boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns Returns true if healed from status, false if not
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     if (this.effects.includes(pokemon.status.effect)) {
-      if (pokemon.getMaxHp() === pokemon.hp) {
-        this.showAbility = false;
-      } else {
-        this.showAbility = true;
-        pokemon.heal(Math.max(Math.floor((pokemon.getMaxHp() / 8)), 1));
-        pokemon.updateInfo();
+      if (pokemon.getMaxHp() !== pokemon.hp) {
+        const scene = pokemon.scene;
+        const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+        scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
+          Math.max(Math.floor(pokemon.getMaxHp() / (8 / 1)), 1), getPokemonMessage(pokemon, `'s ${abilityName}\nrestored its HP a little!`), true));
+        return true;
       }
-      return true;
     }
     return false;
   }
