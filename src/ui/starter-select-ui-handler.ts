@@ -1116,6 +1116,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (row) {
             success = this.setCursor(this.cursor - 9);
           } else {
+            // when strictly opposite starter based on rows length
+            // does not exits, set cursor on the second to last row
             if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
               success = this.setCursor(this.cursor + (rows - 2) * 9);
             } else {
@@ -1127,6 +1129,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 9);
           } else {
+            // if there is no starter below while being on the second to
+            // last row, adjust cursor position with one line less
             if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
               success = this.setCursor(this.cursor - (rows - 2) * 9);
             } else {
