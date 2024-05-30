@@ -4786,10 +4786,17 @@ export class ConfuseIfBoostedAttr extends AddBattlerTagAttr {
     super(BattlerTagType.CONFUSED, false, false, 2, 5);
   }
 
+  /**
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} {@linkcode Move.ALLURING_VOICE}
+   * @param {any[]} args N/A
+   * @returns true
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (
       target.turnData.statsBoosted ||
-      (user.scene.currentBattle.turn === 1 && target.battleSummonData.statsBoostedOnFirstTurn)
+      (user.scene.currentBattle.turn === 1 && target.battleData.statsBoostedFirstTurn)
     ) {
       super.apply(user, target, move, args);
     }
@@ -4807,10 +4814,17 @@ export class BurnIfBoostedAttr extends MoveEffectAttr {
     super(true, MoveEffectTrigger.HIT);
   }
 
+  /**
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} {@linkcode Move.BURNING_JEALOUSY}
+   * @param {any[]} args N/A
+   * @returns true
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (
       target.turnData.statsBoosted ||
-      (user.scene.currentBattle.turn === 1 && target.battleSummonData.statsBoostedOnFirstTurn)
+      (user.scene.currentBattle.turn === 1 && target.battleData.statsBoostedFirstTurn)
     ) {
       target.trySetStatus(StatusEffect.BURN, true, user);
     }

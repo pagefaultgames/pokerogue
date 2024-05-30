@@ -3688,12 +3688,12 @@ export class PokemonBattleData {
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
+  public statsBoostedFirstTurn: boolean = false;
 }
 
 export class PokemonBattleSummonData {
   public turnCount: integer = 1;
   public moveHistory: TurnMove[] = [];
-  public statsBoostedOnFirstTurn: boolean = false;
 }
 
 export class PokemonTurnData {

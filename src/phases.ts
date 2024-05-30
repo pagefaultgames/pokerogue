@@ -3055,8 +3055,8 @@ export class StatChangePhase extends PokemonPhase {
           if (pokemon.turnData) {
             pokemon.turnData.statsBoosted = true;
           }
-          if (pokemon.battleSummonData.turnCount === 1) {
-            pokemon.battleSummonData.statsBoostedOnFirstTurn = true;
+          if (pokemon.scene.currentBattle.turn === 1) {
+            pokemon.battleData.statsBoostedFirstTurn = true;
           }
         }
 
