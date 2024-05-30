@@ -2069,6 +2069,37 @@ export class BlockNonDirectDamageAbAttr extends AbAttr {
   }
 }
 
+/**
+ * This attribute will block any status damage that you put in the parameter.
+ */
+export class BlockStatusDamageAbAttr extends BlockNonDirectDamageAbAttr {
+  private effects: StatusEffect[];
+
+  /**
+   * @param {StatusEffect[]} effects The status effect(s) that will be blocked from damaging the ability pokemon
+   */
+  constructor(...effects: StatusEffect[]) {
+    super(false);
+
+    this.effects = effects;
+  }
+
+  /**
+   * @param {Pokemon} pokemon The pokemon with the ability
+   * @param {boolean} passive N/A
+   * @param {Utils.BooleanHolder} cancelled Whether to cancel the status damage
+   * @param {any[]} args N/A
+   * @returns Returns true if status damage is blocked
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.effects.includes(pokemon.status.effect)) {
+      cancelled.value = true;
+      return true;
+    }
+    return false;
+  }
+}
+
 export class BlockOneHitKOAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
@@ -2379,6 +2410,41 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
 
 export class PostTurnAbAttr extends AbAttr {
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+/**
+ * This attribute will heal 1/8th HP if the ability pokemon has the correct status.
+ */
+export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
+  private effects: StatusEffect[];
+
+  /**
+   * @param {StatusEffect[]} effects The status effect(s) that will qualify healing the ability pokemon
+   */
+  constructor(...effects: StatusEffect[]) {
+    super(false);
+
+    this.effects = effects;
+  }
+
+  /**
+   * @param {Pokemon} pokemon The pokemon with the ability that will receive the healing
+   * @param {Boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns Returns true if healed from status, false if not
+   */
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    if (this.effects.includes(pokemon.status.effect)) {
+      if (pokemon.getMaxHp() !== pokemon.hp) {
+        const scene = pokemon.scene;
+        const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+        scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
+          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: pokemon.name, abilityName: abilityName}), true));
+        return true;
+      }
+    }
     return false;
   }
 }
@@ -3732,7 +3798,8 @@ export function initAbilities() {
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, 4)
-      .unimplemented(),
+      .attr(PostTurnStatusHealAbAttr, StatusEffect.TOXIC, StatusEffect.POISON)
+      .attr(BlockStatusDamageAbAttr, StatusEffect.TOXIC, StatusEffect.POISON),
     new Ability(Abilities.ADAPTABILITY, 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
