@@ -2351,7 +2351,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
         const scene = pokemon.scene;
         const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
         scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-          Math.max(Math.floor(pokemon.getMaxHp() / (8 / 1)), 1), getPokemonMessage(pokemon, `'s ${abilityName}\nrestored its HP a little!`), true));
+          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: pokemon.name, abilityName: abilityName}), true));
         return true;
       }
     }
