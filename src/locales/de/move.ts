@@ -3767,7 +3767,7 @@ export const move: MoveTranslationEntries = {
   },
   "thunderclap": {
     name: "Sturmblitz",
-    effect: "Der Anwender trifft das Ziel mit einem schnellen Stromschlag. Erstschlaggarantie."
+    effect: "Diese Attacke ermöglicht es dem Anwender, zuerst mit einem Stromstoß anzugreifen. Die Attacke schlägt fehl, wenn das Ziel keinen Angriff vorbereitet."
   },
   "mightyCleave": {
     name: "Wuchtklinge",
