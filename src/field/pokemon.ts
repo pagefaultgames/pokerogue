@@ -1268,8 +1268,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Generates a variant
    * Has a 10% of returning 2 (epic variant)
-   * And a 20% of returning 1 (rare variant)
-   * Returns 0 (basic shiny) if there is no variant or 70% of the time otherwise
+   * And a 30% of returning 1 (rare variant)
+   * Returns 0 (basic shiny) if there is no variant or 60% of the time otherwise
    * @returns the shiny variant
    */
   generateVariant(): Variant {
@@ -1277,10 +1277,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 0;
     }
     const rand = Utils.randSeedInt(10);
-    if (rand >= 3) {
-      return 0;             // 7/10
+    if (rand >= 4) {
+      return 0;             // 6/10
     } else if (rand >= 1) {
-      return 1;             // 2/10
+      return 1;             // 3/10
     } else {
       return 2;             // 1/10
     }
