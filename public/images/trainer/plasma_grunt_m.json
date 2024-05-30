@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "aqua_grunt_female.png",
+			"image": "plasma_grunt_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 71,
-				"h": 71
+				"w": 72,
+				"h": 72
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 22,
-						"y": 8,
-						"w": 36,
-						"h": 71
+						"x": 16,
+						"y": 7,
+						"w": 47,
+						"h": 72
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 36,
-						"h": 71
+						"w": 47,
+						"h": 72
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:6db25cb5753163d19bca8e2db45849ae:7d8f51509862bfdf8a78bf42dd0005cd:af0aa9494be37941522487032b556989$"
+		"smartupdate": "$TexturePacker:SmartUpdate:61f195ebbcde93ab7442408edad7fe7a:28ae203b3cb42a94c4ba4420fdebdccc:9ae0ee174d431d48052a2f6b74e9d40c$"
 	}
 }

@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "magma_grunt_female.png",
+			"image": "plasma_grunt_f.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 72,
-				"h": 72
+				"w": 75,
+				"h": 75
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 23,
-						"y": 7,
-						"w": 33,
-						"h": 72
+						"x": 21,
+						"y": 4,
+						"w": 37,
+						"h": 75
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 33,
-						"h": 72
+						"w": 37,
+						"h": 75
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f63ad48affc076f60fae78992c96a2bf:80928b32710abcb28c07c6fc5a425d99:3b961d8852b62aaf24ceb2030c036515$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c3001e18f1878c01a4825697200e823e:2003e0d4db249f7020c3471872198ac8:b01645b9e941158814978f2126e7e995$"
 	}
 }

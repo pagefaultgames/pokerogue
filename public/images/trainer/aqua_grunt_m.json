@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "rocket_grunt_female.png",
+			"image": "aqua_grunt_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 67,
-				"h": 67
+				"w": 73,
+				"h": 73
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 18,
-						"y": 9,
-						"w": 50,
-						"h": 67
+						"x": 17,
+						"y": 6,
+						"w": 46,
+						"h": 73
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 50,
-						"h": 67
+						"w": 46,
+						"h": 73
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f2e4df704ed3262efeba03b98c4f34b6:856ea7816491331f96e020076871263b:fadb24d665ba1be4d210fe9064954d5b$"
+		"smartupdate": "$TexturePacker:SmartUpdate:efd07ff3ed1e610150a4b8ca18974343:d9b85b9eb11182e9e4669e2bd8b08694:72b7b50231708a9486d5f315824e4df1$"
 	}
 }

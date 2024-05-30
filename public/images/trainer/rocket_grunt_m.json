@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "flare_grunt.png",
+			"image": "rocket_grunt_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 77,
-				"h": 77
+				"w": 65,
+				"h": 65
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 24,
-						"y": 2,
-						"w": 31,
-						"h": 77
+						"x": 17,
+						"y": 9,
+						"w": 42,
+						"h": 65
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 31,
-						"h": 77
+						"w": 42,
+						"h": 65
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:a26606e70778f88a1a7053b2f2420dde:84abf0d0f6bc90c6a60f660567b2d641:adc35a4070bac9fe828c2605a3b15744$"
+		"smartupdate": "$TexturePacker:SmartUpdate:831f5748dad92911b10a1cb358ee2dae:a3bf81bbaa3b49cad5e0e549cf94563b:bb6befc9383c9c08837183ae2a7a80c1$"
 	}
 }
