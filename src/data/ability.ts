@@ -3500,7 +3500,8 @@ export function initAbilities() {
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true),
     new Ability(Abilities.COMPOUND_EYES, 3)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3), // TODO: Generation III Item Implementation https://bulbapedia.bulbagarden.net/wiki/Compound_Eyes_(Ability)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3)
+      .partial(), // TODO: Generation III Item Implementation https://bulbapedia.bulbagarden.net/wiki/Compound_Eyes_(Ability)
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -3775,7 +3776,8 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " breaks the mold!"))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
-      .attr(BonusCritAbAttr), // TODO: Generation VIII Item Implementation https://bulbapedia.bulbagarden.net/wiki/Super_Luck_(Ability)
+      .attr(BonusCritAbAttr)
+      .partial(), // TODO: Generation VIII Item Implementation https://bulbapedia.bulbagarden.net/wiki/Super_Luck_(Ability)
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),
