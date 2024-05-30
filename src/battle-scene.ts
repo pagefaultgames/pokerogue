@@ -878,7 +878,8 @@ export default class BattleScene extends SceneBase {
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
-    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
+    const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
+    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
     let newDouble: boolean;
     let newBattleType: BattleType;
     let newTrainer: Trainer;

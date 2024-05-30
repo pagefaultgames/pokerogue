@@ -97,10 +97,12 @@ export default class GameWrapper {
       scene.pushPhase(new EncounterPhase(scene, false));
       scene.sessionSlotId = 0;
       selectStarterPhase.initBattle(starters)
-      await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM);
-      const confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-      confirmHandler.processInput(Button.CANCEL);
-      await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
+      await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM || scene.ui.getMode() === Mode.COMMAND);
+      if (scene.ui.getMode() === Mode.CONFIRM) { // if this is a trainer battle, we don't switch pokemon
+        const confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
+        confirmHandler.processInput(Button.CANCEL);
+        await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
+      }
       return resolve();
     });
   }
