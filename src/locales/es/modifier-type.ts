@@ -420,5 +420,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DRAGON_MEMORY": "Disco Dragón",
     "DARK_MEMORY": "Disco Siniestro",
     "FAIRY_MEMORY": "Disco Hada",
+    "BLANK_MEMORY": "Disco Blanco",
   },
 } as const;

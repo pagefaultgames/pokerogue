@@ -420,5 +420,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DRAGON_MEMORY": "ROM Dragon",
     "DARK_MEMORY": "ROM Ténèbres",
     "FAIRY_MEMORY": "ROM Fée",
+    "BLANK_MEMORY": "ROM Vierge",
   },
 } as const;

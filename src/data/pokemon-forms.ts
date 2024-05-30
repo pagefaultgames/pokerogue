@@ -123,7 +123,8 @@ export enum FormChangeItem {
   ICE_MEMORY,
   DRAGON_MEMORY,
   DARK_MEMORY,
-  FAIRY_MEMORY
+  FAIRY_MEMORY,
+  BLANK_MEMORY  // Will this ever be used?
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
