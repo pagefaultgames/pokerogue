@@ -16,7 +16,7 @@ export const tutorial: SimpleTranslationEntries = {
     $Podrás cambiar la velocidad del juego, el estilo de la ventana y demás.
     $Hay más opciones, ¡así que pruébalas todas!`,
 
-  "starterSelect": `En esta pantalla podrás elegir tus iniciales. Estos serán tus\nmiembros de equipo al comenzar la partida.
+  "starterSelect": `En esta pantalla, podrás elegir tus iniciales presionando Z\no Espacio. Estos serán tus miembros de equipo al comenzar.
     $Cada inicial tiene un valor. Tu equipo puede contener hasta 6\nmiembros mientras el valor total no pase de 10.
     $También puedes elegir su género, habilidad y forma\ndependiendo de las variantes que hayas conseguido.
     $Los IVs de los iniciales corresponderán al valor más alto de\nlos Pokémon de la misma especie que hayas obtenido.
@@ -27,7 +27,9 @@ export const tutorial: SimpleTranslationEntries = {
 
   "statChange": `Los cambios de estadísticas se mantienen entre combates\nmientras que el Pokémon no vuelva a su Poké Ball.
     $Tus Pokémon vuelven a sus Poké Balls antes de combates contra entrenadores y de entrar a un nuevo bioma.
-    $También puedes ver los cambios de estadísticas del Pokémon en campo manteniendo pulsado C o Shift.`,
+    $También puedes ver los cambios de estadísticas del Pokémon en campo manteniendo pulsado C o Shift.
+    $También puedes ver los movimientos de un Pokémon enemigo manteniendo presionada la V.
+    $Esto solo revela los movimientos que has visto usar al Pokémon en esta combate.`,
 
   "selectItem": `Tras cada combate, tendrás la opción de elegir entre tres objetos aleatorios. Solo podrás escoger uno.
     $Estos objetos pueden ser consumibles, objetos equipables u objetos pasivos permanentes (hasta acabar la partida).
