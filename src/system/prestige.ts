@@ -246,6 +246,26 @@ export abstract class Prestige {
    */
   private static getModifierAttributeName(attribute: PrestigeModifierAttribute): string {
     switch (attribute) {
+    case PrestigeModifierAttribute.WILD_POKEMON_ATTACK:
+      return "Wild Pokémon Attack";
+    case PrestigeModifierAttribute.WILD_POKEMON_DEFENSE:
+      return "Wild Pokémon Defense";
+    case PrestigeModifierAttribute.WILD_POKEMON_SPEED:
+      return "Wild Pokémon Speed";
+    case PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK:
+      return "Trainer Pokémon Attack";
+    case PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE:
+      return "Trainer Pokémon Defense";
+    case PrestigeModifierAttribute.TRAINER_POKEMON_SPEED:
+      return "Trainer Pokémon Speed";
+    case PrestigeModifierAttribute.SHOP_ITEM_PRICES:
+      return "Shop Item Prices";
+    case PrestigeModifierAttribute.POKEMON_EXP_GAIN:
+      return "Pokémon Exp. Gain";
+    case PrestigeModifierAttribute.PARTY_LUCK:
+      return "Party Luck";
+    case PrestigeModifierAttribute.STARTER_PARTY_POINTS:
+      return "Starter Party Points";
     default:
       throw new PrestigeModifierNameNotImplementedError(attribute);
     }
