@@ -2116,7 +2116,7 @@ export class TurnStartPhase extends FieldPhase {
         applyMoveAttrs(IncrementMovePriorityAttr,this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a),null,aMove,aPriority);
         applyMoveAttrs(IncrementMovePriorityAttr,this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b),null,bMove,bPriority);
 
-		    applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
+        applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
         applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b), null, bMove, bPriority);
 
         if (aPriority.value !== bPriority.value) {
@@ -2190,7 +2190,6 @@ export class TurnStartPhase extends FieldPhase {
         break;
       }
     }
-
 
     if (this.scene.arena.weather) {
       this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));

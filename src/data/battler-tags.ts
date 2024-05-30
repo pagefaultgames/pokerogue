@@ -927,19 +927,20 @@ export class ContactPoisonProtectedTag extends ProtectedTag {
 
 export class BeakBlastTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.BEAK_BLAST, BattlerTagLapseType.CUSTOM, 0, Moves.BEAK_BLAST);
+    super(BattlerTagType.BEAK_BLAST, BattlerTagLapseType.MOVE_EFFECT, 1, Moves.BEAK_BLAST);
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = super.lapse(pokemon, lapseType);
-
-    const effectPhase = pokemon.scene.getCurrentPhase();
-    if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
-      const attacker = effectPhase.getPokemon();
-      attacker.trySetStatus(StatusEffect.BURN, true);
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType) {
+    if (lapseType === BattlerTagLapseType.CUSTOM) { // lapsed in battle, burn on contact
+      const effectPhase = pokemon.scene.getCurrentPhase();
+      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+        const attacker = effectPhase.getPokemon();
+        attacker.trySetStatus(StatusEffect.BURN, true);
+      }
+      return true; // do not remove tag
+    } else { // lapsed on move effect, remove tag
+      return super.lapse(pokemon, lapseType);
     }
-
-    return ret;
   }
 }
 

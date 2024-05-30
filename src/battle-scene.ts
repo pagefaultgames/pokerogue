@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, TurnEndPhase } from "./phases";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, WeatherEffectPhase, PostTurnStatusEffectPhase, BerryPhase, TurnEndPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import * as Utils from "./utils";
@@ -1671,32 +1671,44 @@ export default class BattleScene extends SceneBase {
   }
 
   pushMovePhase(movePhase: MovePhase, priorityOverride?: integer): void {
-    // Remove the current turn-end phase from the queue
-    // and place it after this new move phase
-
-    // search for and remove turn end phase in queue
-    let foundTurnEndPhase = false;
-    for (let phase = 0; phase < this.phaseQueue.length; phase++) {
-      if (this.phaseQueue[phase] instanceof TurnEndPhase) {
-        foundTurnEndPhase = true;
-        this.phaseQueue.splice(phase, 1);
-        break;
-      }
-    }
-
-    // add new move phase
+    // determine if the new move phase has a higher priority than an existing move phase
+    // to place it accordingly in the queue
     const movePriority = new Utils.IntegerHolder(priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority);
     applyAbAttrs(IncrementMovePriorityAbAttr, movePhase.pokemon, null, movePhase.move.getMove(), movePriority);
-    const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < movePriority.value);
-    if (lowerPriorityPhase) {
-      this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
-    } else {
-      this.pushPhase(movePhase);
-    }
 
-    // if turn end phase was removed from queue, add back at the end
-    if (foundTurnEndPhase) {
-      this.pushPhase(new TurnEndPhase(this));
+    const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < movePriority.value);
+    if (lowerPriorityPhase) { // if there is a lower priority move already in the queue
+      this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
+    } else { // if this move phase would be the lowest priority move
+      // Need to push this move phase after all phases except end of turn phases
+      // (WeatherEffectPhase, PostTurnStatusEffectPhase, BerryPhase, TurnEndPhase)
+
+      // add new move phase
+      this.pushPhase(movePhase);
+
+      // search for each of the end of turn phases
+      // if they exist, remove them and place them at the end, in the same order as they
+      // were added in TurnStartPhase
+      const weatherPhase = this.findPhase(phase => phase instanceof WeatherEffectPhase); // exists only if weather is present
+      if (weatherPhase) {
+        this.tryRemovePhase(phase => phase instanceof WeatherEffectPhase);
+        this.pushPhase(weatherPhase);
+      }
+      const statusPhase = this.findPhase(phase => phase instanceof PostTurnStatusEffectPhase); // exists only if any pokemon has a status with end of turn effects
+      if (statusPhase) {
+        this.tryRemovePhase(phase => phase instanceof PostTurnStatusEffectPhase);
+        this.pushPhase(statusPhase);
+      }
+      const berryPhase = this.findPhase(phase => phase instanceof BerryPhase); // should always exist
+      if (berryPhase) {
+        this.tryRemovePhase(phase => phase instanceof BerryPhase);
+        this.pushPhase(berryPhase);
+      }
+      const endPhase = this.findPhase(phase => phase instanceof TurnEndPhase); // should always exist
+      if (endPhase) {
+        this.tryRemovePhase(phase => phase instanceof TurnEndPhase);
+        this.pushPhase(endPhase);
+      }
     }
   }
 
