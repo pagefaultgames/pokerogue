@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const modifierSelectUiHandler: SimpleTranslationEntries = {
   "transfer": "도구 이동",
-  "reroll": "Reroll",
+  "reroll": "새로고침",
   "lockRarities": "Lock Rarities",
   "transferDesc": "Transfer a held item from one Pokémon to another.",
   "rerollDesc": "Spend money to reroll your item options.",
