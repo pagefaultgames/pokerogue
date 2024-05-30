@@ -4853,6 +4853,8 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
+    } else {
+      this.scene.reroll = false;
     }
 
     const party = this.scene.getParty();
@@ -4884,6 +4886,7 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.ui.playError();
             return false;
           } else {
+            this.scene.reroll = true;
             this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier)));
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());

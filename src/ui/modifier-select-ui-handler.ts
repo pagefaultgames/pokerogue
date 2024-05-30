@@ -147,6 +147,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.scene.showFieldOverlay(750);
     this.scene.updateAndShowText(750);
+    this.scene.updateMoneyText();
 
     let i = 0;
 
@@ -382,7 +383,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.eraseCursor();
 
     this.scene.hideFieldOverlay(250);
-    this.scene.hideLuckText(750);
+    this.scene.hideLuckText(250);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
