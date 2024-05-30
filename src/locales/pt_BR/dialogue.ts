@@ -1203,8 +1203,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
