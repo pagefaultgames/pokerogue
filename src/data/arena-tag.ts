@@ -294,18 +294,20 @@ class WishTag extends ArenaTag {
   }
 }
 
-export class WeakenMoveTypeTag extends ArenaTag {
-  private weakenedType: Type;
+export class BuffOrWeakenMoveTypeTag extends ArenaTag {
+  private buffedTypes: Type[];
+  private buff: number;
 
-  constructor(tagType: ArenaTagType, turnCount: integer, type: Type, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: ArenaTagType, turnCount: integer, buffedTypes: Type[], buff: number, sourceMove: Moves, sourceId: integer) {
     super(tagType, turnCount, sourceMove, sourceId);
 
-    this.weakenedType = type;
+    this.buffedTypes = buffedTypes;
+    this.buff = buff;
   }
 
   apply(arena: Arena, args: any[]): boolean {
-    if ((args[0] as Type) === this.weakenedType) {
-      (args[1] as Utils.NumberHolder).value *= 0.33;
+    if (this.buffedTypes.includes((args[0] as Type))) {
+      (args[1] as Utils.NumberHolder).value *= this.buff;
       return true;
     }
 
@@ -313,9 +315,9 @@ export class WeakenMoveTypeTag extends ArenaTag {
   }
 }
 
-class MudSportTag extends WeakenMoveTypeTag {
+class MudSportTag extends BuffOrWeakenMoveTypeTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(ArenaTagType.MUD_SPORT, turnCount, Type.ELECTRIC, Moves.MUD_SPORT, sourceId);
+    super(ArenaTagType.MUD_SPORT, turnCount, [Type.ELECTRIC], 0.33, Moves.MUD_SPORT, sourceId);
   }
 
   onAdd(arena: Arena): void {
@@ -327,9 +329,9 @@ class MudSportTag extends WeakenMoveTypeTag {
   }
 }
 
-class WaterSportTag extends WeakenMoveTypeTag {
+class WaterSportTag extends BuffOrWeakenMoveTypeTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(ArenaTagType.WATER_SPORT, turnCount, Type.FIRE, Moves.WATER_SPORT, sourceId);
+    super(ArenaTagType.WATER_SPORT, turnCount, [Type.FIRE], 0.33, Moves.WATER_SPORT, sourceId);
   }
 
   onAdd(arena: Arena): void {
@@ -632,6 +634,46 @@ class TailwindTag extends ArenaTag {
   }
 }
 
+class FairyAuraTag extends BuffOrWeakenMoveTypeTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(ArenaTagType.FAIRY_AURA, turnCount, [Type.FAIRY], 5448/4096, undefined, sourceId);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    if (!arena.tags.flatMap((tag) => tag.tagType).includes(ArenaTagType.AURA_BREAK)) {
+      return super.apply(arena, args);
+    }
+    return false;
+  }
+}
+
+class DarkAuraTag extends BuffOrWeakenMoveTypeTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(ArenaTagType.DARK_AURA, turnCount, [Type.DARK], 5448/4096, undefined, sourceId);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    if (!arena.tags.flatMap((tag) => tag.tagType).includes(ArenaTagType.AURA_BREAK)) {
+      return super.apply(arena, args);
+    }
+    return false;
+  }
+}
+
+class AuraBreakTag extends BuffOrWeakenMoveTypeTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(ArenaTagType.AURA_BREAK, turnCount, [Type.DARK, Type.FAIRY], 4096/5448, undefined, sourceId);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    if ((arena.tags.flatMap((tag) => tag.tagType).includes(ArenaTagType.DARK_AURA) && (args[0] as Type) === Type.DARK)
+      || (arena.tags.flatMap((tag) => tag.tagType).includes(ArenaTagType.FAIRY_AURA)) && (args[0] as Type) === Type.FAIRY) {
+      return super.apply(arena, args);
+    }
+    return false;
+  }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -673,5 +715,11 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new AuroraVeilTag(turnCount, sourceId, side);
   case ArenaTagType.TAILWIND:
     return new TailwindTag(turnCount, sourceId, side);
+  case ArenaTagType.FAIRY_AURA:
+    return new FairyAuraTag(turnCount, sourceId);
+  case ArenaTagType.DARK_AURA:
+    return new DarkAuraTag(turnCount, sourceId);
+  case ArenaTagType.AURA_BREAK:
+    return new AuraBreakTag(turnCount, sourceId);
   }
 }

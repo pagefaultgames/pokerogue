@@ -3200,6 +3200,42 @@ export class MoneyAbAttr extends PostBattleAbAttr {
   }
 }
 
+/**
+ * Add an arena tag to target all the pokemon on the field
+ */
+export class AddArenaTagPostSummonAbAttr extends PostSummonAbAttr {
+  public tagType: ArenaTagType;
+  public turnCount: integer;
+
+  constructor(tagType: ArenaTagType, turnCount?: integer) {
+    super(true);
+
+    this.tagType = tagType;
+    this.turnCount = turnCount;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    return pokemon.scene.arena.addTag(this.tagType, this.turnCount, undefined, pokemon.id, ArenaTagSide.BOTH);
+  }
+}
+
+/**
+ * Remove an arena tag
+ */
+export class RemoveArenaTagAbPreSwitchOutAttr extends PreSwitchOutAbAttr {
+  public tagType: ArenaTagType;
+
+  constructor(tagType: ArenaTagType) {
+    super();
+
+    this.tagType = tagType;
+  }
+
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    return pokemon.scene.arena.removeTag(this.tagType);
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -3967,13 +4003,16 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.DARK_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a Dark Aura!"))
-      .attr(FieldMoveTypePowerBoostAbAttr, Type.DARK, 4 / 3),
+      .attr(AddArenaTagPostSummonAbAttr, ArenaTagType.DARK_AURA)
+      .attr(RemoveArenaTagAbPreSwitchOutAttr, ArenaTagType.DARK_AURA),
     new Ability(Abilities.FAIRY_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a Fairy Aura!"))
-      .attr(FieldMoveTypePowerBoostAbAttr, Type.FAIRY, 4 / 3),
+      .attr(AddArenaTagPostSummonAbAttr, ArenaTagType.FAIRY_AURA)
+      .attr(RemoveArenaTagAbPreSwitchOutAttr, ArenaTagType.FAIRY_AURA),
     new Ability(Abilities.AURA_BREAK, 6)
-      .ignorable()
-      .unimplemented(),
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " reversed all other Pokémon's auras!"))
+      .attr(AddArenaTagPostSummonAbAttr, ArenaTagType.AURA_BREAK)
+      .attr(RemoveArenaTagAbPreSwitchOutAttr, ArenaTagType.AURA_BREAK),
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
