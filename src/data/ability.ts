@@ -819,6 +819,39 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nhurt its attacker!`);
   }
 }
+/**
+ * @description: This ability applies the Perish Song tag to the attacking pokemon
+ * and the defending pokemon if the move makes physical contact and neither pokemon
+ * already has the Perish Song tag.
+ * @class PostDefendPerishSongAbAttr
+ * @extends {PostDefendAbAttr}
+ */
+export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
+  private turns: integer;
+
+  constructor(turns: integer) {
+    super();
+
+    this.turns = turns;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      if (pokemon.getTag(BattlerTagType.PERISH_SONG) || attacker.getTag(BattlerTagType.PERISH_SONG)) {
+        return false;
+      } else {
+        attacker.addTag(BattlerTagType.PERISH_SONG, this.turns);
+        pokemon.addTag(BattlerTagType.PERISH_SONG, this.turns);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:perishBody", {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
+  }
+}
 
 export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
   private weatherType: WeatherType;
@@ -2756,14 +2789,20 @@ export class RunSuccessAbAttr extends AbAttr {
   }
 }
 
+type ArenaTrapCondition = (user: Pokemon, target: Pokemon) => boolean;
+
 /**
  * Base class for checking if a Pokemon is trapped by arena trap
  * @extends AbAttr
+ * @field {@linkcode arenaTrapCondition} Conditional for trapping abilities.
+ * For example, Magnet Pull will only activate if opponent is Steel type.
  * @see {@linkcode applyCheckTrapped}
  */
 export class CheckTrappedAbAttr extends AbAttr {
-  constructor() {
+  protected arenaTrapCondition: ArenaTrapCondition;
+  constructor(condition: ArenaTrapCondition) {
     super(false);
+    this.arenaTrapCondition = condition;
   }
 
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
@@ -2780,6 +2819,9 @@ export class CheckTrappedAbAttr extends AbAttr {
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   /**
    * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
+   * If the enemy is a Ghost type, it is not trapped
+   * If the user has Magnet Pull and the enemy is not a Steel type, it is not trapped.
+   * If the user has Arena Trap and the enemy is not grounded, it is not trapped.
    * @param pokemon The {@link Pokemon} with this {@link AbAttr}
    * @param passive N/A
    * @param trapped {@link Utils.BooleanHolder} indicating whether the other Pokemon is trapped or not
@@ -2788,12 +2830,16 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
    * @returns if enemy Pokemon is trapped or not
    */
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
-    if (otherPokemon.getTypes().includes(Type.GHOST)) {
-      trapped.value = false;
-      return false;
+    if (this.arenaTrapCondition(pokemon, otherPokemon)) {
+      if (otherPokemon.getTypes(true).includes(Type.GHOST) || (otherPokemon.getTypes(true).includes(Type.STELLAR) && otherPokemon.getTypes().includes(Type.GHOST))) {
+        trapped.value = false;
+        return false;
+      }
+      trapped.value = true;
+      return true;
     }
-    trapped.value = true;
-    return true;
+    trapped.value = false;
+    return false;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -3433,7 +3479,12 @@ export function initAbilities() {
     new Ability(Abilities.INTIMIDATE, 3)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1, false, true),
     new Ability(Abilities.SHADOW_TAG, 3)
-      .attr(ArenaTrapAbAttr),
+      .attr(ArenaTrapAbAttr, (user, target) => {
+        if (target.hasAbility(Abilities.SHADOW_TAG)) {
+          return false;
+        }
+        return true;
+      }),
     new Ability(Abilities.ROUGH_SKIN, 3)
       .attr(PostDefendContactDamageAbAttr, 8)
       .bypassFaint(),
@@ -3490,9 +3541,12 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
-      /*.attr(ArenaTrapAbAttr)
-      .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL))*/
-      .unimplemented(),
+      .attr(ArenaTrapAbAttr, (user, target) => {
+        if (target.getTypes(true).includes(Type.STEEL) || (target.getTypes(true).includes(Type.STELLAR) && target.getTypes().includes(Type.STEEL))) {
+          return true;
+        }
+        return false;
+      }),
     new Ability(Abilities.SOUNDPROOF, 3)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.SOUND_BASED))
       .ignorable(),
@@ -3569,7 +3623,12 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(Abilities.ARENA_TRAP, 3)
-      .attr(ArenaTrapAbAttr)
+      .attr(ArenaTrapAbAttr, (user, target) => {
+        if (target.isGrounded()) {
+          return true;
+        }
+        return false;
+      })
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -4138,7 +4197,7 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
       .partial(),
     new Ability(Abilities.PERISH_BODY, 8)
-      .unimplemented(),
+      .attr(PostDefendPerishSongAbAttr, 4),
     new Ability(Abilities.WANDERING_SPIRIT, 8)
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint()

@@ -106,13 +106,14 @@ input:-internal-autofill-selected {
 }
 /* Hide buttons on specific UIs */
 
-#touchControls:not(.configMode) #control-group-extra-2,
+#touchControls:not(.configMode) #control-group-extra-2 > *:not(#apadInfo),
 #touchControls:not(.configMode):not([data-ui-mode='STARTER_SELECT']) #apadCycleShiny,
 #touchControls:not(.configMode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
   display: none;
 }
 
-#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apadStats {
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apadStats,
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apadInfo {
   display: none;
 }
 

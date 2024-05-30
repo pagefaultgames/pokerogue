@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import * as Utils from "./utils";
-import {initTouchControls} from "./touch-controls";
+import {ButtonKey, initTouchControls} from "./touch-controls";
 import pad_generic from "./configs/pad_generic";
 import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
@@ -255,7 +255,7 @@ export class InputsController {
     gamepadMapping[this.player.LT] = Button.CYCLE_GENDER;
     gamepadMapping[this.player.RT] = Button.CYCLE_ABILITY;
     gamepadMapping[this.player.RC_W] = Button.CYCLE_NATURE;
-    gamepadMapping[this.player.RC_N] = Button.CYCLE_VARIANT;
+    gamepadMapping[this.player.RC_N] = Button.V;
     gamepadMapping[this.player.LS] = Button.SPEED_UP;
     gamepadMapping[this.player.RS] = Button.SLOW_DOWN;
 
@@ -353,11 +353,11 @@ export class InputsController {
       [Button.CYCLE_GENDER]: [keyCodes.G],
       [Button.CYCLE_ABILITY]: [keyCodes.E],
       [Button.CYCLE_NATURE]: [keyCodes.N],
-      [Button.CYCLE_VARIANT]: [keyCodes.V],
+      [Button.V]: [keyCodes.V],
       [Button.SPEED_UP]: [keyCodes.PLUS],
       [Button.SLOW_DOWN]: [keyCodes.MINUS]
     };
-    const mobileKeyConfig = {};
+    const mobileKeyConfig = new Map<string, ButtonKey>();
     for (const b of Utils.getEnumValues(Button)) {
       const keys: Phaser.Input.Keyboard.Key[] = [];
       if (keyConfig.hasOwnProperty(b)) {
