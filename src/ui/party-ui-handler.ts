@@ -87,7 +87,9 @@ export default class PartyUiHandler extends MessageUiHandler {
   private transferMode: boolean;
   private transferOptionCursor: integer;
   private transferCursor: integer;
+  /** Current quantity selection for every item held by the pokemon selected for the transfer */
   private transferQuantities: integer[];
+  /** Stack size of every item that the selected pokemon is holding */
   private transferQuantitiesMax: integer[];
 
   private lastCursor: integer = 0;
@@ -374,32 +376,36 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else {
         switch (button) {
         case Button.LEFT:
+          /** Decrease quantity for the current item and update UI */
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
             this.transferQuantities[option] = this.transferQuantities[option] === 1 ? this.transferQuantitiesMax[option] : this.transferQuantities[option] - 1;
             this.updateOptions();
-            success = this.setCursor(this.optionsCursor);
+            success = this.setCursor(this.optionsCursor); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
           }
           break;
         case Button.RIGHT:
+          /** Increase quantity for the current item and update UI */
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
             this.transferQuantities[option] = this.transferQuantities[option] === this.transferQuantitiesMax[option] ? 1 : this.transferQuantities[option] + 1;
             this.updateOptions();
-            success = this.setCursor(this.optionsCursor);
+            success = this.setCursor(this.optionsCursor); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
           }
           break;
         case Button.UP:
+          /** If currently selecting items to transfer, reset quantity selection */
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
             this.transferQuantities[option] = this.transferQuantitiesMax[option];
             this.updateOptions();
           }
-          success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1);
+          success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1); /** Move cursor */
           break;
         case Button.DOWN:
+          /** If currently selecting items to transfer, reset quantity selection */
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
             this.transferQuantities[option] = this.transferQuantitiesMax[option];
             this.updateOptions();
           }
-          success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0);
+          success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0); /** Move cursor */
           break;
         }
       }
@@ -407,6 +413,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         if (this.cursor < 6) {
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
+            /** Initialize item quantities for the selected Pokemon */
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
               && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
             this.transferQuantities = itemModifiers.map(item => item.getStackCount());
@@ -601,6 +608,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.updateOptions();
 
+    /** When an item is being selected for transfer, the message box is taller as the message occupies two lines */
     if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
       this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 42);
     } else {
@@ -777,6 +785,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else {
         const itemModifier = itemModifiers[option];
         optionName = itemModifier.type.name;
+        /** For every item that has stack bigger than 1, display the current quantity selection */
         if (this.transferQuantitiesMax[option] > 1) {
           optionName += ` (${this.transferQuantities[option]})`;
         }
