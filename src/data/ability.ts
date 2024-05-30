@@ -820,7 +820,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 }
 /**
- * @description: This ability applies the Perish Song tag the attacking pokemon
+ * @description: This ability applies the Perish Song tag to the attacking pokemon
  * and the defending pokemon if the move makes physical contact and neither pokemon
  * already has the Perish Song tag.
  * @class PostDefendPerishSongAbAttr
@@ -836,12 +836,9 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    // Checking for physical contact
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
-      // Checking for if either of the pokemon already has the Perish Song tag
       if (pokemon.getTag(BattlerTagType.PERISH_SONG) || attacker.getTag(BattlerTagType.PERISH_SONG)) {
         return false;
-      // Applying the Perish Song tag to both pokemon
       } else {
         attacker.addTag(BattlerTagType.PERISH_SONG, this.turns);
         pokemon.addTag(BattlerTagType.PERISH_SONG, this.turns);
@@ -852,7 +849,7 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\n will faint both pokemon in ${this.turns - 1} turns!`);
+    return i18next.t("abilityTriggers:perishBody", {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
   }
 }
 
