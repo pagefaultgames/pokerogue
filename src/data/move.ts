@@ -2707,7 +2707,7 @@ export class HitCountPowerAttr extends VariablePowerAttr {
  * @returns {number} Returns the amount of positive stats
  */
 const countPositiveStats = (pokemon: Pokemon): number => {
-  return pokemon.summonData.battleStats.reduce((total, stat) => stat > 0 && stat ? total + stat : total, 0);
+  return pokemon.summonData.battleStats.reduce((total, stat) => (stat && stat > 0) ? total + stat : total, 0);
 };
 
 /**
@@ -2752,7 +2752,6 @@ export class PunishmentPowerAttr extends VariablePowerAttr {
       this.PUNISHMENT_MAX_BASE_POWER,
       this.PUNISHMENT_MIN_BASE_POWER + positiveStats * 20
     );
-    console.log((args[0] as Utils.NumberHolder).value);
     return true;
   }
 }
