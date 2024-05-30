@@ -12,12 +12,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonHeldItemModifierType": {
       extra: {
-        "inoperable": "¡{{pokemonName}} no puede\ntener este objeto!",
-        "tooMany": "¡{{pokemonName}} tiene este objeto\ndemasiada veces!",
+        "inoperable": "¡{{pokemonName}} no puede\nrecibir este objeto!",
+        "tooMany": "¡{{pokemonName}} tiene este objeto\ndemasiadas veces!",
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "Restaura {{restorePoints}} PS o {{restorePercent}}% PS de un Pokémon, cualquiera de los dos sea el mas alto",
+      description: "Restaura {{restorePoints}} PS o, al menos, un {{restorePercent}}% PS de un Pokémon",
       extra: {
         "fully": "Restaura todos los PS de un Pokémon",
         "fullyWithStatus": "Restaura todos los PS de un Pokémon y cura todos los problemas de estados",
@@ -46,13 +46,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonNatureChangeModifierType": {
       name: "Menta {{natureName}}",
-      description: "Cambia la naturaleza de un Pokémon a {{natureName}} y desbloquea permanentemente la naturaleza para el inicial",
+      description: "Cambia la naturaleza de un Pokémon a {{natureName}} y desbloquea permanentemente dicha naturaleza para el inicial",
     },
     "DoubleBattleChanceBoosterModifierType": {
-      description: "Duplica la posibilidad de que un encuentro sea una combate doble por {{battleCount}} combates",
+      description: "Duplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates",
     },
     "TempBattleStatBoosterModifierType": {
-      description: "Aumenta el {{tempBattleStatName}} de todos los miembros del equipo en 1 nivel para 5 combates",
+      description: "Aumenta la est. {{tempBattleStatName}} de todos los miembros del equipo en 1 nivel durante 5 combates",
     },
     "AttackTypeBoosterModifierType": {
       description: "Aumenta la potencia de los movimientos de tipo {{moveType}} de un Pokémon en un 20%",
@@ -64,7 +64,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta el nivel de todos los miembros del equipo en 1",
     },
     "PokemonBaseStatBoosterModifierType": {
-      description: "Aumenta {{statName}} base del portador en un 10%. Cuanto mayores sean tus IV, mayor será el límite de acumulación",
+      description: "Aumenta la est. {{statName}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restaura el 100% de los PS de todos los Pokémon",
@@ -75,7 +75,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MoneyRewardModifierType": {
       description: "Otorga una {{moneyMultiplier}} cantidad de dinero (₽{{moneyAmount}})",
       extra: {
-        "small": "pequaña",
+        "small": "pequeña",
         "moderate": "moderada",
         "large": "gran",
       },
@@ -110,7 +110,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TerastallizeModifierType": {
       name: "Teralito {{teraType}}",
-      description: "Teracristaliza al portador al tipo {{teraType}} por 10 combates",
+      description: "Teracristaliza al portador al tipo {{teraType}} durante 10 combates",
     },
     "ContactHeldItemTransferChanceModifierType": {
       description: "Al atacar, hay un {{chancePercent}}% de posibilidades de que robes el objeto que tiene el enemigo",
@@ -128,11 +128,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RARE_CANDY": { name: "Carameloraro" },
     "RARER_CANDY": { name: "Rarer Candy" },
 
-    "MEGA_BRACELET": { name: "Mega-aro", description: "Las Megapiedras están disponible" },
-    "DYNAMAX_BAND": { name: "Maximuñequera", description: "Las Maxisetas están disponible" },
-    "TERA_ORB": { name: "Orbe Teracristal", description: "Los Teralitos están disponible" },
+    "MEGA_BRACELET": { name: "Mega-aro", description: "Las Megapiedras están disponibles" },
+    "DYNAMAX_BAND": { name: "Maximuñequera", description: "Las Maxisetas están disponibles" },
+    "TERA_ORB": { name: "Orbe Teracristal", description: "Los Teralitos están disponibles" },
 
-    "MAP": { name: "Mapa", description: "Te permite elegir tu destino" },
+    "MAP": { name: "Mapa", description: "Te permite elegir tu camino al final del bioma" },
 
     "POTION": { name: "Poción" },
     "SUPER_POTION": { name: "Superpoción" },
@@ -145,7 +145,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "FULL_HEAL": { name: "Cura Total" },
 
-    "SACRED_ASH": { name: "Cen Sagrada" },
+    "SACRED_ASH": { name: "Cen. Sagrada" },
 
     "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse" },
 
@@ -165,9 +165,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MEMORY_MUSHROOM": { name: "Memory Mushroom", description: "Recall one Pokémon's forgotten move" },
 
     "EXP_SHARE": { name: "Repartir EXP", description: "Los que no combatan reciben el 20% de la EXP" },
-    "EXP_BALANCE": { name: "EXP. Balance", description: "Reparte la EXP recibida a los miembros del equipo que tengan menos nivel" },
+    "EXP_BALANCE": { name: "EXP. Balance", description: "Da mayor parte de la EXP recibida a los miembros del equipo que tengan menos nivel" },
 
-    "OVAL_CHARM": { name: "Amuleto Oval", description: "When multiple Pokémon participate in a battle, each gets an extra 10% of the total EXP" },
+    "OVAL_CHARM": { name: "Amuleto Oval", description: "Cada Pokémon combatiente recibe un 10% adicional de la EXP total" },
 
     "EXP_CHARM": { name: "Amuleto EXP" },
     "SUPER_EXP_CHARM": { name: "Super Amuleto EXP" },
@@ -176,7 +176,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LUCKY_EGG": { name: "Huevo Suerte" },
     "GOLDEN_EGG": { name: "Huevo Dorado" },
 
-    "SOOTHE_BELL": { name: "Camp Alivio" },
+    "SOOTHE_BELL": { name: "Camp. Alivio" },
 
     "SOUL_DEW": { name: "Rocío bondad", description: "Aumenta la influencia de la naturaleza de un Pokémon en sus estadísticas en un 10% (aditivo)" },
 
@@ -184,13 +184,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BIG_NUGGET": { name: "Maxipepita" },
     "RELIC_GOLD": { name: "Real de oro" },
 
-    "AMULET_COIN": { name: "Moneda amuleto", description: "Aumenta el dinero ganado en un 20%" },
+    "AMULET_COIN": { name: "Moneda Amuleto", description: "Aumenta el dinero ganado en un 20%" },
     "GOLDEN_PUNCH": { name: "Puño Dorado", description: "Otorga el 50% del daño infligido como dinero" },
     "COIN_CASE": { name: "Monedero", description: "Después de cada 10 combates, recibe el 10% de tu dinero en intereses" },
 
     "LOCK_CAPSULE": { name: "Cápsula candado", description: "Le permite bloquear las rarezas de los objetos al cambiar de objetos" },
 
-    "GRIP_CLAW": { name: "Garra garfio" },
+    "GRIP_CLAW": { name: "Garra Garfio" },
     "WIDE_LENS": { name: "Lupa" },
 
     "MULTI_LENS": { name: "Multi Lens" },
@@ -214,7 +214,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "Amuleto Iris", description: "Aumenta drásticamente la posibilidad de que un Pokémon salvaje sea Shiny" },
     "ABILITY_CHARM": { name: "Amuleto Habilidad", description: "Aumenta drásticamente la posibilidad de que un Pokémon salvaje tenga una habilidad oculta" },
 
-    "IV_SCANNER": { name: "Escáner IV", description: "Permite escanear los IV de Pokémon salvajes. Se revelan 2 IV por cada objeto Los mejores IV se muestran primero" },
+    "IV_SCANNER": { name: "Escáner IV", description: "Permite escanear los IVs de Pokémon salvajes. Se revelan 2 IVs por cada objeto.\nLos mejores IVs se muestran primero" },
 
     "DNA_SPLICERS": { name: "Punta ADN" },
 
@@ -241,7 +241,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_sp_def": "Def. Esp. X",
     "x_speed": "Velocidad X",
     "x_accuracy": "Precisión X",
-    "dire_hit": "Directo",
+    "dire_hit": "Crítico X",
   },
   AttackTypeBoosterItem: {
     "silk_scarf": "Pañuelo Seda",
@@ -274,7 +274,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
   EvolutionItem: {
     "NONE": "None",
 
-    "LINKING_CORD": "Cordón unión",
+    "LINKING_CORD": "Cordón Unión",
     "SUN_STONE": "Piedra Solar",
     "MOON_STONE": "Piedra Lunar",
     "LEAF_STONE": "Piedra Hoja",
@@ -285,24 +285,24 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DUSK_STONE": "Piedra Noche",
     "DAWN_STONE": "Piedra Alba",
     "SHINY_STONE": "Piedra Día",
-    "CRACKED_POT": "Tetera agrietada",
-    "SWEET_APPLE": "Manzana dulce",
-    "TART_APPLE": "Manzana ácida",
-    "STRAWBERRY_SWEET": "Confite fresa",
-    "UNREMARKABLE_TEACUP": "Cuenco mediocre",
+    "CRACKED_POT": "Tetera Agrietada",
+    "SWEET_APPLE": "Manzana Dulce",
+    "TART_APPLE": "Manzana Ácida",
+    "STRAWBERRY_SWEET": "Confite Fresa",
+    "UNREMARKABLE_TEACUP": "Cuenco Mediocre",
 
-    "CHIPPED_POT": "Tetera rota",
-    "BLACK_AUGURITE": "Mineral negro",
-    "GALARICA_CUFF": "Brazal galanuez",
-    "GALARICA_WREATH": "Corona galanuez",
-    "PEAT_BLOCK": "Bloque de turba",
-    "AUSPICIOUS_ARMOR": "Armadura auspiciosa",
-    "MALICIOUS_ARMOR": "Armadura maldita",
-    "MASTERPIECE_TEACUP": "Cuenco exquisito",
-    "METAL_ALLOY": "Metal compuesto",
-    "SCROLL_OF_DARKNESS": "Manuscrito sombras",
-    "SCROLL_OF_WATERS": "Manuscrito aguas",
-    "SYRUPY_APPLE": "Manzana melosa",
+    "CHIPPED_POT": "Tetera Rota",
+    "BLACK_AUGURITE": "Mineral Negro",
+    "GALARICA_CUFF": "Brazal Galanuez",
+    "GALARICA_WREATH": "Corona Galanuez",
+    "PEAT_BLOCK": "Bloque de Turba",
+    "AUSPICIOUS_ARMOR": "Armadura Auspiciosa",
+    "MALICIOUS_ARMOR": "Armadura Maldita",
+    "MASTERPIECE_TEACUP": "Cuenco Exquisito",
+    "METAL_ALLOY": "Metal Compuesto",
+    "SCROLL_OF_DARKNESS": "Manuscrito Sombras",
+    "SCROLL_OF_WATERS": "Manuscrito Aguas",
+    "SYRUPY_APPLE": "Manzana Melosa",
   },
   FormChangeItem: {
     "NONE": "None",
@@ -356,32 +356,32 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TYRANITARITE": "Tyranitarita",
     "VENUSAURITE": "Venusaurita",
 
-    "BLUE_ORB": "Blue Orb",
-    "RED_ORB": "Red Orb",
-    "SHARP_METEORITE": "Sharp Meteorite",
-    "HARD_METEORITE": "Hard Meteorite",
-    "SMOOTH_METEORITE": "Smooth Meteorite",
-    "ADAMANT_CRYSTAL": "Adamant Crystal",
-    "LUSTROUS_ORB": "Lustrous Orb",
-    "GRISEOUS_CORE": "Griseous Core",
-    "REVEAL_GLASS": "Reveal Glass",
-    "GRACIDEA": "Gracidea",
-    "MAX_MUSHROOMS": "Max Mushrooms",
-    "DARK_STONE": "Dark Stone",
-    "LIGHT_STONE": "Light Stone",
-    "PRISON_BOTTLE": "Prison Bottle",
-    "N_LUNARIZER": "N Lunarizer",
-    "N_SOLARIZER": "N Solarizer",
-    "RUSTED_SWORD": "Rusted Sword",
-    "RUSTED_SHIELD": "Rusted Shield",
-    "ICY_REINS_OF_UNITY": "Icy Reins Of Unity",
-    "SHADOW_REINS_OF_UNITY": "Shadow Reins Of Unity",
-    "WELLSPRING_MASK": "Wellspring Mask",
-    "HEARTHFLAME_MASK": "Hearthflame Mask",
-    "CORNERSTONE_MASK": "Cornerstone Mask",
-    "SHOCK_DRIVE": "Shock Drive",
-    "BURN_DRIVE": "Burn Drive",
-    "CHILL_DRIVE": "Chill Drive",
-    "DOUSE_DRIVE": "Douse Drive",
+    "BLUE_ORB": "Prisma Azul",
+    "RED_ORB": "Prisma Rojo",
+    "SHARP_METEORITE": "Meteorito Afilado",
+    "HARD_METEORITE": "Meteorito Duro",
+    "SMOOTH_METEORITE": "Meteorito Suave",
+    "ADAMANT_CRYSTAL": "Gran Diamansfera",
+    "LUSTROUS_ORB": "Gran Lustresfera",
+    "GRISEOUS_CORE": "Gran Griseosfera",
+    "REVEAL_GLASS": "Espejo Veraz",
+    "GRACIDEA": "Gracídea",
+    "MAX_MUSHROOMS": "MaxiSetas",
+    "DARK_STONE": "Piedra Oscura",
+    "LIGHT_STONE": "Piedra Luminosa",
+    "PRISON_BOTTLE": "Vasija Castigo",
+    "N_LUNARIZER": "Necroluna",
+    "N_SOLARIZER": "Necrosol",
+    "RUSTED_SWORD": "Espada Oxidada",
+    "RUSTED_SHIELD": "Escudo Oxidado",
+    "ICY_REINS_OF_UNITY": "Riendas Unión Heladas",
+    "SHADOW_REINS_OF_UNITY": "Riendas Unión Oscuras",
+    "WELLSPRING_MASK": "Máscara Fuente",
+    "HEARTHFLAME_MASK": "Máscara Horno",
+    "CORNERSTONE_MASK": "Máscara Cimiento",
+    "SHOCK_DRIVE": "FulgoROM",
+    "BURN_DRIVE": "PiroROM",
+    "CHILL_DRIVE": "CrioROM",
+    "DOUSE_DRIVE": "HidroROM",
   },
 } as const;
