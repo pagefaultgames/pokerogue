@@ -71,20 +71,10 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   ],
   // Level 7
   [
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1)
-  ],
-  // Level 8
-  [
-    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.3),
-    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -3)
-  ],
-  // Level 9
-  [
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1)
   ],
-  // Level 10
+  // Level 8
   [
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
