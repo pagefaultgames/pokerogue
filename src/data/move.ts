@@ -1188,7 +1188,7 @@ export class HitHealAttr extends MoveEffectAttr {
 
     this.healRatio = healRatio || 0.5;
     this.message = message || " had its\nenergy drained!";
-    this.healStat = healStat || undefined;
+    this.healStat = healStat || null;
   }
   /**
    * Heals the user the determined amount and possibly displays a message about regaining health.
@@ -1217,7 +1217,7 @@ export class HitHealAttr extends MoveEffectAttr {
     if (reverseDrain) {
       user.turnData.damageTaken += healAmount;
       healAmount = healAmount * -1;
-      message = undefined;
+      message = null;
     }
     user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(), healAmount, message, false, true));
     return true;
@@ -6843,7 +6843,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
-      .attr(HitHealAttr, undefined, " regained\nhealth!", Stat.ATK)
+      .attr(HitHealAttr, null, " regained\nhealth!", Stat.ATK)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
       .triageMove(),
