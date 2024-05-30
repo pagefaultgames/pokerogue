@@ -87,7 +87,7 @@ export default class GameWrapper {
       seed: ["test"],
     };
   }
-  newGame(scene, gameMode, _starters?): Promise<void> {
+  newGame(scene, gameMode): Promise<void> {
     return new Promise(async (resolve) => {
       const starters = generateStarter(scene);
       const selectStarterPhase = new SelectStarterPhase(scene, gameMode);

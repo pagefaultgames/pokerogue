@@ -139,7 +139,7 @@ export default class MockContainer {
 
   add(obj) {
     // Adds a child to this Game Object.
-    const whitelist = ["ArenaBase", "PlayerPokemon"];
+    const whitelist = ["ArenaBase", "PlayerPokemon", "EnemyPokemon"];
     const key = obj.constructor.name;
     if (whitelist.includes(key) || obj.texture?.key?.includes("trainer_")) {
       this.textureManager.containers.push(obj);
@@ -193,6 +193,10 @@ export default class MockContainer {
 
   setName(name) {
     // return this.phaserSprite.setName(name);
+  }
+
+  bringToTop() {
+    // Brings this Game Object to the top of its parents display list.
   }
 
 }

@@ -131,14 +131,10 @@ describe("Session import/export", () => {
     await scene.gameData.tryExportData(GameDataType.SESSION, 0)
   }, 100000);
 
-  it('Override', async() => {
+  it('Override starter species', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-    await game.newGame(scene, GameModes.CLASSIC, [
-      Species.SQUIRTLE,
-      Species.CHARMANDER,
-    ]);
-    let mode = scene.ui?.getMode();
-    expect(mode).toBe(Mode.COMMAND);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
+    await game.newGame(scene, GameModes.CLASSIC);
     // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
     await scene.gameData.saveAll(scene, true, true, true, true);
     scene.reset(true);

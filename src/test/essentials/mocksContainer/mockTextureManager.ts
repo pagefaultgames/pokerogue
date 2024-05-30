@@ -27,6 +27,7 @@ export default class MockTextureManager {
       image: this.image.bind(this),
       polygon: this.polygon.bind(this),
       text: this.text.bind(this),
+      bitmapText: this.text.bind(this),
       displayList: this.displayList,
     };
   }
@@ -39,8 +40,12 @@ export default class MockTextureManager {
     return new MockSprite(this, x, y, texture);
   }
 
-  existing() {
-    return null;
+  existing(obj) {
+    // const whitelist = ["ArenaBase", "PlayerPokemon", "EnemyPokemon"];
+    // const key = obj.constructor.name;
+    // if (whitelist.includes(key) || obj.texture?.key?.includes("trainer_")) {
+    //   this.containers.push(obj);
+    // }
   }
 
   rectangle(x, y, width, height, fillColor) {
