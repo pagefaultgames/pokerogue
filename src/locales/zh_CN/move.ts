@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   "zippyZap": {
     name: "电电加速",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness.",
+    effect: "迅猛无比的电击。必定能够\n先制攻击，并且提高自己的\n闪避率。",
   },
   "splishySplash": {
     name: "滔滔冲浪",

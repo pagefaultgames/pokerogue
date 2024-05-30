@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Mielincetta",
-    description: "Il Pokémon può raccogliere del Miele alla fine della lotta.",
+    description: "The Pokémon gathers Honey after a battle. The Honey is then sold for money.",
   },
   frisk: {
     name: "Indagine",
@@ -711,7 +711,7 @@ export const ability: AbilityTranslationEntries = {
   },
   megaLauncher: {
     name: "Megalancio",
-    description: 'Potenzia le mosse "pulsar", Forzasfera e Ondasana.',
+    description: "Potenzia le mosse \"pulsar\", Forzasfera e Ondasana.",
   },
   grassPelt: {
     name: "Peloderba",
@@ -1194,36 +1194,36 @@ export const ability: AbilityTranslationEntries = {
     description: "Quando usa mosse di stato, il Pokémon agisce più lentamente, ma ignora l'abilità del bersaglio se questa ha effetto su tali mosse.",
   },
   mindsEye: {
-    name: "Ospitalità",
-    description: "Quando un Pokémon con questa abilità entra in campo ricopre di attenzioni l'alleato, restituendogli un po' dei suoi PS.",
-  },
-  supersweetSyrup: {
     name: "Occhio Interiore",
     description: "Permette di colpire bersagli di tipo Spettro con mosse di tipo Normale e Lotta, di ignorare modifiche alla loro elusione e di non veder ridotta la propria precisione.",
   },
+  supersweetSyrup: {
+    name: "Sciroppo Sublime",
+    description: "La prima volta che il Pokémon entra in campo, spande un odore dolciastro che diminuisce l'elusione degli avversari.",
+  },
   hospitality: {
-    name: "Albergamemorie",
-    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Turchese e aumentando la propria Velocità.",
+    name: "Ospitalità",
+    description: "Quando un Pokémon con questa abilità entra in campo ricopre di attenzioni l'alleato, restituendogli un po' dei suoi PS.",
   },
   toxicChain: {
-    name: "Albergamemorie",
-    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Pozzo e aumentando la propria Difesa Speciale.",
-  },
-  embodyAspectTeal: {
-    name: "Albergamemorie",
-    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Focolare e aumentando il proprio Attacco.",
-  },
-  embodyAspectWellspring: {
-    name: "Albergamemorie",
-    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Fondamenta e aumentando la propria Difesa.",
-  },
-  embodyAspectHearthflame: {
     name: "Catena Tossica",
     description: "Quando il Pokémon colpisce il bersaglio con una mossa, può iperavvelenarlo grazie al potere della catena intrisa di tossine.",
   },
+  embodyAspectTeal: {
+    name: "Albergamemorie",
+    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Focolare e aumentando il proprio Velocità.",
+  },
+  embodyAspectWellspring: {
+    name: "Albergamemorie",
+    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Fondamenta e aumentando la propria Difesa Speciale.",
+  },
+  embodyAspectHearthflame: {
+    name: "Albergamemorie",
+    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Fondamenta e aumentando la propria Attacco.",
+  },
   embodyAspectCornerstone: {
-    name: "Sciroppo Sublime",
-    description: "La prima volta che il Pokémon entra in campo, spande un odore dolciastro che diminuisce l'elusione degli avversari.",
+    name: "Albergamemorie",
+    description: "Il Pokémon riporta alla mente vecchi ricordi, facendo risplendere la Maschera Fondamenta e aumentando la propria Difesa.",
   },
   teraShift: {
     name: "Teramorfosi",
