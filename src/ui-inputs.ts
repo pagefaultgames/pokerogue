@@ -66,7 +66,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
       [Button.CYCLE_ABILITY]:   () => this.buttonCycleOption(Button.CYCLE_ABILITY),
       [Button.CYCLE_NATURE]:    () => this.buttonCycleOption(Button.CYCLE_NATURE),
-      [Button.CYCLE_VARIANT]:   () => this.buttonCycleOption(Button.CYCLE_VARIANT),
+      [Button.V]:   () => this.buttonCycleOption(Button.V),
       [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
     };
@@ -89,7 +89,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => undefined,
       [Button.CYCLE_ABILITY]:   () => undefined,
       [Button.CYCLE_NATURE]:    () => undefined,
-      [Button.CYCLE_VARIANT]:   () => undefined,
+      [Button.V]:               () => this.buttonInfo(false),
       [Button.SPEED_UP]:        () => undefined,
       [Button.SLOW_DOWN]:       () => undefined,
     };
@@ -111,14 +111,17 @@ export class UiInputs {
   }
 
   buttonStats(pressed: boolean = true): void {
-    if (pressed) {
-      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-        p.toggleStats(true);
-      }
-    } else {
-      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-        p.toggleStats(false);
-      }
+    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+      p.toggleStats(pressed);
+    }
+  }
+  buttonInfo(pressed: boolean = true): void {
+    if (!this.scene.showMovesetFlyout) {
+      return;
+    }
+
+    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+      p.toggleFlyout(pressed);
     }
   }
 
@@ -158,6 +161,8 @@ export class UiInputs {
   buttonCycleOption(button: Button): void {
     if (this.scene.ui?.getHandler() instanceof StarterSelectUiHandler) {
       this.scene.ui.processInput(button);
+    } else if (button === Button.V) {
+      this.buttonInfo(true);
     }
   }
 
