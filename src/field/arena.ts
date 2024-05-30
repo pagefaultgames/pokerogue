@@ -5,7 +5,7 @@ import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase, WeatherEffectPhase } from "../phases";
+import { CommonAnimPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
@@ -302,11 +302,9 @@ export class Arena {
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
 
     if (this.weather) {
-      this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
       this.scene.queueMessage(getWeatherStartMessage(weather));
     } else {
-      this.scene.tryRemovePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType);
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
     }
 

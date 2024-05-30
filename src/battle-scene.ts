@@ -90,6 +90,8 @@ export default class BattleScene extends SceneBase {
   public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
+  public reroll: boolean = false;
+  public showMovesetFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
@@ -129,6 +131,7 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public gamepadSupport: boolean = false;
   public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
@@ -206,6 +209,9 @@ export default class BattleScene extends SceneBase {
    *
    * Current Events:
    * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
+   * - {@linkcode BattleSceneEventType.TURN_INIT} {@linkcode TurnInitEvent}
+   * - {@linkcode BattleSceneEventType.TURN_END} {@linkcode TurnEndEvent}
+   * - {@linkcode BattleSceneEventType.NEW_ARENA} {@linkcode NewArenaEvent}
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
@@ -295,12 +301,13 @@ export default class BattleScene extends SceneBase {
     this.field = field;
 
     const fieldUI = this.add.container(0, this.game.canvas.height);
+    fieldUI.setName("container-field-ui");
     fieldUI.setDepth(1);
     fieldUI.setScale(6);
 
     this.fieldUI = fieldUI;
 
-    const transition = this.make.rexTransitionImagePack({
+    const transition = (this.make as any).rexTransitionImagePack({
       x: 0,
       y: 0,
       scale: 6,
@@ -318,6 +325,7 @@ export default class BattleScene extends SceneBase {
     this.add.existing(transition);
 
     const uiContainer = this.add.container(0, 0);
+    uiContainer.setName("container-ui");
     uiContainer.setDepth(2);
     uiContainer.setScale(6);
 
@@ -326,6 +334,7 @@ export default class BattleScene extends SceneBase {
     const overlayWidth = this.game.canvas.width / 6;
     const overlayHeight = (this.game.canvas.height / 6) - 48;
     this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
+    this.fieldOverlay.setName("rect-field-overlay");
     this.fieldOverlay.setOrigin(0, 0);
     this.fieldOverlay.setAlpha(0);
     this.fieldUI.add(this.fieldOverlay);
@@ -334,57 +343,70 @@ export default class BattleScene extends SceneBase {
     this.enemyModifiers = [];
 
     this.modifierBar = new ModifierBar(this);
+    this.modifierBar.setName("container-modifier-bar");
     this.add.existing(this.modifierBar);
     uiContainer.add(this.modifierBar);
 
     this.enemyModifierBar = new ModifierBar(this, true);
+    this.enemyModifierBar.setName("container-enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
     uiContainer.add(this.enemyModifierBar);
 
     this.charSprite = new CharSprite(this);
+    this.charSprite.setName("sprite-char");
     this.charSprite.setup();
 
     this.fieldUI.add(this.charSprite);
 
     this.pbTray = new PokeballTray(this, true);
+    this.pbTray.setName("container-pb-tray");
     this.pbTray.setup();
 
     this.pbTrayEnemy = new PokeballTray(this, false);
+    this.pbTrayEnemy.setName("container-enemy-pb-tray");
     this.pbTrayEnemy.setup();
 
     this.fieldUI.add(this.pbTray);
     this.fieldUI.add(this.pbTrayEnemy);
 
     this.abilityBar = new AbilityBar(this);
+    this.abilityBar.setName("container-ability-bar");
     this.abilityBar.setup();
     this.fieldUI.add(this.abilityBar);
 
     this.partyExpBar = new PartyExpBar(this);
+    this.partyExpBar.setName("container-party-exp-bar");
     this.partyExpBar.setup();
     this.fieldUI.add(this.partyExpBar);
 
     this.candyBar = new CandyBar(this);
+    this.candyBar.setName("container-candy-bar");
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
     this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.biomeWaveText.setName("text-biome-wave");
     this.biomeWaveText.setOrigin(1, 0);
     this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
+    this.moneyText.setName("text-money");
     this.moneyText.setOrigin(1, 0);
     this.fieldUI.add(this.moneyText);
 
     this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.scoreText.setName("text-score");
     this.scoreText.setOrigin(1, 0);
     this.fieldUI.add(this.scoreText);
 
     this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckText.setName("text-luck");
     this.luckText.setOrigin(1, 0);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
     this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckLabelText.setName("text-luck-label");
     this.luckLabelText.setOrigin(1, 0);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
@@ -670,6 +692,10 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
+      pokemon.level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
+
     if (Overrides.OPP_GENDER_OVERRIDE !== null) {
       pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
     }
@@ -1286,6 +1312,7 @@ export default class BattleScene extends SceneBase {
     const formattedMoney =
 			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
     this.moneyText.setText(`₽${formattedMoney}`);
+    this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
       this.moneyText.setVisible(true);
     }
@@ -1296,12 +1323,9 @@ export default class BattleScene extends SceneBase {
     this.scoreText.setVisible(this.gameMode.isDaily);
   }
 
-  updateAndShowLuckText(duration: integer): void {
+  updateAndShowText(duration: integer): void {
     const labels = [ this.luckLabelText, this.luckText ];
-    labels.map(t => {
-      t.setAlpha(0);
-      t.setVisible(true);
-    });
+    labels.forEach(t => t.setAlpha(0));
     const luckValue = getPartyLuckValue(this.getParty());
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
@@ -1313,18 +1337,24 @@ export default class BattleScene extends SceneBase {
     this.tweens.add({
       targets: labels,
       duration: duration,
-      alpha: 1
+      alpha: 1,
+      onComplete: () => {
+        labels.forEach(t => t.setVisible(true));
+      }
     });
   }
 
   hideLuckText(duration: integer): void {
+    if (this.reroll) {
+      return;
+    }
     const labels = [ this.luckLabelText, this.luckText ];
     this.tweens.add({
       targets: labels,
       duration: duration,
       alpha: 0,
       onComplete: () => {
-        labels.map(l => l.setVisible(false));
+        labels.forEach(l => l.setVisible(false));
       }
     });
   }
@@ -1339,6 +1369,15 @@ export default class BattleScene extends SceneBase {
     this.partyExpBar.setY(offsetY);
     this.candyBar.setY(offsetY + 15);
     this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
+  }
+
+  /**
+   * Pushes all {@linkcode Phaser.GameObjects.Text} objects in the top right to the bottom of the canvas
+   */
+  sendTextToBack(): void {
+    this.fieldUI.sendToBack(this.biomeWaveText);
+    this.fieldUI.sendToBack(this.moneyText);
+    this.fieldUI.sendToBack(this.scoreText);
   }
 
   addFaintedEnemyScore(enemy: EnemyPokemon): void {
@@ -1837,7 +1876,20 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
+  /**
+   * Try to transfer a held item to another pokemon.
+   * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
+   * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
+   * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
+   * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
+   * @param target {@linkcode Pokemon} pokemon recepient in this transfer
+   * @param playSound {boolean}
+   * @param transferQuantity {@linkcode integer} how many items of the stack to transfer. Optional, defaults to 1
+   * @param instant {boolean}
+   * @param ignoreUpdate {boolean}
+   * @returns true if the transfer was successful
+   */
+  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: integer = 1, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
     return new Promise(resolve => {
       const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
       const cancelled = new Utils.BooleanHolder(false);
@@ -1855,14 +1907,16 @@ export default class BattleScene extends SceneBase {
           if (matchingModifier.stackCount >= maxStackCount) {
             return resolve(false);
           }
-          const countTaken = transferStack ? Math.min(itemModifier.stackCount, maxStackCount - matchingModifier.stackCount) : 1;
+          const countTaken = Math.min(transferQuantity, itemModifier.stackCount, maxStackCount - matchingModifier.stackCount);
           itemModifier.stackCount -= countTaken;
           newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
           removeOld = !itemModifier.stackCount;
-        } else if (!transferStack) {
-          newItemModifier.stackCount = 1;
-          removeOld = !(--itemModifier.stackCount);
+        } else {
+          const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
+          itemModifier.stackCount -= countTaken;
+          newItemModifier.stackCount = countTaken;
         }
+        removeOld = !itemModifier.stackCount;
         if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
           const addModifier = () => {
             if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
