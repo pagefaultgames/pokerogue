@@ -2838,6 +2838,7 @@ export class PlayerPokemon extends Pokemon {
       if (Overrides.VARIANT_OVERRIDE) {
         this.variant = Overrides.VARIANT_OVERRIDE;
       }
+      this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
     }
 
     if (!dataSource) {

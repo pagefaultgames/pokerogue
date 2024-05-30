@@ -1846,8 +1846,9 @@ export class ModifierTypeOption {
 }
 
 export function getPartyLuckValue(party: Pokemon[]): integer {
-  return Phaser.Math.Clamp(party.map(p => p.isFainted() ? 0 : p.getLuck())
-    .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+  const basePartyLuck = party.map(p => p.isFainted() ? 0 : p.getLuck()).reduce((total: integer, value: integer) => total += value, 0);
+  const partyLuck = FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE] ? Prestige.getModifiedValue(party[0].scene.prestigeLevel, PrestigeModifierAttribute.PARTY_LUCK, basePartyLuck) : basePartyLuck;
+  return Phaser.Math.Clamp(Math.round(partyLuck), 0, 14);
 }
 
 export function getLuckString(luckValue: integer): string {

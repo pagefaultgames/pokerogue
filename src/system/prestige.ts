@@ -8,7 +8,8 @@ export enum PrestigeModifierAttribute {
   TRAINER_POKEMON_DEFENSE,
   TRAINER_POKEMON_SPEED,
   SHOP_ITEM_PRICES,
-  POKEMON_EXP_GAIN
+  POKEMON_EXP_GAIN,
+  PARTY_LUCK
 }
 
 enum PrestigeModifierOperation {
@@ -38,7 +39,9 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
     new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.1),
   ],
   // Level 2
-  [],
+  [
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -1)
+  ],
   // Level 3
   [
     new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.05),
@@ -56,7 +59,8 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
     new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3)
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -2)
   ],
   // Level 6
   [
@@ -69,7 +73,8 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
   ],
   // Level 8
   [
-    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.3)
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -3)
   ],
   // Level 9
   [
@@ -84,7 +89,8 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
     new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 2),
     new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.4),
-    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.8)
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.8),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -4)
   ]
 ];
 
