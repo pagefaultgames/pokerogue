@@ -793,7 +793,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
       releasedPokemon.destroy();
       this.populatePartySlots();
-      
+
       if (this.cursor >= this.scene.getParty().length) {
         this.setCursor(this.cursor - 1);
       }

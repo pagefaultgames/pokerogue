@@ -4722,8 +4722,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           if (newPokemon) {
             modifiersFromReleasedPokemon?.forEach(m => this.scene.tryTransferHeldItemModifier(m, newPokemon, true, false));
             newPokemon.loadAssets().then(end);
-          }
-          else {
+          } else {
             end();
           }
         });
@@ -4739,17 +4738,15 @@ export class AttemptCapturePhase extends PokemonPhase {
                   const releasedItems =  releasedPokemon?.getTransferrableHeldItems();
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (releasedPokemonSlotIndex < 6) {
-                      if (releasedItems != null && releasedItems.length > 0) {
+                      if (releasedItems !== null && releasedItems.length > 0) {
                         this.scene.ui.showText(`You transferred all items held by ${releasedPokemon.name} to ${pokemon.name}.`, null, () => {
                           addToParty(releasedItems);
                         }, 0, true);
-                      }
-                      else {
+                      } else {
                         this.scene.ui.clearText();
                         addToParty();
                       }
-                    }
-                    else {
+                    } else {
                       promptRelease();
                     }
                   });
