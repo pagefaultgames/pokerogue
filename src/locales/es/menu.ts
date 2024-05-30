@@ -30,7 +30,7 @@ export const menu: SimpleTranslationEntries = {
   "confirmPassword": "Confirmar Contra.",
   "registrationAgeWarning": "Al registrarte, confirmas tener 13 o más años de edad.",
   "backToLogin": "Volver al Login",
-  "failedToLoadSaveData": "No se han podido cargar los datos guardados. Por favor, recarga la página.\nSi el fallo continúa, por favor comunícaselo al administrador.",
+  "failedToLoadSaveData": "No se han podido cargar los datos guardados. Por favor, recarga la página.\nSi el fallo continúa, por favor comprueba #announcements en nuestro Discord.",
   "sessionSuccess": "Sesión cargada con éxito.",
   "failedToLoadSession": "No se han podido cargar los datos de tu sesión.\nPuede que estén corruptos.",
   "boyOrGirl": "¿Eres un chico o una chica?",
