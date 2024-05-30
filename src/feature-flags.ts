@@ -3,5 +3,5 @@ export enum FeatureFlag {
 }
 
 export const FEATURE_FLAGS: Record<FeatureFlag, boolean> = {
-  [FeatureFlag.PRESTIGE_MODE]: false
+  [FeatureFlag.PRESTIGE_MODE]: true
 };
