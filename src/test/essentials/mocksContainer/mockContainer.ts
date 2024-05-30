@@ -195,4 +195,8 @@ export default class MockContainer {
     // return this.phaserSprite.setName(name);
   }
 
+  bringToTop(object) {
+    // Moves this Game Object to the top of its parent's display list.
+  }
+
 }
