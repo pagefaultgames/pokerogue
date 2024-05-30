@@ -2131,25 +2131,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound {
-    const scene = sceneOverride || this.scene;
-    const cry = this.getSpeciesForm().cry(scene, soundConfig);
-    let duration = cry.totalDuration * 1000;
-    if (this.fusionSpecies && this.getSpeciesForm() !== this.getFusionSpeciesForm()) {
-      let fusionCry = this.getFusionSpeciesForm().cry(scene, soundConfig, true);
-      duration = Math.min(duration, fusionCry.totalDuration * 1000);
-      fusionCry.destroy();
-      scene.time.delayedCall(Utils.fixedInt(Math.ceil(duration * 0.4)), () => {
-        try {
-          SoundFade.fadeOut(scene, cry, Utils.fixedInt(Math.ceil(duration * 0.2)));
-          fusionCry = this.getFusionSpeciesForm().cry(scene, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig));
-          SoundFade.fadeIn(scene, fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), scene.masterVolume * scene.seVolume, 0);
-        } catch (err) {
-          console.error(err);
-        }
-      });
-    }
+    try {
+      const scene = sceneOverride || this.scene;
+      const cry = this.getSpeciesForm().cry(scene, soundConfig);
+      let duration = cry.totalDuration * 1000;
+      if (this.fusionSpecies && this.getSpeciesForm() !== this.getFusionSpeciesForm()) {
+        let fusionCry = this.getFusionSpeciesForm().cry(scene, soundConfig, true);
+        duration = Math.min(duration, fusionCry.totalDuration * 1000);
+        fusionCry.destroy();
+        scene.time.delayedCall(Utils.fixedInt(Math.ceil(duration * 0.4)), () => {
+          try {
+            SoundFade.fadeOut(scene, cry, Utils.fixedInt(Math.ceil(duration * 0.2)));
+            fusionCry = this.getFusionSpeciesForm().cry(scene, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig));
+            SoundFade.fadeIn(scene, fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), scene.masterVolume * scene.seVolume, 0);
+          } catch (err) {
+            console.error("An error occurred while playing the Pokémon's fusion cry.", err.message);
+          }
+        });
+      }
 
-    return cry;
+      return cry;
+    } catch (err) {
+      console.error("An error occurred while playing the Pokémon's cry.", err.message);
+    }
   }
 
   faintCry(callback: Function): void {
