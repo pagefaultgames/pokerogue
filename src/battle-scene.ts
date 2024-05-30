@@ -100,6 +100,7 @@ export default class BattleScene extends SceneBase {
   public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
+  public showMovesetFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
@@ -139,6 +140,7 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public gamepadSupport: boolean = false;
   public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
@@ -217,6 +219,9 @@ export default class BattleScene extends SceneBase {
    *
    * Current Events:
    * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
+   * - {@linkcode BattleSceneEventType.TURN_INIT} {@linkcode TurnInitEvent}
+   * - {@linkcode BattleSceneEventType.TURN_END} {@linkcode TurnEndEvent}
+   * - {@linkcode BattleSceneEventType.NEW_ARENA} {@linkcode NewArenaEvent}
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
@@ -311,7 +316,7 @@ export default class BattleScene extends SceneBase {
 
     this.fieldUI = fieldUI;
 
-    const transition = this.make.rexTransitionImagePack({
+    const transition = (this.make as any).rexTransitionImagePack({
       x: 0,
       y: 0,
       scale: 6,
@@ -1414,6 +1419,15 @@ export default class BattleScene extends SceneBase {
     this.partyExpBar.setY(offsetY);
     this.candyBar.setY(offsetY + 15);
     this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
+  }
+
+  /**
+   * Pushes all {@linkcode Phaser.GameObjects.Text} objects in the top right to the bottom of the canvas
+   */
+  sendTextToBack(): void {
+    this.fieldUI.sendToBack(this.biomeWaveText);
+    this.fieldUI.sendToBack(this.moneyText);
+    this.fieldUI.sendToBack(this.scoreText);
   }
 
   addFaintedEnemyScore(enemy: EnemyPokemon): void {

@@ -12,7 +12,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   private speciesId: Species;
 
   private tween: Phaser.Tweens.Tween;
-  private autoHideTimer: number;
+  private autoHideTimer: NodeJS.Timeout;
 
   public shown: boolean;
 
