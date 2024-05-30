@@ -6,6 +6,7 @@ const MockConsoleLog = () => {
   return ({
     log(msg) {
       logs.push(msg);
+      originalLog(msg);
     },
     error(msg) {
       logs.push(msg);

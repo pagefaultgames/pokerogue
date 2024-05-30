@@ -133,6 +133,7 @@ describe("Session import/export", () => {
 
   it('Override starter species', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
     vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
     await game.newGame(scene, GameModes.CLASSIC);
     // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
@@ -140,6 +141,6 @@ describe("Session import/export", () => {
     scene.reset(true);
     await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
     await scene.gameData.tryExportData(GameDataType.SESSION, 0)
-  }, 100000);
+  }, 50000);
 });
 

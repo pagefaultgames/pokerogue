@@ -167,8 +167,10 @@ export default class MockContainer {
   }
 
   getIndex(obj) {
+    const key = obj.constructor.name;
     for (const [index, texture] of this.textureManager.containers.entries()) {
-      if (texture?.name === obj.name) {
+      const textureKey = texture.constructor.name;
+      if (texture?.name === obj.name && key === textureKey) {
         return index;
       }
     }
