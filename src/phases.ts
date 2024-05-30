@@ -2678,7 +2678,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
     const targets = this.getTargets();
 
-    if (!user?.isOnField()) {
+    if (!user?.isOnField() && !(this.move.moveId === Moves.FUTURE_SIGHT)) {
       return super.end();
     }
 
