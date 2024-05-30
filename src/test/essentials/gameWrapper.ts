@@ -21,7 +21,7 @@ import MockLoader from "#app/test/essentials/mockLoader";
 import {MockFetch} from "#app/test/essentials/mockFetch";
 import * as Utils from "#app/utils";
 import {Mode} from "#app/ui/ui";
-import {CommandPhase, EncounterPhase, SelectStarterPhase} from "#app/phases";
+import {CheckSwitchPhase, CommandPhase, EncounterPhase, SelectStarterPhase} from "#app/phases";
 import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
 import {Button} from "#app/enums/buttons";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
@@ -33,7 +33,7 @@ Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
 });
 Object.defineProperty(window, "console", {
-  value: mockConsoleLog(true),
+  value: mockConsoleLog(false),
 });
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
@@ -99,8 +99,12 @@ export default class GameWrapper {
       selectStarterPhase.initBattle(starters)
       await waitUntil(() => scene.ui.getMode() === Mode.CONFIRM || scene.ui.getMode() === Mode.COMMAND);
       if (scene.ui.getMode() === Mode.CONFIRM) { // if this is a trainer battle, we don't switch pokemon
-        const confirmHandler = scene.ui.getHandler() as ConfirmUiHandler;
-        confirmHandler.processInput(Button.CANCEL);
+        scene.ui.setMode(Mode.MESSAGE);
+        (scene.getCurrentPhase() as CheckSwitchPhase).end(); // same as saying no to the switch box
+        if (scene.currentBattle.double) {
+          scene.ui.setMode(Mode.MESSAGE);
+          (scene.getCurrentPhase() as CheckSwitchPhase).end(); // same as saying no to the switch box
+        }
         await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
       }
       return resolve();
