@@ -11,7 +11,7 @@ export default class MockSprite {
   public frame;
   public textureManager;
   public scene;
-  public texture;
+  public anims;
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
@@ -27,10 +27,13 @@ export default class MockSprite {
     this.texture = {
       key: texture || "",
     };
+    this.anims = {
+      pause: () => null,
+    };
   }
 
-  setTexture(key: string, frame?: string | number): Sprite {
-    return {} as Sprite;
+  setTexture(key: string, frame?: string | number) {
+    return this;
   }
 
   setSizeToFrame(frame?: boolean | Frame): Sprite {
@@ -150,6 +153,10 @@ export default class MockSprite {
 
   setName(name) {
     return this.phaserSprite.setName(name);
+  }
+
+  setAngle(angle) {
+    return this.phaserSprite.setAngle(angle);
   }
 
 

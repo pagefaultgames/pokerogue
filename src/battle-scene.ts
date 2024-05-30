@@ -136,7 +136,7 @@ export default class BattleScene extends SceneBase {
   public gameData: GameData;
   public sessionSlotId: integer;
 
-  private phaseQueue: Phase[];
+  public phaseQueue: Phase[];
   private phaseQueuePrepend: Phase[];
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];

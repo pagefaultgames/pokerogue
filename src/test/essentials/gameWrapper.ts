@@ -25,6 +25,7 @@ import {EncounterPhase, SelectStarterPhase} from "#app/phases";
 import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
 import {Button} from "#app/enums/buttons";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import {MockClock} from "#app/test/essentials/mockClock";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -100,6 +101,15 @@ export default class GameWrapper {
     });
   }
 
+  getMovePosition(scene, pokemonIndex, moveIndex): Promise<number> {
+    return new Promise(async (resolve) => {
+      const playerPokemon = scene.getPlayerField()[pokemonIndex];
+      const moveSet = playerPokemon.getMoveset();
+      const index = moveSet.findIndex((move) => move.moveId === moveIndex);
+      return resolve(index);
+    });
+  }
+
   private addScene(key: string, _scene: any): void {
 
     _scene.game = this.gameObj;
@@ -134,6 +144,8 @@ export default class GameWrapper {
     };
     _scene.sound = {
       play: () => null,
+      pause: () => null,
+      setRate: () => null,
       add: () => _scene.sound,
       get: () => _scene.sound,
       getAllPlaying: () => [],
@@ -206,21 +218,7 @@ export default class GameWrapper {
         transit: () => null,
       }),
     };
-    _scene.time = {
-      addEvent: (evt) => {
-        const delay = 1;
-        setInterval(() => {
-          if (evt.callback) {
-            evt.callback();
-          }
-        }, delay);
-        return {
-          repeatCount: 0,
-          remove: () => null,
-        };
-      },
-      delayedCall: (time, fn) => fn(),
-    };
+    _scene.time = new MockClock(_scene);
 
     // const a = this.gameObj;
     this.scenes[key] = _scene;

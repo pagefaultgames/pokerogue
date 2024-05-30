@@ -166,10 +166,21 @@ export default class MockContainer {
   addAt(index, obj) {
   }
 
-  getIndex(obj) {
+  remove(obj) {
     const key = obj.constructor.name;
     for (const [index, texture] of this.textureManager.containers.entries()) {
       const textureKey = texture.constructor.name;
+      if (texture?.name === obj.name && key === textureKey) {
+        delete this.textureManager.containers[index];
+        return;
+      }
+    }
+  }
+
+  getIndex(obj) {
+    const key = obj.constructor.name;
+    for (const [index, texture] of this.textureManager.containers.entries()) {
+      const textureKey = texture?.constructor.name;
       if (texture?.name === obj.name && key === textureKey) {
         return index;
       }
@@ -191,6 +202,10 @@ export default class MockContainer {
 
   moveAbove(obj) {
     // Moves this Game Object to be above the given Game Object in the display list.
+  }
+
+  moveBelow(obj) {
+    // Moves this Game Object to be below the given Game Object in the display list.
   }
 
   setName(name) {
