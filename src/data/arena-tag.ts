@@ -637,8 +637,9 @@ class TailwindTag extends ArenaTag {
       if (pokemon.hasAbility(Abilities.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {
         pokemon.addTag(BattlerTagType.CHARGED);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: pokemon.name, moveName: this.getMoveName() }));
-      } else if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
-        // Raise attack by one stage if party member has WIND_RIDER ability
+      }
+      // Raise attack by one stage if party member has WIND_RIDER ability
+      if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
         pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.getBattlerIndex()));
         pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, true));
       }
