@@ -732,6 +732,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.stats[s] = value;
     }
+    if (Overrides.INFINITE_HP) {
+      this.stats[Stat.HP] = 1e250;
+      this.hp = 1e250;
+    }
   }
 
   getNature(): Nature {

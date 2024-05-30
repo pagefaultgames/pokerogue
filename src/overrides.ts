@@ -69,6 +69,7 @@ export const GENDER_OVERRIDE: Gender = null;
 export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
+export const INFINITE_HP: boolean = false;
 
 /**
  * OPPONENT / ENEMY OVERRIDES
