@@ -1,52 +1,66 @@
 import { default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from "../utils";
-import BattleScene, { MoveUsedEvent } from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene.js";
 import { UiTheme } from "#app/enums/ui-theme.js";
 import Move from "#app/data/move.js";
+import { BattleSceneEventType, MoveUsedEvent } from "#app/battle-scene-events.js";
 
+/** Container for info about a {@linkcode Move} */
 interface MoveInfo {
+  /** The {@linkcode Move} itself */
   move: Move,
 
+  /** The maximum PP of the {@linkcode Move} */
   maxPp: number,
+  /** The amount of PP used by the {@linkcode Move} */
   ppUsed: number,
 }
 
+/** A Flyout Menu attached to each {@linkcode BattleInfo} object on the field UI */
 export default class BattleFlyout extends Phaser.GameObjects.Container {
+  /** An alias for the scene typecast to a {@linkcode BattleScene} */
   private battleScene: BattleScene;
 
+  /** Is this object linked to a player's Pokemon? */
   private player: boolean;
-  private mini: boolean;
-  private boss: boolean;
-  private offset: boolean;
 
+  /** The Pokemon this object is linked to */
   private pokemon: Pokemon;
 
+  /** The restricted width of the flyout which should be drawn to */
   private flyoutWidth = 118;
+  /** The restricted height of the flyout which should be drawn to */
   private flyoutHeight = 23;
 
+  /** The amount of translation animation on the x-axis */
   private translationX: number;
+  /** The x-axis point where the flyout should sit when activated */
   private anchorX: number;
+  /** The y-axis point where the flyout should sit when activated */
   private anchorY: number;
 
+  /** The initial container which defines where the flyout should be attached */
   private flyoutParent: Phaser.GameObjects.Container;
-  private flyoutBox: Phaser.GameObjects.Sprite;
+  /** The background {@linkcode Phaser.GameObjects.Sprite;} for the flyout */
+  private flyoutBackground: Phaser.GameObjects.Sprite;
 
+  /** The container which defines the drawable dimensions of the flyout */
   private flyoutContainer: Phaser.GameObjects.Container;
 
+  /** The array of {@linkcode Phaser.GameObjects.Text} objects which are drawn on the flyout */
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
+  /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
   private moveInfo: MoveInfo[] = new Array();
 
-  private debug: boolean = false;
+  private readonly onMoveUsed = (event) => this.updateInfo(event);
 
   constructor(scene: Phaser.Scene, player: boolean) {
     super(scene, 0, 0);
     this.battleScene = scene as BattleScene;
 
+    // Note that all player based flyouts are disabled. This is included in case of future development
     this.player = player;
-    this.mini = !player;
-    this.boss = false;
-    this.offset = false;
 
     this.translationX = this.player ? -this.flyoutWidth : this.flyoutWidth;
     this.anchorX = (this.player ? -130 : -40);
@@ -56,14 +70,16 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutParent.setAlpha(0);
     this.add(this.flyoutParent);
 
-    this.flyoutBox = this.scene.add.sprite(0, 0, "pbinfo_enemy_boss_stats");
-    this.flyoutBox.setOrigin(0, 0);
+    // Load the background image
+    this.flyoutBackground = this.scene.add.sprite(0, 0, "pbinfo_enemy_boss_stats");
+    this.flyoutBackground.setOrigin(0, 0);
 
-    this.flyoutParent.add(this.flyoutBox);
+    this.flyoutParent.add(this.flyoutBackground);
 
     this.flyoutContainer = this.scene.add.container(44 + (this.player ? -this.flyoutWidth : 0), 2);
     this.flyoutParent.add(this.flyoutContainer);
 
+    // Loops through and sets the position of each text object according to the width and height of the flyout
     for (let i = 0; i < 4; i++) {
       this.flyoutText[i] = addTextObject(
         this.scene,
@@ -81,32 +97,22 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth / 2, 0, 1, this.flyoutHeight + (this.battleScene.uiTheme === UiTheme.LEGACY ? 1 : 0), 0x212121).setOrigin(0.5, 0));
     this.flyoutContainer.add(
       new Phaser.GameObjects.Rectangle(this.scene, 0, this.flyoutHeight / 2, this.flyoutWidth + 6, 1, 0x212121).setOrigin(0, 0.5));
-
-    if (this.debug) {
-      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, 0, 0, 2, 2, 0xFF0000));
-      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth, 0, 2, 2, 0xFF0000));
-      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, 0, this.flyoutHeight, 2, 2, 0xFF0000));
-      this.flyoutContainer.add(new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth, this.flyoutHeight, 2, 2, 0xFF0000));
-    }
   }
 
+  /**
+   * Links the given {@linkcode Pokemon} and subscribes to the {@linkcode BattleSceneEventType.MOVE_USED} event
+   * @param pokemon {@linkcode Pokemon} to link to this flyout
+   */
   initInfo(pokemon: Pokemon) {
     this.pokemon = pokemon;
 
     this.name = `Flyout ${this.pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
 
-    this.battleScene.eventTarget.addEventListener("onMoveUsed", (e) => this.updateInfo(e));
+    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsed);
   }
 
-  setMini(mini: boolean): void {
-    if (this.mini === mini) {
-      return;
-    }
-
-    this.mini = mini;
-  }
-
+  /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
   setText() {
     for (let i = 0; i < this.flyoutText.length; i++) {
       const flyoutText = this.flyoutText[i];
@@ -121,9 +127,10 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     }
   }
 
+  /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
   updateInfo(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.userIndex !== this.pokemon?.id) {
+    if (!moveUsedEvent || moveUsedEvent.userId !== this.pokemon?.id) {
       return;
     }
 
@@ -137,6 +144,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.setText();
   }
 
+  /** Animates the flyout to either show or hide it by applying a fade and translation */
   toggleFlyout(visible: boolean): void {
     this.scene.tweens.add({
       targets: this.flyoutParent,
@@ -145,5 +153,11 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });
+  }
+
+  destroy(fromScene?: boolean): void {
+    this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsed);
+
+    super.destroy();
   }
 }

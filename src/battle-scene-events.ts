@@ -2,14 +2,46 @@ import Move from "./data/move";
 
 /** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {
-  /** @see {@linkcode MoveUsedEvent} */
+  /**
+   * Triggers when the corresponding setting is changed
+   * @see {@linkcode CandyUpgradeNotificationChangedEvent}
+   */
+  CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeDisplayChanged",
+
+  /**
+   * Triggers when a move is successfully used
+   * @see {@linkcode MoveUsedEvent}
+   */
   MOVE_USED = "onMoveUsed",
-  /** @see {@linkcode TurnInitEvent} */
+  /**
+   * Triggers on the first turn of a new battle
+   * @see {@linkcode TurnInitEvent}
+   */
   TURN_INIT = "onTurnInit",
-  /** @see {@linkcode TurnEndEvent} */
+  /**
+   * Triggers after a turn ends in battle
+   * @see {@linkcode TurnEndEvent}
+   */
   TURN_END  = "onTurnEnd",
-  /** @see {@linkcode NewArenaEvent} */
+  /**
+   * Triggers when a new {@linkcode Arena} is created during initialization
+   * @see {@linkcode NewArenaEvent}
+   */
   NEW_ARENA = "onNewArena",
+}
+
+/**
+ * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
+ * @extends Event
+*/
+export class CandyUpgradeNotificationChangedEvent extends Event {
+  /** The new value the setting was changed to */
+  public newValue: number;
+  constructor(newValue: number) {
+    super(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED);
+
+    this.newValue = newValue;
+  }
 }
 
 /**
