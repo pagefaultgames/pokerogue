@@ -1784,7 +1784,7 @@ export class PostSummonCopyAbAttr extends PostSummonAbAttr {
     }
 
     const ally = pokemon.getAlly();
-    if (!ally || !ally.summonData.battleStats.some((change) => change > 0)) {
+    if (!ally || ally.summonData.battleStats.every((change) => change === 0)) {
       return false;
     }
 
