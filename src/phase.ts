@@ -1,5 +1,4 @@
 import BattleScene from "./battle-scene";
-import {NewBattlePhase} from "#app/phases";
 
 export class Phase {
   protected scene: BattleScene;
@@ -16,9 +15,6 @@ export class Phase {
   }
 
   end() {
-    if (this.scene.phaseQueue?.length && this.scene.phaseQueue[0] instanceof NewBattlePhase) {
-      throw new Error("tayo");
-    }
     this.scene.shiftPhase();
   }
 }
