@@ -47,7 +47,10 @@ export default class PrestigeLevelSelectUiHandler extends OptionSelectUiHandler 
     if (selectedOption !== undefined) {
       const value = selectedOption.value;
       if (value !== undefined) {
+        this.prestigeModifiersDescription.setVisible(true);
         this.prestigeModifiersDescription.updateContent(value as integer);
+      } else {
+        this.prestigeModifiersDescription.setVisible(false);
       }
     }
     return result;
