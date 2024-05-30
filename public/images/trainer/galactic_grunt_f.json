@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "aqua_grunt.png",
+			"image": "galactic_grunt_f.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 73,
-				"h": 73
+				"w": 68,
+				"h": 68
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 17,
-						"y": 6,
-						"w": 46,
-						"h": 73
+						"x": 10,
+						"y": 11,
+						"w": 57,
+						"h": 68
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 46,
-						"h": 73
+						"w": 57,
+						"h": 68
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:efd07ff3ed1e610150a4b8ca18974343:d9b85b9eb11182e9e4669e2bd8b08694:72b7b50231708a9486d5f315824e4df1$"
+		"smartupdate": "$TexturePacker:SmartUpdate:3012867f03f02c4ee67a8ab3ad5a000e:77a5f60f1adc158664b3b2ee17bf30fe:7e8259b5177c0a76e5d02d6bdc66affe$"
 	}
 }

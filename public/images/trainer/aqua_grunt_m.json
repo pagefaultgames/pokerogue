@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "plasma_grunt.png",
+			"image": "aqua_grunt_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 72,
-				"h": 72
+				"w": 73,
+				"h": 73
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 16,
-						"y": 7,
-						"w": 47,
-						"h": 72
+						"x": 17,
+						"y": 6,
+						"w": 46,
+						"h": 73
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 47,
-						"h": 72
+						"w": 46,
+						"h": 73
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:61f195ebbcde93ab7442408edad7fe7a:28ae203b3cb42a94c4ba4420fdebdccc:9ae0ee174d431d48052a2f6b74e9d40c$"
+		"smartupdate": "$TexturePacker:SmartUpdate:efd07ff3ed1e610150a4b8ca18974343:d9b85b9eb11182e9e4669e2bd8b08694:72b7b50231708a9486d5f315824e4df1$"
 	}
 }

@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "galactic_grunt.png",
+			"image": "flare_grunt_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 73,
-				"h": 73
+				"w": 77,
+				"h": 77
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 20,
-						"y": 6,
-						"w": 37,
-						"h": 73
+						"x": 24,
+						"y": 2,
+						"w": 31,
+						"h": 77
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 37,
-						"h": 73
+						"w": 31,
+						"h": 77
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:856b85bb5d7a1ea2e7a76708ebf82d21:1687dff972369c6248e4aa5b0795fe62:259dd316440c335df5dc6008166d69ca$"
+		"smartupdate": "$TexturePacker:SmartUpdate:a26606e70778f88a1a7053b2f2420dde:84abf0d0f6bc90c6a60f660567b2d641:adc35a4070bac9fe828c2605a3b15744$"
 	}
 }
