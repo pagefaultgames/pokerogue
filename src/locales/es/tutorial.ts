@@ -27,7 +27,9 @@ export const tutorial: SimpleTranslationEntries = {
 
   "statChange": `Los cambios de estadísticas se mantienen entre combates\nmientras que el Pokémon no vuelva a su Poké Ball.
     $Tus Pokémon vuelven a sus Poké Balls antes de combates contra entrenadores y de entrar a un nuevo bioma.
-    $También puedes ver los cambios de estadísticas del Pokémon en campo manteniendo pulsado C o Shift.`,
+    $También puedes ver los cambios de estadísticas del Pokémon en campo manteniendo pulsado C o Shift.
+    $También puedes ver los movimientos de un Pokémon enemigo manteniendo presionada la V.
+    $Esto solo revela los movimientos que has visto usar al Pokémon en esta combate.`,
 
   "selectItem": `Tras cada combate, tendrás la opción de elegir entre tres objetos aleatorios. Solo podrás escoger uno.
     $Estos objetos pueden ser consumibles, objetos equipables u objetos pasivos permanentes (hasta acabar la partida).
