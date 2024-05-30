@@ -56,7 +56,6 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
-import CanvasRenderer = Phaser.Renderer.Canvas.CanvasRenderer;
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
 
@@ -265,13 +264,11 @@ export default class BattleScene extends SceneBase {
 
     this.load.setBaseURL();
 
-    if (!this.game.renderer instanceof CanvasRenderer) {
-      this.spritePipeline = new SpritePipeline(this.game);
-      (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("Sprite", this.spritePipeline);
+    this.spritePipeline = new SpritePipeline(this.game);
+    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("Sprite", this.spritePipeline);
 
-      this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
-      (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
-    }
+    this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
+    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
 
     this.time.delayedCall(20, () => this.launchBattle());

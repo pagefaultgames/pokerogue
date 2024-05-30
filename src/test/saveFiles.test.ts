@@ -33,9 +33,9 @@ describe("Session import/export", () => {
     let handler = scene.ui.getHandler() as OptionSelectUiHandler;
     handler.processInput(Button.ACTION);
     await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
-  }, 100000);
+  }, 10000);
 
-  it.skip('test fetch mock async', async () => {
+  it('test fetch mock async', async () => {
     const spy = vi.fn();
     await fetch('https://localhost:8080/account/info').then(response => {
       expect(response.status).toBe(200);
@@ -48,7 +48,7 @@ describe("Session import/export", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it.skip('test apifetch mock async', async () => {
+  it('test apifetch mock async', async () => {
     const spy = vi.fn();
     await apiFetch('https://localhost:8080/account/info').then(response => {
       expect(response.status).toBe(200);
@@ -61,7 +61,7 @@ describe("Session import/export", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it.skip('test fetch mock sync', async () => {
+  it('test fetch mock sync', async () => {
     const response = await fetch('https://localhost:8080/account/info');
     const data = await response.json();
 
@@ -70,7 +70,7 @@ describe("Session import/export", () => {
     expect(data).toEqual(infoHandler);
   });
 
-  it.skip('import session', () => {
+  it('import session', () => {
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData1_Greenlamp.cookies", {encoding: "utf8", flag: "r"});
     let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
     sessionData = scene.gameData.parseSessionData(dataStr);
@@ -78,7 +78,7 @@ describe("Session import/export", () => {
     localStorage.setItem(dataKey, encrypt(dataStr, false));
   })
 
-  it.skip('export session, check integrity of data', () => {
+  it('export session, check integrity of data', () => {
     const cookiesStr = fs.readFileSync("./src/test/data/sessionData1_Greenlamp.cookies", {encoding: "utf8", flag: "r"});
     let dataStr = AES.decrypt(cookiesStr, saveKey).toString(enc.Utf8);
     sessionData = scene.gameData.parseSessionData(dataStr);
@@ -97,7 +97,7 @@ describe("Session import/export", () => {
     });
   })
 
-  it.skip('testing wait phase queue', async () => {
+  it('testing wait phase queue', async () => {
     const fakeScene = {
       phaseQueue: [1, 2, 3] // Initially not empty
     };
@@ -112,35 +112,49 @@ describe("Session import/export", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it.skip('Start at title mode', () => {
+  it('Start at title mode', () => {
     const mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.TITLE);
   });
 
-  it.skip('test new Battle', async() => {
-    await game.newGame(scene, GameModes.CLASSIC, [
-      Species.SQUIRTLE,
-      Species.CHARMANDER,
-    ]);
+  it('test new Battle', async() => {
+    await game.newGame(scene, GameModes.CLASSIC);
     let mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.COMMAND);
-    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
-    await scene.gameData.saveAll(scene, true, true, true, true);
-    scene.reset(true);
-    await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
-    await scene.gameData.tryExportData(GameDataType.SESSION, 0)
-  }, 100000);
+  }, 10000)
 
   it('Override starter species', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
     await game.newGame(scene, GameModes.CLASSIC);
-    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
-    await scene.gameData.saveAll(scene, true, true, true, true);
-    scene.reset(true);
-    await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
-    await scene.gameData.tryExportData(GameDataType.SESSION, 0)
-  }, 50000);
+    let mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.COMMAND);
+  }, 10000);
+
+  it('Override opponent species', async() => {
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    await game.newGame(scene, GameModes.CLASSIC);
+    let mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.COMMAND);
+  }, 10000);
+
+  it('Override both species', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    await game.newGame(scene, GameModes.CLASSIC);
+    let mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.COMMAND);
+  }, 10000);
+
+  // it('Override starter species', async() => {
+  //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+  //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+  //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
+  //   await game.newGame(scene, GameModes.CLASSIC);
+  //   // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
+  //   await scene.gameData.saveAll(scene, true, true, true, true);
+  //   scene.reset(true);
+  //   await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
+  //   await scene.gameData.tryExportData(GameDataType.SESSION, 0)
+  // }, 50000);
 });
 

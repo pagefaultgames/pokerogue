@@ -1,16 +1,12 @@
 /* eslint-disable */
 import fs from "fs";
-import Clock = Phaser.Time.Clock;
 import game from "../phaser.setup";
-import TweenManager = Phaser.Tweens.TweenManager;
 import InputManager = Phaser.Input.InputManager;
 import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
 import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
-import LoaderPlugin = Phaser.Loader.LoaderPlugin;
 import CanvasRenderer = Phaser.Renderer.Canvas.CanvasRenderer;
-import CacheManager = Phaser.Cache.CacheManager;
 import UpdateList = Phaser.GameObjects.UpdateList;
 import ScaleManager = Phaser.Scale.ScaleManager;
 import MockGraphics from "#app/test/essentials/mocksContainer/mockGraphics";
@@ -18,7 +14,6 @@ import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureM
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import {blobToString, generateStarter, setPositionRelative, waitUntil} from "#app/test/essentials/utils";
-import NoAudioSound = Phaser.Sound.NoAudioSound;
 import {expect, vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mockLocalStorage";
 import mockConsoleLog from "#app/test/essentials/mockConsoleLog";
@@ -27,13 +22,8 @@ import {MockFetch} from "#app/test/essentials/mockFetch";
 import * as Utils from "#app/utils";
 import {Mode} from "#app/ui/ui";
 import {EncounterPhase, SelectStarterPhase} from "#app/phases";
-import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import {getPokemonSpecies} from "#app/data/pokemon-species";
-import {Species} from "#app/data/enums/species";
 import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
 import {Button} from "#app/enums/buttons";
-import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
-import MockText from "#app/test/essentials/mocksContainer/mockText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 Object.defineProperty(window, "localStorage", {
@@ -70,8 +60,16 @@ export default class GameWrapper {
   };
 
   constructor() {
+    localStorage.clear();
     this.gameObj.renderer = new CanvasRenderer(this.gameObj);
     this.gameObj.renderer.maxTextures = -1;
+    this.gameObj.renderer.gl = {};
+    this.gameObj.renderer.deleteTexture = () => null;
+    this.gameObj.renderer.canvasToTexture = () => ({});
+    this.gameObj.renderer.createCanvasTexture = () => ({});
+    this.gameObj.renderer.pipelines = {
+      add: () => null,
+    };
     this.gameObj.manager = new InputManager(this.gameObj, {});
     this.gameObj.pluginEvents = new EventEmitter();
     this.gameObj.domContainer = {} as HTMLDivElement;
