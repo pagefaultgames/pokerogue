@@ -3,7 +3,6 @@ import { PostBiomeChangeAbAttr, applyAbAttrs } from "../data/ability";
 import MysteryEncounter from "../data/mystery-encounter";
 import { getRandomWeatherType } from "../data/weather";
 import { EncounterPhase } from "../phases";
-import { Mode } from "../ui/ui";
 
 export class MysteryEncounterPhase extends EncounterPhase {
   constructor(scene: BattleScene) {
@@ -44,8 +43,8 @@ export class MysteryEncounterPhase extends EncounterPhase {
     });
   }
 
-  renderMysteryEncounter(scene: BattleScene, encounter: MysteryEncounter): void {
-    this.scene.ui.showText("render mystery encounter text here", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: encounter.options }));
+  getMysteryEncounter(): MysteryEncounter {
+    return this.scene.currentBattle.mysteryEncounter;
   }
 }
 

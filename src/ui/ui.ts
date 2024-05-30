@@ -38,6 +38,7 @@ import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import {Button} from "../enums/buttons";
 import i18next, {ParseKeys} from "i18next";
 import {PlayerGender} from "#app/system/game-data";
+import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -150,7 +151,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoadingModalUiHandler(scene),
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
-      new OutdatedModalUiHandler(scene)
+      new OutdatedModalUiHandler(scene),
+      new MysteryEncounterUiHandler(scene)
     ];
   }
 

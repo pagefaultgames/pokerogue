@@ -62,6 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { MysteryEncounterOptionSelectPhase } from "./phases/mystery-encounter-option-select-phase";
 
 
 export class LoginPhase extends Phase {
@@ -910,7 +911,7 @@ export class EncounterPhase extends BattlePhase {
 
     if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
       const mysteryEncounterIndex: number = this.scene.currentBattle.mysteryEncounter.getMysteryEncounterIndex();
-      return i18next.t(`mysteryEncounter:encounter${mysteryEncounterIndex}`);
+      return i18next.t(`mysteryEncounter:encounter_${mysteryEncounterIndex}`);
     }
 
     return enemyField.length === 1
@@ -985,44 +986,41 @@ export class EncounterPhase extends BattlePhase {
       trainer.untint(100, "Sine.easeOut");
       trainer.playAnim();
 
-      const doSummon = () => {
-        this.scene.currentBattle.started = true;
+      const doEncounter = () => {
+        //this.scene.currentBattle.started = true;
         this.scene.playBgm(undefined);
-        this.scene.pbTray.showPbTray(this.scene.getParty());
-        this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
-        const doTrainerSummon = () => {
-          this.hideEnemyTrainer();
-          const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
-          this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
-          if (this.scene.currentBattle.double && availablePartyMembers > 1) {
-            this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
-          }
+        /*this.scene.pbTray.showPbTray(this.scene.getParty());*/
+        //this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+
+        const doShowEncounterOptions = () => {
+          //this.hideEnemyTrainer();
+          //const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
+          //this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
+          //if (this.scene.currentBattle.double && availablePartyMembers > 1) {
+          //  this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
+          //}
+
+          this.scene.ui.clearText();
+          this.scene.unshiftPhase(new MysteryEncounterOptionSelectPhase(this.scene));
+
           this.end();
         };
+
         if (showEncounterMessage) {
-          this.scene.ui.showText(this.getEncounterMessage(), null, doTrainerSummon, 1500, true);
+          this.scene.ui.showText(this.getEncounterMessage(), null, doShowEncounterOptions, 1500, true);
         } else {
-          doTrainerSummon();
+          doShowEncounterOptions();
         }
       };
 
       const encounterMessage = i18next.t("battle:mysteryEncounterAppeared");
 
       if (!encounterMessage) {
-        doSummon();
+        doEncounter();
       } else {
-        const showDialogueAndSummon = () => {
-          // let message: string;
-          // this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
-          this.scene.ui.showDialogue(encounterMessage, "???", null, () => {
-            this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
-          });
-        };
-        if (this.scene.currentBattle.trainer.config.hasCharSprite) {
-          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon()));
-        } else {
-          showDialogueAndSummon();
-        }
+        this.scene.ui.showDialogue(encounterMessage, "???", null, () => {
+          this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doEncounter()));
+        });
       }
     }
   }

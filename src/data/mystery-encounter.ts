@@ -1,9 +1,10 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
-import { OptionSelectItem } from "../ui/abstact-option-select-ui-handler";
+import { EncounterOptionSelectItem } from "../ui/mystery-encounter-ui-handler";
 
 export default abstract class MysteryEncounter {
   scene: BattleScene;
-  options: OptionSelectItem[];
+  options: EncounterOptionSelectItem[];
   index: number;
 
   constructor(scene: BattleScene, index: number) {
@@ -11,16 +12,30 @@ export default abstract class MysteryEncounter {
     this.index = index;
 
     // Generate encounter options based on the index
-    const options: OptionSelectItem[] = [
+    const options: EncounterOptionSelectItem[] = [
       {
-        label: "Option 1",
+        label: i18next.t("mysteryEncounter:encounter_0_option_1"),
         handler: () => {
           // Do stuff
           return true;
         }
       },
       {
-        label: "Option 2",
+        label: i18next.t("mysteryEncounter:encounter_0_option_2"),
+        handler: () => {
+          // Do stuff
+          return true;
+        }
+      },
+      {
+        label: i18next.t("mysteryEncounter:encounter_0_option_3"),
+        handler: () => {
+          // Do stuff
+          return true;
+        }
+      },
+      {
+        label: i18next.t("mysteryEncounter:encounter_0_option_4"),
         handler: () => {
           // Do stuff
           return true;
@@ -34,11 +49,15 @@ export default abstract class MysteryEncounter {
   getMysteryEncounterIndex(): number {
     return this.index;
   }
+
+  getMysteryEncounterOptions(): EncounterOptionSelectItem[] {
+    return this.options;
+  }
 }
 
 export default interface MysteryEncounter {
   scene: BattleScene;
-  options: OptionSelectItem[];
+  options: EncounterOptionSelectItem[];
 }
 
 export class BattleMysteryEncounter extends MysteryEncounter {
