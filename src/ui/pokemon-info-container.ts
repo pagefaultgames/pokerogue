@@ -49,10 +49,13 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
   private pokemonGenderLabelText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
+  private pokemonGenderNewText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
   private pokemonAbilityText: Phaser.GameObjects.Text;
+  private pokemonAbilityNewText: Phaser.GameObjects.Text;
   private pokemonNatureLabelText: Phaser.GameObjects.Text;
   private pokemonNatureText: BBCodeText;
+  private pokemonNatureNewText: Phaser.GameObjects.Text;
   private pokemonShinyIcon: Phaser.GameObjects.Image;
   private pokemonFusionShinyIcon: Phaser.GameObjects.Image;
   private pokemonMovesContainer: Phaser.GameObjects.Container;
@@ -177,6 +180,15 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setShadowColor(getGenderColor(pokemon.gender, true));
         this.pokemonGenderLabelText.setVisible(true);
         this.pokemonGenderText.setVisible(true);
+
+        this.pokemonGenderNewText = addTextObject(this.scene, -8, 18, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonGenderText object
+        this.pokemonGenderNewText.setOrigin(0, 0);
+        this.add(this.pokemonGenderNewText);
+
+        this.pokemonGenderNewText.setText("(+)");
+        this.pokemonGenderNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+        this.pokemonGenderNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+        this.pokemonGenderNewText.setVisible(true);
       } else {
         this.pokemonGenderText.setVisible(false);
       }
@@ -186,7 +198,28 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
       this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
 
+      this.pokemonAbilityNewText = addTextObject(this.scene, 15, 28, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonAbilityText object
+      this.pokemonAbilityNewText.setOrigin(0, 0);
+      this.add(this.pokemonAbilityNewText);
+
+      console.log(pokemon);
+      console.log(pokemon.scene.gameData.dexData[pokemon.species.speciesId]);
+      console.log(pokemon.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr);
+      console.log(pokemon.getDexAttr());
+
+      this.pokemonAbilityNewText.setText("(+)");
+      this.pokemonAbilityNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+      this.pokemonAbilityNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false, this.scene.uiTheme));
+
+      this.pokemonNatureNewText = addTextObject(this.scene, 10, 38, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonNatureText object
+      this.pokemonNatureNewText.setOrigin(0, 0);
+      this.add(this.pokemonNatureNewText);
+
+      this.pokemonNatureNewText.setText("(+)");
+      this.pokemonNatureNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+      this.pokemonNatureNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
 
       const isFusion = pokemon.isFusion();
       const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
