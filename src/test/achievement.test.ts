@@ -91,7 +91,6 @@ describe("RibbonAchv", () => {
     game = new GameWrapper();
     scene = new BattleScene();
     game.scene.add("battle", scene);
-    scene.launchBattle();
   });
 
   it("should create an instance of RibbonAchv", () => {
