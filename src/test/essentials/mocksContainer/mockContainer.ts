@@ -216,4 +216,7 @@ export default class MockContainer {
     // Brings this Game Object to the top of its parents display list.
   }
 
+  on(event, callback, source) {
+  }
+
 }
