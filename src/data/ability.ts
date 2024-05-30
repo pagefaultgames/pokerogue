@@ -676,7 +676,7 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
     if (this.condition(pokemon, attacker, move.getMove())) {
       if (!pokemon.getTag(this.tagType)) {
         pokemon.addTag(this.tagType, undefined, undefined, pokemon.id);
-        pokemon.scene.queueMessage(`Being hit by ${move.getName()} charged ${pokemon.name} with power!`);
+        pokemon.scene.queueMessage(i18next.t("battle:chargedByTailwind", { pokemonName: pokemon.name }));
       }
       return true;
     }
@@ -3127,7 +3127,7 @@ export class MoneyAbAttr extends PostBattleAbAttr {
 }
 
 /**
- * Represents an ability attribute that applies a stat change after a Pokémon is summoned,
+ * Applies a stat change after a Pokémon is summoned,
  * conditioned on the presence of a specific arena tag.
  *
  * @extends {PostSummonStatChangeAbAttr}
@@ -3152,7 +3152,8 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
   }
 
   /**
-   * Applies the post-summon stat change if the specified arena tag is present.
+   * Applies the post-summon stat change if the specified arena tag is present on pokemon's side.
+   * This is used in Wind Rider ability.
    *
    * @param {Pokemon} pokemon - The Pokémon being summoned.
    * @param {boolean} passive - Whether the effect is passive.
@@ -3160,7 +3161,9 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
    * @returns {boolean} - Returns true if the stat change was applied, otherwise false.
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    if (pokemon.scene.arena.getTag(this.tagType)) {
+    const side = pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+
+    if (pokemon.scene.arena.getTagOnSide(this.tagType, side)) {
       return super.applyPostSummon(pokemon, passive, args);
     }
     return false;
@@ -4224,7 +4227,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.FIRE, BattleStat.DEF, 2)
       .ignorable(),
     new Ability(Abilities.WIND_RIDER, 9)
-      .attr(MoveImmunityStatChangeAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.WIND_MOVE), BattleStat.ATK, 1)
+      .attr(MoveImmunityStatChangeAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.WIND_MOVE) && move.getMove().category !== MoveCategory.STATUS, BattleStat.ATK, 1)
       .attr(PostSummonStatChangeOnArenaAbAttr, ArenaTagType.TAILWIND)
       .ignorable(),
     new Ability(Abilities.GUARD_DOG, 9)

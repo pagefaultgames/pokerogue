@@ -14,6 +14,7 @@ import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { Abilities } from "./enums/abilities";
 import { BattlerTagType } from "./enums/battler-tag-type";
+import i18next from "i18next";
 
 export enum ArenaTagSide {
   BOTH,
@@ -629,21 +630,17 @@ class TailwindTag extends ArenaTag {
     arena.scene.queueMessage(`The Tailwind blew from behind${this.side === ArenaTagSide.PLAYER ? "\nyour" : this.side === ArenaTagSide.ENEMY ? "\nthe opposing" : ""} team!`);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    const sidePokemon = source.getAlly();
-
-    // Check if the ally has the WIND_RIDER ability and apply stat changes if it does
-    if (sidePokemon && sidePokemon.hasAbility(Abilities.WIND_RIDER)) {
-      sidePokemon.scene.unshiftPhase(new StatChangePhase(sidePokemon.scene, sidePokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, false));
-      sidePokemon.scene.queueMessage(`${sidePokemon.name}'s wind rider raised its attack!`);
-    }
-
     const party = source.isPlayer() ? source.scene.getPlayerField() : source.scene.getEnemyField();
 
-    // Apply the CHARGED tag to party members with the WIND_POWER ability
     for (const pokemon of party) {
+      // Apply the CHARGED tag to party members with the WIND_POWER ability
       if (pokemon.hasAbility(Abilities.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {
         pokemon.addTag(BattlerTagType.CHARGED);
-        pokemon.scene.queueMessage(`Being hit by Tailwind charged ${pokemon.name} with power!`);
+        pokemon.scene.queueMessage(i18next.t("battle:chargedByTailwind", { pokemonName: pokemon.name }));
+      } else if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
+        // Raise attack by one stage if party member has WIND_RIDER ability
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, false));
+        pokemon.scene.queueMessage(i18next.t("battle:windRiderRaisedAttack", { pokemonName: pokemon.name }));
       }
     }
   }
