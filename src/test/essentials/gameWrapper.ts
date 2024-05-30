@@ -64,7 +64,7 @@ export default class GameWrapper {
 
   constructor() {
     localStorage.clear();
-    this.gameObj.renderer = new CanvasRenderer(this.gameObj);
+    this.gameObj.renderer = {};
     this.gameObj.renderer.maxTextures = -1;
     this.gameObj.renderer.gl = {};
     this.gameObj.renderer.deleteTexture = () => null;
