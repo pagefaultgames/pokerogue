@@ -963,6 +963,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       }
+      this.toggleStatsMode(false);
     } else if (this.genMode) {
       switch (button) {
       case Button.UP:
@@ -986,6 +987,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case Button.RIGHT:
         success = this.setGenMode(false);
         break;
+        this.toggleStatsMode(false);
       }
     } else {
       if (button === Button.ACTION) {
@@ -1245,6 +1247,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
         switch (button) {
+        case Button.STATS:
+          if (!this.statsMode) {
+            this.toggleStatsMode(true);
+          } else {
+            this.toggleStatsMode(false);
+          }
+          break;
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
@@ -1336,11 +1345,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (row) {
             success = this.setCursor(this.cursor - 9);
           }
+          this.toggleStatsMode(false);
           break;
         case Button.DOWN:
           if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 9);
           }
+          this.toggleStatsMode(false);
           break;
         case Button.LEFT:
           if (this.cursor % 9) {
@@ -1351,6 +1362,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
             success = this.setGenMode(true);
           }
+          this.toggleStatsMode(false);
           break;
         case Button.RIGHT:
           if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
@@ -1361,6 +1373,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
             success = this.setGenMode(true);
           }
+          this.toggleStatsMode(false);
           break;
         }
       }
@@ -1431,6 +1444,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (this.canCycleVariant) {
         cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleVariant"));
       }
+      cycleInstructionLines.push(i18next.t("starterSelectUiHandler:shortcutIVs"));
     }
 
     if (cycleInstructionLines.length > 2) {

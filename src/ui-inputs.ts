@@ -94,7 +94,9 @@ export class UiInputs {
   }
 
   buttonStats(pressed: boolean = true): void {
-    if (pressed) {
+    if (pressed && this.scene.ui?.getMode()===Mode.STARTER_SELECT) {
+      this.scene.ui.processInput(Button.STATS);
+    } else if (pressed) {
       for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
         p.toggleStats(true);
       }
