@@ -16,7 +16,7 @@ import {initPokemonForms} from "#app/data/pokemon-forms";
 import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
-import {InitAchievements} from "#app/system/achv";
+import {initAchievements} from "#app/system/achv";
 import {initTrainerTypeDialogue} from "#app/data/dialogue";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
@@ -311,6 +311,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
+    initAchievements();
     initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
@@ -320,7 +321,6 @@ export class LoadingScene extends SceneBase {
     initSpecies();
     initMoves();
     initAbilities();
-    InitAchievements();
   }
 
   loadLoadingScreen() {

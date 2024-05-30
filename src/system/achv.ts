@@ -166,8 +166,7 @@ export const achvs = {
   CLASSIC_VICTORY: new Achv("Undefeated", "Beat the game in classic mode", "relic_crown", 150)
 };
 
-InitAchievements();
-export function InitAchievements() {
+export function initAchievements() {
   const achvKeys = Object.keys(achvs);
   achvKeys.forEach((a: string, i: integer) => {
     achvs[a].id = a;
