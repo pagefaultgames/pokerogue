@@ -52,7 +52,5 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "{{moveName}} 不再被禁用!",
   "skipItemQuestion": "你要跳過拾取道具嗎?",
   "eggHatching": "咦?",
-  "ivScannerUseQuestion": "對 {{pokemonName}} 使用個體值掃描?",
-  "chargedByTailwind": "Being hit by Tailwind charged {{pokemonName}} with power!",
-  "windRiderRaisedAttack": "{{pokemonName}}'s wind rider raised its attack!"
+  "ivScannerUseQuestion": "對 {{pokemonName}} 使用個體值掃描?"
 } as const;

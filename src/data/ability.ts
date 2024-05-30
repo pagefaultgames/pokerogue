@@ -676,7 +676,7 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
     if (this.condition(pokemon, attacker, move.getMove())) {
       if (!pokemon.getTag(this.tagType)) {
         pokemon.addTag(this.tagType, undefined, undefined, pokemon.id);
-        pokemon.scene.queueMessage(i18next.t("battle:chargedByTailwind", { pokemonName: pokemon.name }));
+        pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: pokemon.name, moveName: move.getName() }));
       }
       return true;
     }

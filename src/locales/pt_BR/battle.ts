@@ -55,7 +55,5 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "O movimento {{moveName}}\nnão está mais desabilitado!",
   "skipItemQuestion": "Tem certeza de que não quer escolher um item?",
   "eggHatching": "Opa?",
-  "ivScannerUseQuestion": "Quer usar o Scanner de IVs em {{pokemonName}}?",
-  "chargedByTailwind": "Being hit by Tailwind charged {{pokemonName}} with power!",
-  "windRiderRaisedAttack": "{{pokemonName}}'s wind rider raised its attack!"
+  "ivScannerUseQuestion": "Quer usar o Scanner de IVs em {{pokemonName}}?"
 } as const;
