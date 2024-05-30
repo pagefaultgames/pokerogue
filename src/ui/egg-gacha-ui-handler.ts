@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
-import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
+import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp, EggSource } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
@@ -382,7 +382,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       const timestamp = new Date().getTime();
 
       for (const tier of tiers) {
-        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
+        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), getEggTierDefaultHatchWaves(tier), timestamp, EggSource.GACHA, this.gachaCursor);
         if (egg.isManaphyEgg()) {
           this.scene.gameData.gameStats.manaphyEggsPulled++;
           egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);

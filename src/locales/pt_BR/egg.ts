@@ -13,6 +13,7 @@ export const egg: SimpleTranslationEntries = {
   "gachaTypeLegendary": "Chance de Lendário Aumentada",
   "gachaTypeMove": "Chance de Movimento de Ovo Raro Aumentada",
   "gachaTypeShiny": "Chance de Shiny Aumentada",
+  "sourceCandyExchange": "Candy Exchange",
   "selectMachine": "Escolha uma máquina.",
   "notEnoughVouchers": "Você não tem vouchers suficientes!",
   "tooManyEggs": "Você já tem muitos ovos!",

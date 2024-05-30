@@ -30,6 +30,7 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { EGG_SEED, Egg, EggSource } from "#app/data/egg.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -87,17 +88,17 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   }
 };
 
-const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
-  { passive: 50, costReduction: [30, 75] }, // 1
-  { passive: 45, costReduction: [25, 60] }, // 2
-  { passive: 40, costReduction: [20, 50] }, // 3
-  { passive: 30, costReduction: [15, 40] }, // 4
-  { passive: 25, costReduction: [12, 35] }, // 5
-  { passive: 20, costReduction: [10, 30] }, // 6
-  { passive: 15, costReduction: [8, 20] },  // 7
-  { passive: 10, costReduction: [5, 15] },  // 8
-  { passive: 10, costReduction: [3, 10] },  // 9
-  { passive: 10, costReduction: [3, 10] },  // 10
+const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
+  { passive: 50, costReduction: [30, 75], egg: 30  }, // 1
+  { passive: 45, costReduction: [25, 60], egg: 30 }, // 2
+  { passive: 40, costReduction: [20, 50], egg: 30 }, // 3
+  { passive: 30, costReduction: [15, 40], egg: 20 }, // 4
+  { passive: 25, costReduction: [12, 35], egg: 20 }, // 5
+  { passive: 20, costReduction: [10, 30], egg: 15 }, // 6
+  { passive: 15, costReduction: [8, 20], egg: 15 },  // 7
+  { passive: 10, costReduction: [5, 15], egg: 10 },  // 8
+  { passive: 10, costReduction: [3, 10], egg: 10 },  // 9
+  { passive: 10, costReduction: [3, 10], egg: 0 },  // 10
 ];
 
 function getPassiveCandyCount(baseValue: integer): integer {
@@ -106,6 +107,10 @@ function getPassiveCandyCount(baseValue: integer): integer {
 
 function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   return starterCandyCosts[baseValue - 1].costReduction;
+}
+
+function getEggCandyCount(baseValue: integer): integer {
+  return starterCandyCosts[baseValue - 1].egg;
 }
 
 /**
@@ -1201,6 +1206,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       }
                     }
 
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+            const eggCost = getEggCandyCount(speciesStarters[this.lastSpecies.speciesId]);
+            if (eggCost > 0) {
+              options.push({
+                label: `x${eggCost} ${i18next.t("starterSelectUiHandler:buyEgg")}`,
+                handler: () => {
+                  if (candyCount >= eggCost) {
+                    const egg = new Egg(Utils.randInt(EGG_SEED), null, new Date().getTime(), EggSource.CANDY, null, this.lastSpecies.speciesId);
+                    this.scene.gameData.eggs.push(egg);
+
+                    starterData.candyCount -= eggCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
                     return true;
                   }
                   return false;

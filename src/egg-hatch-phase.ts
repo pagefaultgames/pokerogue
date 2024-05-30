@@ -3,7 +3,7 @@ import { Phase } from "./phase";
 import BattleScene, { AnySound } from "./battle-scene";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
-import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
+import { EGG_SEED, Egg, EggSource, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { Species } from "./data/enums/species";
 import { PlayerPokemon } from "./field/pokemon";
@@ -458,7 +458,9 @@ export class EggHatchPhase extends Phase {
        * Legendary eggs pulled from the legendary gacha have a 50% of being converted into
        * the species that was the legendary focus at the time
        */
-      if (this.egg.isManaphyEgg()) {
+      if (this.egg.source === EggSource.CANDY && this.egg.species) {
+        speciesOverride = this.egg.species;
+      } else if (this.egg.isManaphyEgg()) {
         const rand = Utils.randSeedInt(8);
 
         speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;

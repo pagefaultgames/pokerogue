@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { Egg, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
+import { Egg, getEggSourceDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
@@ -180,7 +180,7 @@ export default class EggListUiHandler extends MessageUiHandler {
       })
     );
     this.eggHatchWavesText.setText(getEggHatchWavesMessage(egg.hatchWaves));
-    this.eggGachaInfoText.setText(getEggGachaTypeDescriptor(this.scene, egg));
+    this.eggGachaInfoText.setText(getEggSourceDescriptor(this.scene, egg));
   }
 
   setCursor(cursor: integer): boolean {
