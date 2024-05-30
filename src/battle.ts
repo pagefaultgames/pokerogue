@@ -16,7 +16,8 @@ import {trainerConfigs} from "#app/data/trainer-config";
 export enum BattleType {
   WILD,
   TRAINER,
-  CLEAR
+  CLEAR,
+  MYSTERY_ENCOUNTER
 }
 
 export enum BattlerIndex {

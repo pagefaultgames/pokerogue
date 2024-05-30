@@ -62,7 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-import { MysteryEncounterPhase } from "./mystery-encounter-phase";
+import MysteryEncounter, { OptionSelectMysteryEncounter } from "./data/mystery-encounter";
 
 
 export class LoginPhase extends Phase {
@@ -793,7 +793,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.validateAchv(achvs.SHINY_PARTY);
     }
 
-    if (battle.battleType === BattleType.TRAINER) {
+    if (battle.battleType === BattleType.TRAINER || !!battle.trainer) {
       loadEnemyAssets.push(battle.trainer.loadAssets().then(() => battle.trainer.initSprite()));
     } else {
       if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
@@ -818,6 +818,9 @@ export class EncounterPhase extends BattlePhase {
             }
             enemyPokemon.tint(0, 0.5);
           } else if (battle.battleType === BattleType.TRAINER) {
+            enemyPokemon.setVisible(false);
+            this.scene.currentBattle.trainer.tint(0, 0.5);
+          } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer.tint(0, 0.5);
           }
@@ -1099,6 +1102,110 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
       targets: [ this.scene.arenaEnemy, enemyField ].flat(),
+      x: "+=300",
+      duration: 2000,
+      onComplete: () => {
+        if (!this.tryOverrideForBattleSpec()) {
+          this.doEncounterCommon();
+        }
+      }
+    });
+  }
+}
+
+export class MysteryEncounterPhase extends EncounterPhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  doEncounter(): void {
+    this.scene.playBgm(undefined, true);
+
+    for (const pokemon of this.scene.getParty()) {
+      if (pokemon) {
+        pokemon.resetBattleData();
+      }
+    }
+
+    this.scene.arenaNextEnemy.setBiome(this.scene.arena.biomeType);
+    this.scene.arenaNextEnemy.setVisible(true);
+
+    const enemyField = this.scene.getEnemyField();
+    this.scene.tweens.add({
+      targets: [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer].flat(),
+      x: "+=300",
+      duration: 2000,
+      onComplete: () => {
+        this.scene.arenaEnemy.setBiome(this.scene.arena.biomeType);
+        this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
+        this.scene.arenaEnemy.setAlpha(1);
+        this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
+        this.scene.arenaNextEnemy.setVisible(false);
+        if (this.scene.lastEnemyTrainer) {
+          this.scene.lastEnemyTrainer.destroy();
+        }
+
+        if (!this.tryOverrideForBattleSpec()) {
+          this.doEncounterCommon();
+        }
+      }
+    });
+  }
+
+  getMysteryEncounter(scene: BattleScene): MysteryEncounter {
+    // Do some logic to figure out what encounter spawned
+
+    // Init and return encounter object
+
+    // This should be moved/serialized elsewhere, but sticking here for now
+    // Ideally, the OptionSelectMysteryEncounter should create its own options array on initialization based on the Encounter type
+    const options: OptionSelectItem[] = [
+      {
+        label: "Option 2",
+        handler: () => {
+          // Do stuff
+          return true;
+        }
+      },
+      {
+        label: "Option 2",
+        handler: () => {
+          // Do stuff
+          return true;
+        }
+      }
+    ];
+
+    const encounter = new OptionSelectMysteryEncounter(scene, options);
+
+    return encounter;
+  }
+
+  renderMysteryEncounter(scene: BattleScene, encounter: MysteryEncounter): void {
+    this.scene.ui.showText("render mystery encounter text here", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: encounter.options }));
+  }
+}
+
+
+export class NewBiomeMysteryEncounterPhase extends EncounterPhase {
+  doEncounter(): void {
+    this.scene.playBgm(undefined, true);
+
+    for (const pokemon of this.scene.getParty()) {
+      if (pokemon) {
+        pokemon.resetBattleData();
+      }
+    }
+
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+
+    for (const pokemon of this.scene.getParty().filter(p => p.isOnField())) {
+      applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
+    }
+
+    const enemyField = this.scene.getEnemyField();
+    this.scene.tweens.add({
+      targets: [this.scene.arenaEnemy, enemyField].flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {

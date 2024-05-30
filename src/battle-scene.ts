@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import UI  from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, MysteryEncounterPhase, NewBiomeMysteryEncounterPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import * as Utils from "./utils";
@@ -919,6 +919,24 @@ export default class BattleScene extends SceneBase {
         newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
         this.field.add(newTrainer);
       }
+
+      // Mystery Encounters
+      // The only time they can occur is in place of a standard wild battle
+      // They will also never be found after floor 180 of classic mode
+      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && newWaveIndex > 180)) {
+        // Roll for mystery encounter instead of wild battle
+        const roll = Utils.randSeedInt(100);
+
+        if (roll <= 100) {
+          // Successful roll, this is a mystery encounter
+          newBattleType = BattleType.MYSTERY_ENCOUNTER;
+
+          // Placeholder that generates a random trainer on the field for the encounter
+          const trainerType = this.arena.randomTrainerType(newWaveIndex);
+          newTrainer = !!trainerData ? trainerData.toTrainer(this) : new Trainer(this, trainerType, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+          this.field.add(newTrainer);
+        }
+      }
     }
 
     if (double === undefined && newWaveIndex > 1) {
@@ -997,11 +1015,12 @@ export default class BattleScene extends SceneBase {
           this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
         }
       }
+
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
-        this.pushPhase(new NextEncounterPhase(this));
+        this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ? this.pushPhase(new MysteryEncounterPhase(this)) : this.pushPhase(new NextEncounterPhase(this));
       } else {
         this.pushPhase(new SelectBiomePhase(this));
-        this.pushPhase(new NewBiomeEncounterPhase(this));
+        this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ? this.pushPhase(new NewBiomeMysteryEncounterPhase(this)) : this.pushPhase(new NewBiomeEncounterPhase(this));
 
         const newMaxExpLevel = this.getMaxExpLevel();
         if (newMaxExpLevel > maxExpLevel) {
