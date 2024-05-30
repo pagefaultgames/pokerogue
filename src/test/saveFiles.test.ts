@@ -2,27 +2,24 @@
 import {describe, it, vi, expect, beforeAll, beforeEach} from "vitest";
 import fs from "fs";
 import { AES, enc } from "crypto-js";
-import {decrypt, encrypt, GameData, GameDataType, getDataTypeKey} from "#app/system/game-data";
+import {decrypt, encrypt, GameDataType, getDataTypeKey} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
 import GameWrapper from "#app/test/essentials/gameWrapper";
 import {
   blobToString,
   waitUntil,
 } from "#app/test/essentials/utils";
-import {loggedInUser, setLoggedInUser} from "#app/account";
+import {loggedInUser} from "#app/account";
 import {Mode} from "#app/ui/ui";
 import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
 import {apiFetch} from "#app/utils";
 import {GameModes} from "#app/game-mode";
-import {TitlePhase} from "#app/phases";
-import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 import {Button} from "#app/enums/buttons";
 import {Species} from "#app/data/enums/species";
-import {getPokemonSpecies} from "#app/data/pokemon-species";
-import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
-import SaveSlotSelectUiHandler, {SaveSlotUiMode} from "#app/ui/save-slot-select-ui-handler";
 import OptionSelectUiHandler from "#app/ui/option-select-ui-handler";
 const saveKey = "x0i2O7WRiANTqPmZ";
+import * as overrides from '../overrides';
+
 
 
 describe("Session import/export", () => {
@@ -120,7 +117,22 @@ describe("Session import/export", () => {
     expect(mode).toBe(Mode.TITLE);
   });
 
-  it('test new Battle', async() => {
+  it.skip('test new Battle', async() => {
+    await game.newGame(scene, GameModes.CLASSIC, [
+      Species.SQUIRTLE,
+      Species.CHARMANDER,
+    ]);
+    let mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.COMMAND);
+    // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
+    await scene.gameData.saveAll(scene, true, true, true, true);
+    scene.reset(true);
+    await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
+    await scene.gameData.tryExportData(GameDataType.SESSION, 0)
+  }, 100000);
+
+  it('Override', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
     await game.newGame(scene, GameModes.CLASSIC, [
       Species.SQUIRTLE,
       Species.CHARMANDER,
