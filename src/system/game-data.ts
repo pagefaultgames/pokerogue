@@ -103,6 +103,7 @@ export interface SessionSaveData {
   seed: string;
   playTime: integer;
   gameMode: GameModes;
+  prestigeLevel: integer;
   party: PokemonData[];
   enemyParty: PokemonData[];
   modifiers: PersistentModifierData[];
@@ -1370,7 +1371,7 @@ export class GameData {
   }
 
   increasePrestigeLevel(): void {
-    if (this.scene.gameData.prestigeLevel < Prestige.MAX_LEVEL && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+    if (this.scene.gameData.prestigeLevel <= Prestige.MAX_LEVEL && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
       this.scene.gameData.prestigeLevel++;
     }
   }
