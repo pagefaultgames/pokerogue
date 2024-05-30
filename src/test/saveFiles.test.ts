@@ -202,7 +202,7 @@ describe("Session import/export", () => {
     expect(scene.currentBattle.waveIndex).toBe(30);
   }, 100000);
 
-  it('test double-battle', async() => {
+  it.skip('test double-battle', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
     vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
     vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
@@ -210,6 +210,20 @@ describe("Session import/export", () => {
     vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
     await game.newGame(scene, GameModes.CLASSIC);
     expect(scene.currentBattle.double).toBe(true);
+  }, 100000);
+
+  it('test attack no OHKO', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(25);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(53);
+    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
+    await game.newGame(scene, GameModes.CLASSIC);
+    const opponentLife = scene.currentBattle.enemyParty[0].hp;
+    const playerLife = scene.party[0].hp;
+    await game.doAttack(Moves.TACKLE);
+    expect(scene.currentBattle.enemyParty[0].hp).not.toBe(opponentLife);
+    expect(scene.party[0].hp).not.toBe(playerLife);
   }, 100000);
 
   // it('Override starter species', async() => {

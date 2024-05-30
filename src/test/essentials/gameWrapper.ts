@@ -111,8 +111,8 @@ export default class GameWrapper {
     });
   }
 
-  doAttack(moveIndex, pokemonIndex= 0, _scene?): Promise<void> {
-    const scene = _scene || this.scenes["battle"];
+  doAttack(moveIndex, pokemonIndex= 0, target= 0): Promise<void> {
+    const scene = this.scenes["battle"];
     let mode = scene.ui?.getMode();
     return new Promise(async (resolve, reject) => {
       if (mode !== Mode.COMMAND) {
@@ -122,7 +122,8 @@ export default class GameWrapper {
       await waitUntil(() => scene.ui.getMode() === Mode.FIGHT);
       const movePosition = await this.getMovePosition(scene, pokemonIndex, moveIndex);
       (scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false)
-      await waitUntil(() => scene.ui?.getMode() === Mode.MESSAGE);
+      //Message if opp is KO, Command if waiting for player to choose next action
+      await waitUntil(() => scene.ui?.getMode() === Mode.MESSAGE || scene.ui?.getMode() === Mode.COMMAND);
       return resolve();
     });
   }
