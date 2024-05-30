@@ -1,11 +1,15 @@
-const MockConsoleLog = () => {
+const MockConsoleLog = (_logDisabled=false) => {
   const logs = [];
+  const logDisabled: boolean = _logDisabled;
   const originalLog = console.log;
   const originalError = console.error;
   const notified = [];
   return ({
     log(msg) {
       logs.push(msg);
+      if (logDisabled) {
+        return;
+      }
       originalLog(msg);
     },
     error(msg) {

@@ -33,7 +33,7 @@ Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
 });
 Object.defineProperty(window, "console", {
-  value: mockConsoleLog(),
+  value: mockConsoleLog(true),
 });
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
@@ -61,9 +61,11 @@ export default class GameWrapper {
   public scene: {
     add: (_key: string, scene: Phaser.Scene) => void
   };
+  private createScene: boolean;
 
-  constructor() {
+  constructor(createScene:boolean = true) {
     localStorage.clear();
+    this.createScene = createScene;
     this.gameObj.renderer = {};
     this.gameObj.renderer.maxTextures = -1;
     this.gameObj.renderer.gl = {};
@@ -252,6 +254,7 @@ export default class GameWrapper {
 
     // const a = this.gameObj;
     this.scenes[key] = _scene;
+    if (!this.createScene) return;
     _scene.preload && _scene.preload();
     _scene.create();
   }
