@@ -423,6 +423,14 @@ export default class Move implements Localizable {
 export class AttackMove extends Move {
   constructor(id: Moves, type: Type, category: MoveCategory, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
     super(id, type, category, MoveTarget.NEAR_OTHER, power, accuracy, pp, chance, priority, generation);
+
+    /**
+     * {@link https://bulbapedia.bulbagarden.net/wiki/Freeze_(status_condition)}
+     * > All damaging Fire-type moves can now thaw a frozen target, regardless of whether or not they have a chance to burn;
+     */
+    if (this.type === Type.FIRE) {
+      this.addAttr(new HealStatusEffectAttr(false, StatusEffect.FREEZE));
+    }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -1612,15 +1620,31 @@ export class StealEatBerryAttr extends EatBerryAttr {
   }
 }
 
+/**
+ * Move attribute that signals that the move should cure a status effect
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply()}
+ */
 export class HealStatusEffectAttr extends MoveEffectAttr {
+  /** List of Status Effects to cure */
   private effects: StatusEffect[];
 
+  /**
+   * @param selfTarget - Whether this move targets the user
+   * @param ...effects - List of status effects to cure
+   */
   constructor(selfTarget: boolean, ...effects: StatusEffect[]) {
     super(selfTarget);
 
     this.effects = effects;
   }
 
+  /**
+   * @param user {@linkcode Pokemon} source of the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move the {@linkcode Move} being used
+   * @returns true if the status is cured
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -6612,6 +6636,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.STEAM_ERUPTION, Type.WATER, MoveCategory.SPECIAL, 110, 95, 5, 30, 0, 6)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.HYPERSPACE_HOLE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, -1, 5, -1, 0, 6)
       .ignoresProtect(),
@@ -7288,6 +7313,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.SCORCHING_SANDS, Type.GROUND, MoveCategory.SPECIAL, 70, 100, 10, 30, 0, 8)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
@@ -7667,6 +7693,7 @@ export function initMoves() {
     new AttackMove(Moves.MATCHA_GOTCHA, Type.GRASS, MoveCategory.SPECIAL, 80, 90, 15, 20, 0, 9)
       .attr(HitHealAttr)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .triageMove()
