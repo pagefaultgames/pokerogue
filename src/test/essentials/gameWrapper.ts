@@ -27,6 +27,7 @@ import {Button} from "#app/enums/buttons";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import {MockClock} from "#app/test/essentials/mockClock";
 import {Command} from "#app/ui/command-ui-handler";
+import {GameDataType} from "#app/system/game-data";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -45,8 +46,8 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 InputText.prototype.setElement = () => null;
 InputText.prototype.resize = () => null;
 window.URL.createObjectURL = (blob: Blob) => {
-  blobToString(blob).then((data) => {
-    const b = data;
+  blobToString(blob).then((data: string) => {
+    localStorage.setItem("toExport", data);
   })
   return null;
 };
@@ -116,7 +117,18 @@ export default class GameWrapper {
       await waitUntil(() => scene.ui?.getMode() === Mode.MESSAGE);
       return resolve();
     });
+  }
 
+  exportSaveToTest(): Promise<string> {
+    const scene = this.scenes["battle"];
+    return new Promise(async (resolve) => {
+      await scene.gameData.saveAll(scene, true, true, true, true);
+      scene.reset(true);
+      await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
+      await scene.gameData.tryExportData(GameDataType.SESSION, 0)
+      await waitUntil(() => localStorage.hasOwnProperty("toExport"));
+      return resolve(localStorage.getItem("toExport"));
+    });
   }
 
   getMovePosition(scene, pokemonIndex, moveIndex): Promise<number> {

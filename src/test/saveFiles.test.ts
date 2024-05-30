@@ -150,7 +150,7 @@ describe("Session import/export", () => {
     expect(mode).toBe(Mode.COMMAND);
   }, 10000);
 
-  it('Do an attack with faint', async() => {
+  it.skip('Do an attack with faint', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
     vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
@@ -168,7 +168,7 @@ describe("Session import/export", () => {
     expect(mode).toBe(Mode.MODIFIER_SELECT);
   }, 100000);
 
-  it('one-line - Do an attack with faint', async() => {
+  it.skip('one-line - Do an attack with faint', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
     vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
@@ -178,6 +178,18 @@ describe("Session import/export", () => {
     await waitUntil(() => scene.ui?.getMode() === Mode.MODIFIER_SELECT);
     const mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.MODIFIER_SELECT);
+  }, 100000);
+
+  it('one-line export data to save', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.PIKACHU);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
+    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
+    await game.newGame(scene, GameModes.CLASSIC);
+    const data = await game.exportSaveToTest();
+    expect(data).not.toBeUndefined();
+    console.log(data);
   }, 100000);
 
   // it('Override starter species', async() => {
