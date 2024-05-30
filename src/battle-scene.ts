@@ -129,6 +129,7 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public gamepadSupport: boolean = false;
   public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
@@ -300,7 +301,7 @@ export default class BattleScene extends SceneBase {
 
     this.fieldUI = fieldUI;
 
-    const transition = this.make.rexTransitionImagePack({
+    const transition = (this.make as any).rexTransitionImagePack({
       x: 0,
       y: 0,
       scale: 6,
@@ -670,6 +671,10 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
+      pokemon.level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
+
     if (Overrides.OPP_GENDER_OVERRIDE !== null) {
       pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
     }
