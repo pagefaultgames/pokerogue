@@ -166,7 +166,18 @@ describe("Session import/export", () => {
     await waitUntil(() => scene.ui?.getMode() === Mode.MODIFIER_SELECT);
     mode = scene.ui?.getMode();
     expect(mode).toBe(Mode.MODIFIER_SELECT);
+  }, 100000);
 
+  it('one-line - Do an attack with faint', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
+    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
+    await game.newGame(scene, GameModes.CLASSIC);
+    await game.doAttack(Moves.AURA_SPHERE);
+    await waitUntil(() => scene.ui?.getMode() === Mode.MODIFIER_SELECT);
+    const mode = scene.ui?.getMode();
+    expect(mode).toBe(Mode.MODIFIER_SELECT);
   }, 100000);
 
   // it('Override starter species', async() => {

@@ -21,11 +21,12 @@ import MockLoader from "#app/test/essentials/mockLoader";
 import {MockFetch} from "#app/test/essentials/mockFetch";
 import * as Utils from "#app/utils";
 import {Mode} from "#app/ui/ui";
-import {EncounterPhase, SelectStarterPhase} from "#app/phases";
+import {CommandPhase, EncounterPhase, SelectStarterPhase} from "#app/phases";
 import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
 import {Button} from "#app/enums/buttons";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import {MockClock} from "#app/test/essentials/mockClock";
+import {Command} from "#app/ui/command-ui-handler";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -99,6 +100,23 @@ export default class GameWrapper {
       await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
       return resolve();
     });
+  }
+
+  doAttack(moveIndex, pokemonIndex= 0, _scene?): Promise<void> {
+    const scene = _scene || this.scenes["battle"];
+    let mode = scene.ui?.getMode();
+    return new Promise(async (resolve, reject) => {
+      if (mode !== Mode.COMMAND) {
+        return reject("Invalid mode");
+      }
+      scene.ui.setMode(Mode.FIGHT, (scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+      await waitUntil(() => scene.ui.getMode() === Mode.FIGHT);
+      const movePosition = await this.getMovePosition(scene, pokemonIndex, moveIndex);
+      (scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false)
+      await waitUntil(() => scene.ui?.getMode() === Mode.MESSAGE);
+      return resolve();
+    });
+
   }
 
   getMovePosition(scene, pokemonIndex, moveIndex): Promise<number> {
