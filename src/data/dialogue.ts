@@ -424,180 +424,216 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.ROCKET_GRUNT]: [
     {
       encounter: [
-        "We will never let you into Lab(N)!"
+        "dialogue:rocket_grunt.encounter.1"
       ],
       victory: [
-        "Maybe it's Lab(P)?"
+        "dialogue:rocket_grunt.victory.1"
       ]
     }
   ],
   [TrainerType.MAGMA_GRUNT]: [
     {
       encounter: [
-        "There's too much water!"
+        "dialogue:magma_grunt.encounter.1"
       ],
       victory: [
-        "7.8/10"
+        "dialogue:magma_grunt.victory.1"
       ]
     }
   ],
   [TrainerType.AQUA_GRUNT]: [
     {
       encounter: [
-        "There's not enough water!"
+        "dialogue:aqua_grunt.encounter.1"
       ],
       victory: [
-        "7.8/10"
+        "dialogue:aqua_grunt.victory.1"
       ]
     }
   ],
   [TrainerType.GALACTIC_GRUNT]: [
     {
       encounter: [
-        "Don't mess with Team Galactic!"
+        "dialogue:galactic_grunt.encounter.1"
       ],
       victory: [
-        "Shut down..."
+        "dialogue:galactic_grunt.victory.1"
       ]
     }
   ],
   [TrainerType.PLASMA_GRUNT]: [
     {
       encounter: [
-        "Here I come!"
+        "dialogue:plasma_grunt.encounter.1"
       ],
       victory: [
-        "Plasmaaaaaaaaa!"
+        "dialogue:plasma_grunt.victory.1"
       ]
     }
   ],
   [TrainerType.FLARE_GRUNT]: [
     {
       encounter: [
-        "Fashion is most important to us!"
+        "dialogue:flare_grunt.encounter.1"
       ],
       victory: [
-        "The future doesn't look bright for me!"
+        "dialogue:flare_grunt.victory.1"
       ]
     }
   ],
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: [
     {
       encounter: [
-        "So! I must say, I am impressed you got here!"
+        "dialogue:rocket_boss_giovanni_1.encounter.1"
       ],
       victory: [
-        "You only won since my abilities are (N)"
+        "dialogue:rocket_boss_giovanni_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:rocket_boss_giovanni_1.defeat.1"
       ]
     }
   ],
   [TrainerType.ROCKET_BOSS_GIOVANNI_2]: [
     {
       encounter: [
-        "For your insolence, you will feel a world of pain!"
+        "dialogue:rocket_boss_giovanni_2.encounter.1"
       ],
       victory: [
-        "How is this possible...?"
+        "dialogue:rocket_boss_giovanni_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:rocket_boss_giovanni_2.defeat.1"
       ]
     }
   ],
   [TrainerType.MAXIE]: [
     {
       encounter: [
-        "After defeating you I will remove all the water biomes"
+        "dialogue:magma_boss_maxie_1.encounter.1"
       ],
       victory: [
-        "But why...?"
+        "dialogue:magma_boss_maxie_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:magma_boss_maxie_1.defeat.1"
       ]
     }
   ],
   [TrainerType.MAXIE_2]: [
     {
       encounter: [
-        "do I need salt cure?"
+        "dialogue:magma_boss_maxie_2.encounter.1"
       ],
       victory: [
-        "I... I lost again?"
+        "dialogue:magma_boss_maxie_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:magma_boss_maxie_2.defeat.1"
       ]
     }
   ],
   [TrainerType.ARCHIE]: [
     {
       encounter: [
-        "After defeating you I will send you to water jail"
+        "dialogue:aqua_boss_archie_1.encounter.1"
       ],
       victory: [
-        "But why...?"
+        "dialogue:aqua_boss_archie_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:aqua_boss_archie_1.defeat.1"
       ]
     }
   ],
   [TrainerType.ARCHIE_2]: [
     {
       encounter: [
-        "do I bring soak?"
+        "dialogue:aqua_boss_archie_2.encounter.1"
       ],
       victory: [
-        "I... I lost again?"
+        "dialogue:aqua_boss_archie_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:aqua_boss_archie_2.defeat.1"
       ]
     }
   ],
   [TrainerType.CYRUS]: [
     {
       encounter: [
-        "I will make you regret paying heed to your heart"
+        "dialogue:galactic_boss_cyrus_1.encounter.1"
       ],
       victory: [
-        "Interesting. And quite curious."
+        "dialogue:galactic_boss_cyrus_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:galactic_boss_cyrus_1.defeat.1"
       ]
     }
   ],
   [TrainerType.CYRUS_2]: [
     {
       encounter: [
-        "I'm going to completely crush you!"
+        "dialogue:galactic_boss_cyrus_2.encounter.1"
       ],
       victory: [
-        "How come I didn't get a 680BST legendary?"
+        "dialogue:galactic_boss_cyrus_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:galactic_boss_cyrus_2.defeat.1"
       ]
     }
   ],
   [TrainerType.GHETSIS]: [
     {
       encounter: [
-        "[Ominous latin chanting in the background]"
+        "dialogue:plasma_boss_ghetsis_1.encounter.1"
       ],
       victory: [
-        "Don't call me Dennis!"
+        "dialogue:plasma_boss_ghetsis_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:plasma_boss_ghetsis_1.defeat.1"
       ]
     }
   ],
   [TrainerType.GHETSIS_2]: [
     {
       encounter: [
-        "Chat who should I fuse?"
+        "dialogue:plasma_boss_ghetsis_2.encounter.1"
       ],
       victory: [
-        "I would have won if I rolled DNA splicers!"
+        "dialogue:plasma_boss_ghetsis_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:plasma_boss_ghetsis_2.defeat.1"
       ]
     }
   ],
   [TrainerType.LYSANDRE]: [
     {
       encounter: [
-        "I copied my team from Cyrus"
+        "dialogue:flare_boss_lysandre_1.encounter.1"
       ],
       victory: [
-        "Maybe I should have copied someone else"
+        "dialogue:flare_boss_lysandre_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:flare_boss_lysandre_1.defeat.1"
       ]
     }
   ],
   [TrainerType.LYSANDRE_2]: [
     {
       encounter: [
-        "Can someone recommend me some good pokemon?"
+        "dialogue:flare_boss_lysandre_2.encounter.1"
       ],
       victory: [
-        "Who's a good carry for endless?"
+        "dialogue:flare_boss_lysandre_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:flare_boss_lysandre_2.defeat.1"
       ]
     }
   ],
