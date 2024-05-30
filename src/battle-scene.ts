@@ -820,7 +820,7 @@ export default class BattleScene extends SceneBase {
       EvilTeam.TEAM_GALACTIC,
       EvilTeam.TEAM_PLASMA,
       EvilTeam.TEAM_FLARE];
-    this.evilTeamThisRun = possibleEvilTeams[Utils.randInt(6)];
+    this.evilTeamThisRun = possibleEvilTeams[Utils.randInt(possibleEvilTeams.length)];
 
     this.modifiers = [];
     this.enemyModifiers = [];
@@ -907,9 +907,9 @@ export default class BattleScene extends SceneBase {
 	 */
   evilTeamOverride(waveIndex: integer): boolean {
     // return true // debug
-
-    // Evil team should never override a boss
-    if (waveIndex % 10 === 0) {
+    const reservedWaves = [8, 10, 20, 25, 30, 45, 40, 50, 55, 60, 70, 80, 90, 95, 100];
+    // Evil team should never override on an important floor
+    if (reservedWaves.includes(waveIndex)) {
       return false;
     }
     // Evil team no longer shows up after beating the boss
