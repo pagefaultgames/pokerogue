@@ -90,6 +90,7 @@ export default class BattleScene extends SceneBase {
   public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
+  public reroll: boolean = false;
   public showMovesetFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
@@ -300,6 +301,7 @@ export default class BattleScene extends SceneBase {
     this.field = field;
 
     const fieldUI = this.add.container(0, this.game.canvas.height);
+    fieldUI.setName("container-field-ui");
     fieldUI.setDepth(1);
     fieldUI.setScale(6);
 
@@ -323,6 +325,7 @@ export default class BattleScene extends SceneBase {
     this.add.existing(transition);
 
     const uiContainer = this.add.container(0, 0);
+    uiContainer.setName("container-ui");
     uiContainer.setDepth(2);
     uiContainer.setScale(6);
 
@@ -331,6 +334,7 @@ export default class BattleScene extends SceneBase {
     const overlayWidth = this.game.canvas.width / 6;
     const overlayHeight = (this.game.canvas.height / 6) - 48;
     this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
+    this.fieldOverlay.setName("rect-field-overlay");
     this.fieldOverlay.setOrigin(0, 0);
     this.fieldOverlay.setAlpha(0);
     this.fieldUI.add(this.fieldOverlay);
@@ -339,57 +343,70 @@ export default class BattleScene extends SceneBase {
     this.enemyModifiers = [];
 
     this.modifierBar = new ModifierBar(this);
+    this.modifierBar.setName("container-modifier-bar");
     this.add.existing(this.modifierBar);
     uiContainer.add(this.modifierBar);
 
     this.enemyModifierBar = new ModifierBar(this, true);
+    this.enemyModifierBar.setName("container-enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
     uiContainer.add(this.enemyModifierBar);
 
     this.charSprite = new CharSprite(this);
+    this.charSprite.setName("sprite-char");
     this.charSprite.setup();
 
     this.fieldUI.add(this.charSprite);
 
     this.pbTray = new PokeballTray(this, true);
+    this.pbTray.setName("container-pb-tray");
     this.pbTray.setup();
 
     this.pbTrayEnemy = new PokeballTray(this, false);
+    this.pbTrayEnemy.setName("container-enemy-pb-tray");
     this.pbTrayEnemy.setup();
 
     this.fieldUI.add(this.pbTray);
     this.fieldUI.add(this.pbTrayEnemy);
 
     this.abilityBar = new AbilityBar(this);
+    this.abilityBar.setName("container-ability-bar");
     this.abilityBar.setup();
     this.fieldUI.add(this.abilityBar);
 
     this.partyExpBar = new PartyExpBar(this);
+    this.partyExpBar.setName("container-party-exp-bar");
     this.partyExpBar.setup();
     this.fieldUI.add(this.partyExpBar);
 
     this.candyBar = new CandyBar(this);
+    this.candyBar.setName("container-candy-bar");
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
     this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.biomeWaveText.setName("text-biome-wave");
     this.biomeWaveText.setOrigin(1, 0);
     this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
+    this.moneyText.setName("text-money");
     this.moneyText.setOrigin(1, 0);
     this.fieldUI.add(this.moneyText);
 
     this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.scoreText.setName("text-score");
     this.scoreText.setOrigin(1, 0);
     this.fieldUI.add(this.scoreText);
 
     this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckText.setName("text-luck");
     this.luckText.setOrigin(1, 0);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
     this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckLabelText.setName("text-luck-label");
     this.luckLabelText.setOrigin(1, 0);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
@@ -1295,6 +1312,7 @@ export default class BattleScene extends SceneBase {
     const formattedMoney =
 			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
     this.moneyText.setText(`₽${formattedMoney}`);
+    this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
       this.moneyText.setVisible(true);
     }
@@ -1305,12 +1323,9 @@ export default class BattleScene extends SceneBase {
     this.scoreText.setVisible(this.gameMode.isDaily);
   }
 
-  updateAndShowLuckText(duration: integer): void {
+  updateAndShowText(duration: integer): void {
     const labels = [ this.luckLabelText, this.luckText ];
-    labels.map(t => {
-      t.setAlpha(0);
-      t.setVisible(true);
-    });
+    labels.forEach(t => t.setAlpha(0));
     const luckValue = getPartyLuckValue(this.getParty());
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
@@ -1322,18 +1337,24 @@ export default class BattleScene extends SceneBase {
     this.tweens.add({
       targets: labels,
       duration: duration,
-      alpha: 1
+      alpha: 1,
+      onComplete: () => {
+        labels.forEach(t => t.setVisible(true));
+      }
     });
   }
 
   hideLuckText(duration: integer): void {
+    if (this.reroll) {
+      return;
+    }
     const labels = [ this.luckLabelText, this.luckText ];
     this.tweens.add({
       targets: labels,
       duration: duration,
       alpha: 0,
       onComplete: () => {
-        labels.map(l => l.setVisible(false));
+        labels.forEach(l => l.setVisible(false));
       }
     });
   }

@@ -1,9 +1,9 @@
-interface ButtonKey {
+export interface ButtonKey {
   onDown: (opt: object) => void;
   onUp: (opt: object) => void;
 }
 
-type ButtonMap = Map<string, ButtonKey>;
+export type ButtonMap = Map<string, ButtonKey>;
 
 export const keys = new Map();
 export const keysDown = new Map();
@@ -16,6 +16,7 @@ let lastTouchedId: string;
  */
 export function initTouchControls(buttonMap: ButtonMap) {
   preventElementZoom(document.querySelector("#dpad"));
+  preventElementZoom(document.querySelector("#apad"));
 
   for (const button of document.querySelectorAll<HTMLElement>("[data-key]")) {
     bindKey(button, button.dataset.key, buttonMap);
