@@ -2150,7 +2150,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "rival_3": {
     "encounter": {
       1: `@c{smile}이게 누구야! 오랜만이야.\n@c{neutral}역시나… 쭉 이기고 있었구나?
-                $@c{neutral_eclosed}우린 상황이 좀… 그래.\n네가 없으니까 집도 옛날같지 않고.
+                $@c{neutral_eclosed}상황이 좀… 그렇더라. \n혼자 마을로 돌아가봤자 너 없인 예전같아질 수 없겠지.
                 $@c{serious}이기적인 이야기란건 알지만 말해야겠어.\n@c{neutral_eclosed}너 지금 좀 아닌 것 같아.
                 $@c{serious}계속 이기기만 하겠다는 건 너무 비현실적이야.\n사람은 원래 꺾여가며 성장하는 거라고.
                 $@c{neutral_eclosed}물론 지금까지는 잘 해왔다고 생각하겠지만,\n갈 길이 멀지. @c{neutral}대비는 되어 있어?
@@ -2163,7 +2163,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "rival_3_female": {
     "encounter": {
       1: `@c{smile_wave}오랜만이야! 아직도 안 졌구나.\n@c{angry}거슬리게 말야. @c{smile_wave_wink}농담이야!
-                $@c{smile_ehalf}하지만 정말로, 집이 그립진 않아? 아니면… 나는?\n나… 나는, 네가 정말 그리웠어.
+                $@c{smile_ehalf}하지만 진짜, 고향이 그립진 않아? 집이나… 나는?\n나… 나는, 네가 정말 그리웠어.
                 $@c{smile_eclosed}난 너의 꿈과 모든 것을 응원하지만,\n넌 언젠가 패배를 겪게 될 거야.
                 $@c{smile}그 땐 언제나처럼 내가 곁에 있어줄게.\n@c{angry_mopen}내가 얼마나 강해졌는지도, 지금 보여 줄 테니까!`
     },
@@ -2245,7 +2245,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `@c{smile_eclosed}내 역할은 여기까진 것 같아.
-                $하나만 약속해 줘.\n@c{smile}세상을 원래대로 되돌리고 나면, 집에 돌아오는거야.`
+                $하나만 약속해 줘.\n@c{smile}세상을 원래대로 되돌리고 나면, 집으로 돌아오는거야.`
     },
   },
   "rival_6_female": {
@@ -2267,7 +2267,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `@c{smile_ehalf}나… 내 소임을 다 한 기분이야…
-                $@c{smile_eclosed}약속해 줘… 세상을 원래대로 되돌리고서… \n집에… 무사히 돌아오는 거야.
+                $@c{smile_eclosed}약속해 줘… 세상을 원래대로 되돌리고서… \n집으로… 무사히 돌아오는 거야.
                 $@c{smile_ehalf}…고마워.`
     },
   },
