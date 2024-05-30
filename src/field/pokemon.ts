@@ -1495,6 +1495,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = this.scene.fieldUI.getAll().slice(0, 4).filter(ui => ui instanceof BattleInfo && ((ui as BattleInfo) instanceof PlayerBattleInfo) === this.isPlayer()).find(() => true);
       if (!otherBattleInfo || !this.getFieldIndex()) {
         this.scene.fieldUI.sendToBack(this.battleInfo);
+        this.scene.sendTextToBack(); // Push the top right text objects behind everything else
       } else {
         this.scene.fieldUI.moveAbove(this.battleInfo, otherBattleInfo);
       }
@@ -1541,6 +1542,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
+  }
+  toggleFlyout(visible: boolean): void {
+    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {
@@ -2800,6 +2804,10 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
+    if (Overrides.STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.STATUS_OVERRIDE);
+    }
+
     if (Overrides.SHINY_OVERRIDE) {
       this.shiny = true;
       this.initShinySparkle();
@@ -3207,6 +3215,10 @@ export class EnemyPokemon extends Pokemon {
     this.trainerSlot = trainerSlot;
     if (boss) {
       this.setBoss();
+    }
+
+    if (Overrides.OPP_STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
     }
 
     if (!dataSource) {
