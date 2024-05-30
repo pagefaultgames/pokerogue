@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, PokemonHealPhase, StatChangePhase} from "../phases";
+import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
@@ -639,8 +639,8 @@ class TailwindTag extends ArenaTag {
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: pokemon.name, moveName: this.getMoveName() }));
       } else if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
         // Raise attack by one stage if party member has WIND_RIDER ability
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, false));
-        pokemon.scene.queueMessage(i18next.t("abilityTriggers:windRiderRaisedAttack", { pokemonName: pokemon.name }));
+        pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.getBattlerIndex()));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, true));
       }
     }
   }
