@@ -674,7 +674,10 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (this.condition(pokemon, attacker, move.getMove())) {
-      pokemon.addTag(this.tagType, undefined, undefined, pokemon.id);
+      if (!pokemon.getTag(this.tagType)) {
+        pokemon.addTag(this.tagType, undefined, undefined, pokemon.id);
+        pokemon.scene.queueMessage(`Being hit by ${move.getName()} charged ${pokemon.name} with power!`);
+      }
       return true;
     }
     return false;
@@ -3123,13 +3126,39 @@ export class MoneyAbAttr extends PostBattleAbAttr {
   }
 }
 
+/**
+ * Represents an ability attribute that applies a stat change after a Pokémon is summoned,
+ * conditioned on the presence of a specific arena tag.
+ *
+ * @extends {PostSummonStatChangeAbAttr}
+ */
 export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAttr {
+  /**
+   * The type of arena tag that conditions the stat change.
+   * @private
+   * @type {ArenaTagType}
+   */
   private tagType: ArenaTagType;
+
+  /**
+   * Creates an instance of PostSummonStatChangeOnArenaAbAttr.
+   * Initializes the stat change to increase Attack by 1 stage if the specified arena tag is present.
+   *
+   * @param {ArenaTagType} tagType - The type of arena tag to check for.
+   */
   constructor(tagType: ArenaTagType) {
     super([BattleStat.ATK], 1, true, false);
     this.tagType = tagType;
   }
 
+  /**
+   * Applies the post-summon stat change if the specified arena tag is present.
+   *
+   * @param {Pokemon} pokemon - The Pokémon being summoned.
+   * @param {boolean} passive - Whether the effect is passive.
+   * @param {any[]} args - Additional arguments.
+   * @returns {boolean} - Returns true if the stat change was applied, otherwise false.
+   */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     if (pokemon.scene.arena.getTag(this.tagType)) {
       return super.applyPostSummon(pokemon, passive, args);

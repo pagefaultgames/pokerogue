@@ -12,6 +12,8 @@ import { ArenaTagType } from "./enums/arena-tag-type";
 import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { Abilities } from "./enums/abilities";
+import { BattlerTagType } from "./enums/battler-tag-type";
 
 export enum ArenaTagSide {
   BOTH,
@@ -625,6 +627,25 @@ class TailwindTag extends ArenaTag {
 
   onAdd(arena: Arena): void {
     arena.scene.queueMessage(`The Tailwind blew from behind${this.side === ArenaTagSide.PLAYER ? "\nyour" : this.side === ArenaTagSide.ENEMY ? "\nthe opposing" : ""} team!`);
+
+    const source = arena.scene.getPokemonById(this.sourceId);
+    const sidePokemon = source.getAlly();
+
+    // Check if the ally has the WIND_RIDER ability and apply stat changes if it does
+    if (sidePokemon && sidePokemon.hasAbility(Abilities.WIND_RIDER)) {
+      sidePokemon.scene.unshiftPhase(new StatChangePhase(sidePokemon.scene, sidePokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, false));
+      sidePokemon.scene.queueMessage(`${sidePokemon.name}'s wind rider raised its attack!`);
+    }
+
+    const party = source.isPlayer() ? source.scene.getPlayerField() : source.scene.getEnemyField();
+
+    // Apply the CHARGED tag to party members with the WIND_POWER ability
+    for (const pokemon of party) {
+      if (pokemon.hasAbility(Abilities.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {
+        pokemon.addTag(BattlerTagType.CHARGED);
+        pokemon.scene.queueMessage(`Being hit by Tailwind charged ${pokemon.name} with power!`);
+      }
+    }
   }
 
   onRemove(arena: Arena): void {
