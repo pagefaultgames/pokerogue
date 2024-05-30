@@ -48,6 +48,8 @@ import { BerryType } from "../data/berry";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
+import { Prestige } from "#app/system/prestige";
+import { FEATURE_FLAGS, FeatureFlag } from "#app/feature-flags";
 
 export enum FieldPosition {
   CENTER,
@@ -3674,6 +3676,25 @@ export class EnemyPokemon extends Pokemon {
     }
 
     return ret;
+  }
+
+  /**
+   * Overrides the base class method to apply prestige level to stats
+   *
+   * @param stat
+   * @param opponent
+   * @param move
+   * @param isCritical
+   * @returns the modified battle stat
+   */
+  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
+    const rawBattleStat = super.getBattleStat(stat, opponent, move, isCritical);
+    if (stat === Stat.HP || this.scene.prestigeLevel === 0 || !FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+      return rawBattleStat;
+    }
+    const isWildPokemon = this.trainerSlot === TrainerSlot.NONE;
+    const prestigeModifierAttribute = Prestige.getModifierAttributeFromStat(stat, isWildPokemon);
+    return Math.round(Prestige.getModifiedValue(this.scene.prestigeLevel, prestigeModifierAttribute, rawBattleStat));
   }
 }
 
