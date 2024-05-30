@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, PokemonHealPhase, StatChangePhase} from "../phases";
+import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
@@ -12,6 +12,9 @@ import { ArenaTagType } from "./enums/arena-tag-type";
 import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { Abilities } from "./enums/abilities";
+import { BattlerTagType } from "./enums/battler-tag-type";
+import i18next from "i18next";
 
 export enum ArenaTagSide {
   BOTH,
@@ -625,6 +628,22 @@ class TailwindTag extends ArenaTag {
 
   onAdd(arena: Arena): void {
     arena.scene.queueMessage(`The Tailwind blew from behind${this.side === ArenaTagSide.PLAYER ? "\nyour" : this.side === ArenaTagSide.ENEMY ? "\nthe opposing" : ""} team!`);
+
+    const source = arena.scene.getPokemonById(this.sourceId);
+    const party = source.isPlayer() ? source.scene.getPlayerField() : source.scene.getEnemyField();
+
+    for (const pokemon of party) {
+      // Apply the CHARGED tag to party members with the WIND_POWER ability
+      if (pokemon.hasAbility(Abilities.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {
+        pokemon.addTag(BattlerTagType.CHARGED);
+        pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: pokemon.name, moveName: this.getMoveName() }));
+      }
+      // Raise attack by one stage if party member has WIND_RIDER ability
+      if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
+        pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.getBattlerIndex()));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, true));
+      }
+    }
   }
 
   onRemove(arena: Arena): void {
