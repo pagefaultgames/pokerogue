@@ -26,7 +26,7 @@ We're using ESLint as our common linter and formatter. It will run automatically
 
 
 ## 🪧 To Do
-Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to see what we're working on
+Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to see how can you help us!
 
 # 📝 Credits
 > If this project contains assets you have produced and you do not see your name here, **please** reach out.

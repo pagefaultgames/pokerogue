@@ -18,6 +18,7 @@ import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
 import {initTrainerTypeDialogue} from "#app/data/dialogue";
 import i18next from "i18next";
+import { initStatsKeys } from "./ui/game-stats-ui-handler";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -206,19 +207,19 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("items", "");
     this.loadAtlas("types", "");
 
-    (i18next.options.supportedLngs as Array<any>).forEach(lang => {
-      switch (lang) {
-      case "pt":
-        lang = "pt_BR";
-        break;
-      case "zh":
-        lang = "zh_CN";
-        break;
-      }
+    // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
+    const lang = i18next.language;
+    if (lang !== "en") {
       if (Utils.verifyLang(lang)) {
         this.loadAtlas(`types_${lang}`, "");
+      } else {
+        // Fallback to English
+        this.loadAtlas("types", "");
       }
-    });
+    } else {
+      this.loadAtlas("types", "");
+    }
+
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
@@ -309,6 +310,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
+    initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
     initEggMoves();

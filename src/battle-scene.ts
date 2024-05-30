@@ -17,7 +17,7 @@ import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
 import { GameMode, GameModes, gameModes } from "./game-mode";
@@ -56,6 +56,7 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -89,9 +90,24 @@ export default class BattleScene extends SceneBase {
   public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
+  public showMovesetFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
+  /**
+   * Determines the condition for a notification should be shown for Candy Upgrades
+   * - 0 = 'Off'
+   * - 1 = 'Passives Only'
+   * - 2 = 'On'
+   */
+  public candyUpgradeNotification: integer = 0;
+  /**
+   * Determines what type of notification is used for Candy Upgrades
+   * - 0 = 'Icon'
+   * - 1 = 'Animation'
+   */
+  public candyUpgradeDisplay: integer = 0;
+  public moneyFormat: MoneyFormat = MoneyFormat.NORMAL;
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
@@ -116,6 +132,7 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public gamepadSupport: boolean = false;
   public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
@@ -193,6 +210,9 @@ export default class BattleScene extends SceneBase {
    *
    * Current Events:
    * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
+   * - {@linkcode BattleSceneEventType.TURN_INIT} {@linkcode TurnInitEvent}
+   * - {@linkcode BattleSceneEventType.TURN_END} {@linkcode TurnEndEvent}
+   * - {@linkcode BattleSceneEventType.NEW_ARENA} {@linkcode NewArenaEvent}
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
@@ -287,7 +307,7 @@ export default class BattleScene extends SceneBase {
 
     this.fieldUI = fieldUI;
 
-    const transition = this.make.rexTransitionImagePack({
+    const transition = (this.make as any).rexTransitionImagePack({
       x: 0,
       y: 0,
       scale: 6,
@@ -657,6 +677,10 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
+      pokemon.level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
+
     if (Overrides.OPP_GENDER_OVERRIDE !== null) {
       pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
     }
@@ -979,6 +1003,7 @@ export default class BattleScene extends SceneBase {
         if (pokemon) {
           if (resetArenaState) {
             pokemon.resetBattleData();
+            applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon, true);
           }
           this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
         }
@@ -1265,9 +1290,16 @@ export default class BattleScene extends SceneBase {
     this.biomeWaveText.setVisible(true);
   }
 
-  updateMoneyText(): void {
-    this.moneyText.setText(`₽${Utils.formatFancyLargeNumber(this.money, 3)}`);
-    this.moneyText.setVisible(true);
+  updateMoneyText(forceVisible: boolean = true): void {
+    if (this.money === undefined) {
+      return;
+    }
+    const formattedMoney =
+			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
+    this.moneyText.setText(`₽${formattedMoney}`);
+    if (forceVisible) {
+      this.moneyText.setVisible(true);
+    }
   }
 
   updateScoreText(): void {
@@ -1286,7 +1318,7 @@ export default class BattleScene extends SceneBase {
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
     } else {
-      this.luckText.setTint(0x83a55a, 0xee384a, 0x5271cd, 0x7b487b);
+      this.luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
     this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
     this.tweens.add({
@@ -1318,6 +1350,15 @@ export default class BattleScene extends SceneBase {
     this.partyExpBar.setY(offsetY);
     this.candyBar.setY(offsetY + 15);
     this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
+  }
+
+  /**
+   * Pushes all {@linkcode Phaser.GameObjects.Text} objects in the top right to the bottom of the canvas
+   */
+  sendTextToBack(): void {
+    this.fieldUI.sendToBack(this.biomeWaveText);
+    this.fieldUI.sendToBack(this.moneyText);
+    this.fieldUI.sendToBack(this.scoreText);
   }
 
   addFaintedEnemyScore(enemy: EnemyPokemon): void {

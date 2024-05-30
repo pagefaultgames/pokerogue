@@ -9,6 +9,7 @@ import { itConfig } from "#app/locales/it/config.js";
 import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
 import { zhTWConfig } from "#app/locales/zh_TW/config.js";
+import { koConfig } from "#app/locales/ko/config.js";
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -65,21 +66,40 @@ export interface DialogueTranslationEntry {
 }
 
 export interface DialogueTranslationCategory {
-  encounter: DialogueTranslationEntry;
-  victory: DialogueTranslationEntry;
-  defeat?: DialogueTranslationEntry;
-}
-
-export interface DialogueTranslationTrainerClass {
-  [key: string]: DialogueTranslationCategory;
+  [category: string]: DialogueTranslationEntry;
 }
 
 export interface DialogueTranslationEntries {
-  [key: string]: DialogueTranslationTrainerClass;
+  [trainertype: string]: DialogueTranslationCategory;
 }
+
 
 export interface Localizable {
   localize(): void;
+}
+
+const alternativeFonts = {
+  "ko": [
+    new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)")
+  ],
+};
+
+function loadFont(language: string) {
+  const altFontLanguages = Object.keys(alternativeFonts);
+  if (!alternativeFonts[language]) {
+    language = language.split(/[-_/]/)[0];
+  }
+  if (alternativeFonts[language]) {
+    alternativeFonts[language].forEach(f => {
+      document.fonts.add(f);
+    });
+    altFontLanguages.splice(altFontLanguages.indexOf(language), 0);
+  }
+  altFontLanguages.forEach(f=> {
+    if (f && f.status === "loaded") {
+      document.fonts.delete(f);
+    }
+  });
 }
 
 export function initI18n(): void {
@@ -94,7 +114,10 @@ export function initI18n(): void {
     lang = localStorage.getItem("prLang");
   }
 
-
+  loadFont(lang);
+  i18next.on("languageChanged", lng=> {
+    loadFont(lng);
+  });
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -116,7 +139,7 @@ export function initI18n(): void {
     lng: lang,
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -145,7 +168,10 @@ export function initI18n(): void {
       },
       zh_TW: {
         ...zhTWConfig
-      }
+      },
+      ko: {
+        ...koConfig
+      },
     },
   });
 }
@@ -181,6 +207,7 @@ declare module "i18next" {
       gameStatsUiHandler: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
       PGMmiscDialogue: SimpleTranslationEntries;

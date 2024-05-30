@@ -897,7 +897,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, "types", Type[this.newMove.type].toLowerCase());
+        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[this.newMove.type].toLowerCase());
         newMoveTypeIcon.setOrigin(0, 1);
         this.extraMoveRowContainer.add(newMoveTypeIcon);
 
