@@ -41,22 +41,27 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     ui.add(this.modifierContainer);
 
     this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
+    this.transferButtonContainer.setName("container-transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
     const transferButtonText = addTextObject(this.scene, -4, -2, "Transfer", TextStyle.PARTY);
+    transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
     this.rerollButtonContainer = this.scene.add.container(16, -64);
+    this.rerollButtonContainer.setName("container-reroll-brn");
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
     const rerollButtonText = addTextObject(this.scene, -4, -2, "Reroll", TextStyle.PARTY);
+    rerollButtonText.setName("text-reroll-btn");
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
 
     this.rerollCostText = addTextObject(this.scene, 0, 0, "", TextStyle.MONEY);
+    this.rerollCostText.setName("text-reroll-cost");
     this.rerollCostText.setOrigin(0, 0);
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
@@ -141,7 +146,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     this.scene.showFieldOverlay(750);
-    this.scene.updateAndShowLuckText(750);
+    this.scene.updateAndShowText(750);
 
     let i = 0;
 
