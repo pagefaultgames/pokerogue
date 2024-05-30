@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "magma_grunt_f.png",
+			"image": "magma_grunt_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 72,
-				"h": 72
+				"w": 80,
+				"h": 80
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 23,
-						"y": 7,
-						"w": 33,
-						"h": 72
+						"x": 0,
+						"y": 0,
+						"w": 80,
+						"h": 80
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 33,
-						"h": 72
+						"w": 80,
+						"h": 80
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f63ad48affc076f60fae78992c96a2bf:80928b32710abcb28c07c6fc5a425d99:3b961d8852b62aaf24ceb2030c036515$"
+		"smartupdate": "$TexturePacker:SmartUpdate:96aa833d987a01bcdcb6f0e7809f5daf:791cce8d026f92b2e52f0b66df8b8e11:35532fd5d9aea30957d50d06f2d2f9a6$"
 	}
 }
