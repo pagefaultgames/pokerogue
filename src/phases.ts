@@ -62,6 +62,8 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { Prestige } from "./system/prestige";
+import { FEATURE_FLAGS, FeatureFlag } from "./feature-flags";
 
 
 export class LoginPhase extends Phase {
@@ -4048,13 +4050,16 @@ export class GameOverPhase extends BattlePhase {
   handleUnlocks(): void {
     if (this.victory && this.scene.gameMode.isClassic) {
       if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
+        this.scene.unshiftPhase(UnlockPhaseFactory.get(this.scene, Unlockables.ENDLESS_MODE));
       }
       if (this.scene.getParty().filter(p => p.fusionSpecies).length && !this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
-        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.SPLICED_ENDLESS_MODE));
+        this.scene.unshiftPhase(UnlockPhaseFactory.get(this.scene, Unlockables.SPLICED_ENDLESS_MODE));
       }
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
-        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+        this.scene.unshiftPhase(UnlockPhaseFactory.get(this.scene, Unlockables.MINI_BLACK_HOLE));
+      }
+      if (this.scene.gameData.prestigeLevel < Prestige.MAX_LEVEL && FEATURE_FLAGS[FeatureFlag.PRESTIGE_MODE]) {
+        this.scene.unshiftPhase(UnlockPhaseFactory.get(this.scene, Unlockables.PRESTIGE_MODE));
       }
     }
   }
@@ -4104,6 +4109,24 @@ export class EndCardPhase extends Phase {
   }
 }
 
+export abstract class UnlockPhaseFactory {
+  /**
+   * Get the unlock phase for the specified unlockable
+   *
+   * @param scene
+   * @param unlockable
+   * @returns the unlock phase
+   */
+  public static get(scene: BattleScene, unlockable: Unlockables): UnlockPhase {
+    switch (unlockable) {
+    case Unlockables.PRESTIGE_MODE:
+      return new UnlockPrestigePhase(scene, unlockable);
+    default:
+      return new UnlockPhase(scene, unlockable);
+    }
+  }
+}
+
 export class UnlockPhase extends Phase {
   private unlockable: Unlockables;
 
@@ -4123,6 +4146,35 @@ export class UnlockPhase extends Phase {
         this.end();
       }, null, true, 1500);
     });
+  }
+}
+
+export class UnlockPrestigePhase extends UnlockPhase {
+  /**
+   * Start the unlock phase for PRESTIGE_MODE
+   */
+  start(): void {
+    if (this.scene.gameData.prestigeLevel === Prestige.MAX_LEVEL) {
+      return;
+    }
+    const prestigeAlreadyUnlocked = this.scene.gameData.unlocks[Unlockables.PRESTIGE_MODE];
+    const isLastPrestigeLevelSelected = this.scene.prestigeLevel === this.scene.gameData.prestigeLevel;
+    if (prestigeAlreadyUnlocked) {
+      if (isLastPrestigeLevelSelected) {
+        this.scene.time.delayedCall(2000, () => {
+          this.scene.gameData.increasePrestigeLevel();
+          this.scene.playSound("level_up_fanfare");
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(`Prestige ${this.scene.gameData.prestigeLevel} has been unlocked.`, null, () => {
+            this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+            this.end();
+          }, null, true, 1500);
+        });
+      }
+    } else {
+      this.scene.gameData.increasePrestigeLevel();
+      super.start();
+    }
   }
 }
 
