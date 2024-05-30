@@ -4234,8 +4234,7 @@ export function initAbilities() {
     new Ability(Abilities.ROCKY_PAYLOAD, 9)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK),
     new Ability(Abilities.WIND_POWER, 9)
-      .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.hasFlag(MoveFlags.WIND_MOVE), BattlerTagType.CHARGED)
-      .partial(),
+      .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.hasFlag(MoveFlags.WIND_MOVE), BattlerTagType.CHARGED),
     new Ability(Abilities.ZERO_TO_HERO, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
