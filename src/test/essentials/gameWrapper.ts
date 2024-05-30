@@ -28,6 +28,7 @@ import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import {MockClock} from "#app/test/essentials/mockClock";
 import {Command} from "#app/ui/command-ui-handler";
 import {GameDataType} from "#app/system/game-data";
+import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -122,10 +123,48 @@ export default class GameWrapper {
       await waitUntil(() => scene.ui.getMode() === Mode.FIGHT);
       const movePosition = await this.getMovePosition(scene, pokemonIndex, moveIndex);
       (scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false)
+
       //Message if opp is KO, Command if waiting for player to choose next action
-      await waitUntil(() => scene.ui?.getMode() === Mode.MESSAGE || scene.ui?.getMode() === Mode.COMMAND);
+      await waitUntil(() => (this.isVictory() && scene.ui?.getMode() === Mode.MESSAGE) || scene.ui?.getMode() === Mode.COMMAND);
       return resolve();
     });
+  }
+
+  doAttackDouble(moveIndex, moveIndex2, target= 0, target2): Promise<void> {
+    const scene = this.scenes["battle"];
+    let mode = scene.ui?.getMode();
+    return new Promise(async (resolve, reject) => {
+      if (mode !== Mode.COMMAND) {
+        return reject("Invalid mode");
+      }
+      scene.ui.setMode(Mode.FIGHT, (scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+      await waitUntil(() => scene.ui.getMode() === Mode.FIGHT);
+      const movePosition = await this.getMovePosition(scene, 0, moveIndex);
+      const movePosition2 = await this.getMovePosition(scene, 1, moveIndex2);
+      (scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false)
+      if (scene.currentBattle.double) {
+        await waitUntil(() => scene.ui?.getMode() === Mode.TARGET_SELECT);
+        let targetHandler = scene.ui.getHandler() as TargetSelectUiHandler;
+        targetHandler.processInput(Button.ACTION);
+        await waitUntil(() => scene.ui.getMode() === Mode.COMMAND);
+        scene.ui.setMode(Mode.FIGHT, (scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+        await waitUntil(() => scene.ui.getMode() === Mode.FIGHT);
+        (scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition2, false)
+        await waitUntil(() => scene.ui?.getMode() === Mode.TARGET_SELECT);
+        targetHandler = scene.ui.getHandler() as TargetSelectUiHandler;
+        targetHandler.processInput(Button.ACTION);
+      }
+
+
+      //Message if opp is KO, Command if waiting for player to choose next action
+      await waitUntil(() => (this.isVictory() && scene.ui?.getMode() === Mode.MESSAGE) || scene.ui?.getMode() === Mode.COMMAND);
+      return resolve();
+    });
+  }
+
+  isVictory() {
+    const scene = this.scenes["battle"];
+    return scene.currentBattle.enemyParty.every(pokemon => pokemon.isFainted());
   }
 
   exportSaveToTest(): Promise<string> {

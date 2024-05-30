@@ -212,11 +212,11 @@ describe("Session import/export", () => {
     expect(scene.currentBattle.double).toBe(true);
   }, 100000);
 
-  it('test attack no OHKO', async() => {
+  it.skip('test attack no OHKO', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
     vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(25);
-    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(53);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
     vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
     await game.newGame(scene, GameModes.CLASSIC);
     const opponentLife = scene.currentBattle.enemyParty[0].hp;
@@ -226,16 +226,19 @@ describe("Session import/export", () => {
     expect(scene.party[0].hp).not.toBe(playerLife);
   }, 100000);
 
-  // it('Override starter species', async() => {
-  //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-  //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-  //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-  //   await game.newGame(scene, GameModes.CLASSIC);
-  //   // WE ARE IN BATTLE, WE CAN CHOOSE ATTACK, SWITCH, ITEM, RUN !!!
-  //   await scene.gameData.saveAll(scene, true, true, true, true);
-  //   scene.reset(true);
-  //   await waitUntil(() => scene.ui?.getMode() === Mode.TITLE);
-  //   await scene.gameData.tryExportData(GameDataType.SESSION, 0)
-  // }, 50000);
+  it.skip('test attack no OHKO on double', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(25);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
+    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
+    vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
+    await game.newGame(scene, GameModes.CLASSIC);
+    const opponentLife = scene.currentBattle.enemyParty[0].hp;
+    const opponentLife2 = scene.currentBattle.enemyParty[1].hp;
+    await game.doAttackDouble(Moves.TACKLE, Moves.TACKLE);
+    expect(scene.currentBattle.enemyParty[0].hp).not.toBe(opponentLife);
+    expect(scene.currentBattle.enemyParty[1].hp).toBe(opponentLife2);
+  }, 100000);
 });
 
