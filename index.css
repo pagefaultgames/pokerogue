@@ -22,6 +22,12 @@ body {
   background: #484050;
 }
 
+@media (display-mode: fullscreen) {
+  body {
+    background: #000000;
+  }
+}
+
 #app {
   display: flex;
   justify-content: center;
