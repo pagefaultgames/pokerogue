@@ -516,7 +516,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Oh, es scheint, als hätte ich verloren.",
-      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um den Kämpfe geht.",
+      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um Kämpfe geht.",
       3: "Ich werde mir zu Herzen nehmen, was ich heute gelernt habe."
     },
     "defeat": {
@@ -775,7 +775,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marshal": {
     "encounter": {
-      1: `Mein Mentor, Lauro, sieht sieht Potential in dir. Ich werde dich testen,
+      1: `Mein Mentor, Lauro, sieht Potential in dir. Ich werde dich testen,
           $dich an die Grenzen deiner Stärke bringen. Kiai!`,
       2: "Ein Sieg, ein entscheidender Sieg, das ist mein Ziel! Herausforderer, hier komme ich!",
       3: "Ich selber suche die Stärke eines Kämpfers zu entwickeln und jede Schwäche in mir zu brechen!"
@@ -930,7 +930,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lacey": {
     "encounter": {
-      1: "Ich werde dir mit meiner gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
+      1: "Ich werde dir mit meinem gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
     },
     "victory": {
       1: "Das war ein großartiger Kampf!"
@@ -1025,7 +1025,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cress": {
     "encounter": {
-      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Typen werden deine Gegner im Kampf sein!"
+      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Pokémon werden deine Gegner im Kampf sein!"
     },
     "victory": {
       1: "Verlieren? Ich? Das glaube ich nicht."
@@ -1234,8 +1234,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
-                $Meine Forschung ist noch nicht abgeschlossen. OK, du gewinnst.`,
+      1: "Ich bin Kai, der Arenaleiter von Azalea City. Ich bin ein großer Fan von Käfer-Pokémon.",
     },
     "victory": {
       1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
@@ -1635,13 +1634,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Ich habe mich entschieden, erneut meinen Hut in den Ring zu werfen.
                 $Komm jetzt... Zeig mir die Früchte deines Trainings.`,
-      "victory": {
-        1: "Ich freue mich auf Neuigkeiten über all deine Erfolge!"
-      },
-      "defeat": {
-        1: "Was ist los? Das ist doch nicht alles, oder?"
-      }
     },
+    "victory": {
+      1: "Ich freue mich auf Neuigkeiten über all deine Erfolge!"
+    },
+    "defeat": {
+      1: "Was ist los? Das ist doch nicht alles, oder?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -2337,7 +2336,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 };
 
 // Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
-export const PGFdialogue: SimpleTranslationEntries = PGMdialogue;
+export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
 // Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
