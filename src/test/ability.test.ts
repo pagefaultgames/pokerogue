@@ -14,7 +14,7 @@ describe("ability", () => {
   let ability: Ability;
 
   beforeEach(() => {
-    ability = new Ability(Abilities.MAGICIAN, 0)
+    ability = new Ability(Abilities.NONE, 0)
       .attr(SuppressWeatherEffectAbAttr, true)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY);

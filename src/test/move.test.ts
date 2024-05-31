@@ -14,7 +14,7 @@ describe("move", () => {
   let move: Move;
 
   beforeEach(() => {
-    move = new StatusMove(Moves.RAIN_DANCE, Type.WATER, -1, 5, -1, 0, 2)
+    move = new StatusMove(Moves.NONE, Type.UNKNOWN, -1, 5, -1, 0, 0)
       .attr(WeatherChangeAttr, WeatherType.RAIN)
       .attr(PlantHealAttr)
       .target(MoveTarget.BOTH_SIDES);
