@@ -362,12 +362,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "firebreather": {
     "encounter": {
       1: "My flames shall devour you!",
-      2: "I'm seriously upset by your cold confusion!",
-      3: "I'm going to put on my fire-breathing shows!"
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
     },
     "victory": {
-      1: "If we only had it warmer.",
-      2: "I flamed out.",
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
       3: "Ow! I scorched the tip of my nose!"
     },
   },
