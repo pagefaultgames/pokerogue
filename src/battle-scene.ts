@@ -59,10 +59,7 @@ import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
 
-export class LoginBypass {
-  public static bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
-  public static isDisasterMode = false;
-}
+export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
