@@ -179,7 +179,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
           optionsContainer.add(settingLabels[s]);
 
           // Initialize an array to store the option labels for this setting.
-          const valueLabels: Phaser.GameObjects.Text[] = [];
+          const valueLabels: Phaser.GameObjects.GameObject[] = [];
 
           // Process each option for the current setting.
           for (const [o, option] of this.settingDeviceOptions[this.settingDevice[setting]].entries()) {
