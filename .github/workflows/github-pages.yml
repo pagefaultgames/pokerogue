@@ -8,6 +8,7 @@ on:
 jobs:
   pages:
     name: Github Pages
+    if: github.repository == 'pagefaultgames/pokerogue'
     runs-on: ubuntu-latest
     env:
       api-dir: ./
