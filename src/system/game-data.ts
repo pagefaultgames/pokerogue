@@ -745,7 +745,6 @@ export class GameData {
 
           scene.arena.terrain = sessionData.arena.terrain;
           scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(null, scene.arena.terrain?.terrainType, scene.arena.terrain?.turnsLeft));
-
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 

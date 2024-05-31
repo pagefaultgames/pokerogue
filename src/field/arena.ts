@@ -19,8 +19,7 @@ import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
-import { TagChangedEvent, WeatherChangedEvent } from "./arena-events";
-import { TerrainChangedEvent } from "./arena-events";
+import { WeatherChangedEvent, TerrainChangedEvent, TagChangedEvent } from "./arena-events";
 
 export class Arena {
   public scene: BattleScene;
@@ -533,10 +532,7 @@ export class Arena {
     if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
-    tags.forEach(
-      t => {
-        t.apply(this, args);
-      });
+    tags.forEach(t => t.apply(this, args));
   }
 
   applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
