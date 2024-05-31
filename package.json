@@ -8,10 +8,11 @@
 		"start:dev": "vite --mode development",
 		"build": "vite build",
 		"preview": "vite preview",
-		"test": "vitest run --mode development",
-		"test:cov": "vitest run --coverage --mode development",
-		"test:watch": "vitest watch --coverage --mode development",
-		"eslint": "eslint --fix ."
+		"test": "vitest run",
+		"test:cov": "vitest run --coverage",
+		"test:watch": "vitest watch --coverage",
+		"eslint": "eslint --fix .",
+		"eslint-ci": "eslint ."
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",

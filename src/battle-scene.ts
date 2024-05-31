@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import UI  from "./ui/ui";
+import UI from "./ui/ui";
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
@@ -129,14 +129,13 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
-  public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
 
   public gameData: GameData;
   public sessionSlotId: integer;
 
-  public phaseQueue: Phase[];
+  private phaseQueue: Phase[];
   private phaseQueuePrepend: Phase[];
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
@@ -270,8 +269,7 @@ export default class BattleScene extends SceneBase {
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
     (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
-
-    this.launchBattle();
+    this.time.delayedCall(20, () => this.launchBattle());
   }
 
   update() {
@@ -589,7 +587,7 @@ export default class BattleScene extends SceneBase {
 					resolve();
 				});*/
 
-        return resolve();
+        resolve();
       });
     });
   }
@@ -878,8 +876,7 @@ export default class BattleScene extends SceneBase {
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
-    const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
-    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
+    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
     let newDouble: boolean;
     let newBattleType: BattleType;
     let newTrainer: Trainer;

@@ -166,12 +166,14 @@ export const achvs = {
   CLASSIC_VICTORY: new Achv("Undefeated", "Beat the game in classic mode", "relic_crown", 150)
 };
 
-export function initAchievements() {
-  const achvKeys = Object.keys(achvs);
-  achvKeys.forEach((a: string, i: integer) => {
-    achvs[a].id = a;
-    if (achvs[a].hasParent) {
-      achvs[a].parentId = achvKeys[i - 1];
-    }
-  });
+{
+  (function() {
+    const achvKeys = Object.keys(achvs);
+    achvKeys.forEach((a: string, i: integer) => {
+      achvs[a].id = a;
+      if (achvs[a].hasParent) {
+        achvs[a].parentId = achvKeys[i - 1];
+      }
+    });
+  })();
 }
