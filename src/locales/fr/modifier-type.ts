@@ -210,7 +210,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHELL_BELL": { name: "Grelot Coque", description: "Soigne 1/8 des dégâts infligés par un Pokémon" },
 
     "TOXIC_ORB": { name: "Toxic Orb", description: "Badly poisons its holder at the end of the turn if they do not have a status condition already" },
-    "FLAME_ORB": { name: "Flame Orb", description: "Burns its holder at the end of the turn if they do not have a status condition already" },
+    "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brûle son porteur durant le combat." },
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
