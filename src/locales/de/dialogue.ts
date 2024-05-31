@@ -367,6 +367,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Ich werde für das nächste Rennen tunen."
     },
   },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
   "brock": {
     "encounter": {
       1: "Meine Expertise in Bezug auf Gesteins-Pokémon wird dich besiegen! Komm schon!",

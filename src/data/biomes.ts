@@ -1823,7 +1823,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.VOLCANO]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.FIREBREATHER ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -7302,6 +7302,10 @@ export function initBiomes() {
     ],
     [ TrainerType.HEX_MANIAC, [
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
+    ]
+    ],
+    [ TrainerType.FIREBREATHER, [
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
     [ TrainerType.BROCK, [
