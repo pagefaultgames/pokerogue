@@ -1192,8 +1192,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Uau, incrível! Você é um especialista em Pokémon! 
-                $Minha pesquisa ainda não está completa. OK, você venceu.`,
+      1: "Sou Bugsy! Eu nunca perco quando se trata de Pokémon do tipo Inseto!"
     },
     "victory": {
       1: "Uau, incrível! Você é um especialista em Pokémon!\nMinha pesquisa ainda não está completa. OK, você venceu."

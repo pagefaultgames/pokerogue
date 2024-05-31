@@ -24,6 +24,7 @@ export enum Setting {
   Money_Format = "MONEY_FORMAT",
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
+  Show_Moveset_Flyout = "SHOW_MOVESET_FLYOUT",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
   EXP_Gains_Speed = "EXP_GAINS_SPEED",
   EXP_Party_Display = "EXP_PARTY_DISPLAY",
@@ -60,6 +61,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Money_Format]: ["Normal", "Abbreviated"],
   [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
   [Setting.Move_Animations]: ["Off", "On"],
+  [Setting.Show_Moveset_Flyout]: ["Off", "On"],
   [Setting.Show_Stats_on_Level_Up]: ["Off", "On"],
   [Setting.EXP_Gains_Speed]: ["Normal", "Fast", "Faster", "Skip"],
   [Setting.EXP_Party_Display]: ["Normal", "Level Up Notification", "Skip"],
@@ -88,6 +90,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Money_Format]: 0,
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
+  [Setting.Show_Moveset_Flyout]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
   [Setting.EXP_Gains_Speed]: 0,
   [Setting.EXP_Party_Display]: 0,
@@ -163,6 +166,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     break;
   case Setting.Move_Animations:
     scene.moveAnimations = settingOptions[setting][value] === "On";
+    break;
+  case Setting.Show_Moveset_Flyout:
+    scene.showMovesetFlyout = settingOptions[setting][value] === "On";
     break;
   case Setting.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = settingOptions[setting][value] === "On";
@@ -259,6 +265,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
             {
               label: "繁體中文",
               handler: () => changeLocaleHandler("zh_TW")
+            },
+            {
+              label: "한국어",
+              handler: () => changeLocaleHandler("ko")
             },
             {
               label: "Cancel",
