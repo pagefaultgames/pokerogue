@@ -5,7 +5,7 @@ import { Mode } from "./ui";
 import { updateUserInfo } from "#app/account";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
-  private reconnectTimer: number;
+  private reconnectTimer: NodeJS.Timeout;
   private reconnectDuration: number;
   private reconnectCallback: () => void;
 

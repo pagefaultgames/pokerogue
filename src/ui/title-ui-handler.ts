@@ -14,7 +14,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
 
-  private titleStatsTimer: number;
+  private titleStatsTimer: NodeJS.Timeout;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
