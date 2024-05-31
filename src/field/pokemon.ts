@@ -1222,7 +1222,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
+   * Endless Pokemon in the end biome are unable to be set to shiny
+   *
+   * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID
+   * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits
+   * The XOR of E and F are then compared to the thresholdOverride (default case 32) to see whether or not to generate a shiny
+   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance
+   * @returns true if the Pokemon has been set as a shiny, false otherwise
+   */
   trySetShiny(thresholdOverride?: integer): boolean {
+    // Shiny Pokemon should not spawn in the end biome in endless
+    if (this.scene.gameMode.isEndless && this.scene.arena.biomeType === Biome.END) {
+      return false;
+    }
+
     const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
     const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
 
@@ -1250,18 +1265,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.shiny;
   }
 
+  /**
+   * Generates a variant
+   * Has a 10% of returning 2 (epic variant)
+   * And a 30% of returning 1 (rare variant)
+   * Returns 0 (basic shiny) if there is no variant or 60% of the time otherwise
+   * @returns the shiny variant
+   */
   generateVariant(): Variant {
     if (!this.shiny || !variantData.hasOwnProperty(this.species.speciesId)) {
       return 0;
     }
     const rand = Utils.randSeedInt(10);
-    if (rand > 3) {
-      return 0;
+    if (rand >= 4) {
+      return 0;             // 6/10
+    } else if (rand >= 1) {
+      return 1;             // 3/10
+    } else {
+      return 2;             // 1/10
     }
-    if (rand) {
-      return 1;
-    }
-    return 2;
   }
 
   generateFusionSpecies(forStarter?: boolean): void {
@@ -1495,6 +1517,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = this.scene.fieldUI.getAll().slice(0, 4).filter(ui => ui instanceof BattleInfo && ((ui as BattleInfo) instanceof PlayerBattleInfo) === this.isPlayer()).find(() => true);
       if (!otherBattleInfo || !this.getFieldIndex()) {
         this.scene.fieldUI.sendToBack(this.battleInfo);
+        this.scene.sendTextToBack(); // Push the top right text objects behind everything else
       } else {
         this.scene.fieldUI.moveAbove(this.battleInfo, otherBattleInfo);
       }
@@ -1541,6 +1564,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
+  }
+  toggleFlyout(visible: boolean): void {
+    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {
@@ -2800,6 +2826,10 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
+    if (Overrides.STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.STATUS_OVERRIDE);
+    }
+
     if (Overrides.SHINY_OVERRIDE) {
       this.shiny = true;
       this.initShinySparkle();
@@ -3159,7 +3189,7 @@ export class PlayerPokemon extends Pokemon {
         && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
       const transferModifiers: Promise<boolean>[] = [];
       for (const modifier of fusedPartyMemberHeldModifiers) {
-        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, true, false, true, true));
+        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true));
       }
       Promise.allSettled(transferModifiers).then(() => {
         this.scene.updateModifiers(true, true).then(() => {
@@ -3207,6 +3237,10 @@ export class EnemyPokemon extends Pokemon {
     this.trainerSlot = trainerSlot;
     if (boss) {
       this.setBoss();
+    }
+
+    if (Overrides.OPP_STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
     }
 
     if (!dataSource) {

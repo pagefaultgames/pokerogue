@@ -1,20 +1,21 @@
 import {Button} from "./enums/buttons";
+import EventEmitter = Phaser.Events.EventEmitter;
 
 // Create a map to store key bindings
-export const keys = new Map();
+export const keys = new Map<string, string>();
 // Create a map to store keys that are currently pressed
-export const keysDown = new Map();
+export const keysDown = new Map<string, string>();
 // Variable to store the ID of the last touched element
-let lastTouchedId;
+let lastTouchedId: string;
 
 /**
  * Initialize touch controls by binding keys to buttons.
  *
  * @param events - The event emitter for handling input events.
  */
-export function initTouchControls(events) {
-  const dpadDiv = document.querySelector("#dpad");
-  preventElementZoom(dpadDiv);
+export function initTouchControls(events: EventEmitter): void {
+  preventElementZoom(document.querySelector("#dpad"));
+  preventElementZoom(document.querySelector("#apad"));
   // Select all elements with the 'data-key' attribute and bind keys to them
   for (const button of document.querySelectorAll("[data-key]")) {
     // @ts-ignore - Bind the key to the button using the dataset key
@@ -27,7 +28,7 @@ export function initTouchControls(events) {
  *
  * @returns `true` if the device has a touchscreen, otherwise `false`.
  */
-export function hasTouchscreen() {
+export function hasTouchscreen(): boolean {
   return window.matchMedia("(hover: none), (pointer: coarse)").matches;
 }
 
@@ -36,7 +37,7 @@ export function hasTouchscreen() {
  *
  * @returns `true` if the device is a mobile device, otherwise `false`.
  */
-export function isMobile() {
+export function isMobile(): boolean {
   let ret = false;
   (function (a) {
     // Check the user agent string against a regex for mobile devices
@@ -58,7 +59,7 @@ export function isMobile() {
  * This function checks if the key exists in the Button enum. If it does, it retrieves the corresponding button
  * and emits the appropriate event ('input_down' or 'input_up') based on the event type.
  */
-function simulateKeyboardEvent(eventType, key, events) {
+function simulateKeyboardEvent(eventType: string, key: string, events: EventEmitter) {
   if (!Button.hasOwnProperty(key)) {
     return;
   }
@@ -93,7 +94,7 @@ function simulateKeyboardEvent(eventType, key, events) {
  * a 'keydown' event and adds an 'active' class to the node. When the touch ends, it simulates a 'keyup'
  * event, removes the keydown state, and removes the 'active' class from the node and the last touched element.
  */
-function bindKey(node, key, events) {
+function bindKey(node: HTMLElement, key: string, events) {
   keys.set(node.id, key);
 
   node.addEventListener("touchstart", event => {
@@ -127,19 +128,30 @@ function bindKey(node, key, events) {
  * Prevent zoom on specified element
  * @param {HTMLElement} element
  */
-function preventElementZoom(element) {
-  element.addEventListener("touchstart", (event) => {
+function preventElementZoom(element: HTMLElement): void {
+  if (!element) {
+    return;
+  }
+  element.addEventListener("touchstart", (event: TouchEvent) => {
+
+    if (!(event.currentTarget instanceof HTMLElement)) {
+      return;
+    }
+
     const currentTouchTimeStamp = event.timeStamp;
-    const previousTouchTimeStamp = event.currentTarget.dataset.lastTouchTimeStamp || currentTouchTimeStamp;
+    const previousTouchTimeStamp = Number(event.currentTarget.dataset.lastTouchTimeStamp) || currentTouchTimeStamp;
     const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
     const fingers = event.touches.length;
-    event.currentTarget.dataset.lastTouchTimeStamp = currentTouchTimeStamp;
+    event.currentTarget.dataset.lastTouchTimeStamp = String(currentTouchTimeStamp);
 
     if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
       return;
     } // not double-tap
 
     event.preventDefault();
-    event.target.click();
+
+    if (event.target instanceof HTMLElement) {
+      event.target.click();
+    }
   });
 }
