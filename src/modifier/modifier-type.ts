@@ -1318,10 +1318,12 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
       let weight = 0;
-      const filteredParty = party.filter(p => p.canSetStatus(StatusEffect.TOXIC) && !p.hasAbility(Abilities.FLARE_BOOST) && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
+      const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.TOXIC || p.canSetStatus(StatusEffect.TOXIC, true, true))
+        && !p.hasAbility(Abilities.FLARE_BOOST)
+        && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
       if (filteredParty.some(p => p.hasAbility(Abilities.TOXIC_BOOST) || p.hasAbility(Abilities.POISON_HEAL))) {
         weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.MARVEL_SCALE) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET))) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
         weight = 2;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
@@ -1333,10 +1335,12 @@ const modifierPool: ModifierPool = {
     }, 32),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       let weight = 0;
-      const filteredParty = party.filter(p => p.canSetStatus(StatusEffect.BURN) && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL) && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
+      const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.BURN || p.canSetStatus(StatusEffect.BURN, true, true))
+        && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL)
+        && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
       if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST))) {
         weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.MARVEL_SCALE) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET))) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
         weight = 2;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
