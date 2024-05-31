@@ -2010,6 +2010,16 @@ export class BonusCritAbAttr extends AbAttr {
   }
 }
 
+/** Attribute that adds luck when the pokemon with this ability is in the party */
+export class BonusLuckAbAttr extends AbAttr {
+  constructor(
+    /** By how much luck will increase */
+    public bonusLuck: number
+  ) {
+    super(false);
+  }
+}
+
 export class MultCritAbAttr extends AbAttr {
   public multAmount: number;
 
@@ -3566,7 +3576,8 @@ export function initAbilities() {
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true),
     new Ability(Abilities.COMPOUND_EYES, 3)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3)
+      .attr(BonusLuckAbAttr, 1),
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -3843,7 +3854,7 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
       .attr(BonusCritAbAttr)
-      .partial(),
+      .attr(BonusLuckAbAttr, 1),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),
