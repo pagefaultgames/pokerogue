@@ -3,10 +3,12 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
   "elite_four": "Elite dos Quatro",
+  "elite_four_female": "Elite dos Quatro",
   "gym_leader": "Líder de Ginásio",
   "gym_leader_female": "Líder de Ginásio",
   "gym_leader_double": "Gym Leader Duo",
   "champion": "Campeão",
+  "champion_female": "Champion",
   "champion_double": "Champion Duo",
   "rival": "Rival",
   "professor": "Professor",
