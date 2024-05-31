@@ -1961,7 +1961,7 @@ export default class BattleScene extends SceneBase {
       const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
       let chances = Math.ceil(difficultyWaveIndex / 10);
       if (this.getPlayerPokemon().getAbility().hasAttr(BonusItemChance)) {
-        chances += Math.ceil(chances * 1.2);
+        chances += Math.floor(chances * 1.2);
       }
       if (isFinalBoss) {
         chances = Math.ceil(chances * 2.5);
