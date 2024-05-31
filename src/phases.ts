@@ -2,7 +2,7 @@ import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr  } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -28,7 +28,7 @@ import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
-import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
+import { ArenaTagSide, ArenaTrapTag, DelayedAttackTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
 import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
@@ -2482,6 +2482,8 @@ export class MovePhase extends BattlePhase {
     });
 
     const doMove = () => {
+      const isDoubleBattle = this.scene.currentBattle.double;
+      const isEnemyPokemon = !this.pokemon.isPlayer();
       this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
 
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
@@ -2519,10 +2521,64 @@ export class MovePhase extends BattlePhase {
 
       this.scene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
+      const isDelayedAttack = (this.move.moveId === Moves.FUTURE_SIGHT || this.move.moveId === Moves.DOOM_DESIRE);
+      if (isDelayedAttack) {
+        // Check the player side arena if future sight is active
+        const futureSightTag = this.scene.arena.getTagOnOneSideOnly(ArenaTagType.FUTURE_SIGHT, isEnemyPokemon ? ArenaTagSide.PLAYER: ArenaTagSide.ENEMY);
+        const doomDesireTag = this.scene.arena.getTagOnOneSideOnly(ArenaTagType.DOOM_DESIRE, isEnemyPokemon ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+        console.log("Future sight tag:", futureSightTag);
+        console.log("Doom Desire tag:", doomDesireTag);
+        if (isDoubleBattle) {
+          let fail = false;
+          const currentTargetIndex = targets[0].getBattlerIndex();
+          const doubleFutureSightPlayed = futureSightTag.length === 2;
+          const doubleDoomDesirePlayed = doomDesireTag.length === 2;
+          if (futureSightTag.length > 0 && doomDesireTag.length > 0) {
+            // These cant be applied to the same mon, and we are in a double battle
+            // So we can fail right away
+            fail = true;
+          } else if (doubleFutureSightPlayed || doubleDoomDesirePlayed) {
+            // this means each opponent already has a delayed attack incoming
+            fail = true;
+          } else if (futureSightTag.length === 1) {
+            // If we are trying to apply future sight to mon that already has
+            // incoming attack it should fail
+            const futureSightTarget = (futureSightTag[0] as DelayedAttackTag).targetIndex;
+            fail = futureSightTarget === currentTargetIndex;
+            // We also need to consider if doomDesire is in play, and if its targetting the current mon
+            if (doomDesireTag.length > 0) {
+              const doomDesireTarget = (doomDesireTag[0] as DelayedAttackTag).targetIndex;
+              fail = fail || doomDesireTarget === currentTargetIndex;
+            }
+          } else if (doomDesireTag.length === 1) {
+            // If we are trying to apply doom desire to mon that already has
+            // incoming attack it should fail
+            const doomDesireTarget = (doomDesireTag[0] as DelayedAttackTag).targetIndex;
+            fail = doomDesireTarget === currentTargetIndex;
+            // We also need to consider if futureSight is in play, and if its targetting the current mon
+            if (futureSightTag.length > 0) {
+              const futureSightTarget = (futureSightTag[0] as DelayedAttackTag).targetIndex;
+              fail = fail || futureSightTarget === currentTargetIndex;
+            }
+          }
+          if (fail) {
+            this.showMoveText();
+            this.showFailedText();
+            return this.end();
+          }
+        } else {
+          if ((futureSightTag.length > 0 || doomDesireTag.length > 0)) {
+            // Move has already been played, so we should fail
+            this.showMoveText();
+            this.showFailedText();
+            return this.end();
+          }
+        }
+      }
+
       if (this.move.moveId) {
         this.showMoveText();
       }
-
       // This should only happen when there are no valid targets left on the field
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
         this.showFailedText();
@@ -2658,10 +2714,12 @@ export class MovePhase extends BattlePhase {
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
   protected targets: BattlerIndex[];
+  protected user: Pokemon;
 
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
     super(scene, battlerIndex);
     this.move = move;
+    this.user = this.getUserPokemon();
     // In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
     // with no party members available to switch in, then the right Pokemon takes the index
     // of the left Pokemon and gets hit unless this is checked.
@@ -2675,10 +2733,11 @@ export class MoveEffectPhase extends PokemonPhase {
   start() {
     super.start();
 
-    const user = this.getUserPokemon();
+    const user = this.user;
     const targets = this.getTargets();
 
-    if (!user?.isOnField() && !(this.move.moveId === Moves.FUTURE_SIGHT)) {
+    const isDelayedAttack = (this.move.moveId === Moves.FUTURE_SIGHT || this.move.moveId === Moves.DOOM_DESIRE);
+    if (!user?.isOnField() && !(isDelayedAttack)) {
       return super.end();
     }
 
@@ -2715,6 +2774,9 @@ export class MoveEffectPhase extends PokemonPhase {
           this.scene.queueMessage(getPokemonMessage(user, "'s\nattack missed!"));
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
+        } else if (isDelayedAttack) {
+          this.scene.queueMessage(this.move.getName() + " failed because the target has fainted!");
+          moveHistoryEntry.result = MoveResult.FAIL;
         } else {
           this.scene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
