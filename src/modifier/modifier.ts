@@ -861,10 +861,17 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   /** The status effect to be applied by the held item */
   private effect: StatusEffect;
 
-  constructor(type: ModifierType, pokemonId: integer, effect: StatusEffect, stackCount?: integer) {
+  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
 
-    this.effect = effect;
+    switch (type.id) {
+    case "TOXIC_ORB":
+      this.effect = StatusEffect.TOXIC;
+      break;
+    case "FLAME_ORB":
+      this.effect = StatusEffect.BURN;
+      break;
+    }
   }
 
   /**
@@ -882,7 +889,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   }
 
   clone() {
-    return new TurnStatusEffectModifier(this.type, this.pokemonId, this.effect, this.stackCount);
+    return new TurnStatusEffectModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   /**
