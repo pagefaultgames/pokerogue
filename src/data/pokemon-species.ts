@@ -387,9 +387,11 @@ export abstract class PokemonSpeciesForm {
       case "four":
       case "droopy":
       case "stretchy":
+      case "hero":
       case "roaming":
       case "complete":
       case "10":
+      case "10-pc":
       case "super":
       case "unbound":
       case "pau":
@@ -2468,9 +2470,9 @@ export function initSpecies() {
     new PokemonSpecies(Species.WUGTRIO, 9, false, false, false, "Garden Eel Pokémon", Type.WATER, null, 1.2, 5.4, Abilities.GOOEY, Abilities.RATTLED, Abilities.SAND_VEIL, 425, 35, 100, 50, 50, 70, 120, 50, 50, 149, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.BOMBIRDIER, 9, false, false, false, "Item Drop Pokémon", Type.FLYING, Type.DARK, 1.5, 42.9, Abilities.BIG_PECKS, Abilities.KEEN_EYE, Abilities.ROCKY_PAYLOAD, 485, 70, 103, 85, 60, 85, 82, 25, 50, 243, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.FINIZEN, 9, false, false, false, "Dolphin Pokémon", Type.WATER, null, 1.3, 60.2, Abilities.WATER_VEIL, Abilities.NONE, Abilities.NONE, 315, 70, 45, 40, 45, 40, 75, 200, 50, 63, GrowthRate.SLOW, 50, false),
-    new PokemonSpecies(Species.PALAFIN, 9, false, false, false, "Dolphin Pokémon", Type.WATER, null, 1.3, 60.2, Abilities.ZERO_TO_HERO, Abilities.NONE, Abilities.NONE, 457, 100, 70, 72, 53, 62, 100, 45, 50, 160, GrowthRate.SLOW, 50, false, false,
+    new PokemonSpecies(Species.PALAFIN, 9, false, false, false, "Dolphin Pokémon", Type.WATER, null, 1.3, 60.2, Abilities.ZERO_TO_HERO, Abilities.NONE, Abilities.NONE, 457, 100, 70, 72, 53, 62, 100, 45, 50, 160, GrowthRate.SLOW, 50, false, true,
       new PokemonForm("Zero Form", "zero", Type.WATER, null, 1.3, 60.2, Abilities.ZERO_TO_HERO, Abilities.NONE, Abilities.ZERO_TO_HERO, 457, 100, 70, 72, 53, 62, 100, 45, 50, 160, false, null, true),
-      new PokemonForm("Hero Form", "hero", Type.WATER, null, 1.8, 97.4, Abilities.ZERO_TO_HERO, Abilities.NONE, Abilities.ZERO_TO_HERO, 650, 100, 160, 97, 106, 87, 100, 45, 50, 160, false, null),
+      new PokemonForm("Hero Form", "hero", Type.WATER, null, 1.8, 97.4, Abilities.ZERO_TO_HERO, Abilities.NONE, Abilities.ZERO_TO_HERO, 650, 100, 160, 97, 106, 87, 100, 45, 50, 160),
     ),
     new PokemonSpecies(Species.VAROOM, 9, false, false, false, "Single-Cyl Pokémon", Type.STEEL, Type.POISON, 1, 35, Abilities.OVERCOAT, Abilities.NONE, Abilities.SLOW_START, 300, 45, 70, 63, 30, 45, 47, 190, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.REVAVROOM, 9, false, false, false, "Multi-Cyl Pokémon", Type.STEEL, Type.POISON, 1.8, 120, Abilities.OVERCOAT, Abilities.NONE, Abilities.FILTER, 500, 80, 119, 90, 54, 67, 90, 75, 50, 175, GrowthRate.MEDIUM_FAST, 50, false),
