@@ -1,10 +1,10 @@
-import MockContainer from "#app/test/essentials/mocksContainer/mockContainer";
-import MockSprite from "#app/test/essentials/mocksContainer/mockSprite";
-import MockRectangle from "#app/test/essentials/mocksContainer/mockRectangle";
-import MockNineslice from "#app/test/essentials/mocksContainer/mockNineslice";
-import MockImage from "#app/test/essentials/mocksContainer/mockImage";
-import MockText from "#app/test/essentials/mocksContainer/mockText";
-import MockPolygon from "#app/test/essentials/mocksContainer/mockPolygon";
+import MockContainer from "#app/test/essentials/mocks/mocksContainer/mockContainer";
+import MockSprite from "#app/test/essentials/mocks/mocksContainer/mockSprite";
+import MockRectangle from "#app/test/essentials/mocks/mocksContainer/mockRectangle";
+import MockNineslice from "#app/test/essentials/mocks/mocksContainer/mockNineslice";
+import MockImage from "#app/test/essentials/mocks/mocksContainer/mockImage";
+import MockText from "#app/test/essentials/mocks/mocksContainer/mockText";
+import MockPolygon from "#app/test/essentials/mocks/mocksContainer/mockPolygon";
 
 
 export default class MockTextureManager {

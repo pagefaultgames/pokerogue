@@ -1,4 +1,4 @@
-import MockTextureManager from "#app/test/essentials/mocksContainer/mockTextureManager";
+import MockTextureManager from "#app/test/essentials/mocks/mockTextureManager";
 
 export default class MockContainer {
   protected x;

@@ -1,4 +1,4 @@
-export default class MessagesWrapper {
+export default class TextInterceptor {
   private scene;
   private logs = [];
   constructor(scene) {

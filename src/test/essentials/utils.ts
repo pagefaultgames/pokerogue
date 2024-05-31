@@ -60,3 +60,12 @@ export function setPositionRelative(guideObject: any, x: number, y: number) {
 
   this.setPosition(x, y);
 }
+
+export async function getMovePosition(scene, pokemonIndex, moveIndex): Promise<number> {
+  return new Promise(async (resolve) => {
+    const playerPokemon = scene.getPlayerField()[pokemonIndex];
+    const moveSet = playerPokemon.getMoveset();
+    const index = moveSet.findIndex((move) => move.moveId === moveIndex);
+    return resolve(index);
+  });
+}
