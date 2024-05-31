@@ -757,14 +757,23 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   }
 }
 
+/**
+ * Class that represents form changing items
+ */
 export class FormChangeItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
   public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
     super("", FormChangeItem[formChangeItem].toLowerCase(), (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
       (pokemon: PlayerPokemon) => {
-        if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
-        && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem)) {
+        // Make sure the Pokemon has alternate forms
+        if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)
+          // Get all form changes for this species with an item trigger, including any compound triggers
+          && pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
+          // Returns true if any form changes match this item
+            .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+            .flat().flatMap(fc => fc.item).includes(this.formChangeItem)
+        ) {
           return null;
         }
 
@@ -1333,10 +1342,8 @@ const modifierPool: ModifierPool = {
         && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
       if (filteredParty.some(p => p.hasAbility(Abilities.TOXIC_BOOST) || p.hasAbility(Abilities.POISON_HEAL))) {
         weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.QUICK_FEET))) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
         weight = 2;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.MARVEL_SCALE))) {
-        weight = 1;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
         if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
@@ -1350,9 +1357,9 @@ const modifierPool: ModifierPool = {
       const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.BURN || p.canSetStatus(StatusEffect.BURN, true, true))
         && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL)
         && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
-      if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.MARVEL_SCALE))) {
+      if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST))) {
         weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.QUICK_FEET))) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
         weight = 2;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
