@@ -52,10 +52,10 @@ export class TerrainChangedEvent extends ArenaEvent {
   public oldTerrainType: TerrainType;
   /** The {@linkcode TerrainType} being set */
   public newTerrainType: TerrainType;
-  constructor(oldTerraintType: TerrainType, newTerrainType: TerrainType, duration: number) {
+  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number) {
     super(ArenaEventType.TERRAIN_CHANGED, duration);
 
-    this.oldTerrainType = oldTerraintType;
+    this.oldTerrainType = oldTerrainType;
     this.newTerrainType = newTerrainType;
   }
 }
