@@ -251,8 +251,6 @@ export class LoadingScene extends SceneBase {
       }
     }
 
-    // Free icons from:
-    // https://juliocacko.itch.io/free-input-prompts
     this.loadAtlas("dualshock", "inputs");
     this.loadAtlas("xbox", "inputs");
     this.loadAtlas("keyboard", "inputs");
