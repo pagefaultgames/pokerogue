@@ -757,14 +757,23 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   }
 }
 
+/**
+ * Class that represents form changing items
+ */
 export class FormChangeItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
   public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
     super("", FormChangeItem[formChangeItem].toLowerCase(), (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
       (pokemon: PlayerPokemon) => {
-        if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
-        && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem)) {
+        // Make sure the Pokemon has alternate forms
+        if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)
+          // Get all form changes for this species with an item trigger, including any compound triggers
+          && pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
+          // Returns true if any form changes match this item
+            .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+            .flat().flatMap(fc => fc.item).includes(this.formChangeItem)
+        ) {
           return null;
         }
 
