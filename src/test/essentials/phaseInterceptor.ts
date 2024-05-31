@@ -1,4 +1,12 @@
-import {EncounterPhase, LoginPhase, SelectGenderPhase, TitlePhase} from "#app/phases";
+import {
+  CheckSwitchPhase, CommandPhase,
+  EncounterPhase,
+  LoginPhase, MessagePhase,
+  PostSummonPhase,
+  SelectGenderPhase,
+  SelectStarterPhase, ShowAbilityPhase,
+  TitlePhase, ToggleDoublePositionPhase, TurnInitPhase
+} from "#app/phases";
 import {Mode} from "#app/ui/ui";
 
 export default class PhaseInterceptor {
@@ -15,6 +23,14 @@ export default class PhaseInterceptor {
     [TitlePhase, this.startPhase],
     [SelectGenderPhase, this.startPhase],
     [EncounterPhase, this.startPhase],
+    [SelectStarterPhase, this.startPhase],
+    [PostSummonPhase, this.startPhase],
+    [ToggleDoublePositionPhase, this.startPhase],
+    [CheckSwitchPhase, this.startPhase],
+    [ShowAbilityPhase, this.startPhase],
+    [MessagePhase, this.startPhase],
+    [TurnInitPhase, this.startPhase],
+    [CommandPhase, this.startPhase],
   ];
 
   constructor(scene) {
@@ -38,12 +54,13 @@ export default class PhaseInterceptor {
     });
   }
 
-  remove(phaseTarget): Promise<void> {
+  remove(phaseTarget, skipFn?): Promise<void> {
     return new Promise(async (resolve) => {
-      this.waitUntil(phaseTarget).then(() => {
+      this.waitUntil(phaseTarget, skipFn).then(() => {
         this.onHold.shift();
         this.scene.getCurrentPhase().end();
-      }).finally(() => {
+        resolve();
+      }).catch(() => {
         resolve();
       });
     });

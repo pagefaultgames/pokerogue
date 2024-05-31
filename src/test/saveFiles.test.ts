@@ -303,11 +303,12 @@ describe("Session import/export", () => {
 
 describe("Phase interceptor", () => {
   let game;
+
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
   });
 
-  it.skip('test phase interceptor with remove', async() => {
+  it('test phase interceptor with remove', async() => {
       game = new GameManager();
       await game.phaseInterceptor.run(LoginPhase);
 
@@ -315,7 +316,7 @@ describe("Phase interceptor", () => {
         return game.phaseInterceptor.log.includes('LoginPhase');
       });
 
-      game.scene.gameData.gender = Gender.MALE;
+      game.scene.gameData.gender = PlayerGender.MALE;
       await game.phaseInterceptor.remove(SelectGenderPhase);
 
       await game.phaseInterceptor.run(TitlePhase);
@@ -352,7 +353,7 @@ describe("Phase interceptor", () => {
           game.endPhase();
       })
 
-      game.onNextPrompt('CheckSwitchPhase', Mode.OPTION_SELECT, () => {
+      game.onNextPrompt('CheckSwitchPhase', Mode.CONFIRM, () => {
         game.setMode(Mode.MESSAGE);
         game.endPhase();
       })
@@ -364,6 +365,13 @@ describe("Phase interceptor", () => {
 
       expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
       expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
+  }, 100000);
+
+  it('newGame one-liner', async() => {
+      game = new GameManager();
+      await game.newGame(GameModes.CLASSIC);
+      expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+      expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000);
 });
 

@@ -4,13 +4,13 @@ import {generateStarter, getMovePosition, waitUntil} from "#app/test/essentials/
 import {
   CheckSwitchPhase,
   CommandPhase,
-  EncounterPhase,
-  SelectStarterPhase,
+  EncounterPhase, LoginPhase, MessagePhase, PostSummonPhase, SelectGenderPhase,
+  SelectStarterPhase, ShowAbilityPhase, TitlePhase, ToggleDoublePositionPhase, TurnInitPhase,
 } from "#app/phases";
 import {Command} from "#app/ui/command-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import {Button} from "#app/enums/buttons";
-import {GameDataType} from "#app/system/game-data";
+import {GameDataType, PlayerGender} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/essentials/phaseInterceptor";
 import TextInterceptor from "#app/test/essentials/TextInterceptor";
@@ -50,25 +50,32 @@ export default class GameManager {
   }
 
   newGame(gameMode): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      if (this.scene.ui.getMode() !== Mode.TITLE) {
-        return reject("Invalid mode");
-      }
+    return new Promise(async(resolve) => {
+      await this.phaseInterceptor.run(LoginPhase);
+      this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
+        this.scene.gameData.gender = PlayerGender.MALE;
+        this.endPhase();
+      });
+      await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
+      await this.phaseInterceptor.run(TitlePhase);
+      await this.waitMode(Mode.TITLE);
       const starters = generateStarter(this.scene);
       const selectStarterPhase = new SelectStarterPhase(this.scene, gameMode);
-      this.scene.pushPhase(new EncounterPhase(scene, false));
-      this.scene.sessionSlotId = 0;
+      this.scene.pushPhase(new EncounterPhase(this.scene, false));
       selectStarterPhase.initBattle(starters);
-      await waitUntil(() => this.scene.ui.getMode() === Mode.CONFIRM || this.scene.ui.getMode() === Mode.COMMAND);
-      if (this.scene.ui.getMode() === Mode.CONFIRM) { // if this is a trainer battle, we don't switch pokemon
-        this.scene.ui.setMode(Mode.MESSAGE);
-        (this.scene.getCurrentPhase() as CheckSwitchPhase).end(); // same as saying no to the switch box
-        if (this.scene.currentBattle.double) {
-          this.scene.ui.setMode(Mode.MESSAGE);
-          (this.scene.getCurrentPhase() as CheckSwitchPhase).end(); // same as saying no to the switch box
-        }
-        await waitUntil(() => this.scene.ui.getMode() === Mode.COMMAND);
-      }
+      await this.phaseInterceptor.run(EncounterPhase);
+      await this.phaseInterceptor.run(PostSummonPhase);
+      await this.phaseInterceptor.run(ToggleDoublePositionPhase);
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      });
+      await this.phaseInterceptor.run(CheckSwitchPhase);
+      await this.phaseInterceptor.run(PostSummonPhase);
+      await this.phaseInterceptor.run(ShowAbilityPhase, () => this.isCurrentPhase(TurnInitPhase));
+      await this.phaseInterceptor.run(MessagePhase, () => this.isCurrentPhase(TurnInitPhase));
+      await this.phaseInterceptor.run(TurnInitPhase);
+      await this.phaseInterceptor.run(CommandPhase);
       return resolve();
     });
   }
@@ -123,6 +130,11 @@ export default class GameManager {
 
   isVictory() {
     return this.scene.currentBattle.enemyParty.every(pokemon => pokemon.isFainted());
+  }
+
+  isCurrentPhase(phaseTarget) {
+    const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
+    return this.scene.getCurrentPhase().constructor.name === targetName;
   }
 
   exportSaveToTest(): Promise<string> {
