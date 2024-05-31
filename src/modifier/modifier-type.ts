@@ -1251,7 +1251,7 @@ const modifierPool: ModifierPool = {
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
     new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
+      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier)).length, 3);
       return statusEffectPartyMemberCount * 6;
     }, 18),
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
@@ -1274,7 +1274,7 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.FULL_RESTORE, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
+      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier)).length, 3);
       const thresholdPartyMemberCount = Math.floor((Math.min(party.filter(p => (p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3) + statusEffectPartyMemberCount) / 2);
       return thresholdPartyMemberCount;
     }, 3),
