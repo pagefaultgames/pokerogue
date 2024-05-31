@@ -209,8 +209,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "먹다남은음식", description: "포켓몬의 HP가 매 턴 최대 체력의 1/16씩 회복" },
     "SHELL_BELL": { name: "조개껍질방울", description: "포켓몬이 준 데미지의 1/8씩 회복" },
 
-    "TOXIC_ORB": { name: "Toxic Orb", description: "Badly poisons its holder at the end of the turn if they do not have a status condition already" },
-    "FLAME_ORB": { name: "Flame Orb", description: "Burns its holder at the end of the turn if they do not have a status condition already" },
+    "TOXIC_ORB": { name: "Toxic Orb", description: "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle" },
+    "FLAME_ORB": { name: "Flame Orb", description: "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle" },
 
     "BATON": { name: "바톤", description: "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 함" },
 
