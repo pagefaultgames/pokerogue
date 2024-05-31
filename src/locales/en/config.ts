@@ -32,6 +32,7 @@ import {
 } from "./dialogue";
 import { biome } from "./biome";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const enConfig = {
   ability: ability,
@@ -69,5 +70,6 @@ export const enConfig = {
   PGMmiscDialogue: PGMmiscDialogue,
   PGFmiscDialogue: PGFmiscDialogue,
   PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
-  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };

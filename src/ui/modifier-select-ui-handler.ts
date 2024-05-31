@@ -7,6 +7,7 @@ import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import {Button} from "../enums/buttons";
+import i18next from "i18next";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -41,27 +42,22 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     ui.add(this.modifierContainer);
 
     this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
-    this.transferButtonContainer.setName("container-transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(this.scene, -4, -2, "Transfer", TextStyle.PARTY);
-    transferButtonText.setName("text-transfer-btn");
+    const transferButtonText = addTextObject(this.scene, -4, -2, i18next.t("modifierSelectUiHandler:transfer"), TextStyle.PARTY);
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
     this.rerollButtonContainer = this.scene.add.container(16, -64);
-    this.rerollButtonContainer.setName("container-reroll-brn");
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(this.scene, -4, -2, "Reroll", TextStyle.PARTY);
-    rerollButtonText.setName("text-reroll-btn");
+    const rerollButtonText = addTextObject(this.scene, -4, -2, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
 
     this.rerollCostText = addTextObject(this.scene, 0, 0, "", TextStyle.MONEY);
-    this.rerollCostText.setName("text-reroll-cost");
     this.rerollCostText.setOrigin(0, 0);
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
@@ -70,7 +66,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
-    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, "Lock Rarities", TextStyle.PARTY);
+    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, i18next.t("modifierSelectUiHandler:lockRarities"), TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
   }
@@ -146,7 +142,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     this.scene.showFieldOverlay(750);
-    this.scene.updateAndShowText(750);
+    this.scene.updateAndShowLuckText(750);
     this.scene.updateMoneyText();
 
     let i = 0;
@@ -303,13 +299,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (!cursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
-      ui.showText("Spend money to reroll your item options.");
+      ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
-      ui.showText("Transfer a held item from one Pokémon to another.");
+      ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
     } else {
       this.cursorObj.setPosition(6, -60);
-      ui.showText("Lock item rarities on reroll (affects reroll cost).");
+      ui.showText(i18next.t("modifierSelectUiHandler:lockRaritiesDesc"));
     }
 
     return ret;
@@ -362,8 +358,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   updateRerollCostText(): void {
     const canReroll = this.scene.money >= this.rerollCost;
+    const rerollCostFormatted = this.rerollCost.toLocaleString(i18next.language);
 
-    this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString("en-US")}`);
+    this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { cost: rerollCostFormatted }));
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -618,8 +615,9 @@ class ModifierOption extends Phaser.GameObjects.Container {
   updateCostText(): void {
     const scene = this.scene as BattleScene;
     const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
+    const itemCostFormatted = this.modifierTypeOption.cost.toLocaleString(i18next.language);
 
-    this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString("en-US")}`);
+    this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { cost: itemCostFormatted }));
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }
