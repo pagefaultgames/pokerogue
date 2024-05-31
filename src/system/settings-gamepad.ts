@@ -44,7 +44,7 @@ export const settingGamepadOptions: SettingOptions = {
   [SettingGamepad.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, "Press action to assign"],
   [SettingGamepad.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, "Press action to assign"],
   [SettingGamepad.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.CYCLE_VARIANT.toString()}`, "Press action to assign"],
+  [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.V.toString()}`, "Press action to assign"],
   [SettingGamepad.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, "Press action to assign"],
   [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, "Press action to assign"],
   [SettingGamepad.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, "Press action to assign"],

@@ -115,7 +115,7 @@ const noTransitionModes = [
 export default class UI extends Phaser.GameObjects.Container {
   private mode: Mode;
   private modeChain: Mode[];
-  private handlers: UiHandler[];
+  public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public savingIcon: SavingIconHandler;

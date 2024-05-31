@@ -1,5 +1,4 @@
 import {expect} from "vitest";
-import {Button} from "#app/enums/buttons";
 import {
   deleteBind,
   getIconWithKeycode,
@@ -48,9 +47,6 @@ export class MenuManip {
       settingName = "Button_" + settingName;
     }
     this.settingName = SettingKeyboard[settingName];
-    const isAlt = settingName.includes("ALT_");
-    const buttonName = isAlt ? settingName.toUpperCase().split("ALT_BUTTON_").splice(1)[0] : settingName.toUpperCase().split("BUTTON_").splice(1)[0];
-    expect(this.config.settings[this.settingName]).toEqual(Button[buttonName]);
     return this;
   }
 

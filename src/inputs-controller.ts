@@ -41,11 +41,9 @@ export interface InterfaceConfig {
     padType: string;
     deviceMapping: DeviceMapping;
     icons: IconsMapping;
-    setting: SettingMapping;
+    settings: SettingMapping;
     default: MappingLayout;
     custom: MappingLayout;
-    main: Array<string>;
-    alt: Array<string>;
 }
 
 const repeatInputDelayMillis = 250;
@@ -106,7 +104,7 @@ export class InputsController {
      * It concludes by calling the `init` method to complete the setup.
      */
 
-  constructor(scene: Phaser.BattleScene) {
+  constructor(scene: BattleScene) {
     this.scene = scene;
     this.time = this.scene.time;
     this.buttonKeys = [];
@@ -333,7 +331,7 @@ export class InputsController {
       if (!this.selectedDevice[Device.GAMEPAD]) {
         this.setChosenGamepad(gamepadID);
       }
-      const config = deepCopy(this.getConfig(gamepadID));
+      const config = deepCopy(this.getConfig(gamepadID)) as InterfaceConfig;
       config.custom = this.configs[gamepadID]?.custom || {...config.default};
       this.configs[gamepadID] = config;
       this.scene.gameData?.saveMappingConfigs(gamepadID, this.configs[gamepadID]);
@@ -348,7 +346,7 @@ export class InputsController {
      */
   setupKeyboard(): void {
     for (const layout of ["default"]) {
-      const config = deepCopy(this.getConfigKeyboard(layout));
+      const config = deepCopy(this.getConfigKeyboard(layout)) as InterfaceConfig;
       config.custom = this.configs[layout]?.custom || {...config.default};
       this.configs[layout] = config;
       this.scene.gameData?.saveMappingConfigs(this.selectedDevice[Device.KEYBOARD], this.configs[layout]);

@@ -53,7 +53,7 @@ const pad_dualshock = {
     [SettingGamepad.Button_Action]: Button.ACTION,
     [SettingGamepad.Button_Cancel]: Button.CANCEL,
     [SettingGamepad.Button_Cycle_Nature]: Button.CYCLE_NATURE,
-    [SettingGamepad.Button_Cycle_Variant]: Button.CYCLE_VARIANT,
+    [SettingGamepad.Button_Cycle_Variant]: Button.V,
     [SettingGamepad.Button_Menu]: Button.MENU,
     [SettingGamepad.Button_Stats]: Button.STATS,
     [SettingGamepad.Button_Cycle_Form]:  Button.CYCLE_FORM,
