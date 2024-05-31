@@ -254,8 +254,14 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
-export const isLocal = window.location.hostname === "localhost" || window.location.hostname === "";
-export const serverUrl = isLocal ? "http://localhost:8001" : "";
+// Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
+export const isLocal = (
+  (window.location.hostname === "localhost" ||
+   /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
+  window.location.port !== "") || window.location.hostname === "";
+
+// Set the server URL based on whether it's local or not
+export const serverUrl = isLocal ? `${window.location.hostname}:${window.location.port}` : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
 
 export function setCookie(cName: string, cValue: string): void {
@@ -405,4 +411,14 @@ export function verifyLang(lang?: string): boolean {
   default:
     return false;
   }
+}
+
+/**
+ * Prints the type and name of all game objects in a container for debuggin purposes
+ * @param container container with game objects inside it
+ */
+export function printContainerList(container: Phaser.GameObjects.Container): void {
+  console.log(container.list.map(go => {
+    return {type: go.type, name: go.name};
+  }));
 }
