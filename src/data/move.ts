@@ -4010,7 +4010,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-
+      console.log(user);
   	// Check if the move category is not STATUS or if the switch out condition is not met
       if (!this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
@@ -4028,6 +4028,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  	} else {
           resolve(false);
         }
+        console.log(user);
 	  	return;
 	  } else if (user.scene.currentBattle.battleType) {
 	  	// Switch out logic for the battle type
@@ -5168,7 +5169,7 @@ export function initMoves() {
     new StatusMove(Moves.ROAR, Type.NORMAL, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr)
       .soundBased()
-      .hidesTarget(),
+      .target(MoveTarget.ALL_ENEMIES),
     new StatusMove(Moves.SING, Type.NORMAL, 55, 15, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased(),
