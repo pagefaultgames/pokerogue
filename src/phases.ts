@@ -538,7 +538,7 @@ export class SelectStarterPhase extends Phase {
             starterFormIndex = Overrides.STARTER_FORM_OVERRIDE[i];
             const availableForms = starter.species.forms.length;
             // prevent use forms which does not exist for species
-            if(Overrides.STARTER_FORM_OVERRIDE[i] >= availableForms) {
+            if (Overrides.STARTER_FORM_OVERRIDE[i] >= availableForms) {
               starterFormIndex = 0;
             }
           }
