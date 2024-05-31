@@ -2272,7 +2272,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.TOXEL, 8, false, false, false, "Baby Pokémon", Type.ELECTRIC, Type.POISON, 0.4, 11, Abilities.RATTLED, Abilities.STATIC, Abilities.KLUTZ, 242, 40, 38, 35, 54, 35, 40, 75, 50, 48, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.TOXTRICITY, 8, false, false, false, "Punk Pokémon", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.PLUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176, GrowthRate.MEDIUM_SLOW, 50, false, true,
       new PokemonForm("Amped Form", "amped", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.PLUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176, false, "", true),
-      new PokemonForm("Low-Key Form", "lowkey", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.MINUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176, true),
+      new PokemonForm("Low-Key Form", "lowkey", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.MINUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176, false, "lowkey", true),
       new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.ELECTRIC, Type.POISON, 24, 40, Abilities.PUNK_ROCK, Abilities.MINUS, Abilities.TECHNICIAN, 602, 95, 118, 80, 144, 80, 85, 45, 50, 176),
     ),
     new PokemonSpecies(Species.SIZZLIPEDE, 8, false, false, false, "Radiator Pokémon", Type.FIRE, Type.BUG, 0.7, 1, Abilities.FLASH_FIRE, Abilities.WHITE_SMOKE, Abilities.FLAME_BODY, 305, 50, 65, 45, 50, 50, 45, 190, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
