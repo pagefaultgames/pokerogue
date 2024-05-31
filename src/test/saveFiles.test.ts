@@ -24,15 +24,17 @@ import {
   CommandPhase,
 } from "#app/phases";
 import {Moves} from "#app/data/enums/moves";
+import MessagesWrapper from "#app/test/essentials/messagesWrapper";
 
 
 
 describe("Session import/export", () => {
-  let game, scene, sessionData;
+  let game, scene, sessionData, messages;
 
   beforeEach(async () => {
     game = new GameWrapper();
     scene = new BattleScene();
+    messages = new MessagesWrapper(scene);
     game.scene.add("battle", scene);
     await waitUntil(() => scene.ui?.getMode() === Mode.OPTION_SELECT);
     let handler = scene.ui.getHandler() as OptionSelectUiHandler;
@@ -73,6 +75,11 @@ describe("Session import/export", () => {
     expect(response.ok).toBe(true);
     expect(response.status).toBe(200);
     expect(data).toEqual(infoHandler);
+  });
+
+  it.skip('test apifetch mock sync', async () => {
+    const data = await scene.cachedFetch(`./battle-anims/splishy-splash.json`);
+    expect(data).not.toBeUndefined();
   });
 
   it.skip('import session', () => {
@@ -228,9 +235,9 @@ describe("Session import/export", () => {
 
   it.skip('test attack no OHKO on double', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MAGIKARP);
     vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(25);
-    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(50);
     vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
     vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
     await game.newGame(scene, GameModes.CLASSIC);
@@ -240,5 +247,18 @@ describe("Session import/export", () => {
     expect(scene.currentBattle.enemyParty[0].hp).not.toBe(opponentLife);
     expect(scene.currentBattle.enemyParty[1].hp).toBe(opponentLife2);
   }, 100000);
+
+  it.skip('test message mode wrapper', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(200);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
+    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.SAND_ATTACK]);
+    vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
+    await game.newGame(scene, GameModes.CLASSIC);
+    expect(scene.ui.getMode()).toBe(Mode.COMMAND);
+    await game.doAttackDouble(Moves.SAND_ATTACK, Moves.SAND_ATTACK);
+    expect(scene.currentBattle.double).toBe(true);
+  });
 });
 

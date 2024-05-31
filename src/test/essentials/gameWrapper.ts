@@ -92,7 +92,10 @@ export default class GameWrapper {
     };
   }
   newGame(scene, gameMode): Promise<void> {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
+      if (scene.ui.getMode() !== Mode.TITLE) {
+        return reject("Invalid mode");
+      }
       const starters = generateStarter(scene);
       const selectStarterPhase = new SelectStarterPhase(scene, gameMode);
       scene.pushPhase(new EncounterPhase(scene, false));
@@ -284,7 +287,12 @@ export default class GameWrapper {
     _scene.cachedFetch = (url, init) => {
       return new Promise((resolve) => {
         const newUrl = prependPath(url);
-        const raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
+        let raw;
+        try {
+          raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
+        } catch(e) {
+          return resolve(createFetchResponse({}));
+        }
         const data = JSON.parse(raw);
         const response = createFetchResponse(data);
         return resolve(response);

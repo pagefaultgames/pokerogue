@@ -3,6 +3,8 @@ const MockConsoleLog = (_logDisabled=false) => {
   const logDisabled: boolean = _logDisabled;
   const originalLog = console.log;
   const originalError = console.error;
+  const originalDebug = console.debug;
+  const originalWarn = console.warn;
   const notified = [];
   return ({
     log(msg) {
@@ -18,9 +20,11 @@ const MockConsoleLog = (_logDisabled=false) => {
     },
     debug(msg) {
       logs.push(msg);
+      originalDebug(msg);
     },
     warn(msg) {
       logs.push(msg);
+      originalWarn(msg);
     },
     notify(msg) {
       originalLog(msg);

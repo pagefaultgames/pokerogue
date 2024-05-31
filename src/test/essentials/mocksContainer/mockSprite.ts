@@ -75,6 +75,17 @@ export default class MockSprite {
     return this.phaserSprite.removeFromDisplayList();
   }
 
+  remove(obj) {
+    const key = obj.constructor.name;
+    for (const [index, texture] of this.textureManager.containers.entries()) {
+      const textureKey = texture?.constructor.name;
+      if (texture?.name === obj.name && key === textureKey) {
+        delete this.textureManager.containers[index];
+        return;
+      }
+    }
+  }
+
   addedToScene() {
     // This callback is invoked when this Game Object is added to a Scene.
     return this.phaserSprite.addedToScene();

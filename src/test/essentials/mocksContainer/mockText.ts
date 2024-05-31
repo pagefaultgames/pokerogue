@@ -69,6 +69,7 @@ export default class MockText {
   }
 
   showText(text, delay, callback, callbackDelay, prompt, promptDelay) {
+    this.scene.messageWrapper.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     if (callback) {
       callback();
     }

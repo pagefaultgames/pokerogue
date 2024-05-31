@@ -169,7 +169,7 @@ export default class MockContainer {
   remove(obj) {
     const key = obj.constructor.name;
     for (const [index, texture] of this.textureManager.containers.entries()) {
-      const textureKey = texture.constructor.name;
+      const textureKey = texture?.constructor.name;
       if (texture?.name === obj.name && key === textureKey) {
         delete this.textureManager.containers[index];
         return;
