@@ -236,12 +236,6 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   showDialogue(text: string, name: string, delay: integer = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
-    // Skip dialogue if the player has enabled the option
-    if ((this.scene as BattleScene).skipDialogues === true) {
-      console.log(`Dialogue with ${name} skipped`);
-      callback();
-      return;
-    }
     // First get the gender of the player (default male) (also used if UNSET)
     let playerGenderPrefix = "PGM";
     if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
@@ -249,15 +243,24 @@ export default class UI extends Phaser.GameObjects.Container {
     }
     // Add the prefix to the text
     const localizationKey = playerGenderPrefix + text;
+
     // Get localized dialogue (if available)
     if (i18next.exists(localizationKey as ParseKeys) ) {
-
-
       text = i18next.t(localizationKey as ParseKeys);
+
+      // Skip dialogue if the player has enabled the option and the dialogue has been already seen
+      if ((this.scene as BattleScene).skipSeenDialogues === true && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
+        console.log(`Dialogue ${localizationKey} skipped`);
+        callback();
+        return;
+      }
     }
     if (text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      let showMessageAndCallback = () => callback();
+      let showMessageAndCallback = () => {
+        (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
+        callback();
+      };
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         showMessageAndCallback = () => this.showDialogue(messagePages[p], name, null, originalFunc);

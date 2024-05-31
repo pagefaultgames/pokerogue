@@ -37,7 +37,8 @@ export enum GameDataType {
   SYSTEM,
   SESSION,
   SETTINGS,
-  TUTORIALS
+  TUTORIALS,
+  SEEN_DIALOGUES
 }
 
 export enum PlayerGender {
@@ -65,6 +66,8 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return "settings";
   case GameDataType.TUTORIALS:
     return "tutorials";
+  case GameDataType.SEEN_DIALOGUES:
+    return "seenDialogues";
   }
 }
 
@@ -196,6 +199,10 @@ export interface StarterData {
 
 export interface TutorialFlags {
   [key: string]: boolean
+}
+
+export interface SeenDialogues {
+  [key: string]: boolean;
 }
 
 const systemShortKeys = {
@@ -579,9 +586,10 @@ export class GameData {
   }
 
   public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
+    const key = getDataTypeKey(GameDataType.TUTORIALS);
     let tutorials: object = {};
-    if (localStorage.hasOwnProperty("tutorials")) {
-      tutorials = JSON.parse(localStorage.getItem("tutorials"));
+    if (localStorage.hasOwnProperty(key)) {
+      tutorials = JSON.parse(localStorage.getItem(key));
     }
 
     Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
@@ -593,23 +601,52 @@ export class GameData {
       }
     });
 
-    localStorage.setItem("tutorials", JSON.stringify(tutorials));
+    localStorage.setItem(key, JSON.stringify(tutorials));
 
     return true;
   }
 
   public getTutorialFlags(): TutorialFlags {
+    const key = getDataTypeKey(GameDataType.TUTORIALS);
     const ret: TutorialFlags = {};
     Object.values(Tutorial).map(tutorial => tutorial as Tutorial).forEach(tutorial => ret[Tutorial[tutorial]] = false);
 
-    if (!localStorage.hasOwnProperty("tutorials")) {
+    if (!localStorage.hasOwnProperty(key)) {
       return ret;
     }
 
-    const tutorials = JSON.parse(localStorage.getItem("tutorials"));
+    const tutorials = JSON.parse(localStorage.getItem(key));
 
     for (const tutorial of Object.keys(tutorials)) {
       ret[tutorial] = tutorials[tutorial];
+    }
+
+    return ret;
+  }
+
+  public saveSeenDialogue(dialogue: string): boolean {
+    const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
+    const dialogues: object = this.getSeenDialogues();
+
+    dialogues[dialogue] = true;
+    localStorage.setItem(key, JSON.stringify(dialogues));
+    console.log("Dialogue saved as seen:", dialogue);
+
+    return true;
+  }
+
+  public getSeenDialogues(): SeenDialogues {
+    const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
+    const ret: SeenDialogues = {};
+
+    if (!localStorage.hasOwnProperty(key)) {
+      return ret;
+    }
+
+    const dialogues = JSON.parse(localStorage.getItem(key));
+
+    for (const dialogue of Object.keys(dialogues)) {
+      ret[dialogue] = dialogues[dialogue];
     }
 
     return ret;

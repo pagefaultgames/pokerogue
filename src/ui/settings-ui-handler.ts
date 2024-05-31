@@ -55,11 +55,6 @@ export default class SettingsUiHandler extends UiHandler {
     this.optionValueLabels = [];
 
     Object.keys(Setting).forEach((setting, s) => {
-      // Don't show skip dialog option if the player has not won a session yet
-      if (Setting[setting] === Setting.Skip_Dialogues && this.scene.gameData.gameStats.sessionsWon === 0) {
-        return;
-      }
-
       let settingName = setting.replace(/\_/g, " ");
       if (reloadSettings.includes(Setting[setting])) {
         settingName += " (Requires Reload)";
@@ -222,10 +217,6 @@ export default class SettingsUiHandler extends UiHandler {
 
     if (setting === Setting.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
       this.getUi().playError();
-      return false;
-    }
-
-    if (setting === Setting.Skip_Dialogues && this.scene.gameData.gameStats.sessionsWon === 0) {
       return false;
     }
 

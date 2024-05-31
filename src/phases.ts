@@ -4044,9 +4044,6 @@ export class GameOverPhase extends BattlePhase {
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
       }
-      if (!this.scene.gameData.unlocks[Unlockables.SKIP_DIALOGUES_OPTION]) {
-        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.SKIP_DIALOGUES_OPTION));
-      }
     }
   }
 
