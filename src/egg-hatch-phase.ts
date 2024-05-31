@@ -14,30 +14,51 @@ import { EggTier } from "./data/enums/egg-type";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
 import EggsToHatchCountContainer from "./ui/eggs-to-hatch-count-container";
 
+/**
+ * Class that represents egg hatching
+ */
 export class EggHatchPhase extends Phase {
+  /** The egg that is hatching */
   private egg: Egg;
 
+  /** The number of eggs that are hatching */
   private eggsToHatchCount: integer;
+  /** The container that lists how many eggs are hatching */
   private eggsToHatchCountContainer: EggsToHatchCountContainer;
 
+  /** The scene handler for egg hatching */
   private eggHatchHandler: EggHatchSceneHandler;
+  /** The phaser gameobject container that holds everything */
   private eggHatchContainer: Phaser.GameObjects.Container;
+  /** The phaser image that is the background */
   private eggHatchBg: Phaser.GameObjects.Image;
+  /** The phaser rectangle that overlays during the scene */
   private eggHatchOverlay: Phaser.GameObjects.Rectangle;
+  /** The phaser container that holds the egg */
   private eggContainer: Phaser.GameObjects.Container;
+  /** The phaser sprite of the egg */
   private eggSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite of the cracks in an egg */
   private eggCrackSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite that represents the overlaid light rays */
   private eggLightraysOverlay: Phaser.GameObjects.Sprite;
+  /** The phaser sprite of the hatched Pokemon */
   private pokemonSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite for shiny sparkles */
   private pokemonShinySparkle: Phaser.GameObjects.Sprite;
 
+  /** The {@link PokemonInfoContainer} of the newly hatched Pokemon */
   private infoContainer: PokemonInfoContainer;
 
+  /** The newly hatched {@link PlayerPokemon} */
   private pokemon: PlayerPokemon;
+  /** The index of which egg move is unlocked. 0-2 is common, 3 is rare */
   private eggMoveIndex: integer;
+  /** Internal booleans representing if the egg is hatched, able to be skipped, or skipped */
   private hatched: boolean;
   private canSkip: boolean;
   private skipped: boolean;
+  /** The sound effect being played when the egg is hatched */
   private evolutionBgm: AnySound;
 
   constructor(scene: BattleScene, egg: Egg, eggsToHatchCount: integer) {
@@ -117,6 +138,7 @@ export class EggHatchPhase extends Phase {
 
       this.eggHatchContainer.add(this.infoContainer);
 
+      // The game will try to unfuse any Pokemon even though eggs should not generate fused Pokemon in the first place
       const pokemon = this.generatePokemon();
       if (pokemon.fusionSpecies) {
         pokemon.clearFusionSpecies();
@@ -187,6 +209,13 @@ export class EggHatchPhase extends Phase {
     super.end();
   }
 
+  /**
+   * Function that animates egg shaking
+   * @param intensity of horizontal shaking. Doubled on the first call (where count is 0)
+   * @param repeatCount the number of times this function should be called (asynchronous recursion?!?)
+   * @param count the current number of times this function has been called.
+   * @returns nothing since it's a Promise<void>
+   */
   doEggShake(intensity: number, repeatCount?: integer, count?: integer): Promise<void> {
     return new Promise(resolve => {
       if (repeatCount === undefined) {
@@ -226,6 +255,10 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Tries to skip the hatching animation
+   * @returns false if cannot be skipped or already skipped. True otherwise
+   */
   trySkip(): boolean {
     if (!this.canSkip || this.skipped) {
       return false;
@@ -239,6 +272,9 @@ export class EggHatchPhase extends Phase {
     return true;
   }
 
+  /**
+   * Plays the animation of an egg hatch
+   */
   doHatch(): void {
     this.canSkip = false;
     this.hatched = true;
@@ -268,6 +304,9 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Function to do the logic and animation of completing a hatch and revealing the Pokemon
+   */
   doReveal(): void {
     // Update/reduce count of hatching eggs when revealed if count is at least 1
     // If count is 0, hide eggsToHatchCountContainer instead
@@ -333,10 +372,21 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Helper function to generate sine. (Why is this not a Utils?!?)
+   * @param index random number from 0-7 being passed in to scale pi/128
+   * @param amplitude Scaling
+   * @returns a number
+   */
   sin(index: integer, amplitude: integer): number {
     return amplitude * Math.sin(index * (Math.PI / 128));
   }
 
+  /**
+   * Animates spraying
+   * @param intensity number of times this is repeated (this is a badly named variable)
+   * @param offsetY how much to offset the Y coordinates
+   */
   doSpray(intensity: integer, offsetY?: number) {
     this.scene.tweens.addCounter({
       repeat: intensity,
@@ -347,6 +397,11 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Animates a particle used in the spray animation
+   * @param trigIndex Used to modify the particle's vertical speed, is a random number from 0-7
+   * @param offsetY how much to offset the Y coordinate
+   */
   doSprayParticle(trigIndex: integer, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
@@ -387,12 +442,22 @@ export class EggHatchPhase extends Phase {
     updateParticle();
   }
 
+
+  /**
+   * Generates a Pokemon to be hatched by the egg
+   * @returns the hatched PlayerPokemon
+   */
   generatePokemon(): PlayerPokemon {
     let ret: PlayerPokemon;
-    let speciesOverride: Species;
+    let speciesOverride: Species; // SpeciesOverride should probably be a passed in parameter for future species-eggs
 
     this.scene.executeWithSeedOffset(() => {
 
+      /**
+       * Manaphy eggs have a 1/8 chance of being Manaphy and 7/8 chance of being Phione
+       * Legendary eggs pulled from the legendary gacha have a 50% of being converted into
+       * the species that was the legendary focus at the time
+       */
       if (this.egg.isManaphyEgg()) {
         const rand = Utils.randSeedInt(8);
 
@@ -437,6 +502,18 @@ export class EggHatchPhase extends Phase {
           .map(s => parseInt(s) as Species)
           .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
+        /**
+         * Pokemon that are cheaper in their tier get a weight boost. Regionals get a weight penalty
+         * 1 cost mons get 2x
+         * 2 cost mons get 1.5x
+         * 4, 6, 8 cost mons get 1.75x
+         * 3, 5, 7, 9 cost mons get 1x
+         * Alolan, Galarian, and Paldean mons get 0.5x
+         * Hisui mons get 0.125x
+         *
+         * The total weight is also being calculated EACH time there is an egg hatch instead of being generated once
+         * and being the same each time
+         */
         let totalWeight = 0;
         const speciesWeights = [];
         for (const speciesId of speciesPool) {
@@ -464,6 +541,16 @@ export class EggHatchPhase extends Phase {
         ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
       }
 
+      /**
+       * Non Shiny gacha Pokemon have a 1/128 chance of being shiny
+       * Shiny gacha Pokemon have a 1/64 chance of being shiny
+       * IVs are rolled twice and the higher of each stat's IV is taken
+       * The egg move gacha doubles the rate of rare egg moves but the base rates are
+       * Common: 1/48
+       * Rare: 1/24
+       * Epic: 1/12
+       * Legendary: 1/6
+       */
       ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
       ret.variant = ret.shiny ? ret.generateVariant() : 0;
 
