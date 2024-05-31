@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "데일리 런 (베타)",
   "loadGame": "불러오기",
   "newGame": "새 게임",
+  "settings": "설정",
   "selectGameMode": "게임 모드를 선택해주세요.",
   "logInOrCreateAccount": "로그인 또는 등록을 해 주세요. 개인정보를 요구하지 않습니다!",
   "username": "이름",
