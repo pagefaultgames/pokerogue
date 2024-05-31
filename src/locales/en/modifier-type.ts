@@ -209,6 +209,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Leftovers", description: "Heals 1/16 of a Pokémon's maximum HP every turn" },
     "SHELL_BELL": { name: "Shell Bell", description: "Heals 1/8 of a Pokémon's dealt damage" },
 
+    "TOXIC_ORB": { name: "Toxic Orb", description: "Badly poisons its holder at the end of the turn if they do not have a status condition already" },
+    "FLAME_ORB": { name: "Flame Orb", description: "Burns its holder at the end of the turn if they do not have a status condition already" },
+
     "BATON": { name: "Baton", description: "Allows passing along effects when switching Pokémon, which also bypasses traps" },
 
     "SHINY_CHARM": { name: "Shiny Charm", description: "Dramatically increases the chance of a wild Pokémon being Shiny" },
