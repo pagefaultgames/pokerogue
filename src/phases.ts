@@ -2776,12 +2776,12 @@ export class MoveEffectPhase extends PokemonPhase {
                       }
                       Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit),
                         user, target, move).then(() => {
-                        return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
+                        return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, move, hitResult).then(() => {
                           if (!user.isPlayer() && move instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
                         })).then(() => {
-                          applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult).then(() => {
+                          applyPostAttackAbAttrs(PostAttackAbAttr, user, target, move, hitResult).then(() => {
                             if (move instanceof AttackMove) {
                               this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
                             }
@@ -3523,7 +3523,7 @@ export class FaintPhase extends PokemonPhase {
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
-      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move), lastAttack.result);
+      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move).getMove(), lastAttack.result);
     }
 
     const alivePlayField = this.scene.getField(true);

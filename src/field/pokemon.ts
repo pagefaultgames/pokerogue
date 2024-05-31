@@ -1057,9 +1057,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isOfType(Type.FLYING, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
-  getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
-    const typeless = !!move.getMove().getAttrs(TypelessAttr).length;
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.getMove().type, source));
+  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove): TypeDamageMultiplier {
+    const move = pokemonMove.getMove();
+    const typeless = !!move.getAttrs(TypelessAttr).length;
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.type, source));
     const cancelled = new Utils.BooleanHolder(false);
     if (!typeless) {
       applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
@@ -1775,7 +1776,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           });
         }
 
-        if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && type === Type.DRAGON) {
+        if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && move.type === Type.DRAGON) {
           damage.value = Math.floor(damage.value / 2);
         }
 
@@ -3766,14 +3767,12 @@ export class PokemonMove {
   public ppUsed: integer;
   public ppUp: integer;
   public virtual: boolean;
-  public type: Type;
 
   constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
     this.moveId = moveId;
     this.ppUsed = ppUsed || 0;
     this.ppUp = ppUp || 0;
     this.virtual = !!virtual;
-    this.type = this.getMove().type;
   }
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
