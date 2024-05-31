@@ -449,7 +449,8 @@ export class InputsController {
     if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD].toLowerCase()) {
       return;
     }
-    const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.GAMEPAD), button.index);
+    const activeConfig = this.getActiveConfig(Device.GAMEPAD);
+    const buttonDown = activeConfig && getButtonWithKeycode(activeConfig, button.index);
     if (buttonDown !== undefined) {
       this.events.emit("input_down", {
         controller_type: "gamepad",
