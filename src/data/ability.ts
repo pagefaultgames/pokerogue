@@ -501,7 +501,7 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
     applyMoveAttrs(IncrementMovePriorityAttr,attacker,null,move.getMove(),attackPriority);
     applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move.getMove(), attackPriority);
 
-    if (move.getMove().moveTarget===MoveTarget.USER) {
+    if (move.getMove().moveTarget===MoveTarget.USER || move.getMove().moveTarget===MoveTarget.NEAR_ALLY) {
       return false;
     }
 
@@ -1229,7 +1229,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
         const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
         if (heldItems.length) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
-          pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
+          pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
               pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` stole\n${defender.name}'s ${stolenItem.type.name}!`));
             }
@@ -1318,7 +1318,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
         const heldItems = this.getTargetHeldItems(attacker).filter(i => i.getTransferrable(false));
         if (heldItems.length) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
-          pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
+          pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
               pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` stole\n${attacker.name}'s ${stolenItem.type.name}!`));
             }
@@ -2069,6 +2069,37 @@ export class BlockNonDirectDamageAbAttr extends AbAttr {
   }
 }
 
+/**
+ * This attribute will block any status damage that you put in the parameter.
+ */
+export class BlockStatusDamageAbAttr extends BlockNonDirectDamageAbAttr {
+  private effects: StatusEffect[];
+
+  /**
+   * @param {StatusEffect[]} effects The status effect(s) that will be blocked from damaging the ability pokemon
+   */
+  constructor(...effects: StatusEffect[]) {
+    super(false);
+
+    this.effects = effects;
+  }
+
+  /**
+   * @param {Pokemon} pokemon The pokemon with the ability
+   * @param {boolean} passive N/A
+   * @param {Utils.BooleanHolder} cancelled Whether to cancel the status damage
+   * @param {any[]} args N/A
+   * @returns Returns true if status damage is blocked
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.effects.includes(pokemon.status.effect)) {
+      cancelled.value = true;
+      return true;
+    }
+    return false;
+  }
+}
+
 export class BlockOneHitKOAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
@@ -2379,6 +2410,41 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
 
 export class PostTurnAbAttr extends AbAttr {
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+/**
+ * This attribute will heal 1/8th HP if the ability pokemon has the correct status.
+ */
+export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
+  private effects: StatusEffect[];
+
+  /**
+   * @param {StatusEffect[]} effects The status effect(s) that will qualify healing the ability pokemon
+   */
+  constructor(...effects: StatusEffect[]) {
+    super(false);
+
+    this.effects = effects;
+  }
+
+  /**
+   * @param {Pokemon} pokemon The pokemon with the ability that will receive the healing
+   * @param {Boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns Returns true if healed from status, false if not
+   */
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    if (this.effects.includes(pokemon.status.effect)) {
+      if (pokemon.getMaxHp() !== pokemon.hp) {
+        const scene = pokemon.scene;
+        const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+        scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
+          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: pokemon.name, abilityName: abilityName}), true));
+        return true;
+      }
+    }
     return false;
   }
 }
@@ -2873,7 +2939,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
     const postBattleLoot = pokemon.scene.currentBattle.postBattleLoot;
     if (postBattleLoot.length) {
       const randItem = Utils.randSeedItem(postBattleLoot);
-      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, true, true)) {
+      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true)) {
         postBattleLoot.splice(postBattleLoot.indexOf(randItem), 1);
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` picked up\n${randItem.type.name}!`));
         return true;
@@ -3650,9 +3716,9 @@ export function initAbilities() {
       .conditionalAttr(pokemon => !Utils.randSeedInt(3), PostTurnResetStatusAbAttr),
     new Ability(Abilities.GUTS, 3)
       .attr(BypassBurnDamageReductionAbAttr)
-      .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5),
+      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5),
     new Ability(Abilities.MARVEL_SCALE, 3)
-      .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.DEF, 1.5)
+      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), BattleStatMultiplierAbAttr, BattleStat.DEF, 1.5)
       .ignorable(),
     new Ability(Abilities.LIQUID_OOZE, 3)
       .attr(ReverseDrainAbAttr),
@@ -3732,7 +3798,8 @@ export function initAbilities() {
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, 4)
-      .unimplemented(),
+      .attr(PostTurnStatusHealAbAttr, StatusEffect.TOXIC, StatusEffect.POISON)
+      .attr(BlockStatusDamageAbAttr, StatusEffect.TOXIC, StatusEffect.POISON),
     new Ability(Abilities.ADAPTABILITY, 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
@@ -3746,7 +3813,7 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.QUICK_FEET, 4)
       .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
-      .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
+      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, 4)
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL &&
             move.id !== Moves.NATURAL_GIFT && move.id !== Moves.JUDGMENT && move.id !== Moves.TECHNO_BLAST),

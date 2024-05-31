@@ -978,7 +978,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (this.isOnField() && !ability.hasAttr(SuppressFieldAbilitiesAbAttr)) {
       const suppressed = new Utils.BooleanHolder(false);
-      this.scene.getField(true).map(p => {
+      this.scene.getField(true).filter(p => p !== this).map(p => {
         if (p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) {
           p.getAbility().getAttrs(SuppressFieldAbilitiesAbAttr).map(a => a.apply(this, false, suppressed, [ability]));
         }
@@ -3189,7 +3189,7 @@ export class PlayerPokemon extends Pokemon {
         && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
       const transferModifiers: Promise<boolean>[] = [];
       for (const modifier of fusedPartyMemberHeldModifiers) {
-        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, true, false, true, true));
+        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true));
       }
       Promise.allSettled(transferModifiers).then(() => {
         this.scene.updateModifiers(true, true).then(() => {
