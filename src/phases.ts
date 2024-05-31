@@ -534,8 +534,13 @@ export class SelectStarterPhase extends Phase {
           }
           const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
           let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-          if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-            starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
+          if (Overrides.STARTER_FORM_OVERRIDE[i]) {
+            starterFormIndex = Overrides.STARTER_FORM_OVERRIDE[i];
+            const availableForms = starter.species.forms.length;
+            // prevent use forms which does not exist for species
+            if(Overrides.STARTER_FORM_OVERRIDE[i] >= availableForms) {
+              starterFormIndex = 0;
+            }
           }
           let starterGender = starter.species.malePercent !== null
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
