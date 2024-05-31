@@ -2228,7 +2228,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     let movePower = 0;
     for (const opponent of pokemon.getOpponents()) {
       for (const move of opponent.moveset) {
-        if (move instanceof StatusMove) {
+        if (move.getMove() instanceof StatusMove) {
           movePower = 1;
         } else if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
           movePower = 150;
@@ -2726,7 +2726,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, target, move, true));
-      } else if (move instanceof SelfStatusMove) {
+      } else if (move.getMove() instanceof SelfStatusMove) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move, true));
       }
