@@ -55,5 +55,7 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "{{moveName}} 不再被禁用！",
   "skipItemQuestion": "你确定要跳过拾取道具吗？",
   "eggHatching": "咦？",
-  "ivScannerUseQuestion": "对 {{pokemonName}} 使用个体值扫描仪？"
+  "ivScannerUseQuestion": "对 {{pokemonName}} 使用个体值扫描仪？",
+  "drainMessage": " had its\nenergy drained!",
+  "regainHealth": " regained\nhealth!"
 } as const;
