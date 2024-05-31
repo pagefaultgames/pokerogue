@@ -20,7 +20,7 @@ export interface GamepadConfig {
 }
 
 export interface ActionGamepadMapping {
-    [key: string]: Button;
+    [key: string]: Button | Button[];
 }
 
 const repeatInputDelayMillis = 250;
@@ -276,18 +276,7 @@ export class InputsController {
      * - If mapped, emits an 'input_down' event with the controller type and button action, and updates the interaction of this button.
      */
   gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-    if (!this.gamepadSupport) {
-      return;
-    }
-    const actionMapping = this.getActionGamepadMapping();
-    const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
-    if (buttonDown !== undefined) {
-      this.events.emit("input_down", {
-        controller_type: "gamepad",
-        button: buttonDown,
-      });
-      this.setLastProcessedMovementTime(buttonDown, "gamepad");
-    }
+    this.handleGamepadButton("input_down", button);
   }
 
   /**
@@ -304,17 +293,38 @@ export class InputsController {
      * - If mapped, emits an 'input_up' event with the controller type and button action, and clears the interaction for this button.
      */
   gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
+    this.handleGamepadButton("input_up", button);
+  }
+
+  handleGamepadButton(event: string, button: Phaser.Input.Gamepad.Button): void {
     if (!this.gamepadSupport) {
       return;
     }
     const actionMapping = this.getActionGamepadMapping();
-    const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
-    if (buttonUp !== undefined) {
-      this.events.emit("input_up", {
-        controller_type: "gamepad",
-        button: buttonUp,
+    const mapping = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
+    if (mapping === undefined) {
+      return;
+    }
+
+
+    if (mapping instanceof Array) {
+      mapping.forEach(btn => {
+        this.emitButtonEvent(event, btn);
       });
-      this.delLastProcessedMovementTime(buttonUp);
+    } else {
+      this.emitButtonEvent(event, mapping);
+    }
+  }
+
+  emitButtonEvent(event: string, button: Button): void {
+    this.events.emit(event, {
+      controller_type: "gamepad",
+      button: button,
+    });
+    if (event === "input_down") {
+      this.setLastProcessedMovementTime(button, "gamepad");
+    } else {
+      this.delLastProcessedMovementTime(button);
     }
   }
 
