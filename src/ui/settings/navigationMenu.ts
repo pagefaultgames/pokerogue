@@ -30,6 +30,10 @@ export class NavigationManager {
     this.labels = ["General", "Gamepad", "Keyboard"];
   }
 
+  public reset() {
+    this.selectedMode = Mode.SETTINGS;
+  }
+
   /**
    * Gets the singleton instance of the NavigationManager.
    * @returns The singleton instance of NavigationManager.

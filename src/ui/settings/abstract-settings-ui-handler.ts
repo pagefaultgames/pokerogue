@@ -406,6 +406,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       if (button === Button.CANCEL) {
         // Handle cancel button press, reverting UI mode to previous state.
         success = true;
+        NavigationManager.getInstance().reset();
         this.scene.ui.revertMode();
       } else {
         const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.

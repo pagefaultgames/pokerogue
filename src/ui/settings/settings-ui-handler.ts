@@ -189,6 +189,7 @@ export default class SettingsUiHandler extends UiHandler {
 
     if (button === Button.CANCEL) {
       success = true;
+      NavigationManager.getInstance().reset();
       // Reverts UI to its previous state on cancel.
       this.scene.ui.revertMode();
     } else {
