@@ -689,10 +689,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DURALUDON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ZACIAN]: [
-    new SpeciesFormChange(Species.ZACIAN, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
+    new SpeciesFormChange(Species.ZACIAN, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
   ],
   [Species.ZAMAZENTA]: [
-    new SpeciesFormChange(Species.ZAMAZENTA, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
+    new SpeciesFormChange(Species.ZAMAZENTA, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
   ],
   [Species.ETERNATUS]: [
     new SpeciesFormChange(Species.ETERNATUS, "", SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
