@@ -5849,7 +5849,8 @@ export function initMoves() {
       .condition((user, target, move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(KnockOffPowerAttr)
-      .attr(RemoveHeldItemAttr, 1, "knocked off", false),
+      .attr(RemoveHeldItemAttr, 1, "knocked off", false)
+      .partial(),
     new AttackMove(Moves.ENDEAVOR, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
       .condition(failOnBossCondition),
