@@ -94,9 +94,12 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       }
       if (pokemon.status) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
+        pokemon.resetStatus();
+        pokemon.updateInfo();
       }
-      pokemon.resetStatus(true, true);
-      pokemon.updateInfo();
+      if (pokemon.getTag(BattlerTagType.CONFUSED)) {
+        pokemon.lapseTag(BattlerTagType.CONFUSED);
+      }
     };
   case BerryType.LIECHI:
   case BerryType.GANLON:

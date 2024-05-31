@@ -21,7 +21,6 @@ import { ModifierTier } from "./modifier-tier";
 import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import i18next from "#app/plugins/i18n";
 import { getModifierTierTextTint } from "#app/ui/text";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -231,7 +230,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, group?: string) {
     super(localeKey, iconImage, newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
       selectFilter || ((pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))) {
+        if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || !pokemon.status))) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -281,7 +280,7 @@ export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
       ((pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
+        if (!pokemon.hp || !pokemon.status) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;

@@ -2426,10 +2426,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
   * Resets the status of a pokemon
-  * @param {boolean} revive Whether revive should be cured; defaults to true.
-  * @param {boolean} confusion Whether resetStatus should include confusion or not; defaults to false.
+  * @param revive whether revive should be cured, defaults to true
   */
-  resetStatus(revive: boolean = true, confusion: boolean = false): void {
+  resetStatus(revive: boolean = true): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2439,11 +2438,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.setFrameRate(12);
       if (this.getTag(BattlerTagType.NIGHTMARE)) {
         this.lapseTag(BattlerTagType.NIGHTMARE);
-      }
-    }
-    if (confusion) {
-      if (this.getTag(BattlerTagType.CONFUSED)) {
-        this.lapseTag(BattlerTagType.CONFUSED);
       }
     }
   }
