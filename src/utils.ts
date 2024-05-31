@@ -407,8 +407,19 @@ export function verifyLang(lang?: string): boolean {
   case "zh_CN":
   case "zh_TW":
   case "pt_BR":
+  case "ko":
     return true;
   default:
     return false;
   }
+}
+
+/**
+ * Prints the type and name of all game objects in a container for debuggin purposes
+ * @param container container with game objects inside it
+ */
+export function printContainerList(container: Phaser.GameObjects.Container): void {
+  console.log(container.list.map(go => {
+    return {type: go.type, name: go.name};
+  }));
 }
