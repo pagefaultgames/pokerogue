@@ -317,7 +317,7 @@ describe("Phase interceptor", () => {
       });
 
       game.scene.gameData.gender = PlayerGender.MALE;
-      await game.phaseInterceptor.remove(SelectGenderPhase);
+      await game.phaseInterceptor.remove(SelectGenderPhase, () => game.isCurrentPhase(TitlePhase));
 
       await game.phaseInterceptor.run(TitlePhase);
       await waitUntil(() => game.scene.ui?.getMode() === Mode.TITLE);
