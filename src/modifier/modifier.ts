@@ -898,6 +898,10 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
   }
+
+  getStatusEffect(): StatusEffect {
+    return this.effect;
+  }
 }
 
 export class HitHealModifier extends PokemonHeldItemModifier {
