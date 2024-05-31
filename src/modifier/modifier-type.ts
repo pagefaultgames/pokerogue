@@ -1333,8 +1333,10 @@ const modifierPool: ModifierPool = {
         && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
       if (filteredParty.some(p => p.hasAbility(Abilities.TOXIC_BOOST) || p.hasAbility(Abilities.POISON_HEAL))) {
         weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.QUICK_FEET))) {
         weight = 2;
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.MARVEL_SCALE))) {
+        weight = 1;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
         if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
@@ -1348,9 +1350,9 @@ const modifierPool: ModifierPool = {
       const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.BURN || p.canSetStatus(StatusEffect.BURN, true, true))
         && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL)
         && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
-      if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST))) {
+      if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST) || p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.MARVEL_SCALE))) {
         weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.QUICK_FEET))) {
         weight = 2;
       } else {
         const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];

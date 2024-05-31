@@ -209,6 +209,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Sobras", description: "Cura 1/16 dos PS máximos de um Pokémon a cada turno" },
     "SHELL_BELL": { name: "Concha-Sino", description: "Cura 1/8 do dano causado por um Pokémon" },
 
+    "TOXIC_ORB": { name: "Toxic Orb", description: "Badly poisons its holder at the end of the turn if they do not have a status condition already" },
+    "FLAME_ORB": { name: "Flame Orb", description: "Burns its holder at the end of the turn if they do not have a status condition already" },
+
     "BATON": { name: "Bastão", description: "Permite passar mudanças de atributo ao trocar Pokémon, ignorando armadilhas" },
 
     "SHINY_CHARM": { name: "Amuleto Brilhante", description: "Aumenta drasticamente a chance de um Pokémon selvagem ser Shiny" },

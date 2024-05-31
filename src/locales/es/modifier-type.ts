@@ -209,6 +209,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Restos", description: "Cura 1/16 de los PS máximo de un Pokémon cada turno" },
     "SHELL_BELL": { name: "Camp Concha", description: "Cura 1/8 del daño infligido por un Pokémon" },
 
+    "TOXIC_ORB": { name: "Toxiesfera", description: "Envenena gravemente al portador al final del turno si no está ya afectado por otro estado" },
+    "FLAME_ORB": { name: "Llamasfera", description: "Quema al portador al final del turno si no está ya afectado por otro estado" },
+
     "BATON": { name: "Baton", description: "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas" },
 
     "SHINY_CHARM": { name: "Amuleto Iris", description: "Aumenta drásticamente la posibilidad de que un Pokémon salvaje sea Shiny" },

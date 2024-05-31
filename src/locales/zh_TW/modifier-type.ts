@@ -238,6 +238,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description:
                 "攜帶該道具的寶可夢在攻擊對方成功造成傷\n害時，攜帶者的HP會恢復其所造成傷害\n的1/8",
     },
+    TOXIC_ORB: {
+      name: "Toxic Orb",
+      description:
+                "Badly poisons its holder at the end of the turn if they do not have a status condition already"
+    },
+    FLAME_ORB: {
+      name: "Flame Orb",
+      description:
+                "Burns its holder at the end of the turn if they do not have a status condition already"
+    },
     BATON: {
       name: "接力棒",
       description: "允許在切換寶可夢時保留能力變化, 對陷阱\n同樣生效",
