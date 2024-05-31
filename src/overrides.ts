@@ -61,12 +61,7 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * default is 0 to not override
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
-export const STARTER_SPECIES_OVERRIDE2: Species | integer = 0;
-export const STARTER_SPECIES_OVERRIDE3: Species | integer = 0;
-export const STARTER_SPECIES_OVERRIDE4: Species | integer = 0;
-export const STARTER_SPECIES_OVERRIDE5: Species | integer = 0;
-export const STARTER_SPECIES_OVERRIDE6: Species | integer = 0;
+export const STARTER_SPECIES_OVERRIDE: Species[] | integer[] = [0, 0, 0, 0, 0, 0];
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
