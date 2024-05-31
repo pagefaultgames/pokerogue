@@ -11,7 +11,7 @@ import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
-import cfg_keyboard_azerty from "./configs/inputs/cfg_keyboard_azerty";
+import cfg_keyboard_qwerty from "./configs/inputs/cfg_keyboard_qwerty";
 import {Device} from "#app/enums/devices";
 import {
   assign,
@@ -518,10 +518,10 @@ export class InputsController {
      */
   getConfigKeyboard(id: string): InterfaceConfig {
     if (id === "default") {
-      return cfg_keyboard_azerty;
+      return cfg_keyboard_qwerty;
     }
 
-    return cfg_keyboard_azerty;
+    return cfg_keyboard_qwerty;
   }
 
   /**

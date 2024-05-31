@@ -1,7 +1,7 @@
 import {Button} from "#app/enums/buttons";
 import {SettingKeyboard} from "#app/system/settings-keyboard";
 
-const cfg_keyboard_azerty = {
+const cfg_keyboard_qwerty = {
   padID: "default",
   padType: "keyboard",
   deviceMapping: {
@@ -219,25 +219,25 @@ const cfg_keyboard_azerty = {
     KEY_V: SettingKeyboard.Button_Cycle_Variant,
     KEY_PLUS: SettingKeyboard.Button_Speed_Up,
     KEY_MINUS: SettingKeyboard.Button_Slow_Down,
-    KEY_A: -1,
+    KEY_A: SettingKeyboard.Alt_Button_Left,
     KEY_B: -1,
     KEY_D: SettingKeyboard.Alt_Button_Right,
-    KEY_H: -1,
+    KEY_H: SettingKeyboard.Alt_Button_Cycle_Form,
     KEY_I: SettingKeyboard.Alt_Button_Cycle_Nature,
     KEY_J: -1,
     KEY_K: SettingKeyboard.Alt_Button_Cycle_Variant,
     KEY_L: SettingKeyboard.Alt_Button_Cycle_Ability,
-    KEY_M: SettingKeyboard.Alt_Button_Cycle_Form,
+    KEY_M: SettingKeyboard.Alt_Button_Menu,
     KEY_O: SettingKeyboard.Alt_Button_Cycle_Gender,
     KEY_P: SettingKeyboard.Alt_Button_Cycle_Shiny,
-    KEY_Q: SettingKeyboard.Alt_Button_Left,
+    KEY_Q: -1,
     KEY_S: SettingKeyboard.Alt_Button_Down,
     KEY_T: -1,
     KEY_U: -1,
-    KEY_W: SettingKeyboard.Alt_Button_Action,
+    KEY_W: SettingKeyboard.Alt_Button_Up,
     KEY_X: SettingKeyboard.Alt_Button_Cancel,
     KEY_Y: -1,
-    KEY_Z: SettingKeyboard.Alt_Button_Up,
+    KEY_Z: SettingKeyboard.Alt_Button_Action,
     KEY_0: -1,
     KEY_1: -1,
     KEY_2: -1,
@@ -269,7 +269,7 @@ const cfg_keyboard_azerty = {
     KEY_PAGE_UP: SettingKeyboard.Alt_Button_Speed_Up,
     KEY_QUOTATION: -1,
     KEY_SHIFT: SettingKeyboard.Alt_Button_Stats,
-    KEY_TAB: SettingKeyboard.Alt_Button_Menu,
+    KEY_TAB: -1,
     KEY_TILDE: -1,
     KEY_LEFT_BRACKET: -1,
     KEY_RIGHT_BRACKET: -1,
@@ -288,4 +288,4 @@ const cfg_keyboard_azerty = {
   ]
 };
 
-export default cfg_keyboard_azerty;
+export default cfg_keyboard_qwerty;

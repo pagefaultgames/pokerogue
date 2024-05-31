@@ -9,7 +9,7 @@ import {MenuManip} from "#app/test/helpers/menuManip";
 import {InGameManip} from "#app/test/helpers/inGameManip";
 import {Device} from "#app/enums/devices";
 import {InterfaceConfig} from "#app/inputs-controller";
-import cfg_keyboard_azerty from "#app/configs/inputs/cfg_keyboard_azerty";
+import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
 import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 
@@ -24,7 +24,7 @@ describe("Test Rebinding", () => {
   };
 
   beforeEach(() => {
-    config = deepCopy(cfg_keyboard_azerty);
+    config = deepCopy(cfg_keyboard_qwerty);
     config.custom = {...config.default};
     configs.default = config;
     inGame = new InGameManip(configs, config, selectedDevice);
@@ -46,7 +46,7 @@ describe("Test Rebinding", () => {
     expect(button).toEqual(Button.LEFT);
   });
   it("Check key for currenly Assigned to action not alt", () => {
-    const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.Q);
+    const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.A);
     const settingName = config.custom[key];
     const button = config.settings[settingName];
     expect(button).toEqual(Button.LEFT);
@@ -60,7 +60,7 @@ describe("Test Rebinding", () => {
   it("Check key for currenly Assigned to setting name alt", () => {
     const settingName = SettingKeyboard.Alt_Button_Left;
     const key = getKeyWithSettingName(config, settingName);
-    expect(key).toEqual("KEY_Q");
+    expect(key).toEqual("KEY_A");
   });
   it("Check key from key code", () => {
     const keycode = Phaser.Input.Keyboard.KeyCodes.LEFT;
@@ -74,10 +74,10 @@ describe("Test Rebinding", () => {
     expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to key code", () => {
-    const keycode = Phaser.Input.Keyboard.KeyCodes.Q;
+    const keycode = Phaser.Input.Keyboard.KeyCodes.A;
     const key = getKeyWithKeycode(config, keycode);
     const icon = config.icons[key];
-    expect(icon).toEqual("Q.png");
+    expect(icon).toEqual("A.png");
   });
   it("Check icon for currenly Assigned to setting name", () => {
     const settingName = SettingKeyboard.Button_Left;
@@ -89,32 +89,32 @@ describe("Test Rebinding", () => {
     const settingName = SettingKeyboard.Alt_Button_Left;
     const key = getKeyWithSettingName(config, settingName);
     const icon = config.icons[key];
-    expect(icon).toEqual("Q.png");
+    expect(icon).toEqual("A.png");
   });
 
   it("Check if is working", () => {
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("Q");
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("A");
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Right").iconDisplayedIs("D");
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("Q").weWantThisBindInstead("D").confirm();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("A").weWantThisBindInstead("D").confirm();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Left");
   });
 
   it("Check prevent rebind indirectly the d-pad buttons", () => {
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("Q");
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("A");
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Right").iconDisplayedIs("D");
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("Q").weWantThisBindInstead("LEFT").weCantAssignThisKey().butLetsForceIt();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("A").weWantThisBindInstead("LEFT").weCantAssignThisKey().butLetsForceIt();
     inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Left");
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
   });
 
   it("Swap alt with a d-pad main", () => {
     inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
-    inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").weWantThisBindInstead("Z").weCantOverrideThisBind().butLetsForceIt();
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
+    inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").weWantThisBindInstead("W").weCantOverrideThisBind().butLetsForceIt();
     inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
   });
 
   it("Check if double assign d-pad is blocked", () => {
@@ -141,27 +141,27 @@ describe("Test Rebinding", () => {
   });
 
   it("Check if double assign is working", () => {
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
 
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_Q").weWantThisBindInstead("D").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_A").weWantThisBindInstead("D").confirm();
 
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Left");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
 
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_D").weWantThisBindInstead("Z").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_D").weWantThisBindInstead("W").confirm();
 
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Left");
 
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_Z").weWantThisBindInstead("D").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_W").weWantThisBindInstead("D").confirm();
 
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Left");
-    inGame.whenWePressOnKeyboard("Z").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("W").nothingShouldHappen();
   });
 
   it("Check if triple swap d-pad is prevented", () => {
@@ -183,27 +183,27 @@ describe("Test Rebinding", () => {
   });
 
   it("Check if triple swap is working", () => {
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
 
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_Q").weWantThisBindInstead("D").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_A").weWantThisBindInstead("D").confirm();
 
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Left");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
 
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Right").thereShouldBeNoIcon().weWantThisBindInstead("Z").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Right").thereShouldBeNoIcon().weWantThisBindInstead("W").confirm();
 
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Left");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Right");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Right");
 
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_D").weWantThisBindInstead("Q").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_D").weWantThisBindInstead("A").confirm();
 
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Right");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Right");
   });
 
   it("Swap alt with a main", () => {
@@ -217,25 +217,25 @@ describe("Test Rebinding", () => {
   it("multiple Swap alt with another main", () => {
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
     inGame.whenWePressOnKeyboard("R").weShouldTriggerTheButton("Button_Cycle_Shiny");
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("F").weShouldTriggerTheButton("Button_Cycle_Form");
     inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Shiny").iconDisplayedIs("KEY_R").weWantThisBindInstead("D").confirm();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("F").weShouldTriggerTheButton("Button_Cycle_Form");
     inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Form").iconDisplayedIs("KEY_F").weWantThisBindInstead("R").confirm();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
     inGame.whenWePressOnKeyboard("R").weShouldTriggerTheButton("Button_Cycle_Form");
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("F").nothingShouldHappen();
   });
 
   it("Swap alt with a key not binded yet", () => {
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_Z").weWantThisBindInstead("B").confirm();
-    inGame.whenWePressOnKeyboard("Z").nothingShouldHappen();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_W").weWantThisBindInstead("B").confirm();
+    inGame.whenWePressOnKeyboard("W").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("Alt_Button_Up");
   });
 
@@ -246,84 +246,84 @@ describe("Test Rebinding", () => {
   });
 
   it("Delete bind", () => {
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
   });
 
   it("Delete bind then assign a not yet binded button", () => {
     inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").thereShouldBeNoIcon().weWantThisBindInstead("B").confirm();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("Alt_Button_Left");
   });
   it("swap 2 bind, than delete 1 bind than assign another bind", () => {
     inGame.whenWePressOnKeyboard("R").weShouldTriggerTheButton("Button_Cycle_Shiny");
     inGame.whenWePressOnKeyboard("F").weShouldTriggerTheButton("Button_Cycle_Form");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
     inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Shiny").iconDisplayedIs("KEY_R").weWantThisBindInstead("D").confirm();
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("F").weShouldTriggerTheButton("Button_Cycle_Form");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
 
-    inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Form").iconDisplayedIs("KEY_F").weWantThisBindInstead("Z").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Form").iconDisplayedIs("KEY_F").weWantThisBindInstead("W").confirm();
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("F").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Button_Cycle_Form");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Button_Cycle_Form");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
 
     inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("F").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Button_Cycle_Form");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Button_Cycle_Form");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
     inGame.whenWePressOnKeyboard("S").weShouldTriggerTheButton("Alt_Button_Down");
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Down").iconDisplayedIs("KEY_S").weWantThisBindInstead("B").confirm();
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("F").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Button_Cycle_Form");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Button_Cycle_Form");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
     inGame.whenWePressOnKeyboard("S").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("Alt_Button_Down");
   });
 
 
   it("Delete bind then assign not already existing button", () => {
 
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
     inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").thereShouldBeNoIcon().weWantThisBindInstead("B").confirm();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("Alt_Button_Left");
   });
 
 
   it("change alt bind to not already existing button, than another one alt bind with another not already existing button", () => {
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("U").nothingShouldHappen();
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_Q").weWantThisBindInstead("B").confirm();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").iconDisplayedIs("KEY_A").weWantThisBindInstead("B").confirm();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
     inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("U").nothingShouldHappen();
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Right").iconDisplayedIs("KEY_D").weWantThisBindInstead("U").confirm();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("U").weShouldTriggerTheButton("Alt_Button_Right");
@@ -332,41 +332,41 @@ describe("Test Rebinding", () => {
   it("Swap multiple touch alt and main", () => {
     inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
     inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
     inTheSettingMenu.whenCursorIsOnSetting("Button_Up").iconDisplayedIs("KEY_ARROW_UP").weWantThisBindInstead("RIGHT").weCantOverrideThisBind().weCantAssignThisKey().butLetsForceIt();
     inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
     inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_Z").weWantThisBindInstead("D").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_W").weWantThisBindInstead("D").confirm();
     inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
     inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
-    inGame.whenWePressOnKeyboard("Z").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("W").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Up");
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_D").weWantThisBindInstead("Z").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_D").weWantThisBindInstead("W").confirm();
     inGame.whenWePressOnKeyboard("UP").weShouldTriggerTheButton("Button_Up");
     inGame.whenWePressOnKeyboard("RIGHT").weShouldTriggerTheButton("Button_Right");
-    inGame.whenWePressOnKeyboard("Z").weShouldTriggerTheButton("Alt_Button_Up");
+    inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Alt_Button_Up");
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
   });
 
 
   it("Delete 2 bind then reassign one of them", () => {
 
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
 
     inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
 
     inTheSettingMenu.whenWeDelete("Alt_Button_Right").thereShouldBeNoIconAnymore();
-    inGame.whenWePressOnKeyboard("Q").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
 
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").thereShouldBeNoIcon().weWantThisBindInstead("Q").confirm();
-    inGame.whenWePressOnKeyboard("Q").weShouldTriggerTheButton("Alt_Button_Left");
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Left").thereShouldBeNoIcon().weWantThisBindInstead("A").confirm();
+    inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
   });
 
@@ -400,12 +400,12 @@ describe("Test Rebinding", () => {
     inTheSettingMenu.whenCursorIsOnSetting("Button_Left").iconDisplayedIs("KEY_ARROW_LEFT").whenWeDelete().iconDisplayedIs("KEY_ARROW_LEFT");
     inTheSettingMenu.whenCursorIsOnSetting("Button_Right").iconDisplayedIs("KEY_ARROW_RIGHT").whenWeDelete().iconDisplayedIs("KEY_ARROW_RIGHT");
     inTheSettingMenu.whenCursorIsOnSetting("Button_Menu").iconDisplayedIs("KEY_ESC").whenWeDelete().iconDisplayedIs("KEY_ESC");
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_Z").whenWeDelete().thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").iconDisplayedIs("KEY_W").whenWeDelete().thereShouldBeNoIconAnymore();
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").thereShouldBeNoIcon().weWantThisBindInstead("DELETE").weCantAssignThisKey().butLetsForceIt();
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Up").thereShouldBeNoIcon().weWantThisBindInstead("HOME").weCantAssignThisKey().butLetsForceIt();
     inGame.whenWePressOnKeyboard("DELETE").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("HOME").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("Z").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("W").nothingShouldHappen();
   });
 
   it("check to delete all the binds of an action", () => {

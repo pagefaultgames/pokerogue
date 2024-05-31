@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
 import {Mode} from "../ui";
-import cfg_keyboard_azerty from "#app/configs/inputs/cfg_keyboard_azerty";
+import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
 import {
   setSettingKeyboard,
   SettingKeyboard,
@@ -33,7 +33,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     this.settingDevice = SettingKeyboard;
     this.settingDeviceDefaults = settingKeyboardDefaults;
     this.settingDeviceOptions = settingKeyboardOptions;
-    this.configs = [cfg_keyboard_azerty];
+    this.configs = [cfg_keyboard_qwerty];
     this.commonSettingsCount = 0;
     this.textureOverride = "keyboard";
     this.localStoragePropertyName = "settingsKeyboard";
