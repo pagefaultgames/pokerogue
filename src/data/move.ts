@@ -1203,7 +1203,6 @@ export class HitHealAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let healAmount = 0;
     let message = "";
-    // If target dies from the damage, user will be healed unless canApply is set to false
     const reverseDrain = target.hasAbilityWithAttr(ReverseDrainAbAttr, false);
     if (this.healStat) {
       // Strength Sap formula
