@@ -1,4 +1,5 @@
 import {EncounterPhase, LoginPhase, SelectGenderPhase, TitlePhase} from "#app/phases";
+import {Mode} from "#app/ui/ui";
 
 export default class PhaseInterceptor {
   public scene;
@@ -6,6 +7,8 @@ export default class PhaseInterceptor {
   public log;
   private onHold;
   private interval;
+  private promptInterval;
+  private prompts;
 
   private PHASES = [
     [LoginPhase, this.startPhase],
@@ -18,7 +21,9 @@ export default class PhaseInterceptor {
     this.scene = scene;
     this.log = [];
     this.onHold = [];
+    this.prompts = [];
     this.initPhases();
+    this.startPromptHander();
   }
 
   run(phaseTarget, skipFn?): Promise<void> {
@@ -45,10 +50,11 @@ export default class PhaseInterceptor {
   }
 
   waitUntil(phaseTarget, skipFn?): Promise<void> {
+    const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     return new Promise((resolve, reject) => {
       this.interval = setInterval(() => {
         const currentPhase = this.onHold?.length && this.onHold[0] && this.onHold[0].name;
-        if (currentPhase === phaseTarget.name) {
+        if (currentPhase === targetName) {
           clearInterval(this.interval);
           return resolve();
         } else if (skipFn && skipFn()) {
@@ -76,5 +82,34 @@ export default class PhaseInterceptor {
         this.phases[phase.name].apply(instance);
       }
     });
+  }
+
+  startPromptHander() {
+    this.promptInterval = setInterval(() => {
+      if (this.prompts.length) {
+        const actionForNextPrompt = this.prompts[0];
+        const currentMode = this.scene.ui.getMode();
+        const currentPhase = this.scene.getCurrentPhase().constructor.name;
+        if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget) {
+          this.prompts.shift().callback();
+        }
+      }
+    }, 1000);
+  }
+
+  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void) {
+    this.prompts.push({
+      phaseTarget,
+      mode,
+      callback
+    });
+  }
+
+  restoreOg() {
+    for (const [phase] of this.PHASES) {
+      phase.prototype.start = this.phases[phase.name];
+    }
+    clearInterval(this.promptInterval);
+    clearInterval(this.interval);
   }
 }

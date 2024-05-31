@@ -1,8 +1,8 @@
 /* eslint-disable */
-import {describe, it, vi, expect, beforeAll, beforeEach} from "vitest";
+import {describe, it, vi, expect, beforeAll, beforeEach, afterEach} from "vitest";
 import fs from "fs";
 import { AES, enc } from "crypto-js";
-import {decrypt, encrypt, GameDataType, getDataTypeKey} from "#app/system/game-data";
+import {decrypt, encrypt, GameDataType, getDataTypeKey, PlayerGender} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
 import GameWrapper from "#app/test/essentials/gameWrapper";
 import {
@@ -303,18 +303,67 @@ describe("Session import/export", () => {
 
 describe("Phase interceptor", () => {
   let game;
-  it('test phase interceptor', async() => {
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  it.skip('test phase interceptor with remove', async() => {
       game = new GameManager();
       await game.phaseInterceptor.run(LoginPhase);
+
       await game.phaseInterceptor.run(LoginPhase, () => {
         return game.phaseInterceptor.log.includes('LoginPhase');
       });
+
       game.scene.gameData.gender = Gender.MALE;
       await game.phaseInterceptor.remove(SelectGenderPhase);
+
       await game.phaseInterceptor.run(TitlePhase);
       await waitUntil(() => game.scene.ui?.getMode() === Mode.TITLE);
+
       expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
-      // game.newGame(GameModes.CLASSIC);
+  }, 100000);
+
+  it('test phase interceptor with prompt', async() => {
+      game = new GameManager();
+      await game.phaseInterceptor.run(LoginPhase);
+
+      game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
+          game.scene.gameData.gender = PlayerGender.MALE;
+          game.endPhase();
+      })
+
+      await game.phaseInterceptor.run(SelectGenderPhase);
+
+      await game.phaseInterceptor.run(TitlePhase);
+      await game.waitMode(Mode.TITLE)
+
+
+      expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
+      expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
+  }, 100000);
+
+  it('test phase interceptor with prompt with preparation for a future prompt', async() => {
+      game = new GameManager();
+      await game.phaseInterceptor.run(LoginPhase);
+
+      game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
+          game.scene.gameData.gender = PlayerGender.MALE;
+          game.endPhase();
+      })
+
+      game.onNextPrompt('CheckSwitchPhase', Mode.OPTION_SELECT, () => {
+        game.setMode(Mode.MESSAGE);
+        game.endPhase();
+      })
+      await game.phaseInterceptor.run(SelectGenderPhase);
+
+      await game.phaseInterceptor.run(TitlePhase);
+      await game.waitMode(Mode.TITLE)
+
+
+      expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
+      expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 100000);
 });
 

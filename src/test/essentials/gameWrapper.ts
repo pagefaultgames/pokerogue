@@ -6,31 +6,21 @@ import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
 import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
-import CanvasRenderer = Phaser.Renderer.Canvas.CanvasRenderer;
 import UpdateList = Phaser.GameObjects.UpdateList;
-import ScaleManager = Phaser.Scale.ScaleManager;
 import MockGraphics from "#app/test/essentials/mocks/mocksContainer/mockGraphics";
 import MockTextureManager from "#app/test/essentials/mocks/mockTextureManager";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {blobToString, generateStarter, setPositionRelative, waitUntil} from "#app/test/essentials/utils";
-import {expect, vi} from "vitest";
+import {blobToString, setPositionRelative} from "#app/test/essentials/utils";
+import {vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mocks/mockLocalStorage";
 import mockConsoleLog from "#app/test/essentials/mocks/mockConsoleLog";
 import MockLoader from "#app/test/essentials/mocks/mockLoader";
 import {MockFetch} from "#app/test/essentials/mocks/mockFetch";
 import * as Utils from "#app/utils";
-import {Mode} from "#app/ui/ui";
-import {CheckSwitchPhase, CommandPhase, EncounterPhase, SelectStarterPhase} from "#app/phases";
-import ConfirmUiHandler from "#app/ui/confirm-ui-handler";
-import {Button} from "#app/enums/buttons";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import {MockClock} from "#app/test/essentials/mocks/mockClock";
-import {Command} from "#app/ui/command-ui-handler";
-import {GameDataType} from "#app/system/game-data";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import BattleScene from "#app/battle-scene.js";
-import WebGLRenderer = Phaser.Renderer.WebGL.WebGLRenderer;
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -65,11 +55,6 @@ window.matchMedia = () => ({
 
 export default class GameWrapper {
   public scene: BattleScene;
-  public scenes: Map<string, Phaser.Scene> = new Map();
-  private gameObj = game;
-  public scene: {
-    add: (_key: string, scene: Phaser.Scene) => void
-  };
 
   constructor() {
     localStorage.clear();

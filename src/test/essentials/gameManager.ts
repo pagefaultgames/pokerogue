@@ -30,6 +30,25 @@ export default class GameManager {
     this.gameWrapper.setScene(this.scene);
   }
 
+  setMode(mode: Mode) {
+    this.scene.ui?.setMode(mode);
+  }
+
+  waitMode(mode: Mode): Promise<void> {
+    return new Promise(async (resolve) => {
+      await waitUntil(() => this.scene.ui?.getMode() === mode);
+      return resolve();
+    });
+  }
+
+  endPhase() {
+    this.scene.getCurrentPhase().end();
+  }
+
+  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void) {
+    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback);
+  }
+
   newGame(gameMode): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (this.scene.ui.getMode() !== Mode.TITLE) {
