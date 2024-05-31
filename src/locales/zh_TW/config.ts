@@ -31,7 +31,6 @@ import {
 } from "./dialogue";
 import { biome } from "./biome";
 import { pokemonInfoContainer } from "./pokemon-info-container";
-import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const zhTWConfig = {
   ability: ability,
@@ -68,6 +67,5 @@ export const zhTWConfig = {
   PGMmiscDialogue: PGMmiscDialogue,
   PGFmiscDialogue: PGFmiscDialogue,
   PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
-  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
 };
