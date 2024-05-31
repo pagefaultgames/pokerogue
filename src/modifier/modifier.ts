@@ -951,16 +951,11 @@ export class BerryModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    switch (this.berryType) {
-    case BerryType.LUM:
-    case BerryType.LEPPA:
-    case BerryType.SITRUS:
-    case BerryType.ENIGMA:
+    if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(this.berryType)) {
       return 2;
     }
     return 3;
   }
-}
 
 export class PreserveBerryModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
