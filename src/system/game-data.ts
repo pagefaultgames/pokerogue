@@ -30,6 +30,7 @@ import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -740,6 +741,10 @@ export class GameData {
           });
 
           scene.arena.weather = sessionData.arena.weather;
+          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(null, scene.arena.weather?.weatherType, scene.arena.weather?.turnsLeft));
+
+          scene.arena.terrain = sessionData.arena.terrain;
+          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(null, scene.arena.terrain?.terrainType, scene.arena.terrain?.turnsLeft));
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
