@@ -501,7 +501,7 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
     applyMoveAttrs(IncrementMovePriorityAttr,attacker,null,move.getMove(),attackPriority);
     applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move.getMove(), attackPriority);
 
-    if (move.getMove().moveTarget===MoveTarget.USER) {
+    if (move.getMove().moveTarget===MoveTarget.USER || move.getMove().moveTarget===MoveTarget.NEAR_ALLY) {
       return false;
     }
 
