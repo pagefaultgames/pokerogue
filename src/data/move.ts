@@ -1183,11 +1183,10 @@ export class HitHealAttr extends MoveEffectAttr {
   private message: string;
   private healStat: Stat;
 
-  constructor(healRatio?: number, message?: string, healStat?: Stat) {
+  constructor(healRatio?: number, healStat?: Stat) {
     super(true, MoveEffectTrigger.HIT);
 
     this.healRatio = healRatio || 0.5;
-    this.message = message || i18next.t("battle:drainMessage");
     this.healStat = healStat || null;
   }
   /**
@@ -1207,11 +1206,11 @@ export class HitHealAttr extends MoveEffectAttr {
     if (this.healStat) {
       // Strength Sap formula
       healAmount = target.getBattleStat(this.healStat);
-      message = getPokemonMessage(user, this.message);
+      message = i18next.t("battle:drainMessage", {pokemonName: target.name});
     } else {
       // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
       healAmount = Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1);
-      message = getPokemonMessage(target, this.message);
+      message = i18next.t("battle:regainHealth", {pokemonName: user.name});
     }
     if (reverseDrain) {
       user.turnData.damageTaken += healAmount;
@@ -6842,7 +6841,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
-      .attr(HitHealAttr, null, i18next.t("battle:regainHealth"), Stat.ATK)
+      .attr(HitHealAttr, null, Stat.ATK)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
       .triageMove(),

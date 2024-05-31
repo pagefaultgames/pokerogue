@@ -56,6 +56,6 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "{{pokemonName}}'s {{moveName}} ist\nnicht mehr deaktiviert!",
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "IV-Scanner auf {{pokemonName}} benutzen?",
-  "drainMessage": " had its\nenergy drained!",
-  "regainHealth": " regained\nhealth!"
+  "drainMessage": "{{pokemonName}} wurde Energie abgesaugt",
+  "regainHealth": "KP von {{pokemonName}} wurden wieder aufgefrischt!"
 } as const;
