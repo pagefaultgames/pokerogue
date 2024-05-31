@@ -529,8 +529,8 @@ export class SelectStarterPhase extends Phase {
         const party = this.scene.getParty();
         const loadPokemonAssets: Promise<void>[] = [];
         starters.forEach((starter: Starter, i: integer) => {
-          if (Overrides[`STARTER_SPECIES_OVERRIDE${i === 0 ? "" : i+1 }`]) {
-            starter.species = getPokemonSpecies(Overrides[`STARTER_SPECIES_OVERRIDE${i === 0 ? "" : i+1 }`] as Species);
+          if (Overrides.STARTER_SPECIES_OVERRIDE[i]) {
+            starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE[i] as Species);
           }
           const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
           let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
