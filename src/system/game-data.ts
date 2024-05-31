@@ -1,4 +1,4 @@
-import BattleScene, { LoginBypass, PokeballCounts } from "../battle-scene";
+import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
@@ -30,7 +30,8 @@ import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
-import disasterRecoveryInstance from "#app/disasterRecover.js";
+import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
+import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -69,12 +70,16 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   }
 }
 
-function encrypt(data: string): string {
-  return ((data: string) => AES.encrypt(data, saveKey))(data);
+function encrypt(data: string, bypassLogin: boolean): string {
+  return (bypassLogin
+    ? (data: string) => btoa(data)
+    : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
-function decrypt(data: string): string {
-  return ((data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
+function decrypt(data: string, bypassLogin: boolean): string {
+  return (bypassLogin
+    ? (data: string) => atob(data)
+    : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
 interface SystemSaveData {
@@ -239,6 +244,8 @@ export class GameData {
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.loadSettings();
+    this.loadGamepadSettings();
+    this.loadMappingConfigs();
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
@@ -287,9 +294,9 @@ export class GameData {
       const maxIntAttrValue = Math.pow(2, 31);
       const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-      localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData));
+      localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
 
-      if (!LoginBypass.bypassLogin) {
+      if (!bypassLogin) {
         Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}&clientSessionId=${clientSessionId}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
@@ -319,11 +326,11 @@ export class GameData {
     return new Promise<boolean>(resolve => {
       console.log("Client Session:", clientSessionId);
 
-      if (LoginBypass.bypassLogin && !localStorage.getItem(`data_${loggedInUser.username}`)) {
+      if (bypassLogin && !localStorage.getItem(`data_${loggedInUser.username}`)) {
         return resolve(false);
       }
 
-      if (!LoginBypass.bypassLogin) {
+      if (!bypassLogin) {
         Utils.apiFetch(`savedata/system?clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(response => {
@@ -335,15 +342,15 @@ export class GameData {
                 this.scene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
-              if (!loggedInUser) {
-                return resolve(false);
-              }
+              console.error(response);
+              return resolve(false);
             }
+
             const cachedSystem = localStorage.getItem(`data_${loggedInUser.username}`);
             this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : null).then(resolve);
           });
       } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser.username}`))).then(resolve);
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)).then(resolve);
       }
     });
   }
@@ -366,7 +373,7 @@ export class GameData {
 
         console.debug(systemData);
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr));
+        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
 
         /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
 
@@ -515,18 +522,14 @@ export class GameData {
   }
 
   public async verify(): Promise<boolean> {
-    if (LoginBypass.bypassLogin) {
+    if (bypassLogin) {
       return true;
     }
+
     const response = await Utils.apiPost("savedata/system/verify", JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
-      .then(response => response.json())
-      .catch(err => {
-        disasterRecoveryInstance.startInterval();
-        this.scene.clearPhaseQueue();
-        this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-        return false;
-      });
-    if (response && !response.valid) {
+      .then(response => response.json());
+
+    if (!response.valid) {
       this.scene.clearPhaseQueue();
       this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(response.systemData)));
       this.clearLocalData();
@@ -537,7 +540,7 @@ export class GameData {
   }
 
   public clearLocalData(): void {
-    if (LoginBypass.bypassLogin) {
+    if (bypassLogin) {
       return;
     }
     localStorage.removeItem(`data_${loggedInUser.username}`);
@@ -565,6 +568,125 @@ export class GameData {
     return true;
   }
 
+  /**
+   * Saves the mapping configurations for a specified device.
+   *
+   * @param deviceName - The name of the device for which the configurations are being saved.
+   * @param config - The configuration object containing custom mapping details.
+   * @returns `true` if the configurations are successfully saved.
+   */
+  public saveMappingConfigs(deviceName: string, config): boolean {
+    const key = deviceName.toLowerCase();  // Convert the gamepad name to lowercase to use as a key
+    let mappingConfigs: object = {};  // Initialize an empty object to hold the mapping configurations
+    if (localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
+      mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));
+    }  // Parse the existing 'mappingConfigs' from localStorage
+    if (!mappingConfigs[key]) {
+      mappingConfigs[key] = {};
+    }  // If there is no configuration for the given key, create an empty object for it
+    mappingConfigs[key].custom = config.custom;  // Assign the custom configuration to the mapping configuration for the given key
+    localStorage.setItem("mappingConfigs", JSON.stringify(mappingConfigs));  // Save the updated mapping configurations back to localStorage
+    return true;  // Return true to indicate the operation was successful
+  }
+
+  /**
+   * Loads the mapping configurations from localStorage and injects them into the input controller.
+   *
+   * @returns `true` if the configurations are successfully loaded and injected; `false` if no configurations are found in localStorage.
+   *
+   * @remarks
+   * This method checks if the 'mappingConfigs' entry exists in localStorage. If it does not exist, the method returns `false`.
+   * If 'mappingConfigs' exists, it parses the configurations and injects each configuration into the input controller
+   * for the corresponding gamepad or device key. The method then returns `true` to indicate success.
+   */
+  public loadMappingConfigs(): boolean {
+    if (!localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
+      return false;
+    }  // If 'mappingConfigs' does not exist, return false
+
+    const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));  // Parse the existing 'mappingConfigs' from localStorage
+
+    for (const key of Object.keys(mappingConfigs)) {// Iterate over the keys of the mapping configurations
+      this.scene.inputController.injectConfig(key, mappingConfigs[key]);
+    }  // Inject each configuration into the input controller for the corresponding key
+
+    return true;  // Return true to indicate the operation was successful
+  }
+
+  public resetMappingToFactory(): boolean {
+    if (!localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
+      return false;
+    }  // If 'mappingConfigs' does not exist, return false
+    localStorage.removeItem("mappingConfigs");
+    this.scene.inputController.resetConfigs();
+  }
+
+  /**
+   * Saves a gamepad setting to localStorage.
+   *
+   * @param setting - The gamepad setting to save.
+   * @param valueIndex - The index of the value to set for the gamepad setting.
+   * @returns `true` if the setting is successfully saved.
+   *
+   * @remarks
+   * This method initializes an empty object for gamepad settings if none exist in localStorage.
+   * It then updates the setting in the current scene and iterates over the default gamepad settings
+   * to update the specified setting with the new value. Finally, it saves the updated settings back
+   * to localStorage and returns `true` to indicate success.
+   */
+  public saveGamepadSetting(setting: SettingGamepad, valueIndex: integer): boolean {
+    let settingsGamepad: object = {};  // Initialize an empty object to hold the gamepad settings
+
+    if (localStorage.hasOwnProperty("settingsGamepad")) {  // Check if 'settingsGamepad' exists in localStorage
+      settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad"));  // Parse the existing 'settingsGamepad' from localStorage
+    }
+
+    setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
+
+    Object.keys(settingGamepadDefaults).forEach(s => {  // Iterate over the default gamepad settings
+      if (s === setting) {// If the current setting matches, update its value
+        settingsGamepad[s] = valueIndex;
+      }
+    });
+
+    localStorage.setItem("settingsGamepad", JSON.stringify(settingsGamepad));  // Save the updated gamepad settings back to localStorage
+
+    return true;  // Return true to indicate the operation was successful
+  }
+
+  /**
+   * Saves a keyboard setting to localStorage.
+   *
+   * @param setting - The keyboard setting to save.
+   * @param valueIndex - The index of the value to set for the keyboard setting.
+   * @returns `true` if the setting is successfully saved.
+   *
+   * @remarks
+   * This method initializes an empty object for keyboard settings if none exist in localStorage.
+   * It then updates the setting in the current scene and iterates over the default keyboard settings
+   * to update the specified setting with the new value. Finally, it saves the updated settings back
+   * to localStorage and returns `true` to indicate success.
+   */
+  public saveKeyboardSetting(setting: SettingKeyboard, valueIndex: integer): boolean {
+    let settingsKeyboard: object = {};  // Initialize an empty object to hold the keyboard settings
+
+    if (localStorage.hasOwnProperty("settingsKeyboard")) {  // Check if 'settingsKeyboard' exists in localStorage
+      settingsKeyboard = JSON.parse(localStorage.getItem("settingsKeyboard"));  // Parse the existing 'settingsKeyboard' from localStorage
+    }
+
+    setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
+
+    Object.keys(settingKeyboardDefaults).forEach(s => {  // Iterate over the default keyboard settings
+      if (s === setting) {// If the current setting matches, update its value
+        settingsKeyboard[s] = valueIndex;
+      }
+    });
+
+    localStorage.setItem("settingsKeyboard", JSON.stringify(settingsKeyboard));  // Save the updated keyboard settings back to localStorage
+
+    return true;  // Return true to indicate the operation was successful
+  }
+
   private loadSettings(): boolean {
     Object.values(Setting).map(setting => setting as Setting).forEach(setting => setSetting(this.scene, setting, settingDefaults[setting]));
 
@@ -576,6 +698,19 @@ export class GameData {
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting as Setting, settings[setting]);
+    }
+  }
+
+  private loadGamepadSettings(): boolean {
+    Object.values(SettingGamepad).map(setting => setting as SettingGamepad).forEach(setting => setSettingGamepad(this.scene, setting, settingGamepadDefaults[setting]));
+
+    if (!localStorage.hasOwnProperty("settingsGamepad")) {
+      return false;
+    }
+    const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad"));
+
+    for (const setting of Object.keys(settingsGamepad)) {
+      setSettingGamepad(this.scene, setting as SettingGamepad, settingsGamepad[setting]);
     }
   }
 
@@ -629,9 +764,9 @@ export class GameData {
       pokeballCounts: scene.pokeballCounts,
       money: scene.money,
       score: scene.score,
-      waveIndex: scene.currentBattle?.waveIndex,
-      battleType: scene.currentBattle?.battleType,
-      trainer: scene.currentBattle?.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle?.trainer) : null,
+      waveIndex: scene.currentBattle.waveIndex,
+      battleType: scene.currentBattle.battleType,
+      trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime()
     } as SessionSaveData;
@@ -652,7 +787,7 @@ export class GameData {
         }
       };
 
-      if (!LoginBypass.bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
+      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
         Utils.apiFetch(`savedata/session?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(async response => {
@@ -661,14 +796,14 @@ export class GameData {
               return resolve(null);
             }
 
-            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`, encrypt(response));
+            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`, encrypt(response, bypassLogin));
 
             await handleSessionData(response);
           });
       } else {
         const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
         if (sessionData) {
-          await handleSessionData(decrypt(sessionData));
+          await handleSessionData(decrypt(sessionData, bypassLogin));
         } else {
           return resolve(null);
         }
@@ -783,9 +918,9 @@ export class GameData {
     });
   }
 
-  deleteSession(slotId: integer, scene?: BattleScene): Promise<boolean> {
+  deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (LoginBypass.bypassLogin) {
+      if (bypassLogin) {
         localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
         return resolve(true);
       }
@@ -848,7 +983,7 @@ export class GameData {
 
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
-      if (LoginBypass.bypassLogin) {
+      if (bypassLogin) {
         localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
         return resolve([true, true]);
       }
@@ -934,10 +1069,10 @@ export class GameData {
         if (sync) {
           this.scene.ui.savingIcon.show();
         }
-        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`))) : this.getSessionSaveData(scene);
+        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
 
         const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`))) : this.getSystemSaveData();
+        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData();
 
         const request = {
           system: systemData,
@@ -946,12 +1081,13 @@ export class GameData {
           clientSessionId: clientSessionId
         };
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
+        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
 
-        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData)));
+        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
         console.debug("Session data saved");
-        if (!LoginBypass.bypassLogin && sync && !LoginBypass.isDisasterMode) {
+
+        if (!bypassLogin && sync) {
           Utils.apiPost("savedata/updateall", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
             .then(response => response.text())
             .then(error => {
@@ -971,10 +1107,6 @@ export class GameData {
                 return resolve(false);
               }
               resolve(true);
-            }).catch((error) => {
-              disasterRecoveryInstance.startInterval();
-              this.scene.ui.savingIcon.hide();
-              return resolve(true);
             });
         } else {
           this.verify().then(success => {
@@ -1003,7 +1135,7 @@ export class GameData {
         link.click();
         link.remove();
       };
-      if (!LoginBypass.bypassLogin && dataType < GameDataType.SETTINGS) {
+      if (!bypassLogin && dataType < GameDataType.SETTINGS) {
         Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
           .then(response => response.text())
           .then(response => {
@@ -1019,7 +1151,7 @@ export class GameData {
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
-          handleData(decrypt(data));
+          handleData(decrypt(data, bypassLogin));
         }
         resolve(!!data);
       }
@@ -1091,9 +1223,9 @@ export class GameData {
             this.scene.ui.revertMode();
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr));
+                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                if (!LoginBypass.bypassLogin && dataType < GameDataType.SETTINGS) {
+                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
                     if (!success) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
