@@ -2482,8 +2482,6 @@ export class MovePhase extends BattlePhase {
     });
 
     const doMove = () => {
-      const isDoubleBattle = this.scene.currentBattle.double;
-      const isEnemyPokemon = !this.pokemon.isPlayer();
       this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
 
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
@@ -2524,55 +2522,28 @@ export class MovePhase extends BattlePhase {
       const isDelayedAttack = (this.move.moveId === Moves.FUTURE_SIGHT || this.move.moveId === Moves.DOOM_DESIRE);
       if (isDelayedAttack) {
         // Check the player side arena if future sight is active
-        const futureSightTag = this.scene.arena.getTagOnOneSideOnly(ArenaTagType.FUTURE_SIGHT, isEnemyPokemon ? ArenaTagSide.PLAYER: ArenaTagSide.ENEMY);
-        const doomDesireTag = this.scene.arena.getTagOnOneSideOnly(ArenaTagType.DOOM_DESIRE, isEnemyPokemon ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-        console.log("Future sight tag:", futureSightTag);
-        console.log("Doom Desire tag:", doomDesireTag);
-        if (isDoubleBattle) {
-          let fail = false;
-          const currentTargetIndex = targets[0].getBattlerIndex();
-          const doubleFutureSightPlayed = futureSightTag.length === 2;
-          const doubleDoomDesirePlayed = doomDesireTag.length === 2;
-          if (futureSightTag.length > 0 && doomDesireTag.length > 0) {
-            // These cant be applied to the same mon, and we are in a double battle
-            // So we can fail right away
+        const futureSightTags = this.scene.arena.findTags(t => t.tagType ===  ArenaTagType.FUTURE_SIGHT);
+        const doomDesireTags = this.scene.arena.findTags(t => t.tagType === ArenaTagType.DOOM_DESIRE);
+        console.log("Future sight tag:", futureSightTags);
+        console.log("Doom Desire tag:", doomDesireTags);
+        let fail = false;
+        const currentTargetIndex = targets[0].getBattlerIndex();
+        for (const tag of futureSightTags) {
+          if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
             fail = true;
-          } else if (doubleFutureSightPlayed || doubleDoomDesirePlayed) {
-            // this means each opponent already has a delayed attack incoming
+            break;
+          }
+        }
+        for (const tag of doomDesireTags) {
+          if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
             fail = true;
-          } else if (futureSightTag.length === 1) {
-            // If we are trying to apply future sight to mon that already has
-            // incoming attack it should fail
-            const futureSightTarget = (futureSightTag[0] as DelayedAttackTag).targetIndex;
-            fail = futureSightTarget === currentTargetIndex;
-            // We also need to consider if doomDesire is in play, and if its targetting the current mon
-            if (doomDesireTag.length > 0) {
-              const doomDesireTarget = (doomDesireTag[0] as DelayedAttackTag).targetIndex;
-              fail = fail || doomDesireTarget === currentTargetIndex;
-            }
-          } else if (doomDesireTag.length === 1) {
-            // If we are trying to apply doom desire to mon that already has
-            // incoming attack it should fail
-            const doomDesireTarget = (doomDesireTag[0] as DelayedAttackTag).targetIndex;
-            fail = doomDesireTarget === currentTargetIndex;
-            // We also need to consider if futureSight is in play, and if its targetting the current mon
-            if (futureSightTag.length > 0) {
-              const futureSightTarget = (futureSightTag[0] as DelayedAttackTag).targetIndex;
-              fail = fail || futureSightTarget === currentTargetIndex;
-            }
+            break;
           }
-          if (fail) {
-            this.showMoveText();
-            this.showFailedText();
-            return this.end();
-          }
-        } else {
-          if ((futureSightTag.length > 0 || doomDesireTag.length > 0)) {
-            // Move has already been played, so we should fail
-            this.showMoveText();
-            this.showFailedText();
-            return this.end();
-          }
+        }
+        if (fail) {
+          this.showMoveText();
+          this.showFailedText();
+          return this.end();
         }
       }
 
@@ -2714,12 +2685,10 @@ export class MovePhase extends BattlePhase {
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
   protected targets: BattlerIndex[];
-  protected user: Pokemon;
 
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
     super(scene, battlerIndex);
     this.move = move;
-    this.user = this.getUserPokemon();
     // In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
     // with no party members available to switch in, then the right Pokemon takes the index
     // of the left Pokemon and gets hit unless this is checked.
@@ -2733,11 +2702,14 @@ export class MoveEffectPhase extends PokemonPhase {
   start() {
     super.start();
 
-    const user = this.user;
+    const user = this.getUserPokemon();
+    if (!user) {
+      return super.end();
+    }
     const targets = this.getTargets();
 
     const isDelayedAttack = (this.move.moveId === Moves.FUTURE_SIGHT || this.move.moveId === Moves.DOOM_DESIRE);
-    if (!user?.isOnField() && !(isDelayedAttack)) {
+    if (!user.isOnField() && !(isDelayedAttack)) {
       return super.end();
     }
 

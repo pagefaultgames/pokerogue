@@ -5,7 +5,7 @@ import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase, WeatherEffectPhase } from "../phases";
+import { CommonAnimPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
@@ -302,11 +302,9 @@ export class Arena {
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
 
     if (this.weather) {
-      this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
       this.scene.queueMessage(getWeatherStartMessage(weather));
     } else {
-      this.scene.tryRemovePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType);
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
     }
 
@@ -537,34 +535,17 @@ export class Arena {
   }
 
   addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
-    const existingTags = this.getTagOnOneSideOnly(tagType, side);
-    let isNewTag = true;
-    if (existingTags.length > 0) {
-      for (let i=0; i < existingTags.length; ++i) {
-        if (this.isTagEqual(newTag, existingTags[i])) {
-          existingTags[i].onOverlap(this);
-          isNewTag = false;
-        }
-      }
-      if (!isNewTag) {
-        return false;
-      }
+    const existingTag = this.getTagOnSide(tagType, side);
+    if (existingTag) {
+      existingTag.onOverlap(this);
+      return false;
     }
 
+    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
     this.tags.push(newTag);
     newTag.onAdd(this);
 
     return true;
-  }
-
-  isTagEqual(tag: ArenaTag, otherTag: ArenaTag): boolean {
-    return tag.tagType === otherTag.tagType &&
-           tag.turnCount === otherTag.turnCount &&
-           tag.sourceMove === otherTag.sourceMove &&
-           tag.sourceId === otherTag.sourceId &&
-           tag.side === otherTag.side &&
-           (tag as any)?.targetIndex === (otherTag as any)?.targetIndex;
   }
 
   getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
@@ -575,12 +556,6 @@ export class Arena {
     return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
-  }
-
-  getTagOnOneSideOnly(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag[] {
-    return typeof(tagType) === "string"
-      ? this.tags.filter(t => t.tagType === tagType && (t.side === side))
-      : this.tags.filter(t => t instanceof tagType && (t.side === side));
   }
 
   findTags(tagPredicate: (t: ArenaTag) => boolean): ArenaTag[] {
