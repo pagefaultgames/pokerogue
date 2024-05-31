@@ -221,7 +221,6 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
-      modifierSelectUiHandler: SimpleTranslationEntries;
     };
   }
 }
