@@ -18,29 +18,47 @@ import EggsToHatchCountContainer from "./ui/eggs-to-hatch-count-container";
  * Class that represents egg hatching
  */
 export class EggHatchPhase extends Phase {
+  /** The egg that is hatching */
   private egg: Egg;
 
+  /** The number of eggs that are hatching */
   private eggsToHatchCount: integer;
+  /** The container that lists how many eggs are hatching */
   private eggsToHatchCountContainer: EggsToHatchCountContainer;
 
+  /** The scene handler for egg hatching */
   private eggHatchHandler: EggHatchSceneHandler;
+  /** The phaser gameobject container that holds everything */
   private eggHatchContainer: Phaser.GameObjects.Container;
+  /** The phaser image that is the background */
   private eggHatchBg: Phaser.GameObjects.Image;
+  /** The phaser rectangle that overlays during the scene */
   private eggHatchOverlay: Phaser.GameObjects.Rectangle;
+  /** The phaser container that holds the egg */
   private eggContainer: Phaser.GameObjects.Container;
+  /** The phaser sprite of the egg */
   private eggSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite of the cracks in an egg */
   private eggCrackSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite that represents the overlaid light rays */
   private eggLightraysOverlay: Phaser.GameObjects.Sprite;
+  /** The phaser sprite of the hatched Pokemon */
   private pokemonSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite for shiny sparkles */
   private pokemonShinySparkle: Phaser.GameObjects.Sprite;
 
+  /** The {@link PokemonInfoContainer} of the newly hatched Pokemon */
   private infoContainer: PokemonInfoContainer;
 
+  /** The newly hatched {@link PlayerPokemon} */
   private pokemon: PlayerPokemon;
+  /** The index of which egg move is unlocked. 0-2 is common, 3 is rare */
   private eggMoveIndex: integer;
+  /** Internal booleans representing if the egg is hatched, able to be skipped, or skipped */
   private hatched: boolean;
   private canSkip: boolean;
   private skipped: boolean;
+  /** The sound effect being played when the egg is hatched */
   private evolutionBgm: AnySound;
 
   constructor(scene: BattleScene, egg: Egg, eggsToHatchCount: integer) {
@@ -120,7 +138,8 @@ export class EggHatchPhase extends Phase {
 
       this.eggHatchContainer.add(this.infoContainer);
 
-      const pokemon = this.generatePokemon(); // No idea why it's checking for fusion species since eggs should not generate fusions
+      // The game will try to unfuse any Pokemon even though eggs should not generate fused Pokemon in the first place
+      const pokemon = this.generatePokemon();
       if (pokemon.fusionSpecies) {
         pokemon.clearFusionSpecies();
       }
