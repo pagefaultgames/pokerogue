@@ -209,8 +209,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Überreste", description: "Heilt 1/16 der maximalen KP eines Pokémon pro Runde" },
     "SHELL_BELL": { name: "Muschelglocke", description: "Heilt den Anwender um 1/8 des von ihm zugefügten Schadens" },
 
-    "TOXIC_ORB": { name: "Toxic Orb", description: "Badly poisons its holder at the end of the turn if they do not have a status condition already" },
-    "FLAME_ORB": { name: "Flame Orb", description: "Burns its holder at the end of the turn if they do not have a status condition already" },
+    "TOXIC_ORB": { name: "Heiß-Orb", description: "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle" },
+    "FLAME_ORB": { name: "Toxik-Orb", description: "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle" },
 
     "BATON": { name: "Stab", description: "Ermöglicht das Weitergeben von Effekten beim Wechseln von Pokémon, wodurch auch Fallen umgangen werden." },
 
