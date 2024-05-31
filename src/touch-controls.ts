@@ -132,18 +132,26 @@ function preventElementZoom(element: HTMLElement): void {
   if (!element) {
     return;
   }
-  element.addEventListener("touchstart", (event) => {
+  element.addEventListener("touchstart", (event: TouchEvent) => {
+
+    if (!(event.currentTarget instanceof HTMLElement)) {
+      return;
+    }
+
     const currentTouchTimeStamp = event.timeStamp;
-    const previousTouchTimeStamp = event.currentTarget.dataset.lastTouchTimeStamp || currentTouchTimeStamp;
+    const previousTouchTimeStamp = Number(event.currentTarget.dataset.lastTouchTimeStamp) || currentTouchTimeStamp;
     const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
     const fingers = event.touches.length;
-    event.currentTarget.dataset.lastTouchTimeStamp = currentTouchTimeStamp;
+    event.currentTarget.dataset.lastTouchTimeStamp = String(currentTouchTimeStamp);
 
     if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
       return;
     } // not double-tap
 
     event.preventDefault();
-    event.target.click();
+
+    if (event.target instanceof HTMLElement) {
+      event.target.click();
+    }
   });
 }
