@@ -209,8 +209,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Restos", description: "Cura 1/16 de los PS máximo de un Pokémon cada turno" },
     "SHELL_BELL": { name: "Camp Concha", description: "Cura 1/8 del daño infligido por un Pokémon" },
 
-    "TOXIC_ORB": { name: "Toxiesfera", description: "Envenena gravemente al portador al final del turno si no está ya afectado por otro estado" },
-    "FLAME_ORB": { name: "Llamasfera", description: "Quema al portador al final del turno si no está ya afectado por otro estado" },
+    "TOXIC_ORB": { name: "Toxiesfera", description: "Extraña esfera que envenena gravemente a quien la usa en combate" },
+    "FLAME_ORB": { name: "Llamasfera", description: "Extraña esfera que causa quemaduras a quien la usa en combate" },
 
     "BATON": { name: "Baton", description: "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas" },
 
