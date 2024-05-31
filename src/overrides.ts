@@ -14,12 +14,11 @@ import { PokeballType } from "./data/pokeball";
 import {TimeOfDay} from "#app/data/enums/time-of-day";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
-import { ModifierTier } from "./modifier/modifier-tier";
-import { ModifierType, ModifierTypeOption, TmModifierType, ModifierTypeGenerator, modifierTypes } from "./modifier/modifier-type";
 
 /**
  * Overrides for testing different in game situations
  * if an override name starts with "STARTING", it will apply when a new run begins
+ * This file should only contain values for overrides, any functions that apply these overrides should be added to overrides-functions.ts
  */
 
 /**
@@ -134,56 +133,3 @@ export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-
-/**
- * Override applying methods
- */
-
-/**
- * Applies the Reward override amount if it is set. Used when getting the number of rewards to get for the post battle item screen.
- * @param currentAmount The unoverridden reward amount.
- * @returns The overridden reward amount, or currentAmount if REWARD_AMOUNT_OVERRIDE is 0.
- */
-export function tryOverridePostBattleRewardAmount(currentAmount:integer): integer {
-  if (REWARD_AMOUNT_OVERRIDE) {
-    currentAmount = REWARD_AMOUNT_OVERRIDE;
-  }
-
-  return currentAmount;
-}
-
-/**
-   * Applies the reward options overrides to the selected rewards, if there have been any set.
-   * @param options The current options list.
-   * @returns The options list with any options that have been overridden.
-   */
-export function tryOverridePostBattleRewardOptions(options: ModifierTypeOption[]): ModifierTypeOption[] {
-  if (REWARD_OVERRIDES) {
-    for (let i = 0; i < REWARD_OVERRIDES.length && i < options.length; i++) {
-      const name = REWARD_OVERRIDES[i].name;
-      let overriddenModifier: ModifierType = null;
-      // Special case for TMs since the other method will not work for TMs, particularly if we want it to have a specific move.
-      if (name.startsWith("TM")) {
-        if (REWARD_OVERRIDES[i].type) {
-          overriddenModifier = new TmModifierType(REWARD_OVERRIDES[i].type as Moves);
-        }
-      } else {
-        const modif: ModifierType = modifierTypes[name]();
-        if (modif instanceof ModifierTypeGenerator) {
-          overriddenModifier = modif.generateType(null, [REWARD_OVERRIDES[i].type]).withIdFromFunc(modifierTypes[name]);
-        } else {
-          overriddenModifier = modif.withIdFromFunc(modifierTypes[name]);
-        }
-      }
-
-      if (overriddenModifier) {
-        // A tier must be specified otherwise the pokeball will just show an open great ball.
-        // Since this is an override for testing purposes, just use common.
-        overriddenModifier.setTier(ModifierTier.COMMON);
-        options[i] = new ModifierTypeOption(overriddenModifier, 0);
-      }
-    }
-  }
-
-  return options;
-}
