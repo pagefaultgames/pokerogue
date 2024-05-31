@@ -5,6 +5,8 @@ import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
+import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { MoneyFormat } from "../enums/money-format";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
@@ -17,8 +19,12 @@ export enum Setting {
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
   Enable_Retries = "ENABLE_RETRIES",
+  Candy_Upgrade_Notification = "CANDY_UPGRADE_NOTIFICATION",
+  Candy_Upgrade_Display = "CANDY_UPGRADE_DISPLAY",
+  Money_Format = "MONEY_FORMAT",
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
+  Show_Moveset_Flyout = "SHOW_MOVESET_FLYOUT",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
   EXP_Gains_Speed = "EXP_GAINS_SPEED",
   EXP_Party_Display = "EXP_PARTY_DISPLAY",
@@ -40,28 +46,32 @@ export interface SettingDefaults {
 }
 
 export const settingOptions: SettingOptions = {
-  [Setting.Game_Speed]: ['1x', '1.25x', '1.5x', '2x', '2.5x', '3x', '4x', '5x'],
-  [Setting.Master_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
-  [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
-  [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
-  [Setting.Language]: ['English', 'Change'],
-  [Setting.Damage_Numbers]: ['Off', 'Simple', 'Fancy'],
-  [Setting.UI_Theme]: ['Default', 'Legacy'],
+  [Setting.Game_Speed]: ["1x", "1.25x", "1.5x", "2x", "2.5x", "3x", "4x", "5x"],
+  [Setting.Master_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : "Mute"),
+  [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : "Mute"),
+  [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : "Mute"),
+  [Setting.Language]: ["English", "Change"],
+  [Setting.Damage_Numbers]: ["Off", "Simple", "Fancy"],
+  [Setting.UI_Theme]: ["Default", "Legacy"],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
-  [Setting.Tutorials]: ['Off', 'On'],
-  [Setting.Enable_Retries]: ['Off', 'On'],
-  [Setting.Sprite_Set]: ['Consistent', 'Mixed Animated'],
-  [Setting.Move_Animations]: ['Off', 'On'],
-  [Setting.Show_Stats_on_Level_Up]: ['Off', 'On'],
-  [Setting.EXP_Gains_Speed]: ['Normal', 'Fast', 'Faster', 'Skip'],
-  [Setting.EXP_Party_Display]: ['Normal', 'Level Up Notification', 'Skip'],
-  [Setting.HP_Bar_Speed]: ['Normal', 'Fast', 'Faster', 'Instant'],
-  [Setting.Fusion_Palette_Swaps]: ['Off', 'On'],
-  [Setting.Player_Gender]: ['Boy', 'Girl'],
-  [Setting.Gamepad_Support]: ['Auto', 'Disabled'],
-  [Setting.Swap_A_and_B]: ['Enabled', 'Disabled'],
-  [Setting.Touch_Controls]: ['Auto', 'Disabled'],
-  [Setting.Vibration]: ['Auto', 'Disabled']
+  [Setting.Tutorials]: ["Off", "On"],
+  [Setting.Enable_Retries]: ["Off", "On"],
+  [Setting.Candy_Upgrade_Notification]: ["Off", "Passives Only", "On"],
+  [Setting.Candy_Upgrade_Display]: ["Icon", "Animation"],
+  [Setting.Money_Format]: ["Normal", "Abbreviated"],
+  [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
+  [Setting.Move_Animations]: ["Off", "On"],
+  [Setting.Show_Moveset_Flyout]: ["Off", "On"],
+  [Setting.Show_Stats_on_Level_Up]: ["Off", "On"],
+  [Setting.EXP_Gains_Speed]: ["Normal", "Fast", "Faster", "Skip"],
+  [Setting.EXP_Party_Display]: ["Normal", "Level Up Notification", "Skip"],
+  [Setting.HP_Bar_Speed]: ["Normal", "Fast", "Faster", "Instant"],
+  [Setting.Fusion_Palette_Swaps]: ["Off", "On"],
+  [Setting.Player_Gender]: ["Boy", "Girl"],
+  [Setting.Gamepad_Support]: ["Auto", "Disabled"],
+  [Setting.Swap_A_and_B]: ["Enabled", "Disabled"],
+  [Setting.Touch_Controls]: ["Auto", "Disabled"],
+  [Setting.Vibration]: ["Auto", "Disabled"]
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -75,8 +85,12 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
   [Setting.Enable_Retries]: 0,
+  [Setting.Candy_Upgrade_Notification]: 0,
+  [Setting.Candy_Upgrade_Display]: 0,
+  [Setting.Money_Format]: 0,
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
+  [Setting.Show_Moveset_Flyout]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
   [Setting.EXP_Gains_Speed]: 0,
   [Setting.EXP_Party_Display]: 0,
@@ -89,142 +103,184 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set];
+export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set, Setting.Candy_Upgrade_Display];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
-    case Setting.Game_Speed:
-      scene.gameSpeed = parseFloat(settingOptions[setting][value].replace('x', ''));
+  case Setting.Game_Speed:
+    scene.gameSpeed = parseFloat(settingOptions[setting][value].replace("x", ""));
+    break;
+  case Setting.Master_Volume:
+    scene.masterVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
+    scene.updateSoundVolume();
+    break;
+  case Setting.BGM_Volume:
+    scene.bgmVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
+    scene.updateSoundVolume();
+    break;
+  case Setting.SE_Volume:
+    scene.seVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
+    scene.updateSoundVolume();
+    break;
+  case Setting.Damage_Numbers:
+    scene.damageNumbersMode = value;
+    break;
+  case Setting.UI_Theme:
+    scene.uiTheme = value;
+    break;
+  case Setting.Window_Type:
+    updateWindowType(scene, parseInt(settingOptions[setting][value]));
+    break;
+  case Setting.Tutorials:
+    scene.enableTutorials = settingOptions[setting][value] === "On";
+    break;
+  case Setting.Enable_Retries:
+    scene.enableRetries = settingOptions[setting][value] === "On";
+    break;
+  case Setting.Candy_Upgrade_Notification:
+    if (scene.candyUpgradeNotification === value) {
       break;
-    case Setting.Master_Volume:
-      scene.masterVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
-      scene.updateSoundVolume();
+    }
+
+    scene.candyUpgradeNotification = value;
+    scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
+    break;
+  case Setting.Candy_Upgrade_Display:
+    scene.candyUpgradeDisplay = value;
+  case Setting.Money_Format:
+    switch (settingOptions[setting][value]) {
+    case "Normal":
+      scene.moneyFormat = MoneyFormat.NORMAL;
       break;
-    case Setting.BGM_Volume:
-      scene.bgmVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
-      scene.updateSoundVolume();
+    case "Abbreviated":
+      scene.moneyFormat = MoneyFormat.ABBREVIATED;
       break;
-    case Setting.SE_Volume:
-      scene.seVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
-      scene.updateSoundVolume();
-      break;
-    case Setting.Damage_Numbers:
-      scene.damageNumbersMode = value;
-      break;
-    case Setting.UI_Theme:
-      scene.uiTheme = value;
-      break;
-    case Setting.Window_Type:
-      updateWindowType(scene, parseInt(settingOptions[setting][value]));
-      break;
-    case Setting.Tutorials:
-      scene.enableTutorials = settingOptions[setting][value] === 'On';
-      break;
-    case Setting.Enable_Retries:
-      scene.enableRetries = settingOptions[setting][value] === 'On';
-      break;
-    case Setting.Sprite_Set:
-      scene.experimentalSprites = !!value;
-      if (value)
-        scene.initExpSprites();
-      break;
-    case Setting.Move_Animations:
-      scene.moveAnimations = settingOptions[setting][value] === 'On';
-      break;
-    case Setting.Show_Stats_on_Level_Up:
-      scene.showLevelUpStats = settingOptions[setting][value] === 'On';
-      break;
-    case Setting.EXP_Gains_Speed:
-      scene.expGainsSpeed = value;
-      break;
-    case Setting.EXP_Party_Display:
-      scene.expParty = value;
-      break;
-    case Setting.HP_Bar_Speed:
-      scene.hpBarSpeed = value;
-      break;
-    case Setting.Fusion_Palette_Swaps:
-      scene.fusionPaletteSwaps = !!value;
-      break;
-    case Setting.Player_Gender:
-      if (scene.gameData) {
-        const female = settingOptions[setting][value] === 'Girl';
-        scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
-        scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? 'm' : 'f', female ? 'f' : 'm'));
-      } else
-        return false;
-      break;
-    case Setting.Gamepad_Support:
-      // if we change the value of the gamepad support, we call a method in the inputController to
-      // activate or deactivate the controller listener
-      scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
-      break;
-    case Setting.Swap_A_and_B:
-      scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
-      break;
-    case Setting.Touch_Controls:
-      scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
-      const touchControls = document.getElementById('touchControls');
-      if (touchControls)
-        touchControls.classList.toggle('visible', scene.enableTouchControls);
-      break;
-    case Setting.Vibration:
-      scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
-      break;
-    case Setting.Language:
-      if (value) {
-        if (scene.ui) {
-          const cancelHandler = () => {
-            scene.ui.revertMode();
-            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Object.values(Setting).indexOf(Setting.Language), 0, true);
-          };
-          const changeLocaleHandler = (locale: string) => {
+    }
+    scene.updateMoneyText(false);
+    break;
+  case Setting.Sprite_Set:
+    scene.experimentalSprites = !!value;
+    if (value) {
+      scene.initExpSprites();
+    }
+    break;
+  case Setting.Move_Animations:
+    scene.moveAnimations = settingOptions[setting][value] === "On";
+    break;
+  case Setting.Show_Moveset_Flyout:
+    scene.showMovesetFlyout = settingOptions[setting][value] === "On";
+    break;
+  case Setting.Show_Stats_on_Level_Up:
+    scene.showLevelUpStats = settingOptions[setting][value] === "On";
+    break;
+  case Setting.EXP_Gains_Speed:
+    scene.expGainsSpeed = value;
+    break;
+  case Setting.EXP_Party_Display:
+    scene.expParty = value;
+    break;
+  case Setting.HP_Bar_Speed:
+    scene.hpBarSpeed = value;
+    break;
+  case Setting.Fusion_Palette_Swaps:
+    scene.fusionPaletteSwaps = !!value;
+    break;
+  case Setting.Player_Gender:
+    if (scene.gameData) {
+      const female = settingOptions[setting][value] === "Girl";
+      scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
+      scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
+    } else {
+      return false;
+    }
+    break;
+  case Setting.Gamepad_Support:
+    // if we change the value of the gamepad support, we call a method in the inputController to
+    // activate or deactivate the controller listener
+    scene.inputController.setGamepadSupport(settingOptions[setting][value] !== "Disabled");
+    break;
+  case Setting.Swap_A_and_B:
+    scene.abSwapped = settingOptions[setting][value] !== "Disabled";
+    break;
+  case Setting.Touch_Controls:
+    scene.enableTouchControls = settingOptions[setting][value] !== "Disabled" && hasTouchscreen();
+    const touchControls = document.getElementById("touchControls");
+    if (touchControls) {
+      touchControls.classList.toggle("visible", scene.enableTouchControls);
+    }
+    break;
+  case Setting.Vibration:
+    scene.enableVibration = settingOptions[setting][value] !== "Disabled" && hasTouchscreen();
+    break;
+  case Setting.Language:
+    if (value) {
+      if (scene.ui) {
+        const cancelHandler = () => {
+          scene.ui.revertMode();
+          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Object.values(Setting).indexOf(Setting.Language), 0, true);
+        };
+        const changeLocaleHandler = (locale: string): boolean => {
+          try {
             i18next.changeLanguage(locale);
-            localStorage.setItem('prLang', locale);
+            localStorage.setItem("prLang", locale);
             cancelHandler();
-            scene.reset(true, false, true);
-          };
-          scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-            options: [
-              {
-                label: 'English',
-                handler: () => changeLocaleHandler('en')
-              },
-              {
-                label: 'Español',
-                handler: () => changeLocaleHandler('es')
-              },
-              {
-                label: 'Italiano',
-                handler: () => changeLocaleHandler('it')
-              },
-              {
-                label: 'Français',
-                handler: () => changeLocaleHandler('fr')
-              },
-              {
-                label: 'Deutsch',
-                handler: () => changeLocaleHandler('de')
-              },
-              {
-                label: 'Português (BR)',
-                handler: () => changeLocaleHandler('pt_BR')
-              },
-              {
-                label: '简体中文',
-                handler: () => changeLocaleHandler('zh_CN')
-              },
-              {
-                label: 'Cancel',
-                handler: () => cancelHandler()
-              }
-            ],
-            maxOptions: 7
-          });
-          return false;
-        }
+            // Reload the whole game to apply the new locale since also some constants are translated
+            window.location.reload();
+            return true;
+          } catch (error) {
+            console.error("Error changing locale:", error);
+            return false;
+          }
+        };
+        scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          options: [
+            {
+              label: "English",
+              handler: () => changeLocaleHandler("en")
+            },
+            {
+              label: "Español",
+              handler: () => changeLocaleHandler("es")
+            },
+            {
+              label: "Italiano",
+              handler: () => changeLocaleHandler("it")
+            },
+            {
+              label: "Français",
+              handler: () => changeLocaleHandler("fr")
+            },
+            {
+              label: "Deutsch",
+              handler: () => changeLocaleHandler("de")
+            },
+            {
+              label: "Português (BR)",
+              handler: () => changeLocaleHandler("pt_BR")
+            },
+            {
+              label: "简体中文",
+              handler: () => changeLocaleHandler("zh_CN")
+            },
+            {
+              label: "繁體中文",
+              handler: () => changeLocaleHandler("zh_TW")
+            },
+            {
+              label: "한국어",
+              handler: () => changeLocaleHandler("ko")
+            },
+            {
+              label: "Cancel",
+              handler: () => cancelHandler()
+            }
+          ],
+          maxOptions: 7
+        });
+        return false;
       }
-      break;
+    }
+    break;
   }
 
   return true;

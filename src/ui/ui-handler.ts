@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { TextStyle, getTextColor } from "./text";
-import UI, { Mode } from "./ui";
+import { Mode } from "./ui";
 import {Button} from "../enums/buttons";
 
 export default abstract class UiHandler {
@@ -38,8 +38,9 @@ export default abstract class UiHandler {
 
   setCursor(cursor: integer): boolean {
     const changed = this.cursor !== cursor;
-    if (changed)
+    if (changed) {
       this.cursor = cursor;
+    }
 
     return changed;
   }
