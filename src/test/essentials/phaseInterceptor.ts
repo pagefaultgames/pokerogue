@@ -5,6 +5,7 @@ export default class PhaseInterceptor {
   public phases = {};
   public log;
   private onHold;
+  private interval;
 
   private PHASES = [
     [LoginPhase, this.startPhase],
@@ -20,12 +21,13 @@ export default class PhaseInterceptor {
     this.initPhases();
   }
 
-  run(phaseTarget, skipFn = ()=> false): Promise<void> {
+  run(phaseTarget, skipFn?): Promise<void> {
     return new Promise(async (resolve) => {
       this.waitUntil(phaseTarget, skipFn).then(() => {
         const currentPhase = this.onHold.shift();
         currentPhase.call();
-      }).finally(() => {
+        resolve();
+      }).catch(() => {
         resolve();
       });
     });
@@ -47,9 +49,11 @@ export default class PhaseInterceptor {
       this.interval = setInterval(() => {
         const currentPhase = this.onHold?.length && this.onHold[0] && this.onHold[0].name;
         if (currentPhase === phaseTarget.name) {
+          clearInterval(this.interval);
           return resolve();
         } else if (skipFn && skipFn()) {
-          reject();
+          clearInterval(this.interval);
+          return reject("Skipped phase");
         }
       }, 1000);
     });
@@ -73,38 +77,4 @@ export default class PhaseInterceptor {
       }
     });
   }
-
-
-  // loginPhase(phase){
-  //   this.log.push('loginPhase');
-  //   const instance = this.scene.getCurrentPhase();
-  //   this.onHold.push({
-  //     name: phase.name,
-  //     call: () => {
-  //       this.phases[phase.name].apply(instance);
-  //     }
-  //   });
-  // };
-  //
-  // titlePhase(phase){
-  //   this.log.push('titlePhase');
-  //   const instance = this.scene.getCurrentPhase();
-  //   this.onHold.push({
-  //     name: phase.name,
-  //     call: () => {
-  //       this.phases[phase.name].apply(instance);
-  //     }
-  //   });
-  // };
-  //
-  // encounterPhase(phase){
-  //   this.log.push('encounterPhase');
-  //   const instance = this.scene.getCurrentPhase();
-  //   this.onHold.push({
-  //     name: phase.name,
-  //     call: () => {
-  //       this.phases[phase.name].apply(instance);
-  //     }
-  //   });
-  // };
 }

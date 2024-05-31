@@ -306,9 +306,14 @@ describe("Phase interceptor", () => {
   it('test phase interceptor', async() => {
       game = new GameManager();
       await game.phaseInterceptor.run(LoginPhase);
+      await game.phaseInterceptor.run(LoginPhase, () => {
+        return game.phaseInterceptor.log.includes('LoginPhase');
+      });
       game.scene.gameData.gender = Gender.MALE;
       await game.phaseInterceptor.remove(SelectGenderPhase);
       await game.phaseInterceptor.run(TitlePhase);
+      await waitUntil(() => game.scene.ui?.getMode() === Mode.TITLE);
+      expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
       // game.newGame(GameModes.CLASSIC);
   }, 100000);
 });
