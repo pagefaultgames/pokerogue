@@ -956,6 +956,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     }
     return 3;
   }
+}
 
 export class PreserveBerryModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
