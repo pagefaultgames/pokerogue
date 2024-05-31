@@ -61,6 +61,8 @@ export class ModifierBar extends Phaser.GameObjects.Container {
       this.add(icon);
       this.setModifierIconPosition(icon, visibleIconModifiers.length);
       icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
+      icon.setData("name", modifier.type.name);
+      icon.setData("desc", modifier.type.getDescription(this.scene as BattleScene));
       icon.on("pointerover", () => {
         (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.getDescription(this.scene as BattleScene));
         if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {

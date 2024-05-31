@@ -38,6 +38,7 @@ import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import {Button} from "../enums/buttons";
 import i18next, {ParseKeys} from "i18next";
 import {PlayerGender} from "#app/system/game-data";
+import ModifierBarUiHandler from "./modifier-bar-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -68,7 +69,8 @@ export enum Mode {
   LOADING,
   SESSION_RELOAD,
   UNAVAILABLE,
-  OUTDATED
+  OUTDATED,
+  MODIFIER_INFO
 }
 
 const transitionModes = [
@@ -97,7 +99,8 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.MODIFIER_INFO
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -149,7 +152,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoadingModalUiHandler(scene),
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
-      new OutdatedModalUiHandler(scene)
+      new OutdatedModalUiHandler(scene),
+      new ModifierBarUiHandler(scene),
     ];
   }
 

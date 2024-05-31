@@ -250,8 +250,8 @@ export class InputsController {
     gamepadMapping[this.player.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
     gamepadMapping[this.player.SELECT] = Button.STATS;
     gamepadMapping[this.player.START] = Button.MENU;
-    gamepadMapping[this.player.RB] = Button.CYCLE_SHINY;
-    gamepadMapping[this.player.LB] = Button.CYCLE_FORM;
+    gamepadMapping[this.player.RB] = [Button.CYCLE_SHINY, Button.ENEMY_ITEM_INFO];
+    gamepadMapping[this.player.LB] = [Button.CYCLE_FORM, Button.ITEM_INFO];
     gamepadMapping[this.player.LT] = Button.CYCLE_GENDER;
     gamepadMapping[this.player.RT] = Button.CYCLE_ABILITY;
     gamepadMapping[this.player.RC_W] = Button.CYCLE_NATURE;
@@ -365,7 +365,9 @@ export class InputsController {
       [Button.CYCLE_NATURE]: [keyCodes.N],
       [Button.V]: [keyCodes.V],
       [Button.SPEED_UP]: [keyCodes.PLUS],
-      [Button.SLOW_DOWN]: [keyCodes.MINUS]
+      [Button.SLOW_DOWN]: [keyCodes.MINUS],
+      [Button.ITEM_INFO]: [keyCodes.O],
+      [Button.ENEMY_ITEM_INFO]: [keyCodes.P]
     };
     const mobileKeyConfig = new Map<string, ButtonKey>();
     for (const b of Utils.getEnumValues(Button)) {

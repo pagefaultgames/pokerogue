@@ -176,11 +176,11 @@ export default class BattleScene extends SceneBase {
   private scoreText: Phaser.GameObjects.Text;
   private luckLabelText: Phaser.GameObjects.Text;
   private luckText: Phaser.GameObjects.Text;
-  private modifierBar: ModifierBar;
-  private enemyModifierBar: ModifierBar;
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
+  public modifierBar: ModifierBar;
+  public enemyModifierBar: ModifierBar;
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
 

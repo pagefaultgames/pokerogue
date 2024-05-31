@@ -69,6 +69,8 @@ export class UiInputs {
       [Button.V]:   () => this.buttonCycleOption(Button.V),
       [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
+      [Button.ITEM_INFO]:       () => this.buttonModifierInfo(true),
+      [Button.ENEMY_ITEM_INFO]: () => this.buttonModifierInfo(false),
     };
     return actions;
   }
@@ -92,6 +94,8 @@ export class UiInputs {
       [Button.V]:               () => this.buttonInfo(false),
       [Button.SPEED_UP]:        () => undefined,
       [Button.SLOW_DOWN]:       () => undefined,
+      [Button.ITEM_INFO]:       () => this.revertButtonModifierInfo(),
+      [Button.ENEMY_ITEM_INFO]: () => this.revertButtonModifierInfo(),
     };
     return actions;
   }
@@ -163,6 +167,20 @@ export class UiInputs {
       this.scene.ui.processInput(button);
     } else if (button === Button.V) {
       this.buttonInfo(true);
+    }
+  }
+
+  buttonModifierInfo(player: boolean): void {
+    const mode = this.scene.ui?.getMode();
+    if (mode === Mode.FIGHT || mode === Mode.COMMAND) {
+      this.scene.ui.setOverlayMode(Mode.MODIFIER_INFO, player ? this.scene.modifierBar : this.scene.enemyModifierBar, player);
+    }
+  }
+
+  revertButtonModifierInfo(): void {
+    const mode = this.scene.ui?.getMode();
+    if (mode === Mode.MODIFIER_INFO) {
+      this.scene.ui.revertMode();
     }
   }
 
