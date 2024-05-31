@@ -271,7 +271,7 @@ export default class BattleScene extends SceneBase {
     (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
 
-    this.time.delayedCall(20, () => this.launchBattle());
+    this.launchBattle();
   }
 
   update() {
