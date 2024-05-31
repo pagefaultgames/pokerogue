@@ -98,7 +98,7 @@ export default class ModifierBarUiHandler extends UiHandler {
   }
 
   hideTooltip(): void {
-    this.modifierBar.remove(this.tooltipContainer);
+    this.scene.uiContainer.remove(this.tooltipContainer);
 
     this.tooltipContainer.setVisible(false);
     this.tooltipTitle.clearTint();
@@ -124,11 +124,22 @@ export default class ModifierBarUiHandler extends UiHandler {
     const desc = item.getData("desc");
     this.setupTooltip(name, desc);
 
-    const tx = this.cursorObj.getWorldTransformMatrix().getX(0, 0) + this.cursorObj.width * 2;
-    const reverse = tx >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-    this.tooltipContainer.setPosition(!reverse ? this.cursorObj.width : -this.tooltipBg.width, this.cursorObj.height);
+    const scale = this.scene.uiContainer.scale;
 
-    item.add(this.tooltipContainer);
+    const tx = item.getWorldTransformMatrix().getX(0, 0) + this.cursorObj.width * 2;
+    const ty = item.getWorldTransformMatrix().getY(0, 0) + this.cursorObj.height * 2;
+
+    const reverse = !this.player && (tx >= this.scene.game.canvas.width - this.tooltipBg.width * scale - 12);
+
+    const actualX = tx / scale;
+    const actualY = ty / scale;
+
+    const xOffset = reverse ? -this.tooltipBg.width - this.cursorObj.width / scale - 4 : 4;
+    const yOffset = 4;
+
+    this.tooltipContainer.setPosition(actualX + xOffset, actualY + yOffset);
+
+    this.scene.uiContainer.add(this.tooltipContainer);
     this.tooltipContainer.setVisible(true);
 
     this.cursor = index;
