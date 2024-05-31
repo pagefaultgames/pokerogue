@@ -51,8 +51,6 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
  * PLAYER OVERRIDES
  */
 
-// forms can be found in pokemon-species.ts
-export const STARTER_FORM_OVERRIDE: integer = 0;
 // default 5 or 20 for Daily
 export const STARTING_LEVEL_OVERRIDE: integer = 0;
 /**
@@ -62,6 +60,8 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
 export const STARTER_SPECIES_OVERRIDE: Species[] | integer[] = [0, 0, 0, 0, 0, 0];
+// forms can be found in pokemon-species.ts
+export const STARTER_FORM_OVERRIDE: integer[] = [0, 0, 0, 0, 0, 0];
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
