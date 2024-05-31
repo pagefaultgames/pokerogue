@@ -359,6 +359,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "I'll tune up for the next race."
     },
   },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "I'm seriously upset by your cold confusion!",
+      3: "I'm going to put on my fire-breathing shows!"
+    },
+    "victory": {
+      1: "If we only had it warmer.",
+      2: "I flamed out.",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
