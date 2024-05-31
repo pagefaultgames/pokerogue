@@ -11,6 +11,9 @@ import { Type } from "./data/type";
 import { Stat } from "./data/pokemon-stat";
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
+import {TimeOfDay} from "#app/data/enums/time-of-day";
+import { Gender } from "./data/gender";
+import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
 
 /**
