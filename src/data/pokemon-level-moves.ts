@@ -13665,6 +13665,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 70, Moves.HIGH_JUMP_KICK ],
   ],
   [Species.XURKITREE]: [
+    [ 1, Moves.TAIL_GLOW ],
     [ 1, Moves.WRAP ],
     [ 1, Moves.THUNDER_SHOCK ],
     [ 5, Moves.CHARGE ],
