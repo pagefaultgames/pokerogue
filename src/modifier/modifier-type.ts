@@ -1,6 +1,7 @@
 import * as Modifiers from "./modifier";
 import { AttackMove, allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
+import { Abilities } from "../data/enums/abilities";
 import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
@@ -1182,6 +1183,9 @@ export const modifierTypes = {
   LEFTOVERS: () => new PokemonHeldItemModifierType("modifierType:ModifierType.LEFTOVERS", "leftovers", (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
   SHELL_BELL: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SHELL_BELL", "shell_bell", (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
 
+  TOXIC_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.TOXIC_ORB", "toxic_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id)),
+  FLAME_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.FLAME_ORB", "flame_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id)),
+
   BATON: () => new PokemonHeldItemModifierType("modifierType:ModifierType.BATON", "stick", (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id)),
 
   SHINY_CHARM: () => new ModifierType("modifierType:ModifierType.SHINY_CHARM", "shiny_charm", (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
@@ -1247,7 +1251,12 @@ const modifierPool: ModifierPool = {
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
     new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
+      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
+        if (i instanceof Modifiers.TurnStatusEffectModifier) {
+          return (i as Modifiers.TurnStatusEffectModifier).getStatusEffect() === p.status.effect;
+        }
+        return false;
+      })).length, 3);
       return statusEffectPartyMemberCount * 6;
     }, 18),
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
@@ -1270,7 +1279,12 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.FULL_RESTORE, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
+      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
+        if (i instanceof Modifiers.TurnStatusEffectModifier) {
+          return (i as Modifiers.TurnStatusEffectModifier).getStatusEffect() === p.status.effect;
+        }
+        return false;
+      })).length, 3);
       const thresholdPartyMemberCount = Math.floor((Math.min(party.filter(p => (p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3) + statusEffectPartyMemberCount) / 2);
       return thresholdPartyMemberCount;
     }, 3),
@@ -1312,6 +1326,40 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
+    new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
+      let weight = 0;
+      const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.TOXIC || p.canSetStatus(StatusEffect.TOXIC, true, true))
+        && !p.hasAbility(Abilities.FLARE_BOOST)
+        && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
+      if (filteredParty.some(p => p.hasAbility(Abilities.TOXIC_BOOST) || p.hasAbility(Abilities.POISON_HEAL))) {
+        weight = 4;
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
+        weight = 2;
+      } else {
+        const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+        if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
+          weight = 1;
+        }
+      }
+      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 8 * weight);
+    }, 32),
+    new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
+      let weight = 0;
+      const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.BURN || p.canSetStatus(StatusEffect.BURN, true, true))
+        && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL)
+        && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
+      if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST))) {
+        weight = 4;
+      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
+        weight = 2;
+      } else {
+        const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+        if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
+          weight = 1;
+        }
+      }
+      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 8 * weight);
+    }, 32),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),

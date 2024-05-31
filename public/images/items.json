@@ -7400,7 +7400,49 @@
 						"w": 16,
 						"h": 16
 					}
-				}
+				},
+                {
+                    "filename": "toxic_orb",
+                    "rotated": false,
+                    "trimmed": true,
+                    "sourceSize": {
+                        "w": 32,
+                        "h": 32
+                    },
+                    "spriteSourceSize": {
+                        "x": 7,
+                        "y": 7,
+                        "w": 18,
+                        "h": 18
+                    },
+                    "frame": {
+                        "x": 379,
+                        "y": 274,
+                        "w": 18,
+                        "h": 18
+                    }
+                },
+                {
+                    "filename": "flame_orb",
+                    "rotated": false,
+                    "trimmed": true,
+                    "sourceSize": {
+                        "w": 32,
+                        "h": 32
+                    },
+                    "spriteSourceSize": {
+                        "x": 7,
+                        "y": 7,
+                        "w": 18,
+                        "h": 18
+                    },
+                    "frame": {
+                        "x": 379,
+                        "y": 292,
+                        "w": 18,
+                        "h": 18
+                    }
+                }
 			]
 		}
 	],
