@@ -199,14 +199,34 @@ describe("Session import/export", () => {
     console.log(data);
   }, 100000);
 
-  it.skip('test wave override', async() => {
+  it.skip('test wave override - 5 - trainer', async() => {
     vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
     vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(5);
     vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
     await game.newGame(scene, GameModes.CLASSIC);
-    expect(scene.currentBattle.waveIndex).toBe(30);
+    expect(scene.currentBattle.waveIndex).toBe(5);
+  }, 100000);
+
+  it.skip('test wave override - 8 - rival', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(8);
+    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
+    await game.newGame(scene, GameModes.CLASSIC);
+    expect(scene.currentBattle.waveIndex).toBe(8);
+  }, 100000);
+
+  it.skip('test wave override - 10 - boss', async() => {
+    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
+    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(10);
+    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
+    await game.newGame(scene, GameModes.CLASSIC);
+    expect(scene.currentBattle.waveIndex).toBe(10);
   }, 100000);
 
   it.skip('test double-battle', async() => {
@@ -248,17 +268,17 @@ describe("Session import/export", () => {
     expect(scene.currentBattle.enemyParty[1].hp).toBe(opponentLife2);
   }, 100000);
 
-  it.skip('test message mode wrapper', async() => {
-    vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(200);
-    vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
-    vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.SAND_ATTACK]);
-    vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-    await game.newGame(scene, GameModes.CLASSIC);
-    expect(scene.ui.getMode()).toBe(Mode.COMMAND);
-    await game.doAttackDouble(Moves.SAND_ATTACK, Moves.SAND_ATTACK);
-    expect(scene.currentBattle.double).toBe(true);
-  });
+  // it.skip('test message mode wrapper', async() => {
+  //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+  //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+  //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(200);
+  //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
+  //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.SAND_ATTACK]);
+  //   vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
+  //   await game.newGame(scene, GameModes.CLASSIC);
+  //   expect(scene.ui.getMode()).toBe(Mode.COMMAND);
+  //   await game.doAttackDouble(Moves.SAND_ATTACK, Moves.SAND_ATTACK);
+  //   expect(scene.currentBattle.double).toBe(true);
+  // });
 });
 
