@@ -32,6 +32,7 @@ import {
 } from "./dialogue";
 import { biome } from "./biome";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { pokemonForm } from "./pokemon-form";
 
 export const zhCnConfig = {
   ability: ability,
@@ -48,6 +49,7 @@ export const zhCnConfig = {
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,
+  pokemonForm: pokemonForm,
   pokemonInfo: pokemonInfo,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,

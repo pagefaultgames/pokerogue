@@ -1976,7 +1976,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           formText[i] = formText[i].charAt(0).toUpperCase() + formText[i].substring(1);
         }
 
-        this.pokemonFormText.setText(formText?.join(" "));
+        const speciesName = Species[species.speciesId].toLowerCase().split("_");
+        for (let i = 1; i < speciesName?.length; i++) {
+          speciesName[i] = speciesName[i].charAt(0).toUpperCase() + speciesName[i].substring(1);
+        }
+
+        switch (species.speciesId) {
+        case Species.ARCEUS:
+          this.pokemonFormText.setText(i18next.t(`pokemonInfo:Type.${formText?.join("").toUpperCase()}`));
+          break;
+        default:
+          this.pokemonFormText.setText(formText?.join("") ? i18next.t(`pokemonForm:${speciesName.join("")}${formText?.join("")}`) : "");
+          break;
+        }
 
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
