@@ -1201,48 +1201,72 @@ export class BoostHealAttr extends HealAttr {
   }
 }
 
+/**
+ * Heals user as a side effect of a move that hits a target.
+ * Healing is based on {@linkcode healRatio} * the amount of damage dealt or a stat of the target.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ * @see {@linkcode getUserBenefitScore}
+ */
 export class HitHealAttr extends MoveEffectAttr {
   private healRatio: number;
+  private message: string;
+  private healStat: Stat;
 
-  constructor(healRatio?: number) {
+  constructor(healRatio?: number, healStat?: Stat) {
     super(true, MoveEffectTrigger.HIT);
 
     this.healRatio = healRatio || 0.5;
+    this.healStat = healStat || null;
   }
-
+  /**
+   * Heals the user the determined amount and possibly displays a message about regaining health.
+   * If the target has the {@linkcode ReverseDrainAbAttr}, all healing is instead converted
+   * to damage to the user.
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const healAmount = Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1);
-    const reverseDrain = user.hasAbilityWithAttr(ReverseDrainAbAttr);
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      !reverseDrain ? healAmount : healAmount * -1,
-      !reverseDrain ? getPokemonMessage(target, " had its\nenergy drained!") : undefined,
-      false, true));
+    let healAmount = 0;
+    let message = "";
+    const reverseDrain = target.hasAbilityWithAttr(ReverseDrainAbAttr, false);
+    if (this.healStat) {
+      // Strength Sap formula
+      healAmount = target.getBattleStat(this.healStat);
+      message = i18next.t("battle:drainMessage", {pokemonName: target.name});
+    } else {
+      // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
+      healAmount = Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1);
+      message = i18next.t("battle:regainHealth", {pokemonName: user.name});
+    }
     if (reverseDrain) {
       user.turnData.damageTaken += healAmount;
+      healAmount = healAmount * -1;
+      message = null;
     }
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(), healAmount, message, false, true));
     return true;
   }
 
+  /**
+   * Used by the Enemy AI to rank an attack based on a given user
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @returns an integer. Higher means enemy is more likely to use that move.
+   */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * ((move.power / 5) / 4));
+    if (this.healStat) {
+      const healAmount = target.getBattleStat(this.healStat);
+      return Math.floor(Math.max(0, (Math.min(1, (healAmount+user.hp)/user.getMaxHp() - 0.33))) / user.getHpRatio());
+    }
+    return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * (move.power / 4));
   }
 }
 
-export class StrengthSapHealAttr extends MoveEffectAttr {
-  constructor() {
-    super(true, MoveEffectTrigger.HIT);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const healAmount = target.stats[Stat.ATK] * (Math.max(2, 2 + target.summonData.battleStats[BattleStat.ATK]) / Math.max(2, 2 - target.summonData.battleStats[BattleStat.ATK]));
-    const reverseDrain = user.hasAbilityWithAttr(ReverseDrainAbAttr);
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      !reverseDrain ? healAmount : healAmount * -1,
-      !reverseDrain ? getPokemonMessage(user, " regained\nhealth!") : undefined,
-      false, true));
-    return true;
-  }
-}
 /**
  * Attribute used for moves that change priority in a turn given a condition,
  * e.g. Grassy Glide
@@ -6918,7 +6942,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
-      .attr(StrengthSapHealAttr)
+      .attr(HitHealAttr, null, Stat.ATK)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
       .triageMove(),
