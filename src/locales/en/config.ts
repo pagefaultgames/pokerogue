@@ -1,5 +1,6 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { achv } from "./achv";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { egg } from "./egg";
@@ -36,6 +37,7 @@ import { pokemonInfoContainer } from "./pokemon-info-container";
 export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  achv: achv,
   battle: battle,
   commandUiHandler: commandUiHandler,
   egg: egg,

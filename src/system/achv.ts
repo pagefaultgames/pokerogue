@@ -2,6 +2,7 @@ import { Modifier } from "typescript";
 import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
+import i18next from "i18next";
 
 export enum AchvTier {
   COMMON,
@@ -132,7 +133,7 @@ export class PrestigeAchv extends Achv {
     const iconBadgeGen = Math.floor((prestigeLevel - 1) / 8) + 1;
     const iconImage = `badge_gen${iconBadgeGen}_${iconBadgeNumber}`;
 
-    super(`Prestige ${prestigeLevel}`, `Complete Prestige ${prestigeLevel}`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.prestigeLevel >= prestigeLevel);
+    super(i18next.t("achv:prestige_victory.name", { level: prestigeLevel }), i18next.t("achv:prestige_victory.description", { level: prestigeLevel }), iconImage, score, (scene: BattleScene, _args: any[]) => scene.prestigeLevel >= prestigeLevel);
   }
 }
 
