@@ -82,6 +82,22 @@ export interface DialogueTranslationEntries {
   [trainertype: string]: DialogueTranslationCategory;
 }
 
+export interface PrestigeOperationTranslationEntries {
+  add: {
+    "+": string,
+    "-": string
+  },
+  multiply: {
+    "+": string,
+    "-": string
+  }
+}
+
+export interface PrestigeTranslationEntries {
+  attributes: SimpleTranslationEntries,
+  operations: PrestigeOperationTranslationEntries
+}
+
 
 export interface Localizable {
   localize(): void;
@@ -231,6 +247,7 @@ declare module "i18next" {
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
       achv: AchvTranslationEntries;
+      prestige: SimpleTranslationEntries;
     };
   }
 }

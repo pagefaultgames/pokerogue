@@ -14,6 +14,7 @@ import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
+import { prestige } from "./prestige";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
@@ -51,6 +52,7 @@ export const enConfig = {
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
+  prestige: prestige,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,

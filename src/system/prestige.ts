@@ -1,21 +1,22 @@
 import { Stat } from "#app/data/pokemon-stat";
+import i18next from "i18next";
 
 export enum PrestigeModifierAttribute {
-  WILD_POKEMON_ATTACK,
-  WILD_POKEMON_DEFENSE,
-  WILD_POKEMON_SPEED,
-  TRAINER_POKEMON_ATTACK,
-  TRAINER_POKEMON_DEFENSE,
-  TRAINER_POKEMON_SPEED,
-  SHOP_ITEM_PRICES,
-  POKEMON_EXP_GAIN,
-  PARTY_LUCK,
-  STARTER_PARTY_POINTS
+  WILD_POKEMON_ATTACK = "wild_pokemon_attack",
+  WILD_POKEMON_DEFENSE = "wild_pokemon_defense",
+  WILD_POKEMON_SPEED = "wild_pokemon_speed",
+  TRAINER_POKEMON_ATTACK = "trainer_pokemon_attack",
+  TRAINER_POKEMON_DEFENSE = "trainer_pokemon_defense",
+  TRAINER_POKEMON_SPEED = "trainer_pokemon_speed",
+  SHOP_ITEM_PRICES = "shop_item_prices",
+  POKEMON_EXP_GAIN = "pokemon_exp_gain",
+  PARTY_LUCK = "party_luck",
+  STARTER_PARTY_POINTS = "start_party_points"
 }
 
 enum PrestigeModifierOperation {
-  ADD,
-  MULTIPLY
+  ADD = "add",
+  MULTIPLY = "multiply"
 }
 
 class PrestigeModifier {
@@ -38,61 +39,95 @@ const PRESTIGE_MODIFIERS: PrestigeModifier[][] = [
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.05),
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.05),
     new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -2)
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -1)
   ],
   // Level 2
   [
-    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -1)
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.05),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.05),
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -1),
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -2)
   ],
   // Level 3
   [
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.05),
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.05),
-    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.9)
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.2),
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.9),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -2),
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -3)
   ],
   // Level 4
   [
-    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.2)
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.15),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.15),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.9),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -2),
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -4)
   ],
   // Level 5
   [
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.2),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.2),
     new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.2),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.2),
     new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
-    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -2)
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.9),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -3),
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -5)
   ],
   // Level 6
   [
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.2),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.2),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.2),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.2),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.3),
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.5),
     new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.85),
-    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -3)
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -4),
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -6)
   ],
   // Level 7
   [
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1)
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.4),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.4),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.4),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.45),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.45),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.45),
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.5),
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.85),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -5),
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -7)
   ],
   // Level 8
   [
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.1),
-    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 2),
-    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.4),
-    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.8),
-    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -4),
-    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -4)
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.6),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.6),
+    new PrestigeModifier(PrestigeModifierAttribute.WILD_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.8),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK, PrestigeModifierOperation.MULTIPLY, 1.6),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE, PrestigeModifierOperation.MULTIPLY, 1.6),
+    new PrestigeModifier(PrestigeModifierAttribute.TRAINER_POKEMON_SPEED, PrestigeModifierOperation.MULTIPLY, 1.8),
+    new PrestigeModifier(PrestigeModifierAttribute.SHOP_ITEM_PRICES, PrestigeModifierOperation.MULTIPLY, 1.8),
+    new PrestigeModifier(PrestigeModifierAttribute.POKEMON_EXP_GAIN, PrestigeModifierOperation.MULTIPLY, 0.75),
+    new PrestigeModifier(PrestigeModifierAttribute.PARTY_LUCK, PrestigeModifierOperation.ADD, -6),
+    new PrestigeModifier(PrestigeModifierAttribute.STARTER_PARTY_POINTS, PrestigeModifierOperation.ADD, -8)
   ]
 ];
-
-class PrestigeModifierNameNotImplementedError extends Error {
-  constructor(attribute: PrestigeModifierAttribute) {
-    super(`Attribute ${attribute} is not implemented`);
-  }
-}
 
 export abstract class Prestige {
   public static readonly MAX_LEVEL = PRESTIGE_MODIFIERS.length - 1;
@@ -109,7 +144,7 @@ export abstract class Prestige {
     if (prestigeLevel === 0) {
       return value;
     }
-    return this.getModifiersUntil(prestigeLevel)
+    return this.getModifiersForLevel(prestigeLevel)
       .filter(modifier => modifier.attribute === attribute)
       .reduce((acc, modifier) => {
         switch (modifier.operation) {
@@ -127,9 +162,8 @@ export abstract class Prestige {
    * @param prestigeLevel
    * @returns the description
    */
-  public static getLevelDescriptionsUntil(prestigeLevel: integer): string[] {
-    const modifiers = this.compileModifiers(this.getModifiersUntil(prestigeLevel));
-    return this.getDescriptionsForModifiers(modifiers);
+  public static getLevelDescriptionsForLevel(prestigeLevel: integer): string[] {
+    return this.getDescriptionsForModifiers(this.getModifiersForLevel(prestigeLevel));
   }
 
   /**
@@ -155,39 +189,13 @@ export abstract class Prestige {
   }
 
   /**
-   * Get the modifiers until the given prestige level
+   * Get the modifiers for the given prestige level
    *
    * @param prestigeLevel
    * @returns the modifiers
    */
-  private static getModifiersUntil(prestigeLevel: integer): PrestigeModifier[] {
-    return PRESTIGE_MODIFIERS.slice(0, Math.min(prestigeLevel + 1, this.MAX_LEVEL + 1)).flat();
-  }
-
-  /**
-   * Compile the modifiers together to avoid attribute duplicates
-   *
-   * @param modifiers
-   * @returns the compiled modifiers
-   */
-  private static compileModifiers(modifiers: PrestigeModifier[]): PrestigeModifier[] {
-    return modifiers.reduce((acc, modifier) => {
-      if (acc.some(m => m.attribute === modifier.attribute && m.operation === modifier.operation)) {
-        return acc.map(m => {
-          if (m.attribute === modifier.attribute) {
-            switch (modifier.operation) {
-            case PrestigeModifierOperation.ADD:
-              return new PrestigeModifier(m.attribute, m.operation, m.value + modifier.value);
-            case PrestigeModifierOperation.MULTIPLY:
-              return new PrestigeModifier(m.attribute, m.operation, m.value * modifier.value);
-            }
-          }
-          return m;
-        });
-      } else {
-        return [...acc, modifier];
-      }
-    }, []);
+  private static getModifiersForLevel(prestigeLevel: integer): PrestigeModifier[] {
+    return PRESTIGE_MODIFIERS[Math.min(Math.max(prestigeLevel, 1), this.MAX_LEVEL)];
   }
 
   /**
@@ -197,11 +205,16 @@ export abstract class Prestige {
    * @returns the descriptions
    */
   private static getDescriptionsForModifiers(modifiers: PrestigeModifier[]): string[] {
-    return modifiers.sort((a, b) => a.attribute - b.attribute)
-      .map(modifier => this.getDescriptionForModifier(modifier))
+    return modifiers.map(modifier => this.getDescriptionForModifier(modifier))
       .filter(description => description !== undefined);
   }
 
+  /**
+   * Get the description for the given modifier
+   *
+   * @param modifier
+   * @returns the description
+   */
   private static getDescriptionForModifier(modifier: PrestigeModifier): string | undefined {
     switch (modifier.operation) {
     case PrestigeModifierOperation.ADD:
@@ -210,9 +223,9 @@ export abstract class Prestige {
       }
       const roundedValue = Math.abs(Math.round(modifier.value));
       if (modifier.value > 0) {
-        return `${this.getModifierAttributeName(modifier.attribute)} + ${roundedValue}`;
+        return i18next.t(`prestige:attributes.${modifier.attribute}`, { modifier: i18next.t(`prestige:operations.${modifier.operation}.+`, { value: roundedValue }) });
       } else if (modifier.value < 0) {
-        return `${this.getModifierAttributeName(modifier.attribute)} - ${roundedValue} `;
+        return i18next.t(`prestige:attributes.${modifier.attribute}`, { modifier: i18next.t(`prestige:operations.${modifier.operation}.-`, { value: roundedValue }) });
       }
     case PrestigeModifierOperation.MULTIPLY:
       if (modifier.value === 1) {
@@ -220,44 +233,10 @@ export abstract class Prestige {
       }
       const roundedPercentageValue = Math.abs(Math.round((modifier.value - 1) * 100));
       if (modifier.value > 1) {
-        return `${this.getModifierAttributeName(modifier.attribute)} + ${roundedPercentageValue}%`;
+        return i18next.t(`prestige:attributes.${modifier.attribute}`, { modifier: i18next.t(`prestige:operations.${modifier.operation}.+`, { value: roundedPercentageValue }) });
       } else if (modifier.value < 1) {
-        return `${this.getModifierAttributeName(modifier.attribute)} - ${roundedPercentageValue}%`;
+        return i18next.t(`prestige:attributes.${modifier.attribute}`, { modifier: i18next.t(`prestige:operations.${modifier.operation}.-`, { value: roundedPercentageValue }) });
       }
-    }
-  }
-
-  /**
-   * Get the attribute name for the given attribute
-   *
-   * @param attribute
-   * @throws PrestigeModifierNameNotImplementedError if the attribute is not implemented
-   * @returns the attribute name
-   */
-  private static getModifierAttributeName(attribute: PrestigeModifierAttribute): string {
-    switch (attribute) {
-    case PrestigeModifierAttribute.WILD_POKEMON_ATTACK:
-      return "Wild Pokémon Attack";
-    case PrestigeModifierAttribute.WILD_POKEMON_DEFENSE:
-      return "Wild Pokémon Defense";
-    case PrestigeModifierAttribute.WILD_POKEMON_SPEED:
-      return "Wild Pokémon Speed";
-    case PrestigeModifierAttribute.TRAINER_POKEMON_ATTACK:
-      return "Trainer Pokémon Attack";
-    case PrestigeModifierAttribute.TRAINER_POKEMON_DEFENSE:
-      return "Trainer Pokémon Defense";
-    case PrestigeModifierAttribute.TRAINER_POKEMON_SPEED:
-      return "Trainer Pokémon Speed";
-    case PrestigeModifierAttribute.SHOP_ITEM_PRICES:
-      return "Shop Item Prices";
-    case PrestigeModifierAttribute.POKEMON_EXP_GAIN:
-      return "Pokémon Exp. Gain";
-    case PrestigeModifierAttribute.PARTY_LUCK:
-      return "Party Luck";
-    case PrestigeModifierAttribute.STARTER_PARTY_POINTS:
-      return "Starter Party Points";
-    default:
-      throw new PrestigeModifierNameNotImplementedError(attribute);
     }
   }
 }

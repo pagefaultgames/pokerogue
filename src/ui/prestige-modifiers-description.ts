@@ -32,7 +32,7 @@ export class PrestigeModifiersDescription extends Phaser.GameObjects.Container {
       this.descriptionContainer.add(addTextObject(this.scene, 0, 0, "No modifiers", TextStyle.WINDOW, { fontSize: "74px" }));
       return;
     }
-    const descriptions = Prestige.getLevelDescriptionsUntil(prestigeLevel);
+    const descriptions = Prestige.getLevelDescriptionsForLevel(prestigeLevel);
     this.descriptionContainer.removeAll(true);
     if (descriptions.length === 0) {
       this.descriptionContainer.add(addTextObject(this.scene, 0, 0, "No modifiers", TextStyle.WINDOW, { fontSize: "74px" }));
