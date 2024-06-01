@@ -135,12 +135,12 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     // The font size should be set by language
     const infoContainerTextSize = textSettings?.infoContainerTextSize || "64px";
 
-    this.pokemonGenderLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, i18next.t("pokemonInfoContainer:gender"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonGenderLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, i18next.t("pokemonInfoContainer:form"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderLabelText.setOrigin(1, 0);
     this.pokemonGenderLabelText.setVisible(false);
     this.add(this.pokemonGenderLabelText);
 
-    this.pokemonGenderText = addTextObject(this.scene, infoContainerTextXPos, 18, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonGenderText = addTextObject(this.scene, -42, -61, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderText.setOrigin(0, 0);
     this.pokemonGenderText.setVisible(false);
     this.add(this.pokemonGenderText);
@@ -185,7 +185,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderLabelText.setVisible(true);
         this.pokemonGenderText.setVisible(true);
 
-        this.pokemonGenderNewText = addTextObject(this.scene, -8, 18, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonGenderText object
+        this.pokemonGenderNewText = addTextObject(this.scene, -36, -61, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonGenderText object
         this.pokemonGenderNewText.setOrigin(0, 0);
         this.add(this.pokemonGenderNewText);
 
