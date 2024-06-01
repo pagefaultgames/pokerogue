@@ -5,6 +5,8 @@ interface ImportMetaEnv {
     readonly VITE_BYPASS_TUTORIAL?: string;
     readonly VITE_API_BASE_URL?: string;
     readonly VITE_SERVER_URL?: string;
+    readonly VITE_DISCORD_CLIENT_ID?: string;
+    readonly VITE_GOOGLE_CLIENT_ID?: string;
 }
 
 interface ImportMeta {

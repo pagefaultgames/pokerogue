@@ -6,7 +6,7 @@ import { addWindow } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { updateUserInfo } from "../account";
+import { loggedInUser, updateUserInfo } from "../account";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
@@ -21,7 +21,7 @@ export enum MenuOptions {
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
-  LOG_OUT
+  LOG_OUT,
 }
 
 const wikiUrl = "https://wiki.pokerogue.net/start";
@@ -303,6 +303,51 @@ export default class MenuUiHandler extends MessageUiHandler {
         success = true;
         break;
       case MenuOptions.MANAGE_DATA:
+        if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
+          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
+            {
+              label: loggedInUser.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
+              handler: () => {
+                if (loggedInUser?.discordId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${Utils.serverUrl}/auth/discord/callback`);
+                  const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+                  const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}`;
+                  window.open(discordUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            },
+            {
+              label: loggedInUser?.googleId === "" ? i18next.t("menuUiHandler:linkGoogle") : i18next.t("menuUiHandler:unlinkGoogle"),
+              handler: () => {
+                if (loggedInUser?.googleId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${Utils.serverUrl}/auth/google/callback`);
+                  const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                  const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
+                  window.open(googleUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            });
+        }
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
         success = true;
         break;
