@@ -1662,7 +1662,6 @@ export class DownloadAbAttr extends PostSummonAbAttr {
   private enemySpDef: integer;
   private enemyCountTally: integer;
   private stats: BattleStat[];
-  private opponents: Pokemon[];
 
   // TODO: Implement the Substitute feature(s) once move is implemented.
   /**
@@ -1678,17 +1677,13 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     this.enemySpDef = 0;
     this.enemyCountTally = 0;
 
-    this.opponents = pokemon.getOpponents();
-
-    if (this.opponents[0].summonData !== undefined && this.opponents[0].summonData.battleStats[Stat.HP] > 0) {
-      for (const opponent of this.opponents) {
-        this.enemyCountTally++;
-        this.enemyDef += opponent.getBattleStat(Stat.DEF);
-        this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
-      }
-      this.enemyDef = Math.round(this.enemyDef / this.enemyCountTally);
-      this.enemySpDef = Math.round(this.enemySpDef / this.enemyCountTally);
+    for (const opponent of pokemon.getOpponents()) {
+      this.enemyCountTally++;
+      this.enemyDef += opponent.getBattleStat(Stat.DEF);
+      this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
     }
+    this.enemyDef = Math.round(this.enemyDef / this.enemyCountTally);
+    this.enemySpDef = Math.round(this.enemySpDef / this.enemyCountTally);
 
     if (this.enemyDef < this.enemySpDef) {
       this.stats = [BattleStat.ATK];
