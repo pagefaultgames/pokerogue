@@ -20,6 +20,7 @@ import * as Utils from "#app/utils";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import {MockClock} from "#app/test/essentials/mocks/mockClock";
 import BattleScene from "#app/battle-scene.js";
+import {AnimConfig, BattleAnim, MoveAnim} from "#app/data/battle-anims";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -60,6 +61,9 @@ export default class GameWrapper {
     this.game = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
+    MoveAnim.prototype.getAnim = () => ({
+      frames: {},
+    })
     localStorage.clear();
   }
 

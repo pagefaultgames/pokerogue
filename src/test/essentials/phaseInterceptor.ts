@@ -6,7 +6,7 @@ import {
   LoginPhase, MessagePhase, MoveEffectPhase, MoveEndPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
   PostSummonPhase,
   SelectGenderPhase, SelectModifierPhase,
-  SelectStarterPhase, ShowAbilityPhase,
+  SelectStarterPhase, ShowAbilityPhase, SummonPhase,
   TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, VictoryPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
@@ -27,6 +27,7 @@ export default class PhaseInterceptor {
     [EncounterPhase, this.startPhase],
     [SelectStarterPhase, this.startPhase],
     [PostSummonPhase, this.startPhase],
+    [SummonPhase, this.startPhase],
     [ToggleDoublePositionPhase, this.startPhase],
     [CheckSwitchPhase, this.startPhase],
     [ShowAbilityPhase, this.startPhase],

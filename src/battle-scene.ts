@@ -939,6 +939,9 @@ export default class BattleScene extends SceneBase {
     if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
       newDouble = true;
     }
+    if (Overrides.SINGLE_BATTLE_OVERRIDE) {
+      newDouble = false;
+    }
 
     const lastBattle = this.currentBattle;
 

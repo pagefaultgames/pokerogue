@@ -5,7 +5,7 @@ import {
   CheckSwitchPhase,
   CommandPhase,
   EncounterPhase, LoginPhase, MessagePhase, PostSummonPhase, SelectGenderPhase,
-  SelectStarterPhase, ShowAbilityPhase, TitlePhase, ToggleDoublePositionPhase, TurnInitPhase,
+  SelectStarterPhase, ShowAbilityPhase, SummonPhase, TitlePhase, ToggleDoublePositionPhase, TurnInitPhase,
 } from "#app/phases";
 import {Command} from "#app/ui/command-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
@@ -66,6 +66,7 @@ export default class GameManager {
       });
       await this.phaseInterceptor.run(EncounterPhase);
       await this.phaseInterceptor.run(PostSummonPhase); // stuck here sometime
+      await this.phaseInterceptor.run(SummonPhase);
       await this.phaseInterceptor.run(ToggleDoublePositionPhase);
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);

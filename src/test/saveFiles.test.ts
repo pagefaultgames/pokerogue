@@ -9,7 +9,7 @@ import * as overrides from '../overrides';
 import {Command} from "#app/ui/command-ui-handler";
 import {
   BattleEndPhase,
-  BerryPhase,
+  BerryPhase, CheckSwitchPhase,
   CommandPhase,
   DamagePhase,
   EggLapsePhase,
@@ -24,9 +24,9 @@ import {
   PostSummonPhase,
   SelectGenderPhase,
   SelectModifierPhase,
-  SelectStarterPhase,
+  SelectStarterPhase, ShowAbilityPhase, SummonPhase,
   TitlePhase, ToggleDoublePositionPhase,
-  TurnEndPhase,
+  TurnEndPhase, TurnInitPhase,
   TurnStartPhase,
   VictoryPhase,
 } from "#app/phases";
@@ -373,30 +373,32 @@ describe("Phase interceptor", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000)
 
-  it.skip('do attack wave 3 - regular', async() => {
+  it('do attack wave 3 - single battle - regular - OHKO', async() => {
       vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
       vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
       vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(2000);
       vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(3);
-      vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
+      vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
+        vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
       await game.newGame(GameModes.CLASSIC);
       game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
         game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
       });
       game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-        const movePosition = getMovePosition(game.scene, 0, Moves.AURA_SPHERE);
+        const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
       await game.phaseInterceptor.run(EnemyCommandPhase);
       await game.phaseInterceptor.run(TurnStartPhase);
+
       await game.phaseInterceptor.run(MovePhase);
       await game.phaseInterceptor.run(MessagePhase);
       await game.phaseInterceptor.run(MoveEffectPhase);
       await game.phaseInterceptor.run(DamagePhase);
-      await game.phaseInterceptor.run(MessagePhase);
+      await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(FaintPhase));
       await game.phaseInterceptor.run(FaintPhase);
       await game.phaseInterceptor.run(MessagePhase);
-      // almost, but from here, it's not yet working
+
       await game.phaseInterceptor.run(VictoryPhase);
       await game.phaseInterceptor.run(MoveEndPhase);
       await game.phaseInterceptor.run(MovePhase);
@@ -409,31 +411,54 @@ describe("Phase interceptor", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
   }, 100000);
 
-    it('ok', async() => {
-        vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-        vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-        vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(2000);
-        vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(3);
-        vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-        vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-        await game.phaseInterceptor.run(LoginPhase);
-        game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-          game.scene.gameData.gender = PlayerGender.MALE;
-          game.endPhase();
-        });
-        await game.phaseInterceptor.run(SelectGenderPhase, () => game.isCurrentPhase(TitlePhase));
-        await game.phaseInterceptor.run(TitlePhase);
-        game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-          const starters = generateStarter(game.scene);
-          const selectStarterPhase = new SelectStarterPhase(game.scene, GameModes.CLASSIC);
-          game.scene.pushPhase(new EncounterPhase(game.scene, false));
-          selectStarterPhase.initBattle(starters);
-        });
-        await game.phaseInterceptor.run(EncounterPhase);
-        await game.phaseInterceptor.run(PostSummonPhase);
-        // need to handle double fight !
-        await game.phaseInterceptor.whenAboutToRun(ToggleDoublePositionPhase);
-        expect(game.scene.getCurrentPhase().constructor.name).toBe(ToggleDoublePositionPhase.name);
-    }, 50000);
+  it('do attack wave 3 - double battle - regular - OHKO', async() => {
+      vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
+      vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
+      vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(2000);
+      vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(3);
+      vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(false);
+      vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
+      await game.phaseInterceptor.run(LoginPhase);
+      game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
+        game.scene.gameData.gender = PlayerGender.MALE;
+        game.endPhase();
+      });
+      await game.phaseInterceptor.run(SelectGenderPhase, () => game.isCurrentPhase(TitlePhase));
+      await game.phaseInterceptor.run(TitlePhase);
+      game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+        const starters = generateStarter(game.scene);
+        const selectStarterPhase = new SelectStarterPhase(game.scene, GameModes.CLASSIC);
+        game.scene.pushPhase(new EncounterPhase(game.scene, false));
+        selectStarterPhase.initBattle(starters);
+      });
+      await game.phaseInterceptor.run(EncounterPhase);
+      await game.phaseInterceptor.run(PostSummonPhase);
+      await game.phaseInterceptor.run(PostSummonPhase, () => game.isCurrentPhase(SummonPhase));
+      await game.phaseInterceptor.run(SummonPhase);
+      // need to handle double fight !
+      await game.phaseInterceptor.run(ToggleDoublePositionPhase);
+      await game.phaseInterceptor.run(SummonPhase, () => game.isCurrentPhase(CheckSwitchPhase));
+      game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        game.setMode(Mode.MESSAGE);
+        game.endPhase();
+      });
+      game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        game.setMode(Mode.MESSAGE);
+        game.endPhase();
+      });
+      await game.phaseInterceptor.run(CheckSwitchPhase);
+      await game.phaseInterceptor.run(CheckSwitchPhase, () => game.isCurrentPhase(PostSummonPhase));
+      await game.phaseInterceptor.run(PostSummonPhase);
+      await game.phaseInterceptor.run(ShowAbilityPhase, () => game.isCurrentPhase(TurnInitPhase));
+      await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(TurnInitPhase));
+      await game.phaseInterceptor.run(PostSummonPhase, () => game.isCurrentPhase(TurnInitPhase));
+      await game.phaseInterceptor.run(TurnInitPhase);
+      await game.phaseInterceptor.run(CommandPhase);
+      await waitUntil(() => game.scene.ui?.getMode() === Mode.COMMAND);
+      console.log("==================[New Turn]==================");
+      expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+      expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+  }, 50000);
 });
 
