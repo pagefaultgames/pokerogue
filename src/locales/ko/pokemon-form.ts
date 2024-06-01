@@ -113,8 +113,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "xerneasActive": "액티브모드",
   "zygarde50": "50% 폼",
   "zygarde10": "10% 폼",
-  "zygarde50Pc": "50% 폼 스웜체인지",
-  "zygarde10Pc": "10% 폼 스웜체인지",
+  "zygarde50Pc": "스웜체인지 50% 폼",
+  "zygarde10Pc": "스웜체인지 10% 폼",
   "zygardeComplete": "퍼펙트폼",
   // 7G
   "oricorioBaile": "이글이글스타일",
