@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemonForm: SimpleTranslationEntries = {
   // Battle forms
-  "mega": "메가 {{pokemonName}}",
+  "mega": "메가{{pokemonName}}",
   "megaX": "메가{{pokemonName}}X",
   "megaY": "메가{{pokemonName}}Y",
   "primal": "원시{{pokemonName}}",
@@ -18,7 +18,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuSmartCosplay": "닥터",
   "pikachuToughCosplay": "마스크드",
   // 2G
-  "pichuSpiky": "삐죽귀",
+  "pichuSpiky": "삐쭉귀",
   "unownA": "A",
   "unownB": "B",
   "unownC": "C",
