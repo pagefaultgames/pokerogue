@@ -1239,6 +1239,6 @@ export const ability: AbilityTranslationEntries = {
   },
   poisonPuppeteer: {
     name: "Giftpuppenspiel",
-    description: "Wenn Infamomo ein Ziel mit einer Attacke vergiftet, so wird dieses auch verwirrt.",
+    description: "Wenn der Anwender ein Ziel mit einer Attacke vergiftet, so wird dieses auch verwirrt.",
   },
 } as const;

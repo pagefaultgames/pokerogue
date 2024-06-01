@@ -1239,6 +1239,6 @@ export const ability: AbilityTranslationEntries = {
   },
   poisonPuppeteer: {
     name: "Emprise Toxique",
-    description: "Lorsque Pêchaminus empoisonne un Pokémon grâce à l’une de ses capacités, ce dernier devient également confus.",
+    description: "Lorsque ce Pokémon empoisonne un Pokémon grâce à l’une de ses capacités, ce dernier devient également confus.",
   },
 } as const;
