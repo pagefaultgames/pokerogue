@@ -1,9 +1,24 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { achv } from "./achv";
 import { battle } from "./battle";
+import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { berry } from "./berry";
+import { biome } from "./biome";
 import { commandUiHandler } from "./command-ui-handler";
+import {
+  PGFbattleSpecDialogue,
+  PGFdialogue,
+  PGFdoubleBattleDialogue,
+  PGFmiscDialogue,
+  PGMbattleSpecDialogue,
+  PGMdialogue,
+  PGMdoubleBattleDialogue,
+  PGMmiscDialogue
+} from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
@@ -13,33 +28,34 @@ import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
+import { pokemonInfoContainer } from "./pokemon-info-container";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
-import { weather } from "./weather";
-import { battleMessageUiHandler } from "./battle-message-ui-handler";
-import { berry } from "./berry";
-import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { voucher } from "./voucher";
-import {
-  PGMdialogue,
-  PGFdialogue,
-  PGMbattleSpecDialogue,
-  PGFbattleSpecDialogue,
-  PGMmiscDialogue,
-  PGFmiscDialogue, PGMdoubleBattleDialogue, PGFdoubleBattleDialogue
-} from "./dialogue";
-import { biome } from "./biome";
-import { pokemonInfoContainer } from "./pokemon-info-container";
+import { weather } from "./weather";
 
 export const deConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  achv: achv,
   battle: battle,
+  battleMessageUiHandler: battleMessageUiHandler,
+  berry: berry,
+  biome: biome,
   commandUiHandler: commandUiHandler,
+  PGMdialogue: PGMdialogue,
+  PGFdialogue: PGFdialogue,
+  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
+  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
+  PGMmiscDialogue: PGMmiscDialogue,
+  PGFmiscDialogue: PGFmiscDialogue,
+  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,
@@ -49,25 +65,13 @@ export const deConfig = {
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
+  pokemonInfoContainer: pokemonInfoContainer,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
-  weather: weather,
-  battleMessageUiHandler: battleMessageUiHandler,
-  berry: berry,
-  gameStatsUiHandler: gameStatsUiHandler,
   voucher: voucher,
-  biome: biome,
-  pokemonInfoContainer: pokemonInfoContainer,
-  PGMdialogue: PGMdialogue,
-  PGFdialogue: PGFdialogue,
-  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
-  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
-  PGMmiscDialogue: PGMmiscDialogue,
-  PGFmiscDialogue: PGFmiscDialogue,
-  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
-  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
+  weather: weather
 };
