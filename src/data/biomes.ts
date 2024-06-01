@@ -1371,10 +1371,10 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAY]: [ Species.AMOONGUSS ],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
-      [TimeOfDay.ALL]: [ Species.KANGASKHAN, Species.SCIZOR, Species.SLAKING, Species.LEAFEON, Species.SERPERIOR, Species.RILLABOOM ]
+      [TimeOfDay.ALL]: [ Species.KANGASKHAN, Species.SCIZOR, Species.SLAKING, Species.LEAFEON, Species.SERPERIOR, Species.RILLABOOM, Species.KLEAVOR ]
     },
     [BiomePoolTier.BOSS_SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.TAPU_LELE, Species.BUZZWOLE, Species.ZARUDE, Species.MUNKIDORI ] },
-    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.KLEAVOR ] }
+    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.MEW ] }
   },
   [Biome.FAIRY_CAVE]: {
     [BiomePoolTier.COMMON]: {
@@ -2778,6 +2778,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.MEW, Type.PSYCHIC, -1, [ ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ],
     [ Species.CHIKORITA, Type.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
@@ -6301,7 +6302,7 @@ export function initBiomes() {
     ],
     [ Species.KLEAVOR, Type.BUG, Type.ROCK, [
       [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
-      [ Biome.JUNGLE, BiomePoolTier.BOSS_ULTRA_RARE ]
+      [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
     [ Species.URSALUNA, Type.GROUND, Type.NORMAL, [
