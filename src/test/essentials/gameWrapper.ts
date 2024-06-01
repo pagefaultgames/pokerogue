@@ -21,6 +21,7 @@ import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import {MockClock} from "#app/test/essentials/mocks/mockClock";
 import BattleScene from "#app/battle-scene.js";
 import {AnimConfig, BattleAnim, MoveAnim} from "#app/data/battle-anims";
+import Pokemon from "#app/field/pokemon";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -63,7 +64,8 @@ export default class GameWrapper {
     });
     MoveAnim.prototype.getAnim = () => ({
       frames: {},
-    })
+    });
+    Pokemon.prototype.enableMask = () => null;
     localStorage.clear();
   }
 

@@ -21,6 +21,7 @@ export default class MockTextureManager {
     this.add = {
       container: this.container.bind(this),
       sprite: this.sprite.bind(this),
+      tileSprite: this.sprite.bind(this),
       existing: this.existing.bind(this),
       rectangle: this.rectangle.bind(this),
       nineslice: this.nineslice.bind(this),

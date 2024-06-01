@@ -6,7 +6,7 @@ import {
   LoginPhase, MessagePhase, MoveEffectPhase, MoveEndPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
   PostSummonPhase,
   SelectGenderPhase, SelectModifierPhase,
-  SelectStarterPhase, ShowAbilityPhase, SummonPhase,
+  SelectStarterPhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
   TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, VictoryPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
@@ -49,6 +49,7 @@ export default class PhaseInterceptor {
     [NewBattlePhase, this.startPhase],
     [VictoryPhase, this.startPhase],
     [MoveEndPhase, this.startPhase],
+    [StatChangePhase, this.startPhase],
   ];
 
   constructor(scene) {
@@ -99,6 +100,7 @@ export default class PhaseInterceptor {
     return new Promise((resolve, reject) => {
       this.interval = setInterval(() => {
         const currentPhase = this.onHold?.length && this.onHold[0] && this.onHold[0].name;
+        // if the currentPhase here is not filled, it means it's a phase we haven't added to the list
         if (currentPhase === targetName) {
           clearInterval(this.interval);
           return resolve();

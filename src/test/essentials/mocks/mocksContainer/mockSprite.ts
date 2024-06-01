@@ -170,6 +170,10 @@ export default class MockSprite {
     return this.phaserSprite.setAngle(angle);
   }
 
+  setMask() {
+
+  }
+
 
 
 }
