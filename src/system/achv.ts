@@ -123,6 +123,19 @@ export class ModifierAchv extends Achv {
   }
 }
 
+export class PrestigeAchv extends Achv {
+  constructor(prestigeLevel: integer, score: integer) {
+    if (prestigeLevel < 1) {
+      throw new Error("Prestige level must be at least 1");
+    }
+    const iconBadgeNumber = ((prestigeLevel - 1) % 8) + 1;
+    const iconBadgeGen = Math.floor((prestigeLevel - 1) / 8) + 1;
+    const iconImage = `badge_gen${iconBadgeGen}_${iconBadgeNumber}`;
+
+    super(`Prestige ${prestigeLevel}`, `Complete Prestige ${prestigeLevel}`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.prestigeLevel >= prestigeLevel);
+  }
+}
+
 export const achvs = {
   _10K_MONEY: new MoneyAchv("Money Haver", 10000, "nugget", 10),
   _100K_MONEY: new MoneyAchv("Rich", 100000, "big_nugget", 25).setSecret(true),
@@ -163,7 +176,15 @@ export const achvs = {
   HATCH_SHINY: new Achv("Shiny Egg", "Hatch a shiny Pokémon from an egg", "golden_mystic_ticket", 100).setSecret(),
   HIDDEN_ABILITY: new Achv("Hidden Potential", "Catch a Pokémon with a hidden ability", "ability_charm", 75),
   PERFECT_IVS: new Achv("Certificate of Authenticity", "Get perfect IVs on a Pokémon", "blunder_policy", 100),
-  CLASSIC_VICTORY: new Achv("Undefeated", "Beat the game in classic mode", "relic_crown", 150)
+  CLASSIC_VICTORY: new Achv("Undefeated", "Beat the game in classic mode", "relic_crown", 150),
+  PRESTIGE_1_VICTORY: new PrestigeAchv(1, 100).setSecret(true),
+  PRESTIGE_2_VICTORY: new PrestigeAchv(2, 100).setSecret(true),
+  PRESTIGE_3_VICTORY: new PrestigeAchv(3, 100).setSecret(true),
+  PRESTIGE_4_VICTORY: new PrestigeAchv(4, 100).setSecret(true),
+  PRESTIGE_5_VICTORY: new PrestigeAchv(5, 100).setSecret(true),
+  PRESTIGE_6_VICTORY: new PrestigeAchv(6, 100).setSecret(true),
+  PRESTIGE_7_VICTORY: new PrestigeAchv(7, 100).setSecret(true),
+  PRESTIGE_8_VICTORY: new PrestigeAchv(8, 150).setSecret(true)
 };
 
 {

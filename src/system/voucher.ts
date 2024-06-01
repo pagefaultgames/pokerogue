@@ -81,7 +81,17 @@ export interface Vouchers {
 
 export const vouchers: Vouchers = {};
 
-const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
+const voucherAchvs: Achv[] = [
+  achvs.CLASSIC_VICTORY,
+  achvs.PRESTIGE_1_VICTORY,
+  achvs.PRESTIGE_2_VICTORY,
+  achvs.PRESTIGE_3_VICTORY,
+  achvs.PRESTIGE_4_VICTORY,
+  achvs.PRESTIGE_5_VICTORY,
+  achvs.PRESTIGE_6_VICTORY,
+  achvs.PRESTIGE_7_VICTORY,
+  achvs.PRESTIGE_8_VICTORY
+];
 
 {
   (function() {
