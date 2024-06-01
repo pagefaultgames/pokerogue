@@ -148,8 +148,22 @@ export default class Move implements Localizable {
     this.effect = this.id ? `${i18next.t(`move:${i18nKey}.effect`)}${this.nameAppend}` : "";
   }
 
-  getAttrs(attrType: { new(...args: any[]): MoveAttr }): MoveAttr[] {
-    return this.attrs.filter(a => a instanceof attrType);
+  /**
+   * Get all move attributes that match `attrType`
+   * @param attrType any attribute that extends {@linkcode MoveAttr}
+   * @returns Array of attributes that match `attrType`, Empty Array if none match.
+   */
+  getAttrs<T extends MoveAttr>(attrType: new(...args: any[]) => T): T[] {
+    return this.attrs.filter((a): a is T => a instanceof attrType);
+  }
+
+  /**
+   * Check if a move has an attribute that matches `attrType`
+   * @param attrType any attribute that extends {@linkcode MoveAttr}
+   * @returns true if the move has attribute `attrType`
+   */
+  hasAttr<T extends MoveAttr>(attrType: new(...args: any[]) => T): boolean {
+    return this.attrs.some((attr) => attr instanceof attrType);
   }
 
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
@@ -1445,7 +1459,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
         const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-        user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
+        user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
             user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
           }
@@ -1494,7 +1508,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
         const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
         const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-        user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
+        user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
             user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${stolenItem.type.name}!`));
           }
@@ -2704,12 +2718,57 @@ export class HitCountPowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Turning a once was (StatChangeCountPowerAttr) statement and making it available to call for any attribute.
+ * @param {Pokemon} pokemon The pokemon that is being used to calculate the count of positive stats
+ * @returns {number} Returns the amount of positive stats
+ */
+const countPositiveStats = (pokemon: Pokemon): number => {
+  return pokemon.summonData.battleStats.reduce((total, stat) => (stat && stat > 0) ? total + stat : total, 0);
+};
+
+/**
+ * Attribute that increases power based on the amount of positive stat increases.
+ */
 export class StatChangeCountPowerAttr extends VariablePowerAttr {
+
+  /**
+   * @param {Pokemon} user The pokemon that is being used to calculate the amount of positive stats
+   * @param {Pokemon} target N/A
+   * @param {Move} move N/A
+   * @param {any[]} args The argument for VariablePowerAttr, accumulates and sets the amount of power multiplied by stats
+   * @returns {boolean} Returns true if attribute is applied
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const positiveStats: number = user.summonData.battleStats.reduce((total, stat) => stat > 0 && stat ? total + stat : total, 0);
+    const positiveStats: number = countPositiveStats(user);
 
     (args[0] as Utils.NumberHolder).value += positiveStats * 20;
+    return true;
+  }
+}
 
+/**
+ * Punishment normally has a base power of 60,
+ * but gains 20 power for every increased stat stage the target has,
+ * up to a maximum of 200 base power in total.
+ */
+export class PunishmentPowerAttr extends VariablePowerAttr {
+  private PUNISHMENT_MIN_BASE_POWER = 60;
+  private PUNISHMENT_MAX_BASE_POWER = 200;
+
+  /**
+     * @param {Pokemon} user N/A
+     * @param {Pokemon} target The pokemon that the move is being used against, as well as calculating the stats for the min/max base power
+     * @param {Move} move N/A
+     * @param {any[]} args The value that is being changed due to VariablePowerAttr
+     * @returns Returns true if attribute is applied
+     */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const positiveStats: number = countPositiveStats(target);
+    (args[0] as Utils.NumberHolder).value = Math.min(
+      this.PUNISHMENT_MAX_BASE_POWER,
+      this.PUNISHMENT_MIN_BASE_POWER + positiveStats * 20
+    );
     return true;
   }
 }
@@ -3653,7 +3712,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
 
       while (moveHistory.length) {
         turnMove = moveHistory.shift();
-        if (!allMoves[turnMove.move].getAttrs(ProtectAttr).length || turnMove.result !== MoveResult.SUCCESS) {
+        if (!allMoves[turnMove.move].hasAttr(ProtectAttr) || turnMove.result !== MoveResult.SUCCESS) {
           break;
         }
         timesUsed++;
@@ -4435,7 +4494,7 @@ const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
     return false;
   }
 
-  if (allMoves[copiableMove].getAttrs(ChargeAttr).length) {
+  if (allMoves[copiableMove].hasAttr(ChargeAttr)) {
     return false;
   }
 
@@ -4525,7 +4584,7 @@ const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
     return false;
   }
 
-  if (allMoves[copiableMove.move].getAttrs(ChargeAttr).length && copiableMove.result === MoveResult.OTHER) {
+  if (allMoves[copiableMove.move].hasAttr(ChargeAttr) && copiableMove.result === MoveResult.OTHER) {
     return false;
   }
 
@@ -4942,7 +5001,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   const variableTarget = new Utils.NumberHolder(0);
   user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
 
-  const moveTarget = allMoves[move].getAttrs(VariableTargetAttr).length ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
+  const moveTarget = allMoves[move].hasAttr(VariableTargetAttr) ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
 
   let set: Pokemon[] = [];
@@ -6065,7 +6124,8 @@ export function initMoves() {
     new StatusMove(Moves.GUARD_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.PUNISHMENT, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
-      .unimplemented(),
+      .makesContact(true)
+      .attr(PunishmentPowerAttr),
     new AttackMove(Moves.LAST_RESORT, Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
       .attr(LastResortAttr),
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)

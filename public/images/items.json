@@ -5848,7 +5848,7 @@
 					}
 				},
 				{
-					"filename": "light_stone",
+					"filename": "flame_orb",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5890,7 +5890,7 @@
 					}
 				},
 				{
-					"filename": "manectite",
+					"filename": "light_stone",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5898,16 +5898,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 9,
-						"y": 9,
-						"w": 14,
-						"h": 14
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
 					},
 					"frame": {
 						"x": 401,
 						"y": 74,
-						"w": 14,
-						"h": 14
+						"w": 16,
+						"h": 16
 					}
 				},
 				{
@@ -5932,27 +5932,6 @@
 					}
 				},
 				{
-					"filename": "mawilite",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 9,
-						"w": 14,
-						"h": 14
-					},
-					"frame": {
-						"x": 401,
-						"y": 90,
-						"w": 14,
-						"h": 14
-					}
-				},
-				{
 					"filename": "chill_drive",
 					"rotated": false,
 					"trimmed": true,
@@ -5974,7 +5953,7 @@
 					}
 				},
 				{
-					"filename": "medichamite",
+					"filename": "toxic_orb",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5982,20 +5961,20 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 9,
-						"y": 9,
-						"w": 14,
-						"h": 14
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
 					},
 					"frame": {
 						"x": 401,
-						"y": 106,
-						"w": 14,
-						"h": 14
+						"y": 92,
+						"w": 16,
+						"h": 16
 					}
 				},
 				{
-					"filename": "metagrossite",
+					"filename": "manectite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6010,7 +5989,7 @@
 					},
 					"frame": {
 						"x": 401,
-						"y": 122,
+						"y": 110,
 						"w": 14,
 						"h": 14
 					}
@@ -6037,6 +6016,27 @@
 					}
 				},
 				{
+					"filename": "mawilite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 14,
+						"h": 14
+					},
+					"frame": {
+						"x": 401,
+						"y": 126,
+						"w": 14,
+						"h": 14
+					}
+				},
+				{
 					"filename": "shock_drive",
 					"rotated": false,
 					"trimmed": true,
@@ -6058,48 +6058,6 @@
 					}
 				},
 				{
-					"filename": "mewtwonite_x",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 9,
-						"w": 14,
-						"h": 14
-					},
-					"frame": {
-						"x": 401,
-						"y": 138,
-						"w": 14,
-						"h": 14
-					}
-				},
-				{
-					"filename": "mewtwonite_y",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 9,
-						"w": 14,
-						"h": 14
-					},
-					"frame": {
-						"x": 401,
-						"y": 154,
-						"w": 14,
-						"h": 14
-					}
-				},
-				{
 					"filename": "wise_glasses",
 					"rotated": false,
 					"trimmed": true,
@@ -6118,6 +6076,48 @@
 						"y": 157,
 						"w": 21,
 						"h": 15
+					}
+				},
+				{
+					"filename": "medichamite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 14,
+						"h": 14
+					},
+					"frame": {
+						"x": 401,
+						"y": 142,
+						"w": 14,
+						"h": 14
+					}
+				},
+				{
+					"filename": "metagrossite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 14,
+						"h": 14
+					},
+					"frame": {
+						"x": 401,
+						"y": 158,
+						"w": 14,
+						"h": 14
 					}
 				},
 				{
@@ -6625,7 +6625,7 @@
 					}
 				},
 				{
-					"filename": "nugget",
+					"filename": "mewtwonite_x",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6646,7 +6646,7 @@
 					}
 				},
 				{
-					"filename": "pidgeotite",
+					"filename": "mewtwonite_y",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6667,7 +6667,7 @@
 					}
 				},
 				{
-					"filename": "pinsirite",
+					"filename": "nugget",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7234,7 +7234,7 @@
 					}
 				},
 				{
-					"filename": "rayquazite",
+					"filename": "pidgeotite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7255,7 +7255,7 @@
 					}
 				},
 				{
-					"filename": "sablenite",
+					"filename": "pinsirite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7270,6 +7270,48 @@
 					},
 					"frame": {
 						"x": 328,
+						"y": 235,
+						"w": 14,
+						"h": 14
+					}
+				},
+				{
+					"filename": "rayquazite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 14,
+						"h": 14
+					},
+					"frame": {
+						"x": 344,
+						"y": 235,
+						"w": 14,
+						"h": 14
+					}
+				},
+				{
+					"filename": "sablenite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 14,
+						"h": 14
+					},
+					"frame": {
+						"x": 360,
 						"y": 235,
 						"w": 14,
 						"h": 14
@@ -7290,8 +7332,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 344,
-						"y": 235,
+						"x": 328,
+						"y": 251,
 						"w": 14,
 						"h": 14
 					}
@@ -7311,8 +7353,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 360,
-						"y": 235,
+						"x": 344,
+						"y": 251,
 						"w": 14,
 						"h": 14
 					}
@@ -7332,7 +7374,7 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 328,
+						"x": 360,
 						"y": 251,
 						"w": 14,
 						"h": 14
@@ -7353,8 +7395,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 344,
-						"y": 251,
+						"x": 328,
+						"y": 267,
 						"w": 14,
 						"h": 14
 					}
@@ -7374,8 +7416,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 360,
-						"y": 251,
+						"x": 344,
+						"y": 267,
 						"w": 14,
 						"h": 14
 					}
@@ -7395,7 +7437,7 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 328,
+						"x": 360,
 						"y": 267,
 						"w": 14,
 						"h": 14
@@ -7416,8 +7458,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 344,
-						"y": 267,
+						"x": 328,
+						"y": 283,
 						"w": 14,
 						"h": 14
 					}
@@ -7437,8 +7479,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 360,
-						"y": 267,
+						"x": 344,
+						"y": 283,
 						"w": 14,
 						"h": 14
 					}
@@ -7458,7 +7500,7 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 328,
+						"x": 360,
 						"y": 283,
 						"w": 14,
 						"h": 14
@@ -7479,8 +7521,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 344,
-						"y": 283,
+						"x": 328,
+						"y": 299,
 						"w": 14,
 						"h": 14
 					}
@@ -7500,8 +7542,8 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 360,
-						"y": 283,
+						"x": 328,
+						"y": 315,
 						"w": 14,
 						"h": 14
 					}
@@ -7521,7 +7563,7 @@
 						"h": 13
 					},
 					"frame": {
-						"x": 328,
+						"x": 344,
 						"y": 299,
 						"w": 14,
 						"h": 13
@@ -7542,8 +7584,8 @@
 						"h": 13
 					},
 					"frame": {
-						"x": 328,
-						"y": 314,
+						"x": 360,
+						"y": 299,
 						"w": 13,
 						"h": 13
 					}
