@@ -209,6 +209,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Avanzi", description: "Ripristina 1/16 dei PS massimi di un Pokémon ogni turno" },
     "SHELL_BELL": { name: "Conchinella", description: "Guarisce 1/8 del danno inflitto a un Pokémon" },
 
+    "TOXIC_ORB": { name: "Tossicsfera", description: "Sfera bizzarra che iperavvelena chi l’ha con sé in una lotta" },
+    "FLAME_ORB": { name: "Fiammosfera", description: "Sfera bizzarra che procura una scottatura a chi l’ha con sé in una lotta" },
+
     "BATON": { name: "Staffetta", description: "Permette di trasmettere gli effetti quando si cambia Pokémon, aggirando anche le trappole" },
 
     "SHINY_CHARM": { name: "Cromamuleto", description: "Misterioso amuleto luminoso che aumenta la probabilità di incontrare Pokémon cromatici" },
