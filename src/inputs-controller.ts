@@ -91,14 +91,14 @@ export class InputsController {
   private buttonKeys: Phaser.Input.Keyboard.Key[][];
   private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = new Array();
   private scene: BattleScene;
-  private events: Phaser.Events.EventEmitter;
+  public events: Phaser.Events.EventEmitter;
 
   private buttonLock: Button;
   private interactions: Map<Button, Map<string, boolean>> = new Map();
   private time: Phaser.Time.Clock;
   private configs: Map<string, InterfaceConfig> = new Map();
 
-  private gamepadSupport: boolean = true;
+  public gamepadSupport: boolean = true;
   public selectedDevice;
 
   private disconnectedGamepads: Array<String> = new Array();

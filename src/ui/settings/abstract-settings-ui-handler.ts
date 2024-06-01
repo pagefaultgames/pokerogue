@@ -152,7 +152,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       const settingLabels: Phaser.GameObjects.Text[] = [];
 
       // Array to hold options for each setting, e.g., 'Auto', 'Disabled'.
-      const optionValueLabels: Phaser.GameObjects.Text[][] = [];
+      const optionValueLabels: Phaser.GameObjects.GameObject[][] = [];
 
       // Object to store sprites for each button configuration.
       const inputsIcons: InputsIcons = {};
@@ -215,7 +215,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
         // Calculate the total width of all option labels within a specific setting
         // This is achieved by summing the width of each option label
-        const totalWidth = optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
+        const totalWidth = optionValueLabels[s].map((o) => (o as Phaser.GameObjects.Text).width).reduce((total, width) => total += width, 0);
 
         // Define the minimum width for a label, ensuring it's at least 78 pixels wide or the width of the setting label plus some padding
         const labelWidth = Math.max(130, settingLabels[s].displayWidth + 8);
@@ -232,9 +232,9 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
         // Start positioning each option label one by one
         for (const value of optionValueLabels[s]) {
           // Set the option label's position right next to the setting label, adjusted by xOffset
-          value.setPositionRelative(settingLabels[s], labelWidth + xOffset, 0);
+          (value as Phaser.GameObjects.Text).setPositionRelative(settingLabels[s], labelWidth + xOffset, 0);
           // Move the xOffset to the right for the next label, ensuring each label is spaced evenly
-          xOffset += value.width / 6 + optionSpacing;
+          xOffset += (value as Phaser.GameObjects.Text).width / 6 + optionSpacing;
         }
       });
 
@@ -276,7 +276,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
 
     // Update the cursor for each key based on the stored settings or default cursors.
     this.keys.forEach((key, index) => {
-      this.setOptionCursor(index, settings.hasOwnProperty(key) ? settings[key] : this.optionCursors[index]);
+      this.setOptionCursor(index, settings.hasOwnProperty(key as string) ? settings[key as string] : this.optionCursors[index]);
     });
 
     // If the active configuration has no custom bindings set, exit the function early.
@@ -290,10 +290,10 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
     for (const elm of this.bindingSettings) {
       const icon = getIconWithSettingName(activeConfig, elm);
       if (icon) {
-        this.inputsIcons[elm].setFrame(icon);
-        this.inputsIcons[elm].alpha = 1;
+        this.inputsIcons[elm as string].setFrame(icon);
+        this.inputsIcons[elm as string].alpha = 1;
       } else {
-        this.inputsIcons[elm].alpha = 0;
+        this.inputsIcons[elm as string].alpha = 0;
       }
     }
 

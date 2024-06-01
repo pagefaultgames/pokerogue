@@ -49,7 +49,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
      * @param scene - The BattleScene instance.
      * @param mode - The UI mode.
      */
-  constructor(scene: BattleScene, mode: Mode) {
+  constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
   }
 
