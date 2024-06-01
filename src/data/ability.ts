@@ -1663,6 +1663,8 @@ export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyCountTally: integer;
   private stats: BattleStat[];
 
+  private opponents: Pokemon[];
+
   // TODO: Implement the Substitute feature(s) once move is implemented.
   /**
    * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account
@@ -1677,8 +1679,10 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     this.enemySpDef = 0;
     this.enemyCountTally = 0;
 
-    if (pokemon.getOpponents()[0].summonData !== undefined) {
-      for (const opponent of pokemon.getOpponents()) {
+    this.opponents = pokemon.getOpponents();
+
+    if (this.opponents[0].summonData !== undefined && this.opponents[0].summonData.battleStats[Stat.HP] > 0) {
+      for (const opponent of this.opponents) {
         this.enemyCountTally++;
         this.enemyDef += opponent.getBattleStat(Stat.DEF);
         this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
