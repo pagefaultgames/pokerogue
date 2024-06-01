@@ -37,3 +37,4 @@ src/overrides.ts
 
 coverage
 /typedoc
+/.vscode
