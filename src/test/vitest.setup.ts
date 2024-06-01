@@ -9,6 +9,7 @@ import {initPokemonForms} from "#app/data/pokemon-forms";
 import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
+import { initMysteryEncounters } from "../data/mystery-encounter";
 
 initStatsKeys();
 initPokemonPrevolutions();
@@ -18,3 +19,4 @@ initPokemonForms();
 initSpecies();
 initMoves();
 initAbilities();
+initMysteryEncounters();

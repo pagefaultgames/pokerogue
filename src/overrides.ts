@@ -82,6 +82,13 @@ export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 
 /**
+ * ENCOUNTER OVERRIDES
+ */
+
+export const MYSTERY_ENCOUNTER_RATE: number = 100; // 0 to 100
+export const MYSTERY_ENCOUNTER_OVERRIDE: number = -1;
+
+/**
  * MODIFIER / ITEM OVERRIDES
  * if count is not provided, it will default to 1
  * @example Modifier Override [{name: "EXP_SHARE", count: 2}]

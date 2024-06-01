@@ -71,7 +71,7 @@ export default class Battle {
 
   private rngCounter: integer = 0;
 
-  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean, mysteryEncounter?: MysteryEncounter) {
+  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
@@ -96,7 +96,6 @@ export default class Battle {
     this.lastUsedPokeball = null;
     this.playerFaints = 0;
     this.enemyFaints = 0;
-    this.mysteryEncounter = mysteryEncounter;
   }
 
   private initBattleSpec(): void {

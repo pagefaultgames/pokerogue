@@ -6,24 +6,7 @@ import { Button } from "../enums/buttons";
 import { MysteryEncounterOptionSelectPhase } from "../phases/mystery-encounter-option-select-phase";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
-
-//export interface OptionSelectConfig {
-//  xOffset?: number;
-//  yOffset?: number;
-//  options: OptionSelectItem[];
-//  maxOptions?: integer;
-//  delay?: integer;
-//  noCancel?: boolean;
-//}
-
-export interface EncounterOptionSelectItem {
-  label: string;
-  handler: () => boolean;
-  keepOpen?: boolean;
-  overrideSound?: boolean;
-  item?: string;
-  itemArgs?: any[]
-}
+import { MysteryEncounterOption } from "../data/mystery-encounter";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private optionsContainer: Phaser.GameObjects.Container;
@@ -32,7 +15,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
 
-  private encounterOptions: EncounterOptionSelectItem[] = [];
+  private encounterOptions: MysteryEncounterOption[] = [];
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -90,6 +73,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         const selected = this.encounterOptions[cursor];
         if ((this.scene.getCurrentPhase() as MysteryEncounterOptionSelectPhase).handleOptionSelect(selected)) {
+          this.clear();
           success = true;
         } else {
           ui.playError();
@@ -159,15 +143,19 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const mysteryEncounter = (this.scene.getCurrentPhase() as MysteryEncounterOptionSelectPhase).getMysteryEncounter();
     this.encounterOptions = mysteryEncounter.getMysteryEncounterOptions();
     const index = mysteryEncounter.getMysteryEncounterIndex();
-    const titleText = i18next.t(`mysteryEncounter:encounter_${index}_title`);
+    const titleText = i18next.t(`mysteryEncounter:encounter_${index}_id`);
     const descriptionText = i18next.t(`mysteryEncounter:encounter_${index}_description`);
     const queryText = i18next.t(`mysteryEncounter:encounter_${index}_query`);
 
     // Options Window
-    for (let m = 0; m < 4; m++) {
-      const optionText = addTextObject(this.scene, m % 2 === 0 ? 0 : 150, m < 2 ? 0 : 16, "-", TextStyle.WINDOW);
-      if (m < this.encounterOptions.length) {
-        optionText.setText(this.encounterOptions[m].label);
+    for (let i = 0; i < this.encounterOptions.length; i++) {
+      const optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, i < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+      const text = i18next.t(`mysteryEncounter:encounter_${index}_option_${i + 1}`);
+      if (text) {
+        optionText.setText(text);
+      }
+      if (!this.encounterOptions[i].meetsRequirements(this.scene)) {
+        // TODO: This option should be disabled/greyed out or removed
       }
       this.optionsContainer.add(optionText);
     }
@@ -188,6 +176,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     super.clear();
     this.getUi().getMessageHandler().commandWindow.setVisible(false);
     this.optionsContainer.setVisible(false);
+    this.descriptionContainer.setVisible(false);
     this.getUi().getMessageHandler().clearText();
     this.eraseCursor();
   }

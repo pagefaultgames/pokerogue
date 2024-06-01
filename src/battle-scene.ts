@@ -58,8 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
-import { MysteryEncounterPhase, NewBiomeMysteryEncounterPhase } from "./phases/mystery-encounter-phase";
-import MysteryEncounter, { OptionSelectMysteryEncounter } from "./data/mystery-encounter";
+import MysteryEncounter, { allMysteryEncounters } from "./data/mystery-encounter";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -887,12 +886,11 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
+  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounter): Battle {
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
     let newDouble: boolean;
     let newBattleType: BattleType;
     let newTrainer: Trainer;
-    let newMysteryEncounter: MysteryEncounter;
 
     let battleConfig: FixedBattleConfig = null;
 
@@ -938,19 +936,19 @@ export default class BattleScene extends SceneBase {
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && newWaveIndex > 180)) {
         // Roll for mystery encounter instead of wild battle
         const roll = Utils.randSeedInt(100);
+        const successRate = Overrides.MYSTERY_ENCOUNTER_RATE || 15;
 
-        if (roll <= 100) {
+        if (roll <= successRate) {
           // Successful roll, this is a mystery encounter
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
-
-          // Placeholder that generates a random trainer on the field for the encounter
-          const trainerType = this.arena.randomTrainerType(newWaveIndex);
-          newTrainer = !!trainerData ? trainerData.toTrainer(this) : new Trainer(this, trainerType, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
-          this.field.add(newTrainer);
-
-          // Generate encounter
-          newMysteryEncounter = this.generateMysteryEncounter();
         }
+      }
+
+      if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+        // Placeholder that generates a random trainer on the field for the encounter
+        const trainerType = this.arena.randomTrainerType(newWaveIndex);
+        newTrainer = !!trainerData ? trainerData.toTrainer(this) : new Trainer(this, trainerType, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        this.field.add(newTrainer);
       }
     }
 
@@ -982,9 +980,15 @@ export default class BattleScene extends SceneBase {
     this.lastEnemyTrainer = lastBattle?.trainer ?? null;
 
     this.executeWithSeedOffset(() => {
-      this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble, newMysteryEncounter);
+      this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
     }, newWaveIndex << 3, this.waveSeed);
     this.currentBattle.incrementTurn(this);
+
+    if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      // Generate a mystery encounter
+      const encounter = mysteryEncounter ? mysteryEncounter : this.generateMysteryEncounter();
+      this.currentBattle.mysteryEncounter = encounter;
+    }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
@@ -1032,10 +1036,10 @@ export default class BattleScene extends SceneBase {
       }
 
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
-        this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ? this.pushPhase(new MysteryEncounterPhase(this)) : this.pushPhase(new NextEncounterPhase(this));
+        this.pushPhase(new NextEncounterPhase(this));
       } else {
         this.pushPhase(new SelectBiomePhase(this));
-        this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ? this.pushPhase(new NewBiomeMysteryEncounterPhase(this)) : this.pushPhase(new NewBiomeEncounterPhase(this));
+        this.pushPhase(new NewBiomeEncounterPhase(this));
 
         const newMaxExpLevel = this.getMaxExpLevel();
         if (newMaxExpLevel > maxExpLevel) {
@@ -2203,12 +2207,15 @@ export default class BattleScene extends SceneBase {
   }
 
   generateMysteryEncounter(): MysteryEncounter {
+    if (Overrides.MYSTERY_ENCOUNTER_OVERRIDE > -1 && Overrides.MYSTERY_ENCOUNTER_OVERRIDE < allMysteryEncounters.length) {
+      return allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
+    }
+
     // Do some logic to figure out what encounter spawned
-    const totalEncountersInGame = 1;
-    const encounterIndex = Utils.randSeedInt(totalEncountersInGame);
+    const availableEncounters = allMysteryEncounters.filter((encounter) => encounter.meetsRequirements(this));
 
     // Init and return encounter object
-    const encounter = new OptionSelectMysteryEncounter(this, encounterIndex);
+    const encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length - 1)];
 
     return encounter;
   }

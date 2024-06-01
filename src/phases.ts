@@ -830,7 +830,7 @@ export class EncounterPhase extends BattlePhase {
             this.scene.currentBattle.trainer.tint(0, 0.5);
           } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
             enemyPokemon.setVisible(false);
-            this.scene.currentBattle.trainer.tint(0, 0.5);
+            this.scene.currentBattle.trainer?.tint(0, 0.5);
           }
           if (battle.double) {
             enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
@@ -982,24 +982,14 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      const trainer = this.scene.currentBattle.trainer;
-      trainer.untint(100, "Sine.easeOut");
-      trainer.playAnim();
+      const trainer = this.scene.currentBattle?.trainer;
+      trainer?.untint(100, "Sine.easeOut");
+      trainer?.playAnim();
 
       const doEncounter = () => {
-        //this.scene.currentBattle.started = true;
         this.scene.playBgm(undefined);
-        /*this.scene.pbTray.showPbTray(this.scene.getParty());*/
-        //this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
 
         const doShowEncounterOptions = () => {
-          //this.hideEnemyTrainer();
-          //const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
-          //this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
-          //if (this.scene.currentBattle.double && availablePartyMembers > 1) {
-          //  this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
-          //}
-
           this.scene.ui.clearText();
           this.scene.unshiftPhase(new MysteryEncounterOptionSelectPhase(this.scene));
 

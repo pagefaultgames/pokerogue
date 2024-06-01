@@ -412,3 +412,7 @@ export function verifyLang(lang?: string): boolean {
     return false;
   }
 }
+
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
+}
