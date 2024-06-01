@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import * as Utils from "./utils";
-import {initTouchControls} from "./touch-controls";
+import {ButtonKey, initTouchControls} from "./touch-controls";
 import pad_generic from "./configs/pad_generic";
 import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
@@ -357,7 +357,7 @@ export class InputsController {
       [Button.SPEED_UP]: [keyCodes.PLUS],
       [Button.SLOW_DOWN]: [keyCodes.MINUS]
     };
-    const mobileKeyConfig = {};
+    const mobileKeyConfig = new Map<string, ButtonKey>();
     for (const b of Utils.getEnumValues(Button)) {
       const keys: Phaser.Input.Keyboard.Key[] = [];
       if (keyConfig.hasOwnProperty(b)) {

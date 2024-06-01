@@ -48,6 +48,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "depot_agent": "鐵路員工",
   "doctor": "醫生",
   "doctor_female": "醫生",
+  "firebreather": "Firebreather",
   "fisherman": "垂釣者",
   "fisherman_female": "垂釣者",
   "gentleman": "紳士",
