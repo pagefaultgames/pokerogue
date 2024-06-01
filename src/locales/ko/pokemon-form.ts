@@ -2,12 +2,12 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemonForm: SimpleTranslationEntries = {
   // Battle forms
-  "mega": "Mega {{pokemonName}}",
-  "megaX": "Mega {{pokemonName}} X",
-  "megaY": "Mega {{pokemonName}} Y",
-  "primal": "Primal {{pokemonName}}",
-  "gigantamax": "G-Max {{pokemonName}}",
-  "eternamax": "E-Max {{pokemonName}}",
+  "mega": "메가 {{pokemonName}}",
+  "megaX": "메가{{pokemonName}}X",
+  "megaY": "메가{{pokemonName}}Y",
+  "primal": "원시{{pokemonName}}",
+  "gigantamax": "거다이맥스 {{pokemonName}}",
+  "eternamax": "무한다이맥스 {{pokemonName}}",
 
   // Starters forms
   // 1G
