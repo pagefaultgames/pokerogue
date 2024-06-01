@@ -11,6 +11,8 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
+//import { AbilityAttr, DexAttr, DexAttrProps, DexEntry } from "../system/game-data";
+import { DexAttr } from "../system/game-data";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -57,6 +59,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonNatureText: BBCodeText;
   private pokemonNatureNewText: Phaser.GameObjects.Text;
   private pokemonShinyIcon: Phaser.GameObjects.Image;
+  private pokemonShinyNewIcon: Phaser.GameObjects.Image;
   private pokemonFusionShinyIcon: Phaser.GameObjects.Image;
   private pokemonMovesContainer: Phaser.GameObjects.Container;
   private pokemonMovesContainers: Phaser.GameObjects.Container[];
@@ -174,6 +177,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
   show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1): Promise<void> {
     return new Promise<void>(resolve => {
+      const caughtAttr = BigInt(pokemon.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr);
       if (pokemon.gender > Gender.GENDERLESS) {
         this.pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
         this.pokemonGenderText.setColor(getGenderColor(pokemon.gender));
@@ -185,10 +189,13 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderNewText.setOrigin(0, 0);
         this.add(this.pokemonGenderNewText);
 
+        const newGender = BigInt(Math.pow(2, pokemon.gender + 2)); // adding 2 here because of the 2 starting bits being related to shiny, not gender
+
         this.pokemonGenderNewText.setText("(+)");
         this.pokemonGenderNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
         this.pokemonGenderNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
-        this.pokemonGenderNewText.setVisible(true);
+        this.pokemonGenderNewText.setVisible((newGender & caughtAttr) === BigInt(0));
+        console.log((newGender & caughtAttr) === BigInt(0) ? "This is a new gender" : "You already have this gender");
       } else {
         this.pokemonGenderText.setVisible(false);
       }
@@ -205,11 +212,26 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       console.log(pokemon);
       console.log(pokemon.scene.gameData.dexData[pokemon.species.speciesId]);
       console.log(pokemon.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr);
+      console.log(DexAttr.SHINY);
       console.log(pokemon.getDexAttr());
+
+      /**
+       * If the opposing Pokemon only has 1 normal ability and is using the hidden ability it should have the same behavior
+       * if it had 2 normal abilities. This code checks if that is the case and uses the correct opponent Pokemon abilityIndex (2)
+       * for calculations so it aligns with where the hidden ability is stored in the starter data's abilityAttr (4)
+       */
+      const opponentPokemonOneNormalAbility = (pokemon.species.getAbilityCount() === 2);
+      const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
+      const opponentPokemonAbilityAttr = Math.pow(2, opponentPokemonAbilityIndex);
+
+      const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
 
       this.pokemonAbilityNewText.setText("(+)");
       this.pokemonAbilityNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
       this.pokemonAbilityNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+      this.pokemonAbilityNewText.setVisible(!rootFormHasHiddenAbility);
+
+      console.log(!rootFormHasHiddenAbility ? "This is a new ability: ${pokemon.getAbility().name}" : "You already have this ability: ${pokemon.getAbility().name}");
 
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false, this.scene.uiTheme));
 
@@ -217,9 +239,14 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonNatureNewText.setOrigin(0, 0);
       this.add(this.pokemonNatureNewText);
 
+      const dexNatures = pokemon.scene.gameData.dexData[pokemon.species.speciesId].natureAttr;
+      const newNature = Math.pow(2, pokemon.nature + 1);
+
       this.pokemonNatureNewText.setText("(+)");
       this.pokemonNatureNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
       this.pokemonNatureNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+      this.pokemonNatureNewText.setVisible(!(dexNatures & newNature));
+      console.log(!(dexNatures & newNature) ? "This is a new nature" : "You already have this nature");
 
       const isFusion = pokemon.isFusion();
       const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
@@ -234,6 +261,21 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           : "";
         this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
         this.pokemonShinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+
+        const newShiny = BigInt(Math.pow(2, pokemon.shiny));
+        const newVariant = BigInt(Math.pow(2, pokemon.variant + 4));
+
+        this.pokemonShinyNewIcon = addTextObject(this.scene, this.pokemonShinyIcon.x + 12, this.pokemonShinyIcon.y, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonNatureText object
+        this.pokemonShinyNewIcon.setOrigin(0, 0);
+        this.add(this.pokemonShinyNewIcon);
+        this.pokemonShinyNewIcon.setText("(+)");
+        this.pokemonShinyNewIcon.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+        this.pokemonShinyNewIcon.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+        const newShinyOrVariant = ((newShiny & caughtAttr) === BigInt(0)) || ((newVariant & caughtAttr) === BigInt(0));
+        this.pokemonShinyNewIcon.setVisible(!!newShinyOrVariant); // this for some reason doesn't look like it always works - sometimes it'll show even if the newShinyOrVariant is meant to be false? I've added the !! at the start to try force it to be a bool just in case there's something weird happening
+        console.log(!!newShinyOrVariant);
+        console.log(!!newShinyOrVariant ? "This is a new shiny/variant" : "You have this shiny/non-shiny variant");
+        console;
       }
 
       this.pokemonFusionShinyIcon.setPosition(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y);
