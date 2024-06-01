@@ -226,13 +226,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   init(): void {
     this.fieldPosition = FieldPosition.CENTER;
-
+    console.log(`Initializing ${this.name}...`);
     this.initBattleInfo();
 
     this.scene.fieldUI.addAt(this.battleInfo, 0);
-
+    console.log(`Initialized ${this.name}!`);
     const getSprite = (hasShadow?: boolean) => {
+      console.log(`Creating sprite for ${this.name}...`);
       const ret = this.scene.addPokemonSprite(this, 0, 0, `pkmn__${this.isPlayer() ? "back__" : ""}sub`, undefined, true);
+      console.log("ret", ret);
       ret.setOrigin(0.5, 1);
       ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, teraColor: getTypeRgb(this.getTeraType()) });
       return ret;
@@ -962,7 +964,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} passive If true, check if passive can be applied instead of non-passive
    * @returns {Ability} The passive ability of the pokemon
    */
-  canApplyAbility(passive: boolean = false): boolean {
+  canApplyAbility(passive: boolean = false, forceBypass: boolean = false): boolean {
     if (passive && !this.hasPassive()) {
       return false;
     }
@@ -990,7 +992,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
       }
     }
-    return (this.hp || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
+    return (this.hp || ability.isBypassFaint || forceBypass) && !ability.conditions.find(condition => !condition(this));
   }
 
   /**
@@ -1495,6 +1497,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = this.scene.fieldUI.getAll().slice(0, 4).filter(ui => ui instanceof BattleInfo && ((ui as BattleInfo) instanceof PlayerBattleInfo) === this.isPlayer()).find(() => true);
       if (!otherBattleInfo || !this.getFieldIndex()) {
         this.scene.fieldUI.sendToBack(this.battleInfo);
+        this.scene.sendTextToBack(); // Push the top right text objects behind everything else
       } else {
         this.scene.fieldUI.moveAbove(this.battleInfo, otherBattleInfo);
       }
@@ -1542,6 +1545,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
   }
+  toggleFlyout(visible: boolean): void {
+    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
+  }
 
   addExp(exp: integer) {
     const maxExpLevel = this.scene.getMaxExpLevel();
@@ -1567,6 +1573,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getOpponents(): Pokemon[] {
     return ((this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField()) as Pokemon[]).filter(p => p.isActive());
+  }
+
+  getPlayerPokemons(): Pokemon[] {
+    return ((this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField()) as Pokemon[]).filter(p => p.isActive());
   }
 
   getOpponentDescriptor(): string {
@@ -2800,6 +2810,10 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
+    if (Overrides.STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.STATUS_OVERRIDE);
+    }
+
     if (Overrides.SHINY_OVERRIDE) {
       this.shiny = true;
       this.initShinySparkle();
@@ -3207,6 +3221,10 @@ export class EnemyPokemon extends Pokemon {
     this.trainerSlot = trainerSlot;
     if (boss) {
       this.setBoss();
+    }
+
+    if (Overrides.OPP_STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
     }
 
     if (!dataSource) {

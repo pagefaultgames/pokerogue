@@ -1,15 +1,48 @@
+import { getVariantTint } from "#app/data/variant";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene from "../battle-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { getNatureName } from "../data/nature";
+import { Type } from "../data/type";
 import Pokemon from "../field/pokemon";
+import i18next from "../plugins/i18n";
+import * as Utils from "../utils";
+import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
-import { getNatureName } from "../data/nature";
-import * as Utils from "../utils";
-import { Type } from "../data/type";
-import { getVariantTint } from "#app/data/variant";
-import ConfirmUiHandler from "./confirm-ui-handler";
+
+interface LanguageSetting {
+  infoContainerTextSize: string;
+  infoContainerLabelXPos?: integer;
+  infoContainerTextXPos?: integer;
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "en": {
+    infoContainerTextSize: "64px"
+  },
+  "de": {
+    infoContainerTextSize: "64px"
+  },
+  "es": {
+    infoContainerTextSize: "64px"
+  },
+  "fr": {
+    infoContainerTextSize: "64px"
+  },
+  "it": {
+    infoContainerTextSize: "64px"
+  },
+  "zh": {
+    infoContainerTextSize: "64px"
+  },
+  "pt": {
+    infoContainerTextSize: "60px",
+    infoContainerLabelXPos: -16,
+    infoContainerTextXPos: -12,
+  },
+};
 
 export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private readonly infoWindowWidth = 104;
@@ -40,6 +73,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
+    const currentLanguage = i18next.language;
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
+    const textSettings = languageSettings[langSettingKey];
     const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
     infoBg.setOrigin(0.5, 0.5);
 
@@ -55,7 +91,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     movesBg.setOrigin(1, 0);
     this.pokemonMovesContainer.add(movesBg);
 
-    const movesLabel = addTextObject(this.scene, -movesBg.width / 2, 6, "Moveset", TextStyle.WINDOW, { fontSize: "64px" });
+    const movesLabel = addTextObject(this.scene, -movesBg.width / 2, 6, i18next.t("pokemonInfoContainer:moveset"), TextStyle.WINDOW, { fontSize: "64px" });
     movesLabel.setOrigin(0.5, 0);
     this.pokemonMovesContainer.add(movesLabel);
 
@@ -86,29 +122,36 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.add(infoBg);
     this.add(this.statsContainer);
 
-    this.pokemonGenderLabelText = addTextObject(this.scene, -18, 18, "Gender:", TextStyle.WINDOW, { fontSize: "64px" });
+    // The position should be set per language
+    const infoContainerLabelXPos = textSettings?.infoContainerLabelXPos || -18;
+    const infoContainerTextXPos = textSettings?.infoContainerTextXPos || -14;
+
+    // The font size should be set by language
+    const infoContainerTextSize = textSettings?.infoContainerTextSize || "64px";
+
+    this.pokemonGenderLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, i18next.t("pokemonInfoContainer:gender"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderLabelText.setOrigin(1, 0);
     this.pokemonGenderLabelText.setVisible(false);
     this.add(this.pokemonGenderLabelText);
 
-    this.pokemonGenderText = addTextObject(this.scene, -14, 18, "", TextStyle.WINDOW, { fontSize: "64px" });
+    this.pokemonGenderText = addTextObject(this.scene, infoContainerTextXPos, 18, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderText.setOrigin(0, 0);
     this.pokemonGenderText.setVisible(false);
     this.add(this.pokemonGenderText);
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, -18, 28, "Ability:", TextStyle.WINDOW, { fontSize: "64px" });
+    this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 28, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonAbilityLabelText.setOrigin(1, 0);
     this.add(this.pokemonAbilityLabelText);
 
-    this.pokemonAbilityText = addTextObject(this.scene, -14, 28, "", TextStyle.WINDOW, { fontSize: "64px" });
+    this.pokemonAbilityText = addTextObject(this.scene, infoContainerTextXPos, 28, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
     this.add(this.pokemonAbilityText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, -18, 38, "Nature:", TextStyle.WINDOW, { fontSize: "64px" });
+    this.pokemonNatureLabelText = addTextObject(this.scene, infoContainerLabelXPos, 38, i18next.t("pokemonInfoContainer:nature"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonNatureLabelText.setOrigin(1, 0);
     this.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, -14, 38, "", TextStyle.WINDOW, { fontSize: "64px", lineSpacing: 3, maxLines: 2 });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, infoContainerTextXPos, 38, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize, lineSpacing: 3, maxLines: 2 });
     this.pokemonNatureText.setOrigin(0, 0);
     this.add(this.pokemonNatureText);
 
@@ -154,7 +197,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
         const shinyDescriptor = doubleShiny || baseVariant ?
-          `${baseVariant === 2 ? "Epic" : baseVariant === 1 ? "Rare" : "Common"}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? "Epic" : pokemon.fusionVariant === 1 ? "Rare" : "Common"}` : ""}`
+          `${baseVariant === 2 ? i18next.t("pokemonInfoContainer:epic") : baseVariant === 1 ? i18next.t("pokemonInfoContainer:rare") : i18next.t("pokemonInfoContainer:common")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("pokemonInfoContainer:epic") : pokemon.fusionVariant === 1 ? i18next.t("pokemonInfoContainer:rare") : i18next.t("pokemonInfoContainer:common")}` : ""}`
           : "";
         this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
         this.pokemonShinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());

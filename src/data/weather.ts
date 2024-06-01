@@ -19,7 +19,8 @@ export enum WeatherType {
   FOG,
   HEAVY_RAIN,
   HARSH_SUN,
-  STRONG_WINDS
+  STRONG_WINDS,
+  STINK
 }
 
 export class Weather {
@@ -141,6 +142,8 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
     return i18next.t("weather:snowStartMessage");
   case WeatherType.FOG:
     return i18next.t("weather:fogStartMessage");
+  case WeatherType.STINK:
+    return "A foul stench fills the air!";
   case WeatherType.HEAVY_RAIN:
     return i18next.t("weather:heavyRainStartMessage");
   case WeatherType.HARSH_SUN:
@@ -166,6 +169,8 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
     return i18next.t("weather:snowLapseMessage");
   case WeatherType.FOG:
     return i18next.t("weather:fogLapseMessage");
+  case WeatherType.STINK:
+    return "It stinks!";
   case WeatherType.HEAVY_RAIN:
     return i18next.t("weather:heavyRainLapseMessage");
   case WeatherType.HARSH_SUN:
@@ -204,6 +209,8 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
     return i18next.t("weather:fogClearMessage");
   case WeatherType.HEAVY_RAIN:
     return i18next.t("weather:heavyRainClearMessage");
+  case WeatherType.STINK:
+    return "The stench has dissipated!";
   case WeatherType.HARSH_SUN:
     return i18next.t("weather:harshSunClearMessage");
   case WeatherType.STRONG_WINDS:
@@ -352,6 +359,11 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
     weatherPool = [
       { weatherType: WeatherType.NONE, weight: 3 },
       { weatherType: WeatherType.FOG, weight: 1 }
+    ];
+    break;
+  case Biome.SLUM:
+    weatherPool = [
+      { weatherType: WeatherType.STINK, weight: 3 }
     ];
     break;
   case Biome.JUNGLE:
