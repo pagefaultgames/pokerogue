@@ -75,7 +75,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "scatterbugMeadow": "Motif Floraison",
   "scatterbugIcySnow": "Motif Blizzard",
   "scatterbugPolar": "Motif Banquise",
-  "scatterbugTundra": " 	Motif Glace",
+  "scatterbugTundra": "Motif Glace",
   "scatterbugContinental": "Motif Continent",
   "scatterbugGarden": "Motif Verdure",
   "scatterbugElegant": "Motif Monarchie",
