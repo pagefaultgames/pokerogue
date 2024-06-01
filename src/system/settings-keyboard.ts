@@ -165,6 +165,7 @@ export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard,
   case SettingKeyboard.Alt_Button_Cycle_Variant:
   case SettingKeyboard.Alt_Button_Speed_Up:
   case SettingKeyboard.Alt_Button_Slow_Down:
+  case SettingKeyboard.Alt_Button_Submit:
     if (value) {
       if (scene.ui) {
         const cancelHandler = (success: boolean = false) : boolean => {

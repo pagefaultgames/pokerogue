@@ -98,6 +98,7 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
   case SettingGamepad.Button_Cycle_Variant:
   case SettingGamepad.Button_Speed_Up:
   case SettingGamepad.Button_Slow_Down:
+  case SettingGamepad.Button_Submit:
     if (value) {
       if (scene.ui) {
         const cancelHandler = (success: boolean = false) : boolean => {
