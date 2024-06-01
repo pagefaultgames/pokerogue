@@ -14,6 +14,7 @@ import {GameDataType, PlayerGender} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/essentials/phaseInterceptor";
 import TextInterceptor from "#app/test/essentials/TextInterceptor";
+import {expect} from "vitest";
 
 
 export default class GameManager {
@@ -45,8 +46,8 @@ export default class GameManager {
     this.scene.getCurrentPhase().end();
   }
 
-  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void) {
-    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback);
+  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void) {
+    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn);
   }
 
   newGame(gameMode): Promise<void> {
@@ -65,21 +66,32 @@ export default class GameManager {
         selectStarterPhase.initBattle(starters);
       });
       await this.phaseInterceptor.run(EncounterPhase);
-      await this.phaseInterceptor.run(PostSummonPhase); // stuck here sometime
+      await this.phaseInterceptor.run(PostSummonPhase);
+      await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(SummonPhase));
       await this.phaseInterceptor.run(SummonPhase);
+      // need to handle double fight !
       await this.phaseInterceptor.run(ToggleDoublePositionPhase);
+      await this.phaseInterceptor.run(SummonPhase, () => this.isCurrentPhase(CheckSwitchPhase));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
       });
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(PostSummonPhase));
       await this.phaseInterceptor.run(CheckSwitchPhase);
+      await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
       await this.phaseInterceptor.run(PostSummonPhase);
       await this.phaseInterceptor.run(ShowAbilityPhase, () => this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.run(MessagePhase, () => this.isCurrentPhase(TurnInitPhase));
+      await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.run(TurnInitPhase);
       await this.phaseInterceptor.run(CommandPhase);
       await waitUntil(() => this.scene.ui?.getMode() === Mode.COMMAND);
       console.log("==================[New Turn]==================");
+      expect(this.scene.ui?.getMode()).toBe(Mode.COMMAND);
+      expect(this.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
       return resolve();
     });
   }

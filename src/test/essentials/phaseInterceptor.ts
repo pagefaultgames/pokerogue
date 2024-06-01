@@ -133,20 +133,24 @@ export default class PhaseInterceptor {
     this.promptInterval = setInterval(() => {
       if (this.prompts.length) {
         const actionForNextPrompt = this.prompts[0];
+        const expireFn = actionForNextPrompt.expireFn && actionForNextPrompt.expireFn();
         const currentMode = this.scene.ui.getMode();
         const currentPhase = this.scene.getCurrentPhase().constructor.name;
-        if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget) {
+        if (expireFn) {
+          this.prompts.shift();
+        } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget) {
           this.prompts.shift().callback();
         }
       }
     }, 1000);
   }
 
-  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void) {
+  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn: () => void) {
     this.prompts.push({
       phaseTarget,
       mode,
-      callback
+      callback,
+      expireFn
     });
   }
 
