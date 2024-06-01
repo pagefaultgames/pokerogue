@@ -1078,8 +1078,7 @@ export class SteelySpiritAbAttr extends AbAttr {
    *
    * @param pokemon N/A
    * @param passive N/A
-   * @param defender N/A
-   * @param move N/A
+   * @param cancelled N/A
    * @param args N/A
    * @returns true if the function succeeds
    */
