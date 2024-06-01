@@ -19,7 +19,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private IvScannerToggleText: Phaser.GameObjects.Text;
-  
+
 
   private rowCursor: integer = 0;
   private player: boolean;
@@ -341,10 +341,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     } else if (!this.rowCursor && cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, this.IvScannerToggleContainer ? -72 : -60);
       ui.showText("Transfer a held item from one Pokémon to another.");
-    } else if (!cursor && this.rowCursor === -1){
+    } else if (!cursor && this.rowCursor === -1) {
       this.cursorObj.setPosition(6, -60);
       ui.showText("Lock item rarities on reroll (affects reroll cost).");
-    } else if (cursor === 1 && this.rowCursor === -1){
+    } else if (cursor === 1 && this.rowCursor === -1) {
       this.cursorObj.setPositionRelative(this.IvScannerToggleContainer, -10, 4);
       ui.showText("Toggle whether to receive the IV Scanner prompt at battle start.");
     }

@@ -987,7 +987,7 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
       enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier && this.scene.IvScannerEnabled){
+      if (ivScannerModifier && this.scene.IvScannerEnabled) {
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
       }
     }
@@ -4887,7 +4887,7 @@ export class SelectModifierPhase extends BattlePhase {
       let cost: integer;
       switch (rowCursor) {
       case -1:
-        if(cursor === 1){
+        if (cursor === 1) {
           this.scene.IvScannerEnabled = !this.scene.IvScannerEnabled;
           const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
           uiHandler.updateToggleIvScannerText();
@@ -4927,7 +4927,7 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }
           }, PartyUiHandler.FilterItemMaxStacks);
-        } 
+        }
         return true;
       case 1:
         modifierType = typeOptions[cursor].type;
