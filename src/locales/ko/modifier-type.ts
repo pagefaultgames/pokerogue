@@ -167,7 +167,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "EXP_SHARE": { name: "학습장치", description: "배틀에 참여하지 않아도 20%의 경험치를 받을 수 있는 장치" },
     "EXP_BALANCE": { name: "균형학습장치", description: "레벨이 낮은 포켓몬이 받는 경험치를 가중" },
 
-    "OVAL_CHARM": { name: "Oval Charm", description: "여러 마리의 포켓몬이 배틀에 참여할 경우, 전체 경험치의 10%씩을 추가로 획득" },
+    "OVAL_CHARM": { name: "둥근부적", description: "여러 마리의 포켓몬이 배틀에 참여할 경우, 전체 경험치의 10%씩을 추가로 획득" },
 
     "EXP_CHARM": { name: "경험부적" },
     "SUPER_EXP_CHARM": { name: "좋은경험부적" },
@@ -209,6 +209,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "먹다남은음식", description: "포켓몬의 HP가 매 턴 최대 체력의 1/16씩 회복" },
     "SHELL_BELL": { name: "조개껍질방울", description: "포켓몬이 준 데미지의 1/8씩 회복" },
 
+    "TOXIC_ORB": { name: "맹독구슬", description: "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 맹독 상태가 된다." },
+    "FLAME_ORB": { name: "화염구슬", description: "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 화상 상태가 된다." },
+
     "BATON": { name: "바톤", description: "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 함" },
 
     "SHINY_CHARM": { name: "빛나는부적", description: "야생 포켓몬이 색이 다른 포켓몬으로 등장할 확률을 급격히 증가" },
@@ -218,7 +221,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "DNA_SPLICERS": { name: "유전자쐐기" },
 
-    "MINI_BLACK_HOLE": { name: "미니 블랙 홀" },
+    "MINI_BLACK_HOLE": { name: "미니 블랙홀" },
 
     "GOLDEN_POKEBALL": { name: "황금몬스터볼", description: "전투 후 획득하는 아이템의 선택지를 하나 더 추가" },
 
@@ -315,7 +318,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ALTARIANITE": "파비코리나이트",
     "AMPHAROSITE": "전룡나이트",
     "AUDINITE": "다부니나이트",
-    "BANETTITE": "깜까미나이트",
+    "BANETTITE": "다크펫나이트",
     "BEEDRILLITE": "독침붕나이트",
     "BLASTOISINITE": "거북왕나이트",
     "BLAZIKENITE": "번치코나이트",
