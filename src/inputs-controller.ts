@@ -77,7 +77,6 @@ export class InputsController {
   private events: Phaser.Events.EventEmitter;
 
   private buttonLock: Button;
-  private buttonLock2: Button;
   private interactions: Map<Button, Map<string, boolean>> = new Map();
   private time: Phaser.Time.Clock;
   private configs: Map<string, InterfaceConfig> = new Map();
@@ -597,7 +596,7 @@ export class InputsController {
      * This method is used to reset the state of all buttons within the `interactions` dictionary,
      * effectively deactivating any currently pressed keys. It performs the following actions:
      *
-     * - Releases button locks for predefined buttons (`buttonLock` and `buttonLock2`), allowing them
+     * - Releases button lock for predefined buttons, allowing them
      *   to be pressed again or properly re-initialized in future interactions.
      * - Iterates over all possible button values obtained via `Utils.getEnumValues(Button)`, and for
      *   each button:
@@ -611,7 +610,6 @@ export class InputsController {
   deactivatePressedKey(): void {
     this.pauseUpdate = true;
     this.releaseButtonLock(this.buttonLock);
-    this.releaseButtonLock(this.buttonLock2);
     for (const b of Utils.getEnumValues(Button)) {
       if (this.interactions.hasOwnProperty(b)) {
         this.interactions[b].pressTime = null;
@@ -627,40 +625,27 @@ export class InputsController {
      * Checks if a specific button is currently locked.
      *
      * @param button - The button to check for a lock status.
-     * @returns `true` if the button is either of the two potentially locked buttons (`buttonLock` or `buttonLock2`), otherwise `false`.
+     * @returns `true` if the button is locked, otherwise `false`.
      *
      * @remarks
      * This method is used to determine if a given button is currently prevented from being processed due to a lock.
      * It checks against two separate lock variables, allowing for up to two buttons to be locked simultaneously.
      */
   isButtonLocked(button: Button): boolean {
-    return (this.buttonLock === button || this.buttonLock2 === button);
+    return this.buttonLock === button;
   }
 
   /**
-     * Sets a lock on a given button if it is not already locked.
+     * Sets a lock on a given button.
      *
      * @param button - The button to lock.
      *
      * @remarks
      * This method ensures that a button is not processed multiple times inadvertently.
-     * It checks if the button is already locked by either of the two lock variables (`buttonLock` or `buttonLock2`).
-     * If not, it locks the button using the first available lock variable.
-     * This mechanism allows for up to two buttons to be locked at the same time.
+     * It checks if the button is already locked.
      */
   setButtonLock(button: Button): void {
-    if (this.buttonLock === button || this.buttonLock2 === button) {
-      return;
-    }
-    if (this.buttonLock === button) {
-      this.buttonLock2 = button;
-    } else if (this.buttonLock2 === button) {
-      this.buttonLock = button;
-    } else if (!!this.buttonLock) {
-      this.buttonLock2 = button;
-    } else {
-      this.buttonLock = button;
-    }
+    this.buttonLock = button;
   }
 
   /**
@@ -669,15 +654,13 @@ export class InputsController {
      * @param button - The button whose lock is to be released.
      *
      * @remarks
-     * This method checks both lock variables (`buttonLock` and `buttonLock2`).
+     * This method checks lock variable.
      * If either lock matches the specified button, that lock is cleared.
      * This action frees the button to be processed again, ensuring it can respond to new inputs.
      */
   releaseButtonLock(button: Button): void {
     if (this.buttonLock === button) {
       this.buttonLock = null;
-    } else if (this.buttonLock2 === button) {
-      this.buttonLock2 = null;
     }
   }
 
