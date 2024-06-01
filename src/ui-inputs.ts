@@ -6,7 +6,9 @@ import {InputsController} from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import {Mode} from "./ui/ui";
 import Phaser from "phaser";
-import SettingsUiHandler from "./ui/settings-ui-handler";
+import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
+import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import SettingsUiHandler from "./ui/settings/settings-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
@@ -160,7 +162,9 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    if (this.scene.ui?.getHandler() instanceof StarterSelectUiHandler) {
+    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
+    const uiHandler = this.scene.ui?.getHandler();
+    if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
     } else if (button === Button.V) {
       this.buttonInfo(true);

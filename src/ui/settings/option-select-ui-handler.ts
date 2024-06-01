@@ -1,6 +1,6 @@
-import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
-import BattleScene from "../battle-scene";
-import { Mode } from "./ui";
+import AbstractOptionSelectUiHandler from "../abstact-option-select-ui-handler";
+import BattleScene from "../../battle-scene";
+import { Mode } from "../ui";
 
 export default class OptionSelectUiHandler extends AbstractOptionSelectUiHandler {
   constructor(scene: BattleScene, mode: Mode = Mode.OPTION_SELECT) {

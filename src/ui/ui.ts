@@ -1,6 +1,6 @@
 import * as Utils from "../utils";
 
-import {TextStyle, addTextObject} from "./text";
+import { TextStyle, addTextObject } from "./text";
 import i18next, {ParseKeys} from "i18next";
 
 import AchvBar from "./achv-bar";
@@ -18,12 +18,14 @@ import EggListUiHandler from "./egg-list-ui-handler";
 import EvolutionSceneHandler from "./evolution-scene-handler";
 import FightUiHandler from "./fight-ui-handler";
 import GameStatsUiHandler from "./game-stats-ui-handler";
+import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
+import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import MenuUiHandler from "./menu-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import ModifierSelectUiHandler from "./modifier-select-ui-handler";
-import OptionSelectUiHandler from "./option-select-ui-handler";
+import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import PartyUiHandler from "./party-ui-handler";
 import {PlayerGender} from "#app/system/game-data";
@@ -31,7 +33,9 @@ import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
 import SavingIconHandler from "./saving-icon-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
-import SettingsUiHandler from "./settings-ui-handler";
+import SettingsGamepadUiHandler from "./settings/settings-gamepad-ui-handler";
+import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import SettingsUiHandler from "./settings/settings-ui-handler";
 import StarterSelectUiHandler from "./starter-select-ui-handler";
 import SummaryUiHandler from "./summary-ui-handler";
 import TargetSelectUiHandler from "./target-select-ui-handler";
@@ -60,6 +64,10 @@ export enum Mode {
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
+  SETTINGS_GAMEPAD,
+  GAMEPAD_BINDING,
+  SETTINGS_KEYBOARD,
+  KEYBOARD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
   VOUCHERS,
@@ -90,7 +98,11 @@ const noTransitionModes = [
   Mode.OPTION_SELECT,
   Mode.MENU,
   Mode.MENU_OPTION_SELECT,
+  Mode.GAMEPAD_BINDING,
+  Mode.KEYBOARD_BINDING,
   Mode.SETTINGS,
+  Mode.SETTINGS_GAMEPAD,
+  Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
   Mode.VOUCHERS,
@@ -105,7 +117,7 @@ const noTransitionModes = [
 export default class UI extends Phaser.GameObjects.Container {
   private mode: Mode;
   private modeChain: Mode[];
-  private handlers: UiHandler[];
+  public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public savingIcon: SavingIconHandler;
@@ -141,6 +153,10 @@ export default class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
+      new SettingsGamepadUiHandler(scene),
+      new GamepadBindingUiHandler(scene),
+      new SettingsKeyboardUiHandler(scene),
+      new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),

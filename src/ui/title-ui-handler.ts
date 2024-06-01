@@ -6,7 +6,7 @@ import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-m
 import BattleScene from "../battle-scene";
 import { DailyRunScoreboard } from "./daily-run-scoreboard";
 import { Mode } from "./ui";
-import OptionSelectUiHandler from "./option-select-ui-handler";
+import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import i18next from "i18next";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {

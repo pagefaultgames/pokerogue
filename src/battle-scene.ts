@@ -50,7 +50,7 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { Species } from "./data/enums/species";
 import SpritePipeline from "./pipelines/sprite";
 import TrainerData from "./system/trainer-data";
-import UI  from "./ui/ui";
+import UI from "./ui/ui";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import {UiInputs} from "./ui-inputs";
 import { UiTheme } from "./enums/ui-theme";
@@ -133,8 +133,6 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
-  public gamepadSupport: boolean = false;
-  public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
 
