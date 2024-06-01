@@ -11,12 +11,12 @@ export const pokemonForm: SimpleTranslationEntries = {
 
   // Starters forms
   // 1G
-  "pikachuCosplay": "Cosplay",
-  "pikachuCoolCosplay": "Cool Cosplay",
-  "pikachuBeautyCosplay": "Beauty Cosplay",
-  "pikachuCuteCosplay": "Cute Cosplay",
-  "pikachuSmartCosplay": "Smart Cosplay",
-  "pikachuToughCosplay": "Thoug Cosplay",
+  "pikachuCosplay": "옷갈아입기",
+  "pikachuCoolCosplay": "하드록",
+  "pikachuBeautyCosplay": "마담",
+  "pikachuCuteCosplay": "아이돌",
+  "pikachuSmartCosplay": "닥터",
+  "pikachuToughCosplay": "마스크드",
   // 2G
   "pichuSpiky": "Spiky",
   "unownA": "A",
