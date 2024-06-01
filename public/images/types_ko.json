@@ -1,0 +1,440 @@
+{
+	"textures": [
+		{
+			"image": "types_ko.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 32,
+				"h": 280
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "unknown",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "bug",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 14,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "dark",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 28,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "dragon",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 42,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "electric",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 56,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "fairy",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 70,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "fighting",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 84,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "fire",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 98,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "flying",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 112,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "ghost",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 126,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "grass",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 140,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "ground",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 154,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "ice",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 168,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "normal",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 182,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "poison",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 196,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "psychic",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 210,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "rock",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 224,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "steel",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 238,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "water",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 252,
+						"w": 32,
+						"h": 14
+					}
+				},
+				{
+					"filename": "stellar",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 266,
+						"w": 32,
+						"h": 14
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:f14cf47d9a8f1d40c8e03aa6ba00fff3:6fc4227b57a95d429a1faad4280f7ec8:5961efbfbf4c56b8745347e7a663a32f$"
+	}
+}
