@@ -37,7 +37,6 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   protected cancelFn: (boolean?) => boolean;
   protected swapAction: () => boolean;
 
-  protected confirmText: string;
   protected timeLeftAutoClose: number = 5;
   protected countdownTimer;
 
