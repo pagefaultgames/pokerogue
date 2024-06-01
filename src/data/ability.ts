@@ -55,8 +55,22 @@ export class Ability implements Localizable {
     this.description = this.id ? i18next.t(`ability:${i18nKey}.description`) as string : "";
   }
 
-  getAttrs(attrType: { new(...args: any[]): AbAttr }): AbAttr[] {
-    return this.attrs.filter(a => a instanceof attrType);
+  /**
+   * Get all ability attributes that match `attrType`
+   * @param attrType any attribute that extends {@linkcode AbAttr}
+   * @returns Array of attributes that match `attrType`, Empty Array if none match.
+   */
+  getAttrs<T extends AbAttr>(attrType: new(...args: any[]) => T ): T[] {
+    return this.attrs.filter((a): a is T => a instanceof attrType);
+  }
+
+  /**
+   * Check if an ability has an attribute that matches `attrType`
+   * @param attrType any attribute that extends {@linkcode AbAttr}
+   * @returns true if the ability has attribute `attrType`
+   */
+  hasAttr<T extends AbAttr>(attrType: new(...args: any[]) => T): boolean {
+    return this.attrs.some((attr) => attr instanceof attrType);
   }
 
   attr<T extends new (...args: any[]) => AbAttr>(AttrType: T, ...args: ConstructorParameters<T>): Ability {
@@ -72,10 +86,6 @@ export class Ability implements Localizable {
     this.attrs.push(attr);
 
     return this;
-  }
-
-  hasAttr(attrType: { new(...args: any[]): AbAttr }): boolean {
-    return !!this.getAttrs(attrType).length;
   }
 
   bypassFaint(): Ability {
@@ -341,7 +351,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if ((move.getMove() instanceof AttackMove || move.getMove().getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === this.immuneType)) && move.getMove().type === this.immuneType) {
+    if ((move.getMove() instanceof AttackMove || move.getMove().getAttrs(StatusMoveTypeImmunityAttr).find(attr => attr.immuneType === this.immuneType)) && move.getMove().type === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
@@ -568,7 +578,7 @@ export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
 
 export class ReverseDrainAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (!!move.getMove().getAttrs(HitHealAttr).length || !!move.getMove().getAttrs(StrengthSapHealAttr).length ) {
+    if (move.getMove().hasAttr(HitHealAttr) || move.getMove().hasAttr(StrengthSapHealAttr) ) {
       pokemon.scene.queueMessage(getPokemonMessage(attacker, " sucked up the liquid ooze!"));
       return true;
     }
@@ -2194,7 +2204,7 @@ function getAnticipationCondition(): AbAttrCondition {
           return true;
         }
         // move is a OHKO
-        if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
+        if (move.getMove().hasAttr(OneHitKOAttr)) {
           return true;
         }
         // edge case for hidden power, type is computed
@@ -2248,7 +2258,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
       for (const move of opponent.moveset) {
         if (move.getMove() instanceof StatusMove) {
           movePower = 1;
-        } else if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
+        } else if (move.getMove().hasAttr(OneHitKOAttr)) {
           movePower = 150;
         } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
           movePower = 120;
@@ -3325,7 +3335,7 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
     }
 
     const ability = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility());
-    const attrs = ability.getAttrs(attrType) as TAttr[];
+    const attrs = ability.getAttrs(attrType);
 
     const clearSpliceQueueAndResolve = () => {
       pokemon.scene.clearPhaseQueueSplice();
@@ -3524,7 +3534,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, 3)
-      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => (move.getMove().category !== MoveCategory.STATUS && !move.getMove().findAttr(attr => attr instanceof FlinchAttr)) ? 10 : 0, BattlerTagType.FLINCHED),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => (move.getMove().category !== MoveCategory.STATUS && !move.getMove().hasAttr(FlinchAttr)) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
