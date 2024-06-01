@@ -19,6 +19,8 @@ import {
   getIconForLatestInput, swap,
 } from "#app/configs/inputs/configHandler";
 import BattleScene from "./battle-scene";
+import {SettingGamepad} from "#app/system/settings-gamepad";
+import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 export interface DeviceMapping {
     [key: string]: number;
@@ -29,11 +31,11 @@ export interface IconsMapping {
 }
 
 export interface SettingMapping {
-    [key: string]: string;
+    [key: string]: Button;
 }
 
 export interface MappingLayout {
-    [key: string]: Button;
+    [key: string]: SettingGamepad | SettingKeyboard | number;
 }
 
 export interface InterfaceConfig {
@@ -43,10 +45,25 @@ export interface InterfaceConfig {
     icons: IconsMapping;
     settings: SettingMapping;
     default: MappingLayout;
-    custom: MappingLayout;
+    custom?: MappingLayout;
 }
 
 const repeatInputDelayMillis = 250;
+
+// Phaser.Input.Gamepad.GamepadPlugin#refreshPads
+declare module "phaser" {
+  namespace Input {
+    namespace Gamepad {
+      interface GamepadPlugin {
+        /**
+         * Refreshes the list of connected Gamepads.
+         * This is called automatically when a gamepad is connected or disconnected, and during the update loop.
+         */
+        refreshPads(): void;
+      }
+    }
+  }
+}
 
 /**
  * Manages and handles all input controls for the game, including keyboard and gamepad interactions.
