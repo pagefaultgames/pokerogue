@@ -71,7 +71,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "deerlingAutumn": "가을의 모습",
   "deerlingWinter": "겨울의 모습",
   // 6G
-  "froakieBattleBond": "지우개굴닌자",
+  "froakieBattleBond": "유대변화",
   "scatterbugMeadow": "화원의 모양",
   "scatterbugIcySnow": "빙설의 모양",
   "scatterbugPolar": "설국의 모양",
