@@ -68,8 +68,8 @@ const displayStats: DisplayStats = {
     label_key: "classicWins",
     sourceFunc: gameData => gameData.gameStats.sessionsWon.toString(),
   },
-  prestigeLevel: {
-    label_key: "Prestige",
+  prestige: {
+    label_key: "prestige",
     sourceFunc: gameData => Math.max(gameData.prestigeLevel - 1, 0).toString()
   },
   dailyRunSessionsPlayed: {

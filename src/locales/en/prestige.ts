@@ -2,6 +2,7 @@ import { PrestigeTranslationEntries } from "#app/plugins/i18n.js";
 
 export const prestige: PrestigeTranslationEntries = {
   attributes: {
+    "no_modifier": "No modifier",
     "wild_pokemon_attack": "Wild Pokémon Attack {{modifier}}",
     "wild_pokemon_defense": "Wild Pokémon Defense {{modifier}}",
     "wild_pokemon_speed": "Wild Pokémon Speed {{modifier}}",

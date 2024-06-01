@@ -11,6 +11,7 @@ export const gameStatsUiHandler: SimpleTranslationEntries = {
   "ribbonsOwned": "Ribbons Owned",
   "classicRuns": "Classic Runs",
   "classicWins": "Classic Wins",
+  "prestige": "Prestige",
   "dailyRunAttempts": "Daily Run Attempts",
   "dailyRunWins": "Daily Run Wins",
   "endlessRuns": "Endless Runs",

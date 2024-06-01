@@ -2,6 +2,7 @@ import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import { Prestige } from "#app/system/prestige";
+import i18next from "i18next";
 
 
 export class PrestigeModifiersDescription extends Phaser.GameObjects.Container {
@@ -29,13 +30,13 @@ export class PrestigeModifiersDescription extends Phaser.GameObjects.Container {
     this.prestigeLevel = prestigeLevel;
     if (this.prestigeLevel === 0) {
       this.descriptionContainer.removeAll(true);
-      this.descriptionContainer.add(addTextObject(this.scene, 0, 0, "No modifiers", TextStyle.WINDOW, { fontSize: "74px" }));
+      this.descriptionContainer.add(addTextObject(this.scene, 0, 0, i18next.t("prestige:attributes.no_modifier"), TextStyle.WINDOW, { fontSize: "74px" }));
       return;
     }
     const descriptions = Prestige.getLevelDescriptionsForLevel(prestigeLevel);
     this.descriptionContainer.removeAll(true);
     if (descriptions.length === 0) {
-      this.descriptionContainer.add(addTextObject(this.scene, 0, 0, "No modifiers", TextStyle.WINDOW, { fontSize: "74px" }));
+      this.descriptionContainer.add(addTextObject(this.scene, 0, 0, i18next.t("prestige:attributes.no_modifier"), TextStyle.WINDOW, { fontSize: "74px" }));
       return;
     }
     descriptions.forEach((d: string, i: integer) => {

@@ -49,4 +49,7 @@ export const menu: SimpleTranslationEntries = {
   "empty":"Empty",
   "yes":"Yes",
   "no":"No",
+  "prestige": "Prestige {{level}}",
+  "select_prestige": "Select a prestige",
+  "normal": "Normal",
 } as const;

@@ -247,7 +247,7 @@ export class TitlePhase extends Phase {
               const maxPrestigeLevel = this.scene.gameData.prestigeLevel;
               const prestigeLevels = [...Array(Math.min(maxPrestigeLevel, Prestige.MAX_LEVEL)).keys()].map(i => i + 1);
               const prestigeOptions: OptionSelectItem[] = prestigeLevels.map(prestigeLevel => ({
-                label: `Prestige ${prestigeLevel}`,
+                label: i18next.t("menu:prestige", { level: prestigeLevel}),
                 value: prestigeLevel,
                 handler: () => {
                   this.scene.prestigeLevel = prestigeLevel;
@@ -256,7 +256,7 @@ export class TitlePhase extends Phase {
                 }
               }));
               prestigeOptions.unshift({
-                label: "Normal",
+                label: i18next.t("menu:normal"),
                 value: 0,
                 handler: () => {
                   this.scene.prestigeLevel = 0;
@@ -269,7 +269,7 @@ export class TitlePhase extends Phase {
                 handler: this.handlerNewGame.bind(this)
               });
               this.scene.ui.setMode(Mode.MESSAGE);
-              this.scene.ui.showText("Select a prestige.", null, () => this.scene.ui.setOverlayMode(Mode.PRESTIGE_LEVEL_SELECT, { options: prestigeOptions, maxOptions: 7 }));
+              this.scene.ui.showText(i18next.t("menu:select_prestige"), null, () => this.scene.ui.setOverlayMode(Mode.PRESTIGE_LEVEL_SELECT, { options: prestigeOptions, maxOptions: 7 }));
             } else {
               this.scene.prestigeLevel = 0;
               setModeAndEnd(GameModes.CLASSIC);
