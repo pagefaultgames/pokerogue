@@ -2777,8 +2777,9 @@ export function initBiomes() {
       [ Biome.LABORATORY, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.MEW, Type.PSYCHIC, -1, [ ]
+    [ Species.MEW, Type.PSYCHIC, -1, [
       [ Biome.JUNGLE, BiomePoolTier.BOSS_ULTRA_RARE ]
+    ]
     ],
     [ Species.CHIKORITA, Type.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ]

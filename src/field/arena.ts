@@ -75,10 +75,16 @@ export class Arena {
     }
     const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
+    // const isBoss = true;
+    // USED FOR TESTING
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+    // let tier = !isBoss
+    //   ? tierValue >= 156 ? BiomePoolTier.BOSS_ULTRA_RARE : tierValue >= 32 ? BiomePoolTier.BOSS_ULTRA_RARE : tierValue >= 6 ? BiomePoolTier.BOSS_ULTRA_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_ULTRA_RARE : BiomePoolTier.BOSS_ULTRA_RARE
+    //   : tierValue >= 20 ? BiomePoolTier.BOSS_ULTRA_RARE : tierValue >= 6 ? BiomePoolTier.BOSS_ULTRA_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_ULTRA_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+    // USED FOR TESTING
     console.log(BiomePoolTier[tier]);
     while (!this.pokemonPool[tier].length) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
