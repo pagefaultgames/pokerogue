@@ -26,7 +26,7 @@ describe("Test Rebinding", () => {
   beforeEach(() => {
     config = deepCopy(cfg_keyboard_qwerty);
     config.custom = {...config.default};
-    configs.default = config;
+    configs["default"] = config;
     inGame = new InGameManip(configs, config, selectedDevice);
     inTheSettingMenu = new MenuManip(config);
   });

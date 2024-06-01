@@ -129,7 +129,7 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
           return true;
         };
         scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-          options: [...gp.map((g) => ({
+          options: [...gp.map((g: string) => ({
             label: truncateString(g, 30), // Truncate the gamepad name for display
             handler: () => changeGamepadHandler(g)
           })), {

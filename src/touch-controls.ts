@@ -100,20 +100,20 @@ function bindKey(node: HTMLElement, key: string, events) {
   node.addEventListener("touchstart", event => {
     event.preventDefault();
     simulateKeyboardEvent("keydown", key, events);
-    keysDown.set(event.target.id, node.id);
+    keysDown.set(event.target["id"], node.id);
     node.classList.add("active");
   });
 
   node.addEventListener("touchend", event => {
     event.preventDefault();
 
-    const pressedKey = keysDown.get(event.target.id);
+    const pressedKey = keysDown.get(event.target["id"]);
     if (pressedKey && keys.has(pressedKey)) {
       const key = keys.get(pressedKey);
       simulateKeyboardEvent("keyup", key, events);
     }
 
-    keysDown.delete(event.target.id);
+    keysDown.delete(event.target["id"]);
     node.classList.remove("active");
 
     if (lastTouchedId) {
