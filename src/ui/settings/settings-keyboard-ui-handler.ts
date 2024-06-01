@@ -182,7 +182,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     for (const [index, key] of Object.keys(this.settingDevice).entries()) {
       const setting = this.settingDevice[key]; // Get the actual setting value using the key.
 
-      // Check if the current setting corresponds to the default controller setting.
+      // Check if the current setting corresponds to the layout setting.
       if (setting === this.settingDevice.Default_Layout) {
         // Iterate over all layouts excluding the 'noGamepads' special case.
         for (const _key of Object.keys(this.layout)) {

@@ -148,7 +148,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       // Gather all binding settings from the configuration.
       const bindingSettings = Object.keys(config.settings);
 
-      // Array to hold labels for different settings such as 'Default Controller', 'Gamepad Support', etc.
+      // Array to hold labels for different settings such as 'Controller', 'Gamepad Support', etc.
       const settingLabels: Phaser.GameObjects.Text[] = [];
 
       // Array to hold options for each setting, e.g., 'Auto', 'Disabled'.
@@ -157,7 +157,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       // Object to store sprites for each button configuration.
       const inputsIcons: InputsIcons = {};
 
-      // Fetch common setting keys such as 'Default Controller' and 'Gamepad Support' from gamepad settings.
+      // Fetch common setting keys such as 'Controller' and 'Gamepad Support' from gamepad settings.
       const commonSettingKeys = Object.keys(this.settingDevice).slice(0, this.commonSettingsCount).map(key => this.settingDevice[key]);
       // Combine common and specific bindings into a single array.
       const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.settings)];
@@ -585,7 +585,7 @@ export default abstract class AbstractSettingsUiUiHandler extends UiHandler {
       newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
     }
 
-    // If the save flag is set and the setting is not the default controller setting, save the setting to local storage
+    // If the save flag is set, save the setting to local storage
     if (save) {
       this.saveSettingToLocalStorage(setting, cursor);
     }

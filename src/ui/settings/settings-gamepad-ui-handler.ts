@@ -138,8 +138,8 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
     for (const [index, key] of Object.keys(this.settingDevice).entries()) {
       const setting = this.settingDevice[key]; // Get the actual setting value using the key.
 
-      // Check if the current setting corresponds to the default controller setting.
-      if (setting === this.settingDevice.Default_Controller) {
+      // Check if the current setting corresponds to the controller setting.
+      if (setting === this.settingDevice.Controller) {
         // Iterate over all layouts excluding the 'noGamepads' special case.
         for (const _key of Object.keys(this.layout)) {
           if (_key === "noGamepads") {
@@ -161,7 +161,7 @@ export default class SettingsGamepadUiHandler extends AbstractSettingsUiUiHandle
      * @param cursor - The cursor position to save.
      */
   saveSettingToLocalStorage(setting, cursor): void {
-    if (this.settingDevice[setting] !== this.settingDevice.Default_Controller) {
+    if (this.settingDevice[setting] !== this.settingDevice.Controller) {
       this.scene.gameData.saveGamepadSetting(setting, cursor);
     }
   }

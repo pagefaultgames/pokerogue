@@ -158,7 +158,7 @@ export function swap(config, settingNameTarget, keycode) {
  */
 export function deleteBind(config, settingName) {
   const key = getKeyWithSettingName(config, settingName);
-  if (config.blacklist.includes(key) || isTheLatestBind(config, settingName)) {
+  if (config.blacklist.includes(key)) {
     return false;
   }
   config.custom[key] = -1;
@@ -173,15 +173,16 @@ export function canIAssignThisKey(config, key) {
   if (settingName === -1) {
     return true;
   }
-  if (isTheLatestBind(config, settingName)) {
-    return false;
-  }
+  // if (isTheLatestBind(config, settingName)) {
+  //   return false;
+  // }
   return true;
 }
 
 export function canIOverrideThisSetting(config, settingName) {
   const key = getKeyWithSettingName(config, settingName);
-  if (config.blacklist?.includes(key) || isTheLatestBind(config, settingName)) {
+  // || isTheLatestBind(config, settingName) no longer needed since action and cancel are protected
+  if (config.blacklist?.includes(key)) {
     return false;
   }
   return true;
@@ -191,17 +192,17 @@ export function canIDeleteThisKey(config, key) {
   return canIAssignThisKey(config, key);
 }
 
-export function isTheLatestBind(config, settingName) {
-  if (config.padType !== "keyboard") {
-    return false;
-  }
-  const isAlt = settingName.includes("ALT_");
-  let altSettingName;
-  if (isAlt) {
-    altSettingName = settingName.split("ALT_").splice(1)[0];
-  } else {
-    altSettingName = `ALT_${settingName}`;
-  }
-  const secondButton = getKeyWithSettingName(config, altSettingName);
-  return secondButton === undefined;
-}
+// export function isTheLatestBind(config, settingName) {
+//   if (config.padType !== "keyboard") {
+//     return false;
+//   }
+//   const isAlt = settingName.includes("ALT_");
+//   let altSettingName;
+//   if (isAlt) {
+//     altSettingName = settingName.split("ALT_").splice(1)[0];
+//   } else {
+//     altSettingName = `ALT_${settingName}`;
+//   }
+//   const secondButton = getKeyWithSettingName(config, altSettingName);
+//   return secondButton === undefined;
+// }

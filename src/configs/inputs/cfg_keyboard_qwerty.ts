@@ -279,6 +279,8 @@ const cfg_keyboard_qwerty = {
   blacklist: [
     "KEY_ENTER",
     "KEY_ESC",
+    "KEY_SPACE",
+    "KEY_BACKSPACE",
     "KEY_ARROW_UP",
     "KEY_ARROW_DOWN",
     "KEY_ARROW_LEFT",

@@ -124,6 +124,7 @@ export const settingKeyboardBlackList = [
   SettingKeyboard.Button_Submit,
   SettingKeyboard.Button_Menu,
   SettingKeyboard.Button_Action,
+  SettingKeyboard.Button_Cancel,
   SettingKeyboard.Button_Up,
   SettingKeyboard.Button_Down,
   SettingKeyboard.Button_Left,

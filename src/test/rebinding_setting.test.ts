@@ -412,6 +412,6 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("V").weShouldTriggerTheButton("Button_Cycle_Variant");
     inGame.whenWePressOnKeyboard("K").weShouldTriggerTheButton("Alt_Button_Cycle_Variant");
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Variant").iconDisplayedIs("KEY_K").whenWeDelete().thereShouldBeNoIconAnymore();
-    inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Variant").iconDisplayedIs("KEY_V").whenWeDelete().iconDisplayedIs("KEY_V");
+    inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Variant").iconDisplayedIs("KEY_V").whenWeDelete().thereShouldBeNoIconAnymore();
   });
 });

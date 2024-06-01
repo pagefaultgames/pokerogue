@@ -7,7 +7,7 @@ import {Button} from "../enums/buttons";
 import {SettingKeyboard} from "#app/system/settings-keyboard";
 
 export enum SettingGamepad {
-    Default_Controller = "DEFAULT_CONTROLLER",
+    Controller = "CONTROLLER",
     Gamepad_Support = "GAMEPAD_SUPPORT",
     Button_Up = "BUTTON_UP",
     Button_Down = "BUTTON_DOWN",
@@ -29,7 +29,7 @@ export enum SettingGamepad {
 }
 
 export const settingGamepadOptions: SettingOptions = {
-  [SettingGamepad.Default_Controller]: ["Default", "Change"],
+  [SettingGamepad.Controller]: ["Default", "Change"],
   [SettingGamepad.Gamepad_Support]: ["Auto", "Disabled"],
   [SettingGamepad.Button_Up]: [`KEY ${Button.UP.toString()}`, "Press action to assign"],
   [SettingGamepad.Button_Down]: [`KEY ${Button.DOWN.toString()}`, "Press action to assign"],
@@ -51,7 +51,7 @@ export const settingGamepadOptions: SettingOptions = {
 };
 
 export const settingGamepadDefaults: SettingDefaults = {
-  [SettingGamepad.Default_Controller]: 0,
+  [SettingGamepad.Controller]: 0,
   [SettingGamepad.Gamepad_Support]: 0,
   [SettingGamepad.Button_Up]: 0,
   [SettingGamepad.Button_Down]: 0,
@@ -113,13 +113,13 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
       }
     }
     break;
-  case SettingGamepad.Default_Controller:
+  case SettingGamepad.Controller:
     if (value) {
       const gp = scene.inputController.getGamepadsName();
       if (scene.ui && gp) {
         const cancelHandler = () => {
           scene.ui.revertMode();
-          (scene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(SettingGamepad.Default_Controller), 0, true);
+          (scene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(SettingGamepad.Controller), 0, true);
           (scene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
           return false;
         };
