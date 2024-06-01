@@ -1,11 +1,13 @@
-import { Species } from "./enums/species";
-import { Type } from "./type";
 import * as Utils from "../utils";
-import beautify from "json-beautify";
-import { TrainerType } from "./enums/trainer-type";
-import { TimeOfDay } from "./enums/time-of-day";
+
+import {SpeciesFormEvolution, pokemonEvolutions} from "./pokemon-evolutions";
+
 import { Biome } from "./enums/biome";
-import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
+import { Species } from "./enums/species";
+import { TimeOfDay } from "./enums/time-of-day";
+import { TrainerType } from "./enums/trainer-type";
+import { Type } from "./type";
+import beautify from "json-beautify";
 import i18next from "i18next";
 
 export function getBiomeName(biome: Biome | -1) {

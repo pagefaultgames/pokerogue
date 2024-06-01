@@ -1,68 +1,243 @@
-import BattleScene, { bypassLogin } from "./battle-scene";
-import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
-import * as Utils from "./utils";
-import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr  } from "./data/move";
-import { Mode } from "./ui/ui";
-import { Command } from "./ui/command-ui-handler";
-import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier } from "./modifier/modifier";
-import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
-import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
-import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
-import { SummaryUiMode } from "./ui/summary-ui-handler";
-import EvolutionSceneHandler from "./ui/evolution-scene-handler";
-import { EvolutionPhase } from "./evolution-phase";
-import { Phase } from "./phase";
-import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
-import { biomeLinks, getBiomeName } from "./data/biomes";
-import { Biome } from "./data/enums/biome";
-import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
-import { BattlerTagType } from "./data/enums/battler-tag-type";
-import { getPokemonMessage, getPokemonPrefix } from "./messages";
-import { Starter } from "./ui/starter-select-ui-handler";
-import { Gender } from "./data/gender";
-import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr } from "./data/ability";
-import { Unlockables, getUnlockableName } from "./system/unlockables";
-import { getBiomeKey } from "./field/arena";
-import { BattleType, BattlerIndex, TurnCommand } from "./battle";
-import { BattleSpec } from "./enums/battle-spec";
-import { Species } from "./data/enums/species";
-import { HealAchv, LevelAchv, achvs } from "./system/achv";
-import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
-import { TrainerType } from "./data/enums/trainer-type";
-import { EggHatchPhase } from "./egg-hatch-phase";
-import { Egg } from "./data/egg";
-import { vouchers } from "./system/voucher";
-import { loggedInUser, updateUserInfo } from "./account";
-import { PlayerGender, SessionSaveData } from "./system/game-data";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
-import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
-import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
-import { Setting } from "./system/settings";
-import { Tutorial, handleTutorial } from "./tutorial";
-import { TerrainType } from "./data/terrain";
-import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
-import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
-import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
-import { GameModes, gameModes } from "./game-mode";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
-import i18next from "./plugins/i18n";
-import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
-import { TextStyle, addTextObject } from "./ui/text";
-import { Type } from "./data/type";
-import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import * as Utils from "./utils";
 
+import {
+  AlwaysHitAbAttr,
+  BattleStatMultiplierAbAttr,
+  BlockNonDirectDamageAbAttr,
+  BlockRedirectAbAttr,
+  CheckTrappedAbAttr,
+  HealFromBerryUseAbAttr,
+  IgnoreOpponentEvasionAbAttr,
+  IgnoreOpponentStatChangesAbAttr,
+  IncreasePpAbAttr,
+  IncrementMovePriorityAbAttr,
+  MaxMultiHitAbAttr,
+  PostAttackAbAttr,
+  PostBattleAbAttr,
+  PostBiomeChangeAbAttr,
+  PostDefendAbAttr,
+  PostFaintAbAttr,
+  PostKnockOutAbAttr,
+  PostMoveUsedAbAttr,
+  PostStatChangeAbAttr,
+  PostSummonAbAttr,
+  PostTurnAbAttr,
+  PostVictoryAbAttr,
+  PostWeatherLapseAbAttr,
+  PreSwitchOutAbAttr,
+  PreWeatherDamageAbAttr,
+  PreventBerryUseAbAttr,
+  ProtectStatAbAttr,
+  RedirectMoveAbAttr,
+  RunSuccessAbAttr,
+  StatChangeCopyAbAttr,
+  StatChangeMultiplierAbAttr,
+  SuppressWeatherEffectAbAttr,
+  SyncEncounterNatureAbAttr,
+  applyAbAttrs,
+  applyBattleStatMultiplierAbAttrs,
+  applyCheckTrappedAbAttrs,
+  applyPostAttackAbAttrs,
+  applyPostBattleAbAttrs,
+  applyPostDefendAbAttrs,
+  applyPostFaintAbAttrs,
+  applyPostKnockOutAbAttrs,
+  applyPostMoveUsedAbAttrs,
+  applyPostStatChangeAbAttrs,
+  applyPostSummonAbAttrs,
+  applyPostTurnAbAttrs,
+  applyPostVictoryAbAttrs,
+  applyPostWeatherLapseAbAttrs,
+  applyPreStatChangeAbAttrs,
+  applyPreSwitchOutAbAttrs,
+  applyPreWeatherEffectAbAttrs
+} from "./data/ability";
+import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
+import {
+  AttackMove,
+  BypassRedirectAttr,
+  BypassSleepAttr,
+  ChargeAttr,
+  CopyMoveAttr,
+  FixedDamageAttr,
+  ForceSwitchOutAttr,
+  HealStatusEffectAttr,
+  HitsTagAttr,
+  IgnoreOpponentStatChangesAttr,
+  IncrementMovePriorityAttr,
+  MissEffectAttr,
+  MoveAttr,
+  MoveEffectAttr,
+  MoveEffectTrigger,
+  MoveFlags,
+  MoveTarget,
+  MoveTargetSet,
+  MultiHitAttr,
+  NoEffectAttr,
+  OneHitKOAccuracyAttr,
+  OverrideMoveEffectAttr,
+  PostVictoryStatChangeAttr,
+  PreMoveMessageAttr,
+  SelfStatusMove,
+  VariableAccuracyAttr,
+  VariableTargetAttr,
+  allMoves,
+  applyFilteredMoveAttrs,
+  applyMoveAttrs,
+  getMoveTargets
+} from "./data/move";
+import BattleScene, { bypassLogin } from "./battle-scene";
+import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
+import { BattleType, BattlerIndex, TurnCommand } from "./battle";
+import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import {
+  BerryModifier,
+  BypassSpeedChanceModifier,
+  ContactHeldItemTransferChanceModifier,
+  EnemyAttackStatusEffectChanceModifier,
+  EnemyPersistentModifier,
+  EnemyStatusEffectHealChanceModifier,
+  EnemyTurnHealModifier,
+  ExpBalanceModifier,
+  ExpBoosterModifier,
+  ExpShareModifier,
+  ExtraModifierModifier,
+  FlinchChanceModifier,
+  HealingBoosterModifier,
+  HitHealModifier,
+  IvScannerModifier,
+  LapsingPersistentModifier,
+  LapsingPokemonHeldItemModifier,
+  MapModifier,
+  Modifier,
+  MoneyInterestModifier,
+  MoneyMultiplierModifier,
+  MultipleParticipantExpBonusModifier,
+  PersistentModifier,
+  PokemonExpBoosterModifier,
+  PokemonHeldItemModifier,
+  PokemonInstantReviveModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  SwitchEffectTransferModifier,
+  TempBattleStatBoosterModifier,
+  TurnHealModifier,
+  TurnHeldItemTransferModifier,
+  TurnStatusEffectModifier,
+  overrideHeldItems,
+  overrideModifiers
+} from "./modifier/modifier";
+import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
+import {
+  DamageResult,
+  EnemyPokemon,
+  FieldPosition,
+  HitResult,
+  MoveResult,
+  PlayerPokemon,
+  default as Pokemon,
+  PokemonMove,
+  TurnMove
+} from "./field/pokemon";
+import {
+  FusePokemonModifierType,
+  ModifierPoolType,
+  ModifierType,
+  ModifierTypeFunc,
+  ModifierTypeOption,
+  PokemonModifierType,
+  PokemonMoveModifierType,
+  PokemonPpRestoreModifierType,
+  PokemonPpUpModifierType,
+  RememberMoveModifierType,
+  TmModifierType,
+  getDailyRunStarterModifiers,
+  getEnemyBuffModifierForWave,
+  getModifierType,
+  getPlayerModifierTypeOptions,
+  getPlayerShopModifierTypeOptionsForWave,
+  modifierTypes,
+  regenerateModifierPoolThresholds
+} from "./modifier/modifier-type";
+import { GameModes, gameModes } from "./game-mode";
+import { HealAchv, LevelAchv, achvs } from "./system/achv";
+import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
+import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
+import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
+import { PlayerGender, SessionSaveData } from "./system/game-data";
+import {
+  PokeballType,
+  doPokeballBounceAnim,
+  getPokeballAtlasKey,
+  getPokeballCatchMultiplier,
+  getPokeballTintColor
+} from "./data/pokeball";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import {
+  SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeManualTrigger,
+  SpeciesFormChangeMoveLearnedTrigger,
+  SpeciesFormChangePostMoveTrigger,
+  SpeciesFormChangePreMoveTrigger
+} from "./data/pokemon-forms";
+import {
+  StatusEffect,
+  getStatusEffectActivationText,
+  getStatusEffectCatchRateMultiplier,
+  getStatusEffectHealText,
+  getStatusEffectObtainText,
+  getStatusEffectOverlapText
+} from "./data/status-effect";
+import { TextStyle, addTextObject } from "./ui/text";
+import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
+import { Tutorial, handleTutorial } from "./tutorial";
+import { Unlockables, getUnlockableName } from "./system/unlockables";
+import {
+  Weather,
+  WeatherType,
+  getRandomWeatherType,
+  getTerrainBlockMessage,
+  getWeatherDamageMessage,
+  getWeatherLapseMessage
+} from "./data/weather";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
+import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
+import { biomeLinks, getBiomeName } from "./data/biomes";
+import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
+import { getPokemonMessage, getPokemonPrefix } from "./messages";
+import { loggedInUser, updateUserInfo } from "./account";
+
+import { Abilities } from "./data/enums/abilities";
+import { ArenaTagType } from "./data/enums/arena-tag-type";
+import { BattleSpec } from "./enums/battle-spec";
+import { BattlerTagType } from "./data/enums/battler-tag-type";
+import { Biome } from "./data/enums/biome";
+import { Command } from "./ui/command-ui-handler";
+import { Egg } from "./data/egg";
+import { EggHatchPhase } from "./egg-hatch-phase";
+import { EvolutionPhase } from "./evolution-phase";
+import EvolutionSceneHandler from "./ui/evolution-scene-handler";
+import { Gender } from "./data/gender";
+import { Mode } from "./ui/ui";
+import { ModifierTier } from "./modifier/modifier-tier";
+import { Moves } from "./data/enums/moves";
+import { Phase } from "./phase";
+import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
+import { Setting } from "./system/settings";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { Species } from "./data/enums/species";
+import { Starter } from "./ui/starter-select-ui-handler";
+import { Stat } from "./data/pokemon-stat";
+import { SummaryUiMode } from "./ui/summary-ui-handler";
+import { TempBattleStat } from "./data/temp-battle-stat";
+import { TerrainType } from "./data/terrain";
+import { TrainerType } from "./data/enums/trainer-type";
+import { Type } from "./data/type";
+import { getBiomeKey } from "./field/arena";
+import i18next from "./plugins/i18n";
+import { vouchers } from "./system/voucher";
 
 export class LoginPhase extends Phase {
   private showText: boolean;

@@ -1,13 +1,15 @@
-import Phaser from "phaser";
 import * as Utils from "./utils";
+
 import {ButtonKey, initTouchControls} from "./touch-controls";
+
+import BattleScene from "./battle-scene";
+import {Button} from "./enums/buttons";
+import Phaser from "phaser";
+import pad_dualshock from "./configs/pad_dualshock";
 import pad_generic from "./configs/pad_generic";
+import pad_procon from "./configs/pad_procon";
 import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
-import pad_dualshock from "./configs/pad_dualshock";
-import pad_procon from "./configs/pad_procon";
-import {Button} from "./enums/buttons";
-import BattleScene from "./battle-scene";
 
 export interface GamepadMapping {
     [key: string]: number;

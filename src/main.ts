@@ -1,13 +1,12 @@
-import Phaser from "phaser";
-import BattleScene from "./battle-scene";
-import InvertPostFX from "./pipelines/invert";
-import { version } from "../package.json";
-import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
+import BattleScene from "./battle-scene";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
-import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
+import InvertPostFX from "./pipelines/invert";
 import { LoadingScene } from "./loading-scene";
-
+import Phaser from "phaser";
+import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
+import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
+import { version } from "../package.json";
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {

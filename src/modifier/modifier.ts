@@ -1,26 +1,28 @@
 import * as ModifierTypes from "./modifier-type";
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
-import BattleScene from "../battle-scene";
-import { getLevelTotalExp } from "../data/exp";
-import { PokeballType } from "../data/pokeball";
-import Pokemon, { PlayerPokemon } from "../field/pokemon";
-import { Stat } from "../data/pokemon-stat";
-import { addTextObject, TextStyle } from "../ui/text";
-import { Type } from "../data/type";
-import { EvolutionPhase } from "../evolution-phase";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import { getPokemonMessage } from "../messages";
-import * as Utils from "../utils";
-import { TempBattleStat } from "../data/temp-battle-stat";
-import { BerryType, getBerryEffectFunc, getBerryPredicate } from "../data/berry";
-import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
-import { achvs } from "../system/achv";
-import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
-import { Nature } from "#app/data/nature";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
+import * as Utils from "../utils";
+
+import { BerryType, getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
 import { ModifierType, modifierTypes } from "./modifier-type";
+import Pokemon, { PlayerPokemon } from "../field/pokemon";
+import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
+import { TextStyle, addTextObject } from "../ui/text";
+
+import BattleScene from "../battle-scene";
+import { BattlerTagType } from "#app/data/enums/battler-tag-type";
+import { EvolutionPhase } from "../evolution-phase";
+import { Nature } from "#app/data/nature";
+import { PokeballType } from "../data/pokeball";
+import { Stat } from "../data/pokemon-stat";
+import { TempBattleStat } from "../data/temp-battle-stat";
+import { Type } from "../data/type";
+import { VoucherType } from "../system/voucher";
+import { achvs } from "../system/achv";
+import { getLevelTotalExp } from "../data/exp";
+import { getPokemonMessage } from "../messages";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 

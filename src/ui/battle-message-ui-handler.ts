@@ -1,12 +1,14 @@
-import BattleScene from "../battle-scene";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
-import { Mode } from "./ui";
 import * as Utils from "../utils";
-import MessageUiHandler from "./message-ui-handler";
-import { getStatName, Stat } from "../data/pokemon-stat";
-import { addWindow } from "./ui-theme";
+
+import { Stat, getStatName } from "../data/pokemon-stat";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
+
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import BattleScene from "../battle-scene";
 import {Button} from "../enums/buttons";
+import MessageUiHandler from "./message-ui-handler";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
 import i18next from "../plugins/i18n";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {

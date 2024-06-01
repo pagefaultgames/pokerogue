@@ -1,10 +1,12 @@
-import Pokemon from "../field/pokemon";
-import Move from "./move";
-import { Type } from "./type";
 import * as Utils from "../utils";
+
 import { IncrementMovePriorityAbAttr, applyAbAttrs } from "./ability";
-import { ProtectAttr } from "./move";
+
 import { BattlerIndex } from "#app/battle.js";
+import Move from "./move";
+import Pokemon from "../field/pokemon";
+import { ProtectAttr } from "./move";
+import { Type } from "./type";
 
 export enum TerrainType {
   NONE,

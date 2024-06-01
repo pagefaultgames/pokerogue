@@ -1,8 +1,9 @@
-import BattleScene from "../battle-scene";
-import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
+
+import BattleScene from "../battle-scene";
 import {Button} from "../enums/buttons";
+import MessageUiHandler from "./message-ui-handler";
+import { Mode } from "./ui";
 
 export default class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;

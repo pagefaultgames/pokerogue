@@ -1,11 +1,13 @@
-import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
+
 import { TextStyle, addTextObject } from "./text";
+
+import BattleScene from "../battle-scene";
+import {Button} from "../enums/buttons";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
-import {Button} from "../enums/buttons";
 
 export interface OptionSelectConfig {
   xOffset?: number;

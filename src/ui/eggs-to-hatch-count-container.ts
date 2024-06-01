@@ -1,6 +1,7 @@
+import { TextStyle, addTextObject } from "./text";
+
 import BattleScene from "#app/battle-scene.js";
 import { addWindow } from "./ui-theme";
-import { addTextObject, TextStyle } from "./text";
 
 /**
  * A container that displays the count of hatching eggs.

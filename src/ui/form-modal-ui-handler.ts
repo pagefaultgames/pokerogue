@@ -1,12 +1,14 @@
-import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
+
 import { ModalConfig, ModalUiHandler } from "./modal-ui-handler";
-import { Mode } from "./ui";
 import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
-import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import * as Utils from "../utils";
-import i18next from "../plugins/i18n";
+
+import BattleScene from "../battle-scene";
 import {Button} from "../enums/buttons";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import { Mode } from "./ui";
+import i18next from "../plugins/i18n";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;

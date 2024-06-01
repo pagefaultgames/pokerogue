@@ -1,6 +1,7 @@
+import { TextStyle, addTextObject } from "./text";
+
 import BattleScene from "../battle-scene";
 import Pokemon from "../field/pokemon";
-import { TextStyle, addTextObject } from "./text";
 
 export default class PartyExpBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;

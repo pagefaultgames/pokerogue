@@ -1,7 +1,8 @@
-import BattleScene from "../battle-scene";
-import { Achv } from "../system/achv";
-import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
+
+import { Achv } from "../system/achv";
+import BattleScene from "../battle-scene";
+import { Voucher } from "../system/voucher";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;

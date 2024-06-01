@@ -1,22 +1,29 @@
-import { Abilities } from "./enums/abilities";
-import BattleScene, { AnySound } from "../battle-scene";
-import { Variant, variantColorCache } from "./variant";
-import { variantData } from "./variant";
-import { GrowthRate } from "./exp";
-import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
-import { Species } from "./enums/species";
-import { Type } from "./type";
-import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
-import { uncatchableSpecies } from "./biomes";
 import * as Utils from "../utils";
-import { StarterMoveset } from "../system/game-data";
-import { speciesEggMoves } from "./egg-moves";
-import { PartyMemberStrength } from "./enums/party-member-strength";
-import { GameMode } from "../game-mode";
+
+import BattleScene, { AnySound } from "../battle-scene";
+import {
+  LevelMoves,
+  pokemonFormLevelMoves,
+  pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves,
+  pokemonSpeciesLevelMoves
+} from "./pokemon-level-moves";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
-import { VariantSet } from "./variant";
+import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { Variant, variantColorCache } from "./variant";
 import i18next, { Localizable } from "../plugins/i18n";
+
+import { Abilities } from "./enums/abilities";
+import { GameMode } from "../game-mode";
+import { GrowthRate } from "./exp";
+import { PartyMemberStrength } from "./enums/party-member-strength";
+import { Species } from "./enums/species";
+import { StarterMoveset } from "../system/game-data";
 import { Stat } from "./pokemon-stat";
+import { Type } from "./type";
+import { VariantSet } from "./variant";
+import { speciesEggMoves } from "./egg-moves";
+import { uncatchableSpecies } from "./biomes";
+import { variantData } from "./variant";
 
 export enum Region {
   NORMAL,

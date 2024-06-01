@@ -1,29 +1,47 @@
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { Type } from "./type";
 import * as Utils from "../utils";
+
+import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { BattleStat, getBattleStatName } from "./battle-stat";
+import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
+import Move, {
+  AttackMove,
+  FlinchAttr,
+  HitHealAttr,
+  IncrementMovePriorityAttr,
+  MoveCategory,
+  MoveFlags,
+  MoveTarget,
+  OneHitKOAttr,
+  SelfStatusMove,
+  StatusMove,
+  StatusMoveTypeImmunityAttr,
+  StrengthSapHealAttr,
+  VariablePowerAttr,
+  allMoves,
+  applyMoveAttrs
+} from "./move";
 import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonPrefix } from "../messages";
+import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Weather, WeatherType } from "./weather";
+import { getPokemonMessage, getPokemonPrefix } from "../messages";
+import i18next, { Localizable } from "#app/plugins/i18n.js";
+
+import { Abilities } from "./enums/abilities";
+import { ArenaTagType } from "./enums/arena-tag-type";
+import {BattlerIndex} from "#app/battle";
 import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
-import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
-import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
-import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
-import { ArenaTagType } from "./enums/arena-tag-type";
-import { Stat } from "./pokemon-stat";
-import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
-import { Moves } from "./enums/moves";
-import { TerrainType } from "./terrain";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
-import { Abilities } from "./enums/abilities";
-import i18next, { Localizable } from "#app/plugins/i18n.js";
-import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
-import { getPokeballName } from "./pokeball";
+import { Command } from "../ui/command-ui-handler";
+import { Gender } from "./gender";
+import { Moves } from "./enums/moves";
 import { Species } from "./enums/species";
-import {BattlerIndex} from "#app/battle";
+import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { Stat } from "./pokemon-stat";
+import { TerrainType } from "./terrain";
+import { Type } from "./type";
+import { getPokeballName } from "./pokeball";
 
 export class Ability implements Localizable {
   public id: Abilities;

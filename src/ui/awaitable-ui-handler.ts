@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
+import {Button} from "../enums/buttons";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import {Button} from "../enums/buttons";
 
 export default abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;

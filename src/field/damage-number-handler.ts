@@ -1,6 +1,8 @@
-import { TextStyle, addTextObject } from "../ui/text";
-import Pokemon, { DamageResult, HitResult } from "./pokemon";
 import * as Utils from "../utils";
+
+import Pokemon, { DamageResult, HitResult } from "./pokemon";
+import { TextStyle, addTextObject } from "../ui/text";
+
 import { BattlerIndex } from "../battle";
 
 export default class DamageNumberHandler {

@@ -1,11 +1,13 @@
-import { PokemonHealPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage } from "../messages";
+import * as Utils from "../utils";
+
+import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
 import Pokemon, { HitResult } from "../field/pokemon";
+import { PokemonHealPhase, StatChangePhase } from "../phases";
+
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./enums/battler-tag-type";
+import { getPokemonMessage } from "../messages";
 import { getStatusEffectHealText } from "./status-effect";
-import * as Utils from "../utils";
-import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
 import i18next from "../plugins/i18n";
 
 export enum BerryType {

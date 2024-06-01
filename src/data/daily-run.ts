@@ -1,11 +1,18 @@
-import BattleScene from "../battle-scene";
-import { PlayerPokemon } from "../field/pokemon";
-import { GameModes, gameModes } from "../game-mode";
-import { Starter } from "../ui/starter-select-ui-handler";
 import * as Utils from "../utils";
-import { Species } from "./enums/species";
-import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
+
+import { GameModes, gameModes } from "../game-mode";
+import PokemonSpecies, {
+  PokemonSpeciesForm,
+  getPokemonSpecies,
+  getPokemonSpeciesForm,
+  speciesStarters
+} from "./pokemon-species";
+
+import BattleScene from "../battle-scene";
 import { PartyMemberStrength } from "./enums/party-member-strength";
+import { PlayerPokemon } from "../field/pokemon";
+import { Species } from "./enums/species";
+import { Starter } from "../ui/starter-select-ui-handler";
 
 export interface DailyRunConfig {
   seed: integer;

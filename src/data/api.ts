@@ -1,16 +1,18 @@
+import * as Utils from "../utils";
+
 import { MainClient, NamedAPIResource } from "pokenode-ts";
 import { MoveTarget, allMoves } from "./move";
-import * as Utils from "../utils";
-import fs from "vite-plugin-fs/browser";
 import PokemonSpecies, { PokemonForm, SpeciesFormKey, allSpecies } from "./pokemon-species";
+
+import { Abilities } from "./enums/abilities";
 import { GrowthRate } from "./exp";
+import { Moves } from "./enums/moves";
+import { Species } from "./enums/species";
 import { Type } from "./type";
 import { allAbilities } from "./ability";
-import { Abilities } from "./enums/abilities";
-import { Species } from "./enums/species";
+import fs from "vite-plugin-fs/browser";
 import { pokemonFormLevelMoves } from "./pokemon-level-moves";
 import { tmSpecies } from "./tms";
-import { Moves } from "./enums/moves";
 
 const targetMap = {
   "specific-move": MoveTarget.ATTACKER,

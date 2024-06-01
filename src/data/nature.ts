@@ -1,6 +1,8 @@
-import { Stat, getStatName } from "./pokemon-stat";
 import * as Utils from "../utils";
+
+import { Stat, getStatName } from "./pokemon-stat";
 import { TextStyle, getBBCodeFrag } from "../ui/text";
+
 import { UiTheme } from "#app/enums/ui-theme";
 import i18next from "i18next";
 

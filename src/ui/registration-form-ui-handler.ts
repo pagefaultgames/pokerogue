@@ -1,8 +1,10 @@
+import * as Utils from "../utils";
+
+import { TextStyle, addTextObject } from "./text";
+
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
 import { Mode } from "./ui";
-import { TextStyle, addTextObject } from "./text";
 import i18next from "../plugins/i18n";
 
 export default class RegistrationFormUiHandler extends FormModalUiHandler {

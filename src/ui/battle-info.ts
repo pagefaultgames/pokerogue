@@ -1,14 +1,16 @@
-import { EnemyPokemon, default as Pokemon } from "../field/pokemon";
-import { getLevelTotalExp, getLevelRelExp } from "../data/exp";
 import * as Utils from "../utils";
-import { addTextObject, TextStyle } from "./text";
-import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
-import { StatusEffect } from "../data/status-effect";
-import BattleScene from "../battle-scene";
+
+import { EnemyPokemon, default as Pokemon } from "../field/pokemon";
+import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { TextStyle, addTextObject } from "./text";
 import { Type, getTypeRgb } from "../data/type";
-import { getVariantTint } from "#app/data/variant";
-import { BattleStat } from "#app/data/battle-stat";
+import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
+
 import BattleFlyout from "./battle-flyout";
+import BattleScene from "../battle-scene";
+import { BattleStat } from "#app/data/battle-stat";
+import { StatusEffect } from "../data/status-effect";
+import { getVariantTint } from "#app/data/variant";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 

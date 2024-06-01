@@ -1,6 +1,7 @@
+import * as Utils from "../utils";
+
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
 import { Mode } from "./ui";
 import i18next from "../plugins/i18n";
 

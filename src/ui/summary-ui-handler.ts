@@ -1,27 +1,29 @@
-import BattleScene, { starterColors } from "../battle-scene";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { PlayerPokemon } from "../field/pokemon";
-import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
-import { argbFromRgba } from "@material/material-color-utilities";
-import { Type, getTypeRgb } from "../data/type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
+
+import BattleScene, { starterColors } from "../battle-scene";
 import Move, { MoveCategory } from "../data/move";
-import { getPokeballAtlasKey } from "../data/pokeball";
+import { Nature, getNatureStatMultiplier } from "../data/nature";
+import { Stat, getStatName } from "../data/pokemon-stat";
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
+import { Type, getTypeRgb } from "../data/type";
+import { Variant, getVariantTint } from "#app/data/variant";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
-import { Stat, getStatName } from "../data/pokemon-stat";
+import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
+
+import { Ability } from "../data/ability.js";
+import {Button} from "../enums/buttons";
+import { Mode } from "./ui";
+import { PlayerGender } from "../system/game-data";
+import { PlayerPokemon } from "../field/pokemon";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
+import UiHandler from "./ui-handler";
+import { argbFromRgba } from "@material/material-color-utilities";
 import { getBiomeName } from "../data/biomes";
-import { Nature, getNatureStatMultiplier } from "../data/nature";
-import { loggedInUser } from "../account";
-import { PlayerGender } from "../system/game-data";
-import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "../enums/buttons";
-import { Ability } from "../data/ability.js";
+import { getPokeballAtlasKey } from "../data/pokeball";
 import i18next from "i18next";
+import { loggedInUser } from "../account";
 
 enum Page {
   PROFILE,

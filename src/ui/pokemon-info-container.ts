@@ -1,16 +1,18 @@
-import { getVariantTint } from "#app/data/variant";
+import * as Utils from "../utils";
+
+import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
+
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene from "../battle-scene";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { getNatureName } from "../data/nature";
-import { Type } from "../data/type";
-import Pokemon from "../field/pokemon";
-import i18next from "../plugins/i18n";
-import * as Utils from "../utils";
 import ConfirmUiHandler from "./confirm-ui-handler";
+import Pokemon from "../field/pokemon";
 import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
+import { Type } from "../data/type";
 import { addWindow } from "./ui-theme";
+import { getNatureName } from "../data/nature";
+import { getVariantTint } from "#app/data/variant";
+import i18next from "../plugins/i18n";
 
 interface LanguageSetting {
   infoContainerTextSize: string;

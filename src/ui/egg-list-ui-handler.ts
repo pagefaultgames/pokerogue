@@ -1,11 +1,12 @@
-import BattleScene from "../battle-scene";
-import { Mode } from "./ui";
+import { Egg, getEggDescriptor, getEggGachaTypeDescriptor, getEggHatchWavesMessage } from "../data/egg";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "./text";
-import MessageUiHandler from "./message-ui-handler";
-import { Egg, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
-import { addWindow } from "./ui-theme";
+
+import BattleScene from "../battle-scene";
 import {Button} from "../enums/buttons";
+import MessageUiHandler from "./message-ui-handler";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
 import i18next from "../plugins/i18n";
 
 export default class EggListUiHandler extends MessageUiHandler {

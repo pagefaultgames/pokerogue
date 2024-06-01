@@ -1,35 +1,52 @@
+import * as Utils from "../utils";
+
+import {
+  AbilityAttr,
+  DexAttr,
+  DexAttrProps,
+  DexEntry,
+  Passive as PassiveAttr,
+  StarterFormMoveData,
+  StarterMoveset
+} from "../system/game-data";
+import BattleScene, { starterColors } from "../battle-scene";
 import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
-import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { GameModes, gameModes } from "../game-mode";
+import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { GrowthRate, getGrowthRateColor } from "../data/exp";
+import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
+import { Nature, getNatureName } from "../data/nature";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import PokemonSpecies, {
+  allSpecies,
+  getPokemonSpecies,
+  getPokemonSpeciesForm,
+  getStarterValueFriendshipCap,
+  speciesStarters,
+  starterPassiveAbilities
+} from "../data/pokemon-species";
+import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
+import { Tutorial, handleTutorial } from "../tutorial";
 import { Variant, getVariantTint } from "#app/data/variant";
+
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import { Button } from "../enums/buttons";
+import MessageUiHandler from "./message-ui-handler";
+import { Mode } from "./ui";
+import { Moves } from "../data/enums/moves";
+import { OptionSelectItem } from "./abstact-option-select-ui-handler";
+import { Species } from "../data/enums/species";
+import { StatsContainer } from "./stats-container";
+import { TitlePhase } from "../phases";
+import { Type } from "../data/type";
+import { addWindow } from "./ui-theme";
+import { allAbilities } from "../data/ability";
+import { allMoves } from "../data/move";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import BattleScene, { starterColors } from "../battle-scene";
-import { allAbilities } from "../data/ability";
-import { speciesEggMoves } from "../data/egg-moves";
-import { Moves } from "../data/enums/moves";
-import { Species } from "../data/enums/species";
-import { GrowthRate, getGrowthRateColor } from "../data/exp";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { allMoves } from "../data/move";
-import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
-import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
-import { Type } from "../data/type";
-import { Button } from "../enums/buttons";
-import { GameModes, gameModes } from "../game-mode";
-import { TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
-import { Tutorial, handleTutorial } from "../tutorial";
-import * as Utils from "../utils";
-import { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import MessageUiHandler from "./message-ui-handler";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
-import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
+import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { speciesEggMoves } from "../data/egg-moves";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 

@@ -1,6 +1,6 @@
+import BattleScene from "../battle-scene";
 import { UiTheme } from "#app/enums/ui-theme";
 import { legacyCompatibleImages } from "#app/scene-base";
-import BattleScene from "../battle-scene";
 
 export enum WindowVariant {
   NORMAL,

@@ -1,53 +1,179 @@
-import Phaser from "phaser";
-import BattleScene, { AnySound } from "../battle-scene";
-import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
-import { variantData } from "#app/data/variant";
-import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags } from "../data/move";
-import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import * as Overrides from "../overrides";
 import * as Utils from "../utils";
-import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
-import { getLevelTotalExp } from "../data/exp";
-import { Stat } from "../data/pokemon-stat";
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
-import { PokeballType } from "../data/pokeball";
-import { Gender } from "../data/gender";
-import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
-import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
-import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
-import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
-import { BattlerTagType } from "../data/enums/battler-tag-type";
-import { Species } from "../data/enums/species";
-import { WeatherType } from "../data/weather";
-import { TempBattleStat } from "../data/temp-battle-stat";
+
+import {
+  AbAttr,
+  Ability,
+  BattleStatMultiplierAbAttr,
+  BlockCritAbAttr,
+  BonusCritAbAttr,
+  BypassBurnDamageReductionAbAttr,
+  ConditionalCritAbAttr,
+  DamageBoostAbAttr,
+  FieldPriorityMoveImmunityAbAttr,
+  FieldVariableMovePowerAbAttr,
+  IgnoreOpponentStatChangesAbAttr,
+  IgnoreTypeImmunityAbAttr,
+  IgnoreTypeStatusEffectImmunityAbAttr,
+  MoveImmunityAbAttr,
+  MoveTypeChangeAttr,
+  MultCritAbAttr,
+  NoFusionAbilityAbAttr,
+  PreApplyBattlerTagAbAttr,
+  PreDefendFullHpEndureAbAttr,
+  ReceivedMoveDamageMultiplierAbAttr,
+  ReduceStatusEffectDurationAbAttr,
+  StabBoostAbAttr,
+  StatusEffectImmunityAbAttr,
+  SuppressFieldAbilitiesAbAttr,
+  TypeImmunityAbAttr,
+  UnsuppressableAbilityAbAttr,
+  VariableMovePowerAbAttr,
+  VariableMoveTypeAbAttr,
+  WeightMultiplierAbAttr,
+  allAbilities,
+  applyAbAttrs,
+  applyBattleStatMultiplierAbAttrs,
+  applyPreApplyBattlerTagAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  applyPreSetStatusAbAttrs
+} from "../data/ability";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
-import { ArenaTagType } from "../data/enums/arena-tag-type";
-import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr } from "../data/ability";
-import { Abilities } from "#app/data/enums/abilities";
-import PokemonData from "../system/pokemon-data";
-import { BattlerIndex } from "../battle";
-import { BattleSpec } from "../enums/battle-spec";
-import { Mode } from "../ui/ui";
-import PartyUiHandler, { PartyOption, PartyUiMode } from "../ui/party-ui-handler";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { LevelMoves } from "../data/pokemon-level-moves";
+import {
+  AttackTypeBoosterModifier,
+  DamageMoneyRewardModifier,
+  EnemyDamageBoosterModifier,
+  EnemyDamageReducerModifier,
+  EnemyEndureChanceModifier,
+  EnemyFusionChanceModifier,
+  HiddenAbilityRateBoosterModifier,
+  PokemonBaseStatModifier,
+  PokemonFriendshipBoosterModifier,
+  PokemonHeldItemModifier,
+  PokemonMultiHitModifier,
+  PokemonNatureWeightModifier,
+  ShinyRateBoosterModifier,
+  SurviveDamageModifier,
+  TempBattleStatBoosterModifier,
+  TerastallizeModifier
+} from "../modifier/modifier";
+import BattleInfo, { EnemyBattleInfo, PlayerBattleInfo } from "../ui/battle-info";
+import BattleScene, { AnySound } from "../battle-scene";
+import {
+  BattlerTag,
+  BattlerTagLapseType,
+  EncoreTag,
+  HelpingHandTag,
+  HighestStatBoostTag,
+  TypeBoostTag,
+  getBattlerTag
+} from "../data/battler-tags";
 import { DamageAchv, achvs } from "../system/achv";
+import {
+  DamagePhase,
+  FaintPhase,
+  LearnMovePhase,
+  ObtainStatusEffectPhase,
+  StatChangePhase,
+  SwitchSummonPhase,
+  ToggleDoublePositionPhase
+} from "../phases";
 import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
-import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
+import {
+  FusionSpeciesFormEvolution,
+  SpeciesEvolutionCondition,
+  SpeciesFormEvolution,
+  pokemonEvolutions,
+  pokemonPrevolutions
+} from "../data/pokemon-evolutions";
+import Move, {
+  AttackMove,
+  BypassBurnDamageReductionAttr,
+  ChargeAttr,
+  CounterDamageAttr,
+  CritOnlyAttr,
+  FixedDamageAttr,
+  HighCritAttr,
+  HitsTagAttr,
+  IgnoreOpponentStatChangesAttr,
+  IgnoreWeatherTypeDebuffAttr,
+  ModifiedDamageAttr,
+  MoveCategory,
+  MoveFlags,
+  MoveTarget,
+  MultiHitAttr,
+  OneHitKOAttr,
+  RechargeAttr,
+  SacrificialAttr,
+  SacrificialAttrOnHit,
+  StatChangeAttr,
+  StatusMoveTypeImmunityAttr,
+  TypelessAttr,
+  VariableAtkAttr,
+  VariableDefAttr,
+  VariableMoveCategoryAttr,
+  VariableMoveTypeAttr,
+  VariableMoveTypeMultiplierAttr,
+  VariablePowerAttr,
+  allMoves,
+  applyMoveAttrs,
+  getMoveTargets
+} from "../data/move";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
-import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
+import PartyUiHandler, { PartyOption, PartyUiMode } from "../ui/party-ui-handler";
+import {
+  default as PokemonSpecies,
+  PokemonSpeciesForm,
+  SpeciesFormKey,
+  getFusedSpeciesName,
+  getPokemonSpecies,
+  getPokemonSpeciesForm,
+  getStarterValueFriendshipCap,
+  speciesStarters,
+  starterPassiveAbilities
+} from "../data/pokemon-species";
+import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
+import {
+  SpeciesFormChange,
+  SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeMoveLearnedTrigger,
+  SpeciesFormChangePostMoveTrigger,
+  SpeciesFormChangeStatusEffectTrigger
+} from "../data/pokemon-forms";
+import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
+import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
+import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
+import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
+import { reverseCompatibleTms, tmPoolTiers, tmSpecies } from "../data/tms";
+
+import { Abilities } from "#app/data/enums/abilities";
+import { ArenaTagType } from "../data/enums/arena-tag-type";
+import { BattleSpec } from "../enums/battle-spec";
+import { BattleStat } from "../data/battle-stat";
+import { BattlerIndex } from "../battle";
+import { BattlerTagType } from "../data/enums/battler-tag-type";
+import { BerryType } from "../data/berry";
+import { Biome } from "../data/enums/biome";
+import { Gender } from "../data/gender";
+import { LevelMoves } from "../data/pokemon-level-moves";
+import { Mode } from "../ui/ui";
+import { ModifierTier } from "../modifier/modifier-tier";
+import { Moves } from "../data/enums/moves";
+import Phaser from "phaser";
+import { PokeballType } from "../data/pokeball";
+import PokemonData from "../system/pokemon-data";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { Species } from "../data/enums/species";
+import { Stat } from "../data/pokemon-stat";
+import { TempBattleStat } from "../data/temp-battle-stat";
 import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
-import * as Overrides from "../overrides";
-import { BerryType } from "../data/berry";
+import { WeatherType } from "../data/weather";
+import { getLevelTotalExp } from "../data/exp";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
-import { ModifierTier } from "../modifier/modifier-tier";
+import { variantData } from "#app/data/variant";
 
 export enum FieldPosition {
   CENTER,

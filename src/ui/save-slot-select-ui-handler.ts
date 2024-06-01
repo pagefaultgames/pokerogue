@@ -1,15 +1,17 @@
-import BattleScene from "../battle-scene";
-import { gameModes } from "../game-mode";
-import { SessionSaveData } from "../system/game-data";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
+
+import { TextStyle, addTextObject } from "./text";
+
+import BattleScene from "../battle-scene";
+import {Button} from "../enums/buttons";
+import MessageUiHandler from "./message-ui-handler";
+import { Mode } from "./ui";
 import PokemonData from "../system/pokemon-data";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
-import MessageUiHandler from "./message-ui-handler";
+import { SessionSaveData } from "../system/game-data";
+import { addWindow } from "./ui-theme";
+import { gameModes } from "../game-mode";
 import i18next from "i18next";
-import {Button} from "../enums/buttons";
 
 const sessionSlotCount = 5;
 

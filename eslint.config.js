@@ -1,8 +1,8 @@
-import tseslint from '@typescript-eslint/eslint-plugin';
-import parser from '@typescript-eslint/parser';
 import imports from 'eslint-plugin-import';
+import parser from '@typescript-eslint/parser';
+import tseslint from '@typescript-eslint/eslint-plugin';
 
-export default [ 
+export default [
     {
         files: ["src/**/*.{ts,tsx,js,jsx}"],
         ignores: ["dist/*", "build/*", "coverage/*", "public/*", ".github/*", "node_modules/*", ".vscode/*"],
@@ -36,7 +36,14 @@ export default [
                 "ignoreComments": false // Enforces the rule on lines containing comments
             }],
             "space-before-blocks": ["error", "always"], // Enforces a space before blocks
-            "keyword-spacing": ["error", { "before": true, "after": true }] // Enforces spacing before and after keywords
+            "keyword-spacing": ["error", { "before": true, "after": true }], // Enforces spacing before and after keywords
+            "sort-imports": ["error", {
+                "ignoreCase": false,
+                "ignoreDeclarationSort": false,
+                "ignoreMemberSort": false,
+                "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+                "allowSeparatedGroups": true
+            }]
         }
     }
 ]

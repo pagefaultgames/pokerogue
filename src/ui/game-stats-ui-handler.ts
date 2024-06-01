@@ -1,13 +1,15 @@
-import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
+
+import { DexAttr, GameData } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
+
+import BattleScene from "../battle-scene";
+import {Button} from "../enums/buttons";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import { DexAttr, GameData } from "../system/game-data";
-import { speciesStarters } from "../data/pokemon-species";
-import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
+import { speciesStarters } from "../data/pokemon-species";
 
 interface DisplayStat {
   label_key?: string;

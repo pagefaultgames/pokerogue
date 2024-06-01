@@ -1,24 +1,26 @@
-import { GachaType } from "./data/egg";
-import { Biome } from "./data/enums/biome";
-import { TrainerType } from "./data/enums/trainer-type";
-import { trainerConfigs } from "./data/trainer-config";
-import { getBiomeHasProps } from "./field/arena";
-import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
-import { SceneBase } from "./scene-base";
-import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
-import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
-import { initI18n } from "./plugins/i18n";
-import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
+
+import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
+
+import { Biome } from "./data/enums/biome";
+import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
+import { GachaType } from "./data/egg";
+import { SceneBase } from "./scene-base";
+import { TrainerType } from "./data/enums/trainer-type";
+import { getBiomeHasProps } from "./field/arena";
+import i18next from "i18next";
+import {initAbilities} from "#app/data/ability";
 import {initBiomes} from "#app/data/biomes";
 import {initEggMoves} from "#app/data/egg-moves";
-import {initPokemonForms} from "#app/data/pokemon-forms";
-import {initSpecies} from "#app/data/pokemon-species";
+import { initI18n } from "./plugins/i18n";
 import {initMoves} from "#app/data/move";
-import {initAbilities} from "#app/data/ability";
-import {initTrainerTypeDialogue} from "#app/data/dialogue";
-import i18next from "i18next";
+import {initPokemonForms} from "#app/data/pokemon-forms";
+import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
+import {initSpecies} from "#app/data/pokemon-species";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
+import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { isMobile } from "./touch-controls";
+import { trainerConfigs } from "./data/trainer-config";
 
 export class LoadingScene extends SceneBase {
   constructor() {

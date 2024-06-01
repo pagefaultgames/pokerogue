@@ -1,16 +1,18 @@
-import BattleScene from "./battle-scene";
-import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
-import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
-import Trainer, { TrainerVariant } from "./field/trainer";
-import { Species } from "./data/enums/species";
-import { Moves } from "./data/enums/moves";
-import { TrainerType } from "./data/enums/trainer-type";
-import { GameMode } from "./game-mode";
-import { BattleSpec } from "./enums/battle-spec";
-import { PlayerGender } from "./system/game-data";
+
+import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import Trainer, { TrainerVariant } from "./field/trainer";
+
+import BattleScene from "./battle-scene";
+import { BattleSpec } from "./enums/battle-spec";
+import { Command } from "./ui/command-ui-handler";
+import { GameMode } from "./game-mode";
+import { Moves } from "./data/enums/moves";
+import { PlayerGender } from "./system/game-data";
 import { PokeballType } from "./data/pokeball";
+import { Species } from "./data/enums/species";
+import { TrainerType } from "./data/enums/trainer-type";
 import {trainerConfigs} from "#app/data/trainer-config";
 
 export enum BattleType {

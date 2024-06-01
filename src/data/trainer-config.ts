@@ -1,21 +1,23 @@
+import * as Utils from "../utils";
+
 import BattleScene, {startingWave} from "../battle-scene";
 import {ModifierTypeFunc, modifierTypes} from "../modifier/modifier-type";
-import {EnemyPokemon} from "../field/pokemon";
-import * as Utils from "../utils";
-import {TrainerType} from "./enums/trainer-type";
-import {Moves} from "./enums/moves";
-import {PokeballType} from "./pokeball";
+import PokemonSpecies, {PokemonSpeciesFilter, getPokemonSpecies} from "./pokemon-species";
+import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import {pokemonEvolutions, pokemonPrevolutions} from "./pokemon-evolutions";
-import PokemonSpecies, {getPokemonSpecies, PokemonSpeciesFilter} from "./pokemon-species";
+
+import {EnemyPokemon} from "../field/pokemon";
+import {Moves} from "./enums/moves";
+import {PartyMemberStrength} from "./enums/party-member-strength";
+import {PersistentModifier} from "../modifier/modifier";
+import {PokeballType} from "./pokeball";
 import {Species} from "./enums/species";
-import {tmSpecies} from "./tms";
+import {TrainerType} from "./enums/trainer-type";
+import {TrainerVariant} from "../field/trainer";
 import {Type} from "./type";
 import {doubleBattleDialogue} from "./dialogue";
-import {PersistentModifier} from "../modifier/modifier";
-import {TrainerVariant} from "../field/trainer";
-import {PartyMemberStrength} from "./enums/party-member-strength";
-import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
+import {tmSpecies} from "./tms";
 
 export enum TrainerPoolTier {
   COMMON,

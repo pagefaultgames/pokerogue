@@ -1,12 +1,13 @@
-import Phaser from "phaser";
-import {Mode} from "./ui/ui";
+import {Setting, settingOptions} from "./system/settings";
+
+import BattleScene from "./battle-scene";
+import {Button} from "./enums/buttons";
 import {InputsController} from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
-import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
-import {Setting, settingOptions} from "./system/settings";
+import {Mode} from "./ui/ui";
+import Phaser from "phaser";
 import SettingsUiHandler from "./ui/settings-ui-handler";
-import {Button} from "./enums/buttons";
-import BattleScene from "./battle-scene";
+import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 

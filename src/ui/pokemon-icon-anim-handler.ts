@@ -1,5 +1,6 @@
-import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
+
+import BattleScene from "../battle-scene";
 
 export enum PokemonIconAnimMode {
   NONE,

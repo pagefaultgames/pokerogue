@@ -1,12 +1,12 @@
-import SettingsUiHandler from "#app/ui/settings-ui-handler";
-import { Mode } from "#app/ui/ui";
-import i18next from "i18next";
 import BattleScene from "../battle-scene";
-import { hasTouchscreen } from "../touch-controls";
-import { updateWindowType } from "../ui/ui-theme";
-import { PlayerGender } from "./game-data";
 import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { Mode } from "#app/ui/ui";
 import { MoneyFormat } from "../enums/money-format";
+import { PlayerGender } from "./game-data";
+import SettingsUiHandler from "#app/ui/settings-ui-handler";
+import { hasTouchscreen } from "../touch-controls";
+import i18next from "i18next";
+import { updateWindowType } from "../ui/ui-theme";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",

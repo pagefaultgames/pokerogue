@@ -1,15 +1,17 @@
-import BattleScene from "../battle-scene";
-import { Mode } from "./ui";
-import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
-import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
-import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
-import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
-import { getPokemonSpecies } from "../data/pokemon-species";
-import { addWindow } from "./ui-theme";
+
+import { EGG_SEED, Egg, GachaType, getEggDescriptor, getEggTierDefaultHatchWaves, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
+import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { EggTier } from "../data/enums/egg-type";
+import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
+
+import BattleScene from "../battle-scene";
 import {Button} from "../enums/buttons";
+import { EggTier } from "../data/enums/egg-type";
+import MessageUiHandler from "./message-ui-handler";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
+import { getPokemonSpecies } from "../data/pokemon-species";
 import i18next from "../plugins/i18n";
 
 export default class EggGachaUiHandler extends MessageUiHandler {

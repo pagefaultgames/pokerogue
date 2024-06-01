@@ -1,6 +1,7 @@
-import { Modifier } from "typescript";
-import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
+
+import BattleScene from "../battle-scene";
+import { Modifier } from "typescript";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 
 export enum AchvTier {

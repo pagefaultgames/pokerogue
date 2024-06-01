@@ -1,22 +1,24 @@
-import { CommandPhase } from "../phases";
-import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
+
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
+import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import { TextStyle, addTextObject } from "./text";
+import { getGenderColor, getGenderSymbol } from "../data/gender";
+
+import BattleScene from "../battle-scene";
+import {Button} from "../enums/buttons";
 import { Command } from "./command-ui-handler";
+import { CommandPhase } from "../phases";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
-import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
-import { allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
-import { getGenderColor, getGenderSymbol } from "../data/gender";
-import { StatusEffect } from "../data/status-effect";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { pokemonEvolutions } from "../data/pokemon-evolutions";
-import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { StatusEffect } from "../data/status-effect";
+import { addWindow } from "./ui-theme";
+import { allMoves } from "../data/move";
 import { getVariantTint } from "#app/data/variant";
-import {Button} from "../enums/buttons";
+import { pokemonEvolutions } from "../data/pokemon-evolutions";
 
 const defaultMessage = "Choose a Pokémon.";
 

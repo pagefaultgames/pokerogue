@@ -1,12 +1,13 @@
-import BattleScene from "../battle-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
-import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
-import { handleTutorial, Tutorial } from "../tutorial";
+import { ModifierTypeOption, getPlayerShopModifierTypeOptionsForWave } from "../modifier/modifier-type";
+import { PokeballType, getPokeballAtlasKey } from "../data/pokeball";
+import { TextStyle, addTextObject, getModifierTierTextTint, getTextColor } from "./text";
+import { Tutorial, handleTutorial } from "../tutorial";
+
+import AwaitableUiHandler from "./awaitable-ui-handler";
+import BattleScene from "../battle-scene";
 import {Button} from "../enums/buttons";
+import { Mode } from "./ui";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 

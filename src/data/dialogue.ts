@@ -1,6 +1,6 @@
-import {trainerConfigs} from "./trainer-config";
-import {TrainerType} from "./enums/trainer-type";
 import {BattleSpec} from "../enums/battle-spec";
+import {TrainerType} from "./enums/trainer-type";
+import {trainerConfigs} from "./trainer-config";
 
 export interface TrainerTypeMessages {
     encounter?: string | string[],

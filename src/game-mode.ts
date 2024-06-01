@@ -1,11 +1,13 @@
-import { fixedBattles } from "./battle";
+import * as Overrides from "./overrides";
+import * as Utils from "./utils";
+
+import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
+
+import { Arena } from "./field/arena";
 import BattleScene from "./battle-scene";
 import { Biome } from "./data/enums/biome";
 import { Species } from "./data/enums/species";
-import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
-import { Arena } from "./field/arena";
-import * as Utils from "./utils";
-import * as Overrides from "./overrides";
+import { fixedBattles } from "./battle";
 
 export enum GameModes {
   CLASSIC,

@@ -1,7 +1,8 @@
-import BattleScene from "../battle-scene";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
 import * as Utils from "../utils";
+
+import AwaitableUiHandler from "./awaitable-ui-handler";
+import BattleScene from "../battle-scene";
+import { Mode } from "./ui";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent;

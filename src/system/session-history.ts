@@ -1,6 +1,6 @@
 import { GameModes } from "../game-mode";
-import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
+import PokemonData from "./pokemon-data";
 
 export enum SessionHistoryResult {
   ACTIVE,

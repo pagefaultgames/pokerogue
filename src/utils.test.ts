@@ -1,5 +1,5 @@
-import { expect, describe, it } from "vitest";
-import { randomString, padInt } from "./utils";
+import { describe, expect, it } from "vitest";
+import { padInt, randomString } from "./utils";
 
 import Phaser from "phaser";
 

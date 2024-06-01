@@ -1,36 +1,38 @@
-import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
-import { Species, defaultStarterSpecies } from "../data/enums/species";
-import * as Utils from "../utils";
 import * as Overrides from "../overrides";
-import PokemonData from "./pokemon-data";
-import PersistentModifierData from "./modifier-data";
-import ArenaData from "./arena-data";
-import { Unlockables } from "./unlockables";
-import { GameModes, gameModes } from "../game-mode";
-import { BattleType } from "../battle";
-import TrainerData from "./trainer-data";
-import { trainerConfigs } from "../data/trainer-config";
-import { Setting, setSetting, settingDefaults } from "./settings";
-import { achvs } from "./achv";
-import EggData from "./egg-data";
-import { Egg } from "../data/egg";
-import { VoucherType, vouchers } from "./voucher";
+import * as Utils from "../utils";
+
 import { AES, enc } from "crypto-js";
-import { Mode } from "../ui/ui";
-import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
-import { Nature } from "../data/nature";
-import { GameStats } from "./game-stats";
-import { Tutorial } from "../tutorial";
-import { Moves } from "../data/enums/moves";
-import { speciesEggMoves } from "../data/egg-moves";
-import { allMoves } from "../data/move";
-import { TrainerVariant } from "../field/trainer";
+import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
+import { GameModes, gameModes } from "../game-mode";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
-import { Variant, variantData } from "#app/data/variant";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
+import { Setting, setSetting, settingDefaults } from "./settings";
+import { Species, defaultStarterSpecies } from "../data/enums/species";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
+import { Variant, variantData } from "#app/data/variant";
+import { VoucherType, vouchers } from "./voucher";
+import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
+import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+
+import ArenaData from "./arena-data";
+import { BattleType } from "../battle";
+import { Egg } from "../data/egg";
+import EggData from "./egg-data";
+import { GameStats } from "./game-stats";
+import { Mode } from "../ui/ui";
+import { Moves } from "../data/enums/moves";
+import { Nature } from "../data/nature";
+import PersistentModifierData from "./modifier-data";
+import PokemonData from "./pokemon-data";
+import TrainerData from "./trainer-data";
+import { TrainerVariant } from "../field/trainer";
+import { Tutorial } from "../tutorial";
+import { Unlockables } from "./unlockables";
+import { achvs } from "./achv";
+import { allMoves } from "../data/move";
+import { speciesEggMoves } from "../data/egg-moves";
+import { trainerConfigs } from "../data/trainer-config";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 

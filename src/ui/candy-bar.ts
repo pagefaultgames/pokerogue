@@ -1,8 +1,10 @@
+import * as Utils from "../utils";
+
 import BattleScene, { starterColors } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
-import { argbFromRgba } from "@material/material-color-utilities";
-import * as Utils from "../utils";
+
 import { Species } from "#app/data/enums/species";
+import { argbFromRgba } from "@material/material-color-utilities";
 
 export default class CandyBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;

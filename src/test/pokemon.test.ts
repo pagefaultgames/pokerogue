@@ -1,9 +1,10 @@
 import {describe, expect, it} from "vitest";
-import {getPokemonSpecies} from "#app/data/pokemon-species";
-import {PokemonMove} from "#app/field/pokemon";
-import {Species} from "#app/data/enums/species";
+
 import {Moves} from "#app/data/enums/moves";
 import PokemonData from "#app/system/pokemon-data";
+import {PokemonMove} from "#app/field/pokemon";
+import {Species} from "#app/data/enums/species";
+import {getPokemonSpecies} from "#app/data/pokemon-species";
 
 describe("some tests related to PokemonData and Species", () => {
   it("should create a species", () => {

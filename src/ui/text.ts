@@ -1,8 +1,8 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import BattleScene from "../battle-scene";
+import { EggTier } from "../data/enums/egg-type";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { EggTier } from "../data/enums/egg-type";
-import BattleScene from "../battle-scene";
 import { UiTheme } from "../enums/ui-theme";
 import i18next from "i18next";
 

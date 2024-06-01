@@ -1,8 +1,8 @@
+import * as Utils from "../utils";
+
 import { Moves } from "./enums/moves";
 import { Species } from "./enums/species";
 import { allMoves } from "./move";
-import * as Utils from "../utils";
-
 
 export const speciesEggMoves = {
   [Species.BULBASAUR]: [ Moves.GIGA_DRAIN, Moves.SLUDGE_BOMB, Moves.EARTH_POWER, Moves.SAPPY_SEED ],

@@ -1,11 +1,12 @@
-import { CommandPhase } from "../phases";
-import BattleScene from "../battle-scene";
-import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
+import { TextStyle, addTextObject } from "./text";
+
+import BattleScene from "../battle-scene";
+import {Button} from "../enums/buttons";
+import { CommandPhase } from "../phases";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "../plugins/i18n";
-import {Button} from "../enums/buttons";
 
 export enum Command {
   FIGHT = 0,

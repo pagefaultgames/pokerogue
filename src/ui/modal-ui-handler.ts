@@ -1,9 +1,10 @@
-import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
+import { WindowVariant, addWindow } from "./ui-theme";
+
+import BattleScene from "../battle-scene";
+import {Button} from "../enums/buttons";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import { WindowVariant, addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
 
 export interface ModalConfig {
   buttonActions: Function[];

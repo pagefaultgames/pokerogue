@@ -1,6 +1,7 @@
+import * as Utils from "../utils";
+
 import BattleScene from "../battle-scene";
 import Pokemon from "./pokemon";
-import * as Utils from "../utils";
 
 export default class PokemonSpriteSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;

@@ -1,9 +1,10 @@
+import * as Utils from "../utils";
+
 import BattleScene from "../battle-scene";
-import { variantColorCache } from "#app/data/variant";
+import FieldSpritePipeline from "./field-sprite";
 import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";
-import FieldSpritePipeline from "./field-sprite";
-import * as Utils from "../utils";
+import { variantColorCache } from "#app/data/variant";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -76,7 +77,7 @@ float hue2rgb(float f1, float f2, float hue) {
 
 vec3 rgb2hsl(vec3 color) {
 	vec3 hsl;
-	
+
 	float fmin = min(min(color.r, color.g), color.b);
 	float fmax = max(max(color.r, color.g), color.b);
 	float delta = fmax - fmin;
@@ -91,7 +92,7 @@ vec3 rgb2hsl(vec3 color) {
 			hsl.y = delta / (fmax + fmin);
 		else
 			hsl.y = delta / (2.0 - fmax - fmin);
-		
+
 		float deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;
 		float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
 		float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
@@ -114,24 +115,24 @@ vec3 rgb2hsl(vec3 color) {
 
 vec3 hsl2rgb(vec3 hsl) {
 	vec3 rgb;
-	
+
 	if (hsl.y == 0.0)
 		rgb = vec3(hsl.z);
 	else {
 		float f2;
-		
+
 		if (hsl.z < 0.5)
 			f2 = hsl.z * (1.0 + hsl.y);
 		else
 			f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
-			
+
 		float f1 = 2.0 * hsl.z - f2;
-		
+
 		rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
 		rgb.g = hue2rgb(f1, f2, hsl.x);
 		rgb.b= hue2rgb(f1, f2, hsl.x - (1.0/3.0));
 	}
-	
+
 	return rgb;
 }
 

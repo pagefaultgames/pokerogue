@@ -1,4 +1,5 @@
 import {describe, expect, it} from "vitest";
+
 import {MoneyAchv} from "#app/system/achv";
 
 describe("check some Achievement related stuff", () => {

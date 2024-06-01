@@ -1,10 +1,12 @@
-import BattleScene from "../battle-scene";
-import { DailyRunScoreboard } from "./daily-run-scoreboard";
-import OptionSelectUiHandler from "./option-select-ui-handler";
-import { Mode } from "./ui";
 import * as Utils from "../utils";
+
 import { TextStyle, addTextObject } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
+
+import BattleScene from "../battle-scene";
+import { DailyRunScoreboard } from "./daily-run-scoreboard";
+import { Mode } from "./ui";
+import OptionSelectUiHandler from "./option-select-ui-handler";
 import i18next from "i18next";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {

@@ -1,10 +1,12 @@
-import { default as Pokemon } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
 import * as Utils from "../utils";
-import BattleScene from "#app/battle-scene.js";
-import { UiTheme } from "#app/enums/ui-theme.js";
-import Move from "#app/data/move.js";
+
 import { BattleSceneEventType, MoveUsedEvent } from "#app/battle-scene-events.js";
+import { TextStyle, addTextObject } from "./text";
+
+import BattleScene from "#app/battle-scene.js";
+import Move from "#app/data/move.js";
+import { default as Pokemon } from "../field/pokemon";
+import { UiTheme } from "#app/enums/ui-theme.js";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {

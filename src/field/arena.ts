@@ -1,25 +1,39 @@
-import BattleScene from "../battle-scene";
-import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
-import { Biome } from "../data/enums/biome";
-import * as Utils from "../utils";
-import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
-import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase } from "../phases";
-import { CommonAnim } from "../data/battle-anims";
-import { Type } from "../data/type";
-import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
-import { ArenaTagType } from "../data/enums/arena-tag-type";
-import { TrainerType } from "../data/enums/trainer-type";
-import { BattlerIndex } from "../battle";
-import { Moves } from "../data/enums/moves";
-import { TimeOfDay } from "../data/enums/time-of-day";
-import { Terrain, TerrainType } from "../data/terrain";
-import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
-import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
-import { WeatherChangedEvent, TerrainChangedEvent, TagChangedEvent } from "./arena-events";
+import * as Utils from "../utils";
+
+import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
+import { BiomePoolTier, BiomeTierTrainerPools, PokemonPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
+import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
+import {
+  PostTerrainChangeAbAttr,
+  PostWeatherChangeAbAttr,
+  applyPostTerrainChangeAbAttrs,
+  applyPostWeatherChangeAbAttrs
+} from "../data/ability";
+import { TagChangedEvent, TerrainChangedEvent, WeatherChangedEvent } from "./arena-events";
+import { Terrain, TerrainType } from "../data/terrain";
+import {
+  Weather,
+  WeatherType,
+  getTerrainClearMessage,
+  getTerrainStartMessage,
+  getWeatherClearMessage,
+  getWeatherStartMessage
+} from "../data/weather";
+
+import { ArenaTagType } from "../data/enums/arena-tag-type";
+import BattleScene from "../battle-scene";
+import { BattlerIndex } from "../battle";
+import { Biome } from "../data/enums/biome";
+import { CommonAnim } from "../data/battle-anims";
+import { CommonAnimPhase } from "../phases";
+import Move from "../data/move";
+import { Moves } from "../data/enums/moves";
+import Pokemon from "./pokemon";
+import { Species } from "../data/enums/species";
+import { TimeOfDay } from "../data/enums/time-of-day";
+import { TrainerType } from "../data/enums/trainer-type";
+import { Type } from "../data/type";
 
 export class Arena {
   public scene: BattleScene;

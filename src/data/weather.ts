@@ -1,12 +1,14 @@
-import { Biome } from "./enums/biome";
-import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import Pokemon from "../field/pokemon";
-import { Type } from "./type";
-import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";
+
+import Move, { AttackMove } from "./move";
+import { getPokemonMessage, getPokemonPrefix } from "../messages";
+
 import BattleScene from "../battle-scene";
+import { Biome } from "./enums/biome";
+import Pokemon from "../field/pokemon";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
+import { Type } from "./type";
 import i18next from "i18next";
 
 export enum WeatherType {

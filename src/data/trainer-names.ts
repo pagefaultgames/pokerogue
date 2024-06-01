@@ -1,5 +1,6 @@
-import { TrainerType } from "./enums/trainer-type";
 import * as Utils from "../utils";
+
+import { TrainerType } from "./enums/trainer-type";
 
 class TrainerNameConfig {
   public urls: string[];

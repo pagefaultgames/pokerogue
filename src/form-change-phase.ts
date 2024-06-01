@@ -1,14 +1,16 @@
-import BattleScene from "./battle-scene";
 import * as Utils from "./utils";
-import { SpeciesFormKey } from "./data/pokemon-species";
-import { achvs } from "./system/achv";
-import { SpeciesFormChange, getSpeciesFormChangeMessage } from "./data/pokemon-forms";
+
+import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { EndEvolutionPhase, EvolutionPhase } from "./evolution-phase";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
+import { SpeciesFormChange, getSpeciesFormChangeMessage } from "./data/pokemon-forms";
+
+import BattleScene from "./battle-scene";
+import { BattleSpec } from "./enums/battle-spec";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
-import { BattleSpec } from "./enums/battle-spec";
-import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
+import { SpeciesFormKey } from "./data/pokemon-species";
+import { achvs } from "./system/achv";
 import { getTypeRgb } from "./data/type";
 
 export class FormChangePhase extends EvolutionPhase {
