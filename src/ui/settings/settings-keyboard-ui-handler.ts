@@ -14,6 +14,7 @@ import {InterfaceConfig} from "#app/inputs-controller";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import {deleteBind} from "#app/configs/inputs/configHandler";
 import {Device} from "#app/enums/devices";
+import {NavigationManager} from "#app/ui/settings/navigationMenu";
 
 /**
  * Class representing the settings UI handler for keyboards.
@@ -90,6 +91,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
       return;
     }
     this.scene.gameData.resetMappingToFactory();
+    NavigationManager.getInstance().updateIcons();
   }
 
   /**
@@ -108,6 +110,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     if (success) {
       this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
       this.updateBindings();
+      NavigationManager.getInstance().updateIcons();
     }
   }
 
