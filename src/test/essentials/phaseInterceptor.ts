@@ -1,11 +1,13 @@
 import {
-  CheckSwitchPhase, CommandPhase,
-  EncounterPhase,
-  LoginPhase, MessagePhase,
+  BattleEndPhase,
+  BerryPhase,
+  CheckSwitchPhase, CommandPhase, DamagePhase, EggLapsePhase,
+  EncounterPhase, EnemyCommandPhase, FaintPhase,
+  LoginPhase, MessagePhase, MoveEffectPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
   PostSummonPhase,
-  SelectGenderPhase,
+  SelectGenderPhase, SelectModifierPhase,
   SelectStarterPhase, ShowAbilityPhase,
-  TitlePhase, ToggleDoublePositionPhase, TurnInitPhase
+  TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 
@@ -31,6 +33,19 @@ export default class PhaseInterceptor {
     [MessagePhase, this.startPhase],
     [TurnInitPhase, this.startPhase],
     [CommandPhase, this.startPhase],
+    [EnemyCommandPhase, this.startPhase],
+    [TurnStartPhase, this.startPhase],
+    [MovePhase, this.startPhase],
+    [MoveEffectPhase, this.startPhase],
+    [DamagePhase, this.startPhase],
+    [FaintPhase, this.startPhase],
+    [BerryPhase, this.startPhase],
+    [TurnEndPhase, this.startPhase],
+    [BattleEndPhase, this.startPhase],
+    [EggLapsePhase, this.startPhase],
+    [SelectModifierPhase, this.startPhase],
+    [NextEncounterPhase, this.startPhase],
+    [NewBattlePhase, this.startPhase],
   ];
 
   constructor(scene) {

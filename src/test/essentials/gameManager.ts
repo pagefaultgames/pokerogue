@@ -58,11 +58,12 @@ export default class GameManager {
       });
       await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
       await this.phaseInterceptor.run(TitlePhase);
-      await this.waitMode(Mode.TITLE);
-      const starters = generateStarter(this.scene);
-      const selectStarterPhase = new SelectStarterPhase(this.scene, gameMode);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
-      selectStarterPhase.initBattle(starters);
+      this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+        const starters = generateStarter(this.scene);
+        const selectStarterPhase = new SelectStarterPhase(this.scene, gameMode);
+        this.scene.pushPhase(new EncounterPhase(this.scene, false));
+        selectStarterPhase.initBattle(starters);
+      });
       await this.phaseInterceptor.run(EncounterPhase);
       await this.phaseInterceptor.run(PostSummonPhase);
       await this.phaseInterceptor.run(ToggleDoublePositionPhase);
