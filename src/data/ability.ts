@@ -23,6 +23,7 @@ import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";
 import { Species } from "./enums/species";
+import { BattlerIndex } from "#app/battle";
 
 export class Ability implements Localizable {
   public id: Abilities;
