@@ -321,7 +321,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   const isRevert = !isMega && formChange.formKey === pokemon.species.forms[0].formKey;
   const prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe " : "Wild " : "Your ";
   if (isMega) {
-    return `${prefix}${preName} mega-evolved\ninto ${pokemon.name}!`;
+    return `${prefix}${preName} Mega Evolved\ninto ${pokemon.name}!`;
   }
   if (isGmax) {
     return `${prefix}${preName} Gigantamaxed\ninto ${pokemon.name}!`;
@@ -570,6 +570,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GRENINJA, "battle-bond", "ash", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.GRENINJA, "ash", "battle-bond", new SpeciesFormChangeManualTrigger(), true)
   ],
+  [Species.PALAFIN] : [
+    new SpeciesFormChange(Species.PALAFIN, "zero", "hero", new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.PALAFIN, "hero", "zero", new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.AEGISLASH]: [
     new SpeciesFormChange(Species.AEGISLASH, "blade", "shield", new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, "shield", "blade", new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
@@ -685,10 +689,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DURALUDON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ZACIAN]: [
-    new SpeciesFormChange(Species.ZACIAN, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
+    new SpeciesFormChange(Species.ZACIAN, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
   ],
   [Species.ZAMAZENTA]: [
-    new SpeciesFormChange(Species.ZAMAZENTA, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
+    new SpeciesFormChange(Species.ZAMAZENTA, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
   ],
   [Species.ETERNATUS]: [
     new SpeciesFormChange(Species.ETERNATUS, "", SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),

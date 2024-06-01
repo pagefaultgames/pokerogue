@@ -509,7 +509,7 @@ export class EncoreTag extends BattlerTag {
       return false;
     }
 
-    if (allMoves[repeatableMove.move].getAttrs(ChargeAttr).length && repeatableMove.result === MoveResult.OTHER) {
+    if (allMoves[repeatableMove.move].hasAttr(ChargeAttr) && repeatableMove.result === MoveResult.OTHER) {
       return false;
     }
 

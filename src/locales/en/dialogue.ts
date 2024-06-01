@@ -167,7 +167,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Time to grace the battlefield with elegance and poise!",
     },
     "victory": {
-      2: "My elegance remains unbroken!",
+      1: "My elegance remains unbroken!",
     }
   },
   "twins": {
@@ -357,6 +357,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "I'll tune up for the next race."
+    },
+  },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
     },
   },
   "brock": {
@@ -1203,8 +1215,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
@@ -1595,13 +1606,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -2278,7 +2289,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 
 
 // Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
-export const PGFdialogue: SimpleTranslationEntries = PGMdialogue;
+export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
 // Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
@@ -2316,6 +2327,8 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
         $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
         $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
         $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
+  "ending_endless": "Congratulations on reaching the current end!\nMore content is coming soon.",
+  "ending_name": "Devs"
 };
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
 export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
