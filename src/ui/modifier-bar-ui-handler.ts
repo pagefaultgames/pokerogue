@@ -11,6 +11,8 @@ export default class ModifierBarUiHandler extends UiHandler {
   private modifierBar: ModifierBar;
   private cursorObj: Phaser.GameObjects.NineSlice;
 
+  private rowCount: number = 0;
+
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
   private tooltipTitle: Phaser.GameObjects.Text;
@@ -19,7 +21,6 @@ export default class ModifierBarUiHandler extends UiHandler {
   constructor(scene: BattleScene) {
     super(scene, Mode.MODIFIER_INFO);
   }
-
 
   setup() {
     this.tooltipContainer = this.scene.add.container(0, 0);
@@ -61,8 +62,11 @@ export default class ModifierBarUiHandler extends UiHandler {
 
     this.modifierBar = modifierBar;
     this.player = args[1];
+    this.rowCount = Math.ceil(modifierBar.length / 12);
 
-    return this.setCursor(this.modifierBar.length);
+    this.modifierBar.updateModifierOverflowVisibility(true);
+
+    return this.setCursor(0);
   }
 
   processInput(button: Button): boolean {
@@ -73,6 +77,30 @@ export default class ModifierBarUiHandler extends UiHandler {
     const cursor = this.getCursor();
 
     switch (button) {
+    case Button.UP:
+      if (this.rowCount < 2) {
+        return false;
+      }
+      if (cursor + 12 < this.modifierBar.length) {
+        success = this.setCursor(cursor + 12);
+      } else if (cursor - (12 * this.rowCount) >= 0) {
+        success = this.setCursor(cursor - 12);
+      } else {
+        success = this.setCursor(0);
+      }
+      break;
+    case Button.DOWN:
+      if (this.rowCount < 2) {
+        return false;
+      }
+      if (cursor - 12 >= 0) {
+        success = this.setCursor(cursor - 12);
+      } else if (cursor + (12 * this.rowCount) < this.modifierBar.length) {
+        success = this.setCursor(cursor + 12);
+      } else {
+        success = this.setCursor(0);
+      }
+      break;
     case Button.LEFT:
       success = this.setCursor(cursor + (this.player ? 1 : -1));
       break;
@@ -105,8 +133,7 @@ export default class ModifierBarUiHandler extends UiHandler {
   }
 
   setCursor(cursor: integer): boolean {
-    const length = this.modifierBar.length;
-    const index = (length + cursor) % length;
+    const index = cursor;
 
     const item = this.modifierBar.getAt(index) as Phaser.GameObjects.Container;
     if (!item) {
@@ -153,6 +180,7 @@ export default class ModifierBarUiHandler extends UiHandler {
     this.eraseCursor();
     this.hideTooltip();
 
+    this.modifierBar.updateModifierOverflowVisibility(false);
     this.modifierBar = null;
   }
 
