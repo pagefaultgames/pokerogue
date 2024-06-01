@@ -410,7 +410,7 @@ describe("Test Rebinding", () => {
 
   it("check to delete all the binds of an action", () => {
     inGame.whenWePressOnKeyboard("V").weShouldTriggerTheButton("Button_Cycle_Variant");
-    inGame.whenWePressOnKeyboard("K").weShouldTriggerTheButton("Alt_Button_Cycle_Variant");
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Variant").thereShouldBeNoIcon().weWantThisBindInstead("K").confirm();
     inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Variant").iconDisplayedIs("KEY_K").whenWeDelete().thereShouldBeNoIconAnymore();
     inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Variant").iconDisplayedIs("KEY_V").whenWeDelete().thereShouldBeNoIconAnymore();
   });
