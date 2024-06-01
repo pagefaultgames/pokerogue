@@ -18,7 +18,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuSmartCosplay": "닥터",
   "pikachuToughCosplay": "마스크드",
   // 2G
-  "pichuSpiky": "Spiky",
+  "pichuSpiky": "삐죽귀",
   "unownA": "A",
   "unownB": "B",
   "unownC": "C",
