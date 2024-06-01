@@ -58,6 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import { Prestige } from "./system/prestige";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -393,6 +394,9 @@ export default class BattleScene extends SceneBase {
 
     this.prestigeLevelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.BATTLE_INFO);
     this.prestigeLevelText.setOrigin(1, 0);
+    this.prestigeLevelText.setInteractive();
+    this.prestigeLevelText.on("pointerover", () => this.ui.showTooltip(null, Prestige.getLevelDescriptionsForLevel(this.prestigeLevel).join("\n")));
+    this.prestigeLevelText.on("pointerout", () => this.ui.hideTooltip());
     this.fieldUI.add(this.prestigeLevelText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);

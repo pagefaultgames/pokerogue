@@ -141,7 +141,7 @@ export abstract class Prestige {
    * @returns the modified value
    */
   public static getModifiedValue(prestigeLevel: integer, attribute: PrestigeModifierAttribute, value: number): number {
-    if (prestigeLevel === 0) {
+    if (prestigeLevel === undefined || prestigeLevel === 0) {
       return value;
     }
     return this.getModifiersForLevel(prestigeLevel)
