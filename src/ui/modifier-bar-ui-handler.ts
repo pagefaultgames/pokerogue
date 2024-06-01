@@ -6,11 +6,17 @@ import { ModifierBar } from "../modifier/modifier.js";
 import { addWindow } from "./ui-theme";
 import { TextStyle, addTextObject } from "./text";
 
+/**
+ * UI handler for browsing {@linkcode ModifierBar} via button input
+ * @extends UiHandler
+ * */
 export default class ModifierBarUiHandler extends UiHandler {
+  /** Set to true if {@linkcode ModifierBar} is owned by the player */
   private player: boolean = false;
   private modifierBar: ModifierBar;
   private cursorObj: Phaser.GameObjects.NineSlice;
 
+  /** Number of rows within {@linkcode ModifierBar} (12 per row) */
   private rowCount: number = 0;
 
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -40,6 +46,10 @@ export default class ModifierBarUiHandler extends UiHandler {
     this.tooltipContainer.add(this.tooltipContent);
   }
 
+  /** Show the handler
+   * @param args [0] {@linkcode ModifierBar} to handle
+   *             [1] {boolean} true if {@linkcode ModifierBar} is owned by the player, false otherwise
+   * */
   show(args: any[]): boolean {
     if (this.modifierBar) {
       return false;
@@ -78,27 +88,44 @@ export default class ModifierBarUiHandler extends UiHandler {
 
     switch (button) {
     case Button.UP:
+      // No need to process if there's only one row
       if (this.rowCount < 2) {
         return false;
       }
+      // Move up if the space above is within the length of the bar
       if (cursor + 12 < this.modifierBar.length) {
         success = this.setCursor(cursor + 12);
-      } else if (cursor - (12 * this.rowCount) >= 0) {
-        success = this.setCursor(cursor - 12);
+      // Otherwise cursor is at the topmost row already,
+      // try to wrap it to the lowest row
       } else {
-        success = this.setCursor(0);
+        for (let i = this.rowCount; i >= 1; i--) {
+          if (cursor - 12 * i >= 0) {
+            success = this.setCursor(cursor - 12 * i);
+            if (success) {
+              break;
+            }
+          }
+        }
       }
       break;
     case Button.DOWN:
       if (this.rowCount < 2) {
         return false;
       }
+      // Move down if space below is within the bar
       if (cursor - 12 >= 0) {
         success = this.setCursor(cursor - 12);
-      } else if (cursor + (12 * this.rowCount) < this.modifierBar.length) {
-        success = this.setCursor(cursor + 12);
+      // Otherwise cursor is at the lowest row already,
+      // try to wrap it to the topmost row
       } else {
-        success = this.setCursor(0);
+        for (let i = 1; i <= this.rowCount; i++) {
+          if (cursor + 12 * i < this.modifierBar.length) {
+            success = this.setCursor(cursor + 12 * i);
+            if (success) {
+              break;
+            }
+          }
+        }
       }
       break;
     case Button.LEFT:
@@ -156,11 +183,14 @@ export default class ModifierBarUiHandler extends UiHandler {
     const tx = item.getWorldTransformMatrix().getX(0, 0) + this.cursorObj.width * 2;
     const ty = item.getWorldTransformMatrix().getY(0, 0) + this.cursorObj.height * 2;
 
+    // Check if the tooltip is too far to the right to fit the screen
     const reverse = !this.player && (tx >= this.scene.game.canvas.width - this.tooltipBg.width * scale - 12);
 
     const actualX = tx / scale;
     const actualY = ty / scale;
 
+    // If the tooltip is too far to the right to fit,
+    // offset it to the left by its and the cursor's width
     const xOffset = reverse ? -this.tooltipBg.width - this.cursorObj.width / scale - 4 : 4;
     const yOffset = 4;
 
