@@ -172,12 +172,13 @@ export default class GameWrapper {
     this.scene.input.gamepad = new GamepadPlugin(this.scene);
     this.scene.cachedFetch = (url, init) => {
       return new Promise((resolve) => {
-        const newUrl = prependPath(url);
+        // need to remove that if later we want to test battle-anims
+        const newUrl = url.includes('./battle-anims/') ? prependPath('./battle-anims/tackle.json') : prependPath(url);
         let raw;
         try {
           raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
         } catch(e) {
-          return resolve(createFetchResponse({}));
+          return resolve(createFetchBadResponse({}));
         }
         const data = JSON.parse(raw);
         const response = createFetchResponse(data);
@@ -206,6 +207,15 @@ function createFetchResponse(data) {
   return {
     ok: true,
     status: 200,
+    json: () => Promise.resolve(data),
+    text: () => Promise.resolve(JSON.stringify(data)),
+  };
+}
+// Simulate fetch response
+function createFetchBadResponse(data) {
+  return {
+    ok: false,
+    status: 404,
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
   };

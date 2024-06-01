@@ -65,7 +65,7 @@ export default class GameManager {
         selectStarterPhase.initBattle(starters);
       });
       await this.phaseInterceptor.run(EncounterPhase);
-      await this.phaseInterceptor.run(PostSummonPhase);
+      await this.phaseInterceptor.run(PostSummonPhase); // stuck here sometime
       await this.phaseInterceptor.run(ToggleDoublePositionPhase);
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
@@ -77,6 +77,8 @@ export default class GameManager {
       await this.phaseInterceptor.run(MessagePhase, () => this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.run(TurnInitPhase);
       await this.phaseInterceptor.run(CommandPhase);
+      await waitUntil(() => this.scene.ui?.getMode() === Mode.COMMAND);
+      console.log("==================[New Turn]==================");
       return resolve();
     });
   }
@@ -136,6 +138,10 @@ export default class GameManager {
   isCurrentPhase(phaseTarget) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     return this.scene.getCurrentPhase().constructor.name === targetName;
+  }
+
+  isCurrentMode(mode: Mode) {
+    return this.scene.ui?.getMode() === mode;
   }
 
   exportSaveToTest(): Promise<string> {

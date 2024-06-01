@@ -1,44 +1,39 @@
 /* eslint-disable */
-import {describe, it, vi, expect, beforeAll, beforeEach, afterEach} from "vitest";
-import fs from "fs";
-import { AES, enc } from "crypto-js";
-import {decrypt, encrypt, GameDataType, getDataTypeKey, PlayerGender} from "#app/system/game-data";
-import BattleScene from "#app/battle-scene.js";
-import GameWrapper from "#app/test/essentials/gameWrapper";
-import {
-  blobToString, getMovePosition,
-  waitUntil,
-} from "#app/test/essentials/utils";
-import {loggedInUser} from "#app/account";
+import {afterEach, describe, expect, it, vi} from "vitest";
+import {PlayerGender} from "#app/system/game-data";
+import {generateStarter, getMovePosition, waitUntil,} from "#app/test/essentials/utils";
 import {Mode} from "#app/ui/ui";
-import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
-import {apiFetch} from "#app/utils";
-import {GameMode, GameModes} from "#app/game-mode";
-import {Button} from "#app/enums/buttons";
+import {GameModes} from "#app/game-mode";
 import {Species} from "#app/data/enums/species";
-import OptionSelectUiHandler from "#app/ui/option-select-ui-handler";
-const saveKey = "x0i2O7WRiANTqPmZ";
 import * as overrides from '../overrides';
 import {Command} from "#app/ui/command-ui-handler";
 import {
   BattleEndPhase,
   BerryPhase,
-  CommandPhase, DamagePhase, EggLapsePhase,
-  EnemyCommandPhase, FaintPhase,
+  CommandPhase,
+  DamagePhase,
+  EggLapsePhase,
+  EncounterPhase,
+  EnemyCommandPhase,
+  FaintPhase,
   LoginPhase,
   MessagePhase,
-  MoveEffectPhase, MoveEndPhase,
-  MovePhase, NextEncounterPhase,
-  SelectGenderPhase, SelectModifierPhase,
-  TitlePhase, TurnEndPhase,
-  TurnStartPhase, VictoryPhase,
+  MoveEffectPhase,
+  MoveEndPhase,
+  MovePhase,
+  NextEncounterPhase,
+  SelectGenderPhase,
+  SelectModifierPhase,
+  SelectStarterPhase,
+  TitlePhase,
+  TurnEndPhase,
+  TurnStartPhase,
+  VictoryPhase,
 } from "#app/phases";
 import {Moves} from "#app/data/enums/moves";
-import TextInterceptor from "#app/test/essentials/TextInterceptor";
-import PhaseInterceptor from "#app/test/essentials/phaseInterceptor";
 import GameManager from "#app/test/essentials/gameManager";
-import {Gender} from "#app/data/gender";
 
+const saveKey = "x0i2O7WRiANTqPmZ";
 
 
 // describe("Test helpers", () => {
@@ -375,7 +370,7 @@ describe("Phase interceptor", () => {
       await game.newGame(GameModes.CLASSIC);
       expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
-  }, 100000);
+  }, 100000)
 
   it('do attack wave 3 - regular', async() => {
       vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
@@ -402,8 +397,7 @@ describe("Phase interceptor", () => {
       await game.phaseInterceptor.run(FaintPhase);
       await game.phaseInterceptor.run(MessagePhase);
       // almost, but from here, it's not yet working
-      await game.phaseInterceptor.run(BerryPhase, () => game.isCurrentPhase(VictoryPhase));
-      await game.phaseInterceptor.run(VictoryPhase, () => game.isCurrentPhase(BerryPhase));
+      await game.phaseInterceptor.run(VictoryPhase);
       await game.phaseInterceptor.run(MoveEndPhase);
       await game.phaseInterceptor.run(MovePhase);
       await game.phaseInterceptor.run(BerryPhase);
@@ -411,7 +405,8 @@ describe("Phase interceptor", () => {
       await game.phaseInterceptor.run(BattleEndPhase);
       await game.phaseInterceptor.run(EggLapsePhase);
       await game.phaseInterceptor.run(SelectModifierPhase);
-      await game.phaseInterceptor.run(NextEncounterPhase);
+      expect(game.scene.ui?.getMode()).toBe(Mode.MODIFIER_SELECT);
+      expect(game.scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
   }, 100000);
 });
 
