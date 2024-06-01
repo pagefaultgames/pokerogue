@@ -363,7 +363,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           newCursor = 0;
         } else if (this.transferButtonContainer.visible) {
           newCursor = 1;
-        } else if (this.IvScannerToggleContainer.visible){
+        } else if (this.IvScannerToggleContainer.visible) {
           newCursor = 1;
           this.rowCursor = this.rowCursor - 1;
         }
@@ -444,7 +444,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ease: "Cubic.easeIn",
       onComplete: () => options.forEach(o => o.destroy())
     });
-    
+
     [ this.rerollButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer, this.IvScannerToggleContainer ].forEach(container => {
       if (container.visible) {
         this.scene.tweens.add({
