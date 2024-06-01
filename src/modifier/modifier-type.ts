@@ -1336,39 +1336,17 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
-      let weight = 0;
-      const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.TOXIC || p.canSetStatus(StatusEffect.TOXIC, true, true))
-        && !p.hasAbility(Abilities.FLARE_BOOST)
-        && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
-      if (filteredParty.some(p => p.hasAbility(Abilities.TOXIC_BOOST) || p.hasAbility(Abilities.POISON_HEAL))) {
-        weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
-        weight = 2;
-      } else {
-        const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
-        if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
-          weight = 1;
-        }
-      }
-      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 8 * weight);
-    }, 32),
+      const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL];
+      const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => checkedMoves.includes(m.moveId)))) ? 10 : 0;
+    }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
-      let weight = 0;
-      const filteredParty = party.filter(p => (p.status?.effect === StatusEffect.BURN || p.canSetStatus(StatusEffect.BURN, true, true))
-        && !p.hasAbility(Abilities.TOXIC_BOOST) && !p.hasAbility(Abilities.POISON_HEAL)
-        && !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier));
-      if (filteredParty.some(p => p.hasAbility(Abilities.FLARE_BOOST))) {
-        weight = 4;
-      } else if (filteredParty.some(p => p.hasAbility(Abilities.GUTS) || p.hasAbility(Abilities.QUICK_FEET) || p.hasAbility(Abilities.MARVEL_SCALE))) {
-        weight = 2;
-      } else {
-        const moveList = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
-        if (filteredParty.some(p => p.getMoveset().some(m => moveList.includes(m.moveId)))) {
-          weight = 1;
-        }
-      }
-      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * weight, 8 * weight);
-    }, 32),
+      const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST];
+      const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => checkedMoves.includes(m.moveId)))) ? 10 : 0;
+    }, 10),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
