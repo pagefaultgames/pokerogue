@@ -71,6 +71,16 @@ export default class PhaseInterceptor {
     });
   }
 
+  whenAboutToRun(phaseTarget, skipFn?): Promise<void> {
+    return new Promise(async (resolve) => {
+      this.waitUntil(phaseTarget, skipFn).then(() => {
+        resolve();
+      }).catch(() => {
+        resolve();
+      });
+    });
+  }
+
   remove(phaseTarget, skipFn?): Promise<void> {
     return new Promise(async (resolve) => {
       this.waitUntil(phaseTarget, skipFn).then(() => {

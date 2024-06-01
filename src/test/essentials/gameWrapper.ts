@@ -1,6 +1,5 @@
 /* eslint-disable */
 import fs from "fs";
-import game from "../phaser.setup";
 import InputManager = Phaser.Input.InputManager;
 import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
 import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
@@ -55,8 +54,12 @@ window.matchMedia = () => ({
 
 export default class GameWrapper {
   public scene: BattleScene;
+  public game: Phaser.Game;
 
   constructor() {
+    this.game = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
     localStorage.clear();
   }
 
@@ -68,11 +71,11 @@ export default class GameWrapper {
   }
 
   injectMandatory() {
-    game.config = {
+    this.game.config = {
       seed: ["test"],
     }
-    this.scene.game = game;
-    game.renderer = {
+    this.scene.game = this.game;
+    this.game.renderer = {
       maxTextures: -1,
       gl: {},
       deleteTexture: () => null,
@@ -82,7 +85,7 @@ export default class GameWrapper {
         add: () => null,
       },
     };
-    this.scene.renderer = game.renderer;
+    this.scene.renderer = this.game.renderer;
     this.scene.children = {
       removeAll: () => null,
     };
@@ -95,7 +98,7 @@ export default class GameWrapper {
       get: () => this.scene.sound,
       getAllPlaying: () => [],
       manager: {
-        game: game,
+        game: this.game,
       },
       setVolume: () => null,
       on: (evt, callback) => callback(),
@@ -118,14 +121,14 @@ export default class GameWrapper {
       },
     };
 
-    this.scene.anims = game.anims;
-    this.scene.cache = game.cache;
-    this.scene.plugins = game.plugins;
-    this.scene.registry = game.registry;
-    this.scene.scale = game.scale;
-    this.scene.textures = game.textures;
-    this.scene.events = game.events;
-    this.scene.manager = new InputManager(game, {});
+    this.scene.anims = this.game.anims;
+    this.scene.cache = this.game.cache;
+    this.scene.plugins = this.game.plugins;
+    this.scene.registry = this.game.registry;
+    this.scene.scale = this.game.scale;
+    this.scene.textures = this.game.textures;
+    this.scene.events = this.game.events;
+    this.scene.manager = new InputManager(this.game, {});
     this.scene.manager.keyboard = new KeyboardManager(this.scene);
     this.scene.pluginEvents = new EventEmitter();
     this.scene.domContainer = {} as HTMLDivElement;
@@ -134,8 +137,8 @@ export default class GameWrapper {
     this.scene.load = new MockLoader(this.scene);
     this.scene.sys = {
       queueDepthSort: () => null,
-      anims: game.anims,
-      game: game,
+      anims: this.game.anims,
+      game: this.game,
       textures: {
         addCanvas: () => ({
           get: () => ({ // this.frame in Text.js
@@ -148,7 +151,7 @@ export default class GameWrapper {
         })
       },
       cache: this.scene.load.cacheManager,
-      scale: game.scale,
+      scale: this.game.scale,
       // _scene.sys.scale = new ScaleManager(_scene);
       // events: {
       //   on: () => null,
@@ -159,14 +162,14 @@ export default class GameWrapper {
           key: 'battle',
         }
       },
-      input: game.input,
+      input: this.game.input,
     };
     const mockTextureManager = new MockTextureManager(this.scene);
     this.scene.add = mockTextureManager.add;
     this.scene.sys.displayList =  this.scene.add.displayList;
     this.scene.sys.updateList = new UpdateList(this.scene);
     this.scene.systems = this.scene.sys;
-    this.scene.input = game.input;
+    this.scene.input = this.game.input;
     this.scene.scene = this.scene;
     this.scene.input.keyboard = new KeyboardPlugin(this.scene);
     this.scene.input.gamepad = new GamepadPlugin(this.scene);
