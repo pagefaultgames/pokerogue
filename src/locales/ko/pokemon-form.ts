@@ -2,11 +2,11 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemonForm: SimpleTranslationEntries = {
   // Battle forms
-  "mega": "메가{{pokemonName}}",
+  "mega": "메가 {{pokemonName}}",
   "megaX": "메가{{pokemonName}}X",
   "megaY": "메가{{pokemonName}}Y",
   "primal": "원시{{pokemonName}}",
-  "gigantamax": "거다이{{pokemonName}}",
+  "gigantamax": "거다이맥스 {{pokemonName}}",
   "eternamax": "무한다이맥스 {{pokemonName}}",
 
   // Starters forms
@@ -18,7 +18,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuSmartCosplay": "닥터",
   "pikachuToughCosplay": "마스크드",
   // 2G
-  "pichuSpiky": "뾰족귀",
+  "pichuSpiky": "삐죽귀",
   "unownA": "A",
   "unownB": "B",
   "unownC": "C",
@@ -111,10 +111,10 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pumpkabooSuper": "특대 사이즈",
   "xerneasNeutral": "릴랙스모드",
   "xerneasActive": "액티브모드",
-  "zygarde50": "50% 폼",
-  "zygarde10": "10% 폼",
-  "zygarde50Pc": "스웜체인지 50% 폼",
-  "zygarde10Pc": "스웜체인지 10% 폼",
+  "zygarde50": "50%폼",
+  "zygarde10": "10%폼",
+  "zygarde50Pc": "스웜체인지 50%폼",
+  "zygarde10Pc": "스웜체인지 10%폼",
   "zygardeComplete": "퍼펙트폼",
   // 7G
   "oricorioBaile": "이글이글스타일",

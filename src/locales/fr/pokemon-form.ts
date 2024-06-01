@@ -123,7 +123,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "oricorioSensu": "Buyō",
   "rockruffOwnTempo": "Tempo Perso",
   "miniorRedMeteor": "Météore Rouge",
-  "miniorOrangeMeteor": "Météore Oranger",
+  "miniorOrangeMeteor": "Météore Orange",
   "miniorYellowMeteor": "Météore Jaune",
   "miniorGreenMeteor": "Météore Vert",
   "miniorBlueMeteor": "Météore Bleu",
