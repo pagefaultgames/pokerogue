@@ -1,15 +1,18 @@
-import BattleScene from "../battle-scene";
-import { Setting, reloadSettings, settingDefaults, settingOptions } from "../system/settings";
-import { hasTouchscreen, isMobile } from "../touch-controls";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
+import BattleScene from "../../battle-scene";
+import {Setting, reloadSettings, settingDefaults, settingOptions} from "../../system/settings";
+import { hasTouchscreen, isMobile } from "../../touch-controls";
+import { TextStyle, addTextObject } from "../text";
+import { Mode } from "../ui";
+import UiHandler from "../ui-handler";
+import { addWindow } from "../ui-theme";
+import {Button} from "../../enums/buttons";
+import {InputsIcons} from "#app/ui/settings/abstract-settings-ui-handler";
+import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
+  private navigationContainer: NavigationMenu;
 
   private scrollCursor: integer;
 
@@ -20,16 +23,20 @@ export default class SettingsUiHandler extends UiHandler {
   private settingLabels: Phaser.GameObjects.Text[];
   private optionValueLabels: Phaser.GameObjects.Text[][];
 
+  protected navigationIcons: InputsIcons;
+
   private cursorObj: Phaser.GameObjects.NineSlice;
 
   private reloadRequired: boolean;
   private reloadI18n: boolean;
+  private rowsToDisplay: number;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
     this.reloadRequired = false;
     this.reloadI18n = false;
+    this.rowsToDisplay = 8;
   }
 
   setup() {
@@ -37,17 +44,35 @@ export default class SettingsUiHandler extends UiHandler {
 
     this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
-    headerBg.setOrigin(0, 0);
+    this.navigationIcons = {};
 
-    const headerText = addTextObject(this.scene, 0, 0, "Options", TextStyle.SETTINGS_LABEL);
-    headerText.setOrigin(0, 0);
-    headerText.setPositionRelative(headerBg, 8, 4);
+    this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
 
-    this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2);
+    this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
     this.optionsBg.setOrigin(0, 0);
+
+    const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, 22);
+    actionsBg.setOrigin(0, 0);
+
+    const iconAction = this.scene.add.sprite(0, 0, "keyboard");
+    iconAction.setOrigin(0, -0.1);
+    iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
+    this.navigationIcons["BUTTON_ACTION"] = iconAction;
+
+    const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
+    actionText.setOrigin(0, 0.15);
+    actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
+
+    const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
+    iconCancel.setOrigin(0, -0.1);
+    iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
+    this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
+
+    const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
+    cancelText.setOrigin(0, 0.15);
+    cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
     this.optionsContainer = this.scene.add.container(0, 0);
 
@@ -91,10 +116,14 @@ export default class SettingsUiHandler extends UiHandler {
 
     this.optionCursors = Object.values(settingDefaults);
 
-    this.settingsContainer.add(headerBg);
-    this.settingsContainer.add(headerText);
     this.settingsContainer.add(this.optionsBg);
+    this.settingsContainer.add(this.navigationContainer);
+    this.settingsContainer.add(actionsBg);
     this.settingsContainer.add(this.optionsContainer);
+    this.settingsContainer.add(iconAction);
+    this.settingsContainer.add(iconCancel);
+    this.settingsContainer.add(actionText);
+    this.settingsContainer.add(cancelText);
 
     ui.add(this.settingsContainer);
 
@@ -104,8 +133,30 @@ export default class SettingsUiHandler extends UiHandler {
     this.settingsContainer.setVisible(false);
   }
 
+  updateBindings(): void {
+    for (const settingName of Object.keys(this.navigationIcons)) {
+      if (settingName === "BUTTON_HOME") {
+        this.navigationIcons[settingName].setTexture("keyboard");
+        this.navigationIcons[settingName].setFrame("HOME.png");
+        this.navigationIcons[settingName].alpha = 1;
+        continue;
+      }
+      const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
+      if (icon) {
+        const type = this.scene.inputController?.getLastSourceType();
+        this.navigationIcons[settingName].setTexture(type);
+        this.navigationIcons[settingName].setFrame(icon);
+        this.navigationIcons[settingName].alpha = 1;
+      } else {
+        this.navigationIcons[settingName].alpha = 0;
+      }
+    }
+    NavigationManager.getInstance().updateIcons();
+  }
+
   show(args: any[]): boolean {
     super.show(args);
+    this.updateBindings();
 
     const settings: object = localStorage.hasOwnProperty("settings") ? JSON.parse(localStorage.getItem("settings")) : {};
 
@@ -133,12 +184,12 @@ export default class SettingsUiHandler extends UiHandler {
   processInput(button: Button): boolean {
     const ui = this.getUi();
     // Defines the maximum number of rows that can be displayed on the screen.
-    const rowsToDisplay = 9;
 
     let success = false;
 
     if (button === Button.CANCEL) {
       success = true;
+      NavigationManager.getInstance().reset();
       // Reverts UI to its previous state on cancel.
       this.scene.ui.revertMode();
     } else {
@@ -154,17 +205,17 @@ export default class SettingsUiHandler extends UiHandler {
         } else {
           // When at the top of the menu and pressing UP, move to the bottommost item.
           // First, set the cursor to the last visible element, preparing for the scroll to the end.
-          const successA = this.setCursor(rowsToDisplay - 1);
+          const successA = this.setCursor(this.rowsToDisplay - 1);
           // Then, adjust the scroll to display the bottommost elements of the menu.
-          const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
+          const successB = this.setScrollCursor(this.optionValueLabels.length - this.rowsToDisplay);
           success = successA && successB; // success is just there to play the little validation sound effect
         }
         break;
       case Button.DOWN:
         if (cursor < this.optionValueLabels.length - 1) {
-          if (this.cursor < rowsToDisplay - 1) { // if the visual cursor is in the frame of 0 to 8
+          if (this.cursor < this.rowsToDisplay - 1) {// if the visual cursor is in the frame of 0 to 8
             success = this.setCursor(this.cursor + 1);
-          } else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay) {
+          } else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay) {
             success = this.setScrollCursor(this.scrollCursor + 1);
           }
         } else {
@@ -177,7 +228,7 @@ export default class SettingsUiHandler extends UiHandler {
         }
         break;
       case Button.LEFT:
-        if (this.optionCursors[cursor]) { // Moves the option cursor left, if possible.
+        if (this.optionCursors[cursor]) {// Moves the option cursor left, if possible.
           success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
         }
         break;
@@ -186,6 +237,10 @@ export default class SettingsUiHandler extends UiHandler {
         if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
           success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
         }
+        break;
+      case Button.CYCLE_FORM:
+      case Button.CYCLE_SHINY:
+        success = this.navigationContainer.navigate(button);
         break;
       }
     }
@@ -263,7 +318,7 @@ export default class SettingsUiHandler extends UiHandler {
     this.optionsContainer.setY(-16 * this.scrollCursor);
 
     for (let s = 0; s < this.settingLabels.length; s++) {
-      const visible = s >= this.scrollCursor && s < this.scrollCursor + 9;
+      const visible = s >= this.scrollCursor && s < this.scrollCursor + this.rowsToDisplay;
       this.settingLabels[s].setVisible(visible);
       for (const option of this.optionValueLabels[s]) {
         option.setVisible(visible);

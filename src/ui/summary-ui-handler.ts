@@ -742,7 +742,7 @@ export default class SummaryUiHandler extends UiHandler {
         allAbilityInfo.push(this.passiveContainer);
 
         // Sets up the pixel button prompt image
-        this.abilityPrompt = this.scene.add.image(0, 0, !this.scene.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
+        this.abilityPrompt = this.scene.add.image(0, 0, !this.scene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
         this.abilityPrompt.setPosition(8, 43);
         this.abilityPrompt.setVisible(true);
         this.abilityPrompt.setOrigin(0, 0);
