@@ -241,12 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     TOXIC_ORB: {
       name: "Toxic Orb",
       description:
-                "Badly poisons its holder at the end of the turn if they do not have a status condition already"
+                "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle"
     },
     FLAME_ORB: {
       name: "Flame Orb",
       description:
-                "Burns its holder at the end of the turn if they do not have a status condition already"
+                "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
     },
     BATON: {
       name: "接力棒",
