@@ -32,7 +32,7 @@ import {
 } from "./dialogue";
 import { biome } from "./biome";
 import { pokemonInfoContainer } from "./pokemon-info-container";
-
+import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 
 export const koConfig = {
   ability: ability,
@@ -70,5 +70,6 @@ export const koConfig = {
   PGMmiscDialogue: PGMmiscDialogue,
   PGFmiscDialogue: PGFmiscDialogue,
   PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
-  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue
+  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
+  saveSlotSelectUiHandler: saveSlotSelectUiHandler
 };

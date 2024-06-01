@@ -118,7 +118,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
               originalCallback(cursor);
             };
             if (this.sessionSlots[cursor].hasData) {
-              ui.showText("Overwrite the data in the selected slot?", null, () => {
+              ui.showText(i18next.t("saveSlotSelectUiHandler:Overwrite_the_data"), null, () => {
                 ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
                   ui.revertMode();
                   ui.showText(null, 0);
