@@ -1662,7 +1662,6 @@ export class DownloadAbAttr extends PostSummonAbAttr {
   private enemySpDef: integer;
   private enemyCountTally: integer;
   private stats: BattleStat[];
-
   private opponents: Pokemon[];
 
   // TODO: Implement the Substitute feature(s) once move is implemented.
