@@ -1,5 +1,4 @@
 import { Gender } from "./gender";
-import { FlinchChanceModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
@@ -216,7 +215,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.SLOWPOKE]: [
     new SpeciesEvolution(Species.SLOWBRO, 37, null, null),
-    new SpeciesEvolution(Species.SLOWKING, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.findModifier(m => (m instanceof FlinchChanceModifier) && (m as FlinchChanceModifier).pokemonId === p.id, true)), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.SLOWKING, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => true /* King's Rock */), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MAGNEMITE]: [
     new SpeciesEvolution(Species.MAGNETON, 30, null, null)
@@ -1216,7 +1215,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.PIKACHU]: [
     new SpeciesFormEvolution(Species.ALOLA_RAICHU, "", "", 1, EvolutionItem.THUNDER_STONE, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.ISLAND || p.scene.arena.biomeType === Biome.BEACH), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesFormEvolution(Species.RAICHU, "", "", 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesFormEvolution(Species.ALOLA_RAICHU, "partner", "", 1, EvolutionItem.THUNDER_STONE, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.ISLAND || p.scene.arena.biomeType === Biome.BEACH), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.RAICHU, "", "", 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.RAICHU, "partner", "", 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NIDORINA]: [
     new SpeciesEvolution(Species.NIDOQUEEN, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1242,7 +1243,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.POLIWHIRL]: [
     new SpeciesEvolution(Species.POLIWRATH, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
-    new SpeciesEvolution(Species.POLITOED, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.findModifier(m => (m instanceof FlinchChanceModifier) && (m as FlinchChanceModifier).pokemonId === p.id, true)), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.POLITOED, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => true /* King's Rock */), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.WEEPINBELL]: [
     new SpeciesEvolution(Species.VICTREEBEL, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1268,13 +1269,21 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.EEVEE]: [
     new SpeciesFormEvolution(Species.SYLVEON, "", "", 1, null, new SpeciesFriendshipEvolutionCondition(70, p => !!p.getMoveset().find(m => m.getMove().type === Type.FAIRY)), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.SYLVEON, "partner", "", 1, null, new SpeciesFriendshipEvolutionCondition(70, p => !!p.getMoveset().find(m => m.getMove().type === Type.FAIRY)), SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(Species.ESPEON, "", "", 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.ESPEON, "partner", "", 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(Species.UMBREON, "", "", 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.UMBREON, "partner", "", 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(Species.VAPOREON, "", "", 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.VAPOREON, "partner", "", 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(Species.JOLTEON, "", "", 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.JOLTEON, "partner", "", 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(Species.FLAREON, "", "", 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.FLAREON, "partner", "", 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(Species.LEAFEON, "", "", 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.LEAFEON, "partner", "", 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(Species.GLACEON, "", "", 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.GLACEON, "partner", "", 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.TOGETIC]: [
     new SpeciesEvolution(Species.TOGEKISS, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1610,7 +1619,525 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.GIMMIGHOUL]: [
     new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.VERY_LONG)
-  ]
+  ],
+
+  [Species.GRASSHOLE]: [
+    new SpeciesEvolution(Species.ANALGAE, 16, null, null)
+  ],
+  [Species.ANALGAE]: [
+    new SpeciesEvolution(Species.RECTREEM, 36, null, null)
+  ],
+  [Species.ARABOMB]: [
+    new SpeciesEvolution(Species.IGUALLAH, 16, null, null)
+  ],
+  [Species.IGUALLAH]: [
+    new SpeciesEvolution(Species.LIZAKBAR, 36, null, null)
+  ],
+  [Species.EJACASM]: [
+    new SpeciesEvolution(Species.HOSAJACK, 16, null, null)
+  ],
+  [Species.HOSAJACK]: [
+    new SpeciesEvolution(Species.CONDOOM, 36, null, null)
+  ],
+  [Species.SQUIRRAP]: [
+    new SpeciesEvolution(Species.GAMPSTER, 17, null, null)
+  ],
+  [Species.KENGEON]: [
+    new SpeciesEvolution(Species.FRIEDEN, 15, null, null)
+  ],
+  [Species.FRIEDEN]: [
+    new SpeciesEvolution(Species.COROOSTER, 30, null, null)
+  ],
+  [Species.CURICRAWL]: [
+    new SpeciesEvolution(Species.GUTSICOON, 8, null, null)
+  ],
+  [Species.GUTSICOON]: [
+    new SpeciesEvolution(Species.GUTSIFLY, 12, null, null)
+  ],
+  [Species.LARVADES]: [
+    new SpeciesEvolution(Species.PROBOSKITO, 12, null, null)
+  ],
+  [Species.PROBOSKITO]: [
+    new SpeciesEvolution(Species.VENOWATT, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.CLOVOUR]: [
+    new SpeciesEvolution(Species.CHANOLOUR, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.CHANOLOUR, 60, null, null)
+  ],
+  [Species.NAUSEON]: [
+    new SpeciesEvolution(Species.HAZMATE, 25, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] > p.stats[Stat.SPATK])),
+    new SpeciesEvolution(Species.EBOLABLE, 25, null,  new SpeciesEvolutionCondition(p => p.stats[Stat.SPATK] > p.stats[Stat.ATK]))
+  ],
+  [Species.LANSHIL]: [
+    new SpeciesEvolution(Species.MIDDRIL, 19, null, null)
+  ],
+  [Species.MIDDRIL]: [
+    new SpeciesEvolution(Species.SHURISMASH, 36, null, null)
+  ],
+  [Species.MAYMAY]: [
+    new SpeciesEvolution(Species.MEMENACE, 23, null, null)
+  ],
+  [Species.ARMANDO]: [
+    new SpeciesEvolution(Species.MUSCLEDUDE, 18, null, null)
+  ],
+  [Species.MUSCLEDUDE]: [
+    new SpeciesEvolution(Species.TRIPECS, 36, null, null)
+  ],
+  [Species.SEMDROP]: [
+    new SpeciesEvolution(Species.SEMRUST, 30, null, null)
+  ],
+  [Species.SEMRUST]: [
+    new SpeciesEvolution(Species.SEMDEMEN, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.FURNAZI]: [
+    new SpeciesEvolution(Species.FINASOVEN, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.TROUBAIT]: [
+    new SpeciesEvolution(Species.TULURE, 15, null, null)
+  ],
+  [Species.TULURE]: [
+    new SpeciesEvolution(Species.MONSTRAP, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.BAITMASTER, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.PIXILA]: [
+    new SpeciesEvolution(Species.FAIRILEON, 26, null, null)
+  ],
+  [Species.WEDGARD]: [
+    new SpeciesEvolution(Species.KNOKEDGE, 29, null, null)
+  ],
+  [Species.CHOMPEST]: [
+    new SpeciesEvolution(Species.VAULTEVOUR, 1, EvolutionItem.METAL_ALLOY, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.MASDAWG]: [
+    new SpeciesEvolution(Species.PASDAWG, 35, null, null)
+  ],
+  [Species.SPANKE]: [
+    new SpeciesEvolution(Species.ANACONDUKE, 28, null, null)
+  ],
+  [Species.FISHNISM]: [
+    new SpeciesEvolution(Species.SJWHALE, 35, null, null)
+  ],
+  [Species.CHEZETTA]: [
+    new SpeciesEvolution(Species.MOZZAMAZEL, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.KROKLING]: [
+    new SpeciesEvolution(Species.KROKIZON, 39, null, null)
+  ],
+  [Species.CONCHILLA]: [
+    new SpeciesEvolution(Species.HAREMIT, 29, null, null)
+  ],
+  [Species.COOLCUBE]: [
+    new SpeciesEvolution(Species.TANKUBE, 27, null, null)
+  ],
+  [Species.TANKUBE]: [
+    new SpeciesEvolution(Species.FABKUBE, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.SMOGAROBEN]: [
+    new SpeciesEvolution(Species.SMOXILON, 30, null, null)
+  ],
+  [Species.BACUB]: [
+    new SpeciesEvolution(Species.URSWINE, 32, null, null)
+  ],
+  [Species.MOOSTATIC]: [
+    new SpeciesEvolution(Species.MOOSHOCK, 28, null, null)
+  ],
+  [Species.DEEMDOW]: [
+    new SpeciesEvolution(Species.DOWSTER, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.CHEERLY]: [
+    new SpeciesEvolution(Species.CHEERIFIC, 19, null, null)
+  ],
+  [Species.CHEERIFIC]: [
+    new SpeciesEvolution(Species.MENNOPAWS, 42, null, null)
+  ],
+  [Species.CARACOLD]: [
+    new SpeciesEvolution(Species.GLACIALYNX, 31, null, null)
+  ],
+  [Species.PRAETEUR]: [
+    new SpeciesEvolution(Species.PRAESTISH, 27, null, null)
+  ],
+  [Species.FLOWRE]: [
+    new SpeciesEvolution(Species.FLORIOUS, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.JUARECITO]: [
+    new SpeciesEvolution(Species.PONCHITO, 22, null, null)
+  ],
+  [Species.PONCHITO]: [
+    new SpeciesEvolution(Species.SOMBOLUDO, 40, null, null)
+  ],
+  [Species.PUPPACTI]: [
+    new SpeciesEvolution(Species.MARIONETTL, 36, null, null)
+  ],
+  [Species.TITTAI]: [
+    new SpeciesEvolution(Species.OCTAI, 25, null, null)
+  ],
+  [Species.CHARAGON]: [
+    new SpeciesEvolution(Species.HYLETRACK, 30, null, null)
+  ],
+  [Species.EUPHOREAL]: [
+    new SpeciesEvolution(Species.ARMOWITE, 29, null, null)
+  ],
+  [Species.PRAUNCH]: [
+    new SpeciesEvolution(Species.KARAWN, 23, null, null)
+  ],
+  [Species.KARAWN]: [
+    new SpeciesEvolution(Species.MABSTER, 40, null, null)
+  ],
+  [Species.TRICIENT]: [
+    new SpeciesEvolution(Species.TRICILLION, 37, null, null)
+  ],
+  [Species.POIZOOKIE]: [
+    new SpeciesEvolution(Species.TOXIRAPTOR, 37, null, null)
+  ],
+  [Species.SABRECK]: [
+    new SpeciesEvolution(Species.HUNTABRE, 37, null, null)
+  ],
+  [Species.SINGLETS]: [
+    new SpeciesEvolution(Species.DUBUS, 22, null, null)
+  ],
+  [Species.DUBUS]: [
+    new SpeciesEvolution(Species.TRIPSIUS, 33, null, null)
+  ],
+  [Species.MIASMER]: [
+    new SpeciesEvolution(Species.MIASMORTOR, 42, null, null)
+  ],
+  [Species.HANGINY]: [
+    new SpeciesEvolution(Species.CHANCER, 20, null, null)
+  ],
+  [Species.CHANCER]: [
+    new SpeciesEvolution(Species.UNJOY, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.FROSOWL]: [
+    new SpeciesEvolution(Species.WHIZZARD, 30, null, null)
+  ],
+  [Species.DRAPILLAR]: [
+    new SpeciesEvolution(Species.CAPARAGON, 40, null, null)
+  ],
+  [Species.CAPARAGON]: [
+    new SpeciesEvolution(Species.MANTRAKE, 50, null, null)
+  ],
+  [Species.INBITWEEN]: [
+    new SpeciesEvolution(Species.GEIGH, 40, null, null),
+    new SpeciesEvolution(Species.DRAGKING, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.JARAPE]: [
+    new SpeciesEvolution(Species.SPILEFREE, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.BONGECKO]: [
+    new SpeciesEvolution(Species.MARIGUANA, 24, null, null)
+  ],
+  [Species.MARIGUANA]: [
+    new SpeciesEvolution(Species.MARLEYZARD, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.AYYLAMO]: [
+    new SpeciesEvolution(Species.UWOTTO, 1, EvolutionItem.METAL_ALLOY, null)
+  ],
+  [Species.OILSLAM]: [
+    new SpeciesEvolution(Species.ISISSIN, 38, null, null)
+  ],
+  [Species.STUFFOWL]: [
+    new SpeciesEvolution(Species.DURKEY, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.DURKEY]: [
+    new SpeciesEvolution(Species.UPCHUCKEN, 1, null, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.DRAGUN]: [
+    new SpeciesEvolution(Species.TRIGGEDON, 40, null, null)
+  ],
+  [Species.TRIGGEDON]: [
+    new SpeciesEvolution(Species.CANNONANCE, 65, null, null)
+  ],
+  [Species.REPTYKE]: [
+    new SpeciesEvolution(Species.RASCLOBBER, 16, null, null)
+  ],
+  [Species.RASCLOBBER]: [
+    new SpeciesEvolution(Species.BATTEREX, 36, null, null)
+  ],
+  [Species.FAERIOCK]: [
+    new SpeciesEvolution(Species.SYLVUIN, 16, null, null)
+  ],
+  [Species.SYLVUIN]: [
+    new SpeciesEvolution(Species.OBURONYXO, 36, null, null)
+  ],
+  [Species.CLOUCAT]: [
+    new SpeciesEvolution(Species.FELIMBUS, 16, null, null)
+  ],
+  [Species.FELIMBUS]: [
+    new SpeciesEvolution(Species.DEATHORUS, 36, null, null)
+  ],
+  [Species.KNOGOAT]: [
+    new SpeciesEvolution(Species.KNOGRINYU, 38, null, null)
+  ],
+  [Species.GLASSHOT]: [
+    new SpeciesEvolution(Species.GLASSANNON, 30, null, null)
+  ],
+  [Species.FLUFFYETI]: [
+    new SpeciesEvolution(Species.YEDOOM, 35, null, null)
+  ],
+  [Species.MUDPANTS]: [
+    new SpeciesEvolution(Species.MUDSLACKS, 29, null, null)
+  ],
+  [Species.BUKITLEE]: [
+    new SpeciesEvolution(Species.LOSSOLITH, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.NONITE]: [
+    new SpeciesEvolution(Species.NONEGATIVE, 26, null, null)
+  ],
+  [Species.NONEGATIVE]: [
+    new SpeciesEvolution(Species.NOMAESTRO, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.DUNKYPEA]: [
+    new SpeciesEvolution(Species.BURDMEN, 14, null, null)
+  ],
+  [Species.BURDMEN]: [
+    new SpeciesEvolution(Species.NUTZBOLTZ, 32, null, null)
+  ],
+  [Species.KUKLUX]: [
+    new SpeciesEvolution(Species.KUKLAN, 35, null, null)
+  ],
+  [Species.SAPLEAF]: [
+    new SpeciesEvolution(Species.IGNUT, 15, null, null)
+  ],
+  [Species.IGNUT]: [
+    new SpeciesEvolution(Species.PHANTASH, 34, null, null)
+  ],
+  [Species.BALLACLE]: [
+    new SpeciesEvolution(Species.BARBARKLEY, 38, null, null)
+  ],
+  [Species.KEKROACH]: [
+    new SpeciesEvolution(Species.REKROACH, 30, null, null)
+  ],
+  [Species.RICOSHEEP]: [
+    new SpeciesEvolution(Species.RICOSUAVE, 35, null, null)
+  ],
+  [Species.CRYSTAQUIL]: [
+    new SpeciesEvolution(Species.CRYSTAKING, 42, null, null)
+  ],
+  [Species.FLOCONUT]: [
+    new SpeciesEvolution(Species.SAPPALM, 24, null, null)
+  ],
+  [Species.SAPPALM]: [
+    new SpeciesEvolution(Species.ROYNAPALM, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.MANATEET]: [
+    new SpeciesEvolution(Species.MANATORQUE, 24, null, null)
+  ],
+  [Species.MANATORQUE]: [
+    new SpeciesEvolution(Species.MANATANK, 50, null, null)
+  ],
+  [Species.NINOOP]: [
+    new SpeciesEvolution(Species.DRACONIUS, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
+  [Species.TICKTAC]: [
+    new SpeciesEvolution(Species.EARETICLE, 44, null, null)
+  ],
+  [Species.EARETICLE]: [
+    new SpeciesEvolution(Species.SCYTHEAR, 59, null, null)
+  ],
+  [Species.COZLOAD]: [
+    new SpeciesEvolution(Species.SNUGWARE, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.FLEESPECS, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.EMBORTION]: [
+    new SpeciesEvolution(Species.PREMANTOM, 37, null, null)
+  ],
+  [Species.GALAVIK]: [
+    new SpeciesEvolution(Species.GALAVISTE, 34, null,  new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] > p.stats[Stat.SPATK])),
+    new SpeciesEvolution(Species.GALAVIRE, 34, null,  new SpeciesEvolutionCondition(p => p.stats[Stat.SPATK] > p.stats[Stat.ATK]))
+  ],
+  [Species.POLLEFIN]: [
+    new SpeciesEvolution(Species.FLORIGRACE, 26, null, null)
+  ],
+  [Species.LASSLEE]: [
+    new SpeciesEvolution(Species.WIFEMIN, 39, null, null)
+  ],
+  [Species.SPOOKSTER]: [
+    new SpeciesEvolution(Species.SPOOKEER, 35, null, null)
+  ],
+  [Species.SPOOKEER]: [
+    new SpeciesEvolution(Species.SPOOKZILLA, 55, null, null)
+  ],
+  [Species.DERPATO]: [
+    new SpeciesEvolution(Species.RETATER, 40, null, null)
+  ],
+  [Species.RETATER]: [
+    new SpeciesEvolution(Species.POTARDED, 60, null, null)
+  ],
+  [Species.SADROG]: [
+    new SpeciesEvolution(Species.SMUGROK, 17, null, null)
+  ],
+  [Species.SMUGROK]: [
+    new SpeciesEvolution(Species.PEPEREE, 38, null, null)
+  ],
+  [Species.HODTOG]: [
+    new SpeciesEvolution(Species.WIENEBARK, 17, null, null)
+  ],
+  [Species.WIENEBARK]: [
+    new SpeciesEvolution(Species.SAUDOGE, 38, null, null)
+  ],
+  [Species.GNARRK]: [
+    new SpeciesEvolution(Species.CORSHARRK, 17, null, null)
+  ],
+  [Species.CORSHARRK]: [
+    new SpeciesEvolution(Species.DAVYJAWS, 38, null, null)
+  ],
+  [Species.HUMPUNNY]: [
+    new SpeciesEvolution(Species.BUNNORGY, 17, null, null),
+  ],
+  [Species.EMELGY]: [
+    new SpeciesEvolution(Species.FEDORAWK, 16, null, null)
+  ],
+  [Species.FEDORAWK]: [
+    new SpeciesEvolution(Species.FAZEAGLE, 32, null, null)
+  ],
+  [Species.CATIKILLAR]: [
+    new SpeciesEvolution(Species.TIKOON, 15, null, null)
+  ],
+  [Species.TIKOON]: [
+    new SpeciesEvolution(Species.OOGABUGA, 30, null, null)
+  ],
+  [Species.EBINING]: [
+    new SpeciesEvolution(Species.EMPLYIN, 24, null, null)
+  ],
+  [Species.UPBOTE]: [
+    new SpeciesEvolution(Species.UPBEDDIT, 24, null, null)
+  ],
+  [Species.FLIPBIRD]: [
+    new SpeciesEvolution(Species.WHEYGLE, 27, null, null)
+  ],
+  [Species.BRUHKID]: [
+    new SpeciesEvolution(Species.UBRUH, 30, null, null)
+  ],
+  [Species.WALRUSE]: [
+    new SpeciesEvolution(Species.WALRUSKIE, 30, null, null)
+  ],
+  [Species.DIOBAT]: [
+    new SpeciesEvolution(Species.WARUDIO, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.DOCEE]: [
+    new SpeciesEvolution(Species.DONUTSTEEL, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.CAKUPPLE]: [
+    new SpeciesEvolution(Species.FONDUPPLE, 30, null, null)
+  ],
+  [Species.EGYLAMP]: [
+    new SpeciesEvolution(Species.RUSELAMP, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.MEHNDIOR]: [
+    new SpeciesEvolution(Species.TUNAKKING, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.MISSLETOE]: [
+    new SpeciesEvolution(Species.HOHOHOMING, 24, null, null)
+  ],
+  [Species.FLAA]: [
+    new SpeciesEvolution(Species.HOPAULT, 23, null, null)
+  ],
+  [Species.ARAKETSU]: [
+    new SpeciesEvolution(Species.SENKETULA, 21, null, null)
+  ],
+  [Species.CIRPENT]: [
+    new SpeciesEvolution(Species.TRAUMOBRA, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.LIZASCOOP]: [
+    new SpeciesEvolution(Species.REPTRILL, 28, null, null)
+  ],
+  [Species.FEFEION]: [
+    new SpeciesEvolution(Species.FEFERUN, 34, null, null)
+  ],
+  [Species.FRESRYE]: [
+    new SpeciesEvolution(Species.DEDWHEAT, 30, null, null)
+  ],
+  [Species.NUTJOBBER]: [
+    new SpeciesEvolution(Species.DEISNUTZ, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.SPARGLE]: [
+    new SpeciesEvolution(Species.SPEDO, 27, null, null)
+  ],
+  [Species.HOUSANT]: [
+    new SpeciesEvolution(Species.APARTMANT, 29, null, null)
+  ],
+  [Species.FUERMIGA]: [
+    new SpeciesEvolution(Species.MARIPYRO, 40, null, null)
+  ],
+  [Species.WASTENAUT]: [
+    new SpeciesEvolution(Species.WANTNAUT, 30, null, null)
+  ],
+  [Species.SNUFFANT]: [
+    new SpeciesEvolution(Species.COKEMMOTH, 32, null, null)
+  ],
+  [Species.BETACLUCK]: [
+    new SpeciesEvolution(Species.THUNDACOCK, 31, null, null)
+  ],
+  [Species.TWINFOWL]: [
+    new SpeciesEvolution(Species.AVIANJOIN, 31, null, null)
+  ],
+  [Species.ILLUMINOWL]: [
+    new SpeciesEvolution(Species.ILLUMATRIX, 42, null, null)
+  ],
+  [Species.TYPOBOP]: [
+    new SpeciesEvolution(Species.YEEREX, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.RANDOMIX]: [
+    new SpeciesEvolution(Species.CTHULLORD, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.QUIBOOM]: [
+    new SpeciesEvolution(Species.GYNUKE, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.BEATMARINE]: [
+    new SpeciesEvolution(Species.SUBSTARR, 27, null, null)
+  ],
+  [Species.HORNIGIRI]: [
+    new SpeciesEvolution(Species.HORNICIER, 28, null, null)
+  ],
+  [Species.HORNICIER]: [
+    new SpeciesEvolution(Species.HORNITITAN, 43, null, null)
+  ],
+  [Species.PREASU]: [
+    new SpeciesEvolution(Species.UNDASTAND, 34, null, null)
+  ],
+  [Species.WARNEY]: [
+    new SpeciesEvolution(Species.BANAGEDDON, 40, null, null)
+  ],
+  [Species.SIGNOT]: [
+    new SpeciesEvolution(Species.REAGAIN, 30, null, null)
+  ],
+  [Species.ORMITE]: [
+    new SpeciesEvolution(Species.VIRISTAL, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.ROLANGO]: [
+    new SpeciesEvolution(Species.DREAMEME, 28, null, null)
+  ],
+  [Species.IPLORA]: [
+    new SpeciesEvolution(Species.CHROMOX, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.PITAYEN]: [
+    new SpeciesEvolution(Species.DRAGAYA, 30, null, null)
+  ],
+  [Species.DRAGAYA]: [
+    new SpeciesEvolution(Species.FRUTAGON, 48, null, null)
+  ],
+  [Species.FIRESHI]: [
+    new SpeciesEvolution(Species.FIRESHITWI, 30, null, null)
+  ],
+  [Species.FIRESHITWI]: [
+    new SpeciesEvolution(Species.FIRESHITRE, 48, null, null)
+  ],
+  [Species.SLUGBUD]: [
+    new SpeciesEvolution(Species.SLUGHUG, 30, null, null)
+  ],
+  [Species.SLUGHUG]: [
+    new SpeciesEvolution(Species.SLUGFUGG, 48, null, null)
+  ],
+  [Species.SKELETROLL]: [
+    new SpeciesEvolution(Species.SPOOKSCARE, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.GORYANNUS, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.LANKONG]: [
+    new SpeciesEvolution(Species.BALLANKEY, 50, null, null)
+  ],
+  [Species.BALLANKEY]: [
+    new SpeciesEvolution(Species.FUNNEDONG, 65, null, null)
+  ],
 };
 
 interface PokemonPrevolutions {

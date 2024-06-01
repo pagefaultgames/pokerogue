@@ -41,7 +41,9 @@ const generationMap = {
   "generation-vii": 7,
   "generation-viii": 8,
   "generation-ix": 9,
-  "generation-x": 10,
+  "Fochun": 10,
+  "Ebin": 11,
+  "Kekkoh": 12,
 };
 
 const growthRateMap = {
@@ -67,7 +69,9 @@ const generationDexNumbers = {
   7: 809,
   8: 905,
   9: 1010,
-  10: 10000
+  10: 10151,
+  11: 10251,
+  12: 10386,
 };
 
 const versions = [ "scarlet-violet", "sword-shield", "sun-moon" ];
@@ -238,7 +242,7 @@ export async function printPokemon() {
     let generationIndex = 0;
 
     if (!region) {
-      while (++generationIndex < 10 && dexId > generationDexNumbers[generationIndex]) {}
+      while (++generationIndex < 13 && dexId > generationDexNumbers[generationIndex]) {}
     } else {
       generationIndex = regionalForms.indexOf(region.toLowerCase()) + 6;
     }

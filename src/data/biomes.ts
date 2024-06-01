@@ -7123,10 +7123,7 @@ export function initBiomes() {
       [ Biome.FOREST, BiomePoolTier.SUPER_RARE, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE, TimeOfDay.NIGHT ]
     ]
-    ],
-    [ Species.GRASSHOLE, Type.GRASS, -1, [
-      [ Biome.GRASS, BiomePoolTier.RARE ]
-    ]],
+    ]
   ];
 
   const trainerBiomes = [

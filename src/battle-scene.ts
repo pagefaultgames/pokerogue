@@ -17,7 +17,7 @@ import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
 import { GameMode, GameModes, gameModes } from "./game-mode";
@@ -56,6 +56,7 @@ import { Localizable } from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
+import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -89,9 +90,25 @@ export default class BattleScene extends SceneBase {
   public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
+  public reroll: boolean = false;
+  public showMovesetFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
+  /**
+   * Determines the condition for a notification should be shown for Candy Upgrades
+   * - 0 = 'Off'
+   * - 1 = 'Passives Only'
+   * - 2 = 'On'
+   */
+  public candyUpgradeNotification: integer = 0;
+  /**
+   * Determines what type of notification is used for Candy Upgrades
+   * - 0 = 'Icon'
+   * - 1 = 'Animation'
+   */
+  public candyUpgradeDisplay: integer = 0;
+  public moneyFormat: MoneyFormat = MoneyFormat.NORMAL;
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
@@ -114,6 +131,7 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public gamepadSupport: boolean = false;
   public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
@@ -191,6 +209,9 @@ export default class BattleScene extends SceneBase {
    *
    * Current Events:
    * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
+   * - {@linkcode BattleSceneEventType.TURN_INIT} {@linkcode TurnInitEvent}
+   * - {@linkcode BattleSceneEventType.TURN_END} {@linkcode TurnEndEvent}
+   * - {@linkcode BattleSceneEventType.NEW_ARENA} {@linkcode NewArenaEvent}
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
@@ -280,12 +301,13 @@ export default class BattleScene extends SceneBase {
     this.field = field;
 
     const fieldUI = this.add.container(0, this.game.canvas.height);
+    fieldUI.setName("container-field-ui");
     fieldUI.setDepth(1);
     fieldUI.setScale(6);
 
     this.fieldUI = fieldUI;
 
-    const transition = this.make.rexTransitionImagePack({
+    const transition = (this.make as any).rexTransitionImagePack({
       x: 0,
       y: 0,
       scale: 6,
@@ -303,6 +325,7 @@ export default class BattleScene extends SceneBase {
     this.add.existing(transition);
 
     const uiContainer = this.add.container(0, 0);
+    uiContainer.setName("container-ui");
     uiContainer.setDepth(2);
     uiContainer.setScale(6);
 
@@ -311,6 +334,7 @@ export default class BattleScene extends SceneBase {
     const overlayWidth = this.game.canvas.width / 6;
     const overlayHeight = (this.game.canvas.height / 6) - 48;
     this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
+    this.fieldOverlay.setName("rect-field-overlay");
     this.fieldOverlay.setOrigin(0, 0);
     this.fieldOverlay.setAlpha(0);
     this.fieldUI.add(this.fieldOverlay);
@@ -319,57 +343,70 @@ export default class BattleScene extends SceneBase {
     this.enemyModifiers = [];
 
     this.modifierBar = new ModifierBar(this);
+    this.modifierBar.setName("container-modifier-bar");
     this.add.existing(this.modifierBar);
     uiContainer.add(this.modifierBar);
 
     this.enemyModifierBar = new ModifierBar(this, true);
+    this.enemyModifierBar.setName("container-enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
     uiContainer.add(this.enemyModifierBar);
 
     this.charSprite = new CharSprite(this);
+    this.charSprite.setName("sprite-char");
     this.charSprite.setup();
 
     this.fieldUI.add(this.charSprite);
 
     this.pbTray = new PokeballTray(this, true);
+    this.pbTray.setName("container-pb-tray");
     this.pbTray.setup();
 
     this.pbTrayEnemy = new PokeballTray(this, false);
+    this.pbTrayEnemy.setName("container-enemy-pb-tray");
     this.pbTrayEnemy.setup();
 
     this.fieldUI.add(this.pbTray);
     this.fieldUI.add(this.pbTrayEnemy);
 
     this.abilityBar = new AbilityBar(this);
+    this.abilityBar.setName("container-ability-bar");
     this.abilityBar.setup();
     this.fieldUI.add(this.abilityBar);
 
     this.partyExpBar = new PartyExpBar(this);
+    this.partyExpBar.setName("container-party-exp-bar");
     this.partyExpBar.setup();
     this.fieldUI.add(this.partyExpBar);
 
     this.candyBar = new CandyBar(this);
+    this.candyBar.setName("container-candy-bar");
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
     this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.biomeWaveText.setName("text-biome-wave");
     this.biomeWaveText.setOrigin(1, 0);
     this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
+    this.moneyText.setName("text-money");
     this.moneyText.setOrigin(1, 0);
     this.fieldUI.add(this.moneyText);
 
     this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.scoreText.setName("text-score");
     this.scoreText.setOrigin(1, 0);
     this.fieldUI.add(this.scoreText);
 
     this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckText.setName("text-luck");
     this.luckText.setOrigin(1, 0);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
     this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckLabelText.setName("text-luck-label");
     this.luckLabelText.setOrigin(1, 0);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
@@ -547,32 +584,13 @@ export default class BattleScene extends SceneBase {
 
       this.cachedFetch("./starter-colors.json").then(res => res.json()).then(sc => {
         starterColors = {};
-        Object.keys(sc).forEach(key => {
-          starterColors[key] = sc[key];
-        });
-
-        /*const loadPokemonAssets: Promise<void>[] = [];
-
-				for (let s of Object.keys(speciesStarters)) {
-					const species = getPokemonSpecies(parseInt(s));
-					loadPokemonAssets.push(species.loadAssets(this, false, 0, false));
-				}
-
-				Promise.all(loadPokemonAssets).then(() => {
-					const starterCandyColors = {};
-					const rgbaToHexFunc = (r, g, b) => [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
-
-					for (let s of Object.keys(speciesStarters)) {
-						const species = getPokemonSpecies(parseInt(s));
-
-						starterCandyColors[species.speciesId] = species.generateCandyColors(this).map(c => rgbaToHexFunc(c[0], c[1], c[2]));
-					}
-
-					console.log(JSON.stringify(starterCandyColors));
-
-					resolve();
-				});*/
-
+        if (Object.keys(sc).length === 0) {
+          starterColors["default"] = ["4c362c","b39a8f"];
+        } else {
+          Object.keys(sc).forEach(key => {
+            starterColors[key] = sc[key];
+          });
+        }
         resolve();
       });
     });
@@ -644,6 +662,7 @@ export default class BattleScene extends SceneBase {
   addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
     const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
     if (postProcess) {
+      console.log("Post processing player pokemon");
       postProcess(pokemon);
     }
     pokemon.init();
@@ -655,6 +674,10 @@ export default class BattleScene extends SceneBase {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
+      pokemon.level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
+
     if (Overrides.OPP_GENDER_OVERRIDE !== null) {
       pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
     }
@@ -977,6 +1000,7 @@ export default class BattleScene extends SceneBase {
         if (pokemon) {
           if (resetArenaState) {
             pokemon.resetBattleData();
+            applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon, true);
           }
           this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
         }
@@ -1068,6 +1092,10 @@ export default class BattleScene extends SceneBase {
     case Species.TATSUGIRI:
     case Species.PALDEA_TAUROS:
       return Utils.randSeedInt(species.forms.length);
+    case Species.PIKACHU:
+      return Utils.randSeedInt(8);
+    case Species.EEVEE:
+      return Utils.randSeedInt(2);
     case Species.GRENINJA:
       return Utils.randSeedInt(2);
     case Species.ZYGARDE:
@@ -1259,9 +1287,17 @@ export default class BattleScene extends SceneBase {
     this.biomeWaveText.setVisible(true);
   }
 
-  updateMoneyText(): void {
-    this.moneyText.setText(`₽${Utils.formatLargeNumber(this.money, 1000)}`);
-    this.moneyText.setVisible(true);
+  updateMoneyText(forceVisible: boolean = true): void {
+    if (this.money === undefined) {
+      return;
+    }
+    const formattedMoney =
+			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
+    this.moneyText.setText(`₽${formattedMoney}`);
+    this.fieldUI.moveAbove(this.moneyText, this.luckText);
+    if (forceVisible) {
+      this.moneyText.setVisible(true);
+    }
   }
 
   updateScoreText(): void {
@@ -1269,35 +1305,38 @@ export default class BattleScene extends SceneBase {
     this.scoreText.setVisible(this.gameMode.isDaily);
   }
 
-  updateAndShowLuckText(duration: integer): void {
+  updateAndShowText(duration: integer): void {
     const labels = [ this.luckLabelText, this.luckText ];
-    labels.map(t => {
-      t.setAlpha(0);
-      t.setVisible(true);
-    });
+    labels.forEach(t => t.setAlpha(0));
     const luckValue = getPartyLuckValue(this.getParty());
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
     } else {
-      this.luckText.setTint(0x83a55a, 0xee384a, 0x5271cd, 0x7b487b);
+      this.luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
     this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
     this.tweens.add({
       targets: labels,
       duration: duration,
-      alpha: 1
+      alpha: 1,
+      onComplete: () => {
+        labels.forEach(t => t.setVisible(true));
+      }
     });
   }
 
   hideLuckText(duration: integer): void {
+    if (this.reroll) {
+      return;
+    }
     const labels = [ this.luckLabelText, this.luckText ];
     this.tweens.add({
       targets: labels,
       duration: duration,
       alpha: 0,
       onComplete: () => {
-        labels.map(l => l.setVisible(false));
+        labels.forEach(l => l.setVisible(false));
       }
     });
   }
@@ -1312,6 +1351,15 @@ export default class BattleScene extends SceneBase {
     this.partyExpBar.setY(offsetY);
     this.candyBar.setY(offsetY + 15);
     this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
+  }
+
+  /**
+   * Pushes all {@linkcode Phaser.GameObjects.Text} objects in the top right to the bottom of the canvas
+   */
+  sendTextToBack(): void {
+    this.fieldUI.sendToBack(this.biomeWaveText);
+    this.fieldUI.sendToBack(this.moneyText);
+    this.fieldUI.sendToBack(this.scoreText);
   }
 
   addFaintedEnemyScore(enemy: EnemyPokemon): void {
