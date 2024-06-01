@@ -4,6 +4,7 @@ import {Mode} from "../ui";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "../../enums/buttons";
+import {NavigationManager} from "#app/ui/settings/navigationMenu";
 
 /**
  * Abstract class for handling UI elements related to button bindings.
@@ -179,6 +180,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
         this.cancelFn();
       } else {
         success = this.swapAction();
+        NavigationManager.getInstance().updateIcons();
         this.cancelFn(success);
       }
       break;
