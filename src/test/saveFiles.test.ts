@@ -317,8 +317,7 @@ describe("Phase interceptor", () => {
     game = new GameManager();
   })
 
-  it.skip('test phase interceptor with remove', async() => {
-      game = new GameManager();
+  it('test phase interceptor with remove', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       await game.phaseInterceptor.run(LoginPhase, () => {
@@ -334,7 +333,7 @@ describe("Phase interceptor", () => {
       expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
   }, 100000);
 
-  it.skip('test phase interceptor with prompt', async() => {
+  it('test phase interceptor with prompt', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
@@ -352,7 +351,7 @@ describe("Phase interceptor", () => {
       expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 100000);
 
-  it.skip('test phase interceptor with prompt with preparation for a future prompt', async() => {
+  it('test phase interceptor with prompt with preparation for a future prompt', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
@@ -374,7 +373,7 @@ describe("Phase interceptor", () => {
       expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 100000);
 
-  it.skip('newGame one-liner', async() => {
+  it('newGame one-liner', async() => {
       await game.newGame(GameModes.CLASSIC);
       expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
@@ -418,7 +417,7 @@ describe("Phase interceptor", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
   }, 100000);
 
-  it.skip('do attack wave 3 - double battle - regular - OHKO', async() => {
+  it('do attack wave 3 - double battle - regular - OHKO', async() => {
       vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
       vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
       vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(2000);
