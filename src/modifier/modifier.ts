@@ -899,7 +899,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
    * otherwise
    */
   apply(args: any[]): boolean {
-    return (args[0] as Pokemon).trySetStatus(this.effect, true, undefined, undefined, this.type.name);
+    return (args[0] as Pokemon).trySetStatus(this.effect, true, args[0] as Pokemon, undefined, this.type.name);
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
