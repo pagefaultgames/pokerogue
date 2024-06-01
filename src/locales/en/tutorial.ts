@@ -22,7 +22,9 @@ export const tutorial: SimpleTranslationEntries = {
 
   "statChange": `Stat changes persist across battles as long as your Pokémon aren't recalled.
     $Your Pokémon are recalled before a trainer battle and before entering a new biome.
-    $You can also view the stat changes for the Pokémon on the field by holding C or Shift.`,
+    $You can view the stat changes for any Pokémon on the field by holding C or Shift.
+    $You can also view the moveset for an enemy Pokémon by holding V.
+    $This only reveals moves that you've seen the Pokémon use this battle.`,
 
   "selectItem": `After every battle, you are given a choice of 3 random items.\nYou may only pick one.
     $These range from consumables, to Pokémon held items, to passive permanent items.
