@@ -48,9 +48,9 @@ export const pokemonForm: SimpleTranslationEntries = {
   "unownExclamation": "!",
   "unownQuestion": "?",
   // 3G
-  "castformSunny": "Sunny",
-  "castformRainy": "Rainy",
-  "castformSnowy": "Snowy",
+  "castformSunny": "태양",
+  "castformRainy": "빗방울",
+  "castformSnowy": "설운",
   // 4G
   "burmyPlant": "Plant",
   "burmySandy": "Sandy",
