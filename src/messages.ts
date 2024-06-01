@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import { BattleSpec } from "./enums/battle-spec";
 import Pokemon from "./field/pokemon";
 
@@ -9,7 +10,13 @@ export function getPokemonPrefix(pokemon: Pokemon): string {
   let prefix: string;
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
-    prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe " : "Wild " : "";
+    if (pokemon.isPlayer()) {
+      prefix = "";
+    } else if (pokemon.hasTrainer()) {
+      prefix = `${i18next.t("battle:foe")} `;
+    } else {
+      prefix = `${i18next.t("battle:wild")} `;
+    }
     break;
   case BattleSpec.FINAL_BOSS:
     prefix = !pokemon.isPlayer() ? "Foe " : "";

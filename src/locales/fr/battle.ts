@@ -55,5 +55,9 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "La capacité {{moveName}}\nde {{pokemonName}} n’est plus sous entrave !",
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "eggHatching": "Oh ?",
-  "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?"
+  "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?",
+  // "useMove": " used\n{{moveName}}!",
+  // "fainted": " fainted!",
+  // "foe": "Foe",
+  // "wild": "Wild",
 } as const;
