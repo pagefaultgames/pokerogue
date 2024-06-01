@@ -82,6 +82,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "42px",
     starterInfoXPos: 33,
   },
+  "ko":{
+    starterInfoTextSize: "52px",
+    instructionTextSize: "38px",
+  }
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
@@ -1311,7 +1315,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
           }
           break;
-        case Button.CYCLE_VARIANT:
+        case Button.V:
           if (this.canCycleVariant) {
             let newVariant = props.variant;
             do {
@@ -1337,11 +1341,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case Button.UP:
           if (row) {
             success = this.setCursor(this.cursor - 9);
+          } else {
+            // when strictly opposite starter based on rows length
+            // does not exits, set cursor on the second to last row
+            if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor + (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor + (rows - 1) * 9);
+            }
           }
           break;
         case Button.DOWN:
           if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 9);
+          } else {
+            // if there is no starter below while being on the second to
+            // last row, adjust cursor position with one line less
+            if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor - (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor - (rows - 1) * 9);
+            }
           }
           break;
         case Button.LEFT:
