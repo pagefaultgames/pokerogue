@@ -1,28 +1,48 @@
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { Type } from "./type";
+import Pokemon, {HitResult, PokemonMove} from "../field/pokemon";
+import {Type} from "./type";
 import * as Utils from "../utils";
-import { BattleStat, getBattleStatName } from "./battle-stat";
-import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import { Weather, WeatherType } from "./weather";
-import { BattlerTag } from "./battler-tags";
-import { BattlerTagType } from "./enums/battler-tag-type";
-import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
-import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
-import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
-import { ArenaTagType } from "./enums/arena-tag-type";
-import { Stat } from "./pokemon-stat";
-import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
-import { Moves } from "./enums/moves";
-import { TerrainType } from "./terrain";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
-import { Abilities } from "./enums/abilities";
-import i18next, { Localizable } from "#app/plugins/i18n.js";
-import { Command } from "../ui/command-ui-handler";
-import { BerryModifierType } from "#app/modifier/modifier-type";
-import { getPokeballName } from "./pokeball";
-import { Species } from "./enums/species";
+import {BattleStat, getBattleStatName} from "./battle-stat";
+import {MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
+import {getPokemonMessage, getPokemonPrefix} from "../messages";
+import {Weather, WeatherType} from "./weather";
+import {BattlerTag} from "./battler-tags";
+import {BattlerTagType} from "./enums/battler-tag-type";
+import {
+  getNonVolatileStatusEffects,
+  getStatusEffectDescriptor,
+  getStatusEffectHealText,
+  StatusEffect
+} from "./status-effect";
+import {Gender} from "./gender";
+import Move, {
+  allMoves,
+  applyMoveAttrs,
+  AttackMove,
+  FlinchAttr,
+  HitHealAttr,
+  IncrementMovePriorityAttr,
+  MoveCategory,
+  MoveFlags,
+  MoveTarget,
+  OneHitKOAttr,
+  SelfStatusMove,
+  StatusMove,
+  StatusMoveTypeImmunityAttr,
+  VariablePowerAttr
+} from "./move";
+import {ArenaTagSide, ArenaTrapTag} from "./arena-tag";
+import {ArenaTagType} from "./enums/arena-tag-type";
+import {Stat} from "./pokemon-stat";
+import {BerryModifier, PokemonHeldItemModifier} from "../modifier/modifier";
+import {Moves} from "./enums/moves";
+import {TerrainType} from "./terrain";
+import {SpeciesFormChangeManualTrigger} from "./pokemon-forms";
+import {Abilities} from "./enums/abilities";
+import i18next, {Localizable} from "#app/plugins/i18n.js";
+import {Command} from "../ui/command-ui-handler";
+import {BerryModifierType} from "#app/modifier/modifier-type";
+import {getPokeballName} from "./pokeball";
+import {Species} from "./enums/species";
 import {BattlerIndex} from "#app/battle";
 
 export class Ability implements Localizable {
@@ -2764,8 +2784,12 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @return true if the Dancer ability was resolved
    */
   applyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
+    // List of tags that prevent the Dancer from replicating the move
+    const forbiddenTags = [BattlerTagType.FLYING, BattlerTagType.UNDERWATER,
+      BattlerTagType.UNDERGROUND, BattlerTagType.HIDDEN];
     // The move to replicate cannot come from the Dancer
-    if (source.getBattlerIndex() !== dancer.getBattlerIndex()) {
+    if (source.getBattlerIndex() !== dancer.getBattlerIndex()
+        && !dancer.summonData.tags.some(tag => forbiddenTags.includes(tag.tagType))) {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
@@ -2774,8 +2798,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move, true));
       }
+      return true;
     }
-    return true;
+    return false;
   }
 
   /**
