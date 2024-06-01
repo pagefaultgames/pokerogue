@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "pok1.png",
+			"image": "pokemon_icons_10.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 128,
@@ -10,7 +10,7 @@
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "10001.png",
+					"filename": "10001",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -31,7 +31,7 @@
 					}
 				},
 				{
-					"filename": "10002.png",
+					"filename": "10002",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "10003.png",
+					"filename": "10003",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -73,7 +73,7 @@
 					}
 				},
 				{
-					"filename": "10004.png",
+					"filename": "10004",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -94,7 +94,7 @@
 					}
 				},
 				{
-					"filename": "10005.png",
+					"filename": "10005",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -115,7 +115,7 @@
 					}
 				},
 				{
-					"filename": "10006.png",
+					"filename": "10006",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -136,7 +136,7 @@
 					}
 				},
 				{
-					"filename": "10007.png",
+					"filename": "10007",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -157,7 +157,7 @@
 					}
 				},
 				{
-					"filename": "10008.png",
+					"filename": "10008",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -178,7 +178,7 @@
 					}
 				},
 				{
-					"filename": "10009.png",
+					"filename": "10009",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -199,7 +199,7 @@
 					}
 				},
 				{
-					"filename": "10010.png",
+					"filename": "10010",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -220,7 +220,7 @@
 					}
 				},
 				{
-					"filename": "10011.png",
+					"filename": "10011",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -241,7 +241,7 @@
 					}
 				},
 				{
-					"filename": "10012.png",
+					"filename": "10012",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -262,7 +262,7 @@
 					}
 				},
 				{
-					"filename": "10013.png",
+					"filename": "10013",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -283,7 +283,7 @@
 					}
 				},
 				{
-					"filename": "10014.png",
+					"filename": "10014",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -304,7 +304,7 @@
 					}
 				},
 				{
-					"filename": "10015.png",
+					"filename": "10015",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -325,7 +325,7 @@
 					}
 				},
 				{
-					"filename": "10016.png",
+					"filename": "10016",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -346,7 +346,7 @@
 					}
 				},
 				{
-					"filename": "10017.png",
+					"filename": "10017",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -367,7 +367,7 @@
 					}
 				},
 				{
-					"filename": "10018.png",
+					"filename": "10018",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -388,7 +388,7 @@
 					}
 				},
 				{
-					"filename": "10019.png",
+					"filename": "10019",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -409,7 +409,7 @@
 					}
 				},
 				{
-					"filename": "10020.png",
+					"filename": "10020",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -430,7 +430,7 @@
 					}
 				},
 				{
-					"filename": "10021.png",
+					"filename": "10021",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -451,7 +451,7 @@
 					}
 				},
 				{
-					"filename": "10022.png",
+					"filename": "10022",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -472,7 +472,7 @@
 					}
 				},
 				{
-					"filename": "10023.png",
+					"filename": "10023",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -493,7 +493,7 @@
 					}
 				},
 				{
-					"filename": "10024.png",
+					"filename": "10024",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -514,7 +514,7 @@
 					}
 				},
 				{
-					"filename": "10025.png",
+					"filename": "10025",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -535,7 +535,7 @@
 					}
 				},
 				{
-					"filename": "10026.png",
+					"filename": "10026",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -556,7 +556,7 @@
 					}
 				},
 				{
-					"filename": "10027.png",
+					"filename": "10027",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -577,7 +577,7 @@
 					}
 				},
 				{
-					"filename": "10028.png",
+					"filename": "10028",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -598,7 +598,7 @@
 					}
 				},
 				{
-					"filename": "10029.png",
+					"filename": "10029",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -619,7 +619,7 @@
 					}
 				},
 				{
-					"filename": "10030.png",
+					"filename": "10030",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -640,7 +640,7 @@
 					}
 				},
 				{
-					"filename": "10031.png",
+					"filename": "10031",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -661,7 +661,7 @@
 					}
 				},
 				{
-					"filename": "10032.png",
+					"filename": "10032",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -682,7 +682,7 @@
 					}
 				},
 				{
-					"filename": "10033.png",
+					"filename": "10033",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -703,7 +703,7 @@
 					}
 				},
 				{
-					"filename": "10034.png",
+					"filename": "10034",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -724,7 +724,7 @@
 					}
 				},
 				{
-					"filename": "10035.png",
+					"filename": "10035",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -745,7 +745,7 @@
 					}
 				},
 				{
-					"filename": "10036.png",
+					"filename": "10036",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -766,7 +766,7 @@
 					}
 				},
 				{
-					"filename": "10037.png",
+					"filename": "10037",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -787,7 +787,7 @@
 					}
 				},
 				{
-					"filename": "10038.png",
+					"filename": "10038",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -808,7 +808,7 @@
 					}
 				},
 				{
-					"filename": "10039.png",
+					"filename": "10039",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -829,7 +829,7 @@
 					}
 				},
 				{
-					"filename": "10040.png",
+					"filename": "10040",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -850,7 +850,7 @@
 					}
 				},
 				{
-					"filename": "10041.png",
+					"filename": "10041",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -871,7 +871,7 @@
 					}
 				},
 				{
-					"filename": "10042.png",
+					"filename": "10042",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -892,7 +892,7 @@
 					}
 				},
 				{
-					"filename": "10043.png",
+					"filename": "10043",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -913,7 +913,7 @@
 					}
 				},
 				{
-					"filename": "10044.png",
+					"filename": "10044",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -934,7 +934,7 @@
 					}
 				},
 				{
-					"filename": "10045.png",
+					"filename": "10045",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -955,7 +955,7 @@
 					}
 				},
 				{
-					"filename": "10046.png",
+					"filename": "10046",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -976,7 +976,7 @@
 					}
 				},
 				{
-					"filename": "10047.png",
+					"filename": "10047",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -997,7 +997,7 @@
 					}
 				},
 				{
-					"filename": "10048.png",
+					"filename": "10048",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1018,7 +1018,7 @@
 					}
 				},
 				{
-					"filename": "10049.png",
+					"filename": "10049",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1039,7 +1039,7 @@
 					}
 				},
 				{
-					"filename": "10050.png",
+					"filename": "10050",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1060,7 +1060,7 @@
 					}
 				},
 				{
-					"filename": "10051.png",
+					"filename": "10051",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1081,7 +1081,7 @@
 					}
 				},
 				{
-					"filename": "10052.png",
+					"filename": "10052",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1102,7 +1102,7 @@
 					}
 				},
 				{
-					"filename": "10053.png",
+					"filename": "10053",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1123,7 +1123,7 @@
 					}
 				},
 				{
-					"filename": "10054.png",
+					"filename": "10054",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1144,7 +1144,7 @@
 					}
 				},
 				{
-					"filename": "10055.png",
+					"filename": "10055",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1165,7 +1165,7 @@
 					}
 				},
 				{
-					"filename": "10056.png",
+					"filename": "10056",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1186,7 +1186,7 @@
 					}
 				},
 				{
-					"filename": "10057.png",
+					"filename": "10057",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1207,7 +1207,7 @@
 					}
 				},
 				{
-					"filename": "10058.png",
+					"filename": "10058",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1228,7 +1228,7 @@
 					}
 				},
 				{
-					"filename": "10059.png",
+					"filename": "10059",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1249,7 +1249,7 @@
 					}
 				},
 				{
-					"filename": "10060.png",
+					"filename": "10060",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1270,7 +1270,7 @@
 					}
 				},
 				{
-					"filename": "10061.png",
+					"filename": "10061",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1291,7 +1291,7 @@
 					}
 				},
 				{
-					"filename": "10062.png",
+					"filename": "10062",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1312,7 +1312,7 @@
 					}
 				},
 				{
-					"filename": "10063.png",
+					"filename": "10063",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1333,7 +1333,7 @@
 					}
 				},
 				{
-					"filename": "10064.png",
+					"filename": "10064",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1354,7 +1354,7 @@
 					}
 				},
 				{
-					"filename": "10065.png",
+					"filename": "10065",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1375,7 +1375,7 @@
 					}
 				},
 				{
-					"filename": "10066.png",
+					"filename": "10066",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1396,7 +1396,7 @@
 					}
 				},
 				{
-					"filename": "10067.png",
+					"filename": "10067",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1417,7 +1417,7 @@
 					}
 				},
 				{
-					"filename": "10068.png",
+					"filename": "10068",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1438,7 +1438,7 @@
 					}
 				},
 				{
-					"filename": "10069.png",
+					"filename": "10069",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1459,7 +1459,7 @@
 					}
 				},
 				{
-					"filename": "10070.png",
+					"filename": "10070",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1480,7 +1480,7 @@
 					}
 				},
 				{
-					"filename": "10071.png",
+					"filename": "10071",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1501,7 +1501,7 @@
 					}
 				},
 				{
-					"filename": "10072.png",
+					"filename": "10072",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1522,7 +1522,7 @@
 					}
 				},
 				{
-					"filename": "10073.png",
+					"filename": "10073",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1543,7 +1543,7 @@
 					}
 				},
 				{
-					"filename": "10074.png",
+					"filename": "10074",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1564,7 +1564,7 @@
 					}
 				},
 				{
-					"filename": "10075.png",
+					"filename": "10075",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1585,7 +1585,7 @@
 					}
 				},
 				{
-					"filename": "10076.png",
+					"filename": "10076",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1606,7 +1606,7 @@
 					}
 				},
 				{
-					"filename": "10077.png",
+					"filename": "10077",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1627,7 +1627,7 @@
 					}
 				},
 				{
-					"filename": "10078.png",
+					"filename": "10078",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1648,7 +1648,7 @@
 					}
 				},
 				{
-					"filename": "10079.png",
+					"filename": "10079",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1669,7 +1669,7 @@
 					}
 				},
 				{
-					"filename": "10080.png",
+					"filename": "10080",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1690,7 +1690,7 @@
 					}
 				},
 				{
-					"filename": "10081.png",
+					"filename": "10081",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1711,7 +1711,7 @@
 					}
 				},
 				{
-					"filename": "10082.png",
+					"filename": "10082",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1732,7 +1732,7 @@
 					}
 				},
 				{
-					"filename": "10083.png",
+					"filename": "10083",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1753,7 +1753,7 @@
 					}
 				},
 				{
-					"filename": "10084.png",
+					"filename": "10084",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1774,7 +1774,7 @@
 					}
 				},
 				{
-					"filename": "10085.png",
+					"filename": "10085",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1795,7 +1795,7 @@
 					}
 				},
 				{
-					"filename": "10086.png",
+					"filename": "10086",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1816,7 +1816,7 @@
 					}
 				},
 				{
-					"filename": "10087.png",
+					"filename": "10087",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1837,7 +1837,7 @@
 					}
 				},
 				{
-					"filename": "10088.png",
+					"filename": "10088",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1858,7 +1858,7 @@
 					}
 				},
 				{
-					"filename": "10089.png",
+					"filename": "10089",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1879,7 +1879,7 @@
 					}
 				},
 				{
-					"filename": "10090.png",
+					"filename": "10090",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1900,7 +1900,7 @@
 					}
 				},
 				{
-					"filename": "10091.png",
+					"filename": "10091",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1921,7 +1921,7 @@
 					}
 				},
 				{
-					"filename": "10092.png",
+					"filename": "10092",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1942,7 +1942,7 @@
 					}
 				},
 				{
-					"filename": "10093.png",
+					"filename": "10093",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1963,7 +1963,7 @@
 					}
 				},
 				{
-					"filename": "10094.png",
+					"filename": "10094",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -1984,7 +1984,7 @@
 					}
 				},
 				{
-					"filename": "10095.png",
+					"filename": "10095",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2005,7 +2005,7 @@
 					}
 				},
 				{
-					"filename": "10096.png",
+					"filename": "10096",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2026,7 +2026,7 @@
 					}
 				},
 				{
-					"filename": "10097.png",
+					"filename": "10097",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2047,7 +2047,7 @@
 					}
 				},
 				{
-					"filename": "10098.png",
+					"filename": "10098",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2068,7 +2068,7 @@
 					}
 				},
 				{
-					"filename": "10099.png",
+					"filename": "10099",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2089,7 +2089,7 @@
 					}
 				},
 				{
-					"filename": "10100.png",
+					"filename": "10100",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2110,7 +2110,7 @@
 					}
 				},
 				{
-					"filename": "10101.png",
+					"filename": "10101",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2131,7 +2131,7 @@
 					}
 				},
 				{
-					"filename": "10102.png",
+					"filename": "10102",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2152,7 +2152,7 @@
 					}
 				},
 				{
-					"filename": "10103.png",
+					"filename": "10103",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2173,7 +2173,7 @@
 					}
 				},
 				{
-					"filename": "10104.png",
+					"filename": "10104",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2194,7 +2194,7 @@
 					}
 				},
 				{
-					"filename": "10105.png",
+					"filename": "10105",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2215,7 +2215,7 @@
 					}
 				},
 				{
-					"filename": "10106.png",
+					"filename": "10106",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2236,7 +2236,7 @@
 					}
 				},
 				{
-					"filename": "10107.png",
+					"filename": "10107",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2257,7 +2257,7 @@
 					}
 				},
 				{
-					"filename": "10108.png",
+					"filename": "10108",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2278,7 +2278,7 @@
 					}
 				},
 				{
-					"filename": "10109.png",
+					"filename": "10109",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2299,7 +2299,7 @@
 					}
 				},
 				{
-					"filename": "10110.png",
+					"filename": "10110",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2320,7 +2320,7 @@
 					}
 				},
 				{
-					"filename": "10111.png",
+					"filename": "10111",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2341,7 +2341,7 @@
 					}
 				},
 				{
-					"filename": "10112.png",
+					"filename": "10112",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2362,7 +2362,7 @@
 					}
 				},
 				{
-					"filename": "10113.png",
+					"filename": "10113",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2383,7 +2383,7 @@
 					}
 				},
 				{
-					"filename": "10114.png",
+					"filename": "10114",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2404,7 +2404,7 @@
 					}
 				},
 				{
-					"filename": "10115.png",
+					"filename": "10115",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2425,7 +2425,7 @@
 					}
 				},
 				{
-					"filename": "10116.png",
+					"filename": "10116",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2446,7 +2446,7 @@
 					}
 				},
 				{
-					"filename": "10117.png",
+					"filename": "10117",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2467,7 +2467,7 @@
 					}
 				},
 				{
-					"filename": "10118.png",
+					"filename": "10118",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2488,7 +2488,7 @@
 					}
 				},
 				{
-					"filename": "10119.png",
+					"filename": "10119",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2509,7 +2509,7 @@
 					}
 				},
 				{
-					"filename": "10120.png",
+					"filename": "10120",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2530,7 +2530,7 @@
 					}
 				},
 				{
-					"filename": "10121.png",
+					"filename": "10121",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2551,7 +2551,7 @@
 					}
 				},
 				{
-					"filename": "10122.png",
+					"filename": "10122",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2572,7 +2572,7 @@
 					}
 				},
 				{
-					"filename": "10123.png",
+					"filename": "10123",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2593,7 +2593,7 @@
 					}
 				},
 				{
-					"filename": "10124.png",
+					"filename": "10124",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2614,7 +2614,7 @@
 					}
 				},
 				{
-					"filename": "10125.png",
+					"filename": "10125",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2635,7 +2635,7 @@
 					}
 				},
 				{
-					"filename": "10126.png",
+					"filename": "10126",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2656,7 +2656,7 @@
 					}
 				},
 				{
-					"filename": "10127.png",
+					"filename": "10127",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2677,7 +2677,7 @@
 					}
 				},
 				{
-					"filename": "10128.png",
+					"filename": "10128",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2698,7 +2698,7 @@
 					}
 				},
 				{
-					"filename": "10129.png",
+					"filename": "10129",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2719,7 +2719,7 @@
 					}
 				},
 				{
-					"filename": "10130.png",
+					"filename": "10130",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2740,7 +2740,7 @@
 					}
 				},
 				{
-					"filename": "10131.png",
+					"filename": "10131",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2761,7 +2761,7 @@
 					}
 				},
 				{
-					"filename": "10132.png",
+					"filename": "10132",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2782,7 +2782,7 @@
 					}
 				},
 				{
-					"filename": "10133.png",
+					"filename": "10133",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2803,7 +2803,7 @@
 					}
 				},
 				{
-					"filename": "10134.png",
+					"filename": "10134",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2824,7 +2824,7 @@
 					}
 				},
 				{
-					"filename": "10135.png",
+					"filename": "10135",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2845,7 +2845,7 @@
 					}
 				},
 				{
-					"filename": "10136.png",
+					"filename": "10136",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2866,7 +2866,7 @@
 					}
 				},
 				{
-					"filename": "10137.png",
+					"filename": "10137",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2887,7 +2887,7 @@
 					}
 				},
 				{
-					"filename": "10138.png",
+					"filename": "10138",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2908,7 +2908,7 @@
 					}
 				},
 				{
-					"filename": "10139.png",
+					"filename": "10139",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2929,7 +2929,7 @@
 					}
 				},
 				{
-					"filename": "10140.png",
+					"filename": "10140",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2950,7 +2950,7 @@
 					}
 				},
 				{
-					"filename": "10141.png",
+					"filename": "10141",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2971,7 +2971,7 @@
 					}
 				},
 				{
-					"filename": "10142.png",
+					"filename": "10142",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -2992,7 +2992,7 @@
 					}
 				},
 				{
-					"filename": "10143.png",
+					"filename": "10143",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3013,7 +3013,7 @@
 					}
 				},
 				{
-					"filename": "10144.png",
+					"filename": "10144",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3034,7 +3034,7 @@
 					}
 				},
 				{
-					"filename": "10145.png",
+					"filename": "10145",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3055,7 +3055,7 @@
 					}
 				},
 				{
-					"filename": "10146.png",
+					"filename": "10146",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3076,7 +3076,7 @@
 					}
 				},
 				{
-					"filename": "10147.png",
+					"filename": "10147",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3097,7 +3097,7 @@
 					}
 				},
 				{
-					"filename": "10148.png",
+					"filename": "10148",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3118,7 +3118,7 @@
 					}
 				},
 				{
-					"filename": "10149.png",
+					"filename": "10149",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3139,7 +3139,7 @@
 					}
 				},
 				{
-					"filename": "10150.png",
+					"filename": "10150",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3160,7 +3160,7 @@
 					}
 				},
 				{
-					"filename": "10151.png",
+					"filename": "10151",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3186,6 +3186,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:9701f1556f1e05f78e08459eb8874ce5:9103d23fcfc3b91d28cb2157d71de036:6ee86e98bc31b7fe56a6a97f95352e34$"
+		"smartupdate": "$TexturePacker:SmartUpdate:ba8b48740df4d5fdde7607d53408bd03:9103d23fcfc3b91d28cb2157d71de036:92fb56d94d6af1f9abde22f84aa0fa3f$"
 	}
 }
