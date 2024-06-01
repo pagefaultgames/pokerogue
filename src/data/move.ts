@@ -1365,7 +1365,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
       }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0))
         && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
-        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, new PokemonMove(move.id), null,this.effect);
+        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null,this.effect);
         return true;
       }
     }
@@ -4002,7 +4002,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   	// Check if the move category is not STATUS or if the switch out condition is not met
       if (!this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
-        applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
+        applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, move, null);
         return resolve(false);
       }
 

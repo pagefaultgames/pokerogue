@@ -690,7 +690,7 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
     if (this.condition(pokemon, attacker, move)) {
       if (!pokemon.getTag(this.tagType)) {
         pokemon.addTag(this.tagType, undefined, undefined, pokemon.id);
-        pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: pokemon.name, moveName: move.getName() }));
+        pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: pokemon.name, moveName: move.name }));
       }
       return true;
     }
@@ -1777,7 +1777,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     pokemon.summonData.fusionGender = target.getFusionGender();
     pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
     pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
-    pokemon.summonData.moveset = target.getMoveset().map(m => new Move(m.moveId, m.ppUsed, m.ppUp));
+    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
     pokemon.summonData.types = target.getTypes();
 
     pokemon.scene.playSound("PRSFX- Transform");
@@ -4043,7 +4043,7 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.GALE_WINGS, 6)
-      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => pokemon.getHpRatio() === 1 && move.getType(pokemon) === Type.FLYING),
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => pokemon.getHpRatio() === 1 && move.type === Type.FLYING),
     new Ability(Abilities.MEGA_LAUNCHER, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
     new Ability(Abilities.GRASS_PELT, 6)
