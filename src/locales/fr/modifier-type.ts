@@ -209,8 +209,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Restes", description: "Soigne à chaque tour 1/16 des PV max d’un Pokémon" },
     "SHELL_BELL": { name: "Grelot Coque", description: "Soigne 1/8 des dégâts infligés par un Pokémon" },
 
-    "TOXIC_ORB": { name: "Orbe Toxique", description: "Empoisonne gravement son porteur à la fin du tour s’il na pas déjà de problème de statut." },
-    "FLAME_ORB": { name: "Orbe Flamme", description: "Brule son porteur à la fin du tour s’il na pas déjà de problème de statut." },
+    "TOXIC_ORB": { name: "Orbe Toxique", description: "Empoisonne gravement son porteur à la fin du tour s’il n’a pas déjà de problème de statut." },
+    "FLAME_ORB": { name: "Orbe Flamme", description: "Brule son porteur à la fin du tour s’il n’a pas déjà de problème de statut." },
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
