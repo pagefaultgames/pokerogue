@@ -35,7 +35,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
 
   // Function to call on cancel or completion of binding.
   protected cancelFn: (boolean?) => boolean;
-  protected swapAction: () => boolean;
+  abstract swapAction(): boolean;
 
   protected timeLeftAutoClose: number = 5;
   protected countdownTimer;
