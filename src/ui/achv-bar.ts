@@ -117,7 +117,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
         this.shown = false;
         this.setVisible(false);
         if (this.queue.length) {
-          this.showAchv(this.queue.shift(),playerGender);
+          this.showAchv(this.queue.shift(), playerGender);
         }
       }
     });
