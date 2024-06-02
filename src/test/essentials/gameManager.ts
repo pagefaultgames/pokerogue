@@ -15,6 +15,7 @@ import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/essentials/phaseInterceptor";
 import TextInterceptor from "#app/test/essentials/TextInterceptor";
 import {expect} from "vitest";
+import {GameModes} from "#app/game-mode";
 
 
 export default class GameManager {
@@ -23,8 +24,8 @@ export default class GameManager {
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
 
-  constructor() {
-    this.gameWrapper = new GameWrapper();
+  constructor(phaserGame: Phaser.Game) {
+    this.gameWrapper = new GameWrapper(phaserGame);
     this.scene = new BattleScene();
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);
@@ -50,7 +51,7 @@ export default class GameManager {
     this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn);
   }
 
-  newGame(gameMode): Promise<void> {
+  runToTitle(): Promise<void> {
     return new Promise(async(resolve) => {
       await this.phaseInterceptor.run(LoginPhase);
       this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
@@ -59,9 +60,16 @@ export default class GameManager {
       });
       await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
       await this.phaseInterceptor.run(TitlePhase);
+      resolve();
+    });
+  }
+
+  startBattle(): Promise<void> {
+    return new Promise(async(resolve) => {
+      await this.runToTitle();
       this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
         const starters = generateStarter(this.scene);
-        const selectStarterPhase = new SelectStarterPhase(this.scene, gameMode);
+        const selectStarterPhase = new SelectStarterPhase(this.scene, GameModes.CLASSIC);
         this.scene.pushPhase(new EncounterPhase(this.scene, false));
         selectStarterPhase.initBattle(starters);
       });

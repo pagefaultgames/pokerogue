@@ -1,22 +1,24 @@
-const MockConsoleLog = (_logDisabled=false) => {
+const MockConsoleLog = (_logDisabled=false, _phaseText=false) => {
   let logs = [];
   const logDisabled: boolean = _logDisabled;
+  const phaseText: boolean = _phaseText;
   const originalLog = console.log;
   const originalError = console.error;
   const originalDebug = console.debug;
   const originalWarn = console.warn;
   const notified = [];
 
-  const blacklist = ["variant icon does not exist", "Texture \"%s\" not found"];
+  const blacklist = ["Phaser", "variant icon does not exist", "Texture \"%s\" not found"];
+  const whitelist = ["Phase"];
 
   return ({
     log(...args) {
       const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
-      if (argsStr.includes("wurmple")) {
-        console.log("here");
-      }
       logs.push(argsStr);
-      if (logDisabled || blacklist.some((b) => argsStr.includes(b))) {
+      if (logDisabled && (!phaseText)) {
+        return;
+      }
+      if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
         return;
       }
       originalLog(args);
@@ -24,17 +26,28 @@ const MockConsoleLog = (_logDisabled=false) => {
     error(...args) {
       const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
       logs.push(argsStr);
-      if (blacklist.some((b) => argsStr.includes(b))) {
-        return;
-      }
       originalError(args); // Appelle le console.error originel
     },
     debug(...args) {
-      logs.push(args);
+      const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
+      logs.push(argsStr);
+      if (logDisabled && (!phaseText)) {
+        return;
+      }
+      if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
+        return;
+      }
       originalDebug(args);
     },
     warn(...args) {
+      const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
       logs.push(args);
+      if (logDisabled && (!phaseText)) {
+        return;
+      }
+      if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
+        return;
+      }
       originalWarn(args);
     },
     notify(msg) {

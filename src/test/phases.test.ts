@@ -1,29 +1,41 @@
 import BattleScene from "#app/battle-scene.js";
 import { LoginPhase, TitlePhase, UnavailablePhase } from "#app/phases.js";
 import { Mode } from "#app/ui/ui.js";
-import { describe, expect, it } from "vitest";
-import GameWrapper from "./essentials/gameWrapper";
+import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
+import Phaser from "phaser";
+import GameManager from "#app/test/essentials/gameManager";
 
 describe("Phases", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+  let scene: BattleScene;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    scene = game.scene;
+  });
+
   describe("LoginPhase", () => {
     it("should start the login phase", async () => {
-      const scene = new BattleScene();
-      const game = new GameWrapper();
-      game.scene.add("battle", scene);
-      const battleScene = game.scenes["battle"] as BattleScene;
-      const loginPhase = new LoginPhase(battleScene);
+      const loginPhase = new LoginPhase(scene);
       loginPhase.start();
-      expect(scene.ui.getMode()).to.equal(Mode.LOADING);
+      expect(scene.ui.getMode()).to.equal(Mode.MESSAGE);
     });
   });
 
   describe("TitlePhase", () => {
     it("should start the title phase", async () => {
-      const scene = new BattleScene();
-      const game = new GameWrapper();
-      game.scene.add("battle", scene);
-      const battleScene = game.scenes["battle"] as BattleScene;
-      const titlePhase = new TitlePhase(battleScene);
+      const titlePhase = new TitlePhase(scene);
       titlePhase.start();
       expect(scene.ui.getMode()).to.equal(Mode.MESSAGE);
     });
@@ -31,11 +43,7 @@ describe("Phases", () => {
 
   describe("UnavailablePhase", () => {
     it("should start the unavailable phase", async () => {
-      const scene = new BattleScene();
-      const game = new GameWrapper();
-      game.scene.add("battle", scene);
-      const battleScene = game.scenes["battle"] as BattleScene;
-      const unavailablePhase = new UnavailablePhase(battleScene);
+      const unavailablePhase = new UnavailablePhase(scene);
       unavailablePhase.start();
       expect(scene.ui.getMode()).to.equal(Mode.UNAVAILABLE);
     });

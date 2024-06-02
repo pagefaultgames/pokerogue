@@ -1,5 +1,4 @@
 import "vitest-canvas-mock";
-import "#app/test/phaser.setup";
 import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
 import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
 import {initBiomes} from "#app/data/biomes";

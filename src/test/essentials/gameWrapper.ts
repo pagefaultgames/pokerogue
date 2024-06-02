@@ -27,7 +27,7 @@ Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
 });
 Object.defineProperty(window, "console", {
-  value: mockConsoleLog(false),
+  value: mockConsoleLog(),
 });
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
@@ -55,13 +55,12 @@ window.matchMedia = () => ({
 });
 
 export default class GameWrapper {
+  public game: Phaser.Game;
   public scene: BattleScene;
   public game: Phaser.Game;
 
-  constructor() {
-    this.game = new Phaser.Game({
-      type: Phaser.HEADLESS,
-    });
+  constructor(phaserGame: Phaser.Game) {
+    this.game = phaserGame;
     MoveAnim.prototype.getAnim = () => ({
       frames: {},
     });
