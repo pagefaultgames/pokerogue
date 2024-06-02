@@ -6,7 +6,7 @@ import {
   LoginPhase, MessagePhase, MoveEffectPhase, MoveEndPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
   PostSummonPhase,
   SelectGenderPhase, SelectModifierPhase,
-  SelectStarterPhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
+  SelectStarterPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
   TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, VictoryPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
@@ -50,6 +50,7 @@ export default class PhaseInterceptor {
     [VictoryPhase, this.startPhase],
     [MoveEndPhase, this.startPhase],
     [StatChangePhase, this.startPhase],
+    [ShinySparklePhase, this.startPhase],
   ];
 
   constructor(scene) {
@@ -62,6 +63,7 @@ export default class PhaseInterceptor {
   }
 
   run(phaseTarget, skipFn?): Promise<void> {
+    this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve) => {
       this.waitUntil(phaseTarget, skipFn).then(() => {
         const currentPhase = this.onHold.shift();

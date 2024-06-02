@@ -84,6 +84,7 @@ export default class GameManager {
         selectStarterPhase.initBattle(starters);
       });
       await this.phaseInterceptor.run(EncounterPhase);
+      resolve();
     });
   }
 
