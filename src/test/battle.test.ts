@@ -306,7 +306,7 @@ const saveKey = "x0i2O7WRiANTqPmZ";
 // });
 
 
-describe("Phase interceptor", () => {
+describe("Battle Phase interceptor", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
