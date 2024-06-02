@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Heilungspin", description: "Erhöht die Effektivität von Heilungsattacken sowie Heilitems um 10% (Beleber ausgenommen)" },
     "CANDY_JAR": { name: "Bonbonglas", description: "Erhöht die Anzahl der Level die ein Sonderbonbon erhöht um 1" },
 
-    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 33% Chance hinzu, dass Beeren nicht verbraucht werden" },
+    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 30% Chance hinzu, dass Beeren nicht verbraucht werden" },
 
     "FOCUS_BAND": { name: "Fokusband", description: "Fügt eine 10% Chance hinzu, dass Angriffe die zur Kampfunfähigkeit führen mit 1 KP überlebt werden" },
 
