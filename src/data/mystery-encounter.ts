@@ -18,6 +18,14 @@ export enum MysteryEncounterType {
   MYSTERIOUS_CHEST
 }
 
+export enum MysteryEncounterTier {
+  COMMON,
+  UNCOMMON,
+  RARE,
+  SUPER_RARE,
+  ULTRA_RARE
+}
+
 export class EncounterRequirements {
   minWaveIndex?: number;
   maxWaveIndex?: number;
@@ -147,8 +155,8 @@ export default abstract class MysteryEncounter {
     return this;
   }
 
-  option<T extends EncounterRequirements>(onSelect: (scene: BattleScene) => Promise<void | boolean>, optionRequirements?: T): MysteryEncounter {
-    const option = new MysteryEncounterOption(onSelect, optionRequirements);
+  option<T extends EncounterRequirements>(onSelect: (scene: BattleScene) => Promise<void | boolean>, chanceForOption: number = 100, optionRequirements?: T): MysteryEncounter {
+    const option = new MysteryEncounterOption(onSelect, chanceForOption, optionRequirements);
     this.options.push(option);
 
     return this;
