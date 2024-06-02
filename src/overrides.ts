@@ -14,6 +14,7 @@ import { PokeballType } from "./data/pokeball";
 import {TimeOfDay} from "#app/data/enums/time-of-day";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
+import { modifierTypes } from "./modifier/modifier-type";
 
 /**
  * Overrides for testing different in game situations
@@ -100,7 +101,7 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  * - BerryType is for BERRY
  */
 interface ModifierOverride {
-    name: string,
+    name: keyof typeof modifierTypes & string,
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType
 }

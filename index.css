@@ -260,3 +260,82 @@ input:-internal-autofill-selected {
   right: var(--control-group-extra-2-offset);
   bottom: var(--control-group-extra-2-offset);
 }
+
+/* Layout */
+
+#layout:fullscreen #dpad, #layout:fullscreen #apad {
+  bottom: 6rem;
+}
+
+input:-internal-autofill-selected {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+#banner {
+  display: none;
+  position: absolute;
+  top: 33.2%;
+  left: 0;
+  text-align: center;
+  z-index: 1000; /* Ensures the banner is on top of other elements */
+  & > img {
+    opacity: 50%;
+  }
+}
+
+/* Firefox old*/
+@-moz-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+/* IE */
+@-ms-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+/* Opera and prob css3 final iteration */
+@keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+.blink-image {
+    -moz-animation: blink normal 4s infinite ease-in-out; /* Firefox */
+    -webkit-animation: blink normal 4s infinite ease-in-out; /* Webkit */
+    -ms-animation: blink normal 4s infinite ease-in-out; /* IE */
+    animation: blink normal 4s infinite ease-in-out; /* Opera and prob css3 final iteration */
+}
