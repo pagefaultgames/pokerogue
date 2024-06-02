@@ -57,5 +57,7 @@ export const battle: SimpleTranslationEntries = {
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?",
-  "mysteryEncounterAppeared": "What's this?",
+  "drainMessage": "{{pokemonName}} had its\nenergy drained!",
+  "regainHealth": "{{pokemonName}} regained\nhealth!",
+  "mysteryEncounterAppeared": "What's this?"
 } as const;

@@ -6,10 +6,10 @@ import { enConfig } from "#app/locales/en/config.js";
 import { esConfig } from "#app/locales/es/config.js";
 import { frConfig } from "#app/locales/fr/config.js";
 import { itConfig } from "#app/locales/it/config.js";
+import { koConfig } from "#app/locales/ko/config.js";
 import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
-import { zhTWConfig } from "#app/locales/zh_TW/config.js";
-import { koConfig } from "#app/locales/ko/config.js";
+import { zhTwConfig } from "#app/locales/zh_TW/config.js";
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -54,11 +54,20 @@ export interface PokemonInfoTranslationEntries {
 
 export interface BerryTranslationEntry {
   name: string,
-  effect: string
+  effect: string,
 }
 
 export interface BerryTranslationEntries {
   [key: string]: BerryTranslationEntry
+}
+
+export interface AchievementTranslationEntry {
+  name?: string,
+  description?: string,
+}
+
+export interface AchievementTranslationEntries {
+  [key: string]: AchievementTranslationEntry;
 }
 
 export interface DialogueTranslationEntry {
@@ -171,7 +180,7 @@ export function initI18n(): void {
         ...zhCnConfig
       },
       zh_TW: {
-        ...zhTWConfig
+        ...zhTwConfig
       },
       ko: {
         ...koConfig
@@ -209,6 +218,7 @@ declare module "i18next" {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
+      achv: AchievementTranslationEntries;
       gameStatsUiHandler: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
