@@ -13,7 +13,7 @@ const MockConsoleLog = (_logDisabled=false, _phaseText=false) => {
 
   return ({
     log(...args) {
-      const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
+      const argsStr = this.getStr(args);
       logs.push(argsStr);
       if (logDisabled && (!phaseText)) {
         return;
@@ -24,12 +24,12 @@ const MockConsoleLog = (_logDisabled=false, _phaseText=false) => {
       originalLog(args);
     },
     error(...args) {
-      const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
+      const argsStr = this.getStr(args);
       logs.push(argsStr);
       originalError(args); // Appelle le console.error originel
     },
     debug(...args) {
-      const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
+      const argsStr = this.getStr(args);
       logs.push(argsStr);
       if (logDisabled && (!phaseText)) {
         return;
@@ -40,7 +40,7 @@ const MockConsoleLog = (_logDisabled=false, _phaseText=false) => {
       originalDebug(args);
     },
     warn(...args) {
-      const argsStr = args.map(arg => typeof arg === "object" ? JSON.stringify(arg) : arg.toString()).join(";");
+      const argsStr = this.getStr(args);
       logs.push(args);
       if (logDisabled && (!phaseText)) {
         return;
@@ -59,7 +59,23 @@ const MockConsoleLog = (_logDisabled=false, _phaseText=false) => {
     },
     clearLogs() {
       logs = [];
-    }
+    },
+    getStr(...args) {
+      return args.map(arg => {
+        if (typeof arg === "object" && arg !== null) {
+          // Handle objects including arrays
+          return JSON.stringify(arg, (key, value) =>
+            typeof value === "bigint" ? value.toString() : value
+          );
+        } else if (typeof arg === "bigint") {
+          // Handle BigInt values
+          return arg.toString();
+        } else {
+          // Handle all other types
+          return arg.toString();
+        }
+      }).join(";");
+    },
   });
 };
 

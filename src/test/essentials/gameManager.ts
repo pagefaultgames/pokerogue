@@ -13,7 +13,9 @@ import PhaseInterceptor from "#app/test/essentials/phaseInterceptor";
 import TextInterceptor from "#app/test/essentials/TextInterceptor";
 import {expect} from "vitest";
 import {GameModes} from "#app/game-mode";
-
+import fs from "fs";
+import { AES, enc } from "crypto-js";
+import {updateUserInfo} from "#app/account";
 
 export default class GameManager {
   public gameWrapper: GameWrapper;
@@ -170,5 +172,19 @@ export default class GameManager {
       await waitUntil(() => localStorage.hasOwnProperty("toExport"));
       return resolve(localStorage.getItem("toExport"));
     });
+  }
+
+  async importData(type, path): Promise<[boolean, integer]> {
+    const saveKey = "x0i2O7WRiANTqPmZ";
+    const dataRaw = fs.readFileSync("./src/test/data/everything.prsv", {encoding: "utf8", flag: "r"});
+    let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
+    dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
+    const systemData = this.scene.gameData.parseSystemData(dataStr);
+    const valid = !!systemData.dexData && !!systemData.timestamp;
+    if (valid) {
+      await updateUserInfo();
+      await this.scene.gameData.initSystem(dataStr);
+    }
+    return updateUserInfo();
   }
 }

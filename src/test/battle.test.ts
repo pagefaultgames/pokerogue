@@ -39,6 +39,7 @@ import {Moves} from "#app/data/enums/moves";
 import GameManager from "#app/test/essentials/gameManager";
 import fs from "fs";
 import Phaser from "phaser";
+import {allSpecies, speciesStarters, starterPassiveAbilities} from "#app/data/pokemon-species";
 
 const saveKey = "x0i2O7WRiANTqPmZ";
 
@@ -479,15 +480,12 @@ describe("Battle Phase interceptor", () => {
   }, 100000);
 
   it('load 100% data file', async() => {
-      vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-      vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-      vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(2000);
-      vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(3);
-      vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-      // await game.loadFile(GameDataType.SYSTEM, 'src/test/data/everything.prsv');
-      const dataRaw = fs.readFileSync("./src/test/data/everything.prsv", {encoding: "utf8", flag: "r"});
-      expect(dataRaw).not.toBe(undefined);
+      await game.importData(GameDataType.SYSTEM, 'src/test/data/everything.prsv');
+      const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
+        const species = game.scene.gameData.dexData[key];
+        return species.caughtAttr !== 0n;
+      }).length
+      expect(caughtCount).toBe(Object.keys(allSpecies).length);
   }, 50000);
 });
 
