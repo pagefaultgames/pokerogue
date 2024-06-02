@@ -267,13 +267,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.hp && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
   }
 
+  /**
+   * Check if this pokemon is both not fainted and allowed to be in battle.
+   * This is frequently a better alternative to {@link isFainted}
+   * @returns {boolean} True if pokemon is allowed in battle
+   */
+  isAllowedInBattle(): boolean {
+    const challengeAllowed = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
+    return !this.isFainted() && challengeAllowed.value;
+  }
+
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
       return false;
     }
-    const challengeAllowed = new Utils.BooleanHolder(true);
-    applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
-    return !this.isFainted() && challengeAllowed.value && !!this.scene && (!onField || this.isOnField());
+    return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
   }
 
   getDexAttr(): bigint {

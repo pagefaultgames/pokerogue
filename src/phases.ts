@@ -62,7 +62,6 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-import { applyChallenges, ChallengeType } from "./data/challenge";
 
 
 export class LoginPhase extends Phase {
@@ -389,11 +388,7 @@ export class TitlePhase extends Phase {
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
 
     if (this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => {
-        const challengeAllowed = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-        return challengeAllowed.value && !p.isFainted();
-      }).length;
+      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
 
       this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1) {
@@ -1021,11 +1016,7 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => {
-        const challengeAllowed = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-        return challengeAllowed.value && !p.isFainted();
-      });
+      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
 
       if (!availablePartyMembers[0].isOnField()) {
         this.scene.pushPhase(new SummonPhase(this.scene, 0));
@@ -1319,18 +1310,12 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   preSummon(): void {
     const partyMember = this.getPokemon();
     // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon
-    const challengeAllowed = new Utils.BooleanHolder(true);
-    applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, partyMember, challengeAllowed);
-    if (partyMember.isFainted() || !challengeAllowed.value) {
+    if (!partyMember.isAllowedInBattle()) {
       console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
       const party = this.getParty();
 
       // Find the first non-fainted Pokemon index above the current one
-      const legalIndex = party.findIndex((p, i) => {
-        const challengeAllowed = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-        return i > this.partyMemberIndex && !p.isFainted() && challengeAllowed.value;
-      });
+      const legalIndex = party.findIndex((p, i) => i > this.partyMemberIndex && p.isAllowedInBattle());
       if (legalIndex === -1) {
         console.error("Party Details:\n", party);
         throw new Error("All available Pokemon were fainted or illegal!");
@@ -1381,11 +1366,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     if (this.fieldIndex === 1) {
       pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
     } else {
-      const availablePartyMembers = this.getParty().filter(p => {
-        const challengeAllowed = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-        return challengeAllowed.value && !p.isFainted();
-      }).length;
+      const availablePartyMembers = this.getParty().filter(p => p.isAllowedInBattle()).length;
       pokemon.setFieldPosition(!this.scene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
     }
 
@@ -1675,11 +1656,7 @@ export class ToggleDoublePositionPhase extends BattlePhase {
 
     const playerPokemon = this.scene.getPlayerField().find(p => p.isActive(true));
     if (playerPokemon) {
-      playerPokemon.setFieldPosition(this.double && this.scene.getParty().filter(p => {
-        const challengeAllowed = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-        return challengeAllowed.value && !p.isFainted();
-      }).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
+      playerPokemon.setFieldPosition(this.double && this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
         if (playerPokemon.getFieldIndex() === 1) {
           const party = this.scene.getParty();
           party[1] = party[0];
@@ -2384,11 +2361,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    for (const pokemon of this.scene.getParty().filter(p => {
-      const challengeAllowed = new Utils.BooleanHolder(true);
-      applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-      return challengeAllowed.value && !p.isFainted();
-    })) {
+    for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }
 
@@ -3512,11 +3485,7 @@ export class DamagePhase extends PokemonPhase {
           this.scene.setFieldScale(0.75);
           this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
           this.scene.currentBattle.double = true;
-          const availablePartyMembers = this.scene.getParty().filter(p => {
-            const challengeAllowed = new Utils.BooleanHolder(true);
-            applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-            return challengeAllowed.value && !p.isFainted();
-          });
+          const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
           if (availablePartyMembers.length > 1) {
             this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
             if (!availablePartyMembers[1].isOnField()) {
@@ -3598,11 +3567,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => {
-        const challengeAllowed = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-        return challengeAllowed.value && !p.isFainted();
-      });
+      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
       const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
       if (!nonFaintedPartyMemberCount) {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
@@ -4003,11 +3968,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
               this.scene.pushPhase(new EncounterPhase(this.scene, true));
 
-              const availablePartyMembers = this.scene.getParty().filter(p => {
-                const challengeAllowed = new Utils.BooleanHolder(true);
-                applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-                return challengeAllowed.value && !p.isFainted();
-              }).length;
+              const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
 
               this.scene.pushPhase(new SummonPhase(this.scene, 0));
               if (this.scene.currentBattle.double && availablePartyMembers > 1) {
@@ -4264,11 +4225,7 @@ export class SwitchPhase extends BattlePhase {
     }
 
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
-    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => {
-      const challengeAllowed = new Utils.BooleanHolder(true);
-      applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
-      return !p.isFainted() && challengeAllowed.value;
-    }).length > 1 ? this.fieldIndex : 0;
+    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
