@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -575,10 +575,26 @@ export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
     return ret;
   }
 }
-
+/**
+ * Class for abilities that make drain moves deal damage to user instead of healing them.
+ * @extends PostDefendAbAttr
+ * @see {@linkcode applyPostDefend}
+ */
 export class ReverseDrainAbAttr extends PostDefendAbAttr {
+  /**
+   * Determines if a damage and draining move was used to check if this ability should stop the healing.
+   * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
+   * Also displays a message to show this ability was activated.
+   * @param pokemon {@linkcode Pokemon} with this ability
+   * @param passive N/A
+   * @param attacker {@linkcode Pokemon} that is attacking this Pokemon
+   * @param move {@linkcode PokemonMove} that is being used
+   * @param hitResult N/A
+   * @args N/A
+   * @returns true if healing should be reversed on a healing move, false otherwise.
+   */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (move.getMove().hasAttr(HitHealAttr) || move.getMove().hasAttr(StrengthSapHealAttr) ) {
+    if (move.getMove().hasAttr(HitHealAttr)) {
       pokemon.scene.queueMessage(getPokemonMessage(attacker, " sucked up the liquid ooze!"));
       return true;
     }
