@@ -131,6 +131,12 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  /**
+   * Defines whether or not to show type effectiveness hints
+   * - 0 - Off: No hints
+   * - 1 - Partial: Only show hints for moves
+   * - 2 - Full: Additionally shows hints in the party screen
+   */
   public typeHints: integer = 0;
 
   public disableMenu: boolean = false;

@@ -501,6 +501,9 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
   }
 }
 
+/**
+ * Retrieve the color corresponding to a specific damage multiplier
+ */
 export function getTypeDamageMultiplierColor(multiplier: TypeDamageMultiplier, side: "defense" | "offense"): string {
   if (side === "offense") {
     switch (multiplier) {

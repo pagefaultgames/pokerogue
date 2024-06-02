@@ -107,9 +107,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public maskSprite: Phaser.GameObjects.Sprite;
 
   private shinySparkle: Phaser.GameObjects.Sprite;
+
+  // #region Type effectiveness hint objects
   private effectivenessContainer: Phaser.GameObjects.Container;
   private effectivenessWindow: Phaser.GameObjects.NineSlice;
   private effectivenessText: Phaser.GameObjects.Text;
+  // #endregion
 
   constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, x, y);
@@ -1075,6 +1078,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isOfType(Type.FLYING, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
+  /**
+   * @returns The type damage multiplier or undefined if it's a status move
+   */
   getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
     if (move.getMove().category === MoveCategory.STATUS) {
       return undefined;
@@ -1597,6 +1603,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleInfo.updateNameColor(nameColor);
   }
 
+  /**
+   * Gets the pokemon's name color based on the effectiveness of its moves on its opponents
+   * Will return undefined if type hints are not set to Full or there are no opponents
+   *
+   * Color priority:
+   * - Opponent has an effective type against the current pokemon
+   * - Current pokemon has an effective move against the current opponent(s)
+   * - Current pokemon has a defensive advantage against the current opponent(s)
+   */
   getNameColor(): string | undefined {
     const typeHints = this.scene.typeHints;
     if (typeHints !== 2) {
@@ -1638,6 +1653,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return "white";
   }
 
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
   updateEffectiveness(effectiveness?: string) {
     if (this.isPlayer() || this.scene.typeHints === 0 || effectiveness === undefined) {
       this.effectivenessContainer.setVisible(false);

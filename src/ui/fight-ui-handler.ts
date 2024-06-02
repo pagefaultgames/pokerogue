@@ -201,6 +201,10 @@ export default class FightUiHandler extends UiHandler {
     return changed;
   }
 
+  /**
+   * Gets multiplier text for a pokemon's move against a specific opponent
+   * Returns undefined if it's a status move
+   */
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
     const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove);
     if (effectiveness === undefined) {
@@ -227,6 +231,10 @@ export default class FightUiHandler extends UiHandler {
     }
   }
 
+  /**
+   * Returns a specific move's color based on its type effectiveness against opponents
+   * If there are multiple opponents, the highest effectiveness' color is returned
+   */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string {
     if (this.scene.typeHints === 0) {
       return "white";
