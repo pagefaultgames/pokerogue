@@ -18541,6 +18541,9 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 16, Moves.FEINT ],
       [ 20, Moves.SPARK ],
       [ 24, Moves.AGILITY ],
+      [ 25, Moves.ZIPPY_ZAP ], //Custom
+      [ 25, Moves.SPLISHY_SPLASH ], //Custom
+      [ 25, Moves.FLOATY_FALL ], //Custom
       [ 28, Moves.IRON_TAIL ],
       [ 32, Moves.DISCHARGE ],
       [ 36, Moves.THUNDERBOLT ],
