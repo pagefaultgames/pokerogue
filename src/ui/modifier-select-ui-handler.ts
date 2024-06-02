@@ -73,13 +73,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
     // prepare move overlay
-    const overlayScale = 2/3;
+    const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
       delayVisibility: true,
       scale: overlayScale,
-      top: true,
+      onSide: true,
+      //right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale),
+      y: -MoveInfoOverlay.getHeight(overlayScale, true) -1,
       width: (this.scene.game.canvas.width / 6) - 2,
     });
     ui.add(this.moveInfoOverlay);

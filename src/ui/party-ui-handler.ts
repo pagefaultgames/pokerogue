@@ -178,12 +178,13 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.iconAnimHandler.setup(this.scene);
 
     // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
-    const overlayScale = 2/3;
+    const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
       scale: overlayScale,
       top: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(overlayScale) - 1, //this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+      width: this.scene.game.canvas.width / 12 - 30,
     });
     ui.add(this.moveInfoOverlay);
 
