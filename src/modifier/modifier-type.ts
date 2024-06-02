@@ -1,6 +1,7 @@
 import * as Modifiers from "./modifier";
 import { AttackMove, allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
+import { Abilities } from "../data/enums/abilities";
 import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
@@ -756,14 +757,23 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   }
 }
 
+/**
+ * Class that represents form changing items
+ */
 export class FormChangeItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
   public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
     super("", FormChangeItem[formChangeItem].toLowerCase(), (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
       (pokemon: PlayerPokemon) => {
-        if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
-        && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem)) {
+        // Make sure the Pokemon has alternate forms
+        if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)
+          // Get all form changes for this species with an item trigger, including any compound triggers
+          && pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
+          // Returns true if any form changes match this item
+            .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+            .flat().flatMap(fc => fc.item).includes(this.formChangeItem)
+        ) {
           return null;
         }
 
@@ -1182,6 +1192,9 @@ export const modifierTypes = {
   LEFTOVERS: () => new PokemonHeldItemModifierType("modifierType:ModifierType.LEFTOVERS", "leftovers", (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
   SHELL_BELL: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SHELL_BELL", "shell_bell", (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
 
+  TOXIC_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.TOXIC_ORB", "toxic_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id)),
+  FLAME_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.FLAME_ORB", "flame_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id)),
+
   BATON: () => new PokemonHeldItemModifierType("modifierType:ModifierType.BATON", "stick", (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id)),
 
   SHINY_CHARM: () => new ModifierType("modifierType:ModifierType.SHINY_CHARM", "shiny_charm", (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
@@ -1247,7 +1260,12 @@ const modifierPool: ModifierPool = {
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
     new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
+      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
+        if (i instanceof Modifiers.TurnStatusEffectModifier) {
+          return (i as Modifiers.TurnStatusEffectModifier).getStatusEffect() === p.status.effect;
+        }
+        return false;
+      })).length, 3);
       return statusEffectPartyMemberCount * 6;
     }, 18),
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
@@ -1270,7 +1288,12 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.FULL_RESTORE, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
+      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
+        if (i instanceof Modifiers.TurnStatusEffectModifier) {
+          return (i as Modifiers.TurnStatusEffectModifier).getStatusEffect() === p.status.effect;
+        }
+        return false;
+      })).length, 3);
       const thresholdPartyMemberCount = Math.floor((Math.min(party.filter(p => (p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3) + statusEffectPartyMemberCount) / 2);
       return thresholdPartyMemberCount;
     }, 3),
@@ -1312,6 +1335,18 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
+    new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
+      const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL];
+      const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => checkedMoves.includes(m.moveId)))) ? 10 : 0;
+    }, 10),
+    new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
+      const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST];
+      const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => checkedMoves.includes(m.moveId)))) ? 10 : 0;
+    }, 10),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
@@ -1324,6 +1359,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 4),
     new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(party[0].scene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
     new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(3 - rerollCount, 0) : 0, 3),
+    new WeightedModifierType(modifierTypes.WIDE_LENS, 4),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
@@ -1334,7 +1370,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
-    new WeightedModifierType(modifierTypes.WIDE_LENS, 4),
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 8),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),

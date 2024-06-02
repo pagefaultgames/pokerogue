@@ -144,12 +144,26 @@ export default class Move implements Localizable {
   localize(): void {
     const i18nKey = Moves[this.id].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
 
-    this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`).toString()}${this.nameAppend}` : "";
-    this.effect = this.id ? `${i18next.t(`move:${i18nKey}.effect`).toString()}${this.nameAppend}` : "";
+    this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`)}${this.nameAppend}` : "";
+    this.effect = this.id ? `${i18next.t(`move:${i18nKey}.effect`)}${this.nameAppend}` : "";
   }
 
-  getAttrs(attrType: { new(...args: any[]): MoveAttr }): MoveAttr[] {
-    return this.attrs.filter(a => a instanceof attrType);
+  /**
+   * Get all move attributes that match `attrType`
+   * @param attrType any attribute that extends {@linkcode MoveAttr}
+   * @returns Array of attributes that match `attrType`, Empty Array if none match.
+   */
+  getAttrs<T extends MoveAttr>(attrType: new(...args: any[]) => T): T[] {
+    return this.attrs.filter((a): a is T => a instanceof attrType);
+  }
+
+  /**
+   * Check if a move has an attribute that matches `attrType`
+   * @param attrType any attribute that extends {@linkcode MoveAttr}
+   * @returns true if the move has attribute `attrType`
+   */
+  hasAttr<T extends MoveAttr>(attrType: new(...args: any[]) => T): boolean {
+    return this.attrs.some((attr) => attr instanceof attrType);
   }
 
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
@@ -423,6 +437,14 @@ export default class Move implements Localizable {
 export class AttackMove extends Move {
   constructor(id: Moves, type: Type, category: MoveCategory, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
     super(id, type, category, MoveTarget.NEAR_OTHER, power, accuracy, pp, chance, priority, generation);
+
+    /**
+     * {@link https://bulbapedia.bulbagarden.net/wiki/Freeze_(status_condition)}
+     * > All damaging Fire-type moves can now thaw a frozen target, regardless of whether or not they have a chance to burn;
+     */
+    if (this.type === Type.FIRE) {
+      this.addAttr(new HealStatusEffectAttr(false, StatusEffect.FREEZE));
+    }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -1179,48 +1201,72 @@ export class BoostHealAttr extends HealAttr {
   }
 }
 
+/**
+ * Heals user as a side effect of a move that hits a target.
+ * Healing is based on {@linkcode healRatio} * the amount of damage dealt or a stat of the target.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ * @see {@linkcode getUserBenefitScore}
+ */
 export class HitHealAttr extends MoveEffectAttr {
   private healRatio: number;
+  private message: string;
+  private healStat: Stat;
 
-  constructor(healRatio?: number) {
+  constructor(healRatio?: number, healStat?: Stat) {
     super(true, MoveEffectTrigger.HIT);
 
     this.healRatio = healRatio || 0.5;
+    this.healStat = healStat || null;
   }
-
+  /**
+   * Heals the user the determined amount and possibly displays a message about regaining health.
+   * If the target has the {@linkcode ReverseDrainAbAttr}, all healing is instead converted
+   * to damage to the user.
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const healAmount = Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1);
-    const reverseDrain = user.hasAbilityWithAttr(ReverseDrainAbAttr);
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      !reverseDrain ? healAmount : healAmount * -1,
-      !reverseDrain ? getPokemonMessage(target, " had its\nenergy drained!") : undefined,
-      false, true));
+    let healAmount = 0;
+    let message = "";
+    const reverseDrain = target.hasAbilityWithAttr(ReverseDrainAbAttr, false);
+    if (this.healStat) {
+      // Strength Sap formula
+      healAmount = target.getBattleStat(this.healStat);
+      message = i18next.t("battle:drainMessage", {pokemonName: target.name});
+    } else {
+      // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
+      healAmount = Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1);
+      message = i18next.t("battle:regainHealth", {pokemonName: user.name});
+    }
     if (reverseDrain) {
       user.turnData.damageTaken += healAmount;
+      healAmount = healAmount * -1;
+      message = null;
     }
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(), healAmount, message, false, true));
     return true;
   }
 
+  /**
+   * Used by the Enemy AI to rank an attack based on a given user
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @returns an integer. Higher means enemy is more likely to use that move.
+   */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * ((move.power / 5) / 4));
+    if (this.healStat) {
+      const healAmount = target.getBattleStat(this.healStat);
+      return Math.floor(Math.max(0, (Math.min(1, (healAmount+user.hp)/user.getMaxHp() - 0.33))) / user.getHpRatio());
+    }
+    return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * (move.power / 4));
   }
 }
 
-export class StrengthSapHealAttr extends MoveEffectAttr {
-  constructor() {
-    super(true, MoveEffectTrigger.HIT);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const healAmount = target.stats[Stat.ATK] * (Math.max(2, 2 + target.summonData.battleStats[BattleStat.ATK]) / Math.max(2, 2 - target.summonData.battleStats[BattleStat.ATK]));
-    const reverseDrain = user.hasAbilityWithAttr(ReverseDrainAbAttr);
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      !reverseDrain ? healAmount : healAmount * -1,
-      !reverseDrain ? getPokemonMessage(user, " regained\nhealth!") : undefined,
-      false, true));
-    return true;
-  }
-}
 /**
  * Attribute used for moves that change priority in a turn given a condition,
  * e.g. Grassy Glide
@@ -1437,7 +1483,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
         const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-        user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
+        user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
             user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
           }
@@ -1486,7 +1532,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
         const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
         const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-        user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
+        user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
             user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${stolenItem.type.name}!`));
           }
@@ -1612,15 +1658,31 @@ export class StealEatBerryAttr extends EatBerryAttr {
   }
 }
 
+/**
+ * Move attribute that signals that the move should cure a status effect
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply()}
+ */
 export class HealStatusEffectAttr extends MoveEffectAttr {
+  /** List of Status Effects to cure */
   private effects: StatusEffect[];
 
+  /**
+   * @param selfTarget - Whether this move targets the user
+   * @param ...effects - List of status effects to cure
+   */
   constructor(selfTarget: boolean, ...effects: StatusEffect[]) {
     super(selfTarget);
 
     this.effects = effects;
   }
 
+  /**
+   * @param user {@linkcode Pokemon} source of the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move the {@linkcode Move} being used
+   * @returns true if the status is cured
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -2011,10 +2073,10 @@ export class PostVictoryStatChangeAttr extends MoveAttr {
   }
   applyPostVictory(user: Pokemon, target: Pokemon, move: Move): void {
     if (this.condition && !this.condition(user, target, move)) {
-      return false;
+      return;
     }
     const statChangeAttr = new StatChangeAttr(this.stats, this.levels, this.showMessage);
-    statChangeAttr.apply(user, target, move);
+    statChangeAttr.apply(user, target, move, undefined);
   }
 }
 
@@ -2680,12 +2742,57 @@ export class HitCountPowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Turning a once was (StatChangeCountPowerAttr) statement and making it available to call for any attribute.
+ * @param {Pokemon} pokemon The pokemon that is being used to calculate the count of positive stats
+ * @returns {number} Returns the amount of positive stats
+ */
+const countPositiveStats = (pokemon: Pokemon): number => {
+  return pokemon.summonData.battleStats.reduce((total, stat) => (stat && stat > 0) ? total + stat : total, 0);
+};
+
+/**
+ * Attribute that increases power based on the amount of positive stat increases.
+ */
 export class StatChangeCountPowerAttr extends VariablePowerAttr {
+
+  /**
+   * @param {Pokemon} user The pokemon that is being used to calculate the amount of positive stats
+   * @param {Pokemon} target N/A
+   * @param {Move} move N/A
+   * @param {any[]} args The argument for VariablePowerAttr, accumulates and sets the amount of power multiplied by stats
+   * @returns {boolean} Returns true if attribute is applied
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const positiveStats: number = user.summonData.battleStats.reduce((total, stat) => stat > 0 && stat ? total + stat : total, 0);
+    const positiveStats: number = countPositiveStats(user);
 
     (args[0] as Utils.NumberHolder).value += positiveStats * 20;
+    return true;
+  }
+}
 
+/**
+ * Punishment normally has a base power of 60,
+ * but gains 20 power for every increased stat stage the target has,
+ * up to a maximum of 200 base power in total.
+ */
+export class PunishmentPowerAttr extends VariablePowerAttr {
+  private PUNISHMENT_MIN_BASE_POWER = 60;
+  private PUNISHMENT_MAX_BASE_POWER = 200;
+
+  /**
+     * @param {Pokemon} user N/A
+     * @param {Pokemon} target The pokemon that the move is being used against, as well as calculating the stats for the min/max base power
+     * @param {Move} move N/A
+     * @param {any[]} args The value that is being changed due to VariablePowerAttr
+     * @returns Returns true if attribute is applied
+     */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const positiveStats: number = countPositiveStats(target);
+    (args[0] as Utils.NumberHolder).value = Math.min(
+      this.PUNISHMENT_MAX_BASE_POWER,
+      this.PUNISHMENT_MIN_BASE_POWER + positiveStats * 20
+    );
     return true;
   }
 }
@@ -3629,7 +3736,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
 
       while (moveHistory.length) {
         turnMove = moveHistory.shift();
-        if (!allMoves[turnMove.move].getAttrs(ProtectAttr).length || turnMove.result !== MoveResult.SUCCESS) {
+        if (!allMoves[turnMove.move].hasAttr(ProtectAttr) || turnMove.result !== MoveResult.SUCCESS) {
           break;
         }
         timesUsed++;
@@ -4411,7 +4518,7 @@ const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
     return false;
   }
 
-  if (allMoves[copiableMove].getAttrs(ChargeAttr).length) {
+  if (allMoves[copiableMove].hasAttr(ChargeAttr)) {
     return false;
   }
 
@@ -4501,7 +4608,7 @@ const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
     return false;
   }
 
-  if (allMoves[copiableMove.move].getAttrs(ChargeAttr).length && copiableMove.result === MoveResult.OTHER) {
+  if (allMoves[copiableMove.move].hasAttr(ChargeAttr) && copiableMove.result === MoveResult.OTHER) {
     return false;
   }
 
@@ -4918,7 +5025,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   const variableTarget = new Utils.NumberHolder(0);
   user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
 
-  const moveTarget = allMoves[move].getAttrs(VariableTargetAttr).length ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
+  const moveTarget = allMoves[move].hasAttr(VariableTargetAttr) ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
 
   let set: Pokemon[] = [];
@@ -6041,7 +6148,8 @@ export function initMoves() {
     new StatusMove(Moves.GUARD_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.PUNISHMENT, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
-      .unimplemented(),
+      .makesContact(true)
+      .attr(PunishmentPowerAttr),
     new AttackMove(Moves.LAST_RESORT, Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
       .attr(LastResortAttr),
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)
@@ -6612,6 +6720,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.STEAM_ERUPTION, Type.WATER, MoveCategory.SPECIAL, 110, 95, 5, 30, 0, 6)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.HYPERSPACE_HOLE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, -1, 5, -1, 0, 6)
       .ignoresProtect(),
@@ -6833,7 +6942,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
-      .attr(StrengthSapHealAttr)
+      .attr(HitHealAttr, null, Stat.ATK)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
       .triageMove(),
@@ -7288,6 +7397,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.SCORCHING_SANDS, Type.GROUND, MoveCategory.SPECIAL, 70, 100, 10, 30, 0, 8)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
@@ -7508,10 +7618,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .recklessMove(),
     new AttackMove(Moves.LAST_RESPECTS, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => {
-        return user.scene.getParty().reduce((acc, pokemonInParty) => acc + (pokemonInParty.status?.effect === StatusEffect.FAINT ? 1 : 0),
-          1,);
-      })
+      .attr(MovePowerMultiplierAttr, (user, target, move) => 1 + Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 100))
       .makesContact(false),
     new AttackMove(Moves.LUMINA_CRASH, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
@@ -7670,6 +7777,7 @@ export function initMoves() {
     new AttackMove(Moves.MATCHA_GOTCHA, Type.GRASS, MoveCategory.SPECIAL, 80, 90, 15, 20, 0, 9)
       .attr(HitHealAttr)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .triageMove()

@@ -367,6 +367,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Ich werde für das nächste Rennen tunen."
     },
   },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
   "brock": {
     "encounter": {
       1: "Meine Expertise in Bezug auf Gesteins-Pokémon wird dich besiegen! Komm schon!",
@@ -516,7 +528,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Oh, es scheint, als hätte ich verloren.",
-      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um den Kämpfe geht.",
+      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um Kämpfe geht.",
       3: "Ich werde mir zu Herzen nehmen, was ich heute gelernt habe."
     },
     "defeat": {
@@ -775,7 +787,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marshal": {
     "encounter": {
-      1: `Mein Mentor, Lauro, sieht sieht Potential in dir. Ich werde dich testen,
+      1: `Mein Mentor, Lauro, sieht Potential in dir. Ich werde dich testen,
           $dich an die Grenzen deiner Stärke bringen. Kiai!`,
       2: "Ein Sieg, ein entscheidender Sieg, das ist mein Ziel! Herausforderer, hier komme ich!",
       3: "Ich selber suche die Stärke eines Kämpfers zu entwickeln und jede Schwäche in mir zu brechen!"
@@ -930,7 +942,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lacey": {
     "encounter": {
-      1: "Ich werde dir mit meiner gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
+      1: "Ich werde dir mit meinem gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
     },
     "victory": {
       1: "Das war ein großartiger Kampf!"
@@ -1025,7 +1037,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cress": {
     "encounter": {
-      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Typen werden deine Gegner im Kampf sein!"
+      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Pokémon werden deine Gegner im Kampf sein!"
     },
     "victory": {
       1: "Verlieren? Ich? Das glaube ich nicht."
@@ -1234,8 +1246,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
-                $Meine Forschung ist noch nicht abgeschlossen. OK, du gewinnst.`,
+      1: "Ich bin Kai, der Arenaleiter von Azalea City. Ich bin ein großer Fan von Käfer-Pokémon.",
     },
     "victory": {
       1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
