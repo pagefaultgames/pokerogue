@@ -59,7 +59,7 @@ import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
 import MysteryEncounter, { MysteryEncounterData, allMysteryEncounters } from "./data/mystery-encounter";
-import MysteryEncounterIntro from "./field/mystery-encounter";
+import MysteryEncounterIntroVisuals from "./field/mystery-encounter";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -996,12 +996,14 @@ export default class BattleScene extends SceneBase {
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
       // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
       this.currentBattle.double = false;
+
       // Generate a mystery encounter
-      const encounter = mysteryEncounter?.encounter ? allMysteryEncounters[mysteryEncounter.encounter.index] : this.generateMysteryEncounter();
+      const encounter = mysteryEncounter?.encounter ? allMysteryEncounters[mysteryEncounter.encounter.encounterIndex] : this.generateMysteryEncounter();
       this.currentBattle.mysteryEncounter = encounter;
 
-      // Add intro visuals to show mystery encounter
-      const encounterIntroVisuals = new MysteryEncounterIntro(this, encounter, ["school_kid_f", "scientist_f", "ace_trainer_f"]);
+      // Add intro visuals for mystery encounter
+      // TODO: refactor visuals to be tied to encounter
+      const encounterIntroVisuals = new MysteryEncounterIntroVisuals(this, encounter, ["school_kid_f", "scientist_f", "ace_trainer_f"]);
       this.field.add(encounterIntroVisuals);
       encounter.introVisuals = encounterIntroVisuals;
     }

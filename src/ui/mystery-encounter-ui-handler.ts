@@ -3,10 +3,11 @@ import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "../enums/buttons";
-import { MysteryEncounterOptionSelectPhase } from "../phases/mystery-encounter-option-select-phase";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
 import { MysteryEncounterOption } from "../data/mystery-encounter";
+import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
+import * as Utils from "../utils";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private optionsContainer: Phaser.GameObjects.Container;
@@ -15,7 +16,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
 
-  private encounterOptions: MysteryEncounterOption[] = [];
+  private filteredEncounterOptions: MysteryEncounterOption[] = [];
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -27,7 +28,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    const commands = this.encounterOptions.map((option) => {
+    const commands = this.filteredEncounterOptions.map((option) => {
       return option.label;
     });
 
@@ -69,15 +70,15 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     if (button === Button.CANCEL || button === Button.ACTION) {
 
       if (button === Button.ACTION) {
-        const selected = this.encounterOptions[cursor];
-        if ((this.scene.getCurrentPhase() as MysteryEncounterOptionSelectPhase).handleOptionSelect(selected)) {
+        const selected = this.filteredEncounterOptions[cursor];
+        if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected)) {
           this.clear();
           success = true;
         } else {
           ui.playError();
         }
       } else {
-        // If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
+        // TODO: If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
       }
     } else {
       switch (button) {
@@ -136,28 +137,48 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   }
 
   displayEncounterOptions(): void {
-    const mysteryEncounter = (this.scene.getCurrentPhase() as MysteryEncounterOptionSelectPhase).getMysteryEncounter();
-    this.encounterOptions = mysteryEncounter.getMysteryEncounterOptions();
+    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
+    const allOptions = mysteryEncounter.getMysteryEncounterOptions();
+
+    // If no options would be available after rolling chances on each, redo encounter option rolls
+    while (!this.filteredEncounterOptions || !this.filteredEncounterOptions.some(option => option.meetsRequirements(this.scene))) {
+      this.filteredEncounterOptions = allOptions.filter((option) => {
+        // Determine if option succeeds chance for availability
+        if (option?.chanceForOption < 100 && option?.chanceForOption > 0) {
+          const roll = Utils.randSeedInt(100);
+          if (roll <= option.chanceForOption) {
+            return true;
+          }
+        } else {
+          // If chanceForOption not set or invalid, always add option
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+
     const index = mysteryEncounter.getMysteryEncounterIndex();
     const titleText = i18next.t(`mysteryEncounter:encounter_${index}_id`);
     const descriptionText = i18next.t(`mysteryEncounter:encounter_${index}_description`);
     const queryText = i18next.t(`mysteryEncounter:encounter_${index}_query`);
 
     // Options Window
-    for (let i = 0; i < this.encounterOptions.length; i++) {
+    // TODO: change spacing and positioning if 1-2 options vs 3-4
+    for (let i = 0; i < this.filteredEncounterOptions.length; i++) {
       const optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, i < 2 ? 0 : 16, "-", TextStyle.WINDOW);
       const text = i18next.t(`mysteryEncounter:encounter_${index}_option_${i + 1}`);
       if (text) {
         optionText.setText(text);
       }
-      if (!this.encounterOptions[i].meetsRequirements(this.scene)) {
-        // TODO: This option should be disabled/greyed out or removed
+      if (!this.filteredEncounterOptions[i].meetsRequirements(this.scene)) {
+        // TODO: This option should be disabled/greyed out or removed if requirements are not met
       }
       this.optionsContainer.add(optionText);
     }
 
     // Description Window
-    //addTextObject(this.scene, 7, 69, abilityInfo.ability.description, TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 } });
     const titleTextObject = addTextObject(this.scene, 6, 4, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 830 } });
     this.descriptionContainer.add(titleTextObject);
 
@@ -166,6 +187,15 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     const queryTextObject = addTextObject(this.scene, 6, 90, queryText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
     this.descriptionContainer.add(queryTextObject);
+
+    // Slide in description container
+    this.descriptionContainer.x -= 100;
+    this.scene.tweens.add({
+      targets: this.descriptionContainer,
+      x: "+=100",
+      ease: "Sine.easeInOut",
+      duration: 750
+    });
   }
 
   clear(): void {

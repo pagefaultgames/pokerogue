@@ -62,7 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-import { MysteryEncounterOptionSelectPhase } from "./phases/mystery-encounter-option-select-phase";
+import { MysteryEncounterPhase } from "./phases/mystery-encounter-phase";
 
 
 export class LoginPhase extends Phase {
@@ -992,7 +992,7 @@ export class EncounterPhase extends BattlePhase {
 
         const doShowEncounterOptions = () => {
           this.scene.ui.clearText();
-          this.scene.unshiftPhase(new MysteryEncounterOptionSelectPhase(this.scene));
+          this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
 
           this.end();
         };
@@ -3784,7 +3784,7 @@ export class VictoryPhase extends PokemonPhase {
       }
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
-        if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+        if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
           this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
         } else if (this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
