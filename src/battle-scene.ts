@@ -12,7 +12,7 @@ import { initGameSpeed } from "./system/game-speed";
 import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from "./field/arena";
 import { GameData, PlayerGender } from "./system/game-data";
-import { TextStyle, addTextObject } from "./ui/text";
+import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
@@ -1316,6 +1316,25 @@ export default class BattleScene extends SceneBase {
     }
   }
 
+  animateMoneyChanged(positiveChange: boolean): void {
+    let deltaScale = this.moneyText.scale * 0.1;
+    if (positiveChange) {
+      this.moneyText.setShadowColor("#008000");
+    }
+    else {
+      this.moneyText.setShadowColor("#FF0000");
+      deltaScale = -deltaScale;
+    }
+    this.tweens.add({
+      targets: this.moneyText,
+      duration: Utils.fixedInt(350),
+      scale: this.moneyText.scale + deltaScale,
+      loop: 0,
+      yoyo: true,
+      onComplete: (_) => this.moneyText.setShadowColor(getTextColor(TextStyle.MONEY, true)), 
+    });
+  }
+
   updateScoreText(): void {
     this.scoreText.setText(`Score: ${this.score.toString()}`);
     this.scoreText.setVisible(this.gameMode.isDaily);
@@ -1761,6 +1780,7 @@ export default class BattleScene extends SceneBase {
   addMoney(amount: integer): void {
     this.money = Math.min(this.money + amount, Number.MAX_SAFE_INTEGER);
     this.updateMoneyText();
+    this.animateMoneyChanged(true);
     this.validateAchvs(MoneyAchv);
   }
 
