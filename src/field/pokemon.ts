@@ -886,7 +886,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isOfType(type: Type, includeTeraType: boolean = true, forDefend: boolean = false, ignoreOverride?: boolean): boolean {
-    return !!this.getTypes(includeTeraType, forDefend, ignoreOverride).find(t => t === type);
+    return !!this.getTypes(includeTeraType, forDefend, ignoreOverride).some(t => t === type);
   }
 
   /**
