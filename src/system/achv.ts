@@ -37,10 +37,21 @@ export class Achv {
     this.localizationKey = localizationKey;
   }
 
-  getName(): string {
+  /**
+   * Get the name of the achievement based on the gender of the player
+   * @param playerGender - the gender of the player
+   * @returns the name of the achievement localized for the player gender
+   */
+  getName(playerGender:PlayerGender): string {
+    let prefix = "PGM";
+    if (playerGender === PlayerGender.FEMALE) {
+      prefix = "PGF";
+    }
     // Localization key is used to get the name of the achievement
-    return i18next.t(`achv:${this.localizationKey}.name` as ParseKeys);
+    return i18next.t(`${prefix}achv:${this.localizationKey}.name` as ParseKeys);
   }
+
+
 
   getIconImage(): string {
     return this.iconImage;
@@ -132,7 +143,10 @@ export class ModifierAchv extends Achv {
  */
 export function getAchievementDescription(localizationKey: string): string {
   // We need to get the player gender from the game data to add the correct prefix to the achievement name
-  const playerGender = this.scene.gameData.gender;
+  let playerGender = PlayerGender.MALE;
+  if (this?.scene) {
+    playerGender = this.scene.gameData.gender;
+  }
   let genderPrefix = "PGM";
   if (playerGender === PlayerGender.FEMALE) {
     genderPrefix = "PGF";

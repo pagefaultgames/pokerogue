@@ -2,6 +2,7 @@ import BattleScene from "../battle-scene";
 import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
+import {PlayerGender} from "#app/system/game-data";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;
@@ -54,7 +55,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showAchv(achv: Achv | Voucher): void {
+  showAchv(achv: Achv | Voucher,playerGender:PlayerGender): void {
     if (this.shown) {
       this.queue.push(achv);
       return;
@@ -64,7 +65,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
     this.bg.setTexture(`achv_bar${tier ? `_${tier + 1}` : ""}`);
     this.icon.setFrame(achv.getIconImage());
-    this.titleText.setText(achv.getName());
+    this.titleText.setText(achv.getName(playerGender));
     this.scoreText.setVisible(achv instanceof Achv);
     if (achv instanceof Achv) {
       this.descriptionText.setText(getAchievementDescription((achv as Achv).localizationKey));
@@ -96,13 +97,13 @@ export default class AchvBar extends Phaser.GameObjects.Container {
       ease: "Sine.easeOut"
     });
 
-    this.scene.time.delayedCall(10000, () => this.hide());
+    this.scene.time.delayedCall(10000, () => this.hide(playerGender));
 
     this.setVisible(true);
     this.shown = true;
   }
 
-  protected hide(): void {
+  protected hide(playerGender:PlayerGender): void {
     if (!this.shown) {
       return;
     }
@@ -116,7 +117,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
         this.shown = false;
         this.setVisible(false);
         if (this.queue.length) {
-          this.showAchv(this.queue.shift());
+          this.showAchv(this.queue.shift(),playerGender);
         }
       }
     });

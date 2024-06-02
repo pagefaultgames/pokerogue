@@ -36,7 +36,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 
-export const zhTWConfig = {
+export const zhTwConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
