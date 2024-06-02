@@ -1,6 +1,7 @@
 import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
-export const achv: AchievementTranslationEntries = {
+// Achievement translations for the when the player character is male
+export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
     name: "업적",
   },
@@ -169,3 +170,6 @@ export const achv: AchievementTranslationEntries = {
     description: "클래식 모드 클리어",
   },
 } as const;
+
+// Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
+export const PGFachv: AchievementTranslationEntries = PGMachv;

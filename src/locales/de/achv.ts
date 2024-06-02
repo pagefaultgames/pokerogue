@@ -1,6 +1,7 @@
-import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
+import {AchievementTranslationEntries} from "#app/plugins/i18n.js";
 
-export const achv: AchievementTranslationEntries = {
+// Achievement translations for the when the player character is male
+export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
     name: "Errungenschaften",
   },
@@ -10,7 +11,7 @@ export const achv: AchievementTranslationEntries = {
 
 
   "MoneyAchv": {
-    description:"Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an",
+    description: "Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an",
   },
   "10K_MONEY": {
     name: "Besserverdiener",
@@ -67,14 +68,14 @@ export const achv: AchievementTranslationEntries = {
     name: "Elite",
   },
   "LV_1000": {
-    name:  "Geh noch höher hinaus!",
+    name: "Geh noch höher hinaus!",
   },
 
   "RibbonAchv": {
     description: "Sammle insgesamt {{ribbonAmount}} Bänder",
   },
   "10_RIBBONS": {
-    name:  "Champion der Pokémon Liga",
+    name: "Champion der Pokémon Liga",
   },
   "25_RIBBONS": {
     name: "Bänder-Sammler",
@@ -94,7 +95,7 @@ export const achv: AchievementTranslationEntries = {
     description: "Nutze Staffette, während der Anwender mindestens eines Statuswertes maximiert hat",
   },
   "MAX_FRIENDSHIP": {
-    name:  "Freundschaftsmaximierung",
+    name: "Freundschaftsmaximierung",
     description: "Erreiche maximale Freundschaft bei einem Pokémon",
   },
   "MEGA_EVOLVE": {
@@ -122,8 +123,8 @@ export const achv: AchievementTranslationEntries = {
     description: "Erlange ein Mini-Schwarzes Loch",
   },
   "CATCH_MYTHICAL": {
-    name:  "Mysteriöses!",
-    description:  "Fange ein mysteriöses Pokémon",
+    name: "Mysteriöses!",
+    description: "Fange ein mysteriöses Pokémon",
   },
   "CATCH_SUB_LEGENDARY": {
     name: "Sub-Legendär",
@@ -170,3 +171,84 @@ export const achv: AchievementTranslationEntries = {
     description: "Beende den klassischen Modus erfolgreich",
   },
 } as const;
+
+// Achievement translations for the when the player character is female
+export const PGFachv: AchievementTranslationEntries = {
+  "Achievements": {
+    name: PGMachv.Achievements.name,
+  },
+  "Locked": {
+    name: PGMachv.Locked.name,
+  },
+
+
+  "MoneyAchv": PGMachv.MoneyAchv,
+  "10K_MONEY": {
+    name: "Besserverdienerin",
+  },
+  "100K_MONEY": PGMachv["100K_MONEY"],
+  "1M_MONEY": {
+    name: "Millionärin",
+  },
+  "10M_MONEY": PGMachv["10M_MONEY"],
+
+  "DamageAchv": PGMachv.DamageAchv,
+  "250_DMG": PGMachv["250_DMG"],
+  "1000_DMG": PGMachv["1000_DMG"],
+  "2500_DMG": PGMachv["2500_DMG"],
+  "10000_DMG": {
+    name: "One Punch Woman",
+  },
+
+  "HealAchv": PGMachv.HealAchv,
+  "250_HEAL": {
+    name: "Anfänger-Heilerin",
+  },
+  "1000_HEAL": PGMachv["1000_HEAL"],
+  "2500_HEAL": {
+    name: "Klerikerin",
+  },
+  "10000_HEAL": {
+    name: "Wiederherstellungsmeisterin",
+  },
+
+  "LevelAchv": PGMachv.LevelAchv,
+  "LV_100":  PGMachv["LV_100"],
+  "LV_250":  PGMachv["LV_250"],
+  "LV_1000":  PGMachv["LV_1000"],
+
+  "RibbonAchv":  PGMachv.RibbonAchv,
+  "10_RIBBONS":  PGMachv["10_RIBBONS"],
+  "25_RIBBONS": {
+    name: "Bänder-Sammlerin",
+  },
+  "50_RIBBONS": {
+    name: "Bänder-Expertin",
+  },
+  "75_RIBBONS":  PGMachv["75_RIBBONS"],
+  "100_RIBBONS": {
+    name: "Bänder-Meisterin",
+  },
+
+  "TRANSFER_MAX_BATTLE_STAT": PGMachv.TRANSFER_MAX_BATTLE_STAT,
+  "MAX_FRIENDSHIP": PGMachv.MAX_FRIENDSHIP,
+  "MEGA_EVOLVE": PGMachv.MEGA_EVOLVE,
+  "GIGANTAMAX": PGMachv.GIGANTAMAX,
+  "TERASTALLIZE": PGMachv.TERASTALLIZE,
+  "STELLAR_TERASTALLIZE": PGMachv.STELLAR_TERASTALLIZE,
+  "SPLICE": PGMachv.SPLICE,
+  "MINI_BLACK_HOLE": PGMachv.MINI_BLACK_HOLE,
+  "CATCH_MYTHICAL": PGMachv.CATCH_MYTHICAL,
+  "CATCH_SUB_LEGENDARY": PGMachv.CATCH_SUB_LEGENDARY,
+  "CATCH_LEGENDARY": PGMachv.CATCH_LEGENDARY,
+  "SEE_SHINY": PGMachv.SEE_SHINY,
+  "SHINY_PARTY": PGMachv.SHINY_PARTY,
+  "HATCH_MYTHICAL": PGMachv.HATCH_MYTHICAL,
+  "HATCH_SUB_LEGENDARY": PGMachv.HATCH_SUB_LEGENDARY,
+  "HATCH_LEGENDARY": PGMachv.HATCH_LEGENDARY,
+  "HATCH_SHINY": PGMachv.HATCH_SHINY,
+  "HIDDEN_ABILITY": PGMachv.HIDDEN_ABILITY,
+  "PERFECT_IVS": PGMachv.PERFECT_IVS,
+  "CLASSIC_VICTORY": PGMachv.CLASSIC_VICTORY,
+} as const;
+

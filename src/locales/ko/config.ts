@@ -1,6 +1,6 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
-import { achv } from "./achv";
+import {PGFachv, PGMachv} from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
@@ -39,12 +39,13 @@ import { weather } from "./weather";
 export const koConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
-  achv: achv,
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   biome: biome,
   commandUiHandler: commandUiHandler,
+  PGMachv: PGMachv,
+  PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
   PGMbattleSpecDialogue: PGMbattleSpecDialogue,

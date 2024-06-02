@@ -218,7 +218,8 @@ declare module "i18next" {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-      achv: AchievementTranslationEntries;
+      PGMachv: AchievementTranslationEntries;
+      PGFachv: AchievementTranslationEntries;
       gameStatsUiHandler: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
