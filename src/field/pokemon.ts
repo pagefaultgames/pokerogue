@@ -48,6 +48,7 @@ import { BerryType } from "../data/berry";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 
 export enum FieldPosition {
   CENTER,
@@ -270,7 +271,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.scene) {
       return false;
     }
-    return !this.isFainted() && !!this.scene && (!onField || this.isOnField());
+    const challengeAllowed = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
+    return !this.isFainted() && challengeAllowed.value && !!this.scene && (!onField || this.isOnField());
   }
 
   getDexAttr(): bigint {
