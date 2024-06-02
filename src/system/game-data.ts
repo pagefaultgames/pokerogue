@@ -87,6 +87,7 @@ interface SystemSaveData {
   dexData: DexData;
   starterData: StarterData;
   gameStats: GameStats;
+  runHistory: RunHistoryData;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
   voucherUnlocks: VoucherUnlocks;
@@ -113,6 +114,15 @@ export interface SessionSaveData {
   trainer: TrainerData;
   gameVersion: string;
   timestamp: integer;
+}
+
+export interface RunHistoryData {
+  [key: integer]: RunEntries;
+}
+
+export interface RunEntries {
+  entry: SessionSaveData;
+  victory: boolean;
 }
 
 interface Unlocks {
@@ -230,7 +240,7 @@ export class GameData {
   public starterData: StarterData;
 
   public gameStats: GameStats;
-
+  public runHistory: RunHistoryData;
   public unlocks: Unlocks;
 
   public achvUnlocks: AchvUnlocks;
@@ -245,6 +255,7 @@ export class GameData {
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
+    this.runHistory = {};
     this.gameStats = new GameStats();
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
@@ -269,6 +280,7 @@ export class GameData {
       trainerId: this.trainerId,
       secretId: this.secretId,
       gender: this.gender,
+      runHistory: this.runHistory,
       dexData: this.dexData,
       starterData: this.starterData,
       gameStats: this.gameStats,
@@ -381,6 +393,8 @@ export class GameData {
         this.secretId = systemData.secretId;
 
         this.gender = systemData.gender;
+
+        this.runHistory = systemData.runHistory;
 
         this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 

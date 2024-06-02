@@ -17,6 +17,7 @@ import {addTextObject, TextStyle} from "./text";
 import AchvBar from "./achv-bar";
 import MenuUiHandler from "./menu-ui-handler";
 import AchvsUiHandler from "./achvs-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
 import OptionSelectUiHandler from "./option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
@@ -59,6 +60,7 @@ export enum Mode {
   MENU_OPTION_SELECT,
   SETTINGS,
   ACHIEVEMENTS,
+  RUN_HISTORY,
   GAME_STATS,
   VOUCHERS,
   EGG_LIST,
@@ -93,6 +95,7 @@ const noTransitionModes = [
   Mode.GAME_STATS,
   Mode.VOUCHERS,
   Mode.LOGIN_FORM,
+  Mode.RUN_HISTORY,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
   Mode.SESSION_RELOAD,
@@ -140,6 +143,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
       new AchvsUiHandler(scene),
+      new RunHistoryUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
@@ -377,6 +381,7 @@ export default class UI extends Phaser.GameObjects.Container {
             touchControls.dataset.uiMode = Mode[mode];
           }
           this.getHandler().show(args);
+          console.log(args);
         }
         resolve();
       };

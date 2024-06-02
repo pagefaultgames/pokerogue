@@ -43,7 +43,7 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { PlayerGender, SessionSaveData } from "./system/game-data";
+import { PlayerGender, SessionSaveData, RunHistoryData, RunEntries } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
@@ -62,6 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { runCount } from "./ui/run-history-ui-handler";
 
 
 export class LoginPhase extends Phase {
@@ -3947,6 +3948,20 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
+        const timestamps = Object.keys(this.scene.gameData.runHistory);
+        if (timestamps.length >= runCount) {
+          delete this.scene.gameData.runHistory[Math.min(timestamps)];
+        }
+        const currentTime = new Date().getTime();
+        this.scene.gameData.runHistory[currentTime] = {};
+        this.scene.gameData.getSession(this.scene.sessionSlotId).then(sessionData => {
+          if (sessionData) {
+            this.scene.gameData.runHistory[currentTime].entry = sessionData;
+          }
+        }).catch(err => {
+          console.error(err);
+        });
+        this.scene.gameData.runHistory[currentTime].victory = this.victory;
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
