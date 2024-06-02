@@ -1009,7 +1009,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
 
                 const isValidForChallenge = new Utils.BooleanHolder(true);
-                Challenge.applyChallenges(this.scene, Challenge.ChallengeType.STARTER_CHOICE_MODIFY, species, isValidForChallenge);
+                Challenge.applyChallenges(this.scene, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
 
                 if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                   const cursorObj = this.starterCursorObjs[this.starterCursors.length];
@@ -1482,7 +1482,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       valueLimit.value = 10;
     }
 
-    Challenge.applyChallenges(this.scene, Challenge.ChallengeType.STARTER_POINTS_MODIFY, valueLimit);
+    Challenge.applyChallenges(this.scene, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
 
     return valueLimit.value;
   }
@@ -2104,7 +2104,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     for (let g = 0; g < this.genSpecies.length; g++) {
       for (let s = 0; s < this.genSpecies[g].length; s++) {
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        Challenge.applyChallenges(this.scene, Challenge.ChallengeType.STARTER_CHOICE_MODIFY, this.genSpecies[g][s], isValidForChallenge);
+        Challenge.applyChallenges(this.scene, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge);
 
         const canBeChosen = (newValue + this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId)) <= valueLimit && isValidForChallenge.value;
 

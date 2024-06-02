@@ -5,10 +5,13 @@ import { GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { speciesStarters } from "./pokemon-species";
 import { Type } from "./type";
 import BattleScene from "#app/battle-scene.js";
+import Pokemon from "#app/field/pokemon.js";
 
 export enum ChallengeType {
-  STARTER_CHOICE_MODIFY, // Challenges which modify what starters you can choose
-  STARTER_POINTS_MODIFY // Challenges which modify how many starter points you have
+  STARTER_CHOICE, // Challenges which modify what starters you can choose
+  STARTER_POINTS, // Challenges which modify how many starter points you have
+  /** Challenges which limit which pokemon you can have in battle. */
+  POKEMON_IN_BATTLE,
 }
 
 /**
@@ -124,7 +127,7 @@ export abstract class Challenge implements Localizable {
       overrideValue = this.value;
     }
     if (overrideValue === 0) {
-      return "None";
+      return i18next.t("challengeUiHandler:challenge_off");
     }
     return overrideValue.toString();
   }
@@ -237,7 +240,8 @@ type ChallengeCondition = (data: GameData) => boolean;
 export class SingleGenerationChallenge extends Challenge {
   constructor() {
     super(Challenges.SINGLE_GENERATION, 9);
-    this.addChallengeType(ChallengeType.STARTER_CHOICE_MODIFY);
+    this.addChallengeType(ChallengeType.STARTER_CHOICE);
+    this.addChallengeType(ChallengeType.POKEMON_IN_BATTLE);
     this.maxSeverity = 2;
   }
 
@@ -247,13 +251,22 @@ export class SingleGenerationChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_CHOICE_MODIFY:
+    case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
-      const isValid = args[1] as Utils.BooleanHolder;
+      const isValidStarter = args[1] as Utils.BooleanHolder;
       if (species.generation !== this.value) {
-        isValid.value = false;
+        isValidStarter.value = false;
         return true;
       }
+      break;
+    case ChallengeType.POKEMON_IN_BATTLE:
+      const pokemon = args[0] as Pokemon;
+      const isValidPokemon = args[1] as Utils.BooleanHolder;
+      if (pokemon.isPlayer() && (pokemon.species.generation !== this.value || (pokemon.isFusion() && pokemon.fusionSpecies.generation !== this.value))) {
+        isValidPokemon.value = false;
+        return true;
+      }
+      break;
     }
     return false;
   }
@@ -279,7 +292,8 @@ export class SingleGenerationChallenge extends Challenge {
 export class SingleTypeChallenge extends Challenge {
   constructor() {
     super(Challenges.SINGLE_TYPE, 18);
-    this.addChallengeType(ChallengeType.STARTER_CHOICE_MODIFY);
+    this.addChallengeType(ChallengeType.STARTER_CHOICE);
+    this.addChallengeType(ChallengeType.POKEMON_IN_BATTLE);
     this.maxSeverity = 2;
   }
 
@@ -290,7 +304,7 @@ export class SingleTypeChallenge extends Challenge {
     if (overrideValue) {
       return i18next.t(`pokemonInfo:Type.${Type[overrideValue-1].toString()}`);
     } else {
-      return "None";
+      return i18next.t("challengeUiHandler:challenge_off");
     }
   }
 
@@ -300,13 +314,22 @@ export class SingleTypeChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_CHOICE_MODIFY:
+    case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
-      const isValid = args[1] as Utils.BooleanHolder;
+      const isValidStarter = args[1] as Utils.BooleanHolder;
       if (!species.isOfType(this.value - 1)) {
-        isValid.value = false;
+        isValidStarter.value = false;
         return true;
       }
+      break;
+    case ChallengeType.POKEMON_IN_BATTLE:
+      const pokemon = args[0] as Pokemon;
+      const isValidPokemon = args[1] as Utils.BooleanHolder;
+      if (pokemon.isPlayer() && !pokemon.isOfType(this.value - 1)) {
+        isValidPokemon.value = false;
+        return true;
+      }
+      break;
     }
     return false;
   }
@@ -332,7 +355,7 @@ export class SingleTypeChallenge extends Challenge {
 export class LowerStarterMaxCostChallenge extends Challenge {
   constructor() {
     super(Challenges.LOWER_MAX_STARTER_COST, 9);
-    this.addChallengeType(ChallengeType.STARTER_CHOICE_MODIFY);
+    this.addChallengeType(ChallengeType.STARTER_CHOICE);
   }
 
   /**
@@ -351,7 +374,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_CHOICE_MODIFY:
+    case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
       const isValid = args[1] as Utils.BooleanHolder;
       if (speciesStarters[species.speciesId] > 10 - this.value) {
@@ -376,7 +399,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
 export class LowerStarterPointsChallenge extends Challenge {
   constructor() {
     super(Challenges.LOWER_STARTER_POINTS, 9);
-    this.addChallengeType(ChallengeType.STARTER_POINTS_MODIFY);
+    this.addChallengeType(ChallengeType.STARTER_POINTS);
   }
 
   /**
@@ -395,7 +418,7 @@ export class LowerStarterPointsChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_POINTS_MODIFY:
+    case ChallengeType.STARTER_POINTS:
       const points = args[0] as Utils.NumberHolder;
       points.value -= this.value;
       return true;
@@ -439,7 +462,7 @@ export function initChallenges() {
   allChallenges.push(
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
-    new LowerStarterMaxCostChallenge(),
-    new LowerStarterPointsChallenge()
+    // new LowerStarterMaxCostChallenge(),
+    // new LowerStarterPointsChallenge()
   );
 }

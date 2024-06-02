@@ -1,9 +1,10 @@
 import { SimpleTranslationEntries, ChallengeTranslationEntries } from "#app/plugins/i18n";
 
 export const challengeUiHandler: SimpleTranslationEntries = {
-  "CHALLENGE_TITLE": "Challenge Modifiers",
-  "CHALLENGE_POINTS": "Bad Ideas",
-  "CONFIRM_START": "Proceed with these challenges?"
+  "title": "Challenge Modifiers",
+  "points": "Bad Ideas",
+  "confirm_start": "Proceed with these challenges?",
+  "challenge_off": "Off"
 } as const;
 
 export const challenges: ChallengeTranslationEntries = {

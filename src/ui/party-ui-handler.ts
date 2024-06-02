@@ -17,6 +17,7 @@ import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 
 const defaultMessage = "Choose a Pokémon.";
 
@@ -113,6 +114,20 @@ export default class PartyUiHandler extends MessageUiHandler {
   public static FilterFainted = (pokemon: PlayerPokemon) => {
     if (!pokemon.isFainted()) {
       return `${pokemon.name} still has energy\nto battle!`;
+    }
+    return null;
+  };
+
+  /**
+   * For consistency reasons, this looks like the above filters. However this is used only internally and is always enforced for switching.
+   * @param pokemon The pokemon to check.
+   * @returns
+   */
+  private FilterChallengeLegal = (pokemon: PlayerPokemon) => {
+    const challengeAllowed = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
+    if (!challengeAllowed.value) {
+      return `${pokemon.name} can't be used in\nthis challenge!`;
     }
     return null;
   };
@@ -259,6 +274,9 @@ export default class PartyUiHandler extends MessageUiHandler {
           let filterResult: string;
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
             filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
+            if (filterResult === null && (option === PartyOption.SEND_OUT || option === PartyOption.PASS_BATON)) {
+              filterResult = this.FilterChallengeLegal(pokemon);
+            }
             if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
             }

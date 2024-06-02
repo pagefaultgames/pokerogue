@@ -62,6 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { applyChallenges, ChallengeType } from "./data/challenge";
 
 
 export class LoginPhase extends Phase {
@@ -1309,20 +1310,26 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   */
   preSummon(): void {
     const partyMember = this.getPokemon();
-    // If the Pokemon about to be sent out is fainted, switch to the first non-fainted Pokemon
-    if (partyMember.isFainted()) {
-      console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
+    // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon
+    const challengeAllowed = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, partyMember, challengeAllowed);
+    if (partyMember.isFainted() || !challengeAllowed.value) {
+      console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
       const party = this.getParty();
 
       // Find the first non-fainted Pokemon index above the current one
-      const nonFaintedIndex = party.findIndex((p, i) => i > this.partyMemberIndex && !p.isFainted());
-      if (nonFaintedIndex === -1) {
+      const legalIndex = party.findIndex((p, i) => {
+        const challengeAllowed = new Utils.BooleanHolder(true);
+        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
+        return i > this.partyMemberIndex && !p.isFainted() && challengeAllowed.value;
+      });
+      if (legalIndex === -1) {
         console.error("Party Details:\n", party);
-        throw new Error("All available Pokemon were fainted!");
+        throw new Error("All available Pokemon were fainted or illegal!");
       }
 
-      // Swaps the fainted Pokemon and the first non-fainted Pokemon in the party
-      [party[this.partyMemberIndex], party[nonFaintedIndex]] = [party[nonFaintedIndex], party[this.partyMemberIndex]];
+      // Swaps the fainted Pokemon and the first non-fainted legal Pokemon in the party
+      [party[this.partyMemberIndex], party[legalIndex]] = [party[legalIndex], party[this.partyMemberIndex]];
       console.warn("Swapped %s %O with %s %O", partyMember?.name, partyMember, party[0]?.name, party[0]);
     }
 
@@ -3567,11 +3574,15 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedPartyMembers = this.scene.getParty().filter(p => !p.isFainted());
-      const nonFaintedPartyMemberCount = nonFaintedPartyMembers.length;
+      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => {
+        const challengeAllowed = new Utils.BooleanHolder(true);
+        applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, p, challengeAllowed);
+        return challengeAllowed.value && !p.isFainted();
+      });
+      const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
       if (!nonFaintedPartyMemberCount) {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedPartyMembers[0].isActive(true))) {
+      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedLegalPartyMembers[0].isActive(true))) {
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       }
       if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {

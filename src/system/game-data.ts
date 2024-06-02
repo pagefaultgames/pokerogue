@@ -31,6 +31,7 @@ import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
+import ChallengeData from "./challenge-data";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -114,6 +115,7 @@ export interface SessionSaveData {
   trainer: TrainerData;
   gameVersion: string;
   timestamp: integer;
+  challenges: ChallengeData[];
 }
 
 interface Unlocks {
@@ -633,7 +635,8 @@ export class GameData {
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
     } as SessionSaveData;
   }
 
@@ -683,6 +686,9 @@ export class GameData {
           console.debug(sessionData);
 
           scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
+          if (sessionData.challenges) {
+            scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+          }
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
@@ -923,6 +929,17 @@ export class GameData {
 
       if (k === "arena") {
         return new ArenaData(v);
+      }
+
+      if (k === "challenges") {
+        const ret: ChallengeData[] = [];
+        if (v === null) {
+          v = [];
+        }
+        for (const c of v) {
+          ret.push(new ChallengeData(c));
+        }
+        return ret;
       }
 
       return v;

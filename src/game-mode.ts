@@ -27,6 +27,7 @@ interface GameModeConfig {
   hasRandomBiomes?: boolean;
   hasRandomBosses?: boolean;
   isSplicedOnly?: boolean;
+  isChallenge?: boolean;
 }
 
 export class GameMode implements GameModeConfig {
@@ -41,12 +42,16 @@ export class GameMode implements GameModeConfig {
   public hasRandomBiomes: boolean;
   public hasRandomBosses: boolean;
   public isSplicedOnly: boolean;
+  public isChallenge: boolean;
   public challenges: Challenge[];
 
   constructor(modeId: GameModes, config: GameModeConfig) {
     this.modeId = modeId;
-    this.challenges = allChallenges.map(c => copyChallenge(c));
+    this.challenges = [];
     Object.assign(this, config);
+    if (this.isChallenge) {
+      this.challenges = allChallenges.map(c => copyChallenge(c));
+    }
   }
 
   /**
@@ -275,6 +280,6 @@ export function getGameMode(gameMode: GameModes): GameMode {
   case GameModes.DAILY:
     return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
   case GameModes.CHALLENGE:
-    return new GameMode(GameModes.CHALLENGE, { isClassic: true });
+    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, hasFixedBattles: true, isChallenge: true });
   }
 }
