@@ -4917,7 +4917,16 @@ export class LastResortAttr extends MoveAttr {
   }
 }
 
+
+/**
+ * The move only works if the target has a transferable held item
+ * @extends MoveAttr
+ * @see {@linkcode getCondition}
+ */
 export class AttackedByItemAttr extends MoveAttr {
+  /**
+   * @returns the {@linkcode MoveConditionFunc} for this {@linkcode Move}
+   */
   getCondition(): MoveConditionFunc {
     return (user: Pokemon, target: Pokemon, move: Move) => {
       const heldItems = target.getHeldItems().filter(i => i.getTransferrable(true));
