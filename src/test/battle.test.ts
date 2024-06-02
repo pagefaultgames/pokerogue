@@ -134,181 +134,9 @@ const saveKey = "x0i2O7WRiANTqPmZ";
 //   //   });
 //   //   expect(spy).toHaveBeenCalled();
 //   // });
-//   //
-//   // it('Start at title mode', () => {
-//   //   const mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.TITLE);
-//   // });
-//   //
-//   // it('test new Battle', async() => {
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   let mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.COMMAND);
-//   // })
-//   //
-//   // it('Override starter species', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   let mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.COMMAND);
-//   // });
-//   //
-//   // it('Override opponent species', async() => {
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   let mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.COMMAND);
-//   // });
-//   //
-//   // it('Override both species', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   let mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.COMMAND);
-//   // });
-//
-//   // it('Do an attack with faint', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   let mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.COMMAND);
-//   //   //Try to do the first attack
-//   //   scene.ui.setMode(Mode.FIGHT, (scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-//   //   await waitUntil(() => scene.ui.getMode() === Mode.FIGHT);
-//   //   const movePosition = await game.getMovePosition(scene, 0, Moves.AURA_SPHERE);
-//   //   (scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false)
-//   //   await waitUntil(() => scene.ui?.getMode() === Mode.MODIFIER_SELECT);
-//   //   mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.MODIFIER_SELECT);
-//   // }, 10000);
-//
-//   // it('one-line - Do an attack with faint', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   await game.doAttack(Moves.AURA_SPHERE);
-//   //   await waitUntil(() => scene.ui?.getMode() === Mode.MODIFIER_SELECT);
-//   //   const mode = scene.ui?.getMode();
-//   //   expect(mode).toBe(Mode.MODIFIER_SELECT);
-//   // }, 10000);
-//
-//   // it('one-line export data to save', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.PIKACHU);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   const data = await game.exportSaveToTest();
-//   //   expect(data).not.toBeUndefined();
-//   //   console.log(data);
-//   // }, 10000);
-//
-//   // it('test wave override - 3 - regular', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(3);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   expect(scene.currentBattle.waveIndex).toBe(3);
-//   // }, 10000);
-//   //
-//   // it('test wave override - 5 - trainer', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(5);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   expect(scene.currentBattle.waveIndex).toBe(5);
-//   // }, 10000);
-//
-//   // it('test wave override - 8 - rival', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(8);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   expect(scene.currentBattle.waveIndex).toBe(8);
-//   // }, 10000);
-//   //
-//   // it('test wave override - 10 - boss', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(10);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   expect(scene.currentBattle.waveIndex).toBe(10);
-//   // }, 10000);
-//   //
-//   // it('test double-battle', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(42);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.AURA_SPHERE]);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   expect(scene.currentBattle.double).toBe(true);
-//   // }, 10000);
-//
-//   // it('test attack no OHKO', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MAGIKARP);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(25);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(49);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   const opponentLife = scene.currentBattle.enemyParty[0].hp;
-//   //   const playerLife = scene.party[0].hp;
-//   //   await game.doAttack(Moves.TACKLE);
-//   //   expect(scene.currentBattle.enemyParty[0].hp).not.toBe(opponentLife);
-//   //   expect(scene.party[0].hp).not.toBe(playerLife);
-//   // }, 10000);
-//
-//   // it('test attack no OHKO on double', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MAGIKARP);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(25);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(49);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TACKLE]);
-//   //   vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   const opponentLife = scene.currentBattle.enemyParty[0].hp;
-//   //   const opponentLife2 = scene.currentBattle.enemyParty[1].hp;
-//   //   await game.doAttackDouble(Moves.TACKLE, Moves.TACKLE);
-//   //   expect(scene.currentBattle.enemyParty[0].hp).not.toBe(opponentLife);
-//   //   expect(scene.currentBattle.enemyParty[1].hp).toBe(opponentLife2);
-//   // }, 10000);
-//
-//   // it('test message mode wrapper', async() => {
-//   //   vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
-//   //   vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
-//   //   vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(200);
-//   //   vi.spyOn(overrides, 'STARTING_WAVE_OVERRIDE', 'get').mockReturnValue(30);
-//   //   vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.SAND_ATTACK]);
-//   //   vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-//   //   await game.newGame(scene, GameModes.CLASSIC);
-//   //   expect(scene.ui.getMode()).toBe(Mode.COMMAND);
-//   //   await game.doAttackDouble(Moves.SAND_ATTACK, Moves.SAND_ATTACK);
-//   //   expect(scene.currentBattle.double).toBe(true);
-//   // }, 10000);
-//
-//   // it('test phase interceptor', async() => {
-//   //   expect(phaseInterceptor.log.length).toEqual(2);
-//   // }, 10000);
-// });
 
 
-describe("Battle Phase interceptor", () => {
+describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -335,7 +163,7 @@ describe("Battle Phase interceptor", () => {
     game = new GameManager(phaserGame);
   })
 
-  it.skip('test phase interceptor with remove', async() => {
+  it('test phase interceptor with remove', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       await game.phaseInterceptor.run(LoginPhase, () => {
@@ -351,7 +179,7 @@ describe("Battle Phase interceptor", () => {
       expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
   }, 100000);
 
-  it.skip('test phase interceptor with prompt', async() => {
+  it('test phase interceptor with prompt', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
@@ -369,7 +197,7 @@ describe("Battle Phase interceptor", () => {
       expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 100000);
 
-  it.skip('test phase interceptor with prompt with preparation for a future prompt', async() => {
+  it('test phase interceptor with prompt with preparation for a future prompt', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
@@ -391,13 +219,13 @@ describe("Battle Phase interceptor", () => {
       expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 100000);
 
-  it.skip('newGame one-liner', async() => {
+  it('newGame one-liner', async() => {
       await game.startBattle();
       expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000)
 
-  it.skip('do attack wave 3 - single battle - regular - OHKO', async() => {
+  it('do attack wave 3 - single battle - regular - OHKO', async() => {
       vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
       vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
       vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(2000);
@@ -435,7 +263,7 @@ describe("Battle Phase interceptor", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
   }, 100000);
 
-  it.skip('do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack', async() => {
+  it('do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack', async() => {
       vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
       vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
       vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(5);
@@ -481,7 +309,7 @@ describe("Battle Phase interceptor", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000);
 
-  it.skip('load 100% data file', async() => {
+  it('load 100% data file', async() => {
       await game.importData(GameDataType.SYSTEM, 'src/test/data/everything.prsv');
       const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
         const species = game.scene.gameData.dexData[key];
@@ -490,7 +318,7 @@ describe("Battle Phase interceptor", () => {
       expect(caughtCount).toBe(Object.keys(allSpecies).length);
   }, 50000);
 
-  it.skip('start battle with selected team', async() => {
+  it('start battle with selected team', async() => {
       await game.startBattle([
         Species.CHARIZARD,
         Species.CHANSEY,
@@ -515,7 +343,7 @@ describe("Battle Phase interceptor", () => {
       expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEWTWO);
   }, 50000);
 
-  it.skip('QUICK_FEET', async() => {
+  it('QUICK_FEET', async() => {
       vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
       vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MIGHTYENA);
       vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.QUICK_FEET);
