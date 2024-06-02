@@ -1486,16 +1486,18 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
  * "If Knock Off causes a Pokémon with the Sticky Hold Ability to faint, it can now remove that Pokémon's held item."
  */
 export class RemoveHeldItemAttr extends MoveEffectAttr {
+
+  /** Optional restriction for item pool to berries only i.e. Differentiating Incinerate and Knock Off */
   private berriesOnly: boolean; 
 
-  constructor(berriesOnly: boolean) { // Optional restriction for item pool to berries only i.e. Differentiating Incinerate and Knock Off
+  constructor(berriesOnly: boolean) { 
     super(false, MoveEffectTrigger.HIT);
     this.berriesOnly = berriesOnly;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean { 
 
-      if (!this.berriesOnly && target.isPlayer()) { // Wild Pokemon cannot knock off Player Pokemon's held items.
+      if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
         return true;
       }
       
@@ -1506,8 +1508,10 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
         return false;
 
       // Considers entire transferrable item pool by default (Knock Off). Otherwise berries only if specified (Incinerate).
-      const heldItems = this.berriesOnly ? target.scene.findModifiers(m => m instanceof BerryModifier
-        && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[] : this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
+      let heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
+      if (this.berriesOnly) {
+        heldItems = heldItems.filter(m => m instanceof BerryModifier && (m as BerryModifier).pokemonId === target.id, target.isPlayer());
+      }
 
       if (heldItems.length) {
         const removedItem = heldItems[user.randSeedInt(heldItems.length)];
