@@ -407,6 +407,7 @@ export function verifyLang(lang?: string): boolean {
   case "zh_CN":
   case "zh_TW":
   case "pt_BR":
+  case "ko":
     return true;
   default:
     return false;
@@ -422,3 +423,49 @@ export function printContainerList(container: Phaser.GameObjects.Container): voi
     return {type: go.type, name: go.name};
   }));
 }
+
+
+/**
+ * Truncate a string to a specified maximum length and add an ellipsis if it exceeds that length.
+ *
+ * @param str - The string to be truncated.
+ * @param maxLength - The maximum length of the truncated string, defaults to 10.
+ * @returns The truncated string with an ellipsis if it was longer than maxLength.
+ */
+export function truncateString(str: String, maxLength: number = 10) {
+  // Check if the string length exceeds the maximum length
+  if (str.length > maxLength) {
+    // Truncate the string and add an ellipsis
+    return str.slice(0, maxLength - 3) + "..."; // Subtract 3 to accommodate the ellipsis
+  }
+  // Return the original string if it does not exceed the maximum length
+  return str;
+}
+
+/**
+ * Perform a deep copy of an object.
+ *
+ * @param values - The object to be deep copied.
+ * @returns A new object that is a deep copy of the input.
+ */
+export function deepCopy(values: object): object {
+  // Convert the object to a JSON string and parse it back to an object to perform a deep copy
+  return JSON.parse(JSON.stringify(values));
+}
+
+/**
+ * Convert a space-separated string into a capitalized and underscored string.
+ *
+ * @param input - The string to be converted.
+ * @returns The converted string with words capitalized and separated by underscores.
+ */
+export function reverseValueToKeySetting(input) {
+  // Split the input string into an array of words
+  const words = input.split(" ");
+  // Capitalize the first letter of each word and convert the rest to lowercase
+  const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+  // Join the capitalized words with underscores and return the result
+  return capitalizedWords.join("_");
+}
+
+
