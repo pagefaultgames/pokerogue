@@ -1273,7 +1273,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the shiny variant
    */
   generateVariant(): Variant {
-    if (!this.shiny || !variantData.hasOwnProperty(this.species.speciesId)) {
+    if (!this.shiny) {
       return 0;
     }
     const rand = Utils.randSeedInt(10);
