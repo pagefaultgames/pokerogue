@@ -20388,7 +20388,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CHEERLY]:
   [
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.BABY_DOLL_EYES ],
     [ 1, Moves.LUCKY_CHANT ],
     [ 5, Moves.SING ],
@@ -20410,7 +20410,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [
     [ 1, Moves.HEALING_WISH ],
     [ 1, Moves.BATON_PASS ],
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.BABY_DOLL_EYES ],
     [ 1, Moves.LUCKY_CHANT ],
     [ 5, Moves.SING ],
@@ -20432,7 +20432,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.MENNOPAWS]:
   [
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.LEER ],
     [ 1, Moves.SWAGGER ],
     [ 5, Moves.HOWL ],
@@ -22264,7 +22264,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.DEMIWAIFU]:
   [
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.FAIRY_LOCK ],
     [ 1, Moves.CAPTIVATE ],
     [ 1, Moves.MEAN_LOOK ],
@@ -22639,7 +22639,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.HORN_ATTACK ],
     [ 1, Moves.BABY_DOLL_EYES ],
     [ 6, Moves.ICE_BALL ],
-    [ 10, Moves.DISARMER_CRY ],
+    [ 10, Moves.DISARMING_VOICE ],
     [ 15, Moves.ICE_SHARD ],
     [ 19, Moves.HEADBUTT ],
     [ 22, Moves.MACH_PUNCH ],
@@ -22905,7 +22905,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.ECHOED_VOICE ],
     [ 1, Moves.GROWL ],
     [ 5, Moves.SING ],
-    [ 9, Moves.DISARMER_CRY ],
+    [ 9, Moves.DISARMING_VOICE ],
     [ 13, Moves.DRAINING_KISS ],
     [ 16, Moves.SCREECH ],
     [ 20, Moves.ENCORE ],
@@ -22927,7 +22927,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.ECHOED_VOICE ],
     [ 1, Moves.GROWL ],
     [ 5, Moves.SING ],
-    [ 9, Moves.DISARMER_CRY ],
+    [ 9, Moves.DISARMING_VOICE ],
     [ 13, Moves.DRAINING_KISS ],
     [ 16, Moves.SCREECH ],
     [ 20, Moves.ENCORE ],
@@ -22952,7 +22952,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.ECHOED_VOICE ],
     [ 1, Moves.GROWL ],
     [ 5, Moves.SING ],
-    [ 9, Moves.DISARMER_CRY ],
+    [ 9, Moves.DISARMING_VOICE ],
     [ 13, Moves.DRAINING_KISS ],
     [ 16, Moves.SCREECH ],
     [ 20, Moves.ENCORE ],
@@ -23984,7 +23984,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.LEER ],
     [ 6, Moves.FURY_CUTTER ],
     [ 10, Moves.CUT ],
-    [ 14, Moves.DISARMER_CRY ],
+    [ 14, Moves.DISARMING_VOICE ],
     [ 18, Moves.FOCUS_ENERGY ],
     [ 20, Moves.SUDOKU ],
     [ 23, Moves.FALSE_SWIPE ],
@@ -24631,7 +24631,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.OREON]:
   [
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.SNARL ],
     [ 1, Moves.TAIL_WHIP ],
     [ 1, Moves.HELPING_HAND ],
@@ -25450,7 +25450,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.GANGNOME]:
   [
     [ 1, Moves.REFLECT_TYPE ],
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.ECHOED_VOICE ],
     [ 1, Moves.SUPERSONIC ],
     [ 1, Moves.GROWL ],
@@ -26397,7 +26397,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.NUTJOBBER]:
   [
     [ 1, Moves.ASTONISH ],
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.UPROAR ],
     [ 1, Moves.SUPERSONIC ],
     [ 4, Moves.SNARL ],
@@ -26426,7 +26426,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [
     [ 1, Moves.AURA_SPHERE ],
     [ 1, Moves.ASTONISH ],
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.UPROAR ],
     [ 1, Moves.SUPERSONIC ],
     [ 4, Moves.SNARL ],
@@ -26457,7 +26457,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.POUND ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.HELPING_HAND ],
-    [ 4, Moves.DISARMER_CRY ],
+    [ 4, Moves.DISARMING_VOICE ],
     [ 7, Moves.WATER_SPORT ],
     [ 10, Moves.MUD_SLAP ],
     [ 14, Moves.BITE ],
@@ -26480,7 +26480,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.POUND ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.HELPING_HAND ],
-    [ 4, Moves.DISARMER_CRY ],
+    [ 4, Moves.DISARMING_VOICE ],
     [ 7, Moves.WATER_SPORT ],
     [ 10, Moves.MUD_SLAP ],
     [ 14, Moves.BITE ],
@@ -27002,7 +27002,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SING ],
     [ 6, Moves.ROCK_THROW ],
     [ 9, Moves.PURSUIT ],
-    [ 13, Moves.DISARMER_CRY ],
+    [ 13, Moves.DISARMING_VOICE ],
     [ 15, Moves.SUPERSONIC ],
     [ 18, Moves.HYPER_VOICE ],
     [ 22, Moves.ROCK_BLAST ],
@@ -27027,7 +27027,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SING ],
     [ 7, Moves.ROCK_THROW ],
     [ 10, Moves.PURSUIT ],
-    [ 15, Moves.DISARMER_CRY ],
+    [ 15, Moves.DISARMING_VOICE ],
     [ 17, Moves.SUPERSONIC ],
     [ 20, Moves.HYPER_VOICE ],
     [ 24, Moves.ROCK_BLAST ],
@@ -27587,7 +27587,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.ROLANGO]:
   [
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.TWISTER ],
     [ 1, Moves.CHARM ],
     [ 1, Moves.DEFENSE_CURL ],
@@ -27614,7 +27614,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [
     [ 1, Moves.SPEED_SWAP ],
     [ 1, Moves.SPIKES ],
-    [ 1, Moves.DISARMER_CRY ],
+    [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.TWISTER ],
     [ 1, Moves.CHARM ],
     [ 1, Moves.DEFENSE_CURL ],

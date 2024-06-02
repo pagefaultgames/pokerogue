@@ -3808,5 +3808,257 @@ export const move: MoveTranslationEntries = {
   "malignantChain": {
     name: "Malignant Chain",
     effect: "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned."
-  }
+  },
+  "fruitPunch": {
+    name: "Fruit Punch",
+    effect: "An effeminate punch that may also lower the foe's Defense."
+  },
+  "soulShacke": {
+    name: "Soul Shackle",
+    effect: "The user attacks, stitching the foe's soul to the ground to prevent escape."
+  },
+  "lickClean": {
+    name: "Lick Clean",
+    effect: "Licks the foe clean of its stat boosts, recovering HP based on the amount."
+  },
+  "spookOut": {
+    name: "Spook Out",
+    effect: "Scares the target stiff. Only works on the first turn."
+  },
+  "elbowDrop": {
+    name: "Elbow Drop",
+    effect: "A legendary finishing move developed through years of dedication."
+  },
+  "lactoseShot": {
+    name: "Lactose Shot",
+    effect: "Milk is pumped at the foe. Sharply reduces the user's Sp. Atk."
+  },
+  "overbite": {
+    name: "Overbite",
+    effect: "Using its massive overbite, the user chomps on the foe, also hurting itself."
+  },
+  "trigger": {
+    name: "TRIGGER",
+    effect: "This psychic attack gets stronger if used in succession."
+  },
+  "shitpost": {
+    name: "Shitpost",
+    effect: "The user spreads idiocy for two to three turns, then becomes confused."
+  },
+  "swindle": {
+    name: "Swindle",
+    effect: "Greedily coerces the foe into giving their held item using mind tricks."
+  },
+  "thinkFast": {
+    name: "Think Fast",
+    effect: "The user quickly thinks up a weak psychic attack."
+  },
+  "speedWeed": {
+    name: "Speed Weed",
+    effect: "A blindingly speedy Grass-type attack. The user will always go first."
+  },
+  "toke": {
+    name: "Toke",
+    effect: "Sharply raises offensive stats and Speed, but lowers defenses."
+  },
+  "meme": {
+    name: "Meme",
+    effect: "The user memes at the target. May raise all stats."
+  },
+  "dailyDose": {
+    name: "Daily Dose",
+    effect: "Supplements the foe with a pill. Can cause three different statuses."
+  },
+  "futubaBreak": {
+    name: "Futuba Break",
+    effect: "Sharp clover leaves assault the target. Also breaks barriers like Reflect."
+  },
+  "weirdFlex": {
+    name: "Weird Flex",
+    effect: "The user displays a weird flex, resulting in multiple effects."
+  },
+  "owTheEdge": {
+    name: "Ow The Edge",
+    effect: "The user teleports behind the target and slices, cutting itself as well."
+  },
+  "comeNGo": {
+    name: "Come N Go",
+    effect: "Blasts the target with a sticky liquid 2-5 times."
+  },
+  "warhead": {
+    name: "Warhead",
+    effect: "Using its warhead, the user orders a strike on the foe, dealing big damage."
+  },
+  "holyDuty": {
+    name: "Holy Duty",
+    effect: "The user faints by exploding in a fiery blaze, dealing massive damage."
+  },
+  "enema": {
+    name: "Enema",
+    effect: "User drills a plant- like tendril into the foe. Heals half the damage dealt."
+  },
+  "riotShield": {
+    name: "Riot Shield",
+    effect: "The user attacks while shielding itself and sets up a Safeguard."
+  },
+  "falconPunch": {
+    name: "Falcon Punch",
+    effect: "A powerful bird's punch that may also inflict the foe with a Burn."
+  },
+  "scorchEarth": {
+    name: "Scorch Earth",
+    effect: "Scorch the earth, also inflict the foe with a Burn."
+  },
+  "quickSand": {
+    name: "Quick Sand",
+    effect: "The user quickly digs up clumpy sand at the foe."
+  },
+  "plunder": {
+    name: "Plunder",
+    effect: "The user bashes and slashes the foe, also stealing its held item."
+  },
+  "greatRage": {
+    name: "Great Rage",
+    effect: "The user yells out in frustration, influencing nature itself to attack."
+  },
+  "anAttack": {
+    name: "An Attack",
+    effect: "This is an attack. It does damage."
+  },
+  "overenergize": {
+    name: "Overenergize",
+    effect: "Overcharges the foe with electricity. This harshly lowers the user's Sp. Atk."
+  },
+  "spooperpower": {
+    name: "Spooperpower",
+    effect: "This move inflicts damage based on the user's highest attacking stat."
+  },
+  "erosionWave": {
+    name: "Erosion Wave",
+    effect: "Pummels the foe with a dust storm. May also lower the foe's Sp. Def."
+  },
+  "spaceFury": {
+    name: "Space Fury",
+    effect: "The user unleashes a barrage of hits that ignore the foe's protection."
+  },
+  "fizzbitch": {
+    name: "Fizzbitch",
+    effect: "A move so bizarre, it's named after what people say after seeing it."
+  },
+  "sudoku": {
+    name: "Sudoku",
+    effect: "Honorable sudoku"
+  },
+  "pixiePummel": {
+    name: "Pixie Pummel",
+    effect: "Pummels the foe with the power of mythical proportions."
+  },
+  "slimeGulp": {
+    name: "Slime Gulp",
+    effect: "If the user moves last, this attack will suppress the foe's ability."
+  },
+  "sleazyWeb": {
+    name: "Sleazy Web",
+    effect: "The user weaves sleazy spores around the opposing team, which lowers their Speed stat upon switching into battle."
+  },
+  "punchOut": {
+    name: "Punch Out",
+    effect: "The user punches out for the day, returning to its Trainer."
+  },
+  "thousandFolds": {
+    name: "Thousand Folds",
+    effect: "A folded blade that tears through protection and hits Steel neutrally."
+  },
+  "chaosDunk": {
+    name: "Chaos Dunk",
+    effect: "The user grabs the target and slam- dunks it into the ground."
+  },
+  "geistBeam": {
+    name: "Gheist Beam",
+    effect: "The user emits a sinister ray which ignores the target's ability."
+  },
+  "stratoBlade": {
+    name: "Strato Blade",
+    effect: "Slashes the target with a steel blade. High critical-hit ratio."
+  },
+  "banHammer": {
+    name: "Ban Hammer",
+    effect: "The user exacts its arbitrary sense of justice. Taunts and Torments foe."
+  },
+  "mop": {
+    name: "Mop",
+    effect: "The user cleans up the hazards on its side for free."
+  },
+  "cliffBlades": {
+    name: "Cliff Blades",
+    effect: "The user attacks the foe using the power of land in blades of stone."
+  },
+  "checkem": {
+    name: "Checkem",
+    effect: "A multi-hit move with damage based on the highest attacking stat."
+  },
+  "toxiravage": {
+    name: "Toxiravage",
+    effect: "Sharp, toxic spikes impale the target. Always hits first."
+  },
+  "boltbeam": {
+    name: "Boltbeam",
+    effect: "Hits two times. Type is Electric on the first hit, Ice on the second."
+  },
+  "superSnore": {
+    name: "Super Snore",
+    effect: "The user snores like a train horn. Can only be used when sleeping."
+  },
+  "blobbyBop": {
+    name: "Blobby Bop",
+    effect: "Blobbos bounces on the foe with an unavoidable icy power."
+  },
+  "forYou": {
+    name: "For You",
+    effect: "An extremely painful attack that also lowers the target's Defense."
+  },
+  "dildoCannon": {
+    name: "Dildo Cannon",
+    effect: "The user launches dragon dildos at the target. Hits 2-5 times."
+  },
+  "decayDrain": {
+    name: "Decay Drain",
+    effect: "Poison saps the target's energy. Heals half of the damage dealt."
+  },
+  "regenerate": {
+    name: "Regenerate",
+    effect: "Green clovers restore HP and cures status."
+  },
+  "dragonFist": {
+    name: "Dragon Fist",
+    effect: "A strong dragon's fist is used to punch the target. May also paralyze."
+  },
+  "pukeBlood": {
+    name: "Puke Blood",
+    effect: "User hurls blood at the foe. This also hurts the user a little."
+  },
+  "sunsteelRam": {
+    name: "Sunsteel ram",
+    effect: "Slams into the foe with the force of a meteor. Ignores abilities."
+  },
+  "gayAgenda": {
+    name: "Gay Agenda",
+    effect: "Coerces the foe to fall for the same gender using mind control."
+  },
+  "inverseRoom": {
+    name: "Inverse Room",
+    effect: "Creates a bizarre area where type matchups swap for five turns."
+  },
+  "homerunBat": {
+    name: "Homerun Bat",
+    effect: "Takes aim and hits the foe with a home run, forcing them to switch."
+  },
+  "focusMunch": {
+    name: "Focus Munch",
+    effect: "Heals and raises accuracy, but only if the user can focus."
+  },
+  "spaceHole": {
+    name: "Space Hole",
+    effect: "Using a hyperspace hole, the user strikes the target, ignoring protection."
+  },
 } as const;

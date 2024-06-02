@@ -7744,6 +7744,158 @@ export function initMoves() {
       //TODO: Should also apply when target move priority increased by ability ex. gale wings
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
-      .attr(StatusEffectAttr, StatusEffect.TOXIC)
+      .attr(StatusEffectAttr, StatusEffect.TOXIC),
+    new AttackMove(Moves.FRUIT_PUNCH, Type.FAIRY, MoveCategory.PHYSICAL, 75, 100, 15, 20, 0, 20)
+      .attr(StatChangeAttr, BattleStat.DEF, 1)
+      .punchingMove(),
+    new AttackMove(Moves.SOUL_SHACKLE, Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 100)
+      .attr(AddBattlerTagAttr, BattlerTagType.GROUNDED),
+    new AttackMove(Moves.LICK_CLEAN, Type.WATER, MoveCategory.PHYSICAL, 50, 100, 10, 100, 0, 10)
+      .attr(HitHealAttr)
+      .attr(ResetStatsAttr)
+      .triageMove(),
+    new AttackMove(Moves.SPOOK_OUT, Type.GHOST, MoveCategory.PHYSICAL, 60, 100, 20, 100, 0, 10)
+      .attr(FlinchAttr)
+      .condition(new FirstMoveCondition()),
+    new AttackMove(Moves.ELBOW_DROP, Type.GHOST, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 10),
+    new AttackMove(Moves.LACTOSE_SHOT, Type.FAIRY, MoveCategory.SPECIAL, 130, 90, 5, -1, 0, 10)
+      .attr(StatChangeAttr, BattleStat.ATK, -2, true),
+    new AttackMove(Moves.OVERBITE, Type.DARK, MoveCategory.PHYSICAL, 150, 100, 5, -1, 0, 10)
+      .attr(RecoilAttr, true, 0.33).bitingMove(),
+    new AttackMove(Moves.TRIGGER, Type.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 15, -1, 0, 10)
+      .attr(ConsecutiveUseDoublePowerAttr, 5, true),
+    new AttackMove(Moves.SHITPOST, Type.GROUND, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 10)
+      .attr(FrenzyAttr)
+      .attr(MissEffectAttr, frenzyMissFunc)
+      .target(MoveTarget.RANDOM_NEAR_ENEMY),
+    new AttackMove(Moves.SWINDLE, Type.DARK, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 10)
+      .attr(StealHeldItemChanceAttr, 1),
+    new AttackMove(Moves.SPEED_WEED, Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 10),
+    new SelfStatusMove(Moves.TOKE, Type.FIRE, -1, 15, -1, 0, 10)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 2, true)
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
+    new SelfStatusMove(Moves.MEME, Type.UNKNOWN, 20, 5, 100, 0, 10)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true),
+    new AttackMove(Moves.DAILY_DOSE, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 1)
+      .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.PARALYSIS])
+      .makesContact(false),
+    new AttackMove(Moves.FUTABA_BREAK, Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 10)
+      .attr(RemoveScreensAttr),
+    new SelfStatusMove(Moves.WEIRD_FLEX, Type.FIGHTING, 100, -1, -1, 0, 10)
+      .attr(StatChangeAttr, [ BattleStat.ATK], 1, true, () => Math.random() < 0.2)
+      .attr(StatChangeAttr, [ BattleStat.DEF], 1, true, () => Math.random() < 0.2)
+      .attr(StatChangeAttr, [ BattleStat.SPDEF], 1, true, () => Math.random() < 0.2)
+      .attr(StatChangeAttr, [ BattleStat.SPD], 1, true, () => Math.random() < 0.20)
+      .attr(StatChangeAttr, [ BattleStat.SPATK], 1, true, () => Math.random() < 0.2)
+      .attr(StatChangeAttr, [ BattleStat.EVA], 1, true, () => Math.random() < 0.2)
+      .attr(StatChangeAttr, [ BattleStat.ACC], 1, true, () => Math.random() < 0.2)
+      .attr(StatChangeAttr, [ BattleStat.RAND], 1, true, () => Math.random() < 0.2),
+    new AttackMove(Moves.OW_THE_EDGE, Type.DARK, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 10)
+      .attr(RecoilAttr, true, 0.33).swordMove(),
+    new AttackMove(Moves.COME_N_GO, Type.WATER, MoveCategory.SPECIAL, 30, 100, 15, -1, 0, 10)
+      .attr(MultiHitAttr, MultiHitType._2_TO_5),
+    new AttackMove(Moves.WARHEAD, Type.STEEL, MoveCategory.SPECIAL, 110, 80, 5, 100, 0, 10),
+    new AttackMove(Moves.HOLY_DUTY, Type.FIRE, MoveCategory.SPECIAL, 250, 100, 5, -1, 0, 10)
+      .condition(failIfDampCondition)
+      .attr(SacrificialAttr)
+      .makesContact(false)
+      .target(MoveTarget.ALL_NEAR_OTHERS),
+    new AttackMove(Moves.ENEMA, Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 10)
+      .attr(HitHealAttr)
+      .triageMove(),
+    new AttackMove(Moves.ENEMA, Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 10)
+      .attr(HitHealAttr)
+      .triageMove(),
+    new AttackMove(Moves.RIOT_SHIELD, Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 10)
+      .attr(StatChangeAttr, BattleStat.DEF, 1, true),
+    new AttackMove(Moves.FALCON_PUNCH, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 10, 15, 0, 10)
+      .attr(StatusEffectAttr, StatusEffect.BURN).punchingMove(),
+    new AttackMove(Moves.SCORCH_EARTH, Type.FIRE, MoveCategory.SPECIAL, 20, 100, 15, 100, 0, 10)
+      .attr(StatusEffectAttr, StatusEffect.BURN),
+    new AttackMove(Moves.THINK_FAST, Type.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 30, -1, 1, 10),
+    new AttackMove(Moves.QUICK_SAND, Type.GROUND, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 10),
+    new AttackMove(Moves.PLUNDER, Type.WATER, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 10)
+      .attr(StealHeldItemChanceAttr, 1),
+    new AttackMove(Moves.WOW_WIENER, Type.FIRE, MoveCategory.SPECIAL, 30, 100, 15, -1, 0, 10)
+      .attr(MultiHitAttr, MultiHitType._2_TO_5),
+    new AttackMove(Moves.GREAT_RAGE, Type.GRASS, MoveCategory.PHYSICAL, 140, 90, 10, -1, 0, 10),
+    new AttackMove(Moves.AN_ATTACK, Type.UNKNOWN, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 10),
+    new AttackMove(Moves.FIRE_BOMB, Type.FIRE, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 10),
+    new AttackMove(Moves.SPOOPERPOWER, Type.GHOST, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 10)
+      .partial(),
+    new AttackMove(Moves.OVERENERGIZE, Type.ELECTRIC, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 10)
+      .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
+    new AttackMove(Moves.EROSION_WAVE, Type.ROCK, MoveCategory.SPECIAL, 95, 100, 10, 20, 0, 10)
+      .attr(StatChangeAttr, BattleStat.SPDEF, -1),
+    new AttackMove(Moves.SPACE_FURY, Type.DARK, MoveCategory.PHYSICAL, 100, -1, 5, -1, 0, 10)
+      .attr(RemoveScreensAttr),
+    new AttackMove(Moves.FIZZBITCH, Type.GRASS, MoveCategory.SPECIAL, 110, 80, 5, -1, 0, 10),
+    new AttackMove(Moves.PIXIE_PUMMEL, Type.FAIRY, MoveCategory.PHYSICAL, 120, 80, 5, -1, 0, 10),
+    new SelfStatusMove(Moves.SUDOKU, Type.NORMAL, 100, 5, -1, 6, 10)
+      .attr(SacrificialAttr).swordMove(),
+    new AttackMove(Moves.SLIME_GULP, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 10)
+      .partial(),
+    new StatusMove(Moves.SLEAZY_SPORE, Type.GRASS, -1, 20, -1, 0, 6)
+      .attr(AddArenaTrapTagAttr, ArenaTagType.STICKY_WEB)
+      .target(MoveTarget.ENEMY_SIDE),
+    new AttackMove(Moves.PUNCH_OUT, Type.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 10)
+      .attr(ForceSwitchOutAttr, true, false).punchingMove(),
+    new AttackMove(Moves.THOUSAND_FOLDS, Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 10)
+      .attr(RemoveScreensAttr).swordMove(),
+    new AttackMove(Moves.CHAOS_DUNK, Type.ROCK, MoveCategory.PHYSICAL, 110, 100, 5, -1, 0, 10),
+    new AttackMove(Moves.GEIST_BEAM, Type.GHOST, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 10)
+      .ignoresAbilities()
+      .partial(),
+    new AttackMove(Moves.STRATO_BLADE, Type.FLYING, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 10)
+      .attr(HighCritAttr).swordMove(),
+    new AttackMove(Moves.BAN_HAMMER, Type.NORMAL, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 10),
+    new SelfStatusMove(Moves.MOP, Type.FAIRY, 100, 10, -1, 6, 10,)
+      .attr(RemoveArenaTagsAttr, [ ArenaTagType.GRAVITY, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.TOXIC_SPIKES, ArenaTagType.DOOM_DESIRE ], true)
+      .makesContact(false)
+      .ignoresProtect(),
+    new AttackMove(Moves.CLIFF_BLADES, Type.GROUND, MoveCategory.PHYSICAL, 120, 85, 10, -1, 0, 10),
+    new AttackMove(Moves.CHECKEM, Type.PSYCHIC, MoveCategory.SPECIAL, 25, 100, 15, -1, 0, 10)
+      .attr(MultiHitAttr, MultiHitType._10).partial(),
+    new AttackMove(Moves.TOXIRAVAGE, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 10, -1, 1, 10),
+    new AttackMove(Moves.BOLTBEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 55, 100, 15, -1, 0, 10)
+      .attr(MultiHitAttr, MultiHitType._2).partial(),
+    new AttackMove(Moves.SUPER_SNORE, Type.ICE, MoveCategory.PHYSICAL, 250, 100, 100, -1, 0, 10)
+      .attr(BypassSleepAttr)
+      .condition(userSleptOrComatoseCondition)
+      .soundBased(),
+    new AttackMove(Moves.BLOBBY_BOP, Type.NORMAL, MoveCategory.PHYSICAL, 70, -1, 15, -1, 0, 10),
+    new AttackMove(Moves.FOR_YOU, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 90, 15, -1, 0, 10)
+      .attr(StatChangeAttr, BattleStat.DEF, -1),
+    new AttackMove(Moves.DILDO_CANNON, Type.DRAGON, MoveCategory.PHYSICAL, 25, 100, 10, -1, 0, 10)
+      .attr(MultiHitAttr, MultiHitType._2_TO_5),
+    new AttackMove(Moves.DECAY_DRAIN, Type.POISON, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 10)
+      .attr(HitHealAttr)
+      .triageMove(),
+    new SelfStatusMove(Moves.REGENERATE, Type.GRASS, -1, 5, -1, 0, 1)
+      .attr(HealAttr, 0.5)
+      .attr(PartyStatusCureAttr, "Green clovers restore HP and cures status.", Abilities.NONE)
+      .triageMove()
+      .target(MoveTarget.USER),
+    new AttackMove(Moves.DRAGON_FIST, Type.DRAGON, MoveCategory.PHYSICAL, 90, 100, 15, 10, 0, 10)
+      .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
+      .punchingMove(),
+    new SelfStatusMove(Moves.HULK_UP, Type.FIGHTING, -1, 20, -1, 0, 10)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1, true)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1, true, (p) => p.hp < p.getMaxHp()/2 ),
+    new AttackMove(Moves.PUKE_BLOOD, Type.BUG, MoveCategory.SPECIAL, 130, 95, 5, -1, 0, 10)
+      .attr(RecoilAttr, true, 0.1),
+    new AttackMove(Moves.SUNSTEEL_RAM, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 10)
+      .ignoresAbilities(),
+    new StatusMove(Moves.GAY_AGENDA, Type.FAIRY, 100, 15, -1, 0, 10)
+      .attr(AddBattlerTagAttr, BattlerTagType.INFATUATED)
+      .condition((user, target, move) => !user.isOppositeGender(target)),
+    new StatusMove(Moves.INVERSE_ROOM, Type.PSYCHIC, -1, 5, -1, 0, 10).unimplemented(),
+    new AttackMove(Moves.HOMERUN_BAT, Type.DRAGON, MoveCategory.PHYSICAL, 90, 90, 10, -1, -6, 10)
+      .attr(ForceSwitchOutAttr),
+    new SelfStatusMove(Moves.FOCUS_MUNCH, Type.FIGHTING, -1, 5, -1, 0, 10)
+      .attr(HealAttr, 0.5)
+      .attr(StatChangeAttr, BattleStat.ACC, 1, true),
+    new AttackMove(Moves.SPACE_HOLE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, -1, 5, -1, 0, 10)
+      .attr(RemoveScreensAttr),
   );
 }

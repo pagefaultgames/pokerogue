@@ -4540,6 +4540,6 @@ export function initAbilities() {
     new Ability(Abilities.GHOST_NOTE, 10)
       .attr(MoveTypeChangeAttr, Type.GHOST, 1.0, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED)),
     new Ability(Abilities.JIHAD, 10)
-      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => move.id === Moves.EXPLOSION || move.id === Moves.SELF_DESTRUCT, 10),
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => move.id === Moves.EXPLOSION || move.id===Moves.HOLY_DUTY || move.id === Moves.SELF_DESTRUCT, 10),
   );
 }

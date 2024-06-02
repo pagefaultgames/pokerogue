@@ -1873,7 +1873,6 @@ export enum Moves {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malignant_Chain_(move) | Source} */
   MALIGNANT_CHAIN,
   FRUIT_PUNCH,
-  DISARMER_CRY,
   SOUL_SHACKLE,
   LICK_CLEAN,
   SPOOK_OUT,
