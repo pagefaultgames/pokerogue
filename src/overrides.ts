@@ -90,7 +90,7 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  */
 
 export const MYSTERY_ENCOUNTER_RATE: number = 100; // 0 to 100
-export const MYSTERY_ENCOUNTER_OVERRIDE: number = -1;
+export const MYSTERY_ENCOUNTER_OVERRIDE: number = 0;
 
 /**
  * MODIFIER / ITEM OVERRIDES

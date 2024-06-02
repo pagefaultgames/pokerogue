@@ -100,7 +100,7 @@ function internalMeetsRequirements(scene: BattleScene, requirements: EncounterRe
   }
 
   // Party Pokemon inside required level range
-  if (!isNullOrUndefined(requirements.requiredPokemonLevelRange) && requirements.requiredPokemonLevelRange[0] <= requirements.requiredPokemonLevelRange[1]) {
+  if (!isNullOrUndefined(requirements?.requiredPokemonLevelRange) && requirements.requiredPokemonLevelRange[0] <= requirements.requiredPokemonLevelRange[1]) {
     const pokemonInRange = partyPokemon?.filter((pokemon) => pokemon.level >= requirements.requiredPokemonLevelRange[0] && pokemon.level <= requirements.requiredPokemonLevelRange[1]);
     if (pokemonInRange.length === 0) {
       return false;

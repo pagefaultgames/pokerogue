@@ -998,7 +998,7 @@ export default class BattleScene extends SceneBase {
       this.currentBattle.double = false;
 
       // Generate a mystery encounter
-      const encounter = mysteryEncounter?.encounter ? allMysteryEncounters[mysteryEncounter.encounter.encounterIndex] : this.generateMysteryEncounter();
+      const encounter = mysteryEncounter?.encounter?.encounterIndex >= 0 ? allMysteryEncounters[mysteryEncounter.encounter.encounterIndex] : this.generateMysteryEncounter();
       this.currentBattle.mysteryEncounter = encounter;
 
       // Add intro visuals for mystery encounter
