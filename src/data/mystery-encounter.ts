@@ -4,11 +4,17 @@ import { Abilities } from "./enums/abilities";
 import { Biome } from "./enums/biome";
 import { WeatherType } from "./weather";
 import { isNullOrUndefined } from "../utils";
-import { ModifierRewardPhase, NewBattlePhase, NewBiomeEncounterPhase, NextEncounterPhase } from "../phases";
+import { ModifierRewardPhase, NewBattlePhase } from "../phases";
 import { modifierTypes } from "../modifier/modifier-type";
 import { TrainerType } from "./enums/trainer-type";
 import { generateNewEnemyParty, initBattleFromEncounter, showTrainerDialogue } from "../phases/mystery-encounter-phase";
 import MysteryEncounterIntro from "../field/mystery-encounter";
+
+export enum MysteryEncounterVariant {
+  DEFAULT,
+  TRAINER_BATTLE,
+  WILD_BATTLE
+}
 
 export enum MysteryEncounterType {
   MYSTERY_CHALLENGER,
@@ -132,6 +138,7 @@ export default abstract class MysteryEncounter {
   encounterRequirements: EncounterRequirements;
   introVisuals: MysteryEncounterIntro;
   doEncounterRewards: (scene: BattleScene) => boolean = null;
+  didBattle: boolean = true; // If no battle occurred during mysteryEncounter, flag should be set to false
 
   constructor(encounterType: MysteryEncounterType, index: number) {
     this.encounterType = encounterType;
@@ -234,17 +241,10 @@ export function initMysteryEncounters() {
         });
       })
       .option(async (scene) => {
-        // Skip to next wave
-        let nextEncounter = scene.findPhase(p => p instanceof NextEncounterPhase);
-        if (!nextEncounter) {
-          nextEncounter = scene.findPhase(p => p instanceof NewBiomeEncounterPhase);
-        }
-        if (!nextEncounter) {
-          nextEncounter = new NewBattlePhase(scene);
-        }
+        scene.currentBattle.mysteryEncounter.didBattle = false;
         scene.clearPhaseQueue();
         scene.clearPhaseQueueSplice();
-        scene.pushPhase(nextEncounter);
+        scene.pushPhase(new NewBattlePhase(scene));
         return true;
       }),
     new OptionSelectMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHEST, ++t)

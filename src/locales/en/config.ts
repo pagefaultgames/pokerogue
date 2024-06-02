@@ -24,6 +24,7 @@ import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
+import { mysteryEncounter } from "./mystery-encounter";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
@@ -73,10 +74,6 @@ export const enConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   weather: weather,
-  battleMessageUiHandler: battleMessageUiHandler,
-  berry: berry,
-  gameStatsUiHandler: gameStatsUiHandler,
   voucher: voucher,
-  weather: weather,
   mysteryEncounter: mysteryEncounter
 };

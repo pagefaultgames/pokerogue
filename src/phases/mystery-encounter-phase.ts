@@ -23,9 +23,10 @@ export class MysteryEncounterPostOptionSelectPhase extends Phase {
 
   start() {
     super.start();
-    removeMysteryEncounterIntroVisuals(this.scene);
-    this.onPostOptionSelect(this.scene).then(() => {
-      this.end();
+    removeMysteryEncounterIntroVisuals(this.scene).then(() => {
+      this.onPostOptionSelect(this.scene).then(() => {
+        this.end();
+      });
     });
   }
 
@@ -34,24 +35,30 @@ export class MysteryEncounterPostOptionSelectPhase extends Phase {
   }
 }
 
-export function removeMysteryEncounterIntroVisuals(scene: BattleScene) {
-  const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
-  if (introVisuals) {
-    // Hide
-    scene.tweens.add({
-      targets: introVisuals,
-      x: "+=16",
-      y: "-=16",
-      alpha: 0,
-      ease: "Sine.easeInOut",
-      duration: 750,
-      onComplete: () => {
-        introVisuals.setVisible(false);
-        introVisuals.destroy();
-        scene.field.remove(introVisuals);
-      }
-    });
-  }
+export function removeMysteryEncounterIntroVisuals(scene: BattleScene): Promise<boolean> {
+  return new Promise(resolve => {
+    const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
+    if (introVisuals) {
+      // Hide
+      scene.tweens.add({
+        targets: introVisuals,
+        x: "+=16",
+        y: "-=16",
+        alpha: 0,
+        ease: "Sine.easeInOut",
+        duration: 750,
+        onComplete: () => {
+          scene.field.remove(introVisuals);
+          introVisuals.setVisible(false);
+          introVisuals.destroy();
+          resolve(true);
+        }
+      });
+    } else {
+      resolve(true);
+    }
+  });
+
 }
 
 

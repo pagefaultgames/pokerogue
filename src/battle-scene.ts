@@ -1000,13 +1000,10 @@ export default class BattleScene extends SceneBase {
       const encounter = mysteryEncounter?.encounter ? allMysteryEncounters[mysteryEncounter.encounter.index] : this.generateMysteryEncounter();
       this.currentBattle.mysteryEncounter = encounter;
 
-      // Placeholder that generates a random trainer on the field for the encounter
+      // Add intro visuals to show mystery encounter
       const encounterIntroVisuals = new MysteryEncounterIntro(this, encounter, ["school_kid_f", "scientist_f", "ace_trainer_f"]);
       this.field.add(encounterIntroVisuals);
       encounter.introVisuals = encounterIntroVisuals;
-      //const trainerType = this.arena.randomTrainerType(newWaveIndex);
-      //newTrainer = !!trainerData ? trainerData.toTrainer(this) : new Trainer(this, trainerType, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
-      //this.field.add(newTrainer);
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -1033,6 +1030,8 @@ export default class BattleScene extends SceneBase {
           isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
         }, lastBattle.waveIndex << 4);
       }
+
+
       const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
       this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
       this.trySpreadPokerus();
@@ -1041,7 +1040,11 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.removeAllTags();
-        playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+        // If previous enounter was myster encounter and no battle occurred, skip return phase
+        const didSkipMysteryEncounterBattle = lastBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !lastBattle.mysteryEncounter.didBattle;
+        if (!didSkipMysteryEncounterBattle) {
+          playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+        }
         this.unshiftPhase(new ShowTrainerPhase(this));
       }
       for (const pokemon of this.getParty()) {
