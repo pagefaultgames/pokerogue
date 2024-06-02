@@ -1728,7 +1728,9 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    if (!pokemon.scene.arena.weather?.isImmutable()) {
+    if ((this.weatherType as WeatherType === WeatherType.HEAVY_RAIN ||
+      this.weatherType as WeatherType === WeatherType.HARSH_SUN ||
+      this.weatherType === WeatherType.STRONG_WINDS) || !pokemon.scene.arena.weather?.isImmutable()) {
       return pokemon.scene.arena.trySetWeather(this.weatherType, true);
     }
 
@@ -1852,6 +1854,29 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
       return true;
     }
 
+    return false;
+  }
+}
+
+/**
+ * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
+ */
+export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    const currentAbility = pokemon.getAbility().id;
+    const weatherType = pokemon.scene.arena.weather.weatherType;
+
+    // Clear weather if ability matches weather and if no one else has the ability
+    if ((currentAbility === Abilities.DESOLATE_LAND && weatherType === WeatherType.HARSH_SUN) ||
+    (currentAbility === Abilities.PRIMORDIAL_SEA && weatherType === WeatherType.HEAVY_RAIN) ||
+    (currentAbility === Abilities.DESOLATE_LAND && weatherType === WeatherType.HARSH_SUN)) {
+
+      // Besides the user, check if another has the ability on the field.
+      if (pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(currentAbility)).length === 0) {
+        pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+        return true;
+      }
+    }
     return false;
   }
 }
@@ -2978,6 +3003,29 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 
 export class PostFaintAbAttr extends AbAttr {
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    return false;
+  }
+}
+
+/**
+ * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon fainting
+ */
+export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    const currentAbility = pokemon.getAbility().id;
+    const weatherType = pokemon.scene.arena.weather.weatherType;
+
+    // Clear weather if ability matches weather and if no one else has the ability
+    if ((currentAbility === Abilities.DESOLATE_LAND && weatherType === WeatherType.HARSH_SUN) ||
+    (currentAbility === Abilities.PRIMORDIAL_SEA && weatherType === WeatherType.HEAVY_RAIN) ||
+    (currentAbility === Abilities.DESOLATE_LAND && weatherType === WeatherType.HARSH_SUN)) {
+
+      // Besides the user, check if another has the ability on the field.
+      if (pokemon.scene.getField(true).filter(p => p.hasAbility(currentAbility)).length === 0) {
+        pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+        return true;
+      }
+    }
     return false;
   }
 }
@@ -4116,13 +4164,22 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(PreSwitchOutClearWeatherAbAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
+      .attr(PreSwitchOutClearWeatherAbAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
+      .attr(PreSwitchOutClearWeatherAbAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
