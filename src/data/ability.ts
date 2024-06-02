@@ -1702,7 +1702,9 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    if (!pokemon.scene.arena.weather?.isImmutable()) {
+    if ((this.weatherType as WeatherType === WeatherType.HEAVY_RAIN || 
+      this.weatherType as WeatherType === WeatherType.HARSH_SUN || 
+      this.weatherType === WeatherType.STRONG_WINDS) || !pokemon.scene.arena.weather?.isImmutable()) {
       return pokemon.scene.arena.trySetWeather(this.weatherType, true);
     }
 
@@ -1827,6 +1829,16 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
     }
 
     return false;
+  }
+}
+
+/**
+ * Clears weather upon Primal Groudon/Kyogre/Rayquaza switch out
+ */
+export class PreSwitchOutClearWeatherAttr extends PreSwitchOutAbAttr {
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+    return true;
   }
 }
 
@@ -2953,6 +2965,20 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 export class PostFaintAbAttr extends AbAttr {
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     return false;
+  }
+}
+
+/**
+ * Clears weather upon Primal Groudon/Kyogre/Rayquaza fainting
+ */
+export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
+  constructor() {
+    super ();
+  }
+
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+    return true;
   }
 }
 
@@ -4090,13 +4116,22 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(PreSwitchOutClearWeatherAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
+      .attr(PreSwitchOutClearWeatherAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
+      .attr(PreSwitchOutClearWeatherAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
