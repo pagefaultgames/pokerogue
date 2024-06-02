@@ -55,7 +55,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showAchv(achv: Achv | Voucher,playerGender:PlayerGender): void {
+  showAchv(achv: Achv | Voucher, playerGender:PlayerGender): void {
     if (this.shown) {
       this.queue.push(achv);
       return;
