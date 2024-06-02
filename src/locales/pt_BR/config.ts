@@ -36,7 +36,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 
-export const ptBRConfig = {
+export const ptBrConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
