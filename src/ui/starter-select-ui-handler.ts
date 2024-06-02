@@ -1070,7 +1070,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const row = Math.floor(this.cursor / 9);
     switch (button) {
     case Button.UP:
-      console.log(this.cursor);
       if (row) {
         success = this.setCursor(this.cursor - 9);
       } else {
