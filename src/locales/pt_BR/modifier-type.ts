@@ -110,7 +110,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TerastallizeModifierType": {
       name: "{{teraType}} Fragmento Tera",
-      description: "{{teraType}} Terastaliza um Pokémon por até 10 batalhas",
+      description: "{{teraType}} Terastalize um Pokémon por até 10 batalhas",
     },
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente",
@@ -128,8 +128,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RARE_CANDY": { name: "Doce Raro" },
     "RARER_CANDY": { name: "Doce Raríssimo" },
 
-    "MEGA_BRACELET": { name: "Mega Bracelete", description: "Mega Stones become available" },
-    "DYNAMAX_BAND": { name: "Bracelete  Dynamax", description: "Max Mushrooms become available" },
+    "MEGA_BRACELET": { name: "Mega Bracelete", description: "Mega Pedras ficam disponíveis" },
+    "DYNAMAX_BAND": { name: "Bracelete Dynamax", description: "Cogumáximos ficam disponíveis" },
     "TERA_ORB": { name: "Orbe Tera", description: "Fragmentos Tera ficam disponíveis" },
 
     "MAP": { name: "Mapa", description: "Permite escolher a próxima rota" },
@@ -208,6 +208,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "Sobras", description: "Cura 1/16 dos PS máximos de um Pokémon a cada turno" },
     "SHELL_BELL": { name: "Concha-Sino", description: "Cura 1/8 do dano causado por um Pokémon" },
+
+    "TOXIC_ORB": { name: "Toxic Orb", description: "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle" },
+    "FLAME_ORB": { name: "Flame Orb", description: "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle" },
 
     "BATON": { name: "Bastão", description: "Permite passar mudanças de atributo ao trocar Pokémon, ignorando armadilhas" },
 
@@ -366,7 +369,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GRISEOUS_CORE": "Núcleo Platinado",
     "REVEAL_GLASS": "Espelho da Verdade",
     "GRACIDEA": "Gracídea",
-    "MAX_MUSHROOMS": "Cogumax",
+    "MAX_MUSHROOMS": "Cogumáximo",
     "DARK_STONE": "Pedra das Trevas",
     "LIGHT_STONE": "Pedra da Luz",
     "PRISON_BOTTLE": "Garrafa Prisão",
