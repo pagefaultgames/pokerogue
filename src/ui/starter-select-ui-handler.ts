@@ -1215,7 +1215,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
             const eggCost = getEggCandyCount(speciesStarters[this.lastSpecies.speciesId]);
-            if (eggCost > 0) {
+            if ((passiveAttr & PassiveAttr.UNLOCKED) && valueReduction >= 2 && eggCost > 0) {
               options.push({
                 label: `x${eggCost} ${i18next.t("starterSelectUiHandler:buyEgg")}`,
                 handler: () => {

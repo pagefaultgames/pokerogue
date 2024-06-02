@@ -24,21 +24,21 @@ export class Egg {
   public timestamp: integer;
   public source: EggSource;
   public gachaType: GachaType;
-  public species: Species;
+  public forcedSpecies: Species;
 
 
-  constructor(id: integer, hatchWaves: integer, timestamp: integer, source: EggSource, gachaType: GachaType = null, species: Species = null) {
+  constructor(id: integer, hatchWaves: integer, timestamp: integer, source: EggSource, gachaType: GachaType = null, forcedSpecies: Species = null) {
     this.id = id;
-    this.tier = species === null ? Math.floor(id / EGG_SEED) : getSpeciesTier(species);
+    this.tier = forcedSpecies === null ? Math.floor(id / EGG_SEED) : getSpeciesTier(forcedSpecies);
     this.hatchWaves = hatchWaves ?? getEggTierDefaultHatchWaves(this.tier);
     this.timestamp = timestamp;
     this.source = source;
     this.gachaType = gachaType;
-    this.species = species;
+    this.forcedSpecies = forcedSpecies;
   }
 
   isManaphyEgg(): boolean {
-    return (this.tier === EggTier.COMMON && !(this.id % 255)) || this.species	=== Species.PHIONE || this.species === Species.MANAPHY;
+    return (this.tier === EggTier.COMMON && !(this.id % 255)) || this.forcedSpecies	=== Species.PHIONE || this.forcedSpecies === Species.MANAPHY;
   }
 
   getKey(): string {
@@ -93,9 +93,6 @@ export function getEggHatchWavesMessage(hatchWaves: integer): string {
 export function getEggSourceDescriptor(scene: BattleScene, egg: Egg): string {
   switch (egg.source) {
   case EggSource.GACHA:
-    if (egg.gachaType === null) {
-      break;
-    }
     switch (egg.gachaType) {
     case GachaType.LEGENDARY:
       return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
@@ -105,7 +102,7 @@ export function getEggSourceDescriptor(scene: BattleScene, egg: Egg): string {
       return i18next.t("egg:gachaTypeShiny");
     }
   case EggSource.CANDY:
-    return `${i18next.t("egg:sourceCandyExchange")} (${getPokemonSpecies(egg.species).getName()})`;
+    return `${i18next.t("egg:sourceCandyExchange")} (${getPokemonSpecies(egg.forcedSpecies).getName()})`;
   }
 }
 
@@ -131,16 +128,18 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 }
 
 /**
- * Obtains the egg tier of a starter species, using its starter value
+ * Obtains the egg tier of a species, using its starter value
  * @param species The {@linkcode Species} of which we are trying to obtain the egg tier
- * @returns the {@linkcode EggTier} from which this species usually hatches from, or {@linkcode EggTier.COMMON} if not a starter species
+ * @returns the {@linkcode EggTier} from which this species usually hatches from
  */
 export function getSpeciesTier(species: Species): EggTier {
   if (species === Species.PHIONE || species === Species.MANAPHY) {
     return EggTier.COMMON;
   }
 
-  const starterValue = speciesStarters[species] ?? 1;
+  const rootSpecies = getPokemonSpecies(species).getRootSpeciesId();
+  const starterValue = speciesStarters[rootSpecies];
+
   if (starterValue >= 8) {
     return EggTier.MASTER;
   }

@@ -458,8 +458,8 @@ export class EggHatchPhase extends Phase {
        * Legendary eggs pulled from the legendary gacha have a 50% of being converted into
        * the species that was the legendary focus at the time
        */
-      if (this.egg.source === EggSource.CANDY && this.egg.species) {
-        speciesOverride = this.egg.species;
+      if (this.egg.source === EggSource.CANDY && this.egg.forcedSpecies) {
+        speciesOverride = this.egg.forcedSpecies;
       } else if (this.egg.isManaphyEgg()) {
         const rand = Utils.randSeedInt(8);
 

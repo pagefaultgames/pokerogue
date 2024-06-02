@@ -7,7 +7,7 @@ export default class EggData {
   public timestamp: integer;
   public source: EggSource;
   public gachaType: GachaType;
-  public species: Species;
+  public forcedSpecies: Species;
 
   constructor(source: Egg | any) {
     const sourceEgg = source instanceof Egg ? source as Egg : null;
@@ -16,10 +16,10 @@ export default class EggData {
     this.timestamp = sourceEgg ? sourceEgg.timestamp : source.timestamp;
     this.source = sourceEgg ? sourceEgg.source : source.source;
     this.gachaType = sourceEgg ? sourceEgg.gachaType : source.gachaType;
-    this.species = sourceEgg ? sourceEgg.species : source.species;
+    this.forcedSpecies = sourceEgg ? sourceEgg.forcedSpecies : source.forcedSpecies;
   }
 
   toEgg(): Egg {
-    return new Egg(this.id, this.hatchWaves, this.timestamp, this.source, this.gachaType, this.species);
+    return new Egg(this.id, this.hatchWaves, this.timestamp, this.source, this.gachaType, this.forcedSpecies);
   }
 }
