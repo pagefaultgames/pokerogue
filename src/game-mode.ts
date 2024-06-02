@@ -170,6 +170,7 @@ export class GameMode implements GameModeConfig {
   isWaveFinal(waveIndex: integer, modeId: GameModes = this.modeId): boolean {
     switch (modeId) {
     case GameModes.CLASSIC:
+    case GameModes.CHALLENGE:
       return waveIndex === 200;
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
@@ -221,6 +222,7 @@ export class GameMode implements GameModeConfig {
   getClearScoreBonus(): integer {
     switch (this.modeId) {
     case GameModes.CLASSIC:
+    case GameModes.CHALLENGE:
       return 5000;
     case GameModes.DAILY:
       return 2500;
@@ -230,6 +232,7 @@ export class GameMode implements GameModeConfig {
   getEnemyModifierChance(isBoss: boolean): integer {
     switch (this.modeId) {
     case GameModes.CLASSIC:
+    case GameModes.CHALLENGE:
     case GameModes.DAILY:
       return !isBoss ? 18 : 6;
     case GameModes.ENDLESS:
