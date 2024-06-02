@@ -17,6 +17,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuCuteCosplay": "Star-Pikachu",
   "pikachuSmartCosplay": "Professoren-Pikachu",
   "pikachuToughCosplay": "Wrestler-Pikachu",
+  "pikachuPartner": "Partner-Pikachu",
+  "eeveePartner": "Partner-Evoli",
   // 2G
   "pichuSpiky": "Strubbelohr-Pichu",
   "unownA": "A",
@@ -138,6 +140,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "miniorBlue": "Hellblauer Kern",
   "miniorIndigo": "Blauer Kern",
   "miniorViolet": "Violetter Kern",
+  "mimikyuDisguised": "Verkleidete Form",
+  "mimikyuBusted": "Entlarvte Form",
   "magearnaOriginal": "Originalfarbe",
   "marshadowZenith": "Zenitform",
   // 8G
