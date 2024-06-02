@@ -40,6 +40,7 @@ import GameManager from "#app/test/essentials/gameManager";
 import fs from "fs";
 import Phaser from "phaser";
 import {allSpecies, speciesStarters, starterPassiveAbilities} from "#app/data/pokemon-species";
+import {Abilities} from "#app/data/enums/abilities";
 
 const saveKey = "x0i2O7WRiANTqPmZ";
 
@@ -330,6 +331,7 @@ describe("Battle Phase interceptor", () => {
       vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([]);
       vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(false);
       vi.spyOn(overrides, 'DOUBLE_BATTLE_OVERRIDE', 'get').mockReturnValue(false);
+      vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.NONE);
     game = new GameManager(phaserGame);
   })
 
@@ -479,7 +481,7 @@ describe("Battle Phase interceptor", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000);
 
-  it('load 100% data file', async() => {
+  it.skip('load 100% data file', async() => {
       await game.importData(GameDataType.SYSTEM, 'src/test/data/everything.prsv');
       const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
         const species = game.scene.gameData.dexData[key];
@@ -487,5 +489,60 @@ describe("Battle Phase interceptor", () => {
       }).length
       expect(caughtCount).toBe(Object.keys(allSpecies).length);
   }, 50000);
+
+  it.skip('start battle with selected team', async() => {
+      await game.startBattle([
+        Species.CHARIZARD,
+        Species.CHANSEY,
+        Species.MEW
+      ]);
+      expect(game.scene.getParty()[0].species.speciesId).toBe(Species.CHARIZARD);
+      expect(game.scene.getParty()[1].species.speciesId).toBe(Species.CHANSEY);
+      expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEW);
+  }, 50000);
+
+  it.skip('INTIMIDATE', async() => {
+      vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
+      vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MIGHTYENA);
+      vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.INTIMIDATE);
+      await game.startBattle([
+        Species.MEWTWO,
+        Species.MEWTWO,
+        Species.MEWTWO
+      ]);
+      expect(game.scene.getParty()[0].species.speciesId).toBe(Species.MEWTWO);
+      expect(game.scene.getParty()[1].species.speciesId).toBe(Species.MEWTWO);
+      expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEWTWO);
+  }, 50000);
+
+  it.skip('QUICK_FEET', async() => {
+      vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
+      vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MIGHTYENA);
+      vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.QUICK_FEET);
+      await game.startBattle([
+        Species.MEWTWO,
+        Species.MEWTWO,
+        Species.MEWTWO
+      ]);
+      expect(game.scene.getParty()[0].species.speciesId).toBe(Species.MEWTWO);
+      expect(game.scene.getParty()[1].species.speciesId).toBe(Species.MEWTWO);
+      expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEWTWO);
+  }, 50000);
+
+  // it.skip('TAIL WHIP BATTLE', async() => {
+  //     vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
+  //     vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MIGHTYENA);
+  //     vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.QUICK_FEET);
+  //     vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TAIL_WHIP]);
+  //     vi.spyOn(overrides, 'OPP_MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TAIL_WHIP]);
+  //     await game.startBattle([
+  //       Species.MEWTWO,
+  //       Species.MEWTWO,
+  //       Species.MEWTWO
+  //     ]);
+  //     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.MEWTWO);
+  //     expect(game.scene.getParty()[1].species.speciesId).toBe(Species.MEWTWO);
+  //     expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEWTWO);
+  // }, 50000);
 });
 

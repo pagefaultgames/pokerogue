@@ -4,8 +4,18 @@ import {generateStarter, waitUntil} from "#app/test/essentials/utils";
 import {
   CheckSwitchPhase,
   CommandPhase,
-  EncounterPhase, LoginPhase, MessagePhase, PostSummonPhase, SelectGenderPhase,
-  SelectStarterPhase, ShowAbilityPhase, SummonPhase, TitlePhase, ToggleDoublePositionPhase, TurnInitPhase,
+  EncounterPhase,
+  LoginPhase,
+  MessagePhase,
+  PostSummonPhase,
+  SelectGenderPhase,
+  SelectStarterPhase,
+  ShowAbilityPhase,
+  StatChangePhase,
+  SummonPhase,
+  TitlePhase,
+  ToggleDoublePositionPhase,
+  TurnInitPhase,
 } from "#app/phases";
 import {GameDataType, PlayerGender} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
@@ -16,6 +26,7 @@ import {GameModes} from "#app/game-mode";
 import fs from "fs";
 import { AES, enc } from "crypto-js";
 import {updateUserInfo} from "#app/account";
+import {Species} from "#app/data/enums/species";
 
 export default class GameManager {
   public gameWrapper: GameWrapper;
@@ -56,25 +67,34 @@ export default class GameManager {
       this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
         this.scene.gameData.gender = PlayerGender.MALE;
         this.endPhase();
-      });
+      }, () => this.isCurrentPhase(TitlePhase));
       await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
       await this.phaseInterceptor.run(TitlePhase);
       resolve();
     });
   }
 
-  startBattle(): Promise<void> {
+  runToSummon(species?: Species[]): Promise<void> {
     return new Promise(async(resolve) => {
       await this.runToTitle();
       this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-        const starters = generateStarter(this.scene);
+        const starters = generateStarter(this.scene, species);
         const selectStarterPhase = new SelectStarterPhase(this.scene, GameModes.CLASSIC);
         this.scene.pushPhase(new EncounterPhase(this.scene, false));
         selectStarterPhase.initBattle(starters);
       });
       await this.phaseInterceptor.run(EncounterPhase);
+    });
+  }
+
+  startBattle(species?: Species[]): Promise<void> {
+    return new Promise(async(resolve) => {
+      await this.runToSummon(species);
       await this.phaseInterceptor.run(PostSummonPhase);
-      await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(SummonPhase));
+      await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(SummonPhase) || this.isCurrentPhase(ShowAbilityPhase));
+      await this.phaseInterceptor.run(ShowAbilityPhase, () => this.isCurrentPhase(SummonPhase) ||   this.isCurrentPhase(StatChangePhase));
+      await this.phaseInterceptor.run(StatChangePhase, () => this.isCurrentPhase(MessagePhase) || this.isCurrentPhase(SummonPhase));
+      await this.phaseInterceptor.run(MessagePhase, () => this.isCurrentPhase(SummonPhase));
       await this.phaseInterceptor.run(SummonPhase);
       await this.phaseInterceptor.run(ToggleDoublePositionPhase);
       await this.phaseInterceptor.run(SummonPhase, () => this.isCurrentPhase(CheckSwitchPhase));
