@@ -17,6 +17,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuCuteCosplay": "Cosplay Star",
   "pikachuSmartCosplay": "Cosplay Docteur",
   "pikachuToughCosplay": "Cosplay Catcheur",
+  "pikachuPartner": "Partner",
+  "eeveePartner": "Partner",
   // 2G
   "pichuSpiky": "Troizépi",
   "unownA": "A",
