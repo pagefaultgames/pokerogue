@@ -285,7 +285,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     ENEMY_ATTACK_BURN_CHANCE: { name: "灼燒硬幣" },
     ENEMY_STATUS_EFFECT_HEAL_CHANCE: {
       name: "萬靈藥硬幣",
-      description: "增加5%每回合治癒異常狀態的概率",
+      description: "增加2.5%每回合治癒異常狀態的概率",
     },
     ENEMY_ENDURE_CHANCE: { name: "忍受硬幣" },
     ENEMY_FUSED_CHANCE: {

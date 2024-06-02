@@ -231,7 +231,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Gettone del Veleno" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Gettone della Paralisi" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Gettone della Bruciatura" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Gettone Guarigione Completa", description: "Aggiunge una probabilità del 5% a ogni turno di curare una condizione di stato" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Gettone Guarigione Completa", description: "Aggiunge una probabilità del 2.5% a ogni turno di curare una condizione di stato" },
     "ENEMY_ENDURE_CHANCE": { name: "Gettone di Resistenza" },
     "ENEMY_FUSED_CHANCE": { name: "Gettone della fusione", description: "Aggiunge l'1% di possibilità che un Pokémon selvatico sia una fusione" },
   },

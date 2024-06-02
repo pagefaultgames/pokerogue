@@ -231,7 +231,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Giftmarke" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { "name": "Lähmungsmarke" },
     "ENEMY_ATTACK_BURN_CHANCE": { "name": "Brandmarke" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Vollheilungsmarke", "description": "Fügt eine 5%ige Chance hinzu, jede Runde einen Statuszustand zu heilen" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Vollheilungsmarke", "description": "Fügt eine 2,5%ige Chance hinzu, jede Runde einen Statuszustand zu heilen" },
     "ENEMY_ENDURE_CHANCE": { "name": "Ausdauer-Marke" },
     "ENEMY_FUSED_CHANCE": { "name": "Fusionsmarke", "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist" },
 

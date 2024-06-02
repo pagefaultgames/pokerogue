@@ -231,7 +231,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Token de Veneno" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Token de Paralisia" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Token de Queimadura" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Token de Cura Total", description: "Adiciona uma chance de 5% a cada turno de curar uma condição de status" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Token de Cura Total", description: "Adiciona uma chance de 2.5% a cada turno de curar uma condição de status" },
     "ENEMY_ENDURE_CHANCE": { name: "Token de Persistência" },
     "ENEMY_FUSED_CHANCE": { name: "Token de Fusão", description: "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão" },
   },

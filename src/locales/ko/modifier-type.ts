@@ -231,7 +231,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ATTACK_POISON_CHANCE": { name: "독 토큰" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "마비 토큰" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "화상 토큰" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "만병통치 토큰", description: "매 턴 상태이상에서 회복될 확률 5% 추가" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "만병통치 토큰", description: "매 턴 상태이상에서 회복될 확률 2.5% 추가" },
     "ENEMY_ENDURE_CHANCE": { name: "버티기 토큰" },
     "ENEMY_FUSED_CHANCE": { name: "합체 토큰", description: "야생 포켓몬이 합체할 확률 1% 추가" },
   },
