@@ -977,8 +977,8 @@ export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
   private chancePercent: integer;
   private effect: StatusEffect;
 
-  constructor(localeKey: string, iconImage: string, chancePercent: integer, effect: StatusEffect) {
-    super(localeKey, iconImage, (type, args) => new Modifiers.EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent), "enemy_status_chance");
+  constructor(localeKey: string, iconImage: string, chancePercent: integer, effect: StatusEffect, stackCount?: integer) {
+    super(localeKey, iconImage, (type, args) => new Modifiers.EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent, stackCount), "enemy_status_chance");
 
     this.chancePercent = chancePercent;
     this.effect = effect;
@@ -1216,13 +1216,11 @@ export const modifierTypes = {
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType("modifierType:ModifierType.ENEMY_DAMAGE_REDUCTION", "wl_guard_spec", (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5)),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
   ENEMY_HEAL: () => new ModifierType("modifierType:ModifierType.ENEMY_HEAL", "wl_potion", (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 2)),
-  ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_POISON_CHANCE", "wl_antidote", 10, StatusEffect.POISON),
-  ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_PARALYZE_CHANCE", "wl_paralyze_heal", 10, StatusEffect.PARALYSIS),
-  ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_SLEEP_CHANCE", "wl_awakening", 10, StatusEffect.SLEEP),
-  ENEMY_ATTACK_FREEZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_FREEZE_CHANCE", "wl_ice_heal", 10, StatusEffect.FREEZE),
-  ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_BURN_CHANCE", "wl_burn_heal", 10, StatusEffect.BURN),
-  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_STATUS_EFFECT_HEAL_CHANCE", "wl_full_heal", (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 10)),
-  ENEMY_ENDURE_CHANCE: () => new EnemyEndureChanceModifierType("modifierType:ModifierType.ENEMY_ENDURE_CHANCE", "wl_reset_urge", 2.5),
+  ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_POISON_CHANCE", "wl_antidote", 10, StatusEffect.POISON, 5),
+  ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_PARALYZE_CHANCE", "wl_paralyze_heal", 5, StatusEffect.PARALYSIS),
+  ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType("modifierType:ModifierType.ENEMY_ATTACK_BURN_CHANCE", "wl_burn_heal", 10, StatusEffect.BURN, 5),
+  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_STATUS_EFFECT_HEAL_CHANCE", "wl_full_heal", (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 5, 5)),
+  ENEMY_ENDURE_CHANCE: () => new EnemyEndureChanceModifierType("modifierType:ModifierType.ENEMY_ENDURE_CHANCE", "wl_reset_urge", 2),
   ENEMY_FUSED_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_FUSED_CHANCE", "wl_custom_spliced", (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1)),
 };
 
@@ -1469,8 +1467,6 @@ const enemyBuffModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 2),
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 2),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_SLEEP_CHANCE, 2),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 2),
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 2),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
