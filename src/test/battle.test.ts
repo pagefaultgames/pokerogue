@@ -328,49 +328,5 @@ describe("Test Battle Phase", () => {
       expect(game.scene.getParty()[1].species.speciesId).toBe(Species.CHANSEY);
       expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEW);
   }, 50000);
-
-  it.skip('INTIMIDATE', async() => {
-      vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-      vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MIGHTYENA);
-      vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.INTIMIDATE);
-      await game.startBattle([
-        Species.MEWTWO,
-        Species.MEWTWO,
-        Species.MEWTWO
-      ]);
-      expect(game.scene.getParty()[0].species.speciesId).toBe(Species.MEWTWO);
-      expect(game.scene.getParty()[1].species.speciesId).toBe(Species.MEWTWO);
-      expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEWTWO);
-  }, 50000);
-
-  it('QUICK_FEET', async() => {
-      vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-      vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MIGHTYENA);
-      vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.QUICK_FEET);
-      await game.startBattle([
-        Species.MEWTWO,
-        Species.MEWTWO,
-        Species.MEWTWO
-      ]);
-      expect(game.scene.getParty()[0].species.speciesId).toBe(Species.MEWTWO);
-      expect(game.scene.getParty()[1].species.speciesId).toBe(Species.MEWTWO);
-      expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEWTWO);
-  }, 50000);
-
-  // it.skip('TAIL WHIP BATTLE', async() => {
-  //     vi.spyOn(overrides, 'SINGLE_BATTLE_OVERRIDE', 'get').mockReturnValue(true);
-  //     vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MIGHTYENA);
-  //     vi.spyOn(overrides, 'OPP_ABILITY_OVERRIDE', 'get').mockReturnValue(Abilities.QUICK_FEET);
-  //     vi.spyOn(overrides, 'MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TAIL_WHIP]);
-  //     vi.spyOn(overrides, 'OPP_MOVESET_OVERRIDE', 'get').mockReturnValue([Moves.TAIL_WHIP]);
-  //     await game.startBattle([
-  //       Species.MEWTWO,
-  //       Species.MEWTWO,
-  //       Species.MEWTWO
-  //     ]);
-  //     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.MEWTWO);
-  //     expect(game.scene.getParty()[1].species.speciesId).toBe(Species.MEWTWO);
-  //     expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEWTWO);
-  // }, 50000);
 });
 

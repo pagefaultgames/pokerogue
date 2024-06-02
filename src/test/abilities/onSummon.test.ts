@@ -57,6 +57,7 @@ describe("Abilities Test - onSummon", () => {
     await game.phaseInterceptor.run(PostSummonPhase);
 
 
+    expect(game.scene.getParty()[0].summonData).not.toBeUndefined();
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(0);
     await game.phaseInterceptor.run(ShowAbilityPhase);

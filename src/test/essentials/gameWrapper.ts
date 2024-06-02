@@ -1,4 +1,5 @@
 /* eslint-disable */
+import * as main from "#app/main";
 import fs from "fs";
 import InputManager = Phaser.Input.InputManager;
 import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
@@ -9,8 +10,7 @@ import UpdateList = Phaser.GameObjects.UpdateList;
 import MockGraphics from "#app/test/essentials/mocks/mocksContainer/mockGraphics";
 import MockTextureManager from "#app/test/essentials/mocks/mockTextureManager";
 import Phaser from "phaser";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {blobToString, setPositionRelative} from "#app/test/essentials/utils";
+import {blobToString} from "#app/test/essentials/utils";
 import {vi} from "vitest";
 import mockLocalStorage from "#app/test/essentials/mocks/mockLocalStorage";
 import mockConsoleLog from "#app/test/essentials/mocks/mockConsoleLog";
@@ -20,7 +20,7 @@ import * as Utils from "#app/utils";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import {MockClock} from "#app/test/essentials/mocks/mockClock";
 import BattleScene from "#app/battle-scene.js";
-import {AnimConfig, BattleAnim, MoveAnim} from "#app/data/battle-anims";
+import {MoveAnim} from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 
 Object.defineProperty(window, "localStorage", {
@@ -30,13 +30,7 @@ Object.defineProperty(window, "console", {
   value: mockConsoleLog(),
 });
 
-Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
-BBCodeText.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
+
 InputText.prototype.setElement = () => null;
 InputText.prototype.resize = () => null;
 window.URL.createObjectURL = (blob: Blob) => {
@@ -53,6 +47,27 @@ Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 window.matchMedia = () => ({
   matches: false,
 });
+
+
+/**
+ * Sets this object's position relative to another object with a given offset
+ * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+ * @param x The relative x position
+ * @param y The relative y position
+ */
+const setPositionRelative = function (guideObject: any, x: number, y: number) {
+  const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
+  const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
+  this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
+};
+
+Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
+
 
 export default class GameWrapper {
   public game: Phaser.Game;
