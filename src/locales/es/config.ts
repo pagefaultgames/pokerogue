@@ -1,6 +1,6 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
-import {PGFachv, PGMachv} from "./achv";
+import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
