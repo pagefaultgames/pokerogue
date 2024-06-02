@@ -17,8 +17,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuCuteCosplay": "Cosplay Star",
   "pikachuSmartCosplay": "Cosplay Docteur",
   "pikachuToughCosplay": "Cosplay Catcheur",
-  "pikachuPartner": "Partner",
-  "eeveePartner": "Partner",
+  "pikachuPartner": "Partenaire",
+  "eeveePartner": "Partenaire",
   // 2G
   "pichuSpiky": "Troizépi",
   "unownA": "A",
@@ -138,8 +138,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "miniorBlue": "Bleu",
   "miniorIndigo": "Indigo",
   "miniorViolet": "Violet",
-  "mimikyuDisguised": "Disguised",
-  "mimikyuBusted": "Busted",
+  "mimikyuDisguised": "Déguisé",
+  "mimikyuBusted": "Démasqué",
   "magearnaOriginal": "Couleur du Passé",
   "marshadowZenith": "Zénith",
   // 8G
