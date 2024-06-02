@@ -1055,7 +1055,7 @@ export class GameData {
             md.stackCount = Math.min(md.stackCount, 4);
           }
           if (md?.className === "EnemyAttackStatusEffectChanceModifierType" && [StatusEffect.FREEZE, StatusEffect.SLEEP].includes((md as EnemyAttackStatusEffectChanceModifier)?.effect)) {
-            md.stackCount = Math.min(md.stackCount, 0);
+            md.stackCount = 0;
           }
           ret.push(new PersistentModifierData(md, player));
         }
