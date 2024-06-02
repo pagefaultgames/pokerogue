@@ -1054,7 +1054,7 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
-          else if (md?.className === "EnemyAttackStatusEffectChanceModifierType" && [StatusEffect.FREEZE, StatusEffect.SLEEP].includes((md as EnemyAttackStatusEffectChanceModifier)?.effect)) {
+          if (md?.className === "EnemyAttackStatusEffectChanceModifierType" && [StatusEffect.FREEZE, StatusEffect.SLEEP].includes((md as EnemyAttackStatusEffectChanceModifier)?.effect)) {
             md.stackCount = Math.min(md.stackCount, 0);
           }
           ret.push(new PersistentModifierData(md, player));
