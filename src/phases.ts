@@ -4483,10 +4483,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const fullHp = pokemon.getHpRatio() >= 1;
 
     const hasMessage = !!this.message;
-    const healOrDamage = (!fullHp || this.hpHealed < 0);
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (healOrDamage) {
+    if (!fullHp || this.hpHealed < 0) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
@@ -4531,7 +4530,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(lastStatusEffect)));
     }
 
-    if (!healOrDamage && !lastStatusEffect) {
+    if (fullHp && !lastStatusEffect) {
       super.end();
     }
   }

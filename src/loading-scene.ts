@@ -251,10 +251,6 @@ export class LoadingScene extends SceneBase {
       }
     }
 
-    this.loadAtlas("dualshock", "inputs");
-    this.loadAtlas("xbox", "inputs");
-    this.loadAtlas("keyboard", "inputs");
-
     this.loadSe("select");
     this.loadSe("menu_open");
     this.loadSe("hit");
