@@ -1,11 +1,11 @@
 # Immediate things on the to-do platter
 
-[-] Add logic to handle spawning boss encounters
-[-] Bugfix not getting a reward at the end of battle ME
-[-] Add logic for awarding exp to the party (outside of a normal combat)
-[-] Add logic for choosing a Pokémon from party for some effect (trades, sacrifices, etc)
-[-] Introduce more text tree hierarchy -- for better organization of encounters, options and dialogue text/layers 
-[-] More steps to encounters -- ie Option --> __Dialogue: "You chose to not open the chest"__ --> Efects -> __Dialogue: "You walk away with regret"__
+- Add logic to handle spawning boss encounters [ ]
+- Bugfix not getting a reward at the end of battle ME
+- Add logic for awarding exp to the party (outside of a normal combat)
+- Add logic for choosing a Pokémon from party for some effect (trades, sacrifices, etc)
+- Introduce more text tree hierarchy -- for better organization of encounters, options and dialogue text/layers 
+- More steps to encounters -- ie Option --> __Dialogue: "You chose to not open the chest"__ --> Efects -> __Dialogue: "You walk away with regret"__
 
 # Things to (eventually) be done for Mystery Encounters ("MEs"):
 - Add MEs to gamemodes Classic and Endless ✔️ @ImperialSympathizer
