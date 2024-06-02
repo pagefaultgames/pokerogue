@@ -211,7 +211,7 @@ export const ability: AbilityTranslationEntries = {
   },
   pickup: {
     name: "Pickup",
-    description: "Após uma batalha, o Pokémon pegará um item que um adversário deixou cair.",
+    description: "Durante a batalha, o Pokémon pode tomar o item do Pokémon adversário. Fora de batalha pode encontrar itens pelo chão.",
   },
   truant: {
     name: "Truant",
@@ -1237,4 +1237,5 @@ export const ability: AbilityTranslationEntries = {
     name: "Poison Puppeteer",
     description: "Pokémon envenenados pelos movimentos de Pecharunt também ficarão confusos.",
   },
+
 } as const;

@@ -4,10 +4,8 @@ import {InputsController} from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, settingOptions} from "./system/settings";
-import SettingsUiHandler from "./ui/settings/settings-ui-handler";
+import SettingsUiHandler from "./ui/settings-ui-handler";
 import {Button} from "./enums/buttons";
-import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
-import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
 
 type ActionKeys = Record<Button, () => void>;
@@ -161,9 +159,7 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
-    const uiHandler = this.scene.ui?.getHandler();
-    if (whitelist.some(handler => uiHandler instanceof handler)) {
+    if (this.scene.ui?.getHandler() instanceof StarterSelectUiHandler) {
       this.scene.ui.processInput(button);
     } else if (button === Button.V) {
       this.buttonInfo(true);
