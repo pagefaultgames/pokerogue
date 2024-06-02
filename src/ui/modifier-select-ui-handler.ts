@@ -83,7 +83,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       delayVisibility: true,
       scale: overlayScale,
       onSide: true,
-      //right: true,
+      right: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(overlayScale, true) -1,
       width: (this.scene.game.canvas.width / 6) - 2,
