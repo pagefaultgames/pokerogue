@@ -325,7 +325,7 @@ export class SingleTypeChallenge extends Challenge {
     case ChallengeType.POKEMON_IN_BATTLE:
       const pokemon = args[0] as Pokemon;
       const isValidPokemon = args[1] as Utils.BooleanHolder;
-      if (pokemon.isPlayer() && !pokemon.isOfType(this.value - 1)) {
+      if (pokemon.isPlayer() && !pokemon.isOfType(this.value - 1, false, false, true)) {
         isValidPokemon.value = false;
         return true;
       }
