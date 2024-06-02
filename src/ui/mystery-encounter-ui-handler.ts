@@ -51,8 +51,6 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    //this.fieldIndex = args.length ? args[0] as integer : 0;
-
     this.descriptionContainer.setVisible(true);
     this.optionsContainer.setVisible(true);
     this.setCursor(this.getCursor());
@@ -78,8 +76,6 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         } else {
           ui.playError();
         }
-
-        success = true;
       } else {
         // If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
       }

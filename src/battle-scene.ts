@@ -58,7 +58,8 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
-import MysteryEncounter, { allMysteryEncounters } from "./data/mystery-encounter";
+import MysteryEncounter, { MysteryEncounterData, allMysteryEncounters } from "./data/mystery-encounter";
+import MysteryEncounterIntro from "./field/mystery-encounter";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -903,7 +904,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounter): Battle {
+  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounterData): Battle {
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
     let newDouble: boolean;
     let newBattleType: BattleType;
@@ -949,8 +950,8 @@ export default class BattleScene extends SceneBase {
 
       // Mystery Encounters
       // The only time they can occur is in place of a standard wild battle
-      // They will also never be found after floor 180 of classic mode
-      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && newWaveIndex > 180)) {
+      // They will also never be found after floor 180 of classic mode, and cannot be in the first 2 battles
+      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && (newWaveIndex > 180 || newWaveIndex < 3))) {
         // Roll for mystery encounter instead of wild battle
         const roll = Utils.randSeedInt(100);
         const successRate = Overrides.MYSTERY_ENCOUNTER_RATE || 15;
@@ -959,13 +960,6 @@ export default class BattleScene extends SceneBase {
           // Successful roll, this is a mystery encounter
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
         }
-      }
-
-      if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
-        // Placeholder that generates a random trainer on the field for the encounter
-        const trainerType = this.arena.randomTrainerType(newWaveIndex);
-        newTrainer = !!trainerData ? trainerData.toTrainer(this) : new Trainer(this, trainerType, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
-        this.field.add(newTrainer);
       }
     }
 
@@ -1002,9 +996,19 @@ export default class BattleScene extends SceneBase {
     this.currentBattle.incrementTurn(this);
 
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
+      this.currentBattle.double = false;
       // Generate a mystery encounter
-      const encounter = mysteryEncounter ? mysteryEncounter : this.generateMysteryEncounter();
+      const encounter = mysteryEncounter?.encounter ? allMysteryEncounters[mysteryEncounter.encounter.index] : this.generateMysteryEncounter();
       this.currentBattle.mysteryEncounter = encounter;
+
+      // Placeholder that generates a random trainer on the field for the encounter
+      const encounterIntroVisuals = new MysteryEncounterIntro(this, encounter, ["school_kid_f", "scientist_f", "ace_trainer_f"]);
+      this.field.add(encounterIntroVisuals);
+      encounter.introVisuals = encounterIntroVisuals;
+      //const trainerType = this.arena.randomTrainerType(newWaveIndex);
+      //newTrainer = !!trainerData ? trainerData.toTrainer(this) : new Trainer(this, trainerType, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+      //this.field.add(newTrainer);
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -1031,7 +1035,7 @@ export default class BattleScene extends SceneBase {
           isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
         }, lastBattle.waveIndex << 4);
       }
-      const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+      const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
       this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
       this.trySpreadPokerus();
       if (!isNewBiome && (newWaveIndex % 10) === 5) {

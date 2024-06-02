@@ -4,8 +4,11 @@ import { Abilities } from "./enums/abilities";
 import { Biome } from "./enums/biome";
 import { WeatherType } from "./weather";
 import { isNullOrUndefined } from "../utils";
-import { generateNewEnemyParty, initBattleFromEncounter } from "../phases/mystery-encounter-option-select-phase";
-import { NewBattlePhase, NewBiomeEncounterPhase, NextEncounterPhase } from "../phases";
+import { ModifierRewardPhase, NewBattlePhase, NewBiomeEncounterPhase, NextEncounterPhase } from "../phases";
+import { modifierTypes } from "../modifier/modifier-type";
+import { TrainerType } from "./enums/trainer-type";
+import { generateNewEnemyParty, initBattleFromEncounter, showTrainerDialogue } from "../phases/mystery-encounter-phase";
+import MysteryEncounterIntro from "../field/mystery-encounter";
 
 export enum MysteryEncounterType {
   MYSTERY_CHALLENGER,
@@ -107,9 +110,9 @@ function internalMeetsRequirements(scene: BattleScene, requirements: EncounterRe
 export class MysteryEncounterOption {
   requirements?: EncounterRequirements;
   label: string;
-  onSelect: (scene: BattleScene) => boolean;
+  onSelect: (scene: BattleScene) => Promise<void | boolean>;
 
-  constructor(onSelect: (scene: BattleScene) => boolean, requirements?: EncounterRequirements) {
+  constructor(onSelect: (scene: BattleScene) => Promise<void | boolean>, requirements?: EncounterRequirements) {
     this.onSelect = onSelect;
     this.requirements = requirements;
   }
@@ -127,6 +130,8 @@ export default abstract class MysteryEncounter {
   encounterType: MysteryEncounterType;
   index: number;
   encounterRequirements: EncounterRequirements;
+  introVisuals: MysteryEncounterIntro;
+  doEncounterRewards: (scene: BattleScene) => boolean = null;
 
   constructor(encounterType: MysteryEncounterType, index: number) {
     this.encounterType = encounterType;
@@ -138,10 +143,15 @@ export default abstract class MysteryEncounter {
     return this;
   }
 
-  option<T extends EncounterRequirements>(onSelect: (scene: BattleScene) => boolean, optionRequirements?: T): MysteryEncounter {
+  option<T extends EncounterRequirements>(onSelect: (scene: BattleScene) => Promise<void | boolean>, optionRequirements?: T): MysteryEncounter {
     const option = new MysteryEncounterOption(onSelect, optionRequirements);
     this.options.push(option);
 
+    return this;
+  }
+
+  rewards(doEncounterRewards: (scene: BattleScene) => boolean): MysteryEncounter {
+    this.doEncounterRewards = doEncounterRewards;
     return this;
   }
 
@@ -182,36 +192,48 @@ export class OptionSelectMysteryEncounter extends MysteryEncounter {
   }
 }
 
+let t = 0;
+
 export const allMysteryEncounters: MysteryEncounter[] = [];
 
 export function initMysteryEncounters() {
   allMysteryEncounters.push(
     new OptionSelectMysteryEncounter(MysteryEncounterType.MYSTERY_CHALLENGER, 0)
       .requirements(new EncounterRequirements(0, 50)) // waves 0-50
-      .option(((scene) => {
+      .option(async (scene) => {
         // Spawn easy fight
-        scene.currentBattle.enemyLevels = scene.currentBattle.enemyLevels.map(level => Math.max(level - 5, 0));
-        generateNewEnemyParty(scene);
-        initBattleFromEncounter(scene);
-
-        return true;
-      }))
-      .option(((scene) => {
+        generateNewEnemyParty(scene, false, 0.75, TrainerType.SCHOOL_KID);
+        return showTrainerDialogue(scene).then(() => {
+          initBattleFromEncounter(scene);
+          scene.currentBattle.mysteryEncounter.rewards((scene: BattleScene) => {
+            scene.pushPhase(new ModifierRewardPhase(scene, modifierTypes.AMULET_COIN));
+            return true;
+          });
+        });
+      })
+      .option(async (scene) => {
         // Spawn medium fight
-        generateNewEnemyParty(scene);
-        initBattleFromEncounter(scene);
-
-        return true;
-      }))
-      .option(((scene) => {
+        generateNewEnemyParty(scene, false, 1, TrainerType.SCIENTIST);
+        return showTrainerDialogue(scene).then(() => {
+          initBattleFromEncounter(scene);
+          scene.currentBattle.mysteryEncounter.rewards((scene: BattleScene) => {
+            scene.pushPhase(new ModifierRewardPhase(scene, modifierTypes.AMULET_COIN));
+            return true;
+          });
+        });
+      })
+      .option(async (scene) => {
         // Spawn hard fight
-        scene.currentBattle.enemyLevels = scene.currentBattle.enemyLevels.map(level => Math.max(level + 10, 0));
-        generateNewEnemyParty(scene);
-        initBattleFromEncounter(scene);
-
-        return true;
-      }))
-      .option(((scene) => {
+        generateNewEnemyParty(scene, false, 1.5, TrainerType.ACE_TRAINER);
+        return showTrainerDialogue(scene).then(() => {
+          initBattleFromEncounter(scene);
+          scene.currentBattle.mysteryEncounter.rewards((scene: BattleScene) => {
+            scene.pushPhase(new ModifierRewardPhase(scene, modifierTypes.AMULET_COIN));
+            return true;
+          });
+        });
+      })
+      .option(async (scene) => {
         // Skip to next wave
         let nextEncounter = scene.findPhase(p => p instanceof NextEncounterPhase);
         if (!nextEncounter) {
@@ -221,12 +243,13 @@ export function initMysteryEncounters() {
           nextEncounter = new NewBattlePhase(scene);
         }
         scene.clearPhaseQueue();
+        scene.clearPhaseQueueSplice();
         scene.pushPhase(nextEncounter);
         return true;
-      }))    ,
-    new OptionSelectMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHEST, 1)
+      }),
+    new OptionSelectMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHEST, ++t)
       .requirements(new EncounterRequirements(0, 50)) // waves 0-50
-      .option(((scene) => {
+      .option((async (scene) => {
         // Give the player some money
 
         return true;
