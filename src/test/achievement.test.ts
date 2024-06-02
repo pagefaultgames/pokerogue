@@ -1,9 +1,9 @@
-import {describe, expect, it} from "vitest";
-import {MoneyAchv} from "#app/system/achv";
+import { MoneyAchv } from "#app/system/achv";
+import { describe, expect, it } from "vitest";
 
 describe("check some Achievement related stuff", () => {
   it ("should check Achievement creation", () => {
-    const ach = new MoneyAchv("Achievement", 1000, null, 100);
+    const ach = new MoneyAchv("", "Achievement", 1000, null, 100);
     expect(ach.name).toBe("Achievement");
   });
 });
