@@ -69,7 +69,6 @@ export default class GameManager {
       await this.phaseInterceptor.run(PostSummonPhase);
       await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(SummonPhase));
       await this.phaseInterceptor.run(SummonPhase);
-      // need to handle double fight !
       await this.phaseInterceptor.run(ToggleDoublePositionPhase);
       await this.phaseInterceptor.run(SummonPhase, () => this.isCurrentPhase(CheckSwitchPhase));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
