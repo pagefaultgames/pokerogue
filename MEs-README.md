@@ -29,7 +29,7 @@
 
   - **Options** would be compounded by **option_pieces** (placeholder name). Some **options** could be just made out of one **option_piece**, such as "obtain a pokéball" (option_piece give item) and other **options** could be a few **option_pieces** chained together, like "fight a battle, and get an item if you win" (option_pieces combat encounter + let item choose)
 
-  - **Option_pieces** for ME to happen, if applicable. They can be:
+  - **Option_pieces/effects/helper functions** for ME to happen, if applicable. They can be:
     - Giving the player X item ❌
     - Giving the player X item from Y item pool ❌
     - Letting the player choose from X items
@@ -43,6 +43,9 @@
     - Set a weather ❌
     - Status one or many Pokémon if your party -- if they can be statused ❌
     - Damage one or many Pokémon in your party ❌
+    - Give the player a Pokémon from a pool (useful for reg. professors/traders) ❌
+    - Remove a PKMN from the player's party (Shedinja deal) ❌
+    - Steal from player (Gholdengo, Ninjask deal) ❌
 
 
 Note on rarity: once the ME roll finalises, another roll decides which rarity pool the ME belongs to, and a final roll takes in different weights in the rarity tier pool to decide the ME that occurs, among the available ones in that pool.
