@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import i18next from "../plugins/i18n";
 import * as Utils from "../utils";
-import {PlayerGender} from "#app/system/game-data";
+import { PlayerGender } from "./game-data";
 import {ParseKeys} from "i18next";
 
 export enum AchvTier {
@@ -143,12 +143,15 @@ export class ModifierAchv extends Achv {
  */
 export function getAchievementDescription(localizationKey: string): string {
   // We need to get the player gender from the game data to add the correct prefix to the achievement name
-  let playerGender = PlayerGender.MALE;
+  let playerGender= 1; // This also means MALE. This is the fallback if PlayerGender is not defined
+  if (PlayerGender) {
+    playerGender= PlayerGender.MALE;
+  }
   if (this?.scene) {
     playerGender = this.scene.gameData.gender;
   }
   let genderPrefix = "PGM";
-  if (playerGender === PlayerGender.FEMALE) {
+  if (PlayerGender && playerGender === PlayerGender.FEMALE) {
     genderPrefix = "PGF";
   }
 
