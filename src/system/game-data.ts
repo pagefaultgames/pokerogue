@@ -97,6 +97,8 @@ interface SystemSaveData {
   eggs: EggData[];
   gameVersion: string;
   timestamp: integer;
+  eggPity: integer[];
+  unlockPity: integer[];
 }
 
 export interface SessionSaveData {
@@ -241,6 +243,8 @@ export class GameData {
   public voucherUnlocks: VoucherUnlocks;
   public voucherCounts: VoucherCounts;
   public eggs: Egg[];
+  public eggPity: integer[];
+  public unlockPity: integer[];
 
   constructor(scene: BattleScene) {
     this.scene = scene;
@@ -265,6 +269,8 @@ export class GameData {
       [VoucherType.GOLDEN]: 0
     };
     this.eggs = [];
+    this.eggPity = [0, 0, 0, 0];
+    this.unlockPity = [0, 0, 0, 0];
     this.initDexData();
     this.initStarterData();
   }
@@ -283,7 +289,9 @@ export class GameData {
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
       gameVersion: this.scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      eggPity: this.eggPity.slice(0),
+      unlockPity: this.unlockPity.slice(0)
     };
   }
 
@@ -465,6 +473,9 @@ export class GameData {
         this.eggs = systemData.eggs
           ? systemData.eggs.map(e => e.toEgg())
           : [];
+
+        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
+        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
 
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
