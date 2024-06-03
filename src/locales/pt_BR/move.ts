@@ -1943,7 +1943,7 @@ export const move: MoveTranslationEntries = {
   },
   "electroBall": {
     name: "Electro Ball",
-    effect: "O usuário arremessa uma orbe elétrica no alvo. Quanto mais rápido for o usuário comparado ao alvo, maior será o poder do movimento."
+    effect: "O usuário arremessa uma esfera elétrica no alvo. Quanto mais rápido for o usuário comparado ao alvo, maior será o poder do movimento."
   },
   "soak": {
     name: "Soak",
@@ -2495,7 +2495,7 @@ export const move: MoveTranslationEntries = {
   },
   "allOutPummelingPhysical": {
     name: "All-Out Pummeling",
-    effect: "Utilizando o Poder Z, o usuário cria e arremessa um orbe de energia no alvo com força total. Seu poder varia dependendo do movimento original."
+    effect: "Utilizando o Poder Z, o usuário cria e arremessa uma esfera de energia no alvo com força total. Seu poder varia dependendo do movimento original."
   },
   "allOutPummelingSpecial": {
     name: "All-Out Pummeling",

@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/plugins/i18n";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -2398,12 +2398,12 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
+      1: `Steven: Do you have any rare Pokémon?
+          $Wallace: Steven... We are here for a battle, not to show off our Pokémon.
             $Steven: Oh... I see... Let's go then!`,
     },
     "victory": {
-      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
+      1: `Steven: Now that we are done with the battle, let's show off our Pokémon!
             $Wallace: Steven...`,
     },
   },
