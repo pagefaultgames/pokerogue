@@ -1,9 +1,9 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const saveSlotSelectUiHandler: SimpleTranslationEntries = {
-  "overwriteData": "Overwrite the data in the selected slot?",
-  "loading": "Loading...",
-  "wave": "Wave",
-  "lv": "Lv",
+  "overwriteData": "Effacer les données de l’emplacement sélectionné ?",
+  "loading": "Chargement…",
+  "wave": "Vague",
+  "lv": "N.",
   "empty": "Vide",
 } as const;
