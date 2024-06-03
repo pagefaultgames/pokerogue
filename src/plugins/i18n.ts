@@ -24,15 +24,6 @@ export interface MoveTranslationEntries {
   [key: string]: MoveTranslationEntry
 }
 
-export interface AchvTranslationEntry {
-  name: string,
-  description: string
-}
-
-export interface AchvTranslationEntries {
-  [key: string]: AchvTranslationEntry
-}
-
 export interface AbilityTranslationEntry {
   name: string,
   description: string
@@ -256,7 +247,6 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
-      achv: AchvTranslationEntries;
       prestige: SimpleTranslationEntries;
     };
   }
