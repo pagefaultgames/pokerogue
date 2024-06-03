@@ -2335,6 +2335,10 @@ export class BattleEndPhase extends BattlePhase {
     for (const pokemon of this.scene.getField()) {
       if (pokemon) {
         pokemon.resetBattleSummonData();
+        // Revert to ice face form when battle ends
+        if (pokemon.hasAbility(Abilities.ICE_FACE)) {
+          pokemon.addTag(BattlerTagType.ICE_FACE);
+        }
       }
     }
 

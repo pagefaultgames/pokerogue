@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { BattleEndPhase, CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -15,6 +15,7 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
+import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -1350,6 +1351,39 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class IceFaceTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
+    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
+    const isBattleEnd = pokemon.scene.getCurrentPhase() instanceof BattleEndPhase;
+    const isFormIceFace = pokemon.formIndex === 0;
+
+
+    if (isWeatherSnowOrHail || isBattleEnd || isFormIceFace) {
+      return true;
+    }
+    return false;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    if (pokemon.formIndex !== 0) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    }
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1463,6 +1497,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new MinimizeTag();
   case BattlerTagType.DESTINY_BOND:
     return new DestinyBondTag(sourceMove, sourceId);
+  case BattlerTagType.ICE_FACE:
+    return new IceFaceTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

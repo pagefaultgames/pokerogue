@@ -3339,6 +3339,36 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
   }
 }
 
+export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
+  constructor(immuneCondition: PreDefendAbAttrCondition) {
+    super(immuneCondition);
+  }
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const ret = super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
+    console.log({
+      pokemon: pokemon.name,
+      isPhysical: move.getMove().category === MoveCategory.PHYSICAL,
+      attacker: attacker.name,
+      hasBattlerTag: !!pokemon.getTag(BattlerTagType.ICE_FACE),
+      isImmune: ret
+    });
+    if (ret) {
+      const simulated = args.length > 1 && args[1];
+      if (!simulated) {
+        pokemon.removeTag(BattlerTagType.ICE_FACE);
+        queueShowAbility(pokemon, passive);
+      }
+    }
+
+    return ret;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return `${pokemon.name} avoided damage\nwith ${abilityName}!`;
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -4325,8 +4355,13 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      // Add BattlerTagType.ICE_FACE if the pokemon is in ice face form
+      .conditionalAttr(pokemon => pokemon.formIndex === 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0, false)
+      // When summoned with active HAIL or SNOW, add BattlerTagType.ICE_FACE
+      .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
+      // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
+      .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
+      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.getMove().category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE)),
     new Ability(Abilities.POWER_SPOT, 8)
       .unimplemented(),
     new Ability(Abilities.MIMICRY, 8)
