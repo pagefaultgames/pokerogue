@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Amuleto curación", description: "Aumenta la efectividad de los movimientos y objetos de curacion de PS en un 10% (excepto revivir)" },
     "CANDY_JAR": { name: "Candy Jar", description: "Aumenta en 1 el número de niveles añadidos por los carameloraros" },
 
-    "BERRY_POUCH": { name: "Saco Bayas", description: "Agrega un 33% de posibilidades de que una baya usada no se consuma" },
+    "BERRY_POUCH": { name: "Saco Bayas", description: "Agrega un 30% de posibilidades de que una baya usada no se consuma" },
 
     "FOCUS_BAND": { name: "Cinta Focus", description: "Agrega un 10% de probabilidad de resistir un ataque que lo debilitaría" },
 
@@ -208,6 +208,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "Restos", description: "Cura 1/16 de los PS máximo de un Pokémon cada turno" },
     "SHELL_BELL": { name: "Camp Concha", description: "Cura 1/8 del daño infligido por un Pokémon" },
+
+    "TOXIC_ORB": { name: "Toxiesfera", description: "Extraña esfera que envenena gravemente a quien la usa en combate" },
+    "FLAME_ORB": { name: "Llamasfera", description: "Extraña esfera que causa quemaduras a quien la usa en combate" },
 
     "BATON": { name: "Baton", description: "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas" },
 

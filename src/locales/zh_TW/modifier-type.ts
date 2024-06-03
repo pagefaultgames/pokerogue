@@ -213,7 +213,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     CANDY_JAR: { name: "糖果罐", description: "神奇糖果提供的升級提升1級" },
     BERRY_POUCH: {
       name: "樹果袋",
-      description: "使用樹果時有33%的幾率不會消耗樹果",
+      description: "使用樹果時有30%的幾率不會消耗樹果",
     },
     FOCUS_BAND: {
       name: "氣勢頭帶",
@@ -237,6 +237,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "貝殼之鈴",
       description:
                 "攜帶該道具的寶可夢在攻擊對方成功造成傷\n害時，攜帶者的HP會恢復其所造成傷害\n的1/8",
+    },
+    TOXIC_ORB: {
+      name: "Toxic Orb",
+      description:
+                "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle"
+    },
+    FLAME_ORB: {
+      name: "Flame Orb",
+      description:
+                "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
     },
     BATON: {
       name: "接力棒",
