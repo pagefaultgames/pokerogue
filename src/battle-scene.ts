@@ -2115,7 +2115,7 @@ export default class BattleScene extends SceneBase {
    * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
    */
   findModifier(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier {
-    return (player ? this.modifiers : this.enemyModifiers).find(m => modifierFilter(m));
+    return (player ? this.modifiers : this.enemyModifiers).find(modifierFilter);
   }
 
   /**
@@ -2175,10 +2175,12 @@ export default class BattleScene extends SceneBase {
    * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
    */
   applyModifier<T extends PersistentModifier>(modifierType: ClassType<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T | null {
-    const modifier = (player ? this.modifiers : this.enemyModifiers).find((m): m is T => m instanceof modifierType && m.shouldApply(...args));
-    if (modifier?.apply(...args)) {
-      console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
-      return modifier;
+    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
+    for (const modifier of modifiers) {
+      if (modifier.apply(...args)) {
+        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+        return modifier;
+      }
     }
 
     return null;
