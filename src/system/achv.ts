@@ -4,7 +4,7 @@ import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import i18next from "../plugins/i18n";
 import * as Utils from "../utils";
 import { PlayerGender } from "./game-data";
-import {ParseKeys} from "i18next";
+import { ParseKeys } from "i18next";
 
 export enum AchvTier {
   COMMON,
