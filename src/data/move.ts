@@ -1022,18 +1022,6 @@ export class HealAttr extends MoveEffectAttr {
       Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, " \nhad its HP restored."), true, !this.showAnim));
   }
 
-  /** 
-   * Returns the healRatio. If h is greater than -1, healRatio is set as h first.
-   * @param h this is the int the healRatio is set to @default -1
-   * @returns this class' {@link this.healRatio}
-   */
-  getHealRatio(h: number = -1){
-    if (h > -1)
-      this.healRatio = h;
-
-    return this.healRatio;
-  }
-
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     const score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
@@ -1071,10 +1059,7 @@ export class SwallowHealAttr extends HealAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stock = getStockpiles(user);
-
-    this.getHealRatio(stock >= 3 ? 1 : (stock * 0.25));
-
-    super.apply(user, target, move, args);
+    this.addHealPhase(this.selfTarget ? user : target, (stock >= 3 ? 1 : (stock * 0.25)));
     return true;
   }
 }
@@ -2213,10 +2198,7 @@ export class StockpileStatChangeAttr extends StatChangeAttr {
         user.removeTag(tagType);
     }
 
-    if (!super.apply(user, target, move, args))
-      return false;
-
-    return true;
+    return super.apply(user, target, move, args);
   }
 }
 
