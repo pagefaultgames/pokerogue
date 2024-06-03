@@ -4951,19 +4951,19 @@ export class DestinyBondAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute to apply {@linkcode BattlerTagType.CONFUSED} to the target if they have had their stats boosted this turn.
+ * Attribute to apply a battler tag to the target if they have had their stats boosted this turn.
  *
  * @extends AddBattlerTagAttr
  */
-export class ConfuseIfBoostedAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.CONFUSED, false, false, 2, 5);
+export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
+  constructor(tag: BattlerTagType) {
+    super(tag, false, false, 2, 5);
   }
 
   /**
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} {@linkcode Move.ALLURING_VOICE}
+   * @param move {@linkcode Move} being used
    * @param {any[]} args N/A
    * @returns true
    */
@@ -4979,19 +4979,22 @@ export class ConfuseIfBoostedAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Attribute to apply {@linkcode StatusEffect.BURN} to the target if they have had their stats boosted this turn.
+ * Attribute to apply a status effect to the target if they have had their stats boosted this turn.
  *
  * @extends MoveEffectAttr
  */
-export class BurnIfBoostedAttr extends MoveEffectAttr {
-  constructor() {
+export class StatusIfBoostedAttr extends MoveEffectAttr {
+  public effect: StatusEffect;
+
+  constructor(effect: StatusEffect) {
     super(true, MoveEffectTrigger.HIT);
+    this.effect = effect;
   }
 
   /**
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} {@linkcode Move.BURNING_JEALOUSY}
+   * @param move {@linkcode Move} being used
    * @param {any[]} args N/A
    * @returns true
    */
@@ -5000,7 +5003,7 @@ export class BurnIfBoostedAttr extends MoveEffectAttr {
       target.turnData.statsBoosted ||
       (user.scene.currentBattle.turn === 1 && target.battleData.statsBoostedFirstTurn)
     ) {
-      target.trySetStatus(StatusEffect.BURN, true, user);
+      target.trySetStatus(this.effect, true, user);
     }
     return true;
   }
@@ -7479,7 +7482,7 @@ export function initMoves() {
     new AttackMove(Moves.SKITTER_SMACK, Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new AttackMove(Moves.BURNING_JEALOUSY, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 5, 100, 0, 8)
-      .attr(BurnIfBoostedAttr)
+      .attr(StatusIfBoostedAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .partial(),
@@ -7921,7 +7924,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ALLY)
       .partial(),
     new AttackMove(Moves.ALLURING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
-      .attr(ConfuseIfBoostedAttr)
+      .attr(AddBattlerTagIfBoostedAttr, BattlerTagType.CONFUSED)
       .soundBased(),
     new AttackMove(Moves.TEMPER_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
