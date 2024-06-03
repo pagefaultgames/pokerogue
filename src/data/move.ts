@@ -4935,7 +4935,7 @@ export class AttackedByItemAttr extends MoveAttr {
       }
 
       const itemName = heldItems[0]?.type?.name ?? "item";
-      const attackedByItemString = " is about to be attacked by its " + itemName + "!";
+      const attackedByItemString = ` is about to be attacked by its ${itemName}!`;
       target.scene.queueMessage(getPokemonMessage(target, attackedByItemString));
 
       return true;
