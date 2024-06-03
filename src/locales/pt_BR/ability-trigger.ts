@@ -1,7 +1,8 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const abilityTriggers: SimpleTranslationEntries = {
-    'blockRecoilDamage' : `{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!`,
-    'stockpile' : `{{pokemonName}}\nstockpiled {{stockpileNumber}}!`,
-    'badDreams' : `{{abilityName}} de {{pokemonName}}\nprotegeu-o do dano de recuo!`
+  "blockRecoilDamage" : "{{abilityName}} de {{pokemonName}}\nprotegeu-o do dano de recuo!",
+  "stockpile" : "{{pokemonName}}\nstockpiled {{stockpileNumber}}!",
+  "badDreams": "{{pokemonName}} está tendo pesadelos!",
+  "windPowerCharged": "Being hit by {{moveName}} charged {{pokemonName}} with power!"
 } as const;
