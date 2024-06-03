@@ -23,6 +23,7 @@ export enum Setting {
   Candy_Upgrade_Display = "CANDY_UPGRADE_DISPLAY",
   Money_Format = "MONEY_FORMAT",
   Sprite_Set = "SPRITE_SET",
+  Music_Preference = "MUSIC_PREFERENCE",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Moveset_Flyout = "SHOW_MOVESET_FLYOUT",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
@@ -58,6 +59,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Candy_Upgrade_Display]: ["Icon", "Animation"],
   [Setting.Money_Format]: ["Normal", "Abbreviated"],
   [Setting.Sprite_Set]: ["Consistent", "Mixed Animated"],
+  [Setting.Music_Preference]: ["Consistent", "Mixed"],
   [Setting.Move_Animations]: ["Off", "On"],
   [Setting.Show_Moveset_Flyout]: ["Off", "On"],
   [Setting.Show_Stats_on_Level_Up]: ["Off", "On"],
@@ -85,6 +87,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Candy_Upgrade_Display]: 0,
   [Setting.Money_Format]: 0,
   [Setting.Sprite_Set]: 0,
+  [Setting.Music_Preference]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Moveset_Flyout]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
@@ -97,7 +100,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set, Setting.Candy_Upgrade_Display];
+export const reloadSettings: Setting[] = [Setting.UI_Theme, Setting.Language, Setting.Sprite_Set, Setting.Music_Preference, Setting.Candy_Upgrade_Display];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -157,6 +160,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     if (value) {
       scene.initExpSprites();
     }
+    break;
+  case Setting.Music_Preference:
+    scene.musicPreference = value;
     break;
   case Setting.Move_Animations:
     scene.moveAnimations = settingOptions[setting][value] === "On";
