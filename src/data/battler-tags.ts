@@ -1353,7 +1353,7 @@ export class CursedTag extends BattlerTag {
 
 export class IceFaceTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+    super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
   canAdd(pokemon: Pokemon): boolean {

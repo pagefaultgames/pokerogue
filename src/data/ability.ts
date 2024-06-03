@@ -4360,7 +4360,8 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
       // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
-      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.getMove().category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE)),
+      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.getMove().category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
+      .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .unimplemented(),
     new Ability(Abilities.MIMICRY, 8)
