@@ -10,7 +10,7 @@ import {InGameManip} from "#app/test/helpers/inGameManip";
 import {Device} from "#app/enums/devices";
 import {InterfaceConfig} from "#app/inputs-controller";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
-import {SettingKeyboard} from "#app/system/settings-keyboard";
+import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 
 
 describe("Test Rebinding", () => {
