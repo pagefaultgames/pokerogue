@@ -37,7 +37,8 @@ export enum GameDataType {
   SYSTEM,
   SESSION,
   SETTINGS,
-  TUTORIALS
+  TUTORIALS,
+  RUN_HISTORY
 }
 
 export enum PlayerGender {
@@ -65,6 +66,8 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return "settings";
   case GameDataType.TUTORIALS:
     return "tutorials";
+  case GameDataType.RUN_HISTORY:
+    return "runHistory";
   }
 }
 
@@ -382,6 +385,11 @@ export class GameData {
         console.debug(systemData);
 
         localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
+
+        if (!localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
+          localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt('', bypassLogin));
+        }
+
 
         /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
 
@@ -937,6 +945,72 @@ export class GameData {
       return v;
     }) as SessionSaveData;
   }
+
+  public getRunHistoryData(scene: BattleScene): Promise<Object> {
+    return JSON.parse(atob(localStorage.getItem(`runHistoryData_${loggedInUser.username}`)));
+    try { Utils.apiFetch(`savedata/runHistory`, true)
+      .then(response => response.text())
+        .then(async response => {
+          if (!response.length || response[0] !== "{") {
+            return resolve(null);
+          }
+          else {
+            return resolve(response);
+          }
+        });
+    }catch(error) {
+          return resolve(JSON.parse(decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, bypassLogin))));
+      }
+  } 
+
+  public saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean, useCachedRunHistory: boolean = false, skipVerification: boolean = false, sync: boolean = false): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
+        if (success !== null && !success) {
+          return resolve(false);
+        }
+        const response = this.getRunHistoryData(scene);
+        const runHistoryData = response;
+        //const response = useCachedRunHistory ? decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, bypassLogin)) : this.getRunHistoryData(scene);
+        //const runHistoryData = response ? JSON.parse(response) : {};
+        console.log(runHistoryData);
+        const timestamps = Object.keys(runHistoryData);
+        if (timestamps.length >= 25) {
+          delete this.scene.gameData.runHistory[Math.min(timestamps)];
+        }
+        const currentTime = new Date().getTime();
+        runHistoryData[currentTime] = {};
+        runHistoryData[currentTime]["victory"] = victory;
+        runHistoryData[currentTime]["entry"] = runEntry;
+
+        const maxIntAttrValue = Math.pow(2, 31);
+        const request = {runHistory: runHistoryData};
+
+        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), bypassLogin));
+
+        if (!bypassLogin && sync) {
+          Utils.apiPost("savedata/runHistory", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
+            .then(response => response.text())
+            .then(error => {
+              if (sync) {
+                this.scene.lastSavePlayTime = 0;
+              }
+              if (error) {
+                if (error.startsWith("client version out of date")) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                } else if (error.startsWith("session out of date")) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                }
+                console.error(error);
+                return resolve(false);
+              }
+              resolve(true);
+            });
+      }
+    });
+  })}
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
