@@ -110,7 +110,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TerastallizeModifierType": {
       name: "{{teraType}} Fragmento Tera",
-      description: "{{teraType}} Terastaliza um Pokémon por até 10 batalhas",
+      description: "{{teraType}} Terastalize um Pokémon por até 10 batalhas",
     },
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente",
@@ -128,8 +128,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RARE_CANDY": { name: "Doce Raro" },
     "RARER_CANDY": { name: "Doce Raríssimo" },
 
-    "MEGA_BRACELET": { name: "Mega Bracelete", description: "Mega Stones become available" },
-    "DYNAMAX_BAND": { name: "Bracelete  Dynamax", description: "Max Mushrooms become available" },
+    "MEGA_BRACELET": { name: "Mega Bracelete", description: "Mega Pedras ficam disponíveis" },
+    "DYNAMAX_BAND": { name: "Bracelete Dynamax", description: "Cogumáximos ficam disponíveis" },
     "TERA_ORB": { name: "Orbe Tera", description: "Fragmentos Tera ficam disponíveis" },
 
     "MAP": { name: "Mapa", description: "Permite escolher a próxima rota" },
@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Amuleto de Cura", description: "Aumenta a eficácia dos movimentos e itens que restauram PS em 10% (exceto Reanimador)" },
     "CANDY_JAR": { name: "Pote de Doces", description: "Aumenta o número de níveis adicionados pelo Doce Raro em 1" },
 
-    "BERRY_POUCH": { name: "Bolsa de Berries", description: "Adiciona uma chance de 33% de que uma berry usada não seja consumida" },
+    "BERRY_POUCH": { name: "Bolsa de Berries", description: "Adiciona uma chance de 30% de que uma berry usada não seja consumida" },
 
     "FOCUS_BAND": { name: "Bandana", description: "Adiciona uma chance de 10% de sobreviver com 1 PS após ser danificado o suficiente para desmaiar" },
 
@@ -369,7 +369,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GRISEOUS_CORE": "Núcleo Platinado",
     "REVEAL_GLASS": "Espelho da Verdade",
     "GRACIDEA": "Gracídea",
-    "MAX_MUSHROOMS": "Cogumax",
+    "MAX_MUSHROOMS": "Cogumáximo",
     "DARK_STONE": "Pedra das Trevas",
     "LIGHT_STONE": "Pedra da Luz",
     "PRISON_BOTTLE": "Garrafa Prisão",

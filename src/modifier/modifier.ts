@@ -963,7 +963,10 @@ export class BerryModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 10;
+    if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(this.berryType)) {
+      return 2;
+    }
+    return 3;
   }
 }
 
@@ -982,7 +985,7 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(pokemon: Pokemon, preserve: Utils.BooleanHolder): boolean {
     if (!preserve.value) {
-      preserve.value = pokemon.randSeedInt(this.getMaxStackCount(null)) < this.getStackCount();
+      preserve.value = pokemon.randSeedInt(10) < this.getStackCount() * 3;
     }
 
     return true;
