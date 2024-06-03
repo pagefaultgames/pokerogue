@@ -497,10 +497,18 @@ export class EggHatchPhase extends Phase {
 
         const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
 
-        const speciesPool = Object.keys(speciesStarters)
+        let speciesPool = Object.keys(speciesStarters)
           .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
           .map(s => parseInt(s) as Species)
           .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
+
+        // If this is the 10th egg without unlocking something new, attempt to force it.
+        if (this.scene.gameData.unlockPity[this.egg.tier] >= 9) {
+          const lockedPool = speciesPool.filter(s => !this.scene.gameData.dexData[s].caughtAttr);
+          if (lockedPool.length) { // Skip this if everything is unlocked
+            speciesPool = lockedPool;
+          }
+        }
 
         /**
          * Pokemon that are cheaper in their tier get a weight boost. Regionals get a weight penalty
@@ -534,6 +542,12 @@ export class EggHatchPhase extends Phase {
             species = speciesPool[s];
             break;
           }
+        }
+
+        if (!!this.scene.gameData.dexData[species].caughtAttr) {
+          this.scene.gameData.unlockPity[this.egg.tier] = Math.min(this.scene.gameData.unlockPity[this.egg.tier] + 1, 10);
+        } else {
+          this.scene.gameData.unlockPity[this.egg.tier] = 0;
         }
 
         const pokemonSpecies = getPokemonSpecies(species);
