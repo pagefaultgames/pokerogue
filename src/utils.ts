@@ -185,46 +185,24 @@ export function getIvsFromId(id: integer): integer[] {
 }
 
 export function formatLargeNumber(count: integer, threshold: integer): string {
+  const langCode = getLangCode(i18next.language);
+
   if (count < threshold) {
     return count.toString();
   }
-  const ret = count.toString();
-  let suffix = "";
-  switch (Math.ceil(ret.length / 3) - 1) {
-  case 1:
-    suffix = "K";
-    break;
-  case 2:
-    suffix = "M";
-    break;
-  case 3:
-    suffix = "B";
-    break;
-  case 4:
-    suffix = "T";
-    break;
-  case 5:
-    suffix = "q";
-    break;
-  default:
-    return "?";
-  }
-  const digits = ((ret.length + 2) % 3) + 1;
-  let decimalNumber = ret.slice(digits, digits + 2);
-  while (decimalNumber.endsWith("0")) {
-    decimalNumber = decimalNumber.slice(0, -1);
-  }
-  return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ""}${suffix}`;
+  return count.toLocaleString(langCode, { notation: "compact", maximumFractionDigits: 2 });
 }
 
 // Abbreviations from 10^0 to 10^33
 const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
 
 export function formatFancyLargeNumber(number: number, rounded: number = 2): string {
+  const langCode = getLangCode(i18next.language);
   let exponent: number;
 
-  if (number < 1000) {
-    exponent = 0;
+  // If the number is greater than a quadrillion, return the number using toLocaleString
+  if (number < 1e15) {
+    return number.toLocaleString(langCode, { notation: "compact", maximumFractionDigits: rounded });
   } else {
     const maxExp = AbbreviationsLargeNumber.length - 1;
 
@@ -234,7 +212,7 @@ export function formatFancyLargeNumber(number: number, rounded: number = 2): str
     number /= Math.pow(1000, exponent);
   }
 
-  return `${(exponent === 0) ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+  return `${number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
 }
 
 export function formatStat(stat: integer, forHp: boolean = false): string {

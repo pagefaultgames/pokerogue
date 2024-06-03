@@ -1,15 +1,15 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
+import { Button } from "../enums/buttons";
 import { gameModes } from "../game-mode";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { SessionSaveData } from "../system/game-data";
+import PokemonData from "../system/pokemon-data";
+import * as Utils from "../utils";
+import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import PokemonData from "../system/pokemon-data";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
-import MessageUiHandler from "./message-ui-handler";
-import i18next from "i18next";
-import {Button} from "../enums/buttons";
 
 const sessionSlotCount = 5;
 
@@ -283,7 +283,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(this.scene, 32, 20, `Lv${pokemon.level.toLocaleString("en-US", { notation: "compact", maximumFractionDigits: 2})}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
