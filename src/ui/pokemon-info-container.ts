@@ -49,7 +49,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private readonly infoWindowWidth = 104;
 
-  private pokemonGenderLabelText: Phaser.GameObjects.Text;
+  private pokemonFormLabelText: Phaser.GameObjects.Text;
+  private pokemonFormText: Phaser.GameObjects.Text;
+  private pokemonFormNewText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonGenderNewText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
@@ -135,15 +137,30 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     // The font size should be set by language
     const infoContainerTextSize = textSettings?.infoContainerTextSize || "64px";
 
-    this.pokemonGenderLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, i18next.t("pokemonInfoContainer:form"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
-    this.pokemonGenderLabelText.setOrigin(1, 0);
-    this.pokemonGenderLabelText.setVisible(false);
-    this.add(this.pokemonGenderLabelText);
+    this.pokemonFormLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonFormLabelText.setOrigin(0, 0);
+    this.pokemonFormLabelText.setVisible(false);
+    this.add(this.pokemonFormLabelText);
+
+    this.pokemonFormText = addTextObject(this.scene, infoContainerTextXPos, 18, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonFormText.setOrigin(0, 0);
+    this.pokemonFormText.setVisible(false);
+    this.add(this.pokemonFormText);
+
+    this.pokemonFormNewText = addTextObject(this.scene, 15, 18, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonGenderText object
+    this.pokemonFormNewText.setOrigin(0, 0);
+    this.pokemonFormNewText.setVisible(false);
+    this.add(this.pokemonFormNewText);
 
     this.pokemonGenderText = addTextObject(this.scene, -42, -61, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderText.setOrigin(0, 0);
-    this.pokemonGenderText.setVisible(false);
+
     this.add(this.pokemonGenderText);
+
+    this.pokemonGenderNewText = addTextObject(this.scene, -36, -61, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonGenderText object
+    this.pokemonGenderNewText.setOrigin(0, 0);
+    this.pokemonGenderNewText.setVisible(false);
+    this.add(this.pokemonGenderNewText);
 
     this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 28, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonAbilityLabelText.setOrigin(1, 0);
@@ -153,6 +170,11 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonAbilityText.setOrigin(0, 0);
     this.add(this.pokemonAbilityText);
 
+    this.pokemonAbilityNewText = addTextObject(this.scene, 15, 28, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonAbilityText object
+    this.pokemonAbilityNewText.setOrigin(0, 0);
+    this.pokemonAbilityNewText.setVisible(false);
+    this.add(this.pokemonAbilityNewText);
+
     this.pokemonNatureLabelText = addTextObject(this.scene, infoContainerLabelXPos, 38, i18next.t("pokemonInfoContainer:nature"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonNatureLabelText.setOrigin(1, 0);
     this.add(this.pokemonNatureLabelText);
@@ -161,11 +183,20 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonNatureText.setOrigin(0, 0);
     this.add(this.pokemonNatureText);
 
+    this.pokemonNatureNewText = addTextObject(this.scene, 10, 38, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonNatureText object
+    this.pokemonNatureNewText.setOrigin(0, 0);
+    this.add(this.pokemonNatureNewText);
+
     this.pokemonShinyIcon = this.scene.add.image(-43.5, 48.5, "shiny_star");
     this.pokemonShinyIcon.setOrigin(0, 0);
     this.pokemonShinyIcon.setScale(0.75);
     this.pokemonShinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.pokemonShinyIcon);
+
+    this.pokemonShinyNewIcon = addTextObject(this.scene, this.pokemonShinyIcon.x + 12, this.pokemonShinyIcon.y, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonNatureText object
+    this.pokemonShinyNewIcon.setOrigin(0, 0);
+    this.add(this.pokemonShinyNewIcon);
+    this.pokemonShinyNewIcon.setVisible(false);
 
     this.pokemonFusionShinyIcon = this.scene.add.image(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y, "shiny_star_2");
     this.pokemonFusionShinyIcon.setOrigin(0, 0);
@@ -182,12 +213,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
         this.pokemonGenderText.setColor(getGenderColor(pokemon.gender));
         this.pokemonGenderText.setShadowColor(getGenderColor(pokemon.gender, true));
-        this.pokemonGenderLabelText.setVisible(true);
+        //this.pokemonFormLabelText.setVisible(true);
         this.pokemonGenderText.setVisible(true);
-
-        this.pokemonGenderNewText = addTextObject(this.scene, -36, -61, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonGenderText object
-        this.pokemonGenderNewText.setOrigin(0, 0);
-        this.add(this.pokemonGenderNewText);
 
         const newGender = BigInt(Math.pow(2, pokemon.gender + 2)); // adding 2 here because of the 2 starting bits being related to shiny, not gender
 
@@ -200,14 +227,41 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
+      if (pokemon.species.forms?.[pokemon.formIndex]?.formName !== undefined) {
+        this.pokemonFormLabelText.setVisible(true);
+        //this.pokemonFormText.setText(pokemon.species.forms?.[pokemon.formIndex]?.formName);
+        //this.pokemonFormText.setVisible(true);
+        console.log(pokemon.species.forms?.[pokemon.formIndex]?.formName);
+        const newForm = BigInt(Math.pow(2, pokemon.formIndex)) * DexAttr.DEFAULT_FORM;
+
+        /*this.pokemonFormNewText.setText("(+)");
+            this.pokemonFormNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+            this.pokemonFormNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+            this.pokemonFormNewText.x = this.pokemonFormText.x + (this.pokemonFormText.width + 10) / 6;
+            //this.pokemonFormNewText.setVisible((newForm & caughtAttr) === BigInt(0));
+            this.pokemonFormNewText.setVisible(false);
+            */
+        if ((newForm & caughtAttr) === BigInt(0)) {
+          this.pokemonFormLabelText.setText(i18next.t("pokemonInfoContainer:newForm"));
+          this.pokemonFormLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+          this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+        } else {
+          this.pokemonFormLabelText.setText(i18next.t("pokemonInfoContainer:existingForm"));
+          this.pokemonFormLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
+          this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
+        }
+        this.pokemonFormLabelText.x = (this.pokemonFormLabelText.getLeftCenter().x - this.pokemonFormLabelText.getRightCenter().x) / 2; // using this to center the pokemonFormLabelText horizontally as the text is dynamic and can change
+        this.pokemonFormLabelText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormLabelText.width, this.pokemonFormLabelText.height), Phaser.Geom.Rectangle.Contains);
+        this.pokemonFormLabelText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
+        this.pokemonFormLabelText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+        console.log(pokemon.formIndex);
+        console.log((newForm & caughtAttr) === BigInt(0) ? "This is a new form" : "You have this form");
+      }
+
       const abilityTextStyle = pokemon.abilityIndex === (pokemon.species.ability2 ? 2 : 1) ? TextStyle.MONEY : TextStyle.WINDOW;
       this.pokemonAbilityText.setText(pokemon.getAbility(true).name);
       this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
       this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
-
-      this.pokemonAbilityNewText = addTextObject(this.scene, 15, 28, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonAbilityText object
-      this.pokemonAbilityNewText.setOrigin(0, 0);
-      this.add(this.pokemonAbilityNewText);
 
       console.log(pokemon);
       console.log(pokemon.scene.gameData.dexData[pokemon.species.speciesId]);
@@ -229,15 +283,20 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonAbilityNewText.setText("(+)");
       this.pokemonAbilityNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
       this.pokemonAbilityNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
-      this.pokemonAbilityNewText.setVisible(!rootFormHasHiddenAbility);
+      this.pokemonAbilityNewText.x = this.pokemonAbilityText.x + (this.pokemonAbilityText.width + 12) / 6;
+      //this.pokemonAbilityNewText.setVisible(!rootFormHasHiddenAbility);
+      this.pokemonAbilityNewText.setVisible(false);
+      if (!rootFormHasHiddenAbility) {
+        this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+        this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+      } else {
+        this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
+        this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
+      }
 
-      console.log(!rootFormHasHiddenAbility ? "This is a new ability: ${pokemon.getAbility().name}" : "You already have this ability: ${pokemon.getAbility().name}");
+      console.log(!rootFormHasHiddenAbility ? "This is a new ability" : "You already have this ability");
 
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false, this.scene.uiTheme));
-
-      this.pokemonNatureNewText = addTextObject(this.scene, 10, 38, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonNatureText object
-      this.pokemonNatureNewText.setOrigin(0, 0);
-      this.add(this.pokemonNatureNewText);
 
       const dexNatures = pokemon.scene.gameData.dexData[pokemon.species.speciesId].natureAttr;
       const newNature = Math.pow(2, pokemon.nature + 1);
@@ -245,8 +304,17 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonNatureNewText.setText("(+)");
       this.pokemonNatureNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
       this.pokemonNatureNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
-      this.pokemonNatureNewText.setVisible(!(dexNatures & newNature));
+      this.pokemonNatureNewText.x = this.pokemonNatureText.x + (this.pokemonNatureText.width + 12) / 6;
+      //this.pokemonNatureNewText.setVisible(!(dexNatures & newNature));
       console.log(!(dexNatures & newNature) ? "This is a new nature" : "You already have this nature");
+      this.pokemonNatureNewText.setVisible(false);
+      if (!(dexNatures & newNature)) {
+        this.pokemonNatureLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+        this.pokemonNatureLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
+      } else {
+        this.pokemonNatureLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
+        this.pokemonNatureLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
+      }
 
       const isFusion = pokemon.isFusion();
       const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
@@ -265,9 +333,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         const newShiny = BigInt(Math.pow(2, pokemon.shiny));
         const newVariant = BigInt(Math.pow(2, pokemon.variant + 4));
 
-        this.pokemonShinyNewIcon = addTextObject(this.scene, this.pokemonShinyIcon.x + 12, this.pokemonShinyIcon.y, "", TextStyle.WINDOW, { fontSize: "64px" }); // need to figure out how to make this dynamic based on the text width of the pokemonNatureText object
-        this.pokemonShinyNewIcon.setOrigin(0, 0);
-        this.add(this.pokemonShinyNewIcon);
         this.pokemonShinyNewIcon.setText("(+)");
         this.pokemonShinyNewIcon.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
         this.pokemonShinyNewIcon.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
