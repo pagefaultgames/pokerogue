@@ -58,7 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
-import FightFlyout from "./ui/fight-flyout";
+import ArenaFlyout from "./ui/fight-flyout";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -177,7 +177,7 @@ export default class BattleScene extends SceneBase {
   private luckText: Phaser.GameObjects.Text;
   private modifierBar: ModifierBar;
   private enemyModifierBar: ModifierBar;
-  public commandFlyout: FightFlyout;
+  public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private modifiers: PersistentModifier[];
@@ -412,9 +412,9 @@ export default class BattleScene extends SceneBase {
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
 
-    this.commandFlyout = new FightFlyout(this);
-    this.fieldUI.add(this.commandFlyout);
-    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.commandFlyout, this.fieldOverlay);
+    this.arenaFlyout = new ArenaFlyout(this);
+    this.fieldUI.add(this.arenaFlyout);
+    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
 
     this.updateUIPositions();
 
@@ -1281,7 +1281,7 @@ export default class BattleScene extends SceneBase {
     this.fieldUI.moveBelow<any>(gameObject, this.fieldOverlay);
   }
   processStats(pressed: boolean): void {
-    this.commandFlyout.toggleFlyout(pressed);
+    this.arenaFlyout.toggleFlyout(pressed);
   }
 
   showFieldOverlay(duration: integer): Promise<void> {

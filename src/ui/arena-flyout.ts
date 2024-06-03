@@ -31,7 +31,7 @@ interface ArenaEffectInfo {
   duration: number;
 }
 
-export default class FightFlyout extends Phaser.GameObjects.Container {
+export default class ArenaFlyout extends Phaser.GameObjects.Container {
   /** An alias for the scene typecast to a {@linkcode BattleScene} */
   private battleScene: BattleScene;
 
