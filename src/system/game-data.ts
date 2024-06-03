@@ -33,10 +33,12 @@ import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
-import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
+import { EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyTurnHealModifier, PersistentModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
+import { modifierTypes } from "#app/modifier/modifier-type.js";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
+const currentTokenVersion = 1;
 
 export enum GameDataType {
   SYSTEM,
@@ -118,6 +120,7 @@ export interface SessionSaveData {
   trainer: TrainerData;
   gameVersion: string;
   timestamp: integer;
+  tokenVersion: integer;
 }
 
 interface Unlocks {
@@ -771,7 +774,8 @@ export class GameData {
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      tokenVersion: currentTokenVersion
     } as SessionSaveData;
   }
 
@@ -829,6 +833,8 @@ export class GameData {
 
           scene.sessionPlayTime = sessionData.playTime || 0;
           scene.lastSavePlayTime = 0;
+
+          sessionData.tokenVersion = sessionData.tokenVersion? sessionData.tokenVersion : 0;
 
           const loadPokemonAssets: Promise<void>[] = [];
 
@@ -900,6 +906,57 @@ export class GameData {
           for (const enemyModifierData of sessionData.enemyModifiers) {
             const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
             if (modifier) {
+              if (sessionData.tokenVersion < currentTokenVersion) {
+                let updatedMod;
+                if (modifier?.className === "EnemyAttackStatusEffectChanceModifierType" && (modifier as EnemyAttackStatusEffectChanceModifier)?.effect) {
+                  switch ((modifier as EnemyAttackStatusEffectChanceModifier).effect) {
+                    case StatusEffect.SLEEP:
+                    case StatusEffect.FREEZE:
+                      updatedMod = "Nope";
+                      break;
+                    case StatusEffect.POISON:
+                      updatedMod = modifierTypes.ENEMY_ATTACK_POISON_CHANCE().newModifier();
+                      break;
+                    case StatusEffect.PARALYSIS:
+                      updatedMod = modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE().newModifier();
+                      break;
+                    case StatusEffect.BURN:
+                      updatedMod = modifierTypes.ENEMY_ATTACK_BURN_CHANCE().newModifier();
+                      break;
+                  }
+                  if (updatedMod) {
+                    if (updatedMod instanceof PersistentModifier) {
+                      updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
+                      scene.addEnemyModifier(updatedMod, true);
+                    }
+                    continue;
+                  }
+                }
+                if (modifier?.className === "EnemyTurnHealModifierType") {
+                  let updatedMod = modifierTypes.ENEMY_HEAL().newModifier();
+                  if (updatedMod instanceof PersistentModifier) {
+                    updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
+                    scene.addEnemyModifier(updatedMod, true);
+                  }
+                  continue;
+                }
+                if (modifier?.className === "EnemyStatusEffectHealChanceModifierType") {
+                  let updatedMod = modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE().newModifier();
+                  if (updatedMod instanceof PersistentModifier) {
+                    updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
+                    scene.addEnemyModifier(updatedMod, true);
+                  }
+                  continue;
+                }
+                if (modifier?.className === "EnemyEndureChanceModifierType") {
+                  let updatedMod = modifierTypes.ENEMY_ENDURE_CHANCE().newModifier();
+                  if (updatedMod instanceof PersistentModifier) {
+                    updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
+                    scene.addEnemyModifier(updatedMod, true);
+                  }
+                  continue;
+                }
+              }
               scene.addEnemyModifier(modifier, true);
             }
           }
@@ -1053,9 +1110,6 @@ export class GameData {
         for (const md of v) {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
-          }
-          if (md?.className === "EnemyAttackStatusEffectChanceModifierType" && [StatusEffect.FREEZE, StatusEffect.SLEEP].includes((md as EnemyAttackStatusEffectChanceModifier)?.effect)) {
-            md.stackCount = 0;
           }
           ret.push(new PersistentModifierData(md, player));
         }

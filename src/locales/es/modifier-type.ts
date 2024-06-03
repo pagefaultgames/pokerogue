@@ -231,7 +231,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Poison Token" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Paralyze Token" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Burn Token" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Agrega un 5% de probabilidad cada turno de curar un problema de estado" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Agrega un 2.5% de probabilidad cada turno de curar un problema de estado" },
     "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
     "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión" },
   },

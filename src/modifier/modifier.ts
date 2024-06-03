@@ -2172,7 +2172,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 15;
+    return 10;
   }
 }
 
@@ -2207,6 +2207,10 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
     return false;
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
 }
 
 export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
@@ -2240,6 +2244,10 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
     }
 
     return false;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
   }
 }
 
