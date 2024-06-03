@@ -184,13 +184,13 @@ export function getIvsFromId(id: integer): integer[] {
   ];
 }
 
-export function formatLargeNumber(count: integer, threshold: integer): string {
+export function formatLargeNumber(number: integer, threshold: integer): string {
   const langCode = getLangCode(i18next.language);
 
-  if (count < threshold) {
-    return count.toString();
+  if (number < threshold) {
+    return number.toString();
   }
-  return count.toLocaleString(langCode, { notation: "compact", maximumFractionDigits: 2 });
+  return number.toLocaleString(langCode, { notation: "compact", maximumFractionDigits: 2 });
 }
 
 // Abbreviations from 10^0 to 10^33
@@ -215,8 +215,8 @@ export function formatFancyLargeNumber(number: number, rounded: number = 2): str
   return `${number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
 }
 
-export function formatStat(stat: integer, forHp: boolean = false): string {
-  return formatLargeNumber(stat, forHp ? 100000 : 1000000);
+export function formatStat(stat: integer): string {
+  return formatLargeNumber(stat, 1000000);
 }
 
 export function getEnumKeys(enumType): string[] {

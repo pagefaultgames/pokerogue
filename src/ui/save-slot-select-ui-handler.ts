@@ -277,13 +277,14 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     const pokemonIconsContainer = this.scene.add.container(144, 4);
     data.party.forEach((p: PokemonData, i: integer) => {
+      const langCode = Utils.getLangCode(i18next.language);
       const iconContainer = this.scene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
 
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `Lv${pokemon.level.toLocaleString("en-US", { notation: "compact", maximumFractionDigits: 2})}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(this.scene, 32, 20, `Lv${pokemon.level.toLocaleString(langCode, { notation: "compact", maximumFractionDigits: 2})}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
