@@ -203,4 +203,8 @@ export default class MockText {
   setName(name) {
     // return this.phaserText.setName(name);
   }
+
+  setAlign(align) {
+    // return this.phaserText.setAlign(align);
+  }
 }
