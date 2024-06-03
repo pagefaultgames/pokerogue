@@ -17,11 +17,15 @@ export const challenges: ChallengeTranslationEntries = {
     description: "Only allows using pokemon of the chosen type"
   },
   lowerMaxStarterCost: {
-    name: "Lower Starter Cap",
+    name: "Starter Point Cap",
     description: "Only allows pokemon up to the specified cost"
   },
   lowerStarterPoints: {
-    name: "Less Starter Points",
+    name: "Starter Points",
     description: "Lowers your available points to the specified value"
+  },
+  freshStartPoints: {
+    name: "Fresh Start",
+    description: "Your starter choice is limited to that of a new account"
   }
 } as const;

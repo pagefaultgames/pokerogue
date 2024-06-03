@@ -8,8 +8,12 @@ import BattleScene from "#app/battle-scene.js";
 import Pokemon from "#app/field/pokemon.js";
 
 export enum ChallengeType {
-  STARTER_CHOICE, // Challenges which modify what starters you can choose
-  STARTER_POINTS, // Challenges which modify how many starter points you have
+   /** Challenges which modify what starters you can choose */
+  STARTER_CHOICE,
+   /** Challenges which modify how many starter points you have */
+  STARTER_POINTS,
+  /** Challenges which modify your starters in some way */
+  STARTER_MODIFY,
   /** Challenges which limit which pokemon you can have in battle. */
   POKEMON_IN_BATTLE,
 }
@@ -350,6 +354,60 @@ export class SingleTypeChallenge extends Challenge {
 }
 
 /**
+ * Implements a mono type challenge.
+ */
+export class FreshStartChallenge extends Challenge {
+  constructor() {
+    super(Challenges.FRESH_START, 1);
+    this.addChallengeType(ChallengeType.STARTER_CHOICE);
+    this.addChallengeType(ChallengeType.STARTER_MODIFY);
+  }
+
+  getValue(overrideValue?: integer): string {
+    if (overrideValue === undefined) {
+      overrideValue = this.value;
+    }
+    if (overrideValue) {
+      return "On";
+    } else {
+      return i18next.t("challengeUiHandler:challenge_off");
+    }
+  }
+
+  apply(challengeType: ChallengeType, args: any[]): boolean {
+    if (this.value === 0) {
+      return false;
+    }
+
+    switch (challengeType) {
+    case ChallengeType.STARTER_CHOICE:
+      const species = args[0] as PokemonSpecies;
+      const isValidStarter = args[1] as Utils.BooleanHolder;
+      if (species) {
+        isValidStarter.value = false;
+        return true;
+      }
+      break;
+    }
+    return false;
+  }
+
+  /**
+   * @overrides
+   */
+  getDifficulty(): number {
+    return 0;
+  }
+
+  static loadChallenge(source: FreshStartChallenge | any): FreshStartChallenge {
+    const newChallenge = new FreshStartChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
  * Lowers the amount of starter points available.
  */
 export class LowerStarterMaxCostChallenge extends Challenge {
@@ -463,6 +521,7 @@ export function initChallenges() {
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
     // new LowerStarterMaxCostChallenge(),
-    // new LowerStarterPointsChallenge()
+    // new LowerStarterPointsChallenge(),
+    // new FreshStartChallenge()
   );
 }
