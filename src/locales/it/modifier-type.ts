@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Curamuleto", description: "Aumenta del 10% l'efficacia delle mosse e degli oggetti che ripristinano i PS (escluse le rianimazioni)" },
     "CANDY_JAR": { name: "Barattolo di caramelle", description: "Aumenta di 1 il numero di livelli aggiunti dalle Caramelle Rare" },
 
-    "BERRY_POUCH": { name: "Porta Bacche", description: "Aggiunge il 33% di possibilità che una bacca usata non venga consumata" },
+    "BERRY_POUCH": { name: "Porta Bacche", description: "Aggiunge il 30% di possibilità che una bacca usata non venga consumata" },
 
     "FOCUS_BAND": { name: "Bandana", description: "Chi ce l'ha ottiene il 10% di possibilità aggiuntivo di evitare un potenziale KO e rimanere con un solo PS" },
 

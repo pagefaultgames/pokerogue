@@ -894,27 +894,27 @@ export const ability: AbilityTranslationEntries = {
     description: "Wechselt seine Fähigkeit zu der eines kampfunfähig gewordenen Mitstreiters.",
   },
   beastBoost: {
-    name: "BestienBoost",
+    name: "Bestien-Boost",
     description: "Erhöht in jeder Runde, in der es ein anderes Pokémon besiegt, seinen höchsten Statuswert.",
   },
   rksSystem: {
-    name: "AlphaSystem",
+    name: "Alpha-System",
     description: "Das Pokémon passt seinen Typ der getragenen Disc an.",
   },
   electricSurge: {
-    name: "ElektroErzeuger",
+    name: "Elektro-Erzeuger",
     description: "Erzeugt bei Kampfantritt ein Elektrofeld.",
   },
   psychicSurge: {
-    name: "PsychoErzeuger",
+    name: "Psycho-Erzeuger",
     description: "Erzeugt bei Kampfantritt ein Psychofeld.",
   },
   mistySurge: {
-    name: "NebelErzeuger",
+    name: "Nebel-Erzeuger",
     description: "Erzeugt bei Kampfantritt ein Nebelfeld.",
   },
   grassySurge: {
-    name: "GrasErzeuger",
+    name: "Gras-Erzeuger",
     description: "Erzeugt bei Kampfantritt ein Grasfeld.",
   },
   fullMetalBody: {
