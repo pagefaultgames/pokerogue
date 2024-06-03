@@ -6,6 +6,7 @@ import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info
 import { Moves } from "../data/enums/moves";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import { ClassType } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
@@ -620,7 +621,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (stat === Stat.HP) {
       return this.getStat(Stat.HP);
     }
-    const battleStat = (stat - 1) as BattleStat;
+    const battleStat = stat - 1;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
     if (opponent) {
       if (isCritical) {
@@ -641,10 +642,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     if (this.isPlayer()) {
-      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
+      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat satisfies TempBattleStat, statLevel);
     }
     const statValue = new Utils.NumberHolder(this.getStat(stat));
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat satisfies BattleStat, statValue);
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     switch (stat) {
     case Stat.ATK:
@@ -1022,7 +1023,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} ignoreOverride If true, it ignores ability changing effects
    * @returns {boolean} Whether an ability with that attribute is present and active
    */
-  hasAbilityWithAttr(attrType: { new(...args: any[]): AbAttr }, canApply: boolean = true, ignoreOverride?: boolean): boolean {
+  hasAbilityWithAttr(attrType: ClassType<AbAttr>, canApply: boolean = true, ignoreOverride?: boolean): boolean {
     if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).hasAttr(attrType)) {
       return true;
     }
@@ -1993,7 +1994,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  getTag(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag {
+  getTag(tagType: BattlerTagType | ClassType<BattlerTag>): BattlerTag {
     if (!this.summonData) {
       return null;
     }
@@ -2009,7 +2010,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.summonData.tags.find(t => tagFilter(t));
   }
 
-  getTags(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag[] {
+  getTags(tagType: BattlerTagType | ClassType<BattlerTag>): BattlerTag[] {
     if (!this.summonData) {
       return [];
     }

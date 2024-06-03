@@ -1,6 +1,7 @@
 import BattleScene from "../battle-scene";
 import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
 import { Biome } from "../data/enums/biome";
+import { ClassType } from "#app/utils";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
@@ -525,7 +526,7 @@ export class Arena {
     this.ignoreAbilities = ignoreAbilities;
   }
 
-  applyTagsForSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide, ...args: any[]): void {
+  applyTagsForSide(tagType: ArenaTagType | ClassType<ArenaTag>, side: ArenaTagSide, ...args: any[]): void {
     let tags = typeof tagType === "string"
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
@@ -535,7 +536,7 @@ export class Arena {
     tags.forEach(t => t.apply(this, args));
   }
 
-  applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
+  applyTags(tagType: ArenaTagType | ClassType<ArenaTag>, ...args: any[]): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
 
@@ -555,11 +556,11 @@ export class Arena {
     return true;
   }
 
-  getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
+  getTag(tagType: ArenaTagType | ClassType<ArenaTag>): ArenaTag {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
+  getTagOnSide(tagType: ArenaTagType | ClassType<ArenaTag>, side: ArenaTagSide): ArenaTag {
     return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
