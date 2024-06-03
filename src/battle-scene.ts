@@ -1629,16 +1629,16 @@ export default class BattleScene extends SceneBase {
       return 10.495;
     case "battle_legendary_deoxys": //ORAS Deoxys Battle
       return 13.333;
-    case "battle_legendary_lake_trio": //BDSP Lake Guardians Battle
-      return 27.133;
-    case "battle_legendary_sinnoh": //BDSP Sinnoh Legendary Battle
-      return 22.741;
-    case "battle_legendary_dia_pal": //BDSP Dialga & Palkia Battle
-      return 15.993;
-    case "battle_legendary_giratina": //BDSP Giratina Battle
-      return 15.655;
-    case "battle_legendary_arceus": //BDSP Arceus Battle
-      return 16.006;
+    case "battle_legendary_lake_trio": //ORAS Lake Guardians Battle
+      return 16.887;
+    case "battle_legendary_sinnoh": //ORAS Sinnoh Legendary Battle
+      return 22.770;
+    case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
+      return 16.009;
+    case "battle_legendary_giratina": //ORAS Giratina Battle
+      return 10.451;
+    case "battle_legendary_arceus": //HGSS Arceus Battle
+      return 9.595;
     case "battle_legendary_unova": //BW Unova Legendary Battle
       return 13.855;
     case "battle_legendary_kyurem": //BW Kyurem Battle
