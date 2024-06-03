@@ -42,7 +42,7 @@ export class Achv {
    * @param playerGender - the gender of the player
    * @returns the name of the achievement localized for the player gender
    */
-  getName(playerGender:PlayerGender): string {
+  getName(playerGender: PlayerGender): string {
     let prefix = "PGM";
     if (playerGender === PlayerGender.FEMALE) {
       prefix = "PGF";
