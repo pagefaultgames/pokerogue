@@ -11,7 +11,6 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
-//import { AbilityAttr, DexAttr, DexAttrProps, DexEntry } from "../system/game-data";
 import { DexAttr } from "../system/game-data";
 
 interface LanguageSetting {
