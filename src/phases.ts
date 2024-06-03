@@ -2427,6 +2427,9 @@ export class TurnStartPhase extends FieldPhase {
     });
 
     this.queueMoveHeaders(moveOrder);
+
+    let orderIndex = 0;
+
     for (const o of moveOrder) {
 
       const pokemon = field[o];
@@ -2440,6 +2443,7 @@ export class TurnStartPhase extends FieldPhase {
       switch (turnCommand.command) {
       case Command.FIGHT:
         const queuedMove = turnCommand.move;
+        pokemon.turnData.order = orderIndex++;
         if (!queuedMove) {
           continue;
         }
