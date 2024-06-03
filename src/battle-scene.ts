@@ -58,6 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import FightFlyout from "./ui/fight-flyout";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -176,6 +177,8 @@ export default class BattleScene extends SceneBase {
   private luckText: Phaser.GameObjects.Text;
   private modifierBar: ModifierBar;
   private enemyModifierBar: ModifierBar;
+  public commandFlyout: FightFlyout;
+
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
@@ -408,6 +411,10 @@ export default class BattleScene extends SceneBase {
     this.luckLabelText.setOrigin(1, 0);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
+
+    this.commandFlyout = new FightFlyout(this);
+    this.fieldUI.add(this.commandFlyout);
+    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.commandFlyout, this.fieldOverlay);
 
     this.updateUIPositions();
 
@@ -1268,6 +1275,13 @@ export default class BattleScene extends SceneBase {
     sprite.setPipeline(this.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: hasShadow, ignoreOverride: ignoreOverride, teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined });
     this.spriteSparkleHandler.add(sprite);
     return sprite;
+  }
+
+  moveBelowOverlay<T extends Phaser.GameObjects.GameObject>(gameObject: T) {
+    this.fieldUI.moveBelow<any>(gameObject, this.fieldOverlay);
+  }
+  processStats(pressed: boolean): void {
+    this.commandFlyout.toggleFlyout(pressed);
   }
 
   showFieldOverlay(duration: integer): Promise<void> {

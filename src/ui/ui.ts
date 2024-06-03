@@ -223,12 +223,14 @@ export default class UI extends Phaser.GameObjects.Container {
       return false;
     }
 
+    const battleScene = this.scene as BattleScene;
     if ([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
-      this.handlers[Mode.FIGHT]?.processStats(pressed);
+      battleScene?.processStats(pressed);
       return true;
     }
 
-    return false;
+    battleScene?.processStats(false);
+    return true;
   }
 
   processInput(button: Button): boolean {
