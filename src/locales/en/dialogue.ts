@@ -445,7 +445,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
     },
     "victory": {
-      1: "This... This is not..Ngh..."
+      1: "This... This is not.. Ngh..."
     },
     "defeat": {
       1: "And now... I will transform this planet to a land ideal for humanity."

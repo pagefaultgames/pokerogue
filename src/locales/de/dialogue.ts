@@ -369,7 +369,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: `Jetzt gibts Ärger!…
+      1: `Jetzt gibt es Ärger!…
           $und es kommt noch härter!
           $Wir wollen über die Erde regieren…
           $und naja du kennst den Rest…!`
@@ -388,7 +388,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aqua_grunt": {
     "encounter": {
-      1: "Du willst dich also mit Team Aqua anlegen? Du traust dich ja was…Dich werfe ich über Bord!",
+      1: "Du willst dich also mit Team Aqua anlegen? Du traust dich ja was… Dich werfe ich über Bord!",
     },
     "victory": {
       1: "Vielleicht sollte ich wohl lieber selber über die Planke gehen…",
@@ -506,7 +506,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: `So sehen wir uns wieder. Es scheint, als wären unsere Schicksale miteinander verflochten
+      1: `So sehen wir uns wieder. Es scheint, als wären unsere Schicksale miteinander verflochten.
           $Aber hier und jetzt werde ich diese Verbindung brechen!`
     },
     "victory": {
