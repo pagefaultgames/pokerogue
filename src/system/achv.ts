@@ -43,10 +43,7 @@ export class Achv {
    * @returns the name of the achievement localized for the player gender
    */
   getName(playerGender: PlayerGender): string {
-    let prefix = "PGM";
-    if (playerGender === PlayerGender.FEMALE) {
-      prefix = "PGF";
-    }
+    const prefix = playerGender === PlayerGender.FEMALE ?"PGF" : "PGM";
     // Localization key is used to get the name of the achievement
     return i18next.t(`${prefix}achv:${this.localizationKey}.name` as ParseKeys);
   }
