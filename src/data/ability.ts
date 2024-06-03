@@ -2015,6 +2015,10 @@ export class BonusCritAbAttr extends AbAttr {
  * This is used in battle-scene.ts in generateEnemyModifiers.
  */
 export class BonusItemChance extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return true;
   }
@@ -3512,7 +3516,7 @@ export function initAbilities() {
       .attr(SuppressWeatherEffectAbAttr, true),
     new Ability(Abilities.COMPOUND_EYES, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3)
-      .attr(BonusItemChance, false),
+      .attr(BonusItemChance),
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -3788,7 +3792,7 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
       .attr(BonusCritAbAttr)
-      .attr(BonusItemChance, false),
+      .attr(BonusItemChance),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),
