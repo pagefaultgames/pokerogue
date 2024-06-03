@@ -959,14 +959,15 @@ export class EncounterPhase extends BattlePhase {
       if (!encounterMessages?.length) {
         doSummon();
       } else {
+        let message: string;
+        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+
         const showDialogueAndSummon = () => {
-          let message: string;
-          this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
           this.scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE,true), null, () => {
             this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
           });
         };
-        if (this.scene.currentBattle.trainer.config.hasCharSprite) {
+        if (this.scene.currentBattle.trainer.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
           this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon()));
         } else {
           showDialogueAndSummon();
@@ -3789,21 +3790,18 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     this.scene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) }), null, () => {
       const victoryMessages = this.scene.currentBattle.trainer.getVictoryMessages();
-      const showMessage = () => {
-        let message: string;
-        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
-        const messagePages = message.split(/\$/g).map(m => m.trim());
+      let message: string;
+      this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
 
-        for (let p = messagePages.length - 1; p >= 0; p--) {
-          const originalFunc = showMessageOrEnd;
-          showMessageOrEnd = () => this.scene.ui.showDialogue(messagePages[p], this.scene.currentBattle.trainer.getName(), null, originalFunc);
-        }
+      const showMessage = () => {
+        const originalFunc = showMessageOrEnd;
+        showMessageOrEnd = () => this.scene.ui.showDialogue(message, this.scene.currentBattle.trainer.getName(), null, originalFunc);
 
         showMessageOrEnd();
       };
       let showMessageOrEnd = () => this.end();
       if (victoryMessages?.length) {
-        if (this.scene.currentBattle.trainer.config.hasCharSprite) {
+        if (this.scene.currentBattle.trainer.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
           const originalFunc = showMessageOrEnd;
           showMessageOrEnd = () => this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => originalFunc()));
           this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(this.scene.currentBattle.trainer.getKey(), getCharVariantFromDialogue(victoryMessages[0])).then(() => showMessage()));
@@ -4014,19 +4012,27 @@ export class GameOverPhase extends BattlePhase {
           };
 
           if (this.victory && this.scene.gameMode.isClassic) {
-            this.scene.ui.fadeIn(500).then(() => {
-              this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
-                this.scene.ui.showDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1], this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
-                  this.scene.ui.fadeOut(500).then(() => {
-                    this.scene.charSprite.hide().then(() => {
-                      const endCardPhase = new EndCardPhase(this.scene);
-                      this.scene.unshiftPhase(endCardPhase);
-                      clear(endCardPhase);
+            const message = miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1];
+
+            if (!this.scene.ui.shouldSkipDialogue(message)) {
+              this.scene.ui.fadeIn(500).then(() => {
+                this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
+                  this.scene.ui.showDialogue(message, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
+                    this.scene.ui.fadeOut(500).then(() => {
+                      this.scene.charSprite.hide().then(() => {
+                        const endCardPhase = new EndCardPhase(this.scene);
+                        this.scene.unshiftPhase(endCardPhase);
+                        clear(endCardPhase);
+                      });
                     });
                   });
                 });
               });
-            });
+            } else {
+              const endCardPhase = new EndCardPhase(this.scene);
+              this.scene.unshiftPhase(endCardPhase);
+              clear(endCardPhase);
+            }
           } else {
             clear();
           }
