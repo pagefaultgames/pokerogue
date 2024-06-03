@@ -48,7 +48,7 @@ import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
-import { Setting } from "./system/settings";
+import { SettingKeys } from "./system/settings/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
 import { TerrainType } from "./data/terrain";
 import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
@@ -477,7 +477,7 @@ export class SelectGenderPhase extends Phase {
             label: i18next.t("menu:boy"),
             handler: () => {
               this.scene.gameData.gender = PlayerGender.MALE;
-              this.scene.gameData.saveSetting(Setting.Player_Gender, 0);
+              this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 0);
               this.scene.gameData.saveSystem().then(() => this.end());
               return true;
             }
@@ -486,7 +486,7 @@ export class SelectGenderPhase extends Phase {
             label: i18next.t("menu:girl"),
             handler: () => {
               this.scene.gameData.gender = PlayerGender.FEMALE;
-              this.scene.gameData.saveSetting(Setting.Player_Gender, 1);
+              this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 1);
               this.scene.gameData.saveSystem().then(() => this.end());
               return true;
             }

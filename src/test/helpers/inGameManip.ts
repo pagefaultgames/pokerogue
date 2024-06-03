@@ -3,7 +3,7 @@ import {
   getSettingNameWithKeycode
 } from "#app/configs/inputs/configHandler";
 import {expect} from "vitest";
-import {SettingKeyboard} from "#app/system/settings-keyboard";
+import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 
 export class InGameManip {
   private config;

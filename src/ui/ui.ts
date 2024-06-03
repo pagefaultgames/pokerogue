@@ -42,6 +42,7 @@ import {PlayerGender} from "#app/system/game-data";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
+import SettingsAccessibilityUiHandler from "./settings/settings-accessiblity-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -62,6 +63,7 @@ export enum Mode {
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
+  SETTINGS_ACCESSIBILITY,
   SETTINGS_GAMEPAD,
   GAMEPAD_BINDING,
   SETTINGS_KEYBOARD,
@@ -99,6 +101,7 @@ const noTransitionModes = [
   Mode.GAMEPAD_BINDING,
   Mode.KEYBOARD_BINDING,
   Mode.SETTINGS,
+  Mode.SETTINGS_ACCESSIBILITY,
   Mode.SETTINGS_GAMEPAD,
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
@@ -151,6 +154,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
+      new SettingsAccessibilityUiHandler(scene),
       new SettingsGamepadUiHandler(scene),
       new GamepadBindingUiHandler(scene),
       new SettingsKeyboardUiHandler(scene),
