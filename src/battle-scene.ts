@@ -58,7 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
-import ArenaFlyout from "./ui/fight-flyout";
+import ArenaFlyout from "./ui/arena-flyout";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
