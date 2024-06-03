@@ -199,9 +199,10 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      if (pokemon.species.forms?.[pokemon.formIndex]?.formName !== undefined) {
+      if (pokemon.species.forms?.[pokemon.formIndex]?.formName) {
         this.pokemonFormLabelText.setVisible(true);
         const newForm = BigInt(Math.pow(2, pokemon.formIndex)) * DexAttr.DEFAULT_FORM;
+
         if ((newForm & caughtAttr) === BigInt(0)) {
           this.pokemonFormLabelText.setText(i18next.t("pokemonInfoContainer:newForm"));
           this.pokemonFormLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
@@ -211,6 +212,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           this.pokemonFormLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
           this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
         }
+
         this.pokemonFormLabelText.x = (this.pokemonFormLabelText.getLeftCenter().x - this.pokemonFormLabelText.getRightCenter().x) / 2; // using this to center the pokemonFormLabelText horizontally as the text is dynamic and can change
         this.pokemonFormLabelText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormLabelText.width, this.pokemonFormLabelText.height), Phaser.Geom.Rectangle.Contains);
         this.pokemonFormLabelText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, pokemon.species.forms?.[pokemon.formIndex]?.formName, true));

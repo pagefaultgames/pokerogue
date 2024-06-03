@@ -9,5 +9,5 @@ export const pokemonInfoContainer: SimpleTranslationEntries = {
   "rare": "Rare",
   "common": "Common",
   "existingForm": "You have this form",
-  "newForm": "This is a new form"
+  "newForm": "New form unlocked"
 } as const;
