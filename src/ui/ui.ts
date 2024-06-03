@@ -245,22 +245,24 @@ export default class UI extends Phaser.GameObjects.Container {
     const localizationKey = playerGenderPrefix + text;
 
     // Get localized dialogue (if available)
+    let hasi18n = false;
     if (i18next.exists(localizationKey as ParseKeys) ) {
       text = i18next.t(localizationKey as ParseKeys);
+      hasi18n = true;
 
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if ((this.scene as BattleScene).skipSeenDialogues === true && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
+      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
         console.log(`Dialogue ${localizationKey} skipped`);
         callback();
         return;
       }
     }
+    let showMessageAndCallback = () => {
+      hasi18n && (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
+      callback();
+    };
     if (text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      let showMessageAndCallback = () => {
-        (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
-        callback();
-      };
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         showMessageAndCallback = () => this.showDialogue(messagePages[p], name, null, originalFunc);
@@ -269,11 +271,27 @@ export default class UI extends Phaser.GameObjects.Container {
     } else {
       const handler = this.getHandler();
       if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showDialogue(text, name, delay, callback, callbackDelay, true, promptDelay);
+        (handler as MessageUiHandler).showDialogue(text, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
       } else {
-        this.getMessageHandler().showDialogue(text, name, delay, callback, callbackDelay, true, promptDelay);
+        this.getMessageHandler().showDialogue(text, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
       }
     }
+  }
+
+  shouldSkipDialogue(text): boolean {
+    let playerGenderPrefix = "PGM";
+    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
+      playerGenderPrefix = "PGF";
+    }
+
+    const key = playerGenderPrefix + text;
+
+    if (i18next.exists(key as ParseKeys) ) {
+      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
+        return true;
+      }
+    }
+    return false;
   }
 
   showTooltip(title: string, content: string, overlap?: boolean): void {
