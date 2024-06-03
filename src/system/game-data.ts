@@ -33,7 +33,7 @@ import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
-import { EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyTurnHealModifier, PersistentModifier } from "../modifier/modifier";
+import { EnemyAttackStatusEffectChanceModifier, PersistentModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { modifierTypes } from "#app/modifier/modifier-type.js";
 
@@ -910,19 +910,19 @@ export class GameData {
                 let updatedMod;
                 if (modifier?.className === "EnemyAttackStatusEffectChanceModifierType" && (modifier as EnemyAttackStatusEffectChanceModifier)?.effect) {
                   switch ((modifier as EnemyAttackStatusEffectChanceModifier).effect) {
-                    case StatusEffect.SLEEP:
-                    case StatusEffect.FREEZE:
-                      updatedMod = "Nope";
-                      break;
-                    case StatusEffect.POISON:
-                      updatedMod = modifierTypes.ENEMY_ATTACK_POISON_CHANCE().newModifier();
-                      break;
-                    case StatusEffect.PARALYSIS:
-                      updatedMod = modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE().newModifier();
-                      break;
-                    case StatusEffect.BURN:
-                      updatedMod = modifierTypes.ENEMY_ATTACK_BURN_CHANCE().newModifier();
-                      break;
+                  case StatusEffect.SLEEP:
+                  case StatusEffect.FREEZE:
+                    updatedMod = "Nope";
+                    break;
+                  case StatusEffect.POISON:
+                    updatedMod = modifierTypes.ENEMY_ATTACK_POISON_CHANCE().newModifier();
+                    break;
+                  case StatusEffect.PARALYSIS:
+                    updatedMod = modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE().newModifier();
+                    break;
+                  case StatusEffect.BURN:
+                    updatedMod = modifierTypes.ENEMY_ATTACK_BURN_CHANCE().newModifier();
+                    break;
                   }
                   if (updatedMod) {
                     if (updatedMod instanceof PersistentModifier) {
@@ -933,7 +933,7 @@ export class GameData {
                   }
                 }
                 if (modifier?.className === "EnemyTurnHealModifierType") {
-                  let updatedMod = modifierTypes.ENEMY_HEAL().newModifier();
+                  const updatedMod = modifierTypes.ENEMY_HEAL().newModifier();
                   if (updatedMod instanceof PersistentModifier) {
                     updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
                     scene.addEnemyModifier(updatedMod, true);
@@ -941,7 +941,7 @@ export class GameData {
                   continue;
                 }
                 if (modifier?.className === "EnemyStatusEffectHealChanceModifierType") {
-                  let updatedMod = modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE().newModifier();
+                  const updatedMod = modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE().newModifier();
                   if (updatedMod instanceof PersistentModifier) {
                     updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
                     scene.addEnemyModifier(updatedMod, true);
@@ -949,7 +949,7 @@ export class GameData {
                   continue;
                 }
                 if (modifier?.className === "EnemyEndureChanceModifierType") {
-                  let updatedMod = modifierTypes.ENEMY_ENDURE_CHANCE().newModifier();
+                  const updatedMod = modifierTypes.ENEMY_ENDURE_CHANCE().newModifier();
                   if (updatedMod instanceof PersistentModifier) {
                     updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
                     scene.addEnemyModifier(updatedMod, true);
