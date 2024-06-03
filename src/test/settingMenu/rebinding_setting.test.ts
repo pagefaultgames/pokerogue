@@ -5,8 +5,8 @@ import {
   getKeyWithKeycode,
   getKeyWithSettingName,
 } from "#app/configs/inputs/configHandler";
-import {MenuManip} from "#app/test/helpers/menuManip";
-import {InGameManip} from "#app/test/helpers/inGameManip";
+import {MenuManip} from "#app/test/settingMenu/helpers/menuManip";
+import {InGameManip} from "#app/test/settingMenu/helpers/inGameManip";
 import {Device} from "#app/enums/devices";
 import {InterfaceConfig} from "#app/inputs-controller";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";

@@ -9,4 +9,8 @@ export default class TextInterceptor {
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
     this.logs.push(text);
   }
+
+  getLatestMessage(): string {
+    return this.logs[this.logs.length - 1];
+  }
 }

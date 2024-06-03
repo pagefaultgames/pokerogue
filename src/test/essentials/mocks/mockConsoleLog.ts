@@ -1,4 +1,4 @@
-const MockConsoleLog = (_logDisabled=false, _phaseText=false) => {
+const MockConsoleLog = (_logDisabled= false, _phaseText=false) => {
   let logs = [];
   const logDisabled: boolean = _logDisabled;
   const phaseText: boolean = _phaseText;
@@ -18,7 +18,7 @@ const MockConsoleLog = (_logDisabled=false, _phaseText=false) => {
       if (logDisabled && (!phaseText)) {
         return;
       }
-      if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
+      if ((phaseText && !whitelist.some((b) => argsStr.includes(b))) || blacklist.some((b) => argsStr.includes(b))) {
         return;
       }
       originalLog(args);

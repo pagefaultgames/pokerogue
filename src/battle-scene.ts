@@ -177,7 +177,7 @@ export default class BattleScene extends SceneBase {
   private modifierBar: ModifierBar;
   private enemyModifierBar: ModifierBar;
   private fieldOverlay: Phaser.GameObjects.Rectangle;
-  private modifiers: PersistentModifier[];
+  public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
