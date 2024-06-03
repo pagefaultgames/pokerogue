@@ -318,6 +318,8 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
   });
 }
 
+export type ClassType<T> = new(...args: any[]) => T;
+
 export class BooleanHolder {
   public value: boolean;
 

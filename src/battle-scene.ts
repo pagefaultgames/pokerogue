@@ -1784,7 +1784,7 @@ export default class BattleScene extends SceneBase {
         }
         if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
           if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
-            success = modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
+            success = modifier.apply(this.getPokemonById(modifier.pokemonId), true);
           }
           if (playSound && !this.sound.get(soundName)) {
             this.playSound(soundName);
@@ -1811,7 +1811,7 @@ export default class BattleScene extends SceneBase {
           for (const p in this.party) {
             const pokemon = this.party[p];
 
-            const args: any[] = [ pokemon ];
+            const args: any[] = [];
             if (modifier instanceof PokemonHpRestoreModifier) {
               if (!(modifier as PokemonHpRestoreModifier).fainted) {
                 const hpRestoreMultiplier = new Utils.IntegerHolder(1);
@@ -1824,8 +1824,8 @@ export default class BattleScene extends SceneBase {
               args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
             }
 
-            if (modifier.shouldApply(args)) {
-              const result = modifier.apply(args);
+            if (modifier.shouldApply(pokemon, ...args)) {
+              const result = modifier.apply(pokemon, ...args);
               if (result instanceof Promise) {
                 modifierPromises.push(result.then(s => success ||= s));
               } else {
@@ -1837,8 +1837,8 @@ export default class BattleScene extends SceneBase {
           return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
         } else {
           const args = [ this ];
-          if (modifier.shouldApply(args)) {
-            const result = modifier.apply(args);
+          if (modifier.shouldApply(...args)) {
+            const result = modifier.apply(...args);
             if (result instanceof Promise) {
               return result.then(success => resolve(success));
             } else {
@@ -1860,7 +1860,7 @@ export default class BattleScene extends SceneBase {
       }
       if ((modifier as PersistentModifier).add(this.enemyModifiers, false, this)) {
         if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
-          modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
+          modifier.apply(this.getPokemonById(modifier.pokemonId), true);
         }
         for (const rm of modifiersToRemove) {
           this.removeModifier(rm, true);
@@ -2079,7 +2079,7 @@ export default class BattleScene extends SceneBase {
     if (modifierIndex > -1) {
       modifiers.splice(modifierIndex, 1);
       if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
-        modifier.apply([ this.getPokemonById(modifier.pokemonId), false ]);
+        modifier.apply(this.getPokemonById(modifier.pokemonId), false);
       }
       return true;
     }
@@ -2087,20 +2087,46 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  getModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true): PersistentModifier[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType);
+  /**
+   * Get all of the modifiers that match `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the list of all modifiers that matched `modifierType`.
+   */
+  getModifiers<T extends PersistentModifier>(modifierType: Utils.ClassType<T>, player: boolean = true): T[] {
+    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
 
+  /**
+   * Get all of the modifiers that pass the `modifierFilter` function
+   * @param modifierFilter The function used to filter a target's modifiers
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the list of all modifiers that passed the `modifierFilter` function
+   */
   findModifiers(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter(m => (modifierFilter as ModifierPredicate)(m));
+    return (player ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
+  /**
+   * Find the first modifier that pass the `modifierFilter` function
+   * @param modifierFilter The function used to filter a target's modifiers
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
+   */
   findModifier(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier {
-    return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
+    return (player ? this.modifiers : this.enemyModifiers).find(m => modifierFilter(m));
   }
 
-  applyShuffledModifiers(scene: BattleScene, modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
-    let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+  /**
+   * Apply all modifiers that match `modifierType` in a random order
+   * @param scene {@linkcode BattleScene} used to randomize the order of modifiers
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @returns the list of all modifiers that matched `modifierType` and were applied.
+   */
+  applyShuffledModifiers<T extends PersistentModifier>(scene: BattleScene, modifierType: Utils.ClassType<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
+    let modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
     scene.executeWithSeedOffset(() => {
       const shuffleModifiers = mods => {
         if (mods.length < 1) {
@@ -2111,18 +2137,27 @@ export default class BattleScene extends SceneBase {
       };
       modifiers = shuffleModifiers(modifiers);
     }, scene.currentBattle.turn << 4, scene.waveSeed);
-    return this.applyModifiersInternal(modifiers, player, args);
+    return this.applyModifiersInternal(modifiers, player, ...args);
   }
 
-  applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
-    return this.applyModifiersInternal(modifiers, player, args);
+
+  /**
+   * Apply all modifiers that match `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @returns the list of all modifiers that matched `modifierType` and were applied.
+   */
+  applyModifiers<T extends PersistentModifier>(modifierType: Utils.ClassType<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
+    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
+    return this.applyModifiersInternal(modifiers, player, ...args);
   }
 
-  applyModifiersInternal(modifiers: PersistentModifier[], player: boolean, args: any[]): PersistentModifier[] {
-    const appliedModifiers: PersistentModifier[] = [];
+  /** Helper function to apply all passed modifiers */
+  applyModifiersInternal<T extends PersistentModifier>(modifiers: T[], player: boolean, ...args: Parameters<T["apply"]>): T[] {
+    const appliedModifiers: T[] = [];
     for (const modifier of modifiers) {
-      if (modifier.apply(args)) {
+      if (modifier.apply(...args)) {
         console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
         appliedModifiers.push(modifier);
       }
@@ -2131,13 +2166,18 @@ export default class BattleScene extends SceneBase {
     return appliedModifiers;
   }
 
-  applyModifier(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
-    for (const modifier of modifiers) {
-      if (modifier.apply(args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
-        return modifier;
-      }
+  /**
+   * Apply the first modifier that matches `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
+   */
+  applyModifier<T extends PersistentModifier>(modifierType: Utils.ClassType<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T | null {
+    const modifier = (player ? this.modifiers : this.enemyModifiers).find((m): m is T => m instanceof modifierType && m.shouldApply(...args));
+    if (modifier?.apply(...args)) {
+      console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+      return modifier;
     }
 
     return null;
