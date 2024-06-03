@@ -138,13 +138,15 @@ export default class BattleScene extends SceneBase {
   public sessionSlotId: integer;
 
   /**
-	 * PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue
-	 * PhaseQueue: dequeue/remove the first element to get the next phase
 	 * queues are moved around during the function shiftPhase() below
 	 * can debug phases using "phase.constructor.name"
 	 */
+
+  /** PhaseQueue: dequeue/remove the first element to get the next phase */
   private phaseQueue: Phase[];
+  /** PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue */
   private phaseQueuePrepend: Phase[];
+  /** overrides default of inserting phases to end of phaseQueuePrepend array, useful or inserting Phases "out of order" */
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
 
