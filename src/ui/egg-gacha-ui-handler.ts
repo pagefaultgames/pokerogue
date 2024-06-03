@@ -382,6 +382,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         this.scene.gameData.eggPity[EggTier.GREAT] += 1;
         this.scene.gameData.eggPity[EggTier.ULTRA] += 1;
         this.scene.gameData.eggPity[EggTier.MASTER] += 1 + tierValueOffset;
+        // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
         if (this.scene.gameData.eggPity[EggTier.MASTER] >= 412 && tiers[i] === EggTier.COMMON) {
           tiers[i] = EggTier.MASTER;
         } else if (this.scene.gameData.eggPity[EggTier.ULTRA] >= 59 && tiers[i] === EggTier.COMMON) {
