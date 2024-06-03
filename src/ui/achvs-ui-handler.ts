@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import {Button} from "../enums/buttons";
+import { Button } from "../enums/buttons";
 import i18next from "../plugins/i18n";
 import {Achv, achvs, getAchievementDescription} from "../system/achv";
 import MessageUiHandler from "./message-ui-handler";
