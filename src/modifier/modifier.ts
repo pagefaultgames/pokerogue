@@ -114,7 +114,7 @@ export abstract class Modifier {
     return true;
   }
 
-  abstract apply(...args: any[]): boolean | Promise<boolean>;
+  abstract apply(...args: unknown[]): boolean | Promise<boolean>;
 }
 
 export abstract class PersistentModifier extends Modifier {
@@ -360,7 +360,7 @@ export class MapModifier extends PersistentModifier {
     return new MapModifier(this.type, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -378,7 +378,7 @@ export class MegaEvolutionAccessModifier extends PersistentModifier {
     return new MegaEvolutionAccessModifier(this.type, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -396,7 +396,7 @@ export class GigantamaxAccessModifier extends PersistentModifier {
     return new GigantamaxAccessModifier(this.type, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -414,7 +414,7 @@ export class TerastallizeAccessModifier extends PersistentModifier {
     return new TerastallizeAccessModifier(this.type, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -443,10 +443,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   shouldApply(...args: Parameters<this["apply"]>): boolean {
-    return super.shouldApply(...args) && (this.pokemonId === -1 || args[0].id === this.pokemonId);
+    return super.shouldApply(...args) && (this.pokemonId === -1 || args[0]?.id === this.pokemonId);
   }
 
-  abstract apply(pokemon: Pokemon, ...args: any[]): boolean;
+  abstract apply(pokemon: Pokemon, ...args: unknown[]): boolean;
 
   getTransferrable(withinParty: boolean) {
     return true;
@@ -1033,10 +1033,10 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   }
 
   shouldApply(...args: Parameters<this["apply"]>): boolean {
-    return super.shouldApply(...args) && (this.pokemonId === -1 || args[0].id === this.pokemonId);
+    return super.shouldApply(...args) && (this.pokemonId === -1 || args[0]?.id === this.pokemonId);
   }
 
-  abstract apply(pokemon: Pokemon, ...args: any[]): boolean | Promise<boolean>;
+  abstract apply(pokemon: Pokemon, ...args: unknown[]): boolean | Promise<boolean>;
 
   getPokemon(scene: BattleScene) {
     return scene.getParty().find(p => p.id === this.pokemonId);
@@ -1288,7 +1288,7 @@ export class MultipleParticipantExpBonusModifier extends PersistentModifier {
     return modifier instanceof MultipleParticipantExpBonusModifier;
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -1417,7 +1417,7 @@ export class ExpShareModifier extends PersistentModifier {
     return new ExpShareModifier(this.type, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -1439,7 +1439,7 @@ export class ExpBalanceModifier extends PersistentModifier {
     return new ExpBalanceModifier(this.type, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -1772,7 +1772,7 @@ export class LockModifierTiersModifier extends PersistentModifier {
     return modifier instanceof LockModifierTiersModifier;
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -1798,7 +1798,7 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
     return new SwitchEffectTransferModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 
@@ -1812,7 +1812,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     super(type, pokemonId, stackCount);
   }
 
-  apply(pokemon: Pokemon, ...args: any[]): boolean {
+  apply(pokemon: Pokemon, ...args: unknown[]): boolean {
     const opponents = pokemon.getOpponents();
 
     if (!opponents.length) {
@@ -1948,7 +1948,7 @@ export class IvScannerModifier extends PersistentModifier {
     return new IvScannerModifier(this.type, this.stackCount);
   }
 
-  apply(...args: any[]): boolean {
+  apply(...args: unknown[]): boolean {
     return true;
   }
 

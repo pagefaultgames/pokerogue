@@ -526,7 +526,7 @@ export class Arena {
     this.ignoreAbilities = ignoreAbilities;
   }
 
-  applyTagsForSide(tagType: ArenaTagType | ClassType<ArenaTag>, side: ArenaTagSide, ...args: any[]): void {
+  applyTagsForSide(tagType: ArenaTagType | ClassType<ArenaTag>, side: ArenaTagSide, ...args: unknown[]): void {
     let tags = typeof tagType === "string"
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
@@ -536,7 +536,7 @@ export class Arena {
     tags.forEach(t => t.apply(this, args));
   }
 
-  applyTags(tagType: ArenaTagType | ClassType<ArenaTag>, ...args: any[]): void {
+  applyTags(tagType: ArenaTagType | ClassType<ArenaTag>, ...args: unknown[]): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
 

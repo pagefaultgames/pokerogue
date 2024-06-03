@@ -1812,7 +1812,7 @@ export default class BattleScene extends SceneBase {
           for (const p in this.party) {
             const pokemon = this.party[p];
 
-            const args: any[] = [];
+            const args: unknown[] = [];
             if (modifier instanceof PokemonHpRestoreModifier) {
               if (!(modifier as PokemonHpRestoreModifier).fainted) {
                 const hpRestoreMultiplier = new Utils.IntegerHolder(1);
@@ -2210,14 +2210,14 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  validateAchvs(achvType: ClassType<Achv>, ...args: any[]): void {
+  validateAchvs(achvType: ClassType<Achv>, ...args: unknown[]): void {
     const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
     for (const achv of filteredAchvs) {
       this.validateAchv(achv, args);
     }
   }
 
-  validateAchv(achv: Achv, args?: any[]): boolean {
+  validateAchv(achv: Achv, args?: unknown[]): boolean {
     if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
       this.gameData.achvUnlocks[achv.id] = new Date().getTime();
       this.ui.achvBar.showAchv(achv);
@@ -2230,7 +2230,7 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  validateVoucher(voucher: Voucher, args?: any[]): boolean {
+  validateVoucher(voucher: Voucher, args?: unknown[]): boolean {
     if (!this.gameData.voucherUnlocks.hasOwnProperty(voucher.id) && voucher.validate(this, args)) {
       this.gameData.voucherUnlocks[voucher.id] = new Date().getTime();
       this.ui.achvBar.showAchv(voucher);
