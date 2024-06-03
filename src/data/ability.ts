@@ -2,7 +2,7 @@ import Pokemon, { EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "..
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { MovePhase, BattleEndPhase, CheckSwitchPhase, NewBattlePhase, PokemonHealPhase, ReturnPhase, SelectModifierPhase, ShowAbilityPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
+import { MovePhase, BattleEndPhase, CheckSwitchPhase, NewBattlePhase, PokemonHealPhase, ReturnPhase, SelectModifierPhase, ShowAbilityPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase, BerryPhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
@@ -503,37 +503,46 @@ export class PostDamageForcedSwitchAbAttr extends PostDamageAbAttr {
    */
   applyPostDamage(pokemon: Pokemon, initialPokemonHpRatio: number, passive: boolean): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+      pokemon.scene.unshiftPhase(new BerryPhase(pokemon.scene));
       if (this.condition(pokemon, initialPokemonHpRatio) && pokemon.isPlayer()) {
         // Player's pokemon
-        applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
-        pokemon.scene.unshiftPhase(new SwitchPhase(pokemon.scene, pokemon.getFieldIndex(), true, true));
-        resolve(true);
+        // If there is still a pokemon in the party that's not fainted in the player's party, force the switch menu.
+        if(pokemon.scene.getParty().filter(playerPokemon => !playerPokemon.isFainted()).length > pokemon.scene.getPlayerField().length) {
+          applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
+          pokemon.scene.unshiftPhase(new SwitchPhase(pokemon.scene, pokemon.getFieldIndex(), true, true, true));
+          resolve(true);
+        } else {
+          resolve(false)
+        }
       } else if (this.condition(pokemon, initialPokemonHpRatio) && !pokemon.hasTrainer()) {
         // Wild pokemon
-        pokemon.updateInfo(false);
-        pokemon.hideInfo().then(() => pokemon.destroy());
-        pokemon.active = false;
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fled!'), null, true, 500);
+        pokemon.scene.time.delayedCall(200, () => {
+          pokemon.hideInfo().then(() => pokemon.destroy());
+          pokemon.active = false;
+          pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fled!'), null, true, 500);
 
-        if (pokemon.scene.getEnemyField().every(enemyPokemon => !enemyPokemon.active || enemyPokemon.isFainted())) {
-          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
-          if (pokemon.scene.getEnemyField().filter(enemyPokemon => enemyPokemon.isFainted()).length >= 1) {
-            pokemon.scene.pushPhase(new SelectModifierPhase(pokemon.scene))
+          if (pokemon.scene.getEnemyField().every(enemyPokemon => !enemyPokemon.active || enemyPokemon.isFainted())) {
+            pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
+            if (pokemon.scene.getEnemyField().filter(enemyPokemon => enemyPokemon.isFainted()).length >= 1) {
+              pokemon.scene.pushPhase(new SelectModifierPhase(pokemon.scene))
+            }
+            pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
           }
-          pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
-        }
+        });
+        
         resolve(true);
       } else if (this.condition(pokemon, initialPokemonHpRatio) && pokemon.hasTrainer()) {
         // Enemy trainer's pokemon
-        pokemon.updateInfo(false);
+        // If there is still a pokemon in the enemy's trainer party that's not fainted, force them to switch.
         if((pokemon.scene.getEnemyParty().filter(enemyPokemon => !enemyPokemon.isFainted()).length > pokemon.scene.getEnemyField().length )) {
-          pokemon.scene.pushPhase(new SwitchSummonPhase(pokemon.scene, pokemon.getFieldIndex(), pokemon.scene.currentBattle.trainer.getNextSummonIndex((pokemon as EnemyPokemon).trainerSlot), false, false, false));
-
-          pokemon.resetTurnData();
-          pokemon.resetSummonData();
-          pokemon.hideInfo();
-          pokemon.setVisible(false);
-          pokemon.scene.field.remove(pokemon);
+          pokemon.scene.time.delayedCall(200, () => {
+            pokemon.scene.pushPhase(new SwitchSummonPhase(pokemon.scene, pokemon.getFieldIndex(), pokemon.scene.currentBattle.trainer.getNextSummonIndex((pokemon as EnemyPokemon).trainerSlot), false, false, false))
+            pokemon.resetTurnData();
+            pokemon.resetSummonData();
+            pokemon.hideInfo();
+            pokemon.setVisible(false);
+            pokemon.scene.field.remove(pokemon);
+          });
           
           resolve(true);
         } else {

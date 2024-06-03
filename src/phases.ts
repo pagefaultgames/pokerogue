@@ -1683,7 +1683,7 @@ export class CheckSwitchPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true, false));
         this.end();
       }, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
@@ -3549,7 +3549,7 @@ export class FaintPhase extends PokemonPhase {
       if (!nonFaintedPartyMemberCount) {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
       } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedPartyMembers[0].isActive(true))) {
-        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false, false));
       }
       if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
@@ -4179,13 +4179,15 @@ export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
   private isModal: boolean;
   private doReturn: boolean;
+  private forcedSwitch: boolean;
 
-  constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
+  constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean, forcedSwitch: boolean) {
     super(scene);
 
     this.fieldIndex = fieldIndex;
     this.isModal = isModal;
     this.doReturn = doReturn;
+    this.forcedSwitch = forcedSwitch;
   }
 
   start() {
@@ -4196,8 +4198,8 @@ export class SwitchPhase extends BattlePhase {
       return super.end();
     }
 
-    // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => !p.isFainted() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    // Check if there is any space still in field and that a switch is not being forced
+    if ((this.isModal && this.scene.getPlayerField().filter(p => !p.isFainted() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) && !this.forcedSwitch) {
       return super.end();
     }
 
