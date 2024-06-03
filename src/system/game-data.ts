@@ -40,7 +40,8 @@ export enum GameDataType {
   SYSTEM,
   SESSION,
   SETTINGS,
-  TUTORIALS
+  TUTORIALS,
+  SEEN_DIALOGUES
 }
 
 export enum PlayerGender {
@@ -68,6 +69,8 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return "settings";
   case GameDataType.TUTORIALS:
     return "tutorials";
+  case GameDataType.SEEN_DIALOGUES:
+    return "seenDialogues";
   }
 }
 
@@ -97,6 +100,8 @@ interface SystemSaveData {
   eggs: EggData[];
   gameVersion: string;
   timestamp: integer;
+  eggPity: integer[];
+  unlockPity: integer[];
 }
 
 export interface SessionSaveData {
@@ -201,6 +206,10 @@ export interface TutorialFlags {
   [key: string]: boolean
 }
 
+export interface SeenDialogues {
+  [key: string]: boolean;
+}
+
 const systemShortKeys = {
   seenAttr: "$sa",
   caughtAttr: "$ca",
@@ -241,6 +250,8 @@ export class GameData {
   public voucherUnlocks: VoucherUnlocks;
   public voucherCounts: VoucherCounts;
   public eggs: Egg[];
+  public eggPity: integer[];
+  public unlockPity: integer[];
 
   constructor(scene: BattleScene) {
     this.scene = scene;
@@ -265,6 +276,8 @@ export class GameData {
       [VoucherType.GOLDEN]: 0
     };
     this.eggs = [];
+    this.eggPity = [0, 0, 0, 0];
+    this.unlockPity = [0, 0, 0, 0];
     this.initDexData();
     this.initStarterData();
   }
@@ -283,7 +296,9 @@ export class GameData {
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
       gameVersion: this.scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      eggPity: this.eggPity.slice(0),
+      unlockPity: this.unlockPity.slice(0)
     };
   }
 
@@ -465,6 +480,9 @@ export class GameData {
         this.eggs = systemData.eggs
           ? systemData.eggs.map(e => e.toEgg())
           : [];
+
+        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
+        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
 
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
@@ -716,9 +734,10 @@ export class GameData {
   }
 
   public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
+    const key = getDataTypeKey(GameDataType.TUTORIALS);
     let tutorials: object = {};
-    if (localStorage.hasOwnProperty("tutorials")) {
-      tutorials = JSON.parse(localStorage.getItem("tutorials"));
+    if (localStorage.hasOwnProperty(key)) {
+      tutorials = JSON.parse(localStorage.getItem(key));
     }
 
     Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
@@ -730,23 +749,52 @@ export class GameData {
       }
     });
 
-    localStorage.setItem("tutorials", JSON.stringify(tutorials));
+    localStorage.setItem(key, JSON.stringify(tutorials));
 
     return true;
   }
 
   public getTutorialFlags(): TutorialFlags {
+    const key = getDataTypeKey(GameDataType.TUTORIALS);
     const ret: TutorialFlags = {};
     Object.values(Tutorial).map(tutorial => tutorial as Tutorial).forEach(tutorial => ret[Tutorial[tutorial]] = false);
 
-    if (!localStorage.hasOwnProperty("tutorials")) {
+    if (!localStorage.hasOwnProperty(key)) {
       return ret;
     }
 
-    const tutorials = JSON.parse(localStorage.getItem("tutorials"));
+    const tutorials = JSON.parse(localStorage.getItem(key));
 
     for (const tutorial of Object.keys(tutorials)) {
       ret[tutorial] = tutorials[tutorial];
+    }
+
+    return ret;
+  }
+
+  public saveSeenDialogue(dialogue: string): boolean {
+    const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
+    const dialogues: object = this.getSeenDialogues();
+
+    dialogues[dialogue] = true;
+    localStorage.setItem(key, JSON.stringify(dialogues));
+    console.log("Dialogue saved as seen:", dialogue);
+
+    return true;
+  }
+
+  public getSeenDialogues(): SeenDialogues {
+    const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
+    const ret: SeenDialogues = {};
+
+    if (!localStorage.hasOwnProperty(key)) {
+      return ret;
+    }
+
+    const dialogues = JSON.parse(localStorage.getItem(key));
+
+    for (const dialogue of Object.keys(dialogues)) {
+      ret[dialogue] = dialogues[dialogue];
     }
 
     return ret;
