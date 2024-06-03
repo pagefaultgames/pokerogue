@@ -1,19 +1,19 @@
-import { Species } from "./data/enums/species";
+import { TimeOfDay } from "#app/data/enums/time-of-day";
+import { PokeballCounts } from "./battle-scene";
+import { BerryType } from "./data/berry";
 import { Abilities } from "./data/enums/abilities";
 import { Biome } from "./data/enums/biome";
-import { Moves } from "./data/enums/moves";
-import { WeatherType } from "./data/weather";
-import { Variant } from "./data/variant";
-import { BerryType } from "./data/berry";
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { Nature } from "./data/nature";
-import { Type } from "./data/type";
-import { Stat } from "./data/pokemon-stat";
-import { PokeballCounts } from "./battle-scene";
-import { PokeballType } from "./data/pokeball";
-import {TimeOfDay} from "#app/data/enums/time-of-day";
+import { Species } from "./data/enums/species";
 import { Gender } from "./data/gender";
+import { Nature } from "./data/nature";
+import { PokeballType } from "./data/pokeball";
+import { Stat } from "./data/pokemon-stat";
 import { StatusEffect } from "./data/status-effect";
+import { TempBattleStat } from "./data/temp-battle-stat";
+import { Type } from "./data/type";
+import { Variant } from "./data/variant";
+import { WeatherType } from "./data/weather";
+import { PokemonMoveset } from "./field/pokemon";
 import { modifierTypes } from "./modifier/modifier-type";
 
 /**
@@ -67,7 +67,7 @@ export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const MOVESET_OVERRIDE: PokemonMoveset = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -81,7 +81,7 @@ export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const OPP_GENDER_OVERRIDE: Gender = null;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+export const OPP_MOVESET_OVERRIDE: PokemonMoveset = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 

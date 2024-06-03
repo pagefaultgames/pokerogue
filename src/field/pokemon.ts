@@ -49,6 +49,8 @@ import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
 
+export type PokemonMoveset = [Moves?, Moves?, Moves?, Moves?];
+
 export enum FieldPosition {
   CENTER,
   LEFT,
@@ -816,9 +818,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.moveset;
 
     // Overrides moveset based on arrays specified in overrides.ts
-    const overrideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
-    if (overrideArray.length > 0) {
-      overrideArray.forEach((move: Moves, index: number) => {
+    const moveSetOverride: PokemonMoveset = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
+    if (moveSetOverride.length > 0) {
+      moveSetOverride.forEach((move: Moves | undefined, index: number) => {
         const ppUsed = this.moveset[index]?.ppUsed || 0;
         this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
       });
