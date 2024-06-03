@@ -33,7 +33,7 @@ import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
-import { EnemyAttackStatusEffectChanceModifier, PersistentModifier } from "../modifier/modifier";
+import { EnemyAttackStatusEffectChanceModifier, EnemyEndureChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { modifierTypes } from "#app/modifier/modifier-type.js";
 
@@ -882,7 +882,7 @@ export class GameData {
           scene.sessionPlayTime = sessionData.playTime || 0;
           scene.lastSavePlayTime = 0;
 
-          sessionData.tokenVersion = sessionData.tokenVersion? sessionData.tokenVersion : 0;
+          sessionData.tokenVersion = sessionData.tokenVersion || 0;
 
           const loadPokemonAssets: Promise<void>[] = [];
 
@@ -956,8 +956,8 @@ export class GameData {
             if (modifier) {
               if (sessionData.tokenVersion < currentTokenVersion) {
                 let updatedMod;
-                if (modifier?.className === "EnemyAttackStatusEffectChanceModifierType" && (modifier as EnemyAttackStatusEffectChanceModifier)?.effect) {
-                  switch ((modifier as EnemyAttackStatusEffectChanceModifier).effect) {
+                if (modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect) {
+                  switch (modifier.effect) {
                   case StatusEffect.SLEEP:
                   case StatusEffect.FREEZE:
                     updatedMod = "Nope";
@@ -973,32 +973,32 @@ export class GameData {
                     break;
                   }
                   if (updatedMod) {
-                    if (updatedMod instanceof PersistentModifier) {
+                    if (updatedMod instanceof EnemyAttackStatusEffectChanceModifier) {
                       updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
                       scene.addEnemyModifier(updatedMod, true);
                     }
                     continue;
                   }
                 }
-                if (modifier?.className === "EnemyTurnHealModifierType") {
+                if (modifier instanceof EnemyTurnHealModifier) {
                   const updatedMod = modifierTypes.ENEMY_HEAL().newModifier();
-                  if (updatedMod instanceof PersistentModifier) {
+                  if (updatedMod instanceof EnemyTurnHealModifier) {
                     updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
                     scene.addEnemyModifier(updatedMod, true);
                   }
                   continue;
                 }
-                if (modifier?.className === "EnemyStatusEffectHealChanceModifierType") {
+                if (modifier instanceof EnemyStatusEffectHealChanceModifier) {
                   const updatedMod = modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE().newModifier();
-                  if (updatedMod instanceof PersistentModifier) {
+                  if (updatedMod instanceof EnemyStatusEffectHealChanceModifier) {
                     updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
                     scene.addEnemyModifier(updatedMod, true);
                   }
                   continue;
                 }
-                if (modifier?.className === "EnemyEndureChanceModifierType") {
+                if (modifier instanceof EnemyEndureChanceModifier) {
                   const updatedMod = modifierTypes.ENEMY_ENDURE_CHANCE().newModifier();
-                  if (updatedMod instanceof PersistentModifier) {
+                  if (updatedMod instanceof EnemyEndureChanceModifier) {
                     updatedMod.stackCount = Math.max(0, Math.min(modifier.stackCount,updatedMod.getMaxStackCount(scene)));
                     scene.addEnemyModifier(updatedMod, true);
                   }
