@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { Achv } from "../system/achv";
+import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
 
@@ -66,7 +66,11 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.icon.setFrame(achv.getIconImage());
     this.titleText.setText(achv.getName());
     this.scoreText.setVisible(achv instanceof Achv);
-    this.descriptionText.setText(achv.description);
+    if (achv instanceof Achv) {
+      this.descriptionText.setText(getAchievementDescription((achv as Achv).localizationKey));
+    } else if (achv instanceof Voucher) {
+      this.descriptionText.setText((achv as Voucher).description);
+    }
 
     if (achv instanceof Achv) {
       this.scoreText.setText(`+${(achv as Achv).score}pt`);
