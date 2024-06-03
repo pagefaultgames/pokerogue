@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import UI  from "./ui/ui";
+import UI from "./ui/ui";
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
@@ -114,6 +114,8 @@ export default class BattleScene extends SceneBase {
   public experimentalSprites: boolean = false;
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
+  public skipSeenDialogues: boolean = false;
+
   /**
 	 * Defines the experience gain display mode.
 	 *
@@ -131,8 +133,6 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
-  public gamepadSupport: boolean = false;
-  public abSwapped: boolean = false;
 
   public disableMenu: boolean = false;
 
@@ -1876,7 +1876,20 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
+  /**
+   * Try to transfer a held item to another pokemon.
+   * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
+   * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
+   * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
+   * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
+   * @param target {@linkcode Pokemon} pokemon recepient in this transfer
+   * @param playSound {boolean}
+   * @param transferQuantity {@linkcode integer} how many items of the stack to transfer. Optional, defaults to 1
+   * @param instant {boolean}
+   * @param ignoreUpdate {boolean}
+   * @returns true if the transfer was successful
+   */
+  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: integer = 1, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
     return new Promise(resolve => {
       const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
       const cancelled = new Utils.BooleanHolder(false);
@@ -1894,14 +1907,16 @@ export default class BattleScene extends SceneBase {
           if (matchingModifier.stackCount >= maxStackCount) {
             return resolve(false);
           }
-          const countTaken = transferStack ? Math.min(itemModifier.stackCount, maxStackCount - matchingModifier.stackCount) : 1;
+          const countTaken = Math.min(transferQuantity, itemModifier.stackCount, maxStackCount - matchingModifier.stackCount);
           itemModifier.stackCount -= countTaken;
           newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
           removeOld = !itemModifier.stackCount;
-        } else if (!transferStack) {
-          newItemModifier.stackCount = 1;
-          removeOld = !(--itemModifier.stackCount);
+        } else {
+          const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
+          itemModifier.stackCount -= countTaken;
+          newItemModifier.stackCount = countTaken;
         }
+        removeOld = !itemModifier.stackCount;
         if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
           const addModifier = () => {
             if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {

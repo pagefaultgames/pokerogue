@@ -30,6 +30,9 @@ import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
+import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
+import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -37,7 +40,8 @@ export enum GameDataType {
   SYSTEM,
   SESSION,
   SETTINGS,
-  TUTORIALS
+  TUTORIALS,
+  SEEN_DIALOGUES
 }
 
 export enum PlayerGender {
@@ -65,6 +69,8 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return "settings";
   case GameDataType.TUTORIALS:
     return "tutorials";
+  case GameDataType.SEEN_DIALOGUES:
+    return "seenDialogues";
   }
 }
 
@@ -94,6 +100,8 @@ interface SystemSaveData {
   eggs: EggData[];
   gameVersion: string;
   timestamp: integer;
+  eggPity: integer[];
+  unlockPity: integer[];
 }
 
 export interface SessionSaveData {
@@ -198,6 +206,10 @@ export interface TutorialFlags {
   [key: string]: boolean
 }
 
+export interface SeenDialogues {
+  [key: string]: boolean;
+}
+
 const systemShortKeys = {
   seenAttr: "$sa",
   caughtAttr: "$ca",
@@ -238,10 +250,14 @@ export class GameData {
   public voucherUnlocks: VoucherUnlocks;
   public voucherCounts: VoucherCounts;
   public eggs: Egg[];
+  public eggPity: integer[];
+  public unlockPity: integer[];
 
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.loadSettings();
+    this.loadGamepadSettings();
+    this.loadMappingConfigs();
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
@@ -260,6 +276,8 @@ export class GameData {
       [VoucherType.GOLDEN]: 0
     };
     this.eggs = [];
+    this.eggPity = [0, 0, 0, 0];
+    this.unlockPity = [0, 0, 0, 0];
     this.initDexData();
     this.initStarterData();
   }
@@ -278,7 +296,9 @@ export class GameData {
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
       gameVersion: this.scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      eggPity: this.eggPity.slice(0),
+      unlockPity: this.unlockPity.slice(0)
     };
   }
 
@@ -461,6 +481,9 @@ export class GameData {
           ? systemData.eggs.map(e => e.toEgg())
           : [];
 
+        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
+        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
         this.defaultDexData = null;
@@ -564,6 +587,125 @@ export class GameData {
     return true;
   }
 
+  /**
+   * Saves the mapping configurations for a specified device.
+   *
+   * @param deviceName - The name of the device for which the configurations are being saved.
+   * @param config - The configuration object containing custom mapping details.
+   * @returns `true` if the configurations are successfully saved.
+   */
+  public saveMappingConfigs(deviceName: string, config): boolean {
+    const key = deviceName.toLowerCase();  // Convert the gamepad name to lowercase to use as a key
+    let mappingConfigs: object = {};  // Initialize an empty object to hold the mapping configurations
+    if (localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
+      mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));
+    }  // Parse the existing 'mappingConfigs' from localStorage
+    if (!mappingConfigs[key]) {
+      mappingConfigs[key] = {};
+    }  // If there is no configuration for the given key, create an empty object for it
+    mappingConfigs[key].custom = config.custom;  // Assign the custom configuration to the mapping configuration for the given key
+    localStorage.setItem("mappingConfigs", JSON.stringify(mappingConfigs));  // Save the updated mapping configurations back to localStorage
+    return true;  // Return true to indicate the operation was successful
+  }
+
+  /**
+   * Loads the mapping configurations from localStorage and injects them into the input controller.
+   *
+   * @returns `true` if the configurations are successfully loaded and injected; `false` if no configurations are found in localStorage.
+   *
+   * @remarks
+   * This method checks if the 'mappingConfigs' entry exists in localStorage. If it does not exist, the method returns `false`.
+   * If 'mappingConfigs' exists, it parses the configurations and injects each configuration into the input controller
+   * for the corresponding gamepad or device key. The method then returns `true` to indicate success.
+   */
+  public loadMappingConfigs(): boolean {
+    if (!localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
+      return false;
+    }  // If 'mappingConfigs' does not exist, return false
+
+    const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));  // Parse the existing 'mappingConfigs' from localStorage
+
+    for (const key of Object.keys(mappingConfigs)) {// Iterate over the keys of the mapping configurations
+      this.scene.inputController.injectConfig(key, mappingConfigs[key]);
+    }  // Inject each configuration into the input controller for the corresponding key
+
+    return true;  // Return true to indicate the operation was successful
+  }
+
+  public resetMappingToFactory(): boolean {
+    if (!localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
+      return false;
+    }  // If 'mappingConfigs' does not exist, return false
+    localStorage.removeItem("mappingConfigs");
+    this.scene.inputController.resetConfigs();
+  }
+
+  /**
+   * Saves a gamepad setting to localStorage.
+   *
+   * @param setting - The gamepad setting to save.
+   * @param valueIndex - The index of the value to set for the gamepad setting.
+   * @returns `true` if the setting is successfully saved.
+   *
+   * @remarks
+   * This method initializes an empty object for gamepad settings if none exist in localStorage.
+   * It then updates the setting in the current scene and iterates over the default gamepad settings
+   * to update the specified setting with the new value. Finally, it saves the updated settings back
+   * to localStorage and returns `true` to indicate success.
+   */
+  public saveGamepadSetting(setting: SettingGamepad, valueIndex: integer): boolean {
+    let settingsGamepad: object = {};  // Initialize an empty object to hold the gamepad settings
+
+    if (localStorage.hasOwnProperty("settingsGamepad")) {  // Check if 'settingsGamepad' exists in localStorage
+      settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad"));  // Parse the existing 'settingsGamepad' from localStorage
+    }
+
+    setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
+
+    Object.keys(settingGamepadDefaults).forEach(s => {  // Iterate over the default gamepad settings
+      if (s === setting) {// If the current setting matches, update its value
+        settingsGamepad[s] = valueIndex;
+      }
+    });
+
+    localStorage.setItem("settingsGamepad", JSON.stringify(settingsGamepad));  // Save the updated gamepad settings back to localStorage
+
+    return true;  // Return true to indicate the operation was successful
+  }
+
+  /**
+   * Saves a keyboard setting to localStorage.
+   *
+   * @param setting - The keyboard setting to save.
+   * @param valueIndex - The index of the value to set for the keyboard setting.
+   * @returns `true` if the setting is successfully saved.
+   *
+   * @remarks
+   * This method initializes an empty object for keyboard settings if none exist in localStorage.
+   * It then updates the setting in the current scene and iterates over the default keyboard settings
+   * to update the specified setting with the new value. Finally, it saves the updated settings back
+   * to localStorage and returns `true` to indicate success.
+   */
+  public saveKeyboardSetting(setting: SettingKeyboard, valueIndex: integer): boolean {
+    let settingsKeyboard: object = {};  // Initialize an empty object to hold the keyboard settings
+
+    if (localStorage.hasOwnProperty("settingsKeyboard")) {  // Check if 'settingsKeyboard' exists in localStorage
+      settingsKeyboard = JSON.parse(localStorage.getItem("settingsKeyboard"));  // Parse the existing 'settingsKeyboard' from localStorage
+    }
+
+    setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
+
+    Object.keys(settingKeyboardDefaults).forEach(s => {  // Iterate over the default keyboard settings
+      if (s === setting) {// If the current setting matches, update its value
+        settingsKeyboard[s] = valueIndex;
+      }
+    });
+
+    localStorage.setItem("settingsKeyboard", JSON.stringify(settingsKeyboard));  // Save the updated keyboard settings back to localStorage
+
+    return true;  // Return true to indicate the operation was successful
+  }
+
   private loadSettings(): boolean {
     Object.values(Setting).map(setting => setting as Setting).forEach(setting => setSetting(this.scene, setting, settingDefaults[setting]));
 
@@ -578,10 +720,24 @@ export class GameData {
     }
   }
 
+  private loadGamepadSettings(): boolean {
+    Object.values(SettingGamepad).map(setting => setting as SettingGamepad).forEach(setting => setSettingGamepad(this.scene, setting, settingGamepadDefaults[setting]));
+
+    if (!localStorage.hasOwnProperty("settingsGamepad")) {
+      return false;
+    }
+    const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad"));
+
+    for (const setting of Object.keys(settingsGamepad)) {
+      setSettingGamepad(this.scene, setting as SettingGamepad, settingsGamepad[setting]);
+    }
+  }
+
   public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
+    const key = getDataTypeKey(GameDataType.TUTORIALS);
     let tutorials: object = {};
-    if (localStorage.hasOwnProperty("tutorials")) {
-      tutorials = JSON.parse(localStorage.getItem("tutorials"));
+    if (localStorage.hasOwnProperty(key)) {
+      tutorials = JSON.parse(localStorage.getItem(key));
     }
 
     Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
@@ -593,23 +749,52 @@ export class GameData {
       }
     });
 
-    localStorage.setItem("tutorials", JSON.stringify(tutorials));
+    localStorage.setItem(key, JSON.stringify(tutorials));
 
     return true;
   }
 
   public getTutorialFlags(): TutorialFlags {
+    const key = getDataTypeKey(GameDataType.TUTORIALS);
     const ret: TutorialFlags = {};
     Object.values(Tutorial).map(tutorial => tutorial as Tutorial).forEach(tutorial => ret[Tutorial[tutorial]] = false);
 
-    if (!localStorage.hasOwnProperty("tutorials")) {
+    if (!localStorage.hasOwnProperty(key)) {
       return ret;
     }
 
-    const tutorials = JSON.parse(localStorage.getItem("tutorials"));
+    const tutorials = JSON.parse(localStorage.getItem(key));
 
     for (const tutorial of Object.keys(tutorials)) {
       ret[tutorial] = tutorials[tutorial];
+    }
+
+    return ret;
+  }
+
+  public saveSeenDialogue(dialogue: string): boolean {
+    const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
+    const dialogues: object = this.getSeenDialogues();
+
+    dialogues[dialogue] = true;
+    localStorage.setItem(key, JSON.stringify(dialogues));
+    console.log("Dialogue saved as seen:", dialogue);
+
+    return true;
+  }
+
+  public getSeenDialogues(): SeenDialogues {
+    const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
+    const ret: SeenDialogues = {};
+
+    if (!localStorage.hasOwnProperty(key)) {
+      return ret;
+    }
+
+    const dialogues = JSON.parse(localStorage.getItem(key));
+
+    for (const dialogue of Object.keys(dialogues)) {
+      ret[dialogue] = dialogues[dialogue];
     }
 
     return ret;
@@ -740,6 +925,10 @@ export class GameData {
           });
 
           scene.arena.weather = sessionData.arena.weather;
+          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(null, scene.arena.weather?.weatherType, scene.arena.weather?.turnsLeft));
+
+          scene.arena.terrain = sessionData.arena.terrain;
+          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(null, scene.arena.terrain?.terrainType, scene.arena.terrain?.turnsLeft));
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
