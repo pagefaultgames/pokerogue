@@ -51,13 +51,13 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.options = options || {};
 
     // prepare the description box
-    const width = (options?.width || MoveInfoOverlay.getWidth(scale, this.scene)) / scale; // divide by scale as we always want this to be half a window wide
-    const descBg = addWindow(this.scene,  (options?.onSide && !options?.right ? EFF_WIDTH : 0), options?.top ? EFF_HEIGHT : 0, width - (options?.onSide ? EFF_WIDTH : 0), DESC_HEIGHT);
+    const width = (options?.width || MoveInfoOverlay.getWidth(scale, scene)) / scale; // divide by scale as we always want this to be half a window wide
+    const descBg = addWindow(scene,  (options?.onSide && !options?.right ? EFF_WIDTH : 0), options?.top ? EFF_HEIGHT : 0, width - (options?.onSide ? EFF_WIDTH : 0), DESC_HEIGHT);
     descBg.setOrigin(0, 0);
     this.add(descBg);
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
-    this.desc = addTextObject(this.scene, (options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER, (options?.top ? EFF_HEIGHT : 0) + BORDER - 2, "", TextStyle.BATTLE_INFO, { wordWrap: { width: (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * GLOBAL_SCALE } });
+    this.desc = addTextObject(scene, (options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER, (options?.top ? EFF_HEIGHT : 0) + BORDER - 2, "", TextStyle.BATTLE_INFO, { wordWrap: { width: (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * GLOBAL_SCALE } });
 
     // limit the text rendering, required for scrolling later on
     const maskPointOrigin = {
@@ -86,7 +86,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.val = new Phaser.GameObjects.Container(scene, options?.right ? width - EFF_WIDTH : 0,  options?.top || options?.onSide ? 0 : DESC_HEIGHT);
     this.add(this.val);
 
-    const valuesBg = addWindow(this.scene, 0, 0, EFF_WIDTH, EFF_HEIGHT);
+    const valuesBg = addWindow(scene, 0, 0, EFF_WIDTH, EFF_HEIGHT);
     valuesBg.setOrigin(0, 0);
     this.val.add(valuesBg);
 
@@ -97,30 +97,30 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.cat = this.scene.add.sprite(57, EFF_HEIGHT - 35, "categories", "physical");
     this.val.add(this.cat);
 
-    const ppTxt = addTextObject(this.scene, 12, EFF_HEIGHT - 25, "PP", TextStyle.MOVE_INFO_CONTENT);
+    const ppTxt = addTextObject(scene, 12, EFF_HEIGHT - 25, "PP", TextStyle.MOVE_INFO_CONTENT);
     ppTxt.setOrigin(0.0, 0.5);
     ppTxt.setText(i18next.t("fightUiHandler:pp"));
     this.val.add(ppTxt);
 
-    this.pp = addTextObject(this.scene, 70, EFF_HEIGHT - 25, "--", TextStyle.MOVE_INFO_CONTENT);
+    this.pp = addTextObject(scene, 70, EFF_HEIGHT - 25, "--", TextStyle.MOVE_INFO_CONTENT);
     this.pp.setOrigin(1, 0.5);
     this.val.add(this.pp);
 
-    const powTxt = addTextObject(this.scene, 12, EFF_HEIGHT - 17, "POWER", TextStyle.MOVE_INFO_CONTENT);
+    const powTxt = addTextObject(scene, 12, EFF_HEIGHT - 17, "POWER", TextStyle.MOVE_INFO_CONTENT);
     powTxt.setOrigin(0.0, 0.5);
     powTxt.setText(i18next.t("fightUiHandler:power"));
     this.val.add(powTxt);
 
-    this.pow = addTextObject(this.scene, 70, EFF_HEIGHT - 17, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.pow = addTextObject(scene, 70, EFF_HEIGHT - 17, "---", TextStyle.MOVE_INFO_CONTENT);
     this.pow.setOrigin(1, 0.5);
     this.val.add(this.pow);
 
-    const accTxt = addTextObject(this.scene, 12, EFF_HEIGHT - 9, "ACC", TextStyle.MOVE_INFO_CONTENT);
+    const accTxt = addTextObject(scene, 12, EFF_HEIGHT - 9, "ACC", TextStyle.MOVE_INFO_CONTENT);
     accTxt.setOrigin(0.0, 0.5);
     accTxt.setText(i18next.t("fightUiHandler:accuracy"));
     this.val.add(accTxt);
 
-    this.acc = addTextObject(this.scene, 70, EFF_HEIGHT - 9, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.acc = addTextObject(scene, 70, EFF_HEIGHT - 9, "---", TextStyle.MOVE_INFO_CONTENT);
     this.acc.setOrigin(1, 0.5);
     this.val.add(this.acc);
 
@@ -130,7 +130,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
 
   // show this component with infos for the specific move
   show(move : Move):boolean {
-    if (!this.scene.enableMoveInfo) {
+    if (!(this.scene as BattleScene).enableMoveInfo) {
       return; // move infos have been disabled
     }
     this.move = move;

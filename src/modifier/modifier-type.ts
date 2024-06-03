@@ -721,7 +721,7 @@ export class TmModifierType extends PokemonModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TmModifierType.description" + (scene.enableMoveInfo ? "WithInfo" : ""), { moveName: allMoves[this.moveId].name });
+    return i18next.t(scene.enableMoveInfo ? "modifierType:ModifierType.TmModifierTypeWithInfo.description" : "modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
   }
 }
 
@@ -1679,6 +1679,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   // OVERRIDE IF NECESSARY
   if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
     options.forEach((mod, i) => {
+      // @ts-ignore: keeps throwing don't use string as index error in typedoc run
       const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
       mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
     });

@@ -98,7 +98,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TmModifierType": {
       name: "TM{{moveId}} - {{moveName}}",
       description: "Teach {{moveName}} to a Pokémon",
-      descriptionWithInfo: "Teach {{moveName}} to a Pokémon\n(Hold C or Shift for more info)",
+    },
+    "TmModifierTypeWithInfo": {
+      name: "TM{{moveId}} - {{moveName}}",
+      description: "Teach {{moveName}} to a Pokémon\n(Hold C or Shift for more info)",
     },
     "EvolutionItemModifierType": {
       description: "Causes certain Pokémon to evolve",
