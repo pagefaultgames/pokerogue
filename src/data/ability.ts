@@ -1033,10 +1033,11 @@ export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
 }
 
 /**
- * Multiplies a BattleStat if the checked Pokemon lacks this ability
- * If this ability cannot stack, a BooleanHolder can be used to prevent this from stacking
+ * Multiplies a BattleStat if the checked Pokemon lacks this ability.
+ * If this ability cannot stack, a BooleanHolder can be used to prevent this from stacking.
  * @see {@link applyFieldBattleStatMultiplierAbAttrs}
  * @see {@link applyFieldBattleStat}
+ * @see {@link Utils.BooleanHolder}
  */
 export class FieldMultiplyBattleStatAbAttr extends AbAttr {
   private stat: Stat;
@@ -1053,13 +1054,13 @@ export class FieldMultiplyBattleStatAbAttr extends AbAttr {
 
   /**
    * applyFieldBattleStat: Tries to multiply a Pokemon's BattleStat
-   * @param pokemon        (Pokemon)             the Pokemon using this ability
-   * @param passive        (boolean)             unused
-   * @param stat           (Stat)                the type of the checked stat
-   * @param statValue      (Utils.NumberHolder)  the value of the checked stat
-   * @param checkedPokemon (Pokemon)             the Pokemon this ability is targeting
-   * @param hasApplied     (Utils.BooleanHolder) whether or not another multiplier has been applied to this stat
-   * @param args           (any[])               unused
+   * @param pokemon {@linkcode Pokemon} the Pokemon using this ability
+   * @param passive {@linkcode boolean} unused
+   * @param stat {@linkcode Stat} the type of the checked stat
+   * @param statValue {@linkcode Utils.NumberHolder} the value of the checked stat
+   * @param checkedPokemon {@linkcode Pokemon} the Pokemon this ability is targeting
+   * @param hasApplied {@linkcode Utils.BooleanHolder} whether or not another multiplier has been applied to this stat
+   * @param args {any[]} unused
    * @returns true if this changed the checked stat, false otherwise.
    */
   applyFieldBattleStat(pokemon: Pokemon, passive: boolean, stat: Stat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, hasApplied: Utils.BooleanHolder, args: any[]): boolean {
@@ -3475,13 +3476,13 @@ export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[])
 
 /**
  * Applies a field Battle Stat multiplier attribute
- * @param attrType       should always be FieldMultiplyBattleStatAbAttr for the time being
- * @param pokemon        the Pokemon applying this ability
- * @param stat           the type of the checked stat
- * @param statValue      the value of the checked stat
- * @param checkedPokemon the Pokemon with the checked stat
- * @param hasApplied     whether or not a FieldMultiplyBattleStatAbAttr has already affected this stat
- * @param args           unused
+ * @param attrType {@linkcode FieldMultiplyBattleStatAbAttr} should always be FieldMultiplyBattleStatAbAttr for the time being
+ * @param pokemon {@linkcode Pokemon} the Pokemon applying this ability
+ * @param stat {@linkcode Stat} the type of the checked stat
+ * @param statValue {@linkcode Utils.NumberHolder} the value of the checked stat
+ * @param checkedPokemon {@linkcode Pokemon} the Pokemon with the checked stat
+ * @param hasApplied {@linkcode Utils.BooleanHolder} whether or not a FieldMultiplyBattleStatAbAttr has already affected this stat
+ * @param args unused
  */
 export function applyFieldBattleStatMultiplierAbAttrs(attrType: { new(...args: any[]): FieldMultiplyBattleStatAbAttr },
   pokemon: Pokemon, stat: Stat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, hasApplied: Utils.BooleanHolder, ...args: any[]): Promise<void> {

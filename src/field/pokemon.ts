@@ -950,9 +950,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Gets a list of all instances of a given ability attribute among abilities this pokemon has.
    * Accounts for all the various effects which can affect whether an ability will be present or
    * in effect, and both passive and non-passive.
-   * @param {AbAttr} attrType The ability attribute to check for.
-   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
-   * @param {boolean} ignoreOverride If true, it ignores ability changing effects
+   * @param attrType {@linkcode AbAttr} The ability attribute to check for.
+   * @param canApply {@linkcode Boolean} If false, it doesn't check whether the ability is currently active
+   * @param ignoreOverride {@linkcode Boolean} If true, it ignores ability changing effects
    * @returns {AbAttr[]} A list of all the ability attributes on this ability.
    */
   getAbilityAttrs(attrType: { new(...args: any[]): AbAttr }, canApply: boolean = true, ignoreOverride?: boolean): AbAttr[] {
