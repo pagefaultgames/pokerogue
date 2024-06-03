@@ -1,12 +1,12 @@
 import BattleScene from "../battle-scene";
 import { gameModes } from "../game-mode";
-import { SessionSaveData, parseSessionData, RunHistoryData, RunEntries } from "../system/game-data";
+import { SessionSaveData, parseSessionData, getRunHistoryData, RunHistoryData, RunEntries, decrypt } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { PokemonData } from "../system/pokemon-data";
-import { TrainerData } from "../system/trainer-data"
+import { TrainerData } from "../system/trainer-data";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
@@ -76,7 +76,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
     this.getUi().bringToTop(this.runSelectContainer);
     this.runSelectContainer.setVisible(true);
-    this.populateruns();
+    this.populateruns(this.scene);
 
     this.setScrollCursor(0);
     this.setCursor(0);
@@ -130,15 +130,16 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   }
 
 
-  populateruns() {
-    const timestamps = Object.keys(this.scene.gameData.runHistory);
+  populateruns(scene: BattleScene) {
+    const response = this.scene.gameData.getRunHistoryData(this.scene);
+    
+    const timestamps = Object.keys(response);
     if (timestamps.length > 1) {
       timestamps.sort((a, b) => a - b);
     }
     const entryCount = timestamps.length;
-    console.log(entryCount);
     for (let s = 0; s < entryCount; s++) {
-      const entry = new RunEntry(this.scene, timestamps[s], s);
+      const entry = new RunEntry(this.scene, response, timestamps[s], s);
       this.scene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
@@ -215,12 +216,12 @@ class RunEntry extends Phaser.GameObjects.Container {
   public hasData: boolean;
   private loadingLabel: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, timestamp: string, slotId: integer) {
+  constructor(scene: BattleScene, runHistory: RunHistoryData, timestamp: string, slotId: integer) {
     super(scene, 0, slotId*56);
 
     this.slotId = slotId;
 
-    this.setup(this.scene.gameData.runHistory[timestamp]);
+    this.setup(runHistory[timestamp]);
 
   }
 
@@ -238,7 +239,7 @@ class RunEntry extends Phaser.GameObjects.Container {
       const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Victory", TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else {
-       if (data.battleType === BattleType.WILD) {
+      if (data.battleType === BattleType.WILD) {
         const enemyContainer = this.scene.add.container(8,5);
         const gameOutcomeLabel = addTextObject(this.scene, 0, 0, "Defeated by ", TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
@@ -257,14 +258,19 @@ class RunEntry extends Phaser.GameObjects.Container {
           enemy.destroy();
         });
         this.add(enemyContainer);
-       }
-       else if (data.battleType === BattleType.TRAINER) {
+      } else if (data.battleType === BattleType.TRAINER) {
         const tObj = data.trainer.toTrainer(this.scene);
         const tType = TrainerType[data.trainer.trainerType];
-        const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()}`, TextStyle.WINDOW);
-        this.add(gameOutcomeLabel);
-       }
+        if (tType === TrainerType.RIVAL) {
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()} ${i18next.TObj("trainerNames:rival")}`, TextStyle.WINDOW);
+          this.add(gameOutcomeLabel);
+        }
+        else {
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()} ${data.trainer.name}`, TextStyle.WINDOW);
+          this.add(gameOutcomeLabel);
+        }
       }
+    }
 
     const gameModeLabel = addTextObject(this.scene, 8, 19, `${gameModes[data.gameMode]?.getName() || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
     this.add(gameModeLabel);
