@@ -1351,11 +1351,19 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+/**
+ * Provides the Ice Face ability's effects.
+ */
 export class IceFaceTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
+  /**
+   * Determines if the Ice Face tag can be added to the Pokémon.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag might be added.
+   * @returns {boolean} - True if the tag can be added, false otherwise.
+   */
   canAdd(pokemon: Pokemon): boolean {
     const weatherType = pokemon.scene.arena.weather?.weatherType;
     const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
@@ -1369,6 +1377,11 @@ export class IceFaceTag extends BattlerTag {
     return false;
   }
 
+  /**
+   * Applies the Ice Face tag to the Pokémon.
+   * Triggers a form change to Ice Face if the Pokémon is not in its Ice Face form.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag is added.
+   */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
@@ -1377,6 +1390,11 @@ export class IceFaceTag extends BattlerTag {
     }
   }
 
+  /**
+   * Removes the Ice Face tag from the Pokémon.
+   * Triggers a form change to Noice when the tag is removed.
+   * @param {Pokemon} pokemon - The Pokémon from which the tag is removed.
+   */
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
