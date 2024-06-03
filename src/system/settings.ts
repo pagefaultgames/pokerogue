@@ -19,6 +19,7 @@ export enum Setting {
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
   Enable_Retries = "ENABLE_RETRIES",
+  Skip_Seen_Dialogues = "SKIP_SEEN_DIALOGUES",
   Candy_Upgrade_Notification = "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display = "CANDY_UPGRADE_DISPLAY",
   Money_Format = "MONEY_FORMAT",
@@ -54,6 +55,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: ["Off", "On"],
   [Setting.Enable_Retries]: ["Off", "On"],
+  [Setting.Skip_Seen_Dialogues]: ["Off", "On"],
   [Setting.Candy_Upgrade_Notification]: ["Off", "Passives Only", "On"],
   [Setting.Candy_Upgrade_Display]: ["Icon", "Animation"],
   [Setting.Money_Format]: ["Normal", "Abbreviated"],
@@ -81,6 +83,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
   [Setting.Enable_Retries]: 0,
+  [Setting.Skip_Seen_Dialogues]: 0,
   [Setting.Candy_Upgrade_Notification]: 0,
   [Setting.Candy_Upgrade_Display]: 0,
   [Setting.Money_Format]: 0,
@@ -197,6 +200,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     break;
   case Setting.Vibration:
     scene.enableVibration = settingOptions[setting][value] !== "Disabled" && hasTouchscreen();
+    break;
+  case Setting.Skip_Seen_Dialogues:
+    scene.skipSeenDialogues = settingOptions[setting][value] === "On";
     break;
   case Setting.Language:
     if (value) {
