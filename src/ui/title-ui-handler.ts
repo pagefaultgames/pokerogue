@@ -1,11 +1,11 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
+import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
+import * as Utils from "../utils";
 import { DailyRunScoreboard } from "./daily-run-scoreboard";
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
-import { Mode } from "./ui";
-import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
-import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
-import i18next from "i18next";
+import { Mode } from "./ui";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
@@ -64,7 +64,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       .then(stats => {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
         if (this.splashMessage === getBattleCountSplashMessage()) {
-          this.splashMessageText.setText(getBattleCountSplashMessage().replace("{COUNT}", stats.battleCount.toLocaleString("en-US")));
+          this.splashMessageText.setText(getBattleCountSplashMessage().replace("{COUNT}", stats.battleCount.toLocaleString(Utils.getLangCode())));
         }
       })
       .catch(err => {

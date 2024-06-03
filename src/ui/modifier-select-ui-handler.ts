@@ -1,12 +1,14 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
+import { Button } from "../enums/buttons";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
+import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
 import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "../enums/buttons";
+import * as Utils from "../utils";
+import AwaitableUiHandler from "./awaitable-ui-handler";
+import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
+import { Mode } from "./ui";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -361,9 +363,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateRerollCostText(): void {
+    const langCode = Utils.getLangCode(i18next.language);
     const canReroll = this.scene.money >= this.rerollCost;
 
-    this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString("en-US")}`);
+    this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString(langCode)}`);
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -616,10 +619,11 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   updateCostText(): void {
+    const langCode = Utils.getLangCode(i18next.language);
     const scene = this.scene as BattleScene;
     const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString("en-US")}`);
+    this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString(langCode)}`);
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }

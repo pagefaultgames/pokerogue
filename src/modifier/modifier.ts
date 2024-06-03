@@ -21,6 +21,7 @@ import { Nature } from "#app/data/nature";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
+import i18next from "i18next";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -1779,11 +1780,12 @@ export class MoneyInterestModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
+    const langCode = Utils.getLangCode(i18next.language);
     const scene = args[0] as BattleScene;
     const interestAmount = Math.floor(scene.money * 0.1 * this.getStackCount());
     scene.addMoney(interestAmount);
 
-    scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString("en-US")}\nfrom the ${this.type.name}!`, null, true);
+    scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString(langCode)}\nfrom the ${this.type.name}!`, null, true);
 
     return true;
   }

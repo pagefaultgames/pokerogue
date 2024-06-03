@@ -630,7 +630,7 @@ export class MoneyRewardModifierType extends ModifierType {
   getDescription(scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
-      moneyAmount: scene.getWaveMoneyAmount(this.moneyMultiplier).toLocaleString("en-US"),
+      moneyAmount: scene.getWaveMoneyAmount(this.moneyMultiplier).toLocaleString(Utils.getLangCode(i18next.language)),
     });
   }
 }

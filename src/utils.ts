@@ -415,6 +415,38 @@ export function verifyLang(lang?: string): boolean {
 }
 
 /**
+ * Returns the language code for the given language. Used to format dates and numbers in the correct way.
+ * @param lang The language code
+ * @returns The language code for the given language
+**/
+export function getLangCode(lang?: string): string {
+  if (!lang) {
+    lang = i18next.language;
+  }
+
+  switch (lang) {
+  case "es":
+    return "es-ES";
+  case "fr":
+    return "fr-FR";
+  case "de":
+    return "de-DE";
+  case "it":
+    return "it-IT";
+  case "zh_CN":
+    return "zh-CN";
+  case "zh_TW":
+    return "zh-TW";
+  case "pt_BR":
+    return "pt-BR";
+  case "ko":
+    return "ko-KR";
+  default:
+    return "en-US";
+  }
+}
+
+/**
  * Prints the type and name of all game objects in a container for debuggin purposes
  * @param container container with game objects inside it
  */

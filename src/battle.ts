@@ -12,6 +12,7 @@ import { PlayerGender } from "./system/game-data";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
+import i18next from "i18next";
 
 export enum BattleType {
     WILD,
@@ -163,12 +164,13 @@ export default class Battle {
   }
 
   pickUpScatteredMoney(scene: BattleScene): void {
+    const langCode = Utils.getLangCode(i18next.language);
     const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
     scene.addMoney(moneyAmount.value);
 
-    scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString("en-US")}!`, null, true);
+    scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString(langCode)}!`, null, true);
 
     scene.currentBattle.moneyScattered = 0;
   }

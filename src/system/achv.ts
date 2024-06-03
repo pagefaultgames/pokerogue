@@ -129,31 +129,32 @@ export class ModifierAchv extends Achv {
  * @returns The description of the achievement
  */
 export function getAchievementDescription(localizationKey: string): string {
+  const langCode = Utils.getLangCode(i18next.language);
   switch (localizationKey) {
   case "10K_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString(langCode)});
   case "100K_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString(langCode)});
   case "1M_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString(langCode)});
   case "10M_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", {"moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString(langCode)});
   case "250_DMG":
-    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._250_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._250_DMG.damageAmount.toLocaleString(langCode)});
   case "1000_DMG":
-    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._1000_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._1000_DMG.damageAmount.toLocaleString(langCode)});
   case "2500_DMG":
-    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._2500_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._2500_DMG.damageAmount.toLocaleString(langCode)});
   case "10000_DMG":
-    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", {"damageAmount": achvs._10000_DMG.damageAmount.toLocaleString(langCode)});
   case "250_HEAL":
-    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._250_HEAL.healAmount.toLocaleString(langCode), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
   case "1000_HEAL":
-    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._1000_HEAL.healAmount.toLocaleString(langCode), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
   case "2500_HEAL":
-    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._2500_HEAL.healAmount.toLocaleString(langCode), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
   case "10000_HEAL":
-    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {"healAmount": achvs._10000_HEAL.healAmount.toLocaleString(langCode), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
   case "LV_100":
     return i18next.t("achv:LevelAchv.description", {"level": achvs.LV_100.level});
   case "LV_250":
@@ -161,15 +162,15 @@ export function getAchievementDescription(localizationKey: string): string {
   case "LV_1000":
     return i18next.t("achv:LevelAchv.description", {"level": achvs.LV_1000.level});
   case "10_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString(langCode)});
   case "25_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString(langCode)});
   case "50_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString(langCode)});
   case "75_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString(langCode)});
   case "100_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", {"ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString(langCode)});
   case "TRANSFER_MAX_BATTLE_STAT":
     return i18next.t("achv:TRANSFER_MAX_BATTLE_STAT.description");
   case "MAX_FRIENDSHIP":
