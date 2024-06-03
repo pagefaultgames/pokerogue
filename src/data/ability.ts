@@ -3357,7 +3357,6 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
       const simulated = args.length > 1 && args[1];
       if (!simulated) {
         pokemon.removeTag(BattlerTagType.ICE_FACE);
-        queueShowAbility(pokemon, passive);
       }
     }
 
