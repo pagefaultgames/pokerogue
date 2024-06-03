@@ -1098,7 +1098,7 @@ export class GameData {
     });
   }
 
-  parseSessionData(dataStr: string): SessionSaveData {
+  public parseSessionData(dataStr: string): SessionSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 

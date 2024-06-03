@@ -1,16 +1,19 @@
 import BattleScene from "../battle-scene";
 import { gameModes } from "../game-mode";
-import { SessionSaveData, RunHistoryData, RunEntries } from "../system/game-data";
+import { SessionSaveData, parseSessionData, RunHistoryData, RunEntries } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { PokemonData } from "../system/pokemon-data";
+import { TrainerData } from "../system/trainer-data"
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
+import { BattleType } from "../battle";
+import {TrainerType} from "../data/enums/trainer-type";
 
 export const runCount = 25;
 
@@ -213,7 +216,7 @@ class RunEntry extends Phaser.GameObjects.Container {
   private loadingLabel: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, timestamp: string, slotId: integer) {
-    super(scene, slotId);
+    super(scene, 0, slotId*56);
 
     this.slotId = slotId;
 
@@ -224,7 +227,7 @@ class RunEntry extends Phaser.GameObjects.Container {
   setup(run: RunHistoryData) {
 
     const victory = run.victory;
-    const data = run.entry as SessionSaveData;
+    const data = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
     console.log(data);
 
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
@@ -235,18 +238,14 @@ class RunEntry extends Phaser.GameObjects.Container {
       const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Victory", TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else {
-      const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated", TextStyle.WINDOW);
-      this.add(gameOutcomeLabel);
-    }
-    /*else {
-      if (data.battleType === BattleType.WILD) {
+       if (data.battleType === BattleType.WILD) {
         const enemyContainer = this.scene.add.container(8,5);
-        const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by"+"", TextStyle.WINDOW);
+        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, "Defeated by ", TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
-        const enemyIconContainer = this.scene.add.container(10,5);
+        const enemyIconContainer = this.scene.add.container(58,-8);
         enemyIconContainer.setScale(0.75);
         data.enemyParty.forEach((enemyData, e) => {
-          const enemy = enemyData.toPokemon(this.scene, data.battleType, e, false);
+          const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemyLevel = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
           enemyLevel.setShadow(0, 0, null);
@@ -254,14 +253,18 @@ class RunEntry extends Phaser.GameObjects.Container {
           enemyLevel.setOrigin(1, 0);
           enemyIconContainer.add(enemyIcon);
           enemyIconContainer.add(enemyLevel);
+          enemyContainer.add(enemyIconContainer);
           enemy.destroy();
         });
-        enemyContainer.add(enemyIconContainer);
+        this.add(enemyContainer);
+       }
+       else if (data.battleType === BattleType.TRAINER) {
+        const tObj = data.trainer.toTrainer(this.scene);
+        const tType = TrainerType[data.trainer.trainerType];
+        const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()}`, TextStyle.WINDOW);
+        this.add(gameOutcomeLabel);
+       }
       }
-      else {
-        const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by"+data.trainer, TextStyle.WINDOW);
-      }
-    }*/
 
     const gameModeLabel = addTextObject(this.scene, 8, 19, `${gameModes[data.gameMode]?.getName() || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
     this.add(gameModeLabel);
@@ -292,6 +295,7 @@ class RunEntry extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
+    /*
     const modifiersModule = import("../modifier/modifier");
 
     const modifierIconsContainer = this.scene.add.container(148, 30);
@@ -311,6 +315,7 @@ class RunEntry extends Phaser.GameObjects.Container {
     }
 
     this.add(modifierIconsContainer);
+    */
   }
 }
 
