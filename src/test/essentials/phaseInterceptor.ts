@@ -101,6 +101,24 @@ export default class PhaseInterceptor {
     });
   }
 
+
+  mustRun(phaseTarget): Promise<void> {
+    const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
+    this.scene.moveAnimations = null; // Mandatory to avoid crash
+    return new Promise(async (resolve, reject) => {
+      const interval = setInterval(async () => {
+        const currentPhase = this.onHold?.length && this.onHold[0];
+        if (currentPhase && currentPhase.name !== targetName) {
+          reject(currentPhase);
+        } else if (currentPhase && currentPhase.name === targetName) {
+          clearInterval(interval);
+          await this.run(phaseTarget);
+          resolve();
+        }
+      }, 1000);
+    });
+  }
+
   whenAboutToRun(phaseTarget, skipFn?): Promise<void> {
     return new Promise(async (resolve) => {
       this.waitUntil(phaseTarget, skipFn).then(() => {
