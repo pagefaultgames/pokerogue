@@ -878,7 +878,6 @@ export class GameData {
           scene.sessionPlayTime = sessionData.playTime || 0;
           scene.lastSavePlayTime = 0;
 
-
           const loadPokemonAssets: Promise<void>[] = [];
 
           const party = scene.getParty();
@@ -956,11 +955,8 @@ export class GameData {
           scene.updateModifiers(false);
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
-
-          console.log(sessionData);
         };
         if (sessionData) {
-          console.log(sessionData);
           initSessionFromData(sessionData);
         } else {
           this.getSession(slotId)
@@ -1074,7 +1070,6 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
-    console.log(dataStr);
     return JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
@@ -1149,7 +1144,6 @@ export class GameData {
         localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
         console.debug("Session data saved");
-        console.debug(sessionData);
 
         if (!bypassLogin && sync) {
           Utils.apiPost("savedata/updateall", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
