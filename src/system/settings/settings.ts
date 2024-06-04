@@ -138,7 +138,7 @@ export const Setting: Array<Setting> = [
     label: "Move Info",
     options: OFF_ON,
     default: 1,
-    type: SettingType.GENERAL
+    type: SettingType.ACCESSIBILITY
   },
   {
     key: SettingKeys.Enable_Retries,
