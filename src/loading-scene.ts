@@ -29,6 +29,28 @@ export class LoadingScene extends SceneBase {
   }
 
   preload() {
+
+    let languageToSet = "en";
+    // Check if the language is valid, if not, try to load the language without the region and if that fails, fall back to English
+    if (!Utils.verifyLang(i18next.language) && i18next.language.includes("-")) {
+      // Try without the region
+      const lang = i18next.language.split("-")[0];
+      if (Utils.verifyLang(lang)) {
+        languageToSet = lang;
+      }
+    } else if (!Utils.verifyLang(i18next.language)) {
+      // Fallback to English
+      languageToSet = "en";
+    } else {
+      languageToSet = i18next.language;
+    }
+    // Reset the language if it's not the same as the one we're trying to set
+    if (languageToSet !== i18next.language) {
+      i18next.changeLanguage(languageToSet);
+    }
+
+
+
     this.load["manifest"] = this.game["manifest"];
 
     if (!isMobile()) {
