@@ -2140,7 +2140,7 @@ export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
 }
 
 export class EnemyTurnHealModifier extends EnemyPersistentModifier {
-  private healPercent: number;
+  public healPercent: number;
 
   constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
     super(type, stackCount);
@@ -2181,7 +2181,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
 
 export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifier {
   public effect: StatusEffect;
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, effect: StatusEffect, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
@@ -2217,7 +2217,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 }
 
 export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
@@ -2255,12 +2255,12 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 }
 
 export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
-  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
-    super(type, stackCount);
+  constructor(type: ModifierType, chancePercent?: number, stackCount?: integer) {
+    super(type, stackCount || 10);
 
-    this.chance = (chancePercent || 2.5) / 100;
+    this.chance = (chancePercent || 2) / 100;
   }
 
   match(modifier: Modifier) {
