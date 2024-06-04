@@ -66,7 +66,7 @@ export enum FormChangeItem {
   HARD_METEORITE,
   SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
-  LUSTROUS_ORB,
+  LUSTROUS_GLOBE,
   GRISEOUS_CORE,
   REVEAL_GLASS,
   GRACIDEA,
@@ -520,7 +520,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DIALGA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.ADAMANT_CRYSTAL))
   ],
   [Species.PALKIA]: [
-    new SpeciesFormChange(Species.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_ORB))
+    new SpeciesFormChange(Species.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_GLOBE))
   ],
   [Species.GIRATINA]: [
     new SpeciesFormChange(Species.GIRATINA, "altered", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))

@@ -365,7 +365,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "坚硬陨石",
     "SMOOTH_METEORITE": "光滑陨石",
     "ADAMANT_CRYSTAL": "大金刚宝玉",
-    "LUSTROUS_ORB": "白玉宝珠",
+    "LUSTROUS_GLOBE": "大白宝玉",
     "GRISEOUS_CORE": "大白金宝玉",
     "REVEAL_GLASS": "现形镜",
     "GRACIDEA": "葛拉西蒂亚花",
