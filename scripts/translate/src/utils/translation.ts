@@ -139,8 +139,9 @@ export function generateResourcesWithNewTranslations(resources: Object, newTrans
     if (!language || !key || !value) {
       return;
     }
-    const [namespace, ...path] = key.split(":");
-    updateNestedObject(modifiedResources, [language, namespace, ...path], value);
+    const [namespace, path] = key.split(":");
+    const nestedKeys = path.split(".");
+    updateNestedObject(modifiedResources, [language, namespace, ...nestedKeys], value);
   });
 
   return modifiedResources;
