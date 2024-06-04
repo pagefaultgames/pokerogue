@@ -81,11 +81,11 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
   private readonly fieldEffectInfo: ArenaEffectInfo[] = [];
 
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
-  private onNewArenaEvent =  (event: Event) => this.onNewArena(event);
-  private onTurnInitEvent =  (event: Event) => this.onTurnInit(event);
-  private onTurnEndEvent =   (event: Event) => this.onTurnEnd(event);
+  private readonly onNewArenaEvent =  (event: Event) => this.onNewArena(event);
+  private readonly onTurnInitEvent =  (event: Event) => this.onTurnInit(event);
+  private readonly onTurnEndEvent =   (event: Event) => this.onTurnEnd(event);
 
-  private onFieldEffectChangedEvent = (event: Event) => this.onFieldEffectChanged(event);
+  private readonly onFieldEffectChangedEvent = (event: Event) => this.onFieldEffectChanged(event);
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
@@ -379,6 +379,6 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
 
-    super.destroy();
+    super.destroy(fromScene);
   }
 }
