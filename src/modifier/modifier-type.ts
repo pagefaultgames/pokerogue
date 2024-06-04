@@ -12,7 +12,7 @@ import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "..
 import * as Utils from "../utils";
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from "../data/temp-battle-stat";
 import { getBerryEffectDescription, getBerryName } from "../data/berry";
-import { BerryType } from "#app/data/enums/berry-type.js";
+import { BerryType } from "../data/enums/berry-type";
 import { Unlockables } from "../system/unlockables";
 import { StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
 import { SpeciesFormKey } from "../data/pokemon-species";

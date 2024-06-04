@@ -13,7 +13,7 @@ import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
-import { BerryType } from "#app/data/enums/berry-type.js";
+import { BerryType } from "../data/enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
