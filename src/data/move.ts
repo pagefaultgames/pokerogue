@@ -1479,7 +1479,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
 }
 
 /**
- * Removes a random held item (or berry) from target. 
+ * Removes a random held item (or berry) from target.
  * Used for Incinerate and Knock Off.
  * Not Implemented Cases: (Same applies for Thief)
  * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
@@ -1488,47 +1488,48 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
 export class RemoveHeldItemAttr extends MoveEffectAttr {
 
   /** Optional restriction for item pool to berries only i.e. Differentiating Incinerate and Knock Off */
-  private berriesOnly: boolean; 
+  private berriesOnly: boolean;
 
-  constructor(berriesOnly: boolean) { 
+  constructor(berriesOnly: boolean) {
     super(false, MoveEffectTrigger.HIT);
     this.berriesOnly = berriesOnly;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean { 
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
-      if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-        return true;
-      }
-      
-      const cancelled = new Utils.BooleanHolder(false);
-      applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // Check for abilities that block item theft
-
-      if(cancelled.value == true)
-        return false;
-
-      // Considers entire transferrable item pool by default (Knock Off). Otherwise berries only if specified (Incinerate).
-      let heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
-      if (this.berriesOnly) {
-        heldItems = heldItems.filter(m => m instanceof BerryModifier && m.pokemonId === target.id, target.isPlayer());
-      }
-
-      if (heldItems.length) {
-        const removedItem = heldItems[user.randSeedInt(heldItems.length)];
-
-        // Decrease item amount and update icon
-        if (!--removedItem.stackCount) {
-          target.scene.removeModifier(removedItem, !target.isPlayer());
-        }
-        target.scene.updateModifiers(target.isPlayer());
-        
-        if (this.berriesOnly) {
-          user.scene.queueMessage(getPokemonMessage(user, ` incinerated\n${target.name}'s ${removedItem.type.name}!`));
-        } else {
-          user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${removedItem.type.name}!`));
-        }
-      }
+    if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
       return true;
+    }
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // Check for abilities that block item theft
+
+    if (cancelled.value === true) {
+      return false;
+    }
+
+    // Considers entire transferrable item pool by default (Knock Off). Otherwise berries only if specified (Incinerate).
+    let heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
+    if (this.berriesOnly) {
+      heldItems = heldItems.filter(m => m instanceof BerryModifier && m.pokemonId === target.id, target.isPlayer());
+    }
+
+    if (heldItems.length) {
+      const removedItem = heldItems[user.randSeedInt(heldItems.length)];
+
+      // Decrease item amount and update icon
+      if (!--removedItem.stackCount) {
+        target.scene.removeModifier(removedItem, !target.isPlayer());
+      }
+      target.scene.updateModifiers(target.isPlayer());
+
+      if (this.berriesOnly) {
+        user.scene.queueMessage(getPokemonMessage(user, ` incinerated\n${target.name}'s ${removedItem.type.name}!`));
+      } else {
+        user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${removedItem.type.name}!`));
+      }
+    }
+    return true;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
