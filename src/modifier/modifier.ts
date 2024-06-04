@@ -2141,7 +2141,7 @@ export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
 }
 
 export class EnemyTurnHealModifier extends EnemyPersistentModifier {
-  private healPercent: number;
+  public healPercent: number;
 
   constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
     super(type, stackCount);
@@ -2176,23 +2176,23 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 15;
+    return 10;
   }
 }
 
 export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifier {
   public effect: StatusEffect;
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, effect: StatusEffect, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.effect = effect;
-    this.chance = (chancePercent || 10) / 100;
+    this.chance = (chancePercent || 5) / 100;
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect && modifier.chance === this.chance;
+    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect;
   }
 
   clone(): EnemyAttackStatusEffectChanceModifier {
@@ -2211,19 +2211,23 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
     return false;
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
 }
 
 export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 10) / 100;
+    this.chance = (chancePercent || 2.5) / 100;
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyStatusEffectHealChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyStatusEffectHealChanceModifier;
   }
 
   clone(): EnemyStatusEffectHealChanceModifier {
@@ -2245,19 +2249,23 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 
     return false;
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
 }
 
 export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
-  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
-    super(type, stackCount);
+  constructor(type: ModifierType, chancePercent?: number, stackCount?: integer) {
+    super(type, stackCount || 10);
 
-    this.chance = (chancePercent || 2.5) / 100;
+    this.chance = (chancePercent || 2) / 100;
   }
 
   match(modifier: Modifier) {
-    return modifier instanceof EnemyEndureChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyEndureChanceModifier;
   }
 
   clone() {
