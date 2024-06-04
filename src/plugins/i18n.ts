@@ -116,6 +116,38 @@ function loadFont(language: string) {
   });
 }
 
+const isRunningInBrowser = typeof window !== "undefined";
+
+export const resources = {
+  en: {
+    ...enConfig
+  },
+  es: {
+    ...esConfig
+  },
+  fr: {
+    ...frConfig
+  },
+  it: {
+    ...itConfig
+  },
+  de: {
+    ...deConfig
+  },
+  pt_BR: {
+    ...ptBrConfig
+  },
+  zh_CN: {
+    ...zhCnConfig
+  },
+  zh_TW: {
+    ...zhTwConfig
+  },
+  ko: {
+    ...koConfig
+  },
+};
+
 export function initI18n(): void {
   // Prevent reinitialization
   if (isInitialized) {
@@ -124,14 +156,16 @@ export function initI18n(): void {
   isInitialized = true;
   let lang = "";
 
-  if (localStorage.getItem("prLang")) {
-    lang = localStorage.getItem("prLang");
-  }
+  if (isRunningInBrowser && "FontFace" in window) {
+    if (localStorage.getItem("prLang")) {
+      lang = localStorage.getItem("prLang");
+    }
 
-  loadFont(lang);
-  i18next.on("languageChanged", lng=> {
-    loadFont(lng);
-  });
+    loadFont(lang);
+    i18next.on("languageChanged", lng=> {
+      loadFont(lng);
+    });
+  }
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -152,41 +186,13 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     nonExplicitSupportedLngs: true,
-    fallbackLng: "en",
+    fallbackLng: isRunningInBrowser ? "en" : false,
     supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
     debug: true,
     interpolation: {
       escapeValue: false,
     },
-    resources: {
-      en: {
-        ...enConfig
-      },
-      es: {
-        ...esConfig
-      },
-      fr: {
-        ...frConfig
-      },
-      it: {
-        ...itConfig
-      },
-      de: {
-        ...deConfig
-      },
-      pt_BR: {
-        ...ptBrConfig
-      },
-      zh_CN: {
-        ...zhCnConfig
-      },
-      zh_TW: {
-        ...zhTwConfig
-      },
-      ko: {
-        ...koConfig
-      },
-    },
+    resources: resources
   });
 }
 
