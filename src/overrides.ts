@@ -70,6 +70,8 @@ interface StarterOverride {
   status: StatusEffect;
   gender: Gender;
   moveset: Moves[];
+  shiny: boolean;
+  shinyVariant: Variant;
 }
 export const STARTER_OVERRIDE: StarterOverride[] = [
   {
@@ -80,6 +82,8 @@ export const STARTER_OVERRIDE: StarterOverride[] = [
     status: StatusEffect.NONE,
     gender: null,
     moveset: [],
+    shiny: false,
+    shinyVariant: 0,
   },
   {
     species: 0,
@@ -89,6 +93,8 @@ export const STARTER_OVERRIDE: StarterOverride[] = [
     status: StatusEffect.NONE,
     gender: null,
     moveset: [],
+    shiny: false,
+    shinyVariant: 0,
   },
   {
     species: 0,
@@ -98,6 +104,8 @@ export const STARTER_OVERRIDE: StarterOverride[] = [
     status: StatusEffect.NONE,
     gender: null,
     moveset: [],
+    shiny: false,
+    shinyVariant: 0,
   },
   {
     species: 0,
@@ -107,6 +115,8 @@ export const STARTER_OVERRIDE: StarterOverride[] = [
     status: StatusEffect.NONE,
     gender: null,
     moveset: [],
+    shiny: false,
+    shinyVariant: 0,
   },
   {
     species: 0,
@@ -116,6 +126,8 @@ export const STARTER_OVERRIDE: StarterOverride[] = [
     status: StatusEffect.NONE,
     gender: null,
     moveset: [],
+    shiny: false,
+    shinyVariant: 0,
   },
   {
     species: 0,
@@ -125,10 +137,10 @@ export const STARTER_OVERRIDE: StarterOverride[] = [
     status: StatusEffect.NONE,
     gender: null,
     moveset: [],
+    shiny: false,
+    shinyVariant: 0,
   }
 ];
-export const SHINY_OVERRIDE: boolean = false;
-export const VARIANT_OVERRIDE: Variant = 0;
 
 /**
  * OPPONENT / ENEMY OVERRIDES

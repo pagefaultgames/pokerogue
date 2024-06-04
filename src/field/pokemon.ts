@@ -2837,11 +2837,11 @@ export class PlayerPokemon extends Pokemon {
     }
     this.indexInParty = indexInParty;
 
-    if (Overrides.SHINY_OVERRIDE) {
+    if (Overrides.STARTER_OVERRIDE[this.indexInParty]?.shiny) {
       this.shiny = true;
       this.initShinySparkle();
-      if (Overrides.VARIANT_OVERRIDE) {
-        this.variant = Overrides.VARIANT_OVERRIDE;
+      if (Overrides.STARTER_OVERRIDE[this.indexInParty]?.shinyVariant) {
+        this.variant = Overrides.STARTER_OVERRIDE[this.indexInParty].shinyVariant;
       }
     }
 
