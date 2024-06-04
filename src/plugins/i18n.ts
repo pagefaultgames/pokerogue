@@ -87,13 +87,14 @@ export interface Localizable {
   localize(): void;
 }
 
-const alternativeFonts = {
+const getAlternativeFonts = () => ({
   "ko": [
     new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
   ],
-};
+});
 
 function loadFont(language: string) {
+  const alternativeFonts = getAlternativeFonts();
   if (!alternativeFonts[language]) {
     language = language.split(/[-_/]/)[0];
   }
