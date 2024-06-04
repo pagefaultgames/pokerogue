@@ -54,12 +54,14 @@ describe("Abilities Test - onKill", () => {
   });
 
   it("MOXIE", async() => {
+    const moveToUse = Moves.AERIAL_ACE;
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
@@ -72,24 +74,23 @@ describe("Abilities Test - onKill", () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
     game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
+      const movePosition = getMovePosition(game.scene, 0, moveToUse);
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
-    await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.run(TurnStartPhase);
+    await game.phaseInterceptor.mustRun(EnemyCommandPhase).catch((error) => expect(error).toBe(EnemyCommandPhase));
+    await game.phaseInterceptor.mustRun(TurnStartPhase).catch((error) => expect(error).toBe(TurnStartPhase));
 
-    await game.phaseInterceptor.run(MovePhase);
-    await game.phaseInterceptor.run(MessagePhase);
-    await game.phaseInterceptor.run(MoveEffectPhase);
-    await game.phaseInterceptor.run(DamagePhase);
-    await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(FaintPhase));
+    await game.phaseInterceptor.mustRun(MovePhase).catch((error) => expect(error).toBe(MovePhase));
+    await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
+    await game.phaseInterceptor.mustRun(MoveEffectPhase).catch((error) => expect(error).toBe(MoveEffectPhase));
+    await game.phaseInterceptor.mustRun(DamagePhase).catch((error) => expect(error).toBe(DamagePhase));
 
-    await game.phaseInterceptor.run(FaintPhase);
-    await game.phaseInterceptor.run(MessagePhase);
-    await game.phaseInterceptor.run(ShowAbilityPhase);
-    await game.phaseInterceptor.run(StatChangePhase);
-    await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(VictoryPhase));
-    await game.phaseInterceptor.whenAboutToRun(VictoryPhase);
+    await game.phaseInterceptor.mustRun(FaintPhase).catch((error) => expect(error).toBe(FaintPhase));
+    await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
+    await game.phaseInterceptor.mustRun(ShowAbilityPhase).catch((error) => expect(error).toBe(ShowAbilityPhase));
+    await game.phaseInterceptor.mustRun(StatChangePhase).catch((error) => expect(error).toBe(StatChangePhase));
+    await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
+    await game.phaseInterceptor.mustRun(VictoryPhase).catch((error) => expect(error).toBe(VictoryPhase));
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
   }, 120000);
