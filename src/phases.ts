@@ -39,7 +39,7 @@ import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
-import { EggHatchPhase, EggSummaryPhase } from "./egg-hatch-phase";
+import { EggHatchPhase, EggSkipPhase, EggSummaryPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
@@ -5023,25 +5023,13 @@ export class EggLapsePhase extends Phase {
     });
 
     if (eggsToHatch.length) {
-      this.scene.queueMessage(i18next.t("battle:eggHatching"));
       let pokemonHatched: PlayerPokemon[] = [];
-      for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, pokemonHatched));
-      }
-      this.scene.unshiftPhase(new EggSummaryPhase(this.scene, pokemonHatched));
-      // console.log(pokemonHatched);
-      // this.scene.queueMessage("you hatched " + eggsToHatch.length.toString() + " eggs");
+      console.log('1')
+      this.scene.queueMessage(i18next.t("battle:eggHatching"));
+      console.log('2')
+      this.scene.unshiftPhase(new EggSkipPhase(this.scene, eggsToHatch, pokemonHatched));
 
-      // // test show sprite
-      // this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
-      // this.starterSelectContainer.setVisible(false);
-      // this.scene.ui.add(this.starterSelectContainer)
-
-      
-      // this.starterSelectGenIconContainers[g].add(icon);
-      // this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
       console.log(pokemonHatched);
-
     }
     this.end();
   }

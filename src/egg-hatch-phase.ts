@@ -15,6 +15,177 @@ import PokemonInfoContainer from "./ui/pokemon-info-container";
 import { Gender } from "./data/gender";
 import { speciesEggMoves } from "./data/egg-moves";
 
+export class EggSkipPhase extends Phase {
+  private eggs: Egg[];
+  private pokemonHatched: PlayerPokemon[]
+
+  constructor(scene: BattleScene, eggs: Egg[], pokemonHatchedContainer: PlayerPokemon[]) {
+    super(scene);
+
+    this.eggs = eggs;
+    this.pokemonHatched = pokemonHatchedContainer;
+  }
+
+  start() {
+    super.start();
+    console.log(this.eggs)
+    // show prompt for skip
+    console.log('a')
+    this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+        console.log('c')
+        for (const egg of this.eggs) {
+          this.hatchEggSilently(egg); 
+        }
+        this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched));
+        this.end();
+      }, () => {
+        for (const egg of this.eggs) {
+          this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, this.pokemonHatched));
+        }
+        this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched));
+        this.end();
+      }
+    );
+  }
+
+  end() {
+    super.end();
+  }
+
+  hatchEggSilently(egg: Egg) {
+    const pokemon = this.generatePokemon(egg);
+      if (pokemon.fusionSpecies) {
+        pokemon.clearFusionSpecies();
+      }
+      console.log(pokemon)
+
+      pokemon.loadAssets().then(() => {
+       
+      if (pokemon.species.subLegendary) {
+        this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
+      }
+      if (pokemon.species.legendary) {
+        this.scene.validateAchv(achvs.HATCH_LEGENDARY);
+      }
+      if (pokemon.species.mythical) {
+        this.scene.validateAchv(achvs.HATCH_MYTHICAL);
+      }
+      if (pokemon.isShiny()) {
+        this.scene.validateAchv(achvs.HATCH_SHINY);
+      }
+      
+      });
+      
+  }
+
+  generatePokemon(egg: Egg): PlayerPokemon {
+    let ret: PlayerPokemon;
+    let speciesOverride: Species;
+
+    this.scene.executeWithSeedOffset(() => {
+
+      if (egg.isManaphyEgg()) {
+        const rand = Utils.randSeedInt(8);
+
+        speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;
+      } else if (egg.tier === EggTier.MASTER
+        && egg.gachaType === GachaType.LEGENDARY) {
+        if (!Utils.randSeedInt(2)) {
+          speciesOverride = getLegendaryGachaSpeciesForTimestamp(this.scene, egg.timestamp);
+        }
+      }
+
+      if (speciesOverride) {
+        const pokemonSpecies = getPokemonSpecies(speciesOverride);
+        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
+      } else {
+        let minStarterValue: integer;
+        let maxStarterValue: integer;
+
+        switch (egg.tier) {
+        case EggTier.GREAT:
+          minStarterValue = 4;
+          maxStarterValue = 5;
+          break;
+        case EggTier.ULTRA:
+          minStarterValue = 6;
+          maxStarterValue = 7;
+          break;
+        case EggTier.MASTER:
+          minStarterValue = 8;
+          maxStarterValue = 9;
+          break;
+        default:
+          minStarterValue = 1;
+          maxStarterValue = 3;
+          break;
+        }
+
+        const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
+
+        const speciesPool = Object.keys(speciesStarters)
+          .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
+          .map(s => parseInt(s) as Species)
+          .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
+
+        let totalWeight = 0;
+        const speciesWeights = [];
+        for (const speciesId of speciesPool) {
+          let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
+          const species = getPokemonSpecies(speciesId);
+          if (species.isRegional()) {
+            weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
+          }
+          speciesWeights.push(totalWeight + weight);
+          totalWeight += weight;
+        }
+
+        let species: Species;
+
+        const rand = Utils.randSeedInt(totalWeight);
+        for (let s = 0; s < speciesWeights.length; s++) {
+          if (rand < speciesWeights[s]) {
+            species = speciesPool[s];
+            break;
+          }
+        }
+
+        const pokemonSpecies = getPokemonSpecies(species);
+        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
+      }
+
+      ret.trySetShiny(egg.gachaType === GachaType.SHINY ? 1024 : 512);
+      ret.variant = ret.shiny ? ret.generateVariant() : 0;
+
+      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
+
+      for (let s = 0; s < ret.ivs.length; s++) {
+        ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
+      }
+
+      const baseChance = egg.gachaType === GachaType.MOVE ? 3 : 6;
+      const eggMoveIndex = Utils.randSeedInt(baseChance * Math.pow(2, 3 - egg.tier))
+        ? Utils.randSeedInt(3)
+        : 3;
+      // TODO return new catch, new egg move
+      // return properties that were new (for summary)
+      // console.log('setting caught')
+      // this.scene.gameData.setPokemonCaught(ret, true, true).then(() => {
+      //   console.log('setting egg move')
+      //   this.scene.gameData.setEggMoveUnlocked(ret.species, eggMoveIndex).then(() => {
+      //   console.log('null text?')
+      //   this.scene.ui.showText(null, 0);
+      //   });
+      // });
+
+    }, egg.id, EGG_SEED.toString());
+
+    this.pokemonHatched.push(ret)
+    
+    return ret;
+  }
+}
+
 export class EggHatchPhase extends Phase {
   private egg: Egg;
   private pokemonHatched: PlayerPokemon[]
@@ -469,21 +640,21 @@ export class EggHatchPhase extends Phase {
     return ret;
   }
 
-  getNewProperties(pokemon: PlayerPokemon) {
-    const speciesId = pokemon.species.speciesId;
-    let newProperties = {newEggMove: false, newStarter: false};
+//   getNewProperties(pokemon: PlayerPokemon) {
+//     const speciesId = pokemon.species.speciesId;
+//     let newProperties = {newEggMove: false, newStarter: false};
 
-    if (!this.starterData[speciesId].eggMoves) {
-      this.starterData[speciesId].eggMoves = 0;
-    }
+//     if (!this.starterData[speciesId].eggMoves) {
+//       this.starterData[speciesId].eggMoves = 0;
+//     }
 
-    const value = Math.pow(2, eggMoveIndex);
+//     const value = Math.pow(2, eggMoveIndex);
 
-    if (this.starterData[speciesId].eggMoves & value) {
-      resolve(false);
-      return;
-    }
-  }
+//     if (this.starterData[speciesId].eggMoves & value) {
+//       resolve(false);
+//       return;
+//     }
+//   }
 }
 
 export class EggSummaryPhase extends Phase {
@@ -543,10 +714,6 @@ export class EggSummaryPhase extends Phase {
         ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
         return ret;
       };
-
-      for (var j = 1; j < 20; j +=1){
-        this.pokemonHatched = this.pokemonHatched.concat([this.pokemonHatched[0]]);
-      }
       
       this.eggHatchOverlay = this.scene.add.rectangle(0, -this.scene.game.canvas.height / 6, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0xFFFFFF);
       this.eggHatchOverlay.setOrigin(0, 0);
@@ -555,8 +722,7 @@ export class EggSummaryPhase extends Phase {
 
       this.infoContainer = new PokemonInfoContainer(this.scene);
       this.infoContainer.setup();
-      this.infoContainer.show(this.pokemonHatched[1], true, 2);
-
+      this.infoContainer.show(this.pokemonHatched[1], false, 2);
       this.eggHatchContainer.add(this.infoContainer);
 
       
@@ -645,18 +811,65 @@ export class EggSummaryPhase extends Phase {
         i++;
       }
       
-      this.scene.ui.showText(`${this.pokemonHatched.length} eggs hatched`, null, () => {
-        this.scene.ui.showText(null, 0);
-        this.scene.tweens.add({
-          duration: Utils.fixedInt(3000),
-          targets: this.eggHatchOverlay,
-          alpha: 0,
-          ease: "Cubic.easeOut"
-        });
-        this.end();
-      }, null, true, 1500);
-
       
+
+      // for(const ret of this.pokemonHatched) {
+      let chain = Promise.resolve()
+      console.log(this.pokemonHatched)
+      const updateNextPokemon = (i: integer) => {
+        console.log(i);
+        if (i >= this.pokemonHatched.length) {
+          console.log('end')
+          this.scene.ui.showText(`${this.pokemonHatched.length} eggs hatched`, null, () => {
+            this.scene.ui.showText(null, 0);
+            this.scene.tweens.add({
+              duration: Utils.fixedInt(3000),
+              targets: this.eggHatchOverlay,
+              alpha: 0,
+              ease: "Cubic.easeOut"
+            });
+            this.end();
+          }, null, true, 1500);
+        } else {
+          this.updatePokemon(this.pokemonHatched[i]).then(() => {
+            if (i < this.pokemonHatched.length) {
+              updateNextPokemon(i + 1);
+            } else {
+              console.log('updated all pokemon')
+              this.scene.ui.showText(null, 0);
+              this.end();
+            }
+          });
+        }
+      }
+      updateNextPokemon(0);
+      
+      // for (let pokemon of this.pokemonHatched) {
+      //   console.log('calling update pokemon')
+      //   chain.then(() => this.updatePokemon(pokemon))
+      //   console.log('next pokemon')
+      // }
+      // this.updatePokemon(this.pokemonHatched[0]).then(() => {
+      //   console.log('ending scene')
+      //   this.end()
+      // })
+        
+      // }
+      // this.scene.ui.showText(null, 0);
+    });
+  }
+
+  updatePokemon(pokemon: PlayerPokemon, eggMoveIndex: integer = 0) {
+    console.log(pokemon);
+    return new Promise<void>(resolve => {
+      this.scene.gameData.setPokemonCaught(pokemon, true, true, false).then(() => {
+        console.log('setting egg move')
+        //TODO pass through egg move updates
+        this.scene.gameData.updateSpeciesDexIvs(pokemon.species.speciesId, pokemon.ivs);
+        this.scene.gameData.setEggMoveUnlocked(pokemon.species, eggMoveIndex, false).then(() => {
+        resolve();
+        });
+      });
     });
   }
 

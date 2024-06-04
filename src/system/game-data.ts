@@ -461,16 +461,26 @@ export class GameData {
         //   ? systemData.eggs.map(e => e.toEgg())
         //   : [];
         const eggsTestData = [
-          { id: 1, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625123456 },
-          { id: 2, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625124567 },
-          { id: 3, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625125678 },
+          { id: 1, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 2, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 3, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
           { id: 4, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 5, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625127890 },
-          { id: 6, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625128901 },
+          { id: 5, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 6, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
           { id: 7, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 8, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625130123 },
+          { id: 8, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
           { id: 9, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 10, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 }
+          { id: 10, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 },
+          { id: 11, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 12, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 13, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 14, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
+          { id: 15, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 16, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 17, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
+          { id: 18, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+          { id: 19, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
+          { id: 20, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 }
         ];
 
         const eggDataArray: EggData[] = eggsTestData.map(data => new EggData(data));
@@ -1213,11 +1223,11 @@ export class GameData {
     }
   }
 
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg);
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = false): Promise<void> {
+    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<void> {
     return new Promise<void>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
@@ -1276,7 +1286,7 @@ export class GameData {
       const checkPrevolution = () => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg).then(() => resolve());
+          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(() => resolve());
         } else {
           resolve();
         }
@@ -1284,7 +1294,9 @@ export class GameData {
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
         this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
+        if (showMessage) {
+          this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
+        }
       } else {
         checkPrevolution();
       }
@@ -1328,7 +1340,7 @@ export class GameData {
     this.starterData[species.speciesId].candyCount += count;
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1350,7 +1362,9 @@ export class GameData {
       this.starterData[speciesId].eggMoves |= value;
 
       this.scene.playSound("level_up_fanfare");
-      this.scene.ui.showText(`${eggMoveIndex === 3 ? "Rare " : ""}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
+      if (showMessage) {
+        this.scene.ui.showText(`${eggMoveIndex === 3 ? "Rare " : ""}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
+      }
     });
   }
 
