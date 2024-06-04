@@ -1111,6 +1111,8 @@ export default class BattleScene extends SceneBase {
     case Species.FLOETTE:
     case Species.FLORGES:
     case Species.FURFROU:
+    case Species.PUMPKABOO:
+    case Species.GOURGEIST:
     case Species.ORICORIO:
     case Species.MAGEARNA:
     case Species.ZARUDE:
