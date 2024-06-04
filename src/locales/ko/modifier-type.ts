@@ -365,7 +365,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "단단한운석",
     "SMOOTH_METEORITE": "부드러운운석",
     "ADAMANT_CRYSTAL": "큰금강옥",
-    "LUSTROUS_ORB": "큰백옥",
+    "LUSTROUS_GLOBE": "큰백옥",
     "GRISEOUS_CORE": "큰백금옥",
     "REVEAL_GLASS": "비추는거울",
     "GRACIDEA": "그라시데아꽃",
