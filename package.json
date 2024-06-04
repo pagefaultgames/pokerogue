@@ -45,7 +45,8 @@
 		"i18next-browser-languagedetector": "^7.2.1",
 		"json-stable-stringify": "^1.1.0",
 		"phaser": "^3.70.0",
-		"phaser3-rex-plugins": "^1.1.84"
+		"phaser3-rex-plugins": "^1.1.84",
+		"tsx": "^4.11.2"
 	},
 	"engines": {
 		"node": ">=20.0.0"
