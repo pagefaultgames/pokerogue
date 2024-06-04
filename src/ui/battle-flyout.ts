@@ -6,6 +6,7 @@ import { UiTheme } from "#app/enums/ui-theme.js";
 import Move from "#app/data/move.js";
 import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "#app/battle-scene-events.js";
 import { BerryType } from "#app/data/enums/berry-type.js";
+import { Moves } from "#app/data/enums/moves.js";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -126,7 +127,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
         continue;
       }
 
-      const currentPp = Math.max(moveInfo.maxPp - moveInfo.ppUsed, 0);
+      const currentPp = moveInfo.maxPp - moveInfo.ppUsed;
       flyoutText.text = `${moveInfo.move.name}  ${currentPp}/${moveInfo.maxPp}`;
     }
   }
@@ -134,13 +135,15 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
   private onMoveUsed(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.userId !== this.pokemon?.id) {
+    if (!moveUsedEvent
+      || moveUsedEvent.pokemonId !== this.pokemon?.id
+      || moveUsedEvent.move.id === Moves.STRUGGLE) { // Ignore Struggle
       return;
     }
 
     const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id);
     if (foundInfo) {
-      foundInfo.ppUsed += moveUsedEvent.ppUsed;
+      foundInfo.ppUsed = Math.min(foundInfo.ppUsed + moveUsedEvent.ppUsed, foundInfo.maxPp);
     } else {
       this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
     }
@@ -150,16 +153,17 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   private onBerryUsed(event: Event) {
     const berryUsedEvent = event as BerryUsedEvent;
-    // We only care about Leppa berries, so skip all the rest
-    if (!berryUsedEvent || berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA) {
+    if (!berryUsedEvent
+      || berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA // We only care about Leppa berries
+      || berryUsedEvent.berryModifier.pokemonId !== this.pokemon?.id) {
       return;
     }
 
-    this.moveInfo.forEach(info => {
-      if (info.ppUsed === info.maxPp) {
-        info.ppUsed = Math.max(info.ppUsed - 10, 0);
-      }
-    });
+    const foundInfo = this.moveInfo.find(info => info.ppUsed === info.maxPp);
+    if (!foundInfo) { // This will only happen on a de-sync of PP tracking
+      return;
+    }
+    foundInfo.ppUsed = Math.max(foundInfo.ppUsed - 10, 0);
 
     this.setText();
   }

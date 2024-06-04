@@ -58,7 +58,7 @@ export class CandyUpgradeNotificationChangedEvent extends Event {
 */
 export class MoveUsedEvent extends Event {
   /** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
-  public userId: number;
+  public pokemonId: number;
   /** The {@linkcode Move} used */
   public move: Move;
   /** The amount of PP used on the {@linkcode Move} this turn */
@@ -66,7 +66,7 @@ export class MoveUsedEvent extends Event {
   constructor(userId: number, move: Move, ppUsed: number) {
     super(BattleSceneEventType.MOVE_USED);
 
-    this.userId = userId;
+    this.pokemonId = userId;
     this.move = move;
     this.ppUsed = ppUsed;
   }
