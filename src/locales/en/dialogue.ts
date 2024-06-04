@@ -1578,7 +1578,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Know what? I really look forward to having serious battles with strong Trainers! 
                 $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being! 
-                #And they are battling alongside Pokémon that have been through countless difficult battles! 
+                $And they are battling alongside Pokémon that have been through countless difficult battles! 
                 $If I battle with people like that, not only will I get stronger, my Pokémon will, too! 
                 $And we'll get to know each other even better! OK! Brace yourself! 
                 $I'm Iris, the Pokémon League Champion, and I'm going to defeat you!`,
