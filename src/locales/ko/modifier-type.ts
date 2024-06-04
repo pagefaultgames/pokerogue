@@ -12,8 +12,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonHeldItemModifierType": {
       extra: {
-        "inoperable": "{{pokemonName}}(는)은\n이 아이템을 얻을 수 없다!",
-        "tooMany": "{{pokemonName}}(는)은\n이 아이템을 너무 많이 갖고 있다!",
+        "inoperable": "{{pokemonName}}[[는]]\n이 아이템을 얻을 수 없다!",
+        "tooMany": "{{pokemonName}}[[는]]\n이 아이템을 너무 많이 갖고 있다!",
       }
     },
     "PokemonHpRestoreModifierType": {
@@ -46,13 +46,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}}민트",
-      description: "포켓몬의 성격을 {{natureName}}(으)로 바꾸고 스타팅에도 등록한다.",
+      description: "포켓몬의 성격을 {{natureName}}[[로]] 바꾸고 스타팅에도 등록한다.",
     },
     "DoubleBattleChanceBoosterModifierType": {
       description: "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률 두 배",
     },
     "TempBattleStatBoosterModifierType": {
-      description: "자신의 모든 포켓몬이 5번의 배틀 동안 {{tempBattleStatName}}(이)가 한 단계 증가"
+      description: "자신의 모든 포켓몬이 5번의 배틀 동안 {{tempBattleStatName}}[[가]] 한 단계 증가"
     },
     "AttackTypeBoosterModifierType": {
       description: "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승",
@@ -97,7 +97,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierType": {
       name: "No.{{moveId}} {{moveName}}",
-      description: "포켓몬에게 {{moveName}}를(을) 가르침",
+      description: "포켓몬에게 {{moveName}}[[를]] 가르침",
     },
     "EvolutionItemModifierType": {
       description: "어느 특정 포켓몬을 진화",
