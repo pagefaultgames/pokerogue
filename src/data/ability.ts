@@ -3272,6 +3272,35 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   }
 }
 
+
+/*
+ * Here is an idea for the TERA_SHELL ability
+ * I'm not a pro with typescript so there may be mistakes in the code below so please check it before doing anything <3
+ */
+export class AllMovesNotEffective extends AbAttr { // not sure if something should be put in front of "AbAttr"
+  apply(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (pokemon.hp === pokemon.getMaxHp() {
+      if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, attacker) === 4) { // if twice super effective
+        cancelled.value = true; // don't know what it realy does but saw it in other parts of the code
+        (args[0] as Utils.NumberHolder).value *= 0.125; // make not very effective (4*0.125 => 0.5)
+        return true;
+      }
+      if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, attacker) === 2) { // if super effective
+        cancelled.value = true; // don't know what it realy does but saw it in other parts of the code
+        (args[0] as Utils.NumberHolder).value *= 0.25; // make not very effective (2*0.25 => 0.5)
+        return true;
+      }
+      if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, attacker) === 1) { // if normal damage
+        cancelled.value = true; // don't know what it realy does but saw it in other parts of the code
+        (args[0] as Utils.NumberHolder).value *= 0.5; // make not very effective (1*0.5 => 0.5)
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+
 /**
  * Gives money to the user after the battle.
  *
