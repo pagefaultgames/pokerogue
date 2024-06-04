@@ -50,6 +50,7 @@ export const SettingKeys = {
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Money_Format: "MONEY_FORMAT",
   Sprite_Set: "SPRITE_SET",
+  Music_Preference: "MUSIC_PREFERENCE",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Moveset_Flyout: "SHOW_MOVESET_FLYOUT",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
@@ -171,6 +172,14 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Sprite_Set,
     label: "Sprite Set",
     options: ["Consistent", "Mixed Animated"],
+    default: 0,
+    type: SettingType.GENERAL,
+    requireReload: true
+  },
+  {
+    key: SettingKeys.Music_Preference,
+    label: "Music Preference",
+    options: ["Consistent", "Mixed"],
     default: 0,
     type: SettingType.GENERAL,
     requireReload: true
@@ -336,6 +345,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     if (value) {
       scene.initExpSprites();
     }
+    break;
+  case SettingKeys.Music_Preference:
+    scene.musicPreference = value;
     break;
   case SettingKeys.Move_Animations:
     scene.moveAnimations = Setting[index].options[value] === "On";
