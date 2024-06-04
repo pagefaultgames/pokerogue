@@ -32,5 +32,5 @@
     - [ ] Are all unit tests still passing? (`npm run test`)
 - [ ] Are the changes visual?
   - [ ] Have I provided screenshots/videos of the changes?
-- [ ] Do my changes included text that the user can see?
+- [ ] Do my changes include text that the user can see?
   - [ ] Did I use the translation files to use the translated string?
