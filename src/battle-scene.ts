@@ -390,28 +390,28 @@ export default class BattleScene extends SceneBase {
 
     this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
     this.biomeWaveText.setName("text-biome-wave");
-    this.biomeWaveText.setOrigin(1, 0);
+    this.biomeWaveText.setOrigin(1, 0.5);
     this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setName("text-money");
-    this.moneyText.setOrigin(1, 0);
+    this.moneyText.setOrigin(1, 0.5);
     this.fieldUI.add(this.moneyText);
 
     this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.scoreText.setName("text-score");
-    this.scoreText.setOrigin(1, 0);
+    this.scoreText.setOrigin(1, 0.5);
     this.fieldUI.add(this.scoreText);
 
     this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.luckText.setName("text-luck");
-    this.luckText.setOrigin(1, 0);
+    this.luckText.setOrigin(1, 0.5);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
     this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
     this.luckLabelText.setName("text-luck-label");
-    this.luckLabelText.setOrigin(1, 0);
+    this.luckLabelText.setOrigin(1, 0.5);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
 
@@ -1336,21 +1336,20 @@ export default class BattleScene extends SceneBase {
   }
 
   animateMoneyChanged(positiveChange: boolean): void {
-    let deltaScale = this.moneyText.scale * 0.1;
+    let deltaScale = this.moneyText.scale * 0.14;
     if (positiveChange) {
       this.moneyText.setShadowColor("#008000");
-    }
-    else {
+    } else {
       this.moneyText.setShadowColor("#FF0000");
       deltaScale = -deltaScale;
     }
     this.tweens.add({
       targets: this.moneyText,
-      duration: Utils.fixedInt(350),
+      duration: Utils.fixedInt(250),
       scale: this.moneyText.scale + deltaScale,
       loop: 0,
       yoyo: true,
-      onComplete: (_) => this.moneyText.setShadowColor(getTextColor(TextStyle.MONEY, true)), 
+      onComplete: (_) => this.moneyText.setShadowColor(getTextColor(TextStyle.MONEY, true)),
     });
   }
 
@@ -1397,7 +1396,10 @@ export default class BattleScene extends SceneBase {
 
   updateUIPositions(): void {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
-    this.biomeWaveText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
+    const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
+    this.biomeWaveText.setY(
+      -(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0) + (biomeWaveTextHeight / 2)
+    );
     this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
     [ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
