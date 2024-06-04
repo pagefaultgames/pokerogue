@@ -1,9 +1,9 @@
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import Pokemon, { EnemyPokemon, HitResult, MoveResult, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, SelectModifierPhase, ShowAbilityPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag } from "./battler-tags";
@@ -489,6 +489,7 @@ export class PostDefendAbAttr extends AbAttr {
     return false;
   }
 }
+
 
 export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
 
@@ -2855,6 +2856,128 @@ export class PostTurnAbAttr extends AbAttr {
 }
 
 /**
+ * Apply an effect on a pokemon after an instance of damage..
+ * @extends AbAttr
+ * @see {@linkcode applyPostDamage}
+ */
+export class PostDamageAbAttr extends AbAttr {
+  applyPostDamage(pokemon: Pokemon, moveTrigger: boolean, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+/**
+ * Apply a forced switch/flee depending on the pokemon's HP ratio before & after a move.
+ * @extends PostDamageAbAttr
+ * @see {@linkcode applyPostTurn}
+ */
+export class PostDamageForcedSwitchAbAttr extends PostDamageAbAttr {
+  private hpThreshold: number;
+
+  constructor(hpThreshold: number = 0.5) {
+    super();
+
+    this.hpThreshold = hpThreshold;
+  }
+
+  /**
+   * Forces a switch/flee on the pokemon based on a HP condition and the last instance of damage taken.
+   * @param pokemon The pokemon that's being forced to switch/flee.
+   * @param moveTrigger Is this ability being triggered by a damaging move?
+   * @param passive N/A
+   * @param args N/A
+   * @returns true if the switch/flee is forced.
+   */
+  applyPostDamage(pokemon: Pokemon, moveTrigger: boolean, passive: boolean, args: any[]): boolean {
+    const condition = getHpCondition(this.hpThreshold, moveTrigger);
+    const moveHistory = pokemon.getMoveHistory();
+    const nullifiedMoves = [Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT];
+    if (!condition(pokemon)) {
+      return false;
+    }
+
+    if (moveHistory.length > 0) {
+      const lastMoveUsed = moveHistory[moveHistory.length - 1];
+      if ((lastMoveUsed.move === Moves.SKY_DROP && lastMoveUsed.result === MoveResult.OTHER)
+        || (nullifiedMoves.includes(lastMoveUsed.move))) {
+        return false;
+      }
+    }
+
+    if (pokemon.isPlayer() && (pokemon.scene.getParty().filter(playerPokemon => !playerPokemon.isFainted()).length > pokemon.scene.getPlayerField().length)) {
+      // Player's pokemon
+      // If there is still a pokemon in the party that's not fainted in the player's party, force the switch menu.
+      applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
+      pokemon.scene.unshiftPhase(new SwitchPhase(pokemon.scene, pokemon.getFieldIndex(), true, true, true));
+      pokemon.scene.tryRemovePhase(p => p instanceof MovePhase && !p.pokemon.active);
+      return true;
+    } else if (!pokemon.hasTrainer()) {
+      // Wild pokemon
+      pokemon.hideInfo().then(() => pokemon.destroy());
+      pokemon.active = false;
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " fled!"), null, true, 500);
+      pokemon.scene.playSound("flee");
+
+      pokemon.scene.tryRemovePhase(p => p instanceof MovePhase && !p.pokemon.active);
+
+      // End battle if every pokemon fled or fainted.
+      if (pokemon.scene.getEnemyField().every(enemyPokemon => !enemyPokemon.active || enemyPokemon.isFainted())) {
+        pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
+        // If at least one pokemon fainted, go to reward phase.
+        if (pokemon.scene.getEnemyField().filter(enemyPokemon => enemyPokemon.isFainted()).length >= 1) {
+          pokemon.scene.pushPhase(new SelectModifierPhase(pokemon.scene));
+        }
+        pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
+      }
+      return true;
+    } else if (pokemon.hasTrainer() && (pokemon.scene.getEnemyParty().filter(enemyPokemon => !enemyPokemon.isFainted()).length > pokemon.scene.getEnemyField().length )) {
+      // Enemy trainer's pokemon
+      // If there is still a pokemon in the enemy's trainer party that's not fainted, force them to switch.
+      pokemon.scene.unshiftPhase(new SwitchSummonPhase(pokemon.scene, pokemon.getFieldIndex(), pokemon.scene.currentBattle.trainer.getNextSummonIndex((pokemon as EnemyPokemon).trainerSlot), false, false, false));
+      pokemon.resetTurnData();
+      pokemon.resetSummonData();
+      pokemon.hideInfo();
+      pokemon.setVisible(false);
+      pokemon.scene.field.remove(pokemon);
+      pokemon.scene.tryRemovePhase(p => p instanceof MovePhase && !p.pokemon.active);
+
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Gets a function to check a pokemon's HP based on the last instance of damage it took.
+ * @see PostDamageForcedSwitchAbAttr
+ * @returns {AbAttrCondition}
+ */
+function getHpCondition(hpThreshold: number, moveTrigger: boolean = true): AbAttrCondition {
+  return (pokemon) => {
+    if (pokemon.getHpRatio() === 1.0 || !pokemon.turnData) {
+      return false;
+    }
+
+    let initialPokemonHpRatio = (pokemon.hp + pokemon.turnData.lastDamageInstanceTaken) / pokemon.getMaxHp();
+    const attacksReceived = pokemon.turnData.attacksReceived;
+    if (moveTrigger) {
+      if (attacksReceived.length > 0) {
+        const mostRecentSource = attacksReceived[attacksReceived.length - 1].sourceId;
+        const lastAttackTotalDamage = pokemon.turnData.attacksReceived.reduce((total, attack) => {
+          if (attack.sourceId = mostRecentSource) {
+            return total + attack.damage;
+          }
+        }, 0);
+        initialPokemonHpRatio = (pokemon.hp + lastAttackTotalDamage) / pokemon.getMaxHp();
+      } else {
+        return false;
+      }
+    }
+    return initialPokemonHpRatio > hpThreshold && pokemon.getHpRatio() <= hpThreshold;
+  };
+}
+
+/**
  * This attribute will heal 1/8th HP if the ability pokemon has the correct status.
  */
 export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
@@ -2935,8 +3058,8 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     private procChance: (pokemon: Pokemon) => number
   ) {
     super();
-  }
 
+  }
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const pass = Phaser.Math.RND.realInRange(0, 1);
     // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
@@ -4012,6 +4135,11 @@ export function applyPostMoveUsedAbAttrs(attrType: Constructor<PostMoveUsedAbAtt
   return applyAbAttrsInternal<PostMoveUsedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostMoveUsed(pokemon, move, source, targets, args), args);
 }
 
+export function applyPostDamageAbAttrs(attrType: { new(...args: any[]): PostDamageAbAttr },
+  pokemon: Pokemon, moveTrigger: boolean, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDamage(pokemon, moveTrigger, passive, args), args);
+}
+
 export function applyBattleStatMultiplierAbAttrs(attrType: Constructor<BattleStatMultiplierAbAttr>,
   pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<BattleStatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyBattleStat(pokemon, passive, battleStat, statValue, args), args);
@@ -4743,10 +4871,12 @@ export function initAbilities() {
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
       .condition(getSheerForceHitDisableAbCondition())
-      .unimplemented(),
+      .attr(PostDamageForcedSwitchAbAttr)
+      .condition(getHpCondition(0.5, true)),
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .condition(getSheerForceHitDisableAbCondition())
-      .unimplemented(),
+      .attr(PostDamageForcedSwitchAbAttr)
+      .condition(getHpCondition(0.5, true)),
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)

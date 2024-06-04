@@ -1796,7 +1796,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       if (!cancelled.value) {
         applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
+        defendingSidePlayField.filter((p) => p.active).forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
       }
 
       if (cancelled.value) {
@@ -2042,7 +2042,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       if (!cancelled.value) {
         applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
+        defendingSidePlayField.filter((p) => p.active).forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
       }
       if (!typeMultiplier.value) {
         this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
@@ -2091,6 +2091,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
+    this.turnData.lastDamageInstanceTaken = damage;
     return damage;
   }
 
@@ -3912,6 +3913,7 @@ export class PokemonTurnData {
   public damageDealt: integer = 0;
   public currDamageDealt: integer = 0;
   public damageTaken: integer = 0;
+  public lastDamageInstanceTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
 }
 
@@ -3975,7 +3977,7 @@ export class PokemonMove {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
       return false;
     }
-    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
+    return (ignorePp || this.ppUsed <= this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
   }
 
   getMove(): Move {

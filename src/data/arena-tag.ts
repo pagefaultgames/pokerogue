@@ -7,7 +7,7 @@ import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
-import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, PostDamageAbAttr, ProtectStatAbAttr, applyAbAttrs, applyPostDamageAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import i18next from "i18next";
@@ -478,6 +478,7 @@ class SpikesTag extends ArenaTrapTag {
 
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is hurt\nby the spikes!"));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        applyPostDamageAbAttrs(PostDamageAbAttr, pokemon, false);
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
         }
@@ -637,6 +638,7 @@ class StealthRockTag extends ArenaTrapTag {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
+      applyPostDamageAbAttrs(PostDamageAbAttr, pokemon, false);
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
       }
