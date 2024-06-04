@@ -19,8 +19,8 @@ import {
   getIconForLatestInput, swap,
 } from "#app/configs/inputs/configHandler";
 import BattleScene from "./battle-scene";
-import {SettingGamepad} from "#app/system/settings-gamepad";
-import {SettingKeyboard} from "#app/system/settings-keyboard";
+import {SettingGamepad} from "#app/system/settings/settings-gamepad.js";
+import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 
 export interface DeviceMapping {
     [key: string]: number;

@@ -251,7 +251,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.language;
+    const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
 
@@ -518,11 +518,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type1Icon.setScale(0.5);
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type2Icon.setScale(0.5);
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 

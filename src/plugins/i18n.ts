@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
 import { config as deConfig } from "#app/locales/de/config.js";
 import { config as enConfig} from "#app/locales/en/config.js";
@@ -183,7 +184,7 @@ export function initI18n(): void {
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.use(LanguageDetector).init({
+  i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init({
     lng: lang,
     nonExplicitSupportedLngs: true,
     fallbackLng: isRunningInBrowser ? "en" : false,
@@ -192,7 +193,8 @@ export function initI18n(): void {
     interpolation: {
       escapeValue: false,
     },
-    resources: resources
+    resources: resources,
+    postProcess: ["korean-postposition"],
   });
 }
 
