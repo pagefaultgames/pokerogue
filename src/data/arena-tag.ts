@@ -28,23 +28,25 @@ export abstract class ArenaTag {
   public sourceMove: Moves;
   public sourceId: integer;
   public side: ArenaTagSide;
+  public quiet: boolean;
 
-  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId?: integer, side: ArenaTagSide = ArenaTagSide.BOTH) {
+  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId?: integer, side: ArenaTagSide = ArenaTagSide.BOTH, quiet: boolean = false) {
     this.tagType = tagType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
     this.side = side;
+    this.quiet = quiet;
   }
 
   apply(arena: Arena, args: any[]): boolean {
     return true;
   }
 
-  onAdd(arena: Arena, quiet: boolean = false): void { }
+  onAdd(arena: Arena): void { }
 
-  onRemove(arena: Arena, quiet: boolean = false): void {
-    if (quiet === false) {
+  onRemove(arena: Arena): void {
+    if (!this.quiet) {
       arena.scene.queueMessage(`${this.getMoveName()}\'s effect wore off${this.side === ArenaTagSide.PLAYER ? "\non your side" : this.side === ArenaTagSide.ENEMY ? "\non the foe's side" : ""}.`);
     }
   }
@@ -67,11 +69,11 @@ export class MistTag extends ArenaTag {
     super(ArenaTagType.MIST, turnCount, Moves.MIST, sourceId, side);
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    super.onAdd(arena, quiet);
+  onAdd(arena: Arena): void {
+    super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    if (quiet === false) {
+    if (!this.quiet) {
       arena.scene.queueMessage(getPokemonMessage(source, "'s team became\nshrouded in mist!"));
     }
   }
@@ -117,8 +119,8 @@ class ReflectTag extends WeakenMoveScreenTag {
     return false;
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    if (quiet === false) {
+  onAdd(arena: Arena): void {
+    if (!this.quiet) {
       arena.scene.queueMessage(`Reflect reduced the damage of physical moves${this.side === ArenaTagSide.PLAYER ? "\non your side" : this.side === ArenaTagSide.ENEMY ? "\non the foe's side" : ""}.`);
     }
   }
@@ -141,8 +143,8 @@ class LightScreenTag extends WeakenMoveScreenTag {
     return false;
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    if (quiet === false) {
+  onAdd(arena: Arena): void {
+    if (!this.quiet) {
       arena.scene.queueMessage(`Light Screen reduced the damage of special moves${this.side === ArenaTagSide.PLAYER ? "\non your side" : this.side === ArenaTagSide.ENEMY ? "\non the foe's side" : ""}.`);
     }
   }
@@ -153,8 +155,8 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
     super(ArenaTagType.AURORA_VEIL, turnCount, Moves.AURORA_VEIL, sourceId, side);
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    if (quiet === false) {
+  onAdd(arena: Arena): void {
+    if (!this.quiet) {
       arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? "\non your side" : this.side === ArenaTagSide.ENEMY ? "\non the foe's side" : ""}.`);
     }
   }
@@ -396,11 +398,11 @@ class SpikesTag extends ArenaTrapTag {
     super(ArenaTagType.SPIKES, Moves.SPIKES, sourceId, side, 3);
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    super.onAdd(arena, quiet);
+  onAdd(arena: Arena): void {
+    super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    if (quiet === false) {
+    if (!this.quiet) {
       arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
     }
   }
@@ -435,18 +437,18 @@ class ToxicSpikesTag extends ArenaTrapTag {
     this.neutralized = false;
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    super.onAdd(arena, quiet);
+  onAdd(arena: Arena): void {
+    super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    if (quiet === false) {
+    if (!this.quiet) {
       arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
     }
   }
 
-  onRemove(arena: Arena, quiet: boolean): void {
+  onRemove(arena: Arena): void {
     if (!this.neutralized) {
-      super.onRemove(arena, quiet);
+      super.onRemove(arena);
     }
   }
 
@@ -507,11 +509,11 @@ class StealthRockTag extends ArenaTrapTag {
     super(ArenaTagType.STEALTH_ROCK, Moves.STEALTH_ROCK, sourceId, side, 1);
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    super.onAdd(arena, quiet);
+  onAdd(arena: Arena): void {
+    super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    if (quiet === false) {
+    if (!this.quiet) {
       arena.scene.queueMessage(`Pointed stones float in the air\naround ${source.getOpponentDescriptor()}!`);
     }
   }
@@ -578,13 +580,13 @@ class StickyWebTag extends ArenaTrapTag {
     super(ArenaTagType.STICKY_WEB, Moves.STICKY_WEB, sourceId, side, 1);
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    super.onAdd(arena, quiet);
+  onAdd(arena: Arena): void {
+    super.onAdd(arena);
 
     // does not seem to be used anywhere
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const source = arena.scene.getPokemonById(this.sourceId);
-    if (quiet === false) {
+    if (!this.quiet) {
       arena.scene.queueMessage(`A ${this.getMoveName()} has been laid out on the ground around the opposing team!`);
     }
   }
@@ -644,8 +646,8 @@ class TailwindTag extends ArenaTag {
     super(ArenaTagType.TAILWIND, turnCount, Moves.TAILWIND, sourceId, side);
   }
 
-  onAdd(arena: Arena, quiet: boolean): void {
-    if (quiet === false) {
+  onAdd(arena: Arena): void {
+    if (!this.quiet) {
       arena.scene.queueMessage(`The Tailwind blew from behind${this.side === ArenaTagSide.PLAYER ? "\nyour" : this.side === ArenaTagSide.ENEMY ? "\nthe opposing" : ""} team!`);
     }
 
@@ -666,8 +668,8 @@ class TailwindTag extends ArenaTag {
     }
   }
 
-  onRemove(arena: Arena, quiet: boolean): void {
-    if (quiet === false) {
+  onRemove(arena: Arena): void {
+    if (!this.quiet) {
       arena.scene.queueMessage(`${this.side === ArenaTagSide.PLAYER ? "Your" : this.side === ArenaTagSide.ENEMY ? "The opposing" : ""} team's Tailwind petered out!`);
     }
   }

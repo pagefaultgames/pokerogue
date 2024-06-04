@@ -4040,30 +4040,35 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
     }
     const swapTags = [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.MIST, ArenaTagType.REFLECT, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TAILWIND, ArenaTagType.TOXIC_SPIKES];
 
-    for (const swapTagType of swapTags) {
+    const tagPlayerTemp = user.scene.arena.findTagsOnSide((t => swapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
+    const tagEnemyTemp = user.scene.arena.findTagsOnSide((t => swapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
 
-      const tagPlayerTemp = user.scene.arena.getTagOnSide(swapTagType, ArenaTagSide.PLAYER);
-      const tagEnemyTemp = user.scene.arena.getTagOnSide(swapTagType, ArenaTagSide.ENEMY);
 
-      if (tagPlayerTemp) {
-        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.PLAYER, true);
-        user.scene.arena.addTag(tagPlayerTemp.tagType, tagPlayerTemp.turnCount, tagPlayerTemp.sourceMove, tagPlayerTemp.sourceId, ArenaTagSide.ENEMY, true);
+    if (tagPlayerTemp) {
+      for (const swapTagsType of tagPlayerTemp) {
+        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.ENEMY, true);
       }
-      if (tagEnemyTemp) {
-        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.ENEMY, true);
-        user.scene.arena.addTag(tagEnemyTemp.tagType, tagEnemyTemp.turnCount, tagEnemyTemp.sourceMove, tagEnemyTemp.sourceId, ArenaTagSide.PLAYER, true);
-      }
-
-      if (tagEnemyTemp && tagPlayerTemp) {
-
-        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.PLAYER, true);
-        user.scene.arena.addTag(tagPlayerTemp.tagType, tagPlayerTemp.turnCount, tagPlayerTemp.sourceMove, tagPlayerTemp.sourceId, ArenaTagSide.ENEMY, true);
-
-        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.ENEMY, true);
-        user.scene.arena.addTag(tagEnemyTemp.tagType, tagEnemyTemp.turnCount, tagEnemyTemp.sourceMove, tagEnemyTemp.sourceId, ArenaTagSide.PLAYER, true);
-      }
-
     }
+    if (tagEnemyTemp) {
+      for (const swapTagsType of tagEnemyTemp) {
+        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.PLAYER, true);
+      }
+    }
+
+    if (tagEnemyTemp && tagPlayerTemp) {
+      for (const swapTagsType of tagPlayerTemp) {
+        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.ENEMY, true);
+      }
+      for (const swapTagsType of tagEnemyTemp) {
+        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.PLAYER, true);
+      }
+    }
+
+
 
     user.scene.queueMessage( `${user.name} swapped the battle effects affecting each side of the field!`);
     return true;
