@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { BattleEndPhase, CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -16,6 +16,7 @@ import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { Species } from "./enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -1367,11 +1368,11 @@ export class IceFaceTag extends BattlerTag {
   canAdd(pokemon: Pokemon): boolean {
     const weatherType = pokemon.scene.arena.weather?.weatherType;
     const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
-    const isBattleEnd = pokemon.scene.getCurrentPhase() instanceof BattleEndPhase;
     const isFormIceFace = pokemon.formIndex === 0;
 
 
-    if (isWeatherSnowOrHail || isBattleEnd || isFormIceFace) {
+    // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
+    if (pokemon.species.speciesId === Species.EISCUE ||  isWeatherSnowOrHail || isFormIceFace) {
       return true;
     }
     return false;

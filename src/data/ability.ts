@@ -3381,7 +3381,7 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
    * @returns {string} - The trigger message.
    */
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return `${pokemon.name} avoided damage\nwith ${abilityName}!`;
+    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: pokemon.name, abilityName: abilityName });
   }
 }
 
