@@ -121,6 +121,7 @@ export default class GameWrapper {
         game: this.game,
       },
       setVolume: () => null,
+      stopByKey: () => null,
       on: (evt, callback) => callback(),
       key: "",
     };
