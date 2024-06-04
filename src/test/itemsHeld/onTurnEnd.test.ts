@@ -40,7 +40,7 @@ describe("Items Test - onTurnEnd", () => {
     game = new GameManager(phaserGame);
   });
 
-  it.skip("TOXIC ORB", async() => {
+  it("TOXIC ORB", async() => {
     const moveToUse = Moves.GROWTH;
     const oppMoveToUse = Moves.TACKLE;
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);

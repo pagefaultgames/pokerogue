@@ -154,7 +154,7 @@ describe("Test Battle Phase", () => {
     game = new GameManager(phaserGame);
   })
 
-  it.skip('test phase interceptor with remove', async() => {
+  it('test phase interceptor with remove', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       await game.phaseInterceptor.run(LoginPhase, () => {
@@ -170,7 +170,7 @@ describe("Test Battle Phase", () => {
       expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
   }, 100000);
 
-  it.skip('test phase interceptor with prompt', async() => {
+  it('test phase interceptor with prompt', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
@@ -188,7 +188,7 @@ describe("Test Battle Phase", () => {
       expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 100000);
 
-  it.skip('test phase interceptor with prompt with preparation for a future prompt', async() => {
+  it('test phase interceptor with prompt with preparation for a future prompt', async() => {
       await game.phaseInterceptor.run(LoginPhase);
 
       game.onNextPrompt('SelectGenderPhase', Mode.OPTION_SELECT, () => {
@@ -210,13 +210,13 @@ describe("Test Battle Phase", () => {
       expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 100000);
 
-  it.skip('newGame one-liner', async() => {
+  it('newGame one-liner', async() => {
       await game.startBattle();
       expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000)
 
-  it.skip('do attack wave 3 - single battle - regular - OHKO', async() => {
+  it('do attack wave 3 - single battle - regular - OHKO', async() => {
       vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
       vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
       vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(2000);
@@ -254,7 +254,7 @@ describe("Test Battle Phase", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
   }, 100000);
 
-  it.skip('do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack', async() => {
+  it('do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack', async() => {
       vi.spyOn(overrides, 'STARTER_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.MEWTWO);
       vi.spyOn(overrides, 'OPP_SPECIES_OVERRIDE', 'get').mockReturnValue(Species.RATTATA);
       vi.spyOn(overrides, 'STARTING_LEVEL_OVERRIDE', 'get').mockReturnValue(5);
@@ -300,8 +300,8 @@ describe("Test Battle Phase", () => {
       expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000);
 
-  it.skip('load 100% data file', async() => {
-      await game.importData(GameDataType.SYSTEM, 'src/test/data/everything.prsv');
+  it('load 100% data file', async() => {
+      await game.importData(GameDataType.SYSTEM, 'src/test/saves/everything.prsv');
       const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
         const species = game.scene.gameData.dexData[key];
         return species.caughtAttr !== 0n;
@@ -309,7 +309,7 @@ describe("Test Battle Phase", () => {
       expect(caughtCount).toBe(Object.keys(allSpecies).length);
   }, 50000);
 
-  it.skip('start battle with selected team', async() => {
+  it('start battle with selected team', async() => {
       await game.startBattle([
         Species.CHARIZARD,
         Species.CHANSEY,
