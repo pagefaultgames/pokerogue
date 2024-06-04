@@ -58,6 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import ArenaFlyout from "./ui/arena-flyout";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -97,6 +98,7 @@ export default class BattleScene extends SceneBase {
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
   public showMovesetFlyout: boolean = true;
+  public showArenaFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableMoveInfo: boolean = true;
@@ -120,6 +122,8 @@ export default class BattleScene extends SceneBase {
   public experimentalSprites: boolean = false;
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
+  public skipSeenDialogues: boolean = false;
+
   /**
      * Defines the experience gain display mode.
      *
@@ -182,6 +186,8 @@ export default class BattleScene extends SceneBase {
   private luckText: Phaser.GameObjects.Text;
   private modifierBar: ModifierBar;
   private enemyModifierBar: ModifierBar;
+  public arenaFlyout: ArenaFlyout;
+
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
@@ -416,6 +422,10 @@ export default class BattleScene extends SceneBase {
     this.luckLabelText.setOrigin(1, 0);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
+
+    this.arenaFlyout = new ArenaFlyout(this);
+    this.fieldUI.add(this.arenaFlyout);
+    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
 
     this.updateUIPositions();
 
@@ -1286,6 +1296,13 @@ export default class BattleScene extends SceneBase {
     sprite.setPipeline(this.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: hasShadow, ignoreOverride: ignoreOverride, teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined });
     this.spriteSparkleHandler.add(sprite);
     return sprite;
+  }
+
+  moveBelowOverlay<T extends Phaser.GameObjects.GameObject>(gameObject: T) {
+    this.fieldUI.moveBelow<any>(gameObject, this.fieldOverlay);
+  }
+  processInfoButton(pressed: boolean): void {
+    this.arenaFlyout.toggleFlyout(pressed);
   }
 
   showFieldOverlay(duration: integer): Promise<void> {
