@@ -776,6 +776,9 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 
     if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       bypassSpeed.value = true;
+      if (this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW") {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its quick claw to move faster!"));
+      }
       return true;
     }
 
