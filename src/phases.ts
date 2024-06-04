@@ -549,7 +549,7 @@ export class SelectStarterPhase extends Phase {
             starterGender = Overrides.GENDER_OVERRIDE;
           }
           const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature, null, null, i);
           starterPokemon.tryPopulateMoveset(starter.moveset);
           if (starter.passive) {
             starterPokemon.passive = true;
