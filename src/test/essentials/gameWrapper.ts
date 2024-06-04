@@ -27,7 +27,7 @@ Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
 });
 Object.defineProperty(window, "console", {
-  value: mockConsoleLog(true),
+  value: mockConsoleLog(false),
 });
 
 
