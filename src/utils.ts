@@ -361,6 +361,9 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
   }) : new Promise(() => {});
 }
 
+/** Alias for the constructor of a class */
+export type Constructor<T> = new(...args: unknown[]) => T;
+
 export class BooleanHolder {
   public value: boolean;
 

@@ -7,6 +7,7 @@ import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
 import { Abilities } from "./enums/abilities";
+import { Constructor } from "#app/utils";
 
 export enum FormChangeItem {
   NONE,
@@ -178,7 +179,7 @@ export class SpeciesFormChange {
     return true;
   }
 
-  findTrigger(triggerType: { new(...args: any[]): SpeciesFormChangeTrigger }): SpeciesFormChangeTrigger {
+  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger {
     if (!this.trigger.hasTriggerType(triggerType)) {
       return null;
     }
@@ -208,7 +209,7 @@ export abstract class SpeciesFormChangeTrigger {
     return true;
   }
 
-  hasTriggerType(triggerType: { new(...args: any[]): SpeciesFormChangeTrigger }): boolean {
+  hasTriggerType(triggerType: Constructor<SpeciesFormChangeTrigger>): boolean {
     return this instanceof triggerType;
   }
 }
@@ -236,7 +237,7 @@ export class SpeciesFormChangeCompoundTrigger {
     return true;
   }
 
-  hasTriggerType(triggerType: { new(...args: any[]): SpeciesFormChangeTrigger }): boolean {
+  hasTriggerType(triggerType: Constructor<SpeciesFormChangeTrigger>): boolean {
     return !!this.triggers.find(t => t.hasTriggerType(triggerType));
   }
 }
