@@ -529,27 +529,22 @@ export class SelectStarterPhase extends Phase {
         const party = this.scene.getParty();
         const loadPokemonAssets: Promise<void>[] = [];
         starters.forEach((starter: Starter, i: integer) => {
-          if (Overrides.STARTER_OVERRIDE[i]?.species) {
-            starter.species = getPokemonSpecies(Overrides.STARTER_OVERRIDE[i].species as Species);
+          if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
+            starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
           }
           const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
           let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-          if (Overrides.STARTER_OVERRIDE[i]?.form) {
-            starterFormIndex = Overrides.STARTER_OVERRIDE[i].form;
-            const availableForms = starter.species.forms.length;
-            // prevent use forms which does not exist for species
-            if (Overrides.STARTER_OVERRIDE[i].form >= availableForms) {
-              starterFormIndex = 0;
-            }
+          if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
+            starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
           }
           let starterGender = starter.species.malePercent !== null
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
-          if (Overrides.STARTER_OVERRIDE[i]?.gender !== null) {
-            starterGender = Overrides.STARTER_OVERRIDE[i].gender;
+          if (Overrides.GENDER_OVERRIDE !== null) {
+            starterGender = Overrides.GENDER_OVERRIDE;
           }
           const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature, null, null, i);
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
           starterPokemon.tryPopulateMoveset(starter.moveset);
           if (starter.passive) {
             starterPokemon.passive = true;
