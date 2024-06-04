@@ -8,6 +8,7 @@ import BattleScene from "../battle-scene";
 import { Type, getTypeRgb } from "../data/type";
 import { getVariantTint } from "#app/data/variant";
 import { BattleStat } from "#app/data/battle-stat";
+import BattleFlyout from "./battle-flyout";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -57,6 +58,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private statsBox: Phaser.GameObjects.Sprite;
   private statValuesContainer: Phaser.GameObjects.Container;
   private statNumbers: Phaser.GameObjects.Sprite[];
+
+  public flyoutMenu: BattleFlyout;
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -226,6 +229,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.statValuesContainer.add(statNumber);
     });
 
+    if (!this.player) {
+      this.flyoutMenu = new BattleFlyout(this.scene, this.player);
+      this.add(this.flyoutMenu);
+
+      this.moveBelow<Phaser.GameObjects.GameObject>(this.flyoutMenu, this.box);
+    }
+
     this.type1Icon = this.scene.add.sprite(player ? -139 : -15, player ? -17 : -15.5, `pbinfo_${player ? "player" : "enemy"}_type1`);
     this.type1Icon.setName("icon_type_1");
     this.type1Icon.setOrigin(0, 0);
@@ -245,6 +255,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   initInfo(pokemon: Pokemon) {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
+
+    this.name = pokemon.name;
+    this.box.name = pokemon.name;
+
+    this.flyoutMenu?.initInfo(pokemon);
 
     this.genderText.setText(getGenderSymbol(pokemon.gender));
     this.genderText.setColor(getGenderColor(pokemon.gender));
@@ -454,8 +469,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.offset = offset;
 
-    this.x += 10 * (offset === this.player ? 1 : -1);
-    this.y += 27 * (offset ? 1 : -1);
+    this.x += 10 * (this.offset === this.player ? 1 : -1);
+    this.y += 27 * (this.offset ? 1 : -1);
     this.baseY = this.y;
   }
 

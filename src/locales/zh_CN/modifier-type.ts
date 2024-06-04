@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (含复活)" },
     "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级额外增加1级" },
 
-    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有33%的几率不会消耗树果" },
+    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有30%的几率不会消耗树果" },
 
     "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷入濒死状态" },
 
@@ -208,6 +208,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "吃剩的东西", description: "携带该道具的宝可梦在每个回合结束时恢复\n最大HP的1/16" },
     "SHELL_BELL": { name: "贝壳之铃", description: "携带该道具的宝可梦在攻击对方成功造成伤\n害时，携带者的HP会恢复其所造成伤害\n的1/8" },
+
+    "TOXIC_ORB": { name: "Toxic Orb", description: "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle" },
+    "FLAME_ORB": { name: "Flame Orb", description: "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle" },
 
     "BATON": { name: "接力棒", description: "允许在切换宝可梦时保留能力变化, 对陷阱\n同样生效" },
 
@@ -362,7 +365,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "坚硬陨石",
     "SMOOTH_METEORITE": "光滑陨石",
     "ADAMANT_CRYSTAL": "大金刚宝玉",
-    "LUSTROUS_ORB": "白玉宝珠",
+    "LUSTROUS_GLOBE": "大白宝玉",
     "GRISEOUS_CORE": "大白金宝玉",
     "REVEAL_GLASS": "现形镜",
     "GRACIDEA": "葛拉西蒂亚花",

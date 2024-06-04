@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Heilungspin", description: "Erhöht die Effektivität von Heilungsattacken sowie Heilitems um 10% (Beleber ausgenommen)" },
     "CANDY_JAR": { name: "Bonbonglas", description: "Erhöht die Anzahl der Level die ein Sonderbonbon erhöht um 1" },
 
-    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 33% Chance hinzu, dass Beeren nicht verbraucht werden" },
+    "BERRY_POUCH": { name: "Beerentüte", description: "Fügt eine 30% Chance hinzu, dass Beeren nicht verbraucht werden" },
 
     "FOCUS_BAND": { name: "Fokusband", description: "Fügt eine 10% Chance hinzu, dass Angriffe die zur Kampfunfähigkeit führen mit 1 KP überlebt werden" },
 
@@ -208,6 +208,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "Überreste", description: "Heilt 1/16 der maximalen KP eines Pokémon pro Runde" },
     "SHELL_BELL": { name: "Muschelglocke", description: "Heilt den Anwender um 1/8 des von ihm zugefügten Schadens" },
+
+    "TOXIC_ORB": { name: "Toxik-Orb", description: "Dieser bizarre Orb vergiftet seinen Träger im Kampf schwer" },
+    "FLAME_ORB": { name: "Heiß-Orb", description: "Dieser bizarre Orb fügt seinem Träger im Kampf Verbrennungen zu" },
 
     "BATON": { name: "Stab", description: "Ermöglicht das Weitergeben von Effekten beim Wechseln von Pokémon, wodurch auch Fallen umgangen werden." },
 
@@ -363,7 +366,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Harter Meteorit",
     "SMOOTH_METEORITE": "Glatter Meteorit",
     "ADAMANT_CRYSTAL": "Adamantkristall",
-    "LUSTROUS_ORB": "Weiß-Orb",
+    "LUSTROUS_GLOBE": "Weißkristall",
     "GRISEOUS_CORE": "Platinumkristall",
     "REVEAL_GLASS": "Wahrspiegel",
     "GRACIDEA": "Gracidea",

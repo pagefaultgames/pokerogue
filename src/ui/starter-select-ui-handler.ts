@@ -64,13 +64,18 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "35px",
   },
+  "fr":{
+    starterInfoTextSize: "54px",
+    instructionTextSize: "42px",
+  },
   "it":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  "fr":{
-    starterInfoTextSize: "54px",
-    instructionTextSize: "42px",
+  "pt_BR":{
+    starterInfoTextSize: "47px",
+    instructionTextSize: "38px",
+    starterInfoXPos: 33,
   },
   "zh":{
     starterInfoTextSize: "40px",
@@ -82,6 +87,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "42px",
     starterInfoXPos: 33,
   },
+  "ko":{
+    starterInfoTextSize: "52px",
+    instructionTextSize: "38px",
+  }
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
@@ -454,7 +463,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const getShinyStar = (i: integer, v: integer): Phaser.GameObjects.Image => {
       const position = calcIconPosition(i);
-      const ret = this.scene.add.image(position.x + 163, position.y + 11, "shiny_star_small");
+      const ret = this.scene.add.image((position.x - v * 3) + 163, position.y + 11, "shiny_star_small");
       ret.setOrigin(0, 0);
       ret.setScale(0.5);
       ret.setVisible(false);
@@ -856,7 +865,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (!species // No Pokemon exists at that UI index
       || this.scene.candyUpgradeNotification === 0 // Notification setting is 'Off'
-      || species?.getRootSpeciesId(false) !== species?.speciesId) { // Pokemon is not the base evolution and can't use candy
+      || species.speciesId !== species.getRootSpeciesId(false)) { // Pokemon is not the base evolution and can't use candy
       // Set all icons as hidden and exit early
       this.candyUpgradeIcon[index].setVisible(false);
       this.candyUpgradeOverlayIcon[index].setVisible(false);
@@ -1419,7 +1428,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
           }
           break;
-        case Button.CYCLE_VARIANT:
+        case Button.V:
           if (this.canCycleVariant) {
             let newVariant = props.variant;
             do {
@@ -1446,11 +1455,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case Button.UP:
           if (row) {
             success = this.setCursor(this.cursor - 9);
+          } else {
+            // when strictly opposite starter based on rows length
+            // does not exits, set cursor on the second to last row
+            if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor + (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor + (rows - 1) * 9);
+            }
           }
           break;
         case Button.DOWN:
           if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 9);
+          } else {
+            // if there is no starter below while being on the second to
+            // last row, adjust cursor position with one line less
+            if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor - (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor - (rows - 1) * 9);
+            }
           }
           break;
         case Button.LEFT:
@@ -1627,9 +1652,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
-        const species = this.genSpecies[genCursorWithScroll][s];
         // 'Candy Icon' mode
-        if (this.scene.candyUpgradeDisplay === 0 && species?.getRootSpeciesId(false) === species?.speciesId) {
+        if (this.scene.candyUpgradeDisplay === 0) {
 
           if (!starterColors[speciesId]) {
             // Default to white if no colors are found
