@@ -99,6 +99,7 @@ export default class Move implements Localizable {
   public id: Moves;
   public name: string;
   public type: Type;
+  public defaultType: Type;
   public category: MoveCategory;
   public moveTarget: MoveTarget;
   public power: integer;
@@ -118,6 +119,7 @@ export default class Move implements Localizable {
 
     this.nameAppend = "";
     this.type = type;
+    this.defaultType = type;
     this.category = category;
     this.moveTarget = defaultMoveTarget;
     this.power = power;

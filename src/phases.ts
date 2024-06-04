@@ -2819,6 +2819,8 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   end() {
+    const move = this.move.getMove();
+    move.type = move.defaultType;
     const user = this.getUserPokemon();
     if (user) {
       if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive()) {
