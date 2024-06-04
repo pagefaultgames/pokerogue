@@ -42,6 +42,7 @@ import {PlayerGender} from "#app/system/game-data";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
+import SettingsAccessibilityUiHandler from "./settings/settings-accessiblity-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -62,6 +63,7 @@ export enum Mode {
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
+  SETTINGS_ACCESSIBILITY,
   SETTINGS_GAMEPAD,
   GAMEPAD_BINDING,
   SETTINGS_KEYBOARD,
@@ -99,6 +101,7 @@ const noTransitionModes = [
   Mode.GAMEPAD_BINDING,
   Mode.KEYBOARD_BINDING,
   Mode.SETTINGS,
+  Mode.SETTINGS_ACCESSIBILITY,
   Mode.SETTINGS_GAMEPAD,
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
@@ -151,6 +154,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
+      new SettingsAccessibilityUiHandler(scene),
       new SettingsGamepadUiHandler(scene),
       new GamepadBindingUiHandler(scene),
       new SettingsKeyboardUiHandler(scene),
@@ -274,15 +278,26 @@ export default class UI extends Phaser.GameObjects.Container {
     }
     // Add the prefix to the text
     const localizationKey = playerGenderPrefix + text;
+
     // Get localized dialogue (if available)
+    let hasi18n = false;
     if (i18next.exists(localizationKey as ParseKeys) ) {
-
-
       text = i18next.t(localizationKey as ParseKeys);
+      hasi18n = true;
+
+      // Skip dialogue if the player has enabled the option and the dialogue has been already seen
+      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
+        console.log(`Dialogue ${localizationKey} skipped`);
+        callback();
+        return;
+      }
     }
+    let showMessageAndCallback = () => {
+      hasi18n && (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
+      callback();
+    };
     if (text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      let showMessageAndCallback = () => callback();
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         showMessageAndCallback = () => this.showDialogue(messagePages[p], name, null, originalFunc);
@@ -291,11 +306,27 @@ export default class UI extends Phaser.GameObjects.Container {
     } else {
       const handler = this.getHandler();
       if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showDialogue(text, name, delay, callback, callbackDelay, true, promptDelay);
+        (handler as MessageUiHandler).showDialogue(text, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
       } else {
-        this.getMessageHandler().showDialogue(text, name, delay, callback, callbackDelay, true, promptDelay);
+        this.getMessageHandler().showDialogue(text, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
       }
     }
+  }
+
+  shouldSkipDialogue(text): boolean {
+    let playerGenderPrefix = "PGM";
+    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
+      playerGenderPrefix = "PGF";
+    }
+
+    const key = playerGenderPrefix + text;
+
+    if (i18next.exists(key as ParseKeys) ) {
+      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
+        return true;
+      }
+    }
+    return false;
   }
 
   showTooltip(title: string, content: string, overlap?: boolean): void {
