@@ -366,7 +366,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Harter Meteorit",
     "SMOOTH_METEORITE": "Glatter Meteorit",
     "ADAMANT_CRYSTAL": "Adamantkristall",
-    "LUSTROUS_ORB": "Weiß-Orb",
+    "LUSTROUS_GLOBE": "Weißkristall",
     "GRISEOUS_CORE": "Platinumkristall",
     "REVEAL_GLASS": "Wahrspiegel",
     "GRACIDEA": "Gracidea",
