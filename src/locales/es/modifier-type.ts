@@ -365,7 +365,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Meteorito Duro",
     "SMOOTH_METEORITE": "Meteorito Suave",
     "ADAMANT_CRYSTAL": "Gran Diamansfera",
-    "LUSTROUS_ORB": "Gran Lustresfera",
+    "LUSTROUS_GLOBE": "Gran Lustresfera",
     "GRISEOUS_CORE": "Gran Griseosfera",
     "REVEAL_GLASS": "Espejo Veraz",
     "GRACIDEA": "Gracídea",
