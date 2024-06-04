@@ -216,9 +216,6 @@ export default class Battle {
           if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT) {
             return "battle_legendary_unova";
           }
-          if (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM) {
-            return "battle_legendary_res_zek";
-          }
           if (pokemon.species.speciesId === Species.KYUREM) {
             return "battle_legendary_kyurem";
           }
@@ -274,9 +271,6 @@ export default class Battle {
           }
           if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT) {
             return "battle_legendary_unova";
-          }
-          if (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM) {
-            return "battle_legendary_res_zek";
           }
           if (pokemon.species.speciesId === Species.KYUREM) {
             return "battle_legendary_kyurem";
