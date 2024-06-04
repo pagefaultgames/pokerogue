@@ -18,7 +18,9 @@ export default class PhaseInterceptor {
   private onHold;
   private interval;
   private promptInterval;
+  private intervalRun;
   private prompts;
+  private phaseFrom;
 
   private PHASES = [
     [LoginPhase, this.startPhase],
@@ -61,6 +63,30 @@ export default class PhaseInterceptor {
     this.initPhases();
     this.startPromptHander();
   }
+
+  runFrom(phaseFrom) {
+    this.phaseFrom = phaseFrom;
+    return this;
+  }
+
+  async to(phaseTo): Promise<void> {
+    return new Promise(async (resolve) => {
+      await this.run(this.phaseFrom);
+      this.phaseFrom = null;
+      const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
+      this.intervalRun = setInterval(async () => {
+        const currentPhase = this.onHold?.length && this.onHold[0];
+        if (currentPhase && currentPhase.name !== targetName) {
+          await this.run(currentPhase.name);
+        } else if (currentPhase.name === targetName) {
+          await this.run(currentPhase.name);
+          clearInterval(this.intervalRun);
+          return resolve();
+        }
+      }, 1000);
+    });
+  }
+
 
   run(phaseTarget, skipFn?): Promise<void> {
     this.scene.moveAnimations = null; // Mandatory to avoid crash
