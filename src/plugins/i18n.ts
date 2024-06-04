@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import i18next, { InitOptions } from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
@@ -168,6 +168,18 @@ export function initI18n(): void {
     });
   }
 
+  const i18nextConfig = {
+    lng: lang,
+    nonExplicitSupportedLngs: true,
+    fallbackLng: isRunningInBrowser ? "en" : false,
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
+    debug: true,
+    interpolation: {
+      escapeValue: false,
+    },
+    resources: resources
+  };
+
   /**
    * i18next is a localization library for maintaining and using translation resources.
    *
@@ -183,19 +195,12 @@ export function initI18n(): void {
    * Q: How do I make a language selectable in the settings?
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
-
-  i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init({
-    lng: lang,
-    nonExplicitSupportedLngs: true,
-    fallbackLng: isRunningInBrowser ? "en" : false,
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
-    debug: true,
-    interpolation: {
-      escapeValue: false,
-    },
-    resources: resources,
-    postProcess: ["korean-postposition"],
-  });
+  if (isRunningInBrowser) {
+    i18nextConfig["postProcess"] = ["korean-postposition"];
+    i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init(i18nextConfig as InitOptions);
+  } else {
+    i18next.use(LanguageDetector).init(i18nextConfig as InitOptions);
+  }
 }
 
 // Module declared to make referencing keys in the localization files type-safe.
