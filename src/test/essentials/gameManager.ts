@@ -70,6 +70,12 @@ export default class GameManager {
       }, () => this.isCurrentPhase(TitlePhase));
       await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
       await this.phaseInterceptor.run(TitlePhase);
+      this.scene.gameSpeed = 5;
+      this.scene.moveAnimations = false;
+      this.scene.showLevelUpStats = false;
+      this.scene.expGainsSpeed = 3;
+      this.scene.expParty = 3;
+      this.scene.hpBarSpeed = 3;
       resolve();
     });
   }
@@ -196,9 +202,9 @@ export default class GameManager {
     });
   }
 
-  async importData(type, path): Promise<[boolean, integer]> {
+  async importData(path): Promise<[boolean, integer]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
-    const dataRaw = fs.readFileSync("./src/test/data/everything.prsv", {encoding: "utf8", flag: "r"});
+    const dataRaw = fs.readFileSync(path, {encoding: "utf8", flag: "r"});
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
     dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
     const systemData = this.scene.gameData.parseSystemData(dataStr);

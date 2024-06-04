@@ -301,7 +301,7 @@ describe("Test Battle Phase", () => {
   }, 100000);
 
   it('load 100% data file', async() => {
-      await game.importData(GameDataType.SYSTEM, 'src/test/saves/everything.prsv');
+      await game.importData('src/test/saves/everything.prsv');
       const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
         const species = game.scene.gameData.dexData[key];
         return species.caughtAttr !== 0n;

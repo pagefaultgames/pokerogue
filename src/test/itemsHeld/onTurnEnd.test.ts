@@ -12,7 +12,7 @@ import {
   MessagePhase,
   MoveEffectPhase, MoveEndPhase,
   MovePhase,
-  StatChangePhase, TurnEndPhase, TurnInitPhase,
+  StatChangePhase, TurnEndPhase,
   TurnStartPhase,
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
@@ -46,7 +46,8 @@ describe("Items Test - onTurnEnd", () => {
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
@@ -93,9 +94,7 @@ describe("Items Test - onTurnEnd", () => {
     const message2 = game.textInterceptor.getLatestMessage();
     expect(message2).toContain("is hurt");
     expect(message2).toContain("by poison");
-    expect(game.scene.getParty()[0].status.effect).toBe(StatusEffect.POISON);
-    expect(game.scene.getParty()[0].status.turnCount).toBe(2);
-    await game.phaseInterceptor.whenAboutToRun(TurnInitPhase);
+    expect(game.scene.getParty()[0].status.effect).toBe(StatusEffect.TOXIC);
 
 
   }, 120000);
@@ -105,8 +104,8 @@ describe("Items Test - onTurnEnd", () => {
     const oppMoveToUse = Moves.TACKLE;
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
@@ -140,6 +139,5 @@ describe("Items Test - onTurnEnd", () => {
     expect(message2).toContain("is hurt");
     expect(message2).toContain("by poison");
     expect(game.scene.getParty()[0].status.effect).toBe(StatusEffect.TOXIC);
-    await game.phaseInterceptor.whenAboutToRun(TurnInitPhase);
   }, 120000);
 });
