@@ -2177,7 +2177,7 @@ export default class BattleScene extends SceneBase {
   validateAchv(achv: Achv, args?: any[]): boolean {
     if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
       this.gameData.achvUnlocks[achv.id] = new Date().getTime();
-      this.ui.achvBar.showAchv(achv,this.gameData.gender);
+      this.ui.achvBar.showAchv(achv);
       if (vouchers.hasOwnProperty(achv.id)) {
         this.validateVoucher(vouchers[achv.id]);
       }
@@ -2190,7 +2190,7 @@ export default class BattleScene extends SceneBase {
   validateVoucher(voucher: Voucher, args?: any[]): boolean {
     if (!this.gameData.voucherUnlocks.hasOwnProperty(voucher.id) && voucher.validate(this, args)) {
       this.gameData.voucherUnlocks[voucher.id] = new Date().getTime();
-      this.ui.achvBar.showAchv(voucher,this.gameData.gender);
+      this.ui.achvBar.showAchv(voucher);
       this.gameData.voucherCounts[voucher.voucherType]++;
       return true;
     }
