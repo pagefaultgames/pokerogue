@@ -36,19 +36,17 @@ export const modifierSortFunc = (a: Modifier, b: Modifier) => {
   //First sort by pokemonID
   if (aId < bId) {
     return 1;
-  }
-  else if (aId>bId){
+  } else if (aId>bId) {
     return -1;
-  }
-    else if (aId == bId) {
-      //Then sort by item type
-      if (typeNameMatch == 0) {
-        return itemNameMatch;
+  } else if (aId === bId) {
+    //Then sort by item type
+    if (typeNameMatch === 0) {
+      return itemNameMatch;
       //Finally sort by item name
-      } else {
-        return typeNameMatch;
-      }
+    } else {
+      return typeNameMatch;
     }
+  }
 };
 
 export class ModifierBar extends Phaser.GameObjects.Container {
