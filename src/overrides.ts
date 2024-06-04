@@ -54,27 +54,79 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 
 // default 5 or 20 for Daily
 export const STARTING_LEVEL_OVERRIDE: integer = 0;
-/**
- * SPECIES OVERRIDE
- * will only apply to the first starter in your party or each enemy pokemon
- * default is 0 to not override
- * @example SPECIES_OVERRIDE = Species.Bulbasaur;
- */
-export const STARTER_SPECIES_OVERRIDE: Species[] | integer[] = [0, 0, 0, 0, 0, 0];
-// forms can be found in pokemon-species.ts
-export const STARTER_FORM_OVERRIDE: integer[] = [0, 0, 0, 0, 0, 0];
-export const ABILITY_OVERRIDE: Abilities[] = [
-  Abilities.NONE,
-  Abilities.NONE,
-  Abilities.NONE,
-  Abilities.NONE,
-  Abilities.NONE,
-  Abilities.NONE
+interface StarterOverride {
+    /**
+   * SPECIES OVERRIDE
+   * will apply to each starter in your party
+   * default is 0 to not override
+   * @example STARTER_OVERRIDE.species = Species.Bulbasaur;
+   */
+
+  species: Species | integer;
+  // forms can be found in pokemon-species.ts
+  form: integer;
+  ability: Abilities;
+  passiveAbility: Abilities;
+  status: StatusEffect;
+  gender: Gender;
+  moveset: Moves[];
+}
+export const STARTER_OVERRIDE: StarterOverride[] = [
+  {
+    species: 0,
+    form: 0,
+    ability: Abilities.NONE,
+    passiveAbility: Abilities.NONE,
+    status: StatusEffect.NONE,
+    gender: null,
+    moveset: [],
+  },
+  {
+    species: 0,
+    form: 0,
+    ability: Abilities.NONE,
+    passiveAbility: Abilities.NONE,
+    status: StatusEffect.NONE,
+    gender: null,
+    moveset: [],
+  },
+  {
+    species: 0,
+    form: 0,
+    ability: Abilities.NONE,
+    passiveAbility: Abilities.NONE,
+    status: StatusEffect.NONE,
+    gender: null,
+    moveset: [],
+  },
+  {
+    species: 0,
+    form: 0,
+    ability: Abilities.NONE,
+    passiveAbility: Abilities.NONE,
+    status: StatusEffect.NONE,
+    gender: null,
+    moveset: [],
+  },
+  {
+    species: 0,
+    form: 0,
+    ability: Abilities.NONE,
+    passiveAbility: Abilities.NONE,
+    status: StatusEffect.NONE,
+    gender: null,
+    moveset: [],
+  },
+  {
+    species: 0,
+    form: 0,
+    ability: Abilities.NONE,
+    passiveAbility: Abilities.NONE,
+    status: StatusEffect.NONE,
+    gender: null,
+    moveset: [],
+  }
 ];
-export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
