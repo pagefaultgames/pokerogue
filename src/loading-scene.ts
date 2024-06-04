@@ -95,6 +95,11 @@ export class LoadingScene extends SceneBase {
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
 
+    this.loadImage("dawn_icon", "ui");
+    this.loadImage("day_icon", "ui");
+    this.loadImage("dusk_icon", "ui");
+    this.loadImage("night_icon", "ui");
+
     this.loadImage("pb_tray_overlay_player", "ui");
     this.loadImage("pb_tray_overlay_enemy", "ui");
     this.loadAtlas("pb_tray_ball", "ui");

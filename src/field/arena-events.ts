@@ -10,8 +10,10 @@ export enum ArenaEventType {
   /** Triggers when a {@linkcode TerrainType} is added, overlapped, or removed */
   TERRAIN_CHANGED = "onTerrainChanged",
 
-  /** Triggers when a {@linkcode ArenaTagType} is added or removed */
-  TAG_CHANGED = "onTagChanged",
+  /** Triggers when a {@linkcode ArenaTagType} is added */
+  TAG_ADDED = "onTagAdded",
+  /** Triggers when a {@linkcode ArenaTagType} is removed */
+  TAG_REMOVED = "onTagRemoved",
 }
 
 /**
@@ -59,17 +61,34 @@ export class TerrainChangedEvent extends ArenaEvent {
     this.newTerrainType = newTerrainType;
   }
 }
+
 /**
- * Container class for {@linkcode ArenaEventType.TAG_CHANGED} events
+ * Container class for {@linkcode ArenaEventType.TAG_ADDED} events
  * @extends ArenaEvent
 */
-export class TagChangedEvent extends ArenaEvent {
-  /** The {@linkcode ArenaTagType} being set */
+export class TagAddedEvent extends ArenaEvent {
+  /** The {@linkcode ArenaTagType} being added */
   public arenaTagType: ArenaTagType;
   /** The {@linkcode ArenaTagSide} the tag is being placed on */
   public arenaTagSide: ArenaTagSide;
   constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
-    super(ArenaEventType.TAG_CHANGED, duration);
+    super(ArenaEventType.TAG_ADDED, duration);
+
+    this.arenaTagType = arenaTagType;
+    this.arenaTagSide = arenaTagSide;
+  }
+}
+/**
+ * Container class for {@linkcode ArenaEventType.TAG_REMOVED} events
+ * @extends ArenaEvent
+*/
+export class TagRemovedEvent extends ArenaEvent {
+  /** The {@linkcode ArenaTagType} being removed */
+  public arenaTagType: ArenaTagType;
+  /** The {@linkcode ArenaTagSide} the tag was being placed on */
+  public arenaTagSide: ArenaTagSide;
+  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
+    super(ArenaEventType.TAG_REMOVED, duration);
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;

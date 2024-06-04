@@ -52,6 +52,7 @@ export const SettingKeys = {
   Sprite_Set: "SPRITE_SET",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Moveset_Flyout: "SHOW_MOVESET_FLYOUT",
+  Show_Arena_Flyout: "SHOW_ARENA_FLYOUT",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
@@ -185,6 +186,13 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Show_Moveset_Flyout,
     label: "Show Moveset Flyout",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.ACCESSIBILITY
+  },
+  {
+    key: SettingKeys.Show_Arena_Flyout,
+    label: "Show Battle Effects Flyout",
     options: OFF_ON,
     default: 1,
     type: SettingType.ACCESSIBILITY
@@ -342,6 +350,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Show_Moveset_Flyout:
     scene.showMovesetFlyout = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Show_Arena_Flyout:
+    scene.showArenaFlyout = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value] === "On";

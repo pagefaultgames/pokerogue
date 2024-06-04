@@ -69,7 +69,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
       [Button.CYCLE_ABILITY]:   () => this.buttonCycleOption(Button.CYCLE_ABILITY),
       [Button.CYCLE_NATURE]:    () => this.buttonCycleOption(Button.CYCLE_NATURE),
-      [Button.V]:   () => this.buttonCycleOption(Button.V),
+      [Button.V]:               () => this.buttonCycleOption(Button.V),
       [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
     };
@@ -119,12 +119,14 @@ export class UiInputs {
     }
   }
   buttonInfo(pressed: boolean = true): void {
-    if (!this.scene.showMovesetFlyout) {
-      return;
+    if (this.scene.showMovesetFlyout ) {
+      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+        p.toggleFlyout(pressed);
+      }
     }
 
-    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-      p.toggleFlyout(pressed);
+    if (this.scene.showArenaFlyout) {
+      this.scene.ui.processInfoButton(pressed);
     }
   }
 

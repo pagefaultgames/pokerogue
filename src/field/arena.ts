@@ -19,7 +19,7 @@ import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
-import { WeatherChangedEvent, TerrainChangedEvent, TagChangedEvent } from "./arena-events";
+import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./arena-events";
 
 export class Arena {
   public scene: BattleScene;
@@ -550,7 +550,7 @@ export class Arena {
     this.tags.push(newTag);
     newTag.onAdd(this);
 
-    this.eventTarget.dispatchEvent(new TagChangedEvent(newTag.tagType, newTag.side, newTag.turnCount));
+    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount));
 
     return true;
   }
@@ -577,6 +577,8 @@ export class Arena {
     this.tags.filter(t => !(t.lapse(this))).forEach(t => {
       t.onRemove(this);
       this.tags.splice(this.tags.indexOf(t), 1);
+
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(t.tagType, t.side, t.turnCount));
     });
   }
 
@@ -586,6 +588,8 @@ export class Arena {
     if (tag) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
+
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
   }
@@ -595,6 +599,8 @@ export class Arena {
     if (tag) {
       tag.onRemove(this);
       this.tags.splice(this.tags.indexOf(tag), 1);
+
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
   }
@@ -603,6 +609,8 @@ export class Arena {
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount));
+
       this.tags.splice(0, 1);
     }
   }
