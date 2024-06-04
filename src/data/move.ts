@@ -1463,7 +1463,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const statusToApply: StatusEffect = user.status?.effect;
+    const statusToApply: StatusEffect = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
 
     if (target.status) {
       return false;
@@ -1471,7 +1471,9 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
       const statusAfflictResult = target.trySetStatus(statusToApply, true, user);
       if (statusAfflictResult) {
-        user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+        if (user.status) {
+          user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+        }
         user.resetStatus();
         user.updateInfo();
       }
@@ -6164,8 +6166,9 @@ export function initMoves() {
         || user.status?.effect === StatusEffect.POISON
         || user.status?.effect === StatusEffect.TOXIC
         || user.status?.effect === StatusEffect.PARALYSIS
-        || user.status?.effect === StatusEffect.SLEEP)
-        && target.canSetStatus(user.status?.effect, false, false, user)
+        || user.status?.effect === StatusEffect.SLEEP
+        || user.hasAbility(Abilities.COMATOSE))
+        && target.canSetStatus(user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined), false, false, user)
       ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
