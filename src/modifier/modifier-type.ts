@@ -1463,13 +1463,13 @@ const trainerModifierPool: ModifierPool = {
 
 const enemyBuffModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 2),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 2),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 2),
-    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 9),
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 9),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 9),
+    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 4),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
   ].map(m => {
     m.setTier(ModifierTier.COMMON); return m;
