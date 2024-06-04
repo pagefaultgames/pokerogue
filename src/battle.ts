@@ -106,7 +106,7 @@ export default class Battle {
     this.battleSpec = spec;
   }
 
-  private getLevelForWave(): integer {
+  public getLevelForWave(): integer {
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;

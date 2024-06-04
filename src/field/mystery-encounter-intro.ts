@@ -1,10 +1,11 @@
 import BattleScene from "../battle-scene";
 import MysteryEncounter from "../data/mystery-encounter";
 
-export class MysteryEncounterSprite {
+export class MysteryEncounterSpriteConfig {
   spriteKey: string; // e.g. "ace_trainer_f"
-  fileRoot: string; // "trainer" for trainer sprites, "pokemon" for pokemon, etc. Refer to /public/images directory
-  hasShadow: boolean; // Spawns shadow underneath sprite
+  fileRoot: string; // "trainer" for trainer sprites, "pokemon" for pokemon, etc. Refer to /public/images directory for the folder name
+  hasShadow?: boolean = false; // Spawns shadow underneath sprite
+  repeat?: boolean = false; // Cycles animation
 }
 
 /**
@@ -14,13 +15,15 @@ export class MysteryEncounterSprite {
  */
 export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
   public encounter: MysteryEncounter;
-  public spriteKeys: string[];
+  public spriteConfigs: MysteryEncounterSpriteConfig[];
 
-  // TODO: refactor spriteKeys array to MysteryEncounterSprite[]
-  constructor(scene: BattleScene, encounter: MysteryEncounter, spriteKeys: string[]) {
+  constructor(scene: BattleScene, encounter: MysteryEncounter) {
     super(scene, -72, 76);
     this.encounter = encounter;
-    this.spriteKeys = spriteKeys;
+    this.spriteConfigs = encounter.spriteConfigs;
+    if (!this.spriteConfigs) {
+      return;
+    }
 
     const getSprite = (spriteKey: string, hasShadow?: boolean) => {
       const ret = this.scene.addFieldSprite(0, 0, spriteKey);
@@ -33,14 +36,14 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     const minX = -40;
     const maxX = 40;
     const origin = 4;
-    const spacingValue = Math.round((maxX - minX) / Math.max(spriteKeys.length, 1));
-    spriteKeys.forEach((key, i) => {
-      const sprite = getSprite(key, true);
-      const tintSprite = getSprite(key);
+    const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.length, 1));
+    this.spriteConfigs.forEach((config, i) => {
+      const sprite = getSprite(config.spriteKey, true);
+      const tintSprite = getSprite(config.spriteKey);
 
       tintSprite.setVisible(false);
 
-      if (spriteKeys.length === 1) {
+      if (this.spriteConfigs.length === 1) {
         sprite.x = origin;
         tintSprite.x = origin;
       } else {
@@ -55,24 +58,28 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
   loadAssets(): Promise<void> {
     return new Promise(resolve => {
-      this.spriteKeys.forEach((key) => {
+      if (!this.spriteConfigs) {
+        resolve();
+      }
+
+      this.spriteConfigs.forEach((config) => {
         // TODO: refactor spriteKeys and folder to MysteryEncounterSprite
-        this.scene.loadAtlas(key, "trainer");
+        this.scene.loadAtlas(config.spriteKey, config.fileRoot);
       });
 
       this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        this.spriteKeys.forEach((key) => {
+        this.spriteConfigs.forEach((config) => {
           const originalWarn = console.warn;
 
           // Ignore warnings for missing frames, because there will be a lot
           console.warn = () => {
           };
-          const frameNames = this.scene.anims.generateFrameNames(key, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
+          const frameNames = this.scene.anims.generateFrameNames(config.spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
 
           console.warn = originalWarn;
-          if (!(this.scene.anims.exists(key))) {
+          if (!(this.scene.anims.exists(config.spriteKey))) {
             this.scene.anims.create({
-              key: key,
+              key: config.spriteKey,
               frames: frameNames,
               frameRate: 24,
               repeat: -1
@@ -90,8 +97,12 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   }
 
   initSprite(): void {
-    this.getSprites().map((sprite, i) => sprite.setTexture(this.spriteKeys[i]).setFrame(0));
-    this.getTintSprites().map((tintSprite, i) => tintSprite.setTexture(this.spriteKeys[i]).setFrame(0));
+    if (!this.spriteConfigs) {
+      return;
+    }
+
+    this.getSprites().map((sprite, i) => sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0));
+    this.getTintSprites().map((tintSprite, i) => tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0));
   }
 
   /**
@@ -123,12 +134,16 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   }
 
   playAnim(): void {
+    if (!this.spriteConfigs) {
+      return;
+    }
+
     const sprites = this.getSprites();
     const tintSprites = this.getTintSprites();
-    this.spriteKeys.forEach((key, i) => {
+    this.spriteConfigs.forEach((config, i) => {
       const trainerAnimConfig = {
-        key: key,
-        repeat: 0,
+        key: config.spriteKey,
+        repeat: config?.repeat ? -1 : 0,
         startFrame: 0
       };
 
@@ -137,16 +152,24 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   }
 
   getSprites(): Phaser.GameObjects.Sprite[] {
+    if (!this.spriteConfigs) {
+      return;
+    }
+
     const ret: Phaser.GameObjects.Sprite[] = [];
-    this.spriteKeys.forEach((key, i) => {
+    this.spriteConfigs.forEach((config, i) => {
       ret.push(this.getAt(i * 2));
     });
     return ret;
   }
 
   getTintSprites(): Phaser.GameObjects.Sprite[] {
+    if (!this.spriteConfigs) {
+      return;
+    }
+
     const ret: Phaser.GameObjects.Sprite[] = [];
-    this.spriteKeys.forEach((key, i) => {
+    this.spriteConfigs.forEach((config, i) => {
       ret.push(this.getAt(i * 2 + 1));
     });
 

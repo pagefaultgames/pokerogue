@@ -33,7 +33,7 @@ import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
-import { MysteryEncounterData } from "../data/mystery-encounter";
+import { MysteryEncounterData, MysteryEncounterFlags } from "../data/mystery-encounter";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -118,6 +118,7 @@ export interface SessionSaveData {
   mysteryEncounter: MysteryEncounterData;
   gameVersion: string;
   timestamp: integer;
+  mysteryEncounterFlags: MysteryEncounterFlags;
 }
 
 interface Unlocks {
@@ -773,6 +774,7 @@ export class GameData {
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
       mysteryEncounter: scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ? new MysteryEncounterData(scene.currentBattle.mysteryEncounter) : null,
+      mysteryEncounterFlags: scene.mysteryEncounterFlags
     } as SessionSaveData;
   }
 
@@ -859,6 +861,10 @@ export class GameData {
 
           scene.score = sessionData.score;
           scene.updateScoreText();
+
+          scene.mysteryEncounterFlags = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : {
+            encounteredEvents: []
+          };
 
           scene.newArena(sessionData.arena.biome);
 
@@ -1067,6 +1073,10 @@ export class GameData {
 
       if (k === "mysteryEncounter") {
         return new MysteryEncounterData(v);
+      }
+
+      if (k === "mysteryEncounterFlags") {
+        return new MysteryEncounterFlags(v);
       }
 
       return v;

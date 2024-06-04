@@ -7,7 +7,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
 import { MysteryEncounterOption } from "../data/mystery-encounter";
 import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
-import * as Utils from "../utils";
+import { PartyUiMode } from "./party-ui-handler";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private optionsContainer: Phaser.GameObjects.Container;
@@ -20,6 +20,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
+
+  protected viewPartyIndex: integer = 0;
+
+  protected blockInput: boolean = true;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.MYSTERY_ENCOUNTER);
@@ -35,6 +39,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.optionsContainer = this.scene.add.container(18, -38.7);
     this.optionsContainer.setVisible(false);
     ui.add(this.optionsContainer);
+
+    // Cursor is added to optionsContainer at index 0, make sure to index options accordingly
+    this.setCursor(this.getCursor());
 
     this.descriptionContainer = this.scene.add.container(0, -152);
     this.descriptionContainer.setVisible(false);
@@ -54,8 +61,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     this.descriptionContainer.setVisible(true);
     this.optionsContainer.setVisible(true);
+    this.displayEncounterOptions(!(args[0] as boolean || false));
     this.setCursor(this.getCursor());
-    this.displayEncounterOptions();
+    if (this.blockInput) {
+      setTimeout(() => {
+        this.unblockInput();
+      }, 1500);
+    }
 
     return true;
   }
@@ -68,39 +80,39 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const cursor = this.getCursor();
 
     if (button === Button.CANCEL || button === Button.ACTION) {
-
       if (button === Button.ACTION) {
-        const selected = this.filteredEncounterOptions[cursor];
-        if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected)) {
+        if (cursor === this.viewPartyIndex) {
+          // Handle view party
           this.clear();
-          success = true;
+          this.scene.ui.setMode(Mode.PARTY, PartyUiMode.VIEW_PARTY, -1, () => {
+            this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, true);
+            this.unblockInput();
+            this.setCursor(this.viewPartyIndex);
+          });
+        } else if (this.blockInput) {
+          success = false;
         } else {
-          ui.playError();
+          const selected = this.filteredEncounterOptions[cursor - 1];
+          if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor - 1)) {
+            this.clear();
+            success = true;
+          } else {
+            ui.playError();
+          }
         }
       } else {
         // TODO: If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
       }
     } else {
-      switch (button) {
-      case Button.UP:
-        if (cursor >= 2) {
-          success = this.setCursor(cursor - 2);
-        }
+      switch (this.optionsContainer.length) {
+      case 4:
+        success = this.handleTwoOptionMoveInput(button);
         break;
-      case Button.DOWN:
-        if (cursor < 2) {
-          success = this.setCursor(cursor + 2);
-        }
+      case 5:
+        success = this.handleThreeOptionMoveInput(button);
         break;
-      case Button.LEFT:
-        if (cursor % 2 === 1) {
-          success = this.setCursor(cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (cursor % 2 === 0) {
-          success = this.setCursor(cursor + 1);
-        }
+      case 6:
+        success = this.handleFourOptionMoveInput(button);
         break;
       }
     }
@@ -112,97 +124,218 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     return success;
   }
 
+  handleTwoOptionMoveInput(button: Button): boolean {
+    let success = false;
+    const cursor = this.getCursor();
+    switch (button) {
+    case Button.UP:
+      if (cursor < this.viewPartyIndex) {
+        success = this.setCursor(this.viewPartyIndex);
+      }
+      break;
+    case Button.DOWN:
+      if (cursor === this.viewPartyIndex) {
+        success = this.setCursor(2);
+      }
+      break;
+    case Button.LEFT:
+      if (cursor > 1) {
+        success = this.setCursor(cursor - 1);
+      }
+      break;
+    case Button.RIGHT:
+      if (cursor < this.viewPartyIndex) {
+        success = this.setCursor(cursor + 1);
+      }
+      break;
+    }
+
+    return success;
+  }
+
+  handleThreeOptionMoveInput(button: Button): boolean {
+    let success = false;
+    const cursor = this.getCursor();
+    switch (button) {
+    case Button.UP:
+      if (cursor === 3) {
+        success = this.setCursor(cursor - 2);
+      } else {
+        success = this.setCursor(this.viewPartyIndex);
+      }
+      break;
+    case Button.DOWN:
+      if (cursor === this.viewPartyIndex) {
+        success = this.setCursor(2);
+      } else {
+        success = this.setCursor(3);
+      }
+      break;
+    case Button.LEFT:
+      if (cursor === this.viewPartyIndex) {
+        success = this.setCursor(2);
+      } else if (cursor !== 3) {
+        success = this.setCursor(cursor - 1);
+      }
+      break;
+    case Button.RIGHT:
+      if (cursor === 2) {
+        success = this.setCursor(this.viewPartyIndex);
+      } else if (cursor < 2) {
+        success = this.setCursor(cursor + 1);
+      }
+      break;
+    }
+
+    return success;
+  }
+
+  handleFourOptionMoveInput(button: Button): boolean {
+    let success = false;
+    const cursor = this.getCursor();
+    switch (button) {
+    case Button.UP:
+      if (cursor >= 3 && cursor !== this.viewPartyIndex) {
+        success = this.setCursor(cursor - 2);
+      } else {
+        success = this.setCursor(this.viewPartyIndex);
+      }
+      break;
+    case Button.DOWN:
+      if (cursor <= 2) {
+        success = this.setCursor(cursor + 2);
+      } else if (cursor === this.viewPartyIndex) {
+        success = this.setCursor(2);
+      }
+      break;
+    case Button.LEFT:
+      if (cursor === this.viewPartyIndex) {
+        success = this.setCursor(2);
+      } else if (cursor % 2 === 0) {
+        success = this.setCursor(cursor - 1);
+      }
+      break;
+    case Button.RIGHT:
+      if (cursor === 2) {
+        success = this.setCursor(this.viewPartyIndex);
+      } else if (cursor % 2 === 1 && cursor !== this.viewPartyIndex) {
+        success = this.setCursor(cursor + 1);
+      }
+      break;
+    }
+
+    return success;
+  }
+
+  unblockInput() {
+    if (this.blockInput) {
+      this.blockInput = false;
+
+      for (let i = 1; i < this.optionsContainer.length - 1; i++) {
+        (this.optionsContainer.getAt(i) as Phaser.GameObjects.Text).setAlpha(1);
+      }
+    }
+  }
+
   getCursor(): integer {
-    return !this.fieldIndex ? this.cursor : this.cursor2;
+    return this.cursor ? this.cursor : 1;
   }
 
   setCursor(cursor: integer): boolean {
-    const changed = this.getCursor() !== cursor;
+    const prevCursor = this.getCursor();
+    const changed = prevCursor !== cursor;
     if (changed) {
-      if (!this.fieldIndex) {
-        this.cursor = cursor;
-      } else {
-        this.cursor2 = cursor;
-      }
+      this.cursor = cursor;
     }
+
+    this.viewPartyIndex = this.optionsContainer.length - 1;
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, "cursor");
       this.optionsContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 150 : 0), 8 + (cursor >= 2 ? 16 : 0));
+    if (cursor === this.viewPartyIndex) {
+      this.cursorObj.setPosition(249, -17);
+    } else if (this.optionsContainer.length === 4) { // 2 Options
+      this.cursorObj.setPosition(-5 + (cursor % 2 === 0 ? 150 : 0), 16);
+    } else if (this.optionsContainer.length === 5) { // 3 Options
+      this.cursorObj.setPosition(-5 + (cursor % 2 === 0 ? 150 : 0), 8 + (cursor > 2 ? 16 : 0));
+    } else if (this.optionsContainer.length === 6) { // 4 Options
+      this.cursorObj.setPosition(-5 + (cursor % 2 === 0 ? 150 : 0), 8 + (cursor > 2 ? 16 : 0));
+    }
 
     return changed;
   }
 
-  displayEncounterOptions(): void {
+  displayEncounterOptions(slideInDescription: boolean = true): void {
     const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
-    const allOptions = mysteryEncounter.getMysteryEncounterOptions();
+    this.filteredEncounterOptions = mysteryEncounter.getMysteryEncounterOptions();
 
-    // If no options would be available after rolling chances on each, redo encounter option rolls
-    while (!this.filteredEncounterOptions || !this.filteredEncounterOptions.some(option => option.meetsRequirements(this.scene))) {
-      this.filteredEncounterOptions = allOptions.filter((option) => {
-        // Determine if option succeeds chance for availability
-        if (option?.chanceForOption < 100 && option?.chanceForOption > 0) {
-          const roll = Utils.randSeedInt(100);
-          if (roll <= option.chanceForOption) {
-            return true;
-          }
-        } else {
-          // If chanceForOption not set or invalid, always add option
-          return true;
-        }
-
-        return false;
-      });
-    }
-
-
-    const index = mysteryEncounter.getMysteryEncounterIndex();
-    const titleText = i18next.t(`mysteryEncounter:encounter_${index}_id`);
-    const descriptionText = i18next.t(`mysteryEncounter:encounter_${index}_description`);
-    const queryText = i18next.t(`mysteryEncounter:encounter_${index}_query`);
+    const titleText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.title);
+    const descriptionText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.description);
+    const queryText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.query);
 
     // Options Window
-    // TODO: change spacing and positioning if 1-2 options vs 3-4
     for (let i = 0; i < this.filteredEncounterOptions.length; i++) {
-      const optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, i < 2 ? 0 : 16, "-", TextStyle.WINDOW);
-      const text = i18next.t(`mysteryEncounter:encounter_${index}_option_${i + 1}`);
+      let optionText;
+      switch (this.filteredEncounterOptions.length) {
+      case 2:
+        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, 8, "-", TextStyle.WINDOW);
+        break;
+      case 3:
+        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, i < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+        break;
+      case 4:
+        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, i < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+        break;
+      }
+      const text = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.options[i].buttonLabel);
       if (text) {
         optionText.setText(text);
       }
+
       if (!this.filteredEncounterOptions[i].meetsRequirements(this.scene)) {
         // TODO: This option should be disabled/greyed out or removed if requirements are not met
+      }
+      if (this.blockInput) {
+        optionText.setAlpha(0.5);
       }
       this.optionsContainer.add(optionText);
     }
 
+    // View Party Button
+    const viewPartyText = addTextObject(this.scene, 254, -24, "View Party", TextStyle.PARTY);
+    this.optionsContainer.add(viewPartyText);
+
     // Description Window
-    const titleTextObject = addTextObject(this.scene, 6, 4, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 830 } });
+    const titleTextObject = addTextObject(this.scene, 65 - (titleText.length), 6, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 830 } });
     this.descriptionContainer.add(titleTextObject);
 
     const descriptionTextObject = addTextObject(this.scene, 6, 25, descriptionText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
     this.descriptionContainer.add(descriptionTextObject);
 
-    const queryTextObject = addTextObject(this.scene, 6, 90, queryText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const queryTextObject = addTextObject(this.scene, 65 - (queryText.length), 90, queryText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
     this.descriptionContainer.add(queryTextObject);
 
     // Slide in description container
-    this.descriptionContainer.x -= 100;
-    this.scene.tweens.add({
-      targets: this.descriptionContainer,
-      x: "+=100",
-      ease: "Sine.easeInOut",
-      duration: 750
-    });
+    if (slideInDescription) {
+      this.descriptionContainer.x -= 100;
+      this.scene.tweens.add({
+        targets: this.descriptionContainer,
+        x: "+=100",
+        ease: "Sine.easeInOut",
+        duration: 750
+      });
+    }
   }
 
   clear(): void {
     super.clear();
-    this.getUi().getMessageHandler().commandWindow.setVisible(false);
     this.optionsContainer.setVisible(false);
+    this.optionsContainer.removeBetween(1, this.optionsContainer.length, true);
     this.descriptionContainer.setVisible(false);
+    this.descriptionContainer.removeBetween(1, this.descriptionContainer.length, true);
     this.getUi().getMessageHandler().clearText();
     this.eraseCursor();
   }

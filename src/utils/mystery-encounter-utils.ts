@@ -1,16 +1,19 @@
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
 import { SyncEncounterNatureAbAttr, applyAbAttrs } from "../data/ability";
+import { EggTier } from "../data/enums/egg-type";
 import { Species } from "../data/enums/species";
 import { TrainerType } from "../data/enums/trainer-type";
+import { MysteryEncounterVariant } from "../data/mystery-encounter";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
 import { TrainerSlot, trainerConfigs } from "../data/trainer-config";
-import { BattleSpec } from "../enums/battle-spec";
-import { FieldPosition } from "../field/pokemon";
+import { FieldPosition, PlayerPokemon } from "../field/pokemon";
 import Trainer, { TrainerVariant } from "../field/trainer";
 import { ExtraModifierModifier } from "../modifier/modifier";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { ModifierPoolType, ModifierTypeFunc, regenerateModifierPoolThresholds } from "../modifier/modifier-type";
-import { ModifierRewardPhase, NewBattlePhase, SelectModifierPhase, SummonPhase } from "../phases";
+import { ModifierRewardPhase, SelectModifierPhase, SummonPhase } from "../phases";
+import { PostMysteryEncounterPhase } from "../phases/mystery-encounter-phase";
 import * as Utils from "../utils";
 
 /**
@@ -27,7 +30,7 @@ import * as Utils from "../utils";
  * @param scene - Battle scene object
  * @returns - Promise
  */
-export function removeMysteryEncounterIntroVisuals(scene: BattleScene): Promise<boolean> {
+export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<boolean> {
   return new Promise(resolve => {
     const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
     if (introVisuals) {
@@ -50,9 +53,88 @@ export function removeMysteryEncounterIntroVisuals(scene: BattleScene): Promise<
       resolve(true);
     }
   });
-
 }
 
+/**
+ *
+ * Will never remove the player's last non-fainted Pokemon (if they only have 1)
+ * Otherwise, picks a Pokemon completely at random and removes from the party
+ * @param scene
+ * @returns
+ */
+export function removeRandomPlayerPartyPokemon(scene: BattleScene): string {
+  let party = scene.getParty();
+  let chosenIndex: number;
+  let chosenPokemon: PlayerPokemon;
+  const faintedMons = party.filter(p => p.isFainted());
+
+  // Do not remove un-fainted mon if it's the last one in the party
+  if (faintedMons.length === party.length - 1) {
+    chosenIndex = Utils.randSeedInt(faintedMons.length);
+    chosenPokemon = faintedMons.at(chosenIndex);
+  } else {
+    chosenIndex = Utils.randSeedInt(party.length);
+    chosenPokemon = party.at(chosenIndex);
+  }
+
+  if (chosenPokemon) {
+    const partyIndex = party.indexOf(chosenPokemon);
+    scene.field.remove(chosenPokemon, true);
+    party = party.splice(partyIndex, 1);
+    chosenPokemon.destroy();
+
+    return chosenPokemon.name;
+  }
+
+  return null;
+}
+
+/**
+ *
+ * Will pick lowest and highest of the starter costs for tiers provided, then return a random Species
+ * NOTE: This returns ANY random species, including those locked behind eggs, etc.
+ * @param scene
+ * @param tiers
+ * @returns
+ */
+export function getRandomSpeciesByEggTier(scene: BattleScene, tiers: EggTier[]): Species {
+  let values: number[] = [];
+  tiers.forEach((tier) => {
+    switch (tier) {
+    case EggTier.COMMON:
+      values = values.concat([0, 3]);
+      break;
+    case EggTier.GREAT:
+      values = values.concat([4, 5]);
+      break;
+    case EggTier.ULTRA:
+      values = values.concat([6, 7]);
+      break;
+    case EggTier.MASTER:
+      values = values.concat([8, 10]);
+      break;
+    }
+  });
+  values.sort((a, b) => a - b);
+  const min = values[0];
+  const max = values[values.length - 1];
+
+  const filteredSpecies = Object.entries(speciesStarters)
+    .filter(s => s[1] >= min && s[1] <= max)
+    .map(s => parseInt(s[0]))
+    .filter(s => getPokemonSpecies(s));
+
+  const index = Utils.randSeedInt(filteredSpecies.length);
+  return Phaser.Math.RND.shuffle(filteredSpecies)[index];
+}
+
+export class EnemyPartyConfig {
+  levelMultiplier?: number = 1;
+  doubleBattle?: boolean = false;
+  trainerType?: TrainerType;
+  pokemonSpecies?: PokemonSpecies[];
+  pokemonBosses?: PokemonSpecies[];
+}
 
 /**
  * Generates an enemy party for a mystery encounter battle
@@ -63,69 +145,85 @@ export function removeMysteryEncounterIntroVisuals(scene: BattleScene): Promise<
  * @param levelMultiplier - multiplier to adjust enemy levels up and down for harder or easier battles
  * @param trainerType - optional, if set will generate a team based on passed trainer type and configure a trainer battle instead of wild
  */
-export function generateNewEnemyParty(scene: BattleScene, doubleBattle: boolean = false, levelMultiplier: number = 1, trainerType?: TrainerType): void {
+export function generateEnemyPartyForBattle(scene: BattleScene, partyConfig: EnemyPartyConfig): void {
   const loaded = false;
   const loadEnemyAssets = [];
 
   const battle = scene.currentBattle;
 
-  // Create trainer
+  const normalCount = partyConfig?.pokemonSpecies?.length || 0;
+  const bossCount = partyConfig?.pokemonBosses?.length || 0;
+
+  // Trainer
+  const trainerType = partyConfig?.trainerType;
   if (trainerType) {
+    scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.TRAINER_BATTLE;
     if (scene.currentBattle.trainer) {
       scene.currentBattle.trainer.setVisible(false);
       scene.currentBattle.trainer.destroy();
     }
-    const doubleTrainer = trainerConfigs[trainerType].doubleOnly || (trainerConfigs[trainerType].hasDouble && doubleBattle);
+    const doubleTrainer = trainerConfigs[trainerType].doubleOnly || (trainerConfigs[trainerType].hasDouble && partyConfig?.doubleBattle);
     const newTrainer = new Trainer(scene, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
     newTrainer.x += 300;
     scene.field.add(newTrainer);
     scene.currentBattle.trainer = newTrainer;
     loadEnemyAssets.push(newTrainer.loadAssets());
+
+    battle.enemyLevels = scene.currentBattle.trainer.getPartyLevels(scene.currentBattle.waveIndex);
+  } else {
+    // Wild
+    scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.WILD_BATTLE;
+    battle.enemyLevels = new Array(normalCount + bossCount > 0 ? normalCount + bossCount : partyConfig?.doubleBattle ? 2 : 1).fill(null).map(() => scene.currentBattle.getLevelForWave());
   }
 
   scene.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
   battle.enemyParty = [];
 
-  // Calculate levels for battle (with modifier)
-  battle.enemyLevels = scene.currentBattle.trainer.getPartyLevels(scene.currentBattle.waveIndex)
-    .map(level => Math.max(Math.round(level * levelMultiplier), 1) as integer);
+  // Adjust levels for battle by modifier
+  battle.enemyLevels = battle.enemyLevels.map(level => Math.max(Math.round(level * (partyConfig?.levelMultiplier ? partyConfig?.levelMultiplier : 1)), 1) as integer);
 
   battle.enemyLevels.forEach((level, e) => {
+    let enemySpecies;
+    let isBoss = false;
     if (!loaded) {
       if (trainerType) {
         battle.enemyParty[e] = battle.trainer.genPartyMember(e);
       } else {
-        const enemySpecies = scene.randomSpecies(battle.waveIndex, level, true);
-        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
-        if (scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-          battle.enemyParty[e].ivs = new Array(6).fill(31);
+        // Normal pokemon loaded first, Bosses second
+        // If no species are specified, picks random
+
+        if (normalCount - 1 >= e) {
+          enemySpecies = partyConfig?.pokemonSpecies?.[e];
+        } else if (bossCount - 1 >= e - normalCount) {
+          isBoss = true;
+          enemySpecies = partyConfig?.pokemonBosses?.[e];
+        } else {
+          enemySpecies = scene.randomSpecies(battle.waveIndex, level, true);
         }
+
+        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss);
+
+        //if (scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+        //  battle.enemyParty[e].ivs = new Array(6).fill(31);
+        //}
         scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
           applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
         });
       }
     }
+
     const enemyPokemon = scene.getEnemyParty()[e];
-    if (e < (battle.double ? 2 : 1)) {
+    if (isBoss) {
+      enemyPokemon.setBoss(true, scene.getEncounterBossSegments(scene.currentBattle.waveIndex, level, enemySpecies, true));
+    }
+
+    if (e < (partyConfig?.doubleBattle ? 2 : 1)) {
       enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
       enemyPokemon.resetSummonData();
     }
 
     if (!loaded) {
       scene.gameData.setPokemonSeen(enemyPokemon, true, trainerType ? true : false);
-    }
-
-    if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
-      if (scene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || scene.gameMode.isWaveFinal(battle.waveIndex))) {
-        if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
-          enemyPokemon.formIndex = 1;
-          enemyPokemon.updateScale();
-        }
-        enemyPokemon.setBoss();
-      } else if (!(battle.waveIndex % 1000)) {
-        enemyPokemon.formIndex = 1;
-        enemyPokemon.updateScale();
-      }
     }
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
@@ -135,7 +233,7 @@ export function generateNewEnemyParty(scene: BattleScene, doubleBattle: boolean 
 
   Promise.all(loadEnemyAssets).then(() => {
     battle.enemyParty.forEach((enemyPokemon, e) => {
-      if (e < (battle.double ? 2 : 1)) {
+      if (e < (partyConfig?.doubleBattle ? 2 : 1)) {
         enemyPokemon.setVisible(false);
         if (battle.double) {
           enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
@@ -196,17 +294,20 @@ export function initBattleFromEncounter(scene: BattleScene) {
   scene.currentBattle.started = true;
   scene.playBgm(undefined);
   scene.pbTray.showPbTray(scene.getParty());
-  scene.pbTrayEnemy.showPbTray(scene.getEnemyParty());
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+    scene.pbTrayEnemy.showPbTray(scene.getEnemyParty());
 
-  // Hide enemy trainer
-  scene.tweens.add({
-    targets: scene.currentBattle.trainer,
-    x: "+=16",
-    y: "-=16",
-    alpha: 0,
-    ease: "Sine.easeInOut",
-    duration: 750
-  });
+    // Hide enemy trainer
+    scene.tweens.add({
+      targets: scene.currentBattle.trainer,
+      x: "+=16",
+      y: "-=16",
+      alpha: 0,
+      ease: "Sine.easeInOut",
+      duration: 750
+    });
+  }
+
 
   const availablePartyMembers = scene.getEnemyParty().filter(p => !p.isFainted()).length;
   scene.unshiftPhase(new SummonPhase(scene, 0, false));
@@ -237,7 +338,8 @@ export function setEncounterRewards(scene: BattleScene, showShop?: boolean, shop
         rewards = shopRewardTierOverrides;
 
         if (fillShopRemaining && rewards.length < numItems) {
-          for (let i = 0; i < numItems - rewards.length; i++) {
+          const len = rewards.length;
+          for (let i = len - 1; i < numItems - len; i++) {
             const tierValue = Utils.randSeedInt(1024);
             const initialFillTier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
             rewards.push(initialFillTier);
@@ -251,7 +353,7 @@ export function setEncounterRewards(scene: BattleScene, showShop?: boolean, shop
         }
       }
 
-      this.scene.pushPhase(new SelectModifierPhase(this.scene, 0, rewards));
+      scene.pushPhase(new SelectModifierPhase(scene, 0, rewards));
     }
 
     if (nonShopRewards?.length > 0) {
@@ -276,5 +378,5 @@ export function leaveEncounter(scene: BattleScene) {
   scene.currentBattle.mysteryEncounter.didBattle = false;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
-  scene.pushPhase(new NewBattlePhase(scene));
+  scene.pushPhase(new PostMysteryEncounterPhase(scene));
 }

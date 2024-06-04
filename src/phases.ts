@@ -63,6 +63,7 @@ import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 import { MysteryEncounterPhase } from "./phases/mystery-encounter-phase";
+import { MysteryEncounterVariant } from "./data/mystery-encounter";
 
 
 export class LoginPhase extends Phase {
@@ -832,7 +833,7 @@ export class EncounterPhase extends BattlePhase {
             this.scene.currentBattle.trainer.tint(0, 0.5);
           } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
             enemyPokemon.setVisible(false);
-            this.scene.currentBattle.trainer?.tint(0, 0.5);
+            this.scene.currentBattle?.trainer?.tint(0, 0.5);
           }
           if (battle.double) {
             enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
@@ -911,11 +912,6 @@ export class EncounterPhase extends BattlePhase {
       }
     }
 
-    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      const mysteryEncounterIndex: number = this.scene.currentBattle.mysteryEncounter.getMysteryEncounterIndex();
-      return i18next.t(`mysteryEncounter:encounter_${mysteryEncounterIndex}`);
-    }
-
     return enemyField.length === 1
       ? i18next.t("battle:singleWildAppeared", {pokemonName: enemyField[0].name})
       : i18next.t("battle:multiWildAppeared", {pokemonName1: enemyField[0].name, pokemonName2: enemyField[1].name});
@@ -992,13 +988,31 @@ export class EncounterPhase extends BattlePhase {
 
         const doShowEncounterOptions = () => {
           this.scene.ui.clearText();
+          this.scene.ui.getMessageHandler().hideNameText();
           this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
 
           this.end();
         };
 
         if (showEncounterMessage) {
-          this.scene.ui.showText(this.getEncounterMessage(), null, doShowEncounterOptions, 1500, true);
+          const introDialogue = this.scene.currentBattle.mysteryEncounter.dialogue.intro;
+          let i = 0;
+          const showNextDialogue = () => {
+            const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
+            const dialogue = introDialogue[i];
+            const title = dialogue.speaker;
+            const text = dialogue.text;
+            if (title) {
+              this.scene.ui.showDialogue(i18next.t(text), i18next.t(title), null, nextAction, 0, i === 0 ? 750 : 0);
+            } else {
+              this.scene.ui.showText(i18next.t(text), null, nextAction, i === 0 ? 750 : 0, true);
+            }
+            i++;
+          };
+
+          if (introDialogue.length > 0) {
+            showNextDialogue();
+          }
         } else {
           doShowEncounterOptions();
         }
@@ -1368,13 +1382,18 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         onComplete: () => this.scene.trainer.setVisible(false)
       });
       this.scene.time.delayedCall(750, () => this.summon());
-    } else {
+    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene?.currentBattle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
       const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
       const pokemonName = this.getPokemon().name;
       const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
 
       this.scene.pbTrayEnemy.hide();
       this.scene.ui.showText(message, null, () => this.summon());
+    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (this.scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.WILD_BATTLE) {
+        this.scene.pbTrayEnemy.hide();
+        this.summonWild();
+      }
     }
   }
 
@@ -1452,6 +1471,62 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             });
           }
         });
+      }
+    });
+  }
+
+  summonWild(): void {
+    const pokemon = this.getPokemon();
+
+    //const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.pokeball));
+    //pokeball.setVisible(false);
+    //pokeball.setOrigin(0.5, 0.625);
+    //this.scene.field.add(pokeball);
+
+    if (this.fieldIndex === 1) {
+      pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
+    } else {
+      const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
+      pokemon.setFieldPosition(!this.scene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
+    }
+
+    this.scene.add.existing(pokemon);
+    this.scene.field.add(pokemon);
+    if (!this.player) {
+      const playerPokemon = this.scene.getPlayerPokemon() as Pokemon;
+      if (playerPokemon?.visible) {
+        this.scene.field.moveBelow(pokemon, playerPokemon);
+      }
+      this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
+    }
+    this.scene.updateModifiers(this.player);
+    this.scene.updateFieldScale();
+    pokemon.showInfo();
+    pokemon.playAnim();
+    pokemon.setVisible(true);
+    pokemon.getSprite().setVisible(true);
+    pokemon.setScale(0.75);
+    pokemon.tint(getPokeballTintColor(pokemon.pokeball));
+    pokemon.untint(250, "Sine.easeIn");
+    this.scene.updateFieldScale();
+    pokemon.x += 16;
+    pokemon.y -= 16;
+    pokemon.alpha = 0;
+
+    // Slide pokemon in;
+    this.scene.tweens.add({
+      targets: pokemon,
+      x: "-=16",
+      y: "+=16",
+      alpha: 1,
+      duration: 1000,
+      ease: "Sine.easeIn",
+      scale: pokemon.getSpriteScale(),
+      onComplete: () => {
+        pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+        pokemon.getSprite().clearTint();
+        pokemon.resetSummonData();
+        this.scene.time.delayedCall(1000, () => this.end());
       }
     });
   }
@@ -3779,13 +3854,16 @@ export class VictoryPhase extends PokemonPhase {
 
     if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true))) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
-      if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
       }
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
-        if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
-          this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
+        if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+          // Mystery encounters only provide rewards if set on the encounter
+          if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
+            this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
+          }
         } else if (this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
         } else if (this.scene.gameMode.isDaily) {
@@ -4931,7 +5009,14 @@ export class SelectModifierPhase extends BattlePhase {
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
+
+    // If mystery encounter with custom shop and first time shop is being rolled, lock the reward tiers for first shop roll
+    const isMysteryEncounterFirstShop = this.scene?.currentBattle?.mysteryEncounter?.lockEncounterRewardTiers && this.modifierTiers?.length > 0;
+    if (isMysteryEncounterFirstShop) {
+      this.scene.currentBattle.mysteryEncounter.lockEncounterRewardTiers = false;
+    }
+
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, isMysteryEncounterFirstShop);
 
     const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
       if (rowCursor < 0 || cursor < 0) {
@@ -5099,8 +5184,8 @@ export class SelectModifierPhase extends BattlePhase {
     return ModifierPoolType.PLAYER;
   }
 
-  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined);
+  getModifierTypeOptions(modifierCount: integer, lockTiers: boolean = false): ModifierTypeOption[] {
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), (this.scene.lockModifierTiers || lockTiers) ? this.modifierTiers : undefined);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {

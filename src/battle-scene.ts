@@ -58,8 +58,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
-import MysteryEncounter, { MysteryEncounterData, allMysteryEncounters } from "./data/mystery-encounter";
-import MysteryEncounterIntroVisuals from "./field/mystery-encounter";
+import MysteryEncounter, { MysteryEncounterData, MysteryEncounterFlags, MysteryEncounterTier, allMysteryEncounters } from "./data/mystery-encounter";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -170,6 +169,7 @@ export default class BattleScene extends SceneBase {
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
+  public mysteryEncounterFlags: MysteryEncounterFlags;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
@@ -950,9 +950,9 @@ export default class BattleScene extends SceneBase {
       // The only time they can occur is in place of a standard wild battle
       // They will also never be found after floor 180 of classic mode, and cannot be in the first 2 battles
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && (newWaveIndex > 180 || newWaveIndex < 3))) {
-        // Roll for mystery encounter instead of wild battle
-        const roll = Utils.randSeedInt(100);
-        const successRate = Overrides.MYSTERY_ENCOUNTER_RATE || 15;
+        // Roll for mystery encounter instead of wild battle (25% chance)
+        const roll = Utils.randSeedInt(64);
+        const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE || 16;
 
         if (roll <= successRate) {
           // Successful roll, this is a mystery encounter
@@ -997,15 +997,24 @@ export default class BattleScene extends SceneBase {
       // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
       this.currentBattle.double = false;
 
-      // Generate a mystery encounter
-      const encounter = mysteryEncounter?.encounter?.encounterIndex >= 0 ? allMysteryEncounters[mysteryEncounter.encounter.encounterIndex] : this.generateMysteryEncounter();
-      this.currentBattle.mysteryEncounter = encounter;
+      // Load or generate a mystery encounter
+      let encounter;
+      if (Overrides.MYSTERY_ENCOUNTER_OVERRIDE && Overrides.MYSTERY_ENCOUNTER_OVERRIDE < allMysteryEncounters.length) {
+        encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
+      } else {
+        encounter = mysteryEncounter?.encounter?.encounterType >= 0 ? allMysteryEncounters[mysteryEncounter.encounter.encounterType] : null;
+        if (!encounter) {
+          const tierValue = Utils.randSeedInt(64);
+          const tier = tierValue > 32 ? MysteryEncounterTier.COMMON : tierValue > 16 ? MysteryEncounterTier.UNCOMMON : tierValue > 6 ? MysteryEncounterTier.RARE : MysteryEncounterTier.SUPER_RARE;
+          encounter = this.generateMysteryEncounter(tier);
+        }
+      }
 
       // Add intro visuals for mystery encounter
-      // TODO: refactor visuals to be tied to encounter
-      const encounterIntroVisuals = new MysteryEncounterIntroVisuals(this, encounter, ["school_kid_f", "scientist_f", "ace_trainer_f"]);
-      this.field.add(encounterIntroVisuals);
-      encounter.introVisuals = encounterIntroVisuals;
+      encounter.initIntroVisuals(this);
+      this.field.add(encounter.introVisuals);
+
+      this.currentBattle.mysteryEncounter = encounter;
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -2249,16 +2258,22 @@ export default class BattleScene extends SceneBase {
     (window as any).gameInfo = gameInfo;
   }
 
-  generateMysteryEncounter(): MysteryEncounter {
-    if (Overrides.MYSTERY_ENCOUNTER_OVERRIDE > -1 && Overrides.MYSTERY_ENCOUNTER_OVERRIDE < allMysteryEncounters.length) {
-      return allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
+  generateMysteryEncounter(tier: MysteryEncounterTier): MysteryEncounter {
+    let availableEncounters = [];
+
+    // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
+    while (availableEncounters.length === 0 && tier >= 0) {
+      availableEncounters = allMysteryEncounters.filter((encounter) => encounter.meetsRequirements(this) && encounter.encounterTier === tier);
+      tier--;
     }
 
-    // Do some logic to figure out what encounter spawned
-    const availableEncounters = allMysteryEncounters.filter((encounter) => encounter.meetsRequirements(this));
+    // If absolutely no encounters are available, spawn 0th encounter (mysterious trainers)
+    if (availableEncounters.length === 0) {
+      return allMysteryEncounters[0];
+    }
 
     // Init and return encounter object
-    const encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length - 1)];
+    const encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length)];
 
     return encounter;
   }

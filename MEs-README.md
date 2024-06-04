@@ -21,11 +21,11 @@
   - A prompt/query to the player, that leads into the options ✔️ // locales/mystery-encounter.ts
   - An option panel at the bottom, taking the space of what usually is the game dialogs + controls ✔️ // locales/mystery-encounter.ts
   - At least two "options", and up to four. ✔️// locales/mystery-encounter.ts
-  - **Rarity** tier of the ME, common by default. ❌
-    - Common pool ❌
-    - Rare pool ❌
-    - Super Rare (SR) pool ❌
-    - Ultra Rare (UR) pool ❌
+  - **Rarity** tier of the ME, common by default. ✔️
+    - Common pool ✔️
+    - Rare pool ✔️
+    - Super Rare (SR) pool ✔️
+    - Ultra Rare (UR) pool ✔️
 
   - **Requirements** for ME to happen, if applicable. They can be: 
     - Being at wave ✔️

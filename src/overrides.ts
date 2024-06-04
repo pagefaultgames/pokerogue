@@ -33,7 +33,7 @@ export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 // Multiplies XP gained by this value including 0. Set to null to ignore the override
-export const XP_MULTIPLIER_OVERRIDE: number = 100;
+export const XP_MULTIPLIER_OVERRIDE: number = null;
 export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
@@ -86,11 +86,13 @@ export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 
 /**
- * ENCOUNTER OVERRIDES
+ * MYSTERY ENCOUNTER OVERRIDES
  */
 
-export const MYSTERY_ENCOUNTER_RATE: number = 100; // 0 to 100
-export const MYSTERY_ENCOUNTER_OVERRIDE: number = 0;
+// 1 to 100, set to null to ignore
+export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = null;
+// Can use MysteryEncounterType, set to null to ignore (e.g. MysteryEncounterType.DARK_DEAL)
+export const MYSTERY_ENCOUNTER_OVERRIDE: number = null;
 
 /**
  * MODIFIER / ITEM OVERRIDES

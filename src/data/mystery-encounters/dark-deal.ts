@@ -1,0 +1,56 @@
+import BattleScene from "../../battle-scene";
+import { AddPokeballModifierType } from "../../modifier/modifier-type";
+import { EnemyPartyConfig, generateEnemyPartyForBattle, getRandomSpeciesByEggTier, initBattleFromEncounter, leaveEncounter, removeRandomPlayerPartyPokemon } from "../../utils/mystery-encounter-utils";
+import MysteryEncounter, { EncounterRequirements, MysteryEncounterWrapper, OptionSelectMysteryEncounter } from "../mystery-encounter";
+import { ModifierRewardPhase } from "../../phases";
+import { getPokemonSpecies } from "../pokemon-species";
+import { Species } from "../enums/species";
+import { MysteryEncounterType } from "../enums/mystery-encounter-type";
+import { PokeballType } from "../pokeball";
+import { EggTier } from "../enums/egg-type";
+
+export class DarkDealEncounter implements MysteryEncounterWrapper {
+  get(): MysteryEncounter {
+    return new OptionSelectMysteryEncounter(MysteryEncounterType.DARK_DEAL)
+      .introVisualsConfig([
+        {
+          spriteKey: "mad_scientist_m",
+          fileRoot: "mystery-encounters",
+          hasShadow: true
+        },
+        {
+          spriteKey: Species.PORYGON.toString(),
+          fileRoot: "pokemon",
+          hasShadow: true,
+          repeat: true
+        }
+      ])
+      .requirements(new EncounterRequirements(2, 180)) // waves 2 to 180
+      .option(
+        // onSelect
+        async (scene: BattleScene) => {
+          // Give the player 10 Rogue Balls
+          scene.unshiftPhase(new ModifierRewardPhase(scene, () => new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 10)));
+
+          // Start encounter with random legendary (7-10 starter strength)
+          const bossSpecies = getPokemonSpecies(getRandomSpeciesByEggTier(scene, [EggTier.ULTRA, EggTier.MASTER]));
+          const config: EnemyPartyConfig = {
+            pokemonBosses: [bossSpecies]
+          };
+          generateEnemyPartyForBattle(scene, config);
+          initBattleFromEncounter(scene);
+        },
+        // onPreSelect
+        (scene: BattleScene) => {
+          // Removes random pokemon from party and adds name to data tokens
+          const removedPokemon = removeRandomPlayerPartyPokemon(scene);
+          scene.currentBattle.mysteryEncounter.dialogueTokens.push([/@ec\{pokeName\}/gi, removedPokemon]);
+        }
+      )
+      .option(async (scene: BattleScene) => {
+        // Leave encounter with no rewards or exp
+        leaveEncounter(scene);
+        return true;
+      });
+  }
+}

@@ -1,10 +1,14 @@
 import BattleScene from "../battle-scene";
-import MysteryEncounterIntroVisuals from "../field/mystery-encounter";
+import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../field/mystery-encounter-intro";
 import { isNullOrUndefined } from "../utils";
 import { Abilities } from "./enums/abilities";
 import { Biome } from "./enums/biome";
+import { MysteryEncounterType } from "./enums/mystery-encounter-type";
 import { Species } from "./enums/species";
-import { MysteriousTrainersEncounter } from "./mystery-encounters/mysterious-trainers";
+import EncounterDialogue, { allMysteryEncounterDialogue } from "./mystery-encounter-dialogue";
+import { DarkDealEncounter } from "./mystery-encounters/dark-deal";
+import { MysteriousChallengersEncounter } from "./mystery-encounters/mysterious-challengers";
+import { MysteriousChestEncounter } from "./mystery-encounters/mysterious-chest";
 import { WeatherType } from "./weather";
 
 export enum MysteryEncounterVariant {
@@ -13,17 +17,20 @@ export enum MysteryEncounterVariant {
   WILD_BATTLE
 }
 
-export enum MysteryEncounterType {
-  MYSTERY_CHALLENGER,
-  MYSTERIOUS_CHEST
+export enum MysteryEncounterTier {
+  COMMON, // 32/64 odds
+  UNCOMMON, // 16/64 odds
+  RARE, // 10/64 odds
+  SUPER_RARE, // 6/64 odds
+  ULTRA_RARE // Not currently used
 }
 
-export enum MysteryEncounterTier {
-  COMMON,
-  UNCOMMON,
-  RARE,
-  SUPER_RARE,
-  ULTRA_RARE
+export class MysteryEncounterFlags {
+  encounteredEvents: number[];
+
+  constructor(encounteredEvents?: number[]) {
+    this.encounteredEvents = encounteredEvents;
+  }
 }
 
 export class EncounterRequirements {
@@ -121,11 +128,20 @@ function internalMeetsRequirements(scene: BattleScene, requirements: EncounterRe
 export class MysteryEncounterOption {
   requirements?: EncounterRequirements;
   label: string;
-  onSelect: (scene: BattleScene) => Promise<void | boolean>;
-  chanceForOption: number; // between 0 and 100
 
-  constructor(onSelect: (scene: BattleScene) => Promise<void | boolean>, chanceForOption: number = 100,  requirements?: EncounterRequirements) {
+  // Executes before any following dialogue or business logic from option. Cannot be async. Usually this will be for calculating dialogueTokens or performing data updates
+  onPreSelect: (scene: BattleScene) => void | boolean;
+
+  // Business logic for option
+  onSelect: (scene: BattleScene) => Promise<void | boolean>;
+
+  // Executes after the encounter is over. Cannot be async. Usually this will be for calculating dialogueTokens or performing data updates
+  onPostSelect: (scene: BattleScene) => void | boolean;
+
+  constructor(onSelect: (scene: BattleScene) => Promise<void | boolean>, onPreSelect?: (scene: BattleScene) => void | boolean, onPostSelect?: (scene: BattleScene) => void | boolean, requirements?: EncounterRequirements) {
     this.onSelect = onSelect;
+    this.onPreSelect = onPreSelect;
+    this.onPostSelect = onPostSelect;
     this.requirements = requirements;
   }
 
@@ -140,14 +156,28 @@ export class MysteryEncounterOption {
 export default abstract class MysteryEncounter {
   options: MysteryEncounterOption[] = [];
   encounterType: MysteryEncounterType;
-  encounterIndex: number = 0;
+  encounterTier: MysteryEncounterTier;
+  dialogue: EncounterDialogue;
   encounterRequirements: EncounterRequirements;
   introVisuals: MysteryEncounterIntroVisuals;
+  spriteConfigs: MysteryEncounterSpriteConfig[];
   doEncounterRewards: (scene: BattleScene) => boolean = null;
+  dialogueTokens: [RegExp, string][] = [];
+
+  // Flags
+  encounterVariant: MysteryEncounterVariant = MysteryEncounterVariant.DEFAULT; // Should be set depending upon option selected
+  lockEncounterRewardTiers: boolean = true; // Flag to check if first time item shop is being shown for encounter. Will be set to false after shop is shown (so can't reroll same rarity items)
   didBattle: boolean = true; // If no battle occurred during mysteryEncounter, flag should be set to false
 
-  constructor(encounterType: MysteryEncounterType) {
+  constructor(encounterType: MysteryEncounterType, encounterTier: MysteryEncounterTier = MysteryEncounterTier.COMMON) {
     this.encounterType = encounterType;
+    this.encounterTier = encounterTier;
+    this.dialogue = allMysteryEncounterDialogue[this.encounterType];
+  }
+
+  introVisualsConfig(spriteConfigs: MysteryEncounterSpriteConfig[]): MysteryEncounter {
+    this.spriteConfigs = spriteConfigs;
+    return this;
   }
 
   requirements<T extends EncounterRequirements>(encounterRequirements: T): MysteryEncounter {
@@ -155,15 +185,10 @@ export default abstract class MysteryEncounter {
     return this;
   }
 
-  option<T extends EncounterRequirements>(onSelect: (scene: BattleScene) => Promise<void | boolean>, chanceForOption: number = 100, optionRequirements?: T): MysteryEncounter {
-    const option = new MysteryEncounterOption(onSelect, chanceForOption, optionRequirements);
+  option<T extends EncounterRequirements>(onSelect: (scene: BattleScene) => Promise<void | boolean>, onPreSelect?: (scene: BattleScene) => void | boolean, onPostSelect?: (scene: BattleScene) => void | boolean, optionRequirements?: T): MysteryEncounter {
+    const option = new MysteryEncounterOption(onSelect, onPreSelect, onPostSelect, optionRequirements);
     this.options.push(option);
 
-    return this;
-  }
-
-  index(index: number): MysteryEncounter {
-    this.encounterIndex = index;
     return this;
   }
 
@@ -172,16 +197,16 @@ export default abstract class MysteryEncounter {
     return this;
   }
 
-  getMysteryEncounterIndex(): number {
-    return this.encounterIndex;
-  }
-
   getMysteryEncounterOptions(): MysteryEncounterOption[] {
     return this.options;
   }
 
   meetsRequirements(scene: BattleScene) {
     return internalMeetsRequirements(scene, this.encounterRequirements);
+  }
+
+  initIntroVisuals(scene: BattleScene) {
+    this.introVisuals = new MysteryEncounterIntroVisuals(scene, this);
   }
 }
 
@@ -197,12 +222,6 @@ export default interface MysteryEncounter {
   options: MysteryEncounterOption[];
 }
 
-export class BattleMysteryEncounter extends MysteryEncounter {
-  constructor(encounterType: MysteryEncounterType) {
-    super(encounterType);
-  }
-}
-
 export class OptionSelectMysteryEncounter extends MysteryEncounter {
   constructor(encounterType: MysteryEncounterType) {
     super(encounterType);
@@ -214,14 +233,12 @@ export interface MysteryEncounterWrapper {
   get(): MysteryEncounter;
 }
 
-let t = 0;
-
 export const allMysteryEncounters: MysteryEncounter[] = [];
 
 export function initMysteryEncounters() {
   allMysteryEncounters.push(
-    new MysteriousTrainersEncounter().get().index(0),
-    // PLACEHOLDER, needs to be moved to /data/myster-encounters/
-    new OptionSelectMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHEST).index(++t)
+    new MysteriousChallengersEncounter().get(),
+    new MysteriousChestEncounter().get(),
+    new DarkDealEncounter().get()
   );
 }

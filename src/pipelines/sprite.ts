@@ -4,7 +4,7 @@ import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";
 import FieldSpritePipeline from "./field-sprite";
 import * as Utils from "../utils";
-import MysteryEncounterIntroVisuals from "../field/mystery-encounter";
+import MysteryEncounterIntroVisuals from "../field/mystery-encounter-intro";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
