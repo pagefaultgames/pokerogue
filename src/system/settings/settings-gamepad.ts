@@ -1,10 +1,9 @@
-import BattleScene from "../battle-scene";
-import {SettingDefaults, SettingOptions} from "./settings";
-import SettingsGamepadUiHandler from "../ui/settings/settings-gamepad-ui-handler";
-import {Mode} from "../ui/ui";
-import {truncateString} from "../utils";
-import {Button} from "../enums/buttons";
-import {SettingKeyboard} from "#app/system/settings-keyboard";
+import BattleScene from "../../battle-scene";
+import SettingsGamepadUiHandler from "../../ui/settings/settings-gamepad-ui-handler";
+import {Mode} from "../../ui/ui";
+import {truncateString} from "../../utils";
+import {Button} from "../../enums/buttons";
+import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 
 export enum SettingGamepad {
     Controller = "CONTROLLER",
@@ -28,29 +27,31 @@ export enum SettingGamepad {
     Button_Submit = "BUTTON_SUBMIT",
 }
 
-export const settingGamepadOptions: SettingOptions = {
+const pressAction = "Press action to assign";
+
+export const settingGamepadOptions = {
   [SettingGamepad.Controller]: ["Default", "Change"],
   [SettingGamepad.Gamepad_Support]: ["Auto", "Disabled"],
-  [SettingGamepad.Button_Up]: [`KEY ${Button.UP.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Down]: [`KEY ${Button.DOWN.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Left]: [`KEY ${Button.LEFT.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Right]: [`KEY ${Button.RIGHT.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Stats]: [`KEY ${Button.STATS.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.V.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, "Press action to assign"],
-  [SettingGamepad.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, "Press action to assign"],
+  [SettingGamepad.Button_Up]: [`KEY ${Button.UP.toString()}`, pressAction],
+  [SettingGamepad.Button_Down]: [`KEY ${Button.DOWN.toString()}`, pressAction],
+  [SettingGamepad.Button_Left]: [`KEY ${Button.LEFT.toString()}`, pressAction],
+  [SettingGamepad.Button_Right]: [`KEY ${Button.RIGHT.toString()}`, pressAction],
+  [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, pressAction],
+  [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, pressAction],
+  [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, pressAction],
+  [SettingGamepad.Button_Stats]: [`KEY ${Button.STATS.toString()}`, pressAction],
+  [SettingGamepad.Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
+  [SettingGamepad.Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
+  [SettingGamepad.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, pressAction],
+  [SettingGamepad.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction],
+  [SettingGamepad.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, pressAction],
+  [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.V.toString()}`, pressAction],
+  [SettingGamepad.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, pressAction],
+  [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, pressAction],
+  [SettingGamepad.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, pressAction],
 };
 
-export const settingGamepadDefaults: SettingDefaults = {
+export const settingGamepadDefaults = {
   [SettingGamepad.Controller]: 0,
   [SettingGamepad.Gamepad_Support]: 0,
   [SettingGamepad.Button_Up]: 0,
