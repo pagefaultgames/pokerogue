@@ -1986,7 +1986,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonFormText.setText(i18next.t(`pokemonInfo:Type.${formText?.join("").toUpperCase()}`));
           break;
         default:
-          this.pokemonFormText.setText(formText?.join("") ? i18next.t(`pokemonForm:${speciesName.join("")}${formText?.join("")}`) : "");
+          this.pokemonFormText.setText(formText?.join("") ? i18next.t(`pokemonForm:${speciesName.join("")}${formText.join("")}`) : "");
           break;
         }
 
