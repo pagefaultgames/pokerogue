@@ -468,4 +468,22 @@ export function reverseValueToKeySetting(input) {
   return capitalizedWords.join("_");
 }
 
+/**
+ * Attempts to fetch the server time asynchronously
+ * @returns {Promise<integer>} A promise that resolves to the time in milliseconds
+ */
+export async function fetchServerTime(): Promise<integer> {
+  try {
+    // Fetch the server time data from the API
+    const response = await fetch("http://worldtimeapi.org/api/ip");
+    const data = await response.json();
 
+    // Return the server time in milliseconds
+    return new Date(data.utc_datetime).getTime();
+  } catch (error) {
+    console.warn("Error fetching server time, using system time instead.", error.message);
+
+    // Fallback to local time if server time is not available
+    return Date.now();
+  }
+}

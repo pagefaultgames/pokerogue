@@ -11,6 +11,7 @@ import { Tutorial, handleTutorial } from "../tutorial";
 import { EggTier } from "../data/enums/egg-type";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
+import { fetchServerTime } from "../utils";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
@@ -499,12 +500,15 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   updateGachaInfo(gachaType: GachaType): void {
     const infoContainer = this.gachaInfoContainers[gachaType];
-    switch (gachaType as GachaType) {
-    case GachaType.LEGENDARY:
-      const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.scene, new Date().getTime()));
-      const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
-      pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
-      break;
+
+    if (gachaType === GachaType.LEGENDARY) {
+      fetchServerTime().then(res => {
+        const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.scene, res));
+        const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
+        pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
+      }).catch(error => {
+        console.error(error);
+      });
     }
   }
 
