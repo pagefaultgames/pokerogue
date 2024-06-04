@@ -1,0 +1,79 @@
+name: Translate
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  # Trigger the workflow on push on the main branch
+  push:
+    branches:
+      - main  # Trigger on push events to the main branch
+jobs:
+  translate:  # Define a job named "translate"
+    name: Translate missing keys  # Human-readable name for the job
+    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
+
+    steps:
+      - name: Check out Git repository  # Step to check out the repository
+        uses: actions/checkout@v2  # Use the checkout action version 2
+
+      - name: Set up Node.js  # Step to set up Node.js environment
+        uses: actions/setup-node@v1  # Use the setup-node action version 1
+        with:
+          node-version: 20  # Specify Node.js version 20
+
+      - name: Install Node.js dependencies  # Step to install Node.js dependencies
+        run: npm ci  # Use 'npm ci' to install dependencies
+
+      - name: Sync config.ts  # Step to sync config.ts for every language
+        run: |
+          config_content=$(cat src/locales/en/config.ts)
+          for directory in $(ls -d src/locales/*); do
+            if [ $directory != "src/locales/en" ]
+            then
+              echo "Copying config.ts to $directory"
+              echo "$config_content" > $directory/config.ts
+            fi
+          done
+      - name: Generate missing namespaces  # Step to generate template for missing namespaces
+        run: |
+          for file in $(ls src/locales/en); do
+            if [ $file == "config.ts" ]; then
+              continue
+            fi
+
+            template_content=$(cat src/locales/en/$file | sed -z 's/export const \([a-zA-Z0-9_]\+\): \([a-zA-Z0-9_]\+\) = {[^;]*}/export const \1: \2 = {}/g')
+
+            for directory in $(ls -d src/locales/*)
+            do
+              if [ $directory == "src/locales/en" ]; then
+                continue
+              fi
+
+              if [ ! -f $directory/$file ]; then
+                echo "Creating $directory/$file"
+                echo "$template_content" > $directory/$file
+              fi
+            done
+          done
+      - name: Translate missing keys  # Step to translate missing keys
+        run: npx tsx scripts/translate/main.ts
+        env:
+          DEEPL_API_KEYS: ${{ secrets.DEEPL_API_KEYS }}
+      - name: Run eslint on raw results  # Step to run eslint on raw results
+        run: |
+          mkdir -p tmp
+          cp eslint.config.js tmp/eslint.config.js
+          cp scripts/translate/eslint.config.js eslint.config.js
+          npx eslint --fix src/locales/*
+          cp tmp/eslint.config.js eslint.config.js
+          rm -rf tmp
+          npx eslint --fix src/locales/*
+      - name: Commit changes  # Step to commit changes
+        run: |
+          git config --global user.email "translation@pokerogue.com"
+          git config --global user.name "TR-BOT"
+          git add src/locales
+          git commit -m "[TR-BOT] Translate missing keys"
+          git push
+
+
