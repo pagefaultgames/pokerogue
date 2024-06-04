@@ -1992,7 +1992,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
           (args[0] as Utils.BooleanHolder).value = true;
           user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace("{TARGET}", target.name)}`));
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, target.getBattlerIndex());
+          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, false, target.getBattlerIndex());
 
           resolve(true);
         });
@@ -4021,6 +4021,55 @@ export class RemoveScreensAttr extends MoveEffectAttr {
 
   }
 }
+
+/*Swaps arena effects between the player and enemy side
+  * @extends MoveEffectAttr
+  * @see {@linkcode apply}
+*/
+export class SwapArenaTagsAttr extends MoveEffectAttr {
+  public ArenaTags: ArenaTagType[];
+
+
+  constructor() {
+    super(true, MoveEffectTrigger.POST_APPLY);
+  }
+
+  apply(user:Pokemon, target:Pokemon, move:Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+    const swapTags = [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.MIST, ArenaTagType.REFLECT, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TAILWIND, ArenaTagType.TOXIC_SPIKES];
+
+    for (const swapTagType of swapTags) {
+
+      const tagPlayerTemp = user.scene.arena.getTagOnSide(swapTagType, ArenaTagSide.PLAYER);
+      const tagEnemyTemp = user.scene.arena.getTagOnSide(swapTagType, ArenaTagSide.ENEMY);
+
+      if (tagPlayerTemp) {
+        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.PLAYER, true);
+        user.scene.arena.addTag(tagPlayerTemp.tagType, tagPlayerTemp.turnCount, tagPlayerTemp.sourceMove, tagPlayerTemp.sourceId, ArenaTagSide.ENEMY, true);
+      }
+      if (tagEnemyTemp) {
+        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.ENEMY, true);
+        user.scene.arena.addTag(tagEnemyTemp.tagType, tagEnemyTemp.turnCount, tagEnemyTemp.sourceMove, tagEnemyTemp.sourceId, ArenaTagSide.PLAYER, true);
+      }
+
+      if (tagEnemyTemp && tagPlayerTemp) {
+
+        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.PLAYER, true);
+        user.scene.arena.addTag(tagPlayerTemp.tagType, tagPlayerTemp.turnCount, tagPlayerTemp.sourceMove, tagPlayerTemp.sourceId, ArenaTagSide.ENEMY, true);
+
+        user.scene.arena.removeTagOnSide(swapTagType, ArenaTagSide.ENEMY, true);
+        user.scene.arena.addTag(tagEnemyTemp.tagType, tagEnemyTemp.turnCount, tagEnemyTemp.sourceMove, tagEnemyTemp.sourceId, ArenaTagSide.PLAYER, true);
+      }
+
+    }
+
+    user.scene.queueMessage( `${user.name} swapped the battle effects affecting each side of the field!`);
+    return true;
+  }
+}
+
 /**
  * Attribute used for Revival Blessing.
  * @extends MoveEffectAttr
@@ -7253,9 +7302,7 @@ export function initMoves() {
       .attr(FirstAttackDoublePowerAttr)
       .bitingMove(),
     new StatusMove(Moves.COURT_CHANGE, Type.NORMAL, 100, 10, -1, 0, 8)
-      .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
-    /* Unused */
+      .attr(SwapArenaTagsAttr),
     new AttackMove(Moves.MAX_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented()
