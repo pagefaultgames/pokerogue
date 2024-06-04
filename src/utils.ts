@@ -318,8 +318,8 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
   });
 }
 
-/** Get the type of a class from its definition */
-export type OfType<T> = new(...args: unknown[]) => T;
+/** Alias for the constructor of a class */
+export type Constructor<T> = new(...args: unknown[]) => T;
 
 export class BooleanHolder {
   public value: boolean;
