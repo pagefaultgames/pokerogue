@@ -117,16 +117,16 @@ export class UiInputs {
     for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
       p.toggleStats(pressed);
     }
-
-    this.scene.ui.processStats(pressed);
   }
   buttonInfo(pressed: boolean = true): void {
-    if (!this.scene.showMovesetFlyout) {
-      return;
+    if (this.scene.showMovesetFlyout ) {
+      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+        p.toggleFlyout(pressed);
+      }
     }
 
-    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-      p.toggleFlyout(pressed);
+    if (this.scene.showArenaFlyout) {
+      this.scene.ui.processInfoButton(pressed);
     }
   }
 

@@ -93,6 +93,7 @@ export default class BattleScene extends SceneBase {
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
   public showMovesetFlyout: boolean = true;
+  public showArenaFlyout: boolean = true;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
@@ -1282,7 +1283,7 @@ export default class BattleScene extends SceneBase {
   moveBelowOverlay<T extends Phaser.GameObjects.GameObject>(gameObject: T) {
     this.fieldUI.moveBelow<any>(gameObject, this.fieldOverlay);
   }
-  processStats(pressed: boolean): void {
+  processInfoButton(pressed: boolean): void {
     this.arenaFlyout.toggleFlyout(pressed);
   }
 

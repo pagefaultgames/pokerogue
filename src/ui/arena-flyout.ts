@@ -116,6 +116,8 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutContainer.add(this.flyoutTextHeader);
 
     this.timeOfDayIcon = this.scene.add.sprite((this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2), 0, "dawn_icon").setOrigin();
+    this.timeOfDayIcon.setVisible(false);
+
     this.flyoutContainer.add(this.timeOfDayIcon);
 
     this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, "Player", TextStyle.SUMMARY_BLUE);

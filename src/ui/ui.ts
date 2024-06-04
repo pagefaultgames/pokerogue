@@ -222,18 +222,18 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.handlers[Mode.MESSAGE] as BattleMessageUiHandler;
   }
 
-  processStats(pressed: boolean) {
+  processInfoButton(pressed: boolean) {
     if (this.overlayActive) {
       return false;
     }
 
     const battleScene = this.scene as BattleScene;
     if ([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
-      battleScene?.processStats(pressed);
+      battleScene?.processInfoButton(pressed);
       return true;
     }
 
-    battleScene?.processStats(false);
+    battleScene?.processInfoButton(false);
     return true;
   }
 
