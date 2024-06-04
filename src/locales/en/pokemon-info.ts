@@ -40,9 +40,9 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "STELLAR": "Stellar",
   },
   Move: {
-    "EFFECT_POWER": "Power",
-    "EFFECT_ACCURACY": "Accuracy",
-    "EFFECT_CATEGORY": "Category",
-    "EFFECT_PP": "PP"
+    "POWER": "Power",
+    "ACCURACY": "Accuracy",
+    "CATEGORY": "Category",
+    "PP": "PP"
   }
 } as const;

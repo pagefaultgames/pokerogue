@@ -46,7 +46,7 @@ export default class FightUiHandler extends UiHandler {
     this.ppLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
     this.ppLabel.setOrigin(0.0, 0.5);
     this.ppLabel.setVisible(false);
-    this.ppLabel.setText(i18next.t("pokemonInfo:Move.EFFECT_PP"));
+    this.ppLabel.setText(i18next.t("pokemonInfo:Move.PP"));
     ui.add(this.ppLabel);
 
     this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
@@ -57,7 +57,7 @@ export default class FightUiHandler extends UiHandler {
     this.powerLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
     this.powerLabel.setOrigin(0.0, 0.5);
     this.powerLabel.setVisible(false);
-    this.powerLabel.setText(i18next.t("pokemonInfo:Move.EFFECT_POWER"));
+    this.powerLabel.setText(i18next.t("pokemonInfo:Move.POWER"));
     ui.add(this.powerLabel);
 
     this.powerText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
@@ -68,7 +68,7 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
     this.accuracyLabel.setOrigin(0.0, 0.5);
     this.accuracyLabel.setVisible(false);
-    this.accuracyLabel.setText(i18next.t("pokemonInfo:Move.EFFECT_ACCURACY"));
+    this.accuracyLabel.setText(i18next.t("pokemonInfo:Move.ACCURACY"));
     ui.add(this.accuracyLabel);
 
     this.accuracyText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);

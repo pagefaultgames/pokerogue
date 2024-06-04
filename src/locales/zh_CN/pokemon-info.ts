@@ -40,8 +40,8 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
   },
 
   Move: {
-    "EFFECT_POWER": "威力",
-    "EFFECT_ACCURACY": "命中",
-    "EFFECT_PP": "PP"
+    "POWER": "威力",
+    "ACCURACY": "命中",
+    "PP": "PP"
   }
 } as const;

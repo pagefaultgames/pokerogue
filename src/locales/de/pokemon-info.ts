@@ -41,9 +41,9 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
   },
 
   Move: {
-    "EFFECT_POWER": "Stärke",
-    "EFFECT_ACCURACY": "Genauigkeit",
-    "EFFECT_CATEGORY": "Kategorie",
-    "EFFECT_PP": "AP"
+    "POWER": "Stärke",
+    "ACCURACY": "Genauigkeit",
+    "CATEGORY": "Kategorie",
+    "PP": "AP"
   }
 } as const;

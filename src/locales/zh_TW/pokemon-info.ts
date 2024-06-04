@@ -39,8 +39,8 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "STELLAR": "星晶"
   },
   Move: {
-    "EFFECT_POWER": "威力",
-    "EFFECT_ACCURACY": "命中率",
-    "EFFECT_PP": "PP"
+    "POWER": "威力",
+    "ACCURACY": "命中率",
+    "PP": "PP"
   }
 } as const;
