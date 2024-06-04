@@ -115,6 +115,8 @@ export default class BattleScene extends SceneBase {
   public musicPreference: integer = 0;
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
+  public skipSeenDialogues: boolean = false;
+
   /**
 	 * Defines the experience gain display mode.
 	 *
