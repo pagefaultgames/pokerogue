@@ -48,6 +48,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "{{natureName}} Mint",
       description: "Changes a Pokémon's nature to {{natureName}} and permanently unlocks the nature for the starter.",
     },
+    "PokemonAbilityChangeModifierType": {
+      "name": "Ability Capsule",
+      "description": "A capsule that allows a Pokémon to switch its current Ability to the other Ability its species can have."
+    },
     "DoubleBattleChanceBoosterModifierType": {
       description: "Doubles the chance of an encounter being a double battle for {{battleCount}} battles",
     },

@@ -48,6 +48,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "Menta {{natureName}}",
       description: "Cambia la naturaleza de un Pokémon a {{natureName}} y desbloquea permanentemente dicha naturaleza para el inicial",
     },
+    "PokemonAbilityChangeModifierType": {
+      "name": "Ability Capsule",
+      "description": "A capsule that allows a Pokémon to switch its current Ability to the other Ability its species can have."
+    },
     "DoubleBattleChanceBoosterModifierType": {
       description: "Duplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates",
     },

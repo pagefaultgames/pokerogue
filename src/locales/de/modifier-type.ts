@@ -48,6 +48,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "{{natureName}} Minze",
       description: "Ändert das Wesen zu {{natureName}}. Schaltet dieses Wesen permanent für diesen Starter frei.",
     },
+    "PokemonAbilityChangeModifierType": {
+      "name": "Ability Capsule",
+      "description": "A capsule that allows a Pokémon to switch its current Ability to the other Ability its species can have."
+    },
     "DoubleBattleChanceBoosterModifierType": {
       description: "Verdoppelt die Wahrscheinlichkeit, dass die nächsten {{battleCount}} Begegnungen mit wilden Pokémon ein Doppelkampf sind.",
     },

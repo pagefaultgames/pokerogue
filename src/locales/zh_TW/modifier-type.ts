@@ -48,6 +48,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description:
                 "將一隻寶可夢的性格改爲{{natureName}}併爲該寶可\n夢永久解鎖該性格.",
     },
+    PokemonAbilityChangeModifierType: {
+      "name": "Ability Capsule",
+      "description": "A capsule that allows a Pokémon to switch its current Ability to the other Ability its species can have."
+    },
     DoubleBattleChanceBoosterModifierType: {
       description: "接下來的{{battleCount}}場戰鬥是雙打的概率翻倍",
     },

@@ -397,6 +397,26 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
   }
 }
 
+export class PokemonAbilityChangeModifierType extends PokemonModifierType {
+  constructor() {
+    super("", "ability_capsule", ((_type, args) => new Modifiers.PokemonAbilityChangeModifier(this, (args[0] as PlayerPokemon).id)),
+      ((pokemon: PlayerPokemon) => {
+        if (pokemon.abilityIndex === 0 && pokemon.species.ability2 === Abilities.NONE) {
+          return PartyUiHandler.NoEffectMessage;
+        }
+        return null;
+      }), "ability");
+  }
+
+  get name(): string {
+    return i18next.t("modifierType:ModifierType.PokemonAbilityChangeModifierType.name");
+  }
+
+  getDescription(scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.PokemonAbilityChangeModifierType.description");
+  }
+}
+
 export class RememberMoveModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, group?: string) {
     super(localeKey, iconImage, (type, args) => new Modifiers.RememberMoveModifier(type, (args[0] as PlayerPokemon).id, (args[1] as integer)),
@@ -1105,6 +1125,10 @@ export const modifierTypes = {
     return new PokemonNatureChangeModifierType(Utils.randSeedInt(Utils.getEnumValues(Nature).length) as Nature);
   }),
 
+  ABILITY_CAPSULE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    return new PokemonAbilityChangeModifierType();
+  }),
+
   TERA_SHARD: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
       return new TerastallizeModifierType(pregenArgs[0] as Type);
@@ -1373,6 +1397,12 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 8),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
+    new WeightedModifierType(modifierTypes.ABILITY_CAPSULE, (party: Pokemon[]) => {
+      // Capsule is not useable if you are on ability1 with no ability2
+      const usable = party.some(pokemon => !(pokemon.abilityIndex === 0 && pokemon.species.ability2 === Abilities.NONE));
+      console.log(usable);
+      return usable ? 4 : 0;
+    }),
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 6),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),

@@ -48,6 +48,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "{{natureName}}민트",
       description: "포켓몬의 성격을 {{natureName}}(으)로 바꾸고 스타팅에도 등록한다.",
     },
+    "PokemonAbilityChangeModifierType": {
+      "name": "Ability Capsule",
+      "description": "A capsule that allows a Pokémon to switch its current Ability to the other Ability its species can have."
+    },
     "DoubleBattleChanceBoosterModifierType": {
       description: "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률 두 배",
     },

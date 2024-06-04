@@ -21,6 +21,7 @@ import { Nature } from "#app/data/nature";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
+import { Abilities } from "#app/data/enums/abilities.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -1229,6 +1230,41 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
     while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
       speciesId = pokemonPrevolutions[speciesId];
       pokemon.scene.gameData.dexData[speciesId].natureAttr |= Math.pow(2, this.nature + 1);
+    }
+
+    return true;
+  }
+}
+
+export class PokemonAbilityChangeModifier extends ConsumablePokemonModifier {
+
+  constructor(type: ModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    let newAbilityIndex = 0;
+    if (pokemon.abilityIndex === 2) {
+      const maxAbilityIndex = pokemon.species.ability2 !== Abilities.NONE ? 2 : 1;
+      newAbilityIndex = Utils.randIntRange(0, maxAbilityIndex);
+    } else if (pokemon.abilityIndex === 0) {
+      newAbilityIndex = 1;
+    } else {
+      newAbilityIndex = 0;
+    }
+    pokemon.abilityIndex = newAbilityIndex;
+    let speciesId = pokemon.species.speciesId;
+
+    if (pokemon.scene.gameData.starterData[speciesId]?.abilityAttr) {
+      pokemon.scene.gameData.starterData[speciesId].abilityAttr |= Math.pow(2, newAbilityIndex);
+    }
+
+    while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
+      speciesId = pokemonPrevolutions[speciesId];
+      if (pokemon.scene.gameData.starterData[speciesId]?.abilityAttr) {
+        pokemon.scene.gameData.starterData[speciesId].abilityAttr |= Math.pow(2, newAbilityIndex);
+      }
     }
 
     return true;

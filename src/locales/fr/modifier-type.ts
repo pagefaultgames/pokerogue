@@ -48,6 +48,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "Aromate {{natureName}}",
 	  description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
     },
+    "PokemonAbilityChangeModifierType": {
+      "name": "Ability Capsule",
+      "description": "A capsule that allows a Pokémon to switch its current Ability to the other Ability its species can have."
+    },
     "DoubleBattleChanceBoosterModifierType": {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
     },
