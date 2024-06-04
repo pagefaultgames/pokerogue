@@ -6162,13 +6162,13 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.PSYCHO_SHIFT, Type.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => (user.status?.effect === StatusEffect.BURN
-        || user.status?.effect === StatusEffect.POISON
-        || user.status?.effect === StatusEffect.TOXIC
-        || user.status?.effect === StatusEffect.PARALYSIS
-        || user.status?.effect === StatusEffect.SLEEP
-        || user.hasAbility(Abilities.COMATOSE))
-        && target.canSetStatus(user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined), false, false, user)
+      .condition((user, target, move) => {
+        let statusToApply = user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined;
+        if (user.status?.effect && isNonVolatileStatusEffect(user.status.effect)) {
+          statusToApply = user.status.effect;
+        }
+        return statusToApply && target.canSetStatus(statusToApply, false, false, user);
+      }
       ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
