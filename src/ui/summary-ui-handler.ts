@@ -225,7 +225,7 @@ export default class SummaryUiHandler extends UiHandler {
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
 
-    const moveEffectLabels = addTextObject(this.scene, 8, 12, "Power\nAccuracy\nCategory", TextStyle.SUMMARY);
+    const moveEffectLabels = addTextObject(this.scene, 8, 12, `${i18next.t("pokemonInfo:Move.EFFECT_POWER")}\n${i18next.t("pokemonInfo:Move.EFFECT_ACCURACY")}\n${i18next.t("pokemonInfo:Move.EFFECT_CATEGORY")}`, TextStyle.SUMMARY);
     moveEffectLabels.setLineSpacing(9);
     moveEffectLabels.setOrigin(0, 0);
 

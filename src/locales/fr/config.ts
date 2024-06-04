@@ -17,7 +17,7 @@ import {
   PGMmiscDialogue
 } from "./dialogue";
 import { egg } from "./egg";
-import { fightUiHandler } from "./fight-ui-handler";
+
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
@@ -54,7 +54,6 @@ export const frConfig = {
   PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
-  fightUiHandler: fightUiHandler,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
   menu: menu,
