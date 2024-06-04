@@ -359,6 +359,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "I'll tune up for the next race."
     },
   },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
@@ -1203,8 +1215,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
@@ -1595,13 +1606,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -3873,13 +3884,13 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -4564,7 +4575,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
 			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
-  "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
+  "firstStageWin": `Je vois. Cette présence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
   "secondStageWin": "… Magnifique."
 };
@@ -4579,7 +4590,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
 			   $Tu es la seule présence ici, bien que j’ai le sentiment d’en ressentir… une autre.
 			   $Vas-tu enfin me livrer un affrontement digne de ce nom ?\nCe challenge dont je rêve depuis un millénaire ?
                $Commençons.`,
-  "firstStageWin": `Je vois. Cette précence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
+  "firstStageWin": `Je vois. Cette présence était bien réelle.\nJe n’ai donc plus besoin de retenir mes coups.
                     $Ne me déçoit pas.`,
   "secondStageWin": "… Magnifique."
 };

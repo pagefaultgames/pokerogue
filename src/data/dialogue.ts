@@ -9,14 +9,14 @@ export interface TrainerTypeMessages {
 }
 
 export interface TrainerTypeDialogue {
-    [key: integer]: TrainerTypeMessages | [TrainerTypeMessages, TrainerTypeMessages]
+    [key: integer]: TrainerTypeMessages | Array<TrainerTypeMessages>
 }
 
 export function getTrainerTypeDialogue(): TrainerTypeDialogue {
   return trainerTypeDialogue;
 }
 
-export const trainerTypeDialogue = {
+export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.YOUNGSTER]: [
     {
       encounter: [
@@ -250,7 +250,7 @@ export const trainerTypeDialogue = {
         "dialogue:battle_girl.encounter.1",
       ],
       victory: [
-        "dialogue.battle_girl.victory.1",
+        "dialogue:battle_girl.victory.1",
       ]
     }
   ],
@@ -418,6 +418,20 @@ export const trainerTypeDialogue = {
       ],
       victory: [
         "dialogue:biker.victory.1",
+      ]
+    }
+  ],
+  [TrainerType.FIREBREATHER]: [
+    {
+      encounter: [
+        "dialogue:firebreather.encounter.1",
+        "dialogue:firebreather.encounter.2",
+        "dialogue:firebreather.encounter.3",
+      ],
+      victory: [
+        "dialogue:firebreather.victory.1",
+        "dialogue:firebreather.victory.2",
+        "dialogue:firebreather.victory.3",
       ]
     }
   ],
