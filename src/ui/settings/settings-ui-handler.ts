@@ -13,7 +13,7 @@ export default class SettingsUiHandler extends AbstractSettingsUiHandler {
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
     this.title = "General";
-    this.settings = Setting.filter(s => s.type === SettingType.GENERAL);
+    this.settings = Setting.filter(s => s.type === SettingType.GENERAL && !s.hidden?.());
     this.localStorageKey = "settings";
   }
 }

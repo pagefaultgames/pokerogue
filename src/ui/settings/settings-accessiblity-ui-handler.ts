@@ -14,7 +14,7 @@ export default class SettingsAccessibilityUiHandler extends AbstractSettingsUiHa
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
     this.title = "Accessibility";
-    this.settings = Setting.filter(s => s.type === SettingType.ACCESSIBILITY);
+    this.settings = Setting.filter(s => s.type === SettingType.ACCESSIBILITY && !s.hidden?.());
     this.localStorageKey = "settings";
   }
 }

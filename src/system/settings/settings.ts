@@ -28,7 +28,10 @@ export interface Setting {
   default: number
   type: SettingType
   requireReload?: boolean
+  /** Whether the setting can be activated or not */
   activatable?: boolean
+  /** Determines whether the setting should be hidden from the UI */
+  hidden?: () => boolean
 }
 
 /**
@@ -269,7 +272,8 @@ export const Setting: Array<Setting> = [
     options: ["Configure"],
     default: 0,
     type: SettingType.ACCESSIBILITY,
-    activatable: true
+    activatable: true,
+    hidden: () => !hasTouchscreen()
   }
 ];
 

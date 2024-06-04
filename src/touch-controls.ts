@@ -71,6 +71,7 @@ export function isMobile(): boolean {
 
 /**
  * Simulates a keyboard event on the canvas.
+ * Will only simulate the event if the key exists in the Button enum and the controls are not disabled.
  *
  * @param eventType - The type of the keyboard event ('keydown' or 'keyup').
  * @param key - The key to simulate.

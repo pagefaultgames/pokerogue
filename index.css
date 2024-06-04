@@ -179,6 +179,7 @@ input:-internal-autofill-selected {
 .configToolbar .orientationLabel {
   font-size: var(--small-control-size);
   text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
+  user-select: none;
 }
 
 /* dpad */
