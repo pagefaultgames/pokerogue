@@ -53,4 +53,16 @@ declare module "phaser" {
 			setPositionRelative(guideObject: any, x: number, y: number): void;
 		}
 	}
+
+   namespace Input {
+    namespace Gamepad {
+      interface GamepadPlugin {
+        /**
+         * Refreshes the list of connected Gamepads.
+         * This is called automatically when a gamepad is connected or disconnected, and during the update loop.
+         */
+        refreshPads(): void;
+      }
+    }
+  }
 }
