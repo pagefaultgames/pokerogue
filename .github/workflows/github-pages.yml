@@ -53,6 +53,7 @@ jobs:
         working-directory: ${{env.api-dir}}
         run: |
           cd pokerogue_docs
+          rm -rf ./scripts
           npx typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
 
       - name: Commit & Push docs
