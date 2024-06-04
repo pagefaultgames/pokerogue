@@ -1341,7 +1341,7 @@ export class CursedTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4));
+        pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 4), 1));
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt by the ${this.getMoveName()}!`));
       }
     }
