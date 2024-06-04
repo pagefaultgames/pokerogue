@@ -1320,8 +1320,7 @@ export default class BattleScene extends SceneBase {
     let deltaScale = this.moneyText.scale * 0.1;
     if (positiveChange) {
       this.moneyText.setShadowColor("#008000");
-    }
-    else {
+    } else {
       this.moneyText.setShadowColor("#FF0000");
       deltaScale = -deltaScale;
     }
@@ -1331,7 +1330,7 @@ export default class BattleScene extends SceneBase {
       scale: this.moneyText.scale + deltaScale,
       loop: 0,
       yoyo: true,
-      onComplete: (_) => this.moneyText.setShadowColor(getTextColor(TextStyle.MONEY, true)), 
+      onComplete: (_) => this.moneyText.setShadowColor(getTextColor(TextStyle.MONEY, true)),
     });
   }
 
