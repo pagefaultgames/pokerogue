@@ -396,7 +396,7 @@ English itself counts as not available
 export function verifyLang(lang?: string): boolean {
   //IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
   if (!lang) {
-    lang = i18next.language;
+    lang = i18next.resolvedLanguage;
   }
 
   switch (lang) {

@@ -48,7 +48,7 @@ export const battle: SimpleTranslationEntries = {
   "noEscapeForce": "Uma força misteriosa\nte impede de fugir.",
   "noEscapeTrainer": "Não se pode fugir de\nbatalhas contra treinadores!",
   "noEscapePokemon": "O movimento {{moveName}} de {{pokemonName}} te impede de fugir!",
-  "runAwaySuccess": "Você fugiu com sucesso",
+  "runAwaySuccess": "Você fugiu com sucesso.",
   "runAwayCannotEscape": "Você nao conseguiu fugir!",
   "escapeVerbSwitch": "trocar",
   "escapeVerbFlee": "fugir",
@@ -59,6 +59,6 @@ export const battle: SimpleTranslationEntries = {
   "wildPokemonWithAffix": "Wild {{pokemonName}}",
   "foePokemonWithAffix": "Foe {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!",
-  "drainMessage": "{{pokemonName}} had its\nenergy drained!",
-  "regainHealth": "{{pokemonName}} regained\nhealth!"
+  "drainMessage": "{{pokemonName}} teve sua\nenergia drenada!",
+  "regainHealth": "{{pokemonName}} recuperou\npontos de saúde!"
 } as const;
