@@ -917,20 +917,20 @@ export const signatureSpecies: SignatureSpecies = {
   AMARYS: [Species.SKARMORY, Species.EMPOLEON, Species.SCIZOR, Species.METAGROSS],
   LACEY: [Species.EXCADRILL, Species.PRIMARINA, Species.ALCREMIE, Species.GALAR_SLOWBRO],
   DRAYTON: [Species.DRAGONITE, Species.ARCHALUDON, Species.FLYGON, Species.SCEPTILE],
-  BLUE: [[Species.GYARADOS, Species.EXEGGUTOR, Species.ARCANINE], Species.HO_OH, Species.ALAKAZAM, [Species.RHYPERIOR, Species.MAGNEZONE]],
-  RED: [Species.LUGIA, Species.SNORLAX, [Species.ESPEON, Species.UMBREON, Species.SYLVEON]],
-  LANCE_CHAMPION: [Species.DRAGONITE, Species.KINGDRA, Species.ALOLA_EXEGGUTOR, Species.AERODACTYL],
-  STEVEN: [Species.SKARMORY, Species.AGGRON, [Species.ARMALDO, Species.CRADILY], Species.DIALGA],
-  WALLACE: [Species.MILOTIC, Species.PALKIA, Species.WHISCASH, Species.LUDICOLO],
-  CYNTHIA: [Species.SPIRITOMB, Species.GIRATINA, Species.LUCARIO, Species.TOGEKISS],
-  ALDER: [Species.VOLCARONA, Species.ZEKROM, [Species.BOUFFALANT, Species.BRAVIARY], [Species.ACCELGOR, Species.ESCAVALIER], Species.KELDEO],
-  IRIS: [Species.HAXORUS, Species.RESHIRAM, Species.DRUDDIGON, Species.LAPRAS],
-  DIANTHA: [Species.HAWLUCHA, Species.XERNEAS, Species.GOURGEIST, Species.GOODRA],
-  HAU: [Species.ALOLA_RAICHU, [Species.SOLGALEO, Species.LUNALA], Species.NOIVERN, [Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA], [Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE]],
-  LEON: [Species.DRAGAPULT, [Species.ZACIAN, Species.ZAMAZENTA], Species.AEGISLASH, [Species.RILLABOOM, Species.INTELEON, Species.CINDERACE]],
-  GEETA: [Species.MIRAIDON, [Species.ESPATHRA, Species.VELUZA], [Species.AVALUGG, Species.HISUI_AVALUGG], Species.KINGAMBIT],
-  NEMONA: [Species.LYCANROC, Species.KORAIDON, Species.PAWMOT, [Species.DUDUNSPARCE, Species.ORTHWORM], [Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL]],
-  KIERAN: [[Species.POLITOED, Species.POLIWRATH], [Species.GRIMMSNARL, Species.INCINEROAR, Species.PORYGON_Z], Species.OGERPON, Species.TERAPAGOS, Species.HYDRAPPLE],
+  BLUE: [[Species.GYARADOS, Species.EXEGGUTOR, Species.ARCANINE], Species.HO_OH, [Species.RHYPERIOR, Species.MAGNEZONE]], // Alakazam lead, Mega Pidgeot
+  RED: [Species.LUGIA, Species.SNORLAX, [Species.ESPEON, Species.UMBREON, Species.SYLVEON]], // GMax Pikachu lead, Mega gen 1 starter
+  LANCE_CHAMPION: [Species.DRAGONITE, Species.KINGDRA, Species.ALOLA_EXEGGUTOR], // Aerodactyl lead, Mega Lati@s
+  STEVEN: [Species.AGGRON, [Species.ARMALDO, Species.CRADILY], Species.DIALGA], // Skarmorly lead, Mega Metagross
+  WALLACE: [Species.MILOTIC, Species.PALKIA, Species.LUDICOLO], // Pelipper lead, Mega Swampert
+  CYNTHIA: [Species.GIRATINA, Species.LUCARIO, Species.TOGEKISS], // Spiritomb lead, Mega Garchomp
+  ALDER: [Species.VOLCARONA, Species.ZEKROM, [Species.ACCELGOR, Species.ESCAVALIER], Species.KELDEO], // Bouffalant/Braviary lead
+  IRIS: [Species.HAXORUS, Species.RESHIRAM, Species.ARCHEOPS], // Druddigon lead, Gmax Lapras
+  DIANTHA: [Species.HAWLUCHA, Species.XERNEAS, Species.GOODRA], // Gourgeist lead, Mega Gardevoir
+  HAU: [[Species.SOLGALEO, Species.LUNALA], Species.NOIVERN, [Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA], [Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE]], // Alola Raichu lead
+  LEON: [Species.DRAGAPULT, [Species.ZACIAN, Species.ZAMAZENTA], Species.AEGISLASH], // Rillaboom/Cinderace/Inteleon lead
+  GEETA: [Species.MIRAIDON, [Species.ESPATHRA, Species.VELUZA], [Species.AVALUGG, Species.HISUI_AVALUGG], Species.KINGAMBIT], // Glimmora lead
+  NEMONA: [Species.KORAIDON, Species.PAWMOT, [Species.DUDUNSPARCE, Species.ORTHWORM], [Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL]], // Lycanroc lead
+  KIERAN: [[Species.GRIMMSNARL, Species.INCINEROAR, Species.PORYGON_Z], Species.OGERPON, Species.TERAPAGOS, Species.HYDRAPPLE], // Poliwrath/Politoed lead
 };
 
 export const trainerConfigs: TrainerConfigs = {
@@ -1213,7 +1213,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.DRAYTON]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["DRAYTON"],true, Type.DRAGON),
 
   [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion(signatureSpecies["BLUE"],true).setBattleBgm("battle_kanto_champion").setHasDouble("blue_red_double").setDoubleTrainerType(TrainerType.RED).setDoubleTitle("champion_double")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.PIDGEOT], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.ALAKAZAM], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.PIDGEOT], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1;
       p.generateAndPopulateMoveset();
     })),
@@ -1227,39 +1230,67 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
     })),
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion(signatureSpecies["LANCE_CHAMPION"],true).setBattleBgm("battle_johto_champion")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.LATIAS, Species.LATIOS], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.AERODACTYL], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.LATIAS, Species.LATIOS], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1;
       p.generateAndPopulateMoveset();
     })),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(signatureSpecies["STEVEN"],true).setBattleBgm("battle_hoenn_champion").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.METAGROSS], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.SKARMORY], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.METAGROSS], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1;
       p.generateAndPopulateMoveset();
     })),
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion(signatureSpecies["WALLACE"],true).setBattleBgm("battle_hoenn_champion").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.SWAMPERT], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.PELIPPER], TrainerSlot.TRAINER, true, p => {
+      p.abilityIndex = 1; // Drizzle
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.SWAMPERT], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1;
       p.generateAndPopulateMoveset();
     })),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(signatureSpecies["CYNTHIA"],false).setBattleBgm("battle_sinnoh_champion")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.GARCHOMP], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.SPIRITOMB], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.GARCHOMP], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1;
       p.generateAndPopulateMoveset();
     })),
-  [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(signatureSpecies["ALDER"],true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder"),
+  [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(signatureSpecies["ALDER"],true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder")
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.BOUFFALANT, Species.BRAVIARY], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    })),
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(signatureSpecies["IRIS"],false).setBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.AGGRON], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.DRUDDIGON], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.LAPRAS], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1;
       p.generateAndPopulateMoveset();
     })),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(signatureSpecies["DIANTHA"],false)
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.GARDEVOIR], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.GOURGEIST], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.GARDEVOIR], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1;
       p.generateAndPopulateMoveset();
     })),
-  [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(signatureSpecies["HAU"],true),
+  [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(signatureSpecies["HAU"],true)
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.ALOLA_RAICHU], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    })),
   [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"],true)
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.CHARIZARD], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.RILLABOOM, Species.CINDERACE, Species.INTELEON], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.CHARIZARD], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 3;
       p.generateAndPopulateMoveset();
     })),
@@ -1267,8 +1298,14 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.GLIMMORA], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     })),
-  [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(signatureSpecies["NEMONA"],false),
-  [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(signatureSpecies["KIERAN"],true),
+  [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(signatureSpecies["NEMONA"],false)
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.LYCANROC], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    })),
+  [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(signatureSpecies["KIERAN"],true)
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.POLIWRATH, Species.POLITOED], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    })),
 
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)
