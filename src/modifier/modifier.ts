@@ -2187,11 +2187,11 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     super(type, stackCount);
 
     this.effect = effect;
-    this.chance = (chancePercent || 10) / 100;
+    this.chance = (chancePercent || 5) / 100;
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect && modifier.chance === this.chance;
+    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect;
   }
 
   clone(): EnemyAttackStatusEffectChanceModifier {
@@ -2222,11 +2222,11 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 10) / 100;
+    this.chance = (chancePercent || 2.5) / 100;
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyStatusEffectHealChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyStatusEffectHealChanceModifier;
   }
 
   clone(): EnemyStatusEffectHealChanceModifier {
@@ -2264,7 +2264,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   }
 
   match(modifier: Modifier) {
-    return modifier instanceof EnemyEndureChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyEndureChanceModifier;
   }
 
   clone() {
