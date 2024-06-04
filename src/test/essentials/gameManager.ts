@@ -110,7 +110,8 @@ export default class GameManager {
       await this.phaseInterceptor.run(CheckSwitchPhase);
       await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
       await this.phaseInterceptor.run(PostSummonPhase);
-      await this.phaseInterceptor.run(ShowAbilityPhase, () => this.isCurrentPhase(TurnInitPhase));
+      await this.phaseInterceptor.run(ShowAbilityPhase, () => this.isCurrentPhase(PostSummonPhase) || this.isCurrentPhase(TurnInitPhase));
+      await this.phaseInterceptor.run(StatChangePhase, () => this.isCurrentPhase(MessagePhase) || this.isCurrentPhase(PostSummonPhase)|| this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.run(MessagePhase, () => this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.run(TurnInitPhase);

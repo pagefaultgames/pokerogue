@@ -40,16 +40,6 @@ describe("Abilities Test - onKill", () => {
   });
 
   beforeEach(() => {
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     game = new GameManager(phaserGame);
   });
 
@@ -84,7 +74,7 @@ describe("Abilities Test - onKill", () => {
     await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
     await game.phaseInterceptor.mustRun(MoveEffectPhase).catch((error) => expect(error).toBe(MoveEffectPhase));
     await game.phaseInterceptor.mustRun(DamagePhase).catch((error) => expect(error).toBe(DamagePhase));
-
+    await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(FaintPhase));
     await game.phaseInterceptor.mustRun(FaintPhase).catch((error) => expect(error).toBe(FaintPhase));
     await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
     await game.phaseInterceptor.mustRun(ShowAbilityPhase).catch((error) => expect(error).toBe(ShowAbilityPhase));
