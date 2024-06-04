@@ -7,20 +7,7 @@ import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
 import i18next from "../plugins/i18n";
-
-export enum BerryType {
-  SITRUS,
-  LUM,
-  ENIGMA,
-  LIECHI,
-  GANLON,
-  PETAYA,
-  APICOT,
-  SALAC,
-  LANSAT,
-  STARF,
-  LEPPA
-}
+import { BerryType } from "./enums/berry-type";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`berry:${BerryType[berryType]}.name`);

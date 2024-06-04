@@ -12,7 +12,8 @@ import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } fr
 import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
-import { BerryType, getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { BerryType } from "../data/enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
