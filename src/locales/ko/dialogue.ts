@@ -373,7 +373,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "내 전문인 단단한 포켓몬으로 널 쓰러뜨려줄게! 덤벼!",
+      1: "내 전문인 바위 타입 포켓몬으로 널 쓰러뜨려줄게! 덤벼!",
       2: "바위같은 의지로 널 압도하겠어!",
       3: "내 포켓몬의 진정한 힘을 보여줄게!"
     },
