@@ -77,8 +77,10 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate neutral effects */
   private flyoutTextField: Phaser.GameObjects.Text;
 
+  /** Container for all field effects observed by this object */
   private readonly fieldEffectInfo: ArenaEffectInfo[] = [];
 
+  // Stores callbacks in a variable so they can be unsubscribed from when destroyed
   private onNewArenaEvent =  (event: Event) => this.onNewArena(event);
   private onTurnInitEvent =  (event: Event) => this.onTurnInit(event);
   private onTurnEndEvent =   (event: Event) => this.onTurnEnd(event);
@@ -168,6 +170,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.name = "Fight Flyout";
     this.flyoutParent.name = "Fight Flyout Parent";
 
+    // Subscribes to required events available on game start
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.TURN_INIT, this.onTurnInitEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
@@ -184,6 +187,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
   private onNewArena(event: Event) {
     this.fieldEffectInfo.length = 0;
 
+    // Subscribes to required events available on battle start
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
@@ -192,6 +196,11 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.setTimeOfDayIcon();
   }
 
+  /**
+   * Formats a string to title case
+   * @param unformattedText Text to be formatted
+   * @returns the formatted string
+   */
   private formatText(unformattedText: string): string {
     const text = unformattedText.split("_");
     for (let i = 0; i < text.length; i++) {
@@ -201,13 +210,15 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     return text.join(" ");
   }
 
-  clearText() {
+  /** Clears out the current string stored in all arena effect texts */
+  private clearText() {
     this.flyoutTextPlayer.text = "";
     this.flyoutTextField.text = "";
     this.flyoutTextEnemy.text = "";
   }
 
-  updateFieldText() {
+  /** Parses through all set Arena Effects and puts them into the proper {@linkcode Phaser.GameObjects.Text} object */
+  private updateFieldText() {
     this.clearText();
 
     this.fieldEffectInfo.sort((infoA, infoB) => infoA.duration - infoB.duration);
@@ -215,6 +226,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.fieldEffectInfo.length; i++) {
       const fieldEffectInfo = this.fieldEffectInfo[i];
 
+      // Creates a proxy object to decide which text object needs to be updated
       let textObject: Phaser.GameObjects.Text;
       switch (fieldEffectInfo.type) {
       case ArenaEffectType.PLAYER:
@@ -235,7 +247,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
       textObject.text += this.formatText(fieldEffectInfo.name);
       if (fieldEffectInfo.type === ArenaEffectType.TERRAIN) {
-        textObject.text += " Terrain";
+        textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
       }
 
       if (fieldEffectInfo.maxDuration !== 0) {
@@ -246,6 +258,10 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * Parses the {@linkcode Event} being passed and updates the state of the fieldEffectInfo array
+   * @param event {@linkcode Event} being sent
+   */
   private onFieldEffectChanged(event: Event) {
     const arenaEffectChangedEvent = event as ArenaEvent;
     if (!arenaEffectChangedEvent) {
@@ -269,7 +285,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     case TagRemovedEvent:
       const tagRemovedEvent = arenaEffectChangedEvent as TagRemovedEvent;
       foundIndex = this.fieldEffectInfo.findIndex(info => info.name === ArenaTagType[tagRemovedEvent.arenaTagType]);
-      if (foundIndex !== -1) {
+      if (foundIndex !== -1) { // If the tag was being tracked, remove it
         this.fieldEffectInfo.splice(foundIndex, 1);
       }
       break;
@@ -278,10 +294,12 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     case TerrainChangedEvent:
       const fieldEffectChangedEvent = arenaEffectChangedEvent as WeatherChangedEvent | TerrainChangedEvent;
 
+      // Stores the old Weather/Terrain name in case it's in the array already
       const oldName =
       fieldEffectChangedEvent instanceof WeatherChangedEvent
         ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
         : TerrainType[fieldEffectChangedEvent.oldTerrainType];
+      // Stores the new Weather/Terrain info
       const newInfo = {
         name:
           fieldEffectChangedEvent instanceof WeatherChangedEvent
@@ -296,12 +314,12 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       foundIndex = this.fieldEffectInfo.findIndex(info => [newInfo.name, oldName].includes(info.name));
       if (foundIndex === -1) {
         if (newInfo.name !== undefined) {
-          this.fieldEffectInfo.push(newInfo);
+          this.fieldEffectInfo.push(newInfo); // Adds the info to the array if it doesn't already exist and is defined
         }
       } else if (!newInfo.name) {
-        this.fieldEffectInfo.splice(foundIndex, 1);
+        this.fieldEffectInfo.splice(foundIndex, 1); // Removes the old info if the new one is undefined
       } else {
-        this.fieldEffectInfo[foundIndex] = newInfo;
+        this.fieldEffectInfo[foundIndex] = newInfo; // Otherwise, replace the old info
       }
       break;
     }
@@ -309,6 +327,10 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.updateFieldText();
   }
 
+  /**
+   * Iterates through the fieldEffectInfo array and decrements the duration of each item
+   * @param event {@linkcode Event} being sent
+   */
   private onTurnEnd(event: Event) {
     const turnEndEvent = event as TurnEndEvent;
     if (!turnEndEvent) {
@@ -326,7 +348,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       }
 
       --info.duration;
-      if (info.duration <= 0) {
+      if (info.duration <= 0) { // Removes the item if the duration has expired
         this.fieldEffectInfo.splice(this.fieldEffectInfo.indexOf(info), 1);
       }
     }
@@ -334,6 +356,10 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.updateFieldText();
   }
 
+  /**
+   * Animates the flyout to either show or hide it by applying a fade and translation
+   * @param visible Should the flyout be shown?
+   */
   toggleFlyout(visible: boolean): void {
     this.scene.tweens.add({
       targets: this.flyoutParent,
