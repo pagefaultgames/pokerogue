@@ -3,10 +3,13 @@ import {Mode} from "./ui/ui";
 import {InputsController} from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
-import {Setting, settingOptions} from "./system/settings";
-import SettingsUiHandler from "./ui/settings-ui-handler";
+import {Setting, SettingKeys, settingIndex} from "./system/settings/settings";
+import SettingsUiHandler from "./ui/settings/settings-ui-handler";
 import {Button} from "./enums/buttons";
+import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
+import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
+import SettingsAccessibilityUiHandler from "./ui/settings/settings-accessiblity-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -66,7 +69,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
       [Button.CYCLE_ABILITY]:   () => this.buttonCycleOption(Button.CYCLE_ABILITY),
       [Button.CYCLE_NATURE]:    () => this.buttonCycleOption(Button.CYCLE_NATURE),
-      [Button.V]:   () => this.buttonCycleOption(Button.V),
+      [Button.V]:               () => this.buttonCycleOption(Button.V),
       [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
     };
@@ -116,12 +119,14 @@ export class UiInputs {
     }
   }
   buttonInfo(pressed: boolean = true): void {
-    if (!this.scene.showMovesetFlyout) {
-      return;
+    if (this.scene.showMovesetFlyout ) {
+      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+        p.toggleFlyout(pressed);
+      }
     }
 
-    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-      p.toggleFlyout(pressed);
+    if (this.scene.showArenaFlyout) {
+      this.scene.ui.processInfoButton(pressed);
     }
   }
 
@@ -159,7 +164,9 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    if (this.scene.ui?.getHandler() instanceof StarterSelectUiHandler) {
+    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsAccessibilityUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
+    const uiHandler = this.scene.ui?.getHandler();
+    if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
     } else if (button === Button.V) {
       this.buttonInfo(true);
@@ -167,17 +174,14 @@ export class UiInputs {
   }
 
   buttonSpeedChange(up = true): void {
-    if (up) {
-      if (this.scene.gameSpeed < 5) {
-        this.scene.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.scene.gameSpeed}x`) + 1);
-        if (this.scene.ui?.getMode() === Mode.SETTINGS) {
-          (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
-        }
+    const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
+    if (up && this.scene.gameSpeed < 5) {
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) + 1);
+      if (this.scene.ui?.getMode() === Mode.SETTINGS) {
+        (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }
-      return;
-    }
-    if (this.scene.gameSpeed > 1) {
-      this.scene.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.scene.gameSpeed}x`) - 1, 0));
+    } else if (!up && this.scene.gameSpeed > 1) {
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) - 1, 0));
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }

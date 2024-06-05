@@ -695,7 +695,7 @@ export default class SummaryUiHandler extends UiHandler {
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
         const xCoord = 39 + 34 * index;
         const typeIcon = !tera
-          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
+          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
           typeIcon.setScale(0.5);
           const typeRgb = getTypeRgb(type);
@@ -742,7 +742,7 @@ export default class SummaryUiHandler extends UiHandler {
         allAbilityInfo.push(this.passiveContainer);
 
         // Sets up the pixel button prompt image
-        this.abilityPrompt = this.scene.add.image(0, 0, !this.scene.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
+        this.abilityPrompt = this.scene.add.image(0, 0, !this.scene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
         this.abilityPrompt.setPosition(8, 43);
         this.abilityPrompt.setVisible(true);
         this.abilityPrompt.setOrigin(0, 0);
@@ -897,7 +897,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[this.newMove.type].toLowerCase());
+        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[this.newMove.type].toLowerCase());
         newMoveTypeIcon.setOrigin(0, 1);
         this.extraMoveRowContainer.add(newMoveTypeIcon);
 
@@ -920,7 +920,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveRowsContainer.add(moveRowContainer);
 
         if (move) {
-          const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
+          const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
         }
 
