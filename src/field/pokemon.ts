@@ -1281,7 +1281,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         variantDataIndex = `${variantDataIndex}-${formKey}`;
       }
     }
-    if (!this.shiny || !variantData.hasOwnProperty(variantDataIndex)) {
+    // Checks if there is no variant data for both the index or index with form
+    if (!this.shiny || (!variantData.hasOwnProperty(variantDataIndex) && !variantData.hasOwnProperty(this.species.speciesId))) {
       return 0;
     }
     const rand = Utils.randSeedInt(10);
