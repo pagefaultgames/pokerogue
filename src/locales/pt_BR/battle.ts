@@ -48,12 +48,14 @@ export const battle: SimpleTranslationEntries = {
   "noEscapeForce": "Uma força misteriosa\nte impede de fugir.",
   "noEscapeTrainer": "Não se pode fugir de\nbatalhas contra treinadores!",
   "noEscapePokemon": "O movimento {{moveName}} de {{pokemonName}} te impede de fugir!",
-  "runAwaySuccess": "Você fugiu com sucesso",
+  "runAwaySuccess": "Você fugiu com sucesso.",
   "runAwayCannotEscape": "Você nao conseguiu fugir!",
   "escapeVerbSwitch": "trocar",
   "escapeVerbFlee": "fugir",
   "notDisabled": "O movimento {{moveName}}\nnão está mais desabilitado!",
   "skipItemQuestion": "Tem certeza de que não quer escolher um item?",
   "eggHatching": "Opa?",
-  "ivScannerUseQuestion": "Quer usar o Scanner de IVs em {{pokemonName}}?"
+  "ivScannerUseQuestion": "Quer usar o Scanner de IVs em {{pokemonName}}?",
+  "drainMessage": "{{pokemonName}} teve sua\nenergia drenada!",
+  "regainHealth": "{{pokemonName}} recuperou\npontos de saúde!"
 } as const;

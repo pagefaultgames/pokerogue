@@ -5,7 +5,7 @@ import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase, WeatherEffectPhase } from "../phases";
+import { CommonAnimPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
@@ -19,6 +19,7 @@ import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
+import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./arena-events";
 
 export class Arena {
   public scene: BattleScene;
@@ -33,6 +34,8 @@ export class Arena {
 
   private pokemonPool: PokemonPools;
   private trainerPool: BiomeTierTrainerPools;
+
+  public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor(scene: BattleScene, biome: Biome, bgm: string) {
     this.scene = scene;
@@ -300,13 +303,12 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
+    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
 
     if (this.weather) {
-      this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
       this.scene.queueMessage(getWeatherStartMessage(weather));
     } else {
-      this.scene.tryRemovePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType);
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
     }
 
@@ -326,6 +328,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
 
     if (this.terrain) {
       if (!ignoreAnim) {
@@ -547,6 +550,8 @@ export class Arena {
     this.tags.push(newTag);
     newTag.onAdd(this);
 
+    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount));
+
     return true;
   }
 
@@ -572,6 +577,8 @@ export class Arena {
     this.tags.filter(t => !(t.lapse(this))).forEach(t => {
       t.onRemove(this);
       this.tags.splice(this.tags.indexOf(t), 1);
+
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(t.tagType, t.side, t.turnCount));
     });
   }
 
@@ -581,6 +588,8 @@ export class Arena {
     if (tag) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
+
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
   }
@@ -590,6 +599,8 @@ export class Arena {
     if (tag) {
       tag.onRemove(this);
       this.tags.splice(this.tags.indexOf(tag), 1);
+
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
   }
@@ -598,6 +609,8 @@ export class Arena {
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount));
+
       this.tags.splice(0, 1);
     }
   }

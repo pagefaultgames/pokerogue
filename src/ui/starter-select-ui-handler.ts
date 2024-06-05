@@ -63,13 +63,18 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "35px",
   },
+  "fr":{
+    starterInfoTextSize: "54px",
+    instructionTextSize: "42px",
+  },
   "it":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  "fr":{
-    starterInfoTextSize: "54px",
-    instructionTextSize: "42px",
+  "pt_BR":{
+    starterInfoTextSize: "47px",
+    instructionTextSize: "38px",
+    starterInfoXPos: 33,
   },
   "zh":{
     starterInfoTextSize: "40px",
@@ -81,6 +86,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "42px",
     starterInfoXPos: 33,
   },
+  "ko":{
+    starterInfoTextSize: "52px",
+    instructionTextSize: "38px",
+  }
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
@@ -242,7 +251,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.language;
+    const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
 
@@ -509,11 +518,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type1Icon.setScale(0.5);
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type2Icon.setScale(0.5);
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
@@ -1309,7 +1318,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
           }
           break;
-        case Button.CYCLE_VARIANT:
+        case Button.V:
           if (this.canCycleVariant) {
             let newVariant = props.variant;
             do {
@@ -1335,11 +1344,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case Button.UP:
           if (row) {
             success = this.setCursor(this.cursor - 9);
+          } else {
+            // when strictly opposite starter based on rows length
+            // does not exits, set cursor on the second to last row
+            if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor + (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor + (rows - 1) * 9);
+            }
           }
           break;
         case Button.DOWN:
           if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 9);
+          } else {
+            // if there is no starter below while being on the second to
+            // last row, adjust cursor position with one line less
+            if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor - (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor - (rows - 1) * 9);
+            }
           }
           break;
         case Button.LEFT:

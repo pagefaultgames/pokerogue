@@ -198,7 +198,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Curamuleto", description: "Aumenta del 10% l'efficacia delle mosse e degli oggetti che ripristinano i PS (escluse le rianimazioni)" },
     "CANDY_JAR": { name: "Barattolo di caramelle", description: "Aumenta di 1 il numero di livelli aggiunti dalle Caramelle Rare" },
 
-    "BERRY_POUCH": { name: "Porta Bacche", description: "Aggiunge il 33% di possibilità che una bacca usata non venga consumata" },
+    "BERRY_POUCH": { name: "Porta Bacche", description: "Aggiunge il 30% di possibilità che una bacca usata non venga consumata" },
 
     "FOCUS_BAND": { name: "Bandana", description: "Chi ce l'ha ottiene il 10% di possibilità aggiuntivo di evitare un potenziale KO e rimanere con un solo PS" },
 
@@ -208,6 +208,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "Avanzi", description: "Ripristina 1/16 dei PS massimi di un Pokémon ogni turno" },
     "SHELL_BELL": { name: "Conchinella", description: "Guarisce 1/8 del danno inflitto a un Pokémon" },
+
+    "TOXIC_ORB": { name: "Tossicsfera", description: "Sfera bizzarra che iperavvelena chi l’ha con sé in una lotta" },
+    "FLAME_ORB": { name: "Fiammosfera", description: "Sfera bizzarra che procura una scottatura a chi l’ha con sé in una lotta" },
 
     "BATON": { name: "Staffetta", description: "Permette di trasmettere gli effetti quando si cambia Pokémon, aggirando anche le trappole" },
 
@@ -227,10 +230,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_HEAL": { name: "Gettone del Recupero", description: "Cura il 2% dei PS massimi ogni turno" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Gettone del Veleno" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Gettone della Paralisi" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Gettone del Sonno" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Gettone del Congelamento" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Gettone della Bruciatura" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Gettone Guarigione Completa", description: "Aggiunge una probabilità del 10% a ogni turno di curare una condizione di stato" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Gettone Guarigione Completa", description: "Aggiunge una probabilità del 2.5% a ogni turno di curare una condizione di stato" },
     "ENEMY_ENDURE_CHANCE": { name: "Gettone di Resistenza" },
     "ENEMY_FUSED_CHANCE": { name: "Gettone della fusione", description: "Aggiunge l'1% di possibilità che un Pokémon selvatico sia una fusione" },
   },
@@ -362,7 +363,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Meteorite Dura",
     "SMOOTH_METEORITE": "Meteorite Liscia",
     "ADAMANT_CRYSTAL": "Adamasferoide",
-    "LUSTROUS_ORB": "Splendisfera",
+    "LUSTROUS_GLOBE": "Splendisferoide",
     "GRISEOUS_CORE": "Grigiosferoide",
     "REVEAL_GLASS": "Verispecchio",
     "GRACIDEA": "Gracidea",
