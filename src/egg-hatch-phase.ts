@@ -11,6 +11,7 @@ import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import { achvs } from "./system/achv";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import { EggTier } from "./data/enums/egg-type";
+import { VariantTier } from "./data/enums/variant-tiers";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
 import EggsToHatchCountContainer from "./ui/eggs-to-hatch-count-container";
 
@@ -510,6 +511,11 @@ export class EggHatchPhase extends Phase {
           }
         }
 
+        // If variant overwrite is set to RARE or EPIC, filter species pool to only include ones with variants.
+        if (this.egg.variantTier && (this.egg.variantTier === variantTier.RARE || this.egg.variantTier === variantTier.EPIC)) {
+            speciesPool = speciesPool.filter(s => getPokemonSpecies(s).hasVariants());
+        }
+
         /**
          * Pokemon that are cheaper in their tier get a weight boost. Regionals get a weight penalty
          * 1 cost mons get 2x
@@ -555,18 +561,25 @@ export class EggHatchPhase extends Phase {
         ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
       }
 
-      /**
-       * Non Shiny gacha Pokemon have a 1/128 chance of being shiny
-       * Shiny gacha Pokemon have a 1/64 chance of being shiny
-       * IVs are rolled twice and the higher of each stat's IV is taken
-       * The egg move gacha doubles the rate of rare egg moves but the base rates are
-       * Common: 1/48
-       * Rare: 1/24
-       * Epic: 1/12
-       * Legendary: 1/6
-       */
-      ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
-      ret.variant = ret.shiny ? ret.generateVariant() : 0;
+      // If variant override is set, set shiny and use variant override
+      // else generate shiny and variant.
+      if (this.egg.variantOverride) {
+        ret.shiny = true;
+        ret.variant = this.egg.variantOverride;
+      } else {
+        /**
+         * Non Shiny gacha Pokemon have a 1/128 chance of being shiny
+         * Shiny gacha Pokemon have a 1/64 chance of being shiny
+         * IVs are rolled twice and the higher of each stat's IV is taken
+         * The egg move gacha doubles the rate of rare egg moves but the base rates are
+         * Common: 1/48
+         * Rare: 1/24
+         * Epic: 1/12
+         * Legendary: 1/6
+         */
+        ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
+        ret.variant = ret.shiny ? ret.generateVariant() : 0;
+      }
 
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
