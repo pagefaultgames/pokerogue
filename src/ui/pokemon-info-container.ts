@@ -262,6 +262,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.setVisible(true);
       this.shown = true;
+      this.scene.hideEnemyModifierBar();
     });
   }
 
@@ -282,6 +283,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   hide(speedMultiplier: number = 1): Promise<void> {
     return new Promise(resolve => {
       if (!this.shown) {
+        this.scene.showEnemyModifierBar();
         return resolve();
       }
 
@@ -302,6 +304,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           this.pokemonShinyIcon.off("pointerover");
           this.pokemonShinyIcon.off("pointerout");
           (this.scene as BattleScene).ui.hideTooltip();
+          this.scene.showEnemyModifierBar();
           resolve();
         }
       });
