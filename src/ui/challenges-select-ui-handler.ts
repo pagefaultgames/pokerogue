@@ -43,7 +43,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6), 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, i18next.t("challengeUiHandler:title"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("challenges:title"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
@@ -55,7 +55,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     // this.difficultyText.setOrigin(0, 0);
     // this.difficultyText.setPositionRelative(difficultyBg, 8, 4);
 
-    // const difficultyName = addTextObject(this.scene, 0, 0, i18next.t("challengeUiHandler:points"), TextStyle.SETTINGS_LABEL);
+    // const difficultyName = addTextObject(this.scene, 0, 0, i18next.t("challenges:points"), TextStyle.SETTINGS_LABEL);
     // difficultyName.setOrigin(0, 0);
     // difficultyName.setPositionRelative(difficultyBg, difficultyBg.width - difficultyName.displayWidth - 8, 4);
 

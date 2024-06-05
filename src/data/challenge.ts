@@ -3,7 +3,6 @@ import { Challenges } from "./enums/challenges";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { speciesStarters } from "./pokemon-species";
-import { Type } from "./type";
 import BattleScene from "#app/battle-scene.js";
 import Pokemon from "#app/field/pokemon.js";
 
@@ -46,8 +45,6 @@ export abstract class Challenge implements Localizable {
     this.maxSeverity = 0;
     this.conditions = [];
     this.challengeTypes = [];
-
-    this.localize();
   }
 
   /**
@@ -64,14 +61,6 @@ export abstract class Challenge implements Localizable {
    */
   geti18nKey(): string {
     return Challenges[this.id].split("_").map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
-  }
-
-  /**
-   * Fetches localised strings into the correct values.
-   */
-  localize(): void {
-    this.name = i18next.t(`challenges:${this.geti18nKey()}.name`);
-    this.description = i18next.t(`challenges:${this.geti18nKey()}.description`);
   }
 
   /**
@@ -118,7 +107,7 @@ export abstract class Challenge implements Localizable {
    * @returns {string} The localised name of this challenge.
    */
   getName(): string {
-    return this.name;
+    return i18next.t(`challenges:${this.geti18nKey()}.name`);
   }
 
   /**
@@ -130,10 +119,7 @@ export abstract class Challenge implements Localizable {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    if (overrideValue === 0) {
-      return i18next.t("challengeUiHandler:challenge_off");
-    }
-    return overrideValue.toString();
+    return i18next.t(`challenges:${this.geti18nKey()}.value.${this.value}`);
   }
 
   /**
@@ -145,7 +131,7 @@ export abstract class Challenge implements Localizable {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return this.description;
+    return i18next.t(`challenges:${this.geti18nKey()}.desc.${this.value}`);
   }
 
   /**
@@ -301,17 +287,6 @@ export class SingleTypeChallenge extends Challenge {
     this.maxSeverity = 2;
   }
 
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (overrideValue) {
-      return i18next.t(`pokemonInfo:Type.${Type[overrideValue-1].toString()}`);
-    } else {
-      return i18next.t("challengeUiHandler:challenge_off");
-    }
-  }
-
   apply(challengeType: ChallengeType, args: any[]): boolean {
     if (this.value === 0) {
       return false;
@@ -361,17 +336,6 @@ export class FreshStartChallenge extends Challenge {
     super(Challenges.FRESH_START, 1);
     this.addChallengeType(ChallengeType.STARTER_CHOICE);
     this.addChallengeType(ChallengeType.STARTER_MODIFY);
-  }
-
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (overrideValue) {
-      return "On";
-    } else {
-      return i18next.t("challengeUiHandler:challenge_off");
-    }
   }
 
   apply(challengeType: ChallengeType, args: any[]): boolean {

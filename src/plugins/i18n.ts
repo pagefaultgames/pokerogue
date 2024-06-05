@@ -39,15 +39,6 @@ export interface ModifierTypeTranslationEntry {
   extra?: SimpleTranslationEntries
 }
 
-export interface ChallengeTranslationEntry {
-  name: string,
-  description: string
-}
-
-export interface ChallengeTranslationEntries {
-  [key: string]: ChallengeTranslationEntry
-}
-
 export interface ModifierTypeTranslationEntries {
   ModifierType: { [key: string]: ModifierTypeTranslationEntry },
   AttackTypeBoosterItem: SimpleTranslationEntries,
@@ -229,8 +220,7 @@ declare module "i18next" {
       berry: BerryTranslationEntries;
       achv: AchievementTranslationEntries;
       gameStatsUiHandler: SimpleTranslationEntries;
-      challengeUiHandler: SimpleTranslationEntries;
-      challenges: ChallengeTranslationEntries;
+      challenges: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
       pokemonInfoContainer: SimpleTranslationEntries;

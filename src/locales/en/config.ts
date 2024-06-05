@@ -5,7 +5,7 @@ import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { biome } from "./biome";
-import { challenges, challengeUiHandler } from "./challenges";
+import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
 import {
   PGFbattleSpecDialogue,
@@ -45,7 +45,6 @@ export const enConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   biome: biome,
-  challengeUiHandler: challengeUiHandler,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
   PGMdialogue: PGMdialogue,
