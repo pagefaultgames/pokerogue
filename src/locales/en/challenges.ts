@@ -4,6 +4,7 @@ export const challenges: SimpleTranslationEntries = {
   "title": "Challenge Modifiers",
   "points": "Bad Ideas",
   "confirm_start": "Proceed with these challenges?",
+  "illegalEvolution": "{{pokemon}} changed into an ineligble pokemon\nfor this challenge!",
   "singleGeneration.name": "Mono Gen",
   "singleGeneration.value.0": "Off",
   "singleGeneration.desc.0": "You can only use pokemon from the chosen generation.",

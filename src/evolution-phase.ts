@@ -10,7 +10,6 @@ import { cos, sin } from "./field/anims";
 import { PlayerPokemon } from "./field/pokemon";
 import { getTypeRgb } from "./data/type";
 import i18next from "i18next";
-import { getPokemonMessage } from "./messages";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
@@ -545,7 +544,7 @@ export class EndEvolutionPhase extends Phase {
 
     // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
     if (this.pokemon.isPlayer() && this.pokemon.isOnField() && !this.pokemon.isAllowedInBattle()) {
-      this.scene.queueMessage(getPokemonMessage(this.pokemon, " changed into an disallowed pokemon!"), null, true);
+      this.scene.queueMessage(i18next.t("challenges:illegalEvolution", {"pokemon": this.pokemon.name}), null, true);
 
       const allowedPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
 
