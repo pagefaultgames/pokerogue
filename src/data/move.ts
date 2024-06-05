@@ -42,7 +42,7 @@ export enum MoveTarget {
   /** {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_target_all_adjacent_Pok%C3%A9mon Moves that target all adjacent Pokemon} */
   ALL_NEAR_OTHERS,
   NEAR_ENEMY,
-  /** {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_target_all_adjacent_foes Moves that taret all adjacent foes} */
+  /** {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_target_all_adjacent_foes Moves that target all adjacent foes} */
   ALL_NEAR_ENEMIES,
   RANDOM_NEAR_ENEMY,
   ALL_ENEMIES,
@@ -166,10 +166,22 @@ export default class Move implements Localizable {
     return this.attrs.some((attr) => attr instanceof attrType);
   }
 
+  /**
+   * takes as input a boolean function and returns the first MoveAttr in attrs that matches true
+   * @param attrPredicate
+   * @returns the first {@linkcode MoveAttr} element in attrs that makes the input function return true
+   */
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
     return this.attrs.find(attrPredicate);
   }
 
+  /**
+   * Adds a new MoveAttr to the move (appends to the attr array)
+   * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
+   * @param AttrType the constructor of a MoveAttr class {@linkcode MoveAttr}
+   * @param args the args needed to instantiate a the given class
+   * @returns the called object {@linkcode Move}
+   */
   attr<T extends new (...args: any[]) => MoveAttr>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
@@ -184,9 +196,16 @@ export default class Move implements Localizable {
     return this;
   }
 
-  addAttr(attr: MoveAttr): this {
-    this.attrs.push(attr);
-    let attrCondition = attr.getCondition();
+  /**
+   * Adds a new MoveAttr to the move (appends to the attr array)
+   * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
+   * Almost identical to {@link attr}, except you are passing in a MoveAttr object, instead of a constructor and it's arguments
+   * @param attrAdd the {@linkcode MoveAttr} to add
+   * @returns the called object {@linkcode Move}
+   */
+  addAttr(attrAdd: MoveAttr): this {
+    this.attrs.push(attrAdd);
+    let attrCondition = attrAdd.getCondition();
     if (attrCondition) {
       if (typeof attrCondition === "function") {
         attrCondition = new MoveCondition(attrCondition);
@@ -197,15 +216,31 @@ export default class Move implements Localizable {
     return this;
   }
 
+  /**
+   * Sets the move target of this move
+   * @param moveTarget the {@linkcode MoveTarget} to set
+   * @returns the called object {@linkcode Move}
+   */
   target(moveTarget: MoveTarget): this {
     this.moveTarget = moveTarget;
     return this;
   }
 
+  /**
+   * getter function that returns if this Move has a MoveFlag
+   * @param flag the {@linkcode MoveFlags} to check
+   * @returns boolean
+   */
   hasFlag(flag: MoveFlags): boolean {
+    // internally it is taking the bitwise AND (MoveFlags are represented as bit-shifts) and returning False if result is 0 and true otherwise
+
     return !!(this.flags & flag);
   }
 
+  /**
+   * getter function that returns if the move hits multiple targets
+   * @returns boolean
+   */
   isMultiTarget(): boolean {
     switch (this.moveTarget) {
     case MoveTarget.ALL_OTHERS:
@@ -221,6 +256,11 @@ export default class Move implements Localizable {
     }
     return false;
   }
+
+  /**
+   * getter function that returns if the move targets itself or an ally
+   * @returns boolean
+   */
 
   isAllyTarget(): boolean {
     switch (this.moveTarget) {
