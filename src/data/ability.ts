@@ -1870,22 +1870,35 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    const abilities: Abilities[] = [pokemon.getAbility().id, pokemon.getPassiveAbility().id];
     const weatherType = pokemon.scene.arena.weather.weatherType;
+    let turnOffWeather = false;
 
-    // Clear weather if ability matches weather and if no one else has the ability
-    abilities.forEach((ab) => {
-      if ((ab === Abilities.DESOLATE_LAND && weatherType === WeatherType.HARSH_SUN) ||
-      (ab === Abilities.PRIMORDIAL_SEA && weatherType === WeatherType.HEAVY_RAIN) ||
-      (ab === Abilities.DELTA_STREAM && weatherType === WeatherType.STRONG_WINDS)) {
-
-        // Besides the user, check if another has the ability on the field.
-        if (pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(ab)).length === 0) {
-          pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
-          return true;
-        }
+    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
+    switch (weatherType) {
+    case (WeatherType.HARSH_SUN):
+      if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
+          && pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
+        turnOffWeather = true;
       }
-    });
+      break;
+    case (WeatherType.HEAVY_RAIN):
+      if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
+          && pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    case (WeatherType.STRONG_WINDS):
+      if (pokemon.hasAbility(Abilities.DELTA_STREAM)
+          && pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    }
+
+    if (turnOffWeather) {
+      pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+      return true;
+    }
 
     return false;
   }
@@ -3032,22 +3045,35 @@ export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    const abilities: Abilities[] = [pokemon.getAbility().id, pokemon.getPassiveAbility().id];
     const weatherType = pokemon.scene.arena.weather.weatherType;
+    let turnOffWeather = false;
 
-    // Clear weather if ability matches weather and if no one else has the ability
-    abilities.forEach((ab) => {
-      if ((ab === Abilities.DESOLATE_LAND && weatherType === WeatherType.HARSH_SUN) ||
-      (ab === Abilities.PRIMORDIAL_SEA && weatherType === WeatherType.HEAVY_RAIN) ||
-      (ab === Abilities.DELTA_STREAM && weatherType === WeatherType.STRONG_WINDS)) {
-
-        // Besides the user, check if another has the ability on the field.
-        if (pokemon.scene.getField(true).filter(p => p.hasAbility(ab)).length === 0) {
-          pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
-          return true;
-        }
+    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
+    switch (weatherType) {
+    case (WeatherType.HARSH_SUN):
+      if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
+          && pokemon.scene.getField(true).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
+        turnOffWeather = true;
       }
-    });
+      break;
+    case (WeatherType.HEAVY_RAIN):
+      if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
+          && pokemon.scene.getField(true).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    case (WeatherType.STRONG_WINDS):
+      if (pokemon.hasAbility(Abilities.DELTA_STREAM)
+          && pokemon.scene.getField(true).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    }
+
+    if (turnOffWeather) {
+      pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+      return true;
+    }
 
     return false;
   }
