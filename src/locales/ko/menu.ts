@@ -48,4 +48,6 @@ export const menu: SimpleTranslationEntries = {
   "playersOnline": "플레이어 온라인",
   "yes":"예",
   "no":"아니오",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;

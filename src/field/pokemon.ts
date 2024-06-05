@@ -44,7 +44,7 @@ import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMov
 import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import * as Overrides from "../overrides";
-import { BerryType } from "../data/berry";
+import { BerryType } from "../data/enums/berry-type";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
@@ -1168,6 +1168,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.fusionSpecies) {
       const evolutionLevelMoves = levelMoves.slice(0, Math.max(levelMoves.findIndex(lm => !!lm[0]), 0));
       const fusionLevelMoves = this.getFusionSpeciesForm(true).getLevelMoves();
+      const fusionEvolutionLevelMoves = fusionLevelMoves.slice(0, Math.max(fusionLevelMoves.findIndex(flm => !!flm[0]), 0));
       const newLevelMoves: LevelMoves = [];
       while (levelMoves.length && levelMoves[0][0] < startingLevel) {
         levelMoves.shift();
@@ -1178,6 +1179,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (includeEvolutionMoves) {
         for (const elm of evolutionLevelMoves.reverse()) {
           levelMoves.unshift(elm);
+        }
+        for (const felm of fusionEvolutionLevelMoves.reverse()) {
+          fusionLevelMoves.unshift(felm);
         }
       }
       for (let l = includeEvolutionMoves ? 0 : startingLevel; l <= this.level; l++) {

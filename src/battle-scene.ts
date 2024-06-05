@@ -1313,6 +1313,14 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  showEnemyModifierBar(): void {
+    this.enemyModifierBar.setVisible(true);
+  }
+
+  hideEnemyModifierBar(): void {
+    this.enemyModifierBar.setVisible(false);
+  }
+
   updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
@@ -1418,7 +1426,7 @@ export default class BattleScene extends SceneBase {
 
   randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level);
+      return this.arena.randomSpecies(waveIndex, level,null , getPartyLuckValue(this.party));
     }
     const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
       if (!filterAllEvolutions) {

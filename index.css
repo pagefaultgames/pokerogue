@@ -146,8 +146,8 @@ body {
   margin-left: 10%;
 }
 
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadRectBtnContainer > .apadSqBtn,
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadSqBtnContainer
+#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_ACCESSIBILITY']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadRectBtnContainer > .apadSqBtn,
+#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_ACCESSIBILITY']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadSqBtnContainer
 {
   display: none;
 }
