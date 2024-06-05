@@ -16,6 +16,7 @@ import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
 import { VariantTier } from "./data/enums/variant-tiers";
+import { EggTier } from "./data/enums/egg-type";
 
 /**
  * Overrides for testing different in game situations
@@ -90,8 +91,10 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  */
 
 export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
+export const EGG_TIER_OVERRIDE: EggTier = EggTier.COMMON;
 export const EGG_SHINY_OVERRIDE: boolean = false;
 export const EGG_VARIANT_OVERRIDE: VariantTier = VariantTier.COMMON;
+
 
 /**
  * MODIFIER / ITEM OVERRIDES
