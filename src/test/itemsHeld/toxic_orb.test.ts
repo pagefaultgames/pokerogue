@@ -17,7 +17,7 @@ import {Command} from "#app/ui/command-ui-handler";
 import {StatusEffect} from "#app/data/status-effect";
 
 
-describe("Items Test - onTurnEnd", () => {
+describe("Items - Toxic orb", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -33,9 +33,6 @@ describe("Items Test - onTurnEnd", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-  });
-
-  it("TOXIC ORB", async() => {
     const moveToUse = Moves.GROWTH;
     const oppMoveToUse = Moves.TACKLE;
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
@@ -48,6 +45,10 @@ describe("Items Test - onTurnEnd", () => {
     vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{
       name: "TOXIC_ORB",
     }]);
+  });
+
+  it("TOXIC ORB", async() => {
+    const moveToUse = Moves.GROWTH;
     await game.startBattle([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
@@ -75,5 +76,5 @@ describe("Items Test - onTurnEnd", () => {
     expect(message2).toContain("is hurt");
     expect(message2).toContain("by poison");
     expect(game.scene.getParty()[0].status.effect).toBe(StatusEffect.TOXIC);
-  }, 120000);
+  }, 20000);
 });

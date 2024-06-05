@@ -337,5 +337,12 @@ describe("Test Battle Phase", () => {
       await game.phaseInterceptor.mustRun(EncounterPhase).catch((error) => expect(error).toBe(EncounterPhase));
       await game.phaseInterceptor.mustRun(PostSummonPhase).catch((error) => expect(error).toBe(PostSummonPhase));
   }, 50000);
+
+  it("test remove random battle seed int", async() => {
+    for (const i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+      const rand = game.scene.randBattleSeedInt(15);
+      expect(rand).toBe(14);
+    }
+  });
 });
 

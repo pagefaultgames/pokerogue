@@ -17,7 +17,7 @@ import {Command} from "#app/ui/command-ui-handler";
 import {BattleStat} from "#app/data/battle-stat";
 
 
-describe("Abilities Test - onKill", () => {
+describe("Abilities - Moxie", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -33,9 +33,6 @@ describe("Abilities Test - onKill", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-  });
-
-  it("MOXIE", async() => {
     const moveToUse = Moves.AERIAL_ACE;
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
@@ -44,6 +41,10 @@ describe("Abilities Test - onKill", () => {
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+  });
+
+  it("MOXIE", async() => {
+    const moveToUse = Moves.AERIAL_ACE;
     await game.startBattle([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
@@ -62,5 +63,5 @@ describe("Abilities Test - onKill", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
-  }, 120000);
+  }, 20000);
 });

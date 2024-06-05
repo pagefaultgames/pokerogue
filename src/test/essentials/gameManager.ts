@@ -35,6 +35,7 @@ export default class GameManager {
   public textInterceptor: TextInterceptor;
 
   constructor(phaserGame: Phaser.Game) {
+    BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
     this.gameWrapper = new GameWrapper(phaserGame);
     this.scene = new BattleScene();
     this.phaseInterceptor = new PhaseInterceptor(this.scene);

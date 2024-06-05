@@ -17,7 +17,7 @@ import {Mode} from "#app/ui/ui";
 import {BattleStat} from "#app/data/battle-stat";
 
 
-describe("Abilities Test - onSummon", () => {
+describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -33,13 +33,13 @@ describe("Abilities Test - onSummon", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-  });
-
-  it("INTIMIDATE", async() => {
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
+  });
+
+  it("INTIMIDATE", async() => {
     await game.runToSummon([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
