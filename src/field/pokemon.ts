@@ -1584,8 +1584,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
   }
+
   toggleFlyout(visible: boolean): void {
-    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
+    this.battleInfo.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {

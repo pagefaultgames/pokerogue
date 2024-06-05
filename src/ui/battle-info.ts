@@ -57,6 +57,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private effectivenessContainer: Phaser.GameObjects.Container;
   private effectivenessWindow: Phaser.GameObjects.NineSlice;
   private effectivenessText: Phaser.GameObjects.Text;
+  private currentEffectiveness?: string;
   // #endregion
 
   public expMaskRect: Phaser.GameObjects.Graphics;
@@ -66,7 +67,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private statValuesContainer: Phaser.GameObjects.Container;
   private statNumbers: Phaser.GameObjects.Sprite[];
 
-  public flyoutMenu: BattleFlyout;
+  public flyoutMenu?: BattleFlyout;
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -732,11 +733,29 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Request the flyoutMenu to toggle if available and hides or shows the effectiveness window where necessary
+   */
+  toggleFlyout(visible: boolean): void {
+    this.flyoutMenu?.toggleFlyout(visible);
+
+    if (visible) {
+      this.effectivenessContainer?.setVisible(false);
+    } else {
+      this.updateEffectiveness(this.currentEffectiveness);
+    }
+  }
+
+  /**
    * Show or hide the type effectiveness multiplier window
    * Passing undefined will hide the window
    */
   updateEffectiveness(effectiveness?: string) {
-    if (this.player || !(this.scene as BattleScene).typeHints || effectiveness === undefined) {
+    if (this.player) {
+      return;
+    }
+    this.currentEffectiveness = effectiveness;
+
+    if (!(this.scene as BattleScene).typeHints || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
       this.effectivenessContainer.setVisible(false);
       return;
     }
