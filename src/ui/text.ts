@@ -41,7 +41,23 @@ interface LanguageSetting {
   textScale?: number
 }
 
+interface AutoTextInterface {
+  originalFontSize: number,
+  limits: TextLimits,
+  debug: boolean,
+  scale: number,
+  x: number,
+  displayWidth: number
+  style: Phaser.Types.GameObjects.Text.TextStyle,
+  originalY: number,
+
+  setFontSize: (fontSize: number) => this,
+  setText: (text: string | string[]) => this,
+  setScale: (x?: number, y?: number) => this,
+  setY: (y: number) => this,
+}
 interface TextLimits {
+  left?: number,
   right?: number,
   width?: number
 }
@@ -55,71 +71,102 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "pt_BR":{},
   "zh_CN":{},
 };
-
-export class AutoBBCodeText extends BBCodeText {
-  private originalFontSize: number;
-  private originalY: number;
-  private debug: boolean;
-  public limits: TextLimits;
+export class AutoBBCodeText extends BBCodeText implements AutoTextInterface {
+  originalFontSize: number;
+  debug: boolean;
+  limits: TextLimits;
+  originalY: number;
 
   constructor(scene: Phaser.Scene, x: number, y: number, content: string, style: BBCodeText.TextStyle, limits?: TextLimits, debug = false) {
     super(scene, x, y, content, style);
-    this.originalFontSize = parseInt(style.fontSize as any);
-    this.originalY = y;
     this.limits = limits;
     this.debug = debug;
-  }
-
-  setScale(scaleX: number, scaleY?: number): this {
-    super.setScale(scaleX, scaleY);
-
-    // Show debug limit
-    if (this.debug) {
-      if (this.limits?.right) {
-        const limit = this.limits.right / this.scale;
-        const line = new Phaser.Geom.Line(limit, 0, limit, 1000);
-
-        const graphics = this.scene.add.graphics({ lineStyle: { width: 4, color: 0xaa00aa } });
-        graphics.strokeLineShape(line);
-
-        graphics.lineStyle(2, 0x00aa00);
-
-        graphics.beginPath();
-        graphics.moveTo(line.left, line.top);
-        graphics.lineTo(line.right, line.top);
-        graphics.lineTo(line.right, line.bottom);
-        graphics.lineTo(line.left, line.bottom);
-        graphics.lineTo(line.left, line.top);
-        graphics.strokePath();
-        graphics.setDepth(10);
-      }
-    }
-    return this;
+    // autoSizeText(this);
+    // this.update()
   }
 
   setText(text: string | string[]): this {
     super.setText(text);
-    this.setFontSize(this.originalFontSize);
-    this.setY(this.originalY);
+    autoSizeText(this);
+    this.update();
+    return this;
+  }
 
-    const minFontSize = 30;
-    let fontSize = this.originalFontSize;
-    while (((this.limits?.right && (this.x + this.width * this.scale) > this.limits.right) || (this.limits?.width && (this.width * this.scale) > this.limits.width)) && fontSize >= minFontSize) {
-      fontSize -= 1;
-      this.setFontSize(fontSize);
-    }
-    // Center vertically if scaled down
-    if (fontSize < this.originalFontSize) {
-      this.setY(this.originalY + (this.originalFontSize - fontSize) * 0.5 * this.scale);
+  setVisible(value: boolean): this {
+    super.setVisible(value);
+    if (value) {
+      autoSizeText(this);
+      this.update();
     }
     return this;
   }
 }
 
-export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
+export class AutoText extends Phaser.GameObjects.Text implements AutoTextInterface {
+  originalFontSize: number;
+  debug: boolean;
+  limits: TextLimits;
+  originalY: number;
+
+  constructor(scene: Phaser.Scene, x: number, y: number, content: string, style: Phaser.Types.GameObjects.Text.TextStyle, limits?: TextLimits, debug = true) {
+    super(scene, x, y, content, style);
+    this.limits = limits;
+    this.originalY = y;
+    this.debug = debug;
+    autoSizeText(this);
+  }
+
+  setText(text: string | string[]): this {
+    super.setText(text);
+    autoSizeText(this);
+    return this;
+  }
+
+  setVisible(value: boolean): this {
+    super.setVisible(value);
+    if (value) {
+      autoSizeText(this);
+    }
+    return this;
+  }
+
+  setScale(x?: number, y?: number): this {
+    super.setScale(x, y);
+    autoSizeText(this);
+    return this;
+  }
+}
+
+function autoSizeText<T extends AutoTextInterface>(obj: T): void {
+  if (!obj.originalFontSize) {
+    obj.originalFontSize = parseInt(obj.style.fontSize as any);
+  }
+
+  obj.setFontSize(obj.originalFontSize);
+  const minFontSize = 10;
+  let fontSize = parseInt(obj.originalFontSize as any);
+  if (obj.limits?.width > 0) {
+    console.log(obj.limits, obj.displayWidth, obj.originalFontSize, fontSize, "TEST");
+  }
+  while (((obj.limits?.right && (obj.x + obj.displayWidth) > obj.limits.right) ||
+          (obj.limits?.left && obj.x < obj.limits.left) ||
+          (obj.limits?.width > 0 && obj.displayWidth > obj.limits.width)
+  ) && fontSize > minFontSize) {
+    console.log(fontSize);
+    fontSize -= 1;
+    obj.setFontSize(fontSize);
+  }
+  if (obj.limits?.width > 0) {
+    console.log(obj.limits, obj.displayWidth, obj.originalFontSize, fontSize, (obj as any).padding, "TEST");
+  }
+  (obj as any).padding.top = (obj.originalFontSize - fontSize) / 2;
+}
+
+export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle, limits?: TextLimits, debug = false): Phaser.GameObjects.Text {
   const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
-  const ret = scene.add.text(x, y, content, styleOptions);
+  const ret = new AutoText(scene, x, y, content, styleOptions, limits, debug);
+  scene.add.existing(ret);
   ret.setScale(0.1666666667);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
@@ -148,7 +195,6 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
     ret.setLineSpacing(10);
   }
-  console.log(ret.getTextMetrics(), ret.height, ret.getBottomCenter().y);
 
   return ret;
 }
