@@ -40,7 +40,6 @@ window.addEventListener("unhandledrejection", (event) => {
  */
 const shouldCenterWindow = (): boolean => {
   const touchControlsOptions = Setting.find(s => s.key === SettingKeys.Touch_Controls).options;
-  console.log(touchControlsOptions);
   const settings = localStorage.hasOwnProperty("settings") ? JSON.parse(localStorage.getItem("settings")) : null;
 
   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
