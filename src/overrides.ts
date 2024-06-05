@@ -90,11 +90,11 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  * EGG OVERRIDES
  */
 
-export const EGG_IMMEDIATE_HATCH_OVERRIDE: boolean = true;
-export const EGG_TIER_OVERRIDE: EggTier = EggTier.ULTRA;
+export const EGG_IMMEDIATE_HATCH_OVERRIDE: boolean = false;
+export const EGG_TIER_OVERRIDE: EggTier = EggTier.COMMON;
 export const EGG_SHINY_OVERRIDE: boolean = false;
 export const EGG_VARIANT_OVERRIDE: VariantTier = VariantTier.COMMON;
-export const EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = true;
+export const EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
 export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
 
 /**

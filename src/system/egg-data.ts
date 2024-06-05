@@ -1,3 +1,4 @@
+import { VariantTier } from "#app/data/enums/variant-tiers.js";
 import { Egg, GachaType } from "../data/egg";
 
 export default class EggData {
@@ -5,6 +6,7 @@ export default class EggData {
   public gachaType: GachaType;
   public hatchWaves: integer;
   public timestamp: integer;
+  public variantTier: VariantTier | undefined;
 
   constructor(source: Egg | any) {
     const sourceEgg = source instanceof Egg ? source as Egg : null;
@@ -12,9 +14,10 @@ export default class EggData {
     this.gachaType = sourceEgg ? sourceEgg.gachaType : source.gachaType;
     this.hatchWaves = sourceEgg ? sourceEgg.hatchWaves : source.hatchWaves;
     this.timestamp = sourceEgg ? sourceEgg.timestamp : source.timestamp;
+    this.variantTier = sourceEgg ? sourceEgg.variantTier : source.variantTier;
   }
 
   toEgg(): Egg {
-    return new Egg(this.id, this.gachaType, this.hatchWaves, this.timestamp);
+    return new Egg(this.id, this.gachaType, this.hatchWaves, this.timestamp, this.variantTier);
   }
 }

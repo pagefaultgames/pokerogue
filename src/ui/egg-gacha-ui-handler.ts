@@ -12,7 +12,6 @@ import { EggTier } from "../data/enums/egg-type";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
 import * as Overrides from "../overrides";
-import { VariantTier } from "#app/data/enums/variant-tiers.js";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
@@ -405,7 +404,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       const timestamp = new Date().getTime();
 
       for (const tier of tiers) {
-        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp, VariantTier.RARE);
+        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
         if (egg.isManaphyEgg()) {
           this.scene.gameData.gameStats.manaphyEggsPulled++;
           egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);
