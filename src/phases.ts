@@ -36,7 +36,7 @@ import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
 import { Species } from "./data/enums/species";
-import { HealAchv, LevelAchv, achvs } from "./system/achv";
+import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
@@ -4019,6 +4019,10 @@ export class GameOverPhase extends BattlePhase {
           this.scene.setFieldScale(1, true);
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
+
+          if (this.victory && this.scene.gameMode.isChallenge) {
+            this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
+          }
 
           const clear = (endCardPhase?: EndCardPhase) => {
             if (newClear) {

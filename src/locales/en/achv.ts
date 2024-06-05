@@ -168,4 +168,98 @@ export const achv: AchievementTranslationEntries = {
     name: "Undefeated",
     description: "Beat the game in classic mode",
   },
+  "MONO_GEN_ONE": {
+    name: "Generation One",
+    description: "Complete the generation one only challenge.",
+  },
+  "MONO_GEN_TWO": {
+    name: "Generation TWO",
+    description: "Complete the generation two only challenge.",
+  },
+  "MONO_GEN_THREE": {
+    name: "Generation THREE",
+    description: "Complete the generation three only challenge.",
+  },
+  "MONO_GEN_FOUR": {
+    name: "Generation FOUR",
+    description: "Complete the generation four only challenge.",
+  },
+  "MONO_GEN_FIVE": {
+    name: "Generation FIVE",
+    description: "Complete the generation five only challenge.",
+  },
+  "MONO_GEN_SIX": {
+    name: "Generation SIX",
+    description: "Complete the generation six only challenge.",
+  },
+  "MONO_GEN_SEVEN": {
+    name: "Generation SEVEN",
+    description: "Complete the generation seven only challenge.",
+  },
+  "MONO_GEN_EIGHT": {
+    name: "Generation EIGHT",
+    description: "Complete the generation eight only challenge.",
+  },
+  "MONO_GEN_NINE": {
+    name: "Generation NINE",
+    description: "Complete the generation nine only challenge.",
+  },
+
+  "MonoType": {
+    description: "Complete the {{type}} monotype challenge.",
+  },
+  "MONO_NORMAL": {
+    name: "Mono NORMAL",
+  },
+  "MONO_FIGHTING": {
+    name: "Mono FIGHTING",
+  },
+  "MONO_FLYING": {
+    name: "Mono FLYING",
+  },
+  "MONO_POISON": {
+    name: "Mono POISON",
+  },
+  "MONO_GROUND": {
+    name: "Mono GROUND",
+  },
+  "MONO_ROCK": {
+    name: "Mono ROCK",
+  },
+  "MONO_BUG": {
+    name: "Mono BUG",
+  },
+  "MONO_GHOST": {
+    name: "Mono GHOST",
+  },
+  "MONO_STEEL": {
+    name: "Mono STEEL",
+  },
+  "MONO_FIRE": {
+    name: "Mono FIRE",
+  },
+  "MONO_WATER": {
+    name: "Mono WATER",
+  },
+  "MONO_GRASS": {
+    name: "Mono GRASS",
+  },
+  "MONO_ELECTRIC": {
+    name: "Mono ELECTRIC",
+  },
+  "MONO_PSYCHIC": {
+    name: "Mono PSYCHIC",
+  },
+  "MONO_ICE": {
+    name: "Mono ICE",
+  },
+  "MONO_DRAGON": {
+    name: "Mono DRAGON",
+  },
+  "MONO_DARK": {
+    name: "Mono DARK",
+  },
+  "MONO_FAIRY": {
+    name: "Mono FAIRY",
+  },
 } as const;
