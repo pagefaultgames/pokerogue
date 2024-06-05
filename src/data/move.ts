@@ -6404,7 +6404,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr),
     new AttackMove(Moves.MAGMA_STORM, Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, 100, 0, 4)
       .attr(TrapAttr, BattlerTagType.MAGMA_STORM),
-    new StatusMove(Moves.DARK_VOID, Type.DARK, 50, 10, -1, 0, 4)
+    new StatusMove(Moves.DARK_VOID, Type.DARK, 80, 10, -1, 0, 4)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SEED_FLARE, Type.GRASS, MoveCategory.SPECIAL, 120, 85, 5, 40, 0, 4)
