@@ -14,6 +14,7 @@ import { EggTier } from "./data/enums/egg-type";
 import { VariantTier } from "./data/enums/variant-tiers";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
 import EggsToHatchCountContainer from "./ui/eggs-to-hatch-count-container";
+import * as Overrides from "./overrides";
 
 /**
  * Class that represents egg hatching
@@ -580,6 +581,10 @@ export class EggHatchPhase extends Phase {
         ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
         ret.variant = ret.shiny ? ret.generateVariant() : 0;
       }
+
+      // Overrides from overrides.ts
+      if (Overrides.EGG_SHINY_OVERRIDE) ret.shiny = true;
+      if (Overrides.EGG_VARIANT_OVERRIDE) ret.variant = Overrides.EGG_VARIANT_OVERRIDE;
 
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
