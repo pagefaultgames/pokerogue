@@ -514,9 +514,9 @@ export class EggHatchPhase extends Phase {
 
         // If egg variant overwrite is set to RARE or EPIC, filter species pool to only include ones with variants.
         // also filter if global override is set from overrides.ts
-        if ((this.egg.variantTier && (this.egg.variantTier === variantTier.RARE || this.egg.variantTier === variantTier.EPIC)) ||
+        if ((this.egg.variantTier && (this.egg.variantTier === VariantTier.RARE || this.egg.variantTier === VariantTier.EPIC)) ||
             Overrides.EGG_SHINY_OVERRIDE && Overrides.EGG_VARIANT_OVERRIDE) {
-            speciesPool = speciesPool.filter(s => getPokemonSpecies(s).hasVariants());
+          speciesPool = speciesPool.filter(s => getPokemonSpecies(s).hasVariants());
         }
 
         /**
@@ -566,9 +566,10 @@ export class EggHatchPhase extends Phase {
 
       // If variant override is set, set shiny and use variant override
       // else generate shiny and variant.
-      if (this.egg.variantOverride) {
+      if (this.egg.variantTier) {
         ret.shiny = true;
-        ret.variant = this.egg.variantOverride;
+        ret.variant = this.egg.variantTier;
+        //ret.initShinySparkle();
       } else {
         /**
          * Non Shiny gacha Pokemon have a 1/128 chance of being shiny
@@ -585,8 +586,12 @@ export class EggHatchPhase extends Phase {
       }
 
       // Overrides from overrides.ts
-      if (Overrides.EGG_SHINY_OVERRIDE) ret.shiny = true;
-      if (Overrides.EGG_VARIANT_OVERRIDE) ret.variant = Overrides.EGG_VARIANT_OVERRIDE;
+      if (Overrides.EGG_SHINY_OVERRIDE) {
+        ret.shiny = true;
+      }
+      if (Overrides.EGG_VARIANT_OVERRIDE) {
+        ret.variant = Overrides.EGG_VARIANT_OVERRIDE;
+      }
 
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 

@@ -12,6 +12,7 @@ import { EggTier } from "../data/enums/egg-type";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
 import * as Overrides from "../overrides";
+import { VariantTier } from "#app/data/enums/variant-tiers.js";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
@@ -275,8 +276,10 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   pull(pullCount?: integer, count?: integer, eggs?: Egg[]): void {
-    if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) pullCount = Overrides.EGG_GACHA_PULL_COUNT;
-    
+    if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) {
+      pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
+    }
+
     this.eggGachaOptionsContainer.setVisible(false);
     this.setTransitioning(true);
 
@@ -373,7 +376,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       eggs = [];
       const tierValueOffset = this.gachaCursor === GachaType.LEGENDARY ? 1 : 0;
       const tiers = new Array(pullCount).fill(null).map(() => {
-        if (Overrides.EGG_TIER_OVERRIDE) return Overrides.EGG_TIER_OVERRIDE;
+        if (Overrides.EGG_TIER_OVERRIDE) {
+          return Overrides.EGG_TIER_OVERRIDE;
+        }
         const tierValue = Utils.randInt(256);
         return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
       });
@@ -400,7 +405,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       const timestamp = new Date().getTime();
 
       for (const tier of tiers) {
-        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
+        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp, VariantTier.RARE);
         if (egg.isManaphyEgg()) {
           this.scene.gameData.gameStats.manaphyEggsPulled++;
           egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);
@@ -582,7 +587,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 99) {
-              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) this.consumeVouchers(VoucherType.REGULAR, 1);
+              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                this.consumeVouchers(VoucherType.REGULAR, 1);
+              }
               this.pull();
               success = true;
             } else {
@@ -595,7 +602,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 95) {
-              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) this.consumeVouchers(VoucherType.PLUS, 1);
+              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                this.consumeVouchers(VoucherType.PLUS, 1);
+              }
               this.pull(5);
               success = true;
             } else {
@@ -611,9 +620,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 90) {
               if (this.cursor === 3) {
-                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) this.consumeVouchers(VoucherType.PREMIUM, 1);
+                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                  this.consumeVouchers(VoucherType.PREMIUM, 1);
+                }
               } else {
-                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) this.consumeVouchers(VoucherType.REGULAR, 10);
+                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                  this.consumeVouchers(VoucherType.REGULAR, 10);
+                }
               }
               this.pull(10);
               success = true;
@@ -627,7 +640,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 75) {
-              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) this.consumeVouchers(VoucherType.GOLDEN, 1);
+              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                this.consumeVouchers(VoucherType.GOLDEN, 1);
+              }
               this.pull(25);
               success = true;
             } else {
