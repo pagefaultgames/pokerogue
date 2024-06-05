@@ -1,13 +1,14 @@
 import BattleScene from "../../battle-scene";
 import { ModifierTier } from "../../modifier/modifier-tier";
 import { modifierTypes } from "../../modifier/modifier-type";
-import { EnemyPartyConfig, generateEnemyPartyForBattle, initBattleFromEncounter, leaveEncounter, setEncounterRewards, showTrainerDialogue } from "../../utils/mystery-encounter-utils";
+import { EnemyPartyConfig, generateEnemyPartyForBattle, initBattleFromEncounter, leaveEncounterWithoutBattle, setEncounterRewards, showTrainerDialogue } from "../../utils/mystery-encounter-utils";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import { TrainerType } from "../enums/trainer-type";
-import MysteryEncounter, { EncounterRequirements, MysteryEncounterWrapper, OptionSelectMysteryEncounter } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterFactory, OptionSelectMysteryEncounter } from "../mystery-encounter";
+import { MysteryEncounterRequirements } from "../mystery-encounter-requirements";
 
-export class MysteriousChallengersEncounter implements MysteryEncounterWrapper {
-  get(): MysteryEncounter {
+export class MysteriousChallengersEncounter implements MysteryEncounterFactory {
+  getEncounter(): MysteryEncounter<OptionSelectMysteryEncounter> {
     return new OptionSelectMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
       .introVisualsConfig([
         {
@@ -26,7 +27,7 @@ export class MysteriousChallengersEncounter implements MysteryEncounterWrapper {
           hasShadow: true
         }
       ])
-      .requirements(new EncounterRequirements(50, 180)) // waves 50 to 180
+      .requirements(new MysteryEncounterRequirements(50, 180)) // waves 50 to 180
       .option(async (scene: BattleScene) => {
         // Spawn easy fight (75% standard strength) with memory mushroom reward
         const config: EnemyPartyConfig = {
@@ -65,7 +66,7 @@ export class MysteriousChallengersEncounter implements MysteryEncounterWrapper {
       })
       .option(async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp
-        leaveEncounter(scene);
+        leaveEncounterWithoutBattle(scene);
         return true;
       });
   }

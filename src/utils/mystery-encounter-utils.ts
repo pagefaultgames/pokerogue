@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
 import { SyncEncounterNatureAbAttr, applyAbAttrs } from "../data/ability";
@@ -6,10 +7,11 @@ import { Species } from "../data/enums/species";
 import { TrainerType } from "../data/enums/trainer-type";
 import { MysteryEncounterVariant } from "../data/mystery-encounter";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
+import { StatusEffect } from "../data/status-effect";
 import { TrainerSlot, trainerConfigs } from "../data/trainer-config";
 import { FieldPosition, PlayerPokemon } from "../field/pokemon";
 import Trainer, { TrainerVariant } from "../field/trainer";
-import { ExtraModifierModifier } from "../modifier/modifier";
+import { ExtraModifierModifier, PokemonExpBoosterModifier } from "../modifier/modifier";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { ModifierPoolType, ModifierTypeFunc, regenerateModifierPoolThresholds } from "../modifier/modifier-type";
 import { ModifierRewardPhase, SelectModifierPhase, SummonPhase } from "../phases";
@@ -20,7 +22,6 @@ import * as Utils from "../utils";
  * Util file for functions used in mystery encounters
  * **MIGHT** be useful outside of mystery encounters but no guarantees of functionality
  */
-
 
 /**
  * Async function that is called every time a mystery encounter option is selected
@@ -60,33 +61,100 @@ export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<bo
  * Will never remove the player's last non-fainted Pokemon (if they only have 1)
  * Otherwise, picks a Pokemon completely at random and removes from the party
  * @param scene
+ * @param doNotReturnLastUnfaintedMon - If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
-export function removeRandomPlayerPartyPokemon(scene: BattleScene): string {
-  let party = scene.getParty();
+export function getRandomPlayerPokemon(scene: BattleScene, doNotReturnLastUnfaintedMon?: boolean): PlayerPokemon {
+  const party = scene.getParty();
   let chosenIndex: number;
   let chosenPokemon: PlayerPokemon;
   const faintedMons = party.filter(p => p.isFainted());
 
-  // Do not remove un-fainted mon if it's the last one in the party
-  if (faintedMons.length === party.length - 1) {
-    chosenIndex = Utils.randSeedInt(faintedMons.length);
-    chosenPokemon = faintedMons.at(chosenIndex);
-  } else {
+  if (doNotReturnLastUnfaintedMon) {
     chosenIndex = Utils.randSeedInt(party.length);
     chosenPokemon = party.at(chosenIndex);
+  } else {
+    // Do not get un-fainted mon if it's the last one in the party
+    if (faintedMons.length === party.length - 1) {
+      chosenIndex = Utils.randSeedInt(faintedMons.length);
+      chosenPokemon = faintedMons.at(chosenIndex);
+    } else {
+      chosenIndex = Utils.randSeedInt(party.length);
+      chosenPokemon = party.at(chosenIndex);
+    }
   }
 
-  if (chosenPokemon) {
-    const partyIndex = party.indexOf(chosenPokemon);
-    scene.field.remove(chosenPokemon, true);
-    party = party.splice(partyIndex, 1);
-    chosenPokemon.destroy();
+  return chosenPokemon;
+}
 
-    return chosenPokemon.name;
+/**
+ * Ties are broken by whatever mon is closer to the front of the party
+ * @param scene
+ * @returns
+ */
+export function getHighestLevelPlayerPokemon(scene: BattleScene): PlayerPokemon {
+  const party = scene.getParty();
+  let pokemon: PlayerPokemon;
+  party.forEach(p => pokemon = pokemon && pokemon?.level <= p?.level ? pokemon : p);
+  return pokemon;
+}
+
+/**
+ * Ties are broken by whatever mon is closer to the front of the party
+ * @param scene
+ * @returns
+ */
+export function getLowestLevelPlayerPokemon(scene: BattleScene): PlayerPokemon {
+  const party = scene.getParty();
+  let pokemon: PlayerPokemon;
+  party.forEach(p => pokemon = pokemon && pokemon?.level >= p?.level ? pokemon : p);
+  return pokemon;
+}
+
+export function koPlayerPokemon(pokemon: PlayerPokemon) {
+  pokemon.hp = 0;
+  pokemon.trySetStatus(StatusEffect.FAINT);
+  pokemon.updateInfo();
+}
+
+/**
+ * Will display a message in UI with injected encounter data tokens
+ * @param scene
+ */
+export function showEncounterText(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): Promise<void> {
+  return new Promise<void>(resolve => {
+    let text: string = i18next.t(contentKey);
+    const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
+    if (dialogueTokens) {
+      dialogueTokens.forEach((token) => {
+        text = text.replace(token[0], token[1]);
+      });
+    }
+
+    const onMessageContinue = (() => {
+      resolve();
+    });
+
+    scene.ui.showText(text, null, onMessageContinue, 0, true);
+  });
+}
+
+/**
+ * Will display a dialogue (with speaker title) in UI with injected encounter data tokens
+ * @param scene
+ */
+export function showEncounterDialogue(scene: BattleScene, textContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, speakerContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, callback?: Function) {
+  let text: string = i18next.t(textContentKey);
+  let speaker: string = i18next.t(speakerContentKey);
+  const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
+  if (dialogueTokens) {
+    dialogueTokens.forEach((token) => {
+      text = text.replace(token[0], token[1]);
+      speaker = speaker.replace(token[0], token[1]);
+    });
   }
 
-  return null;
+  this.scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
 }
 
 /**
@@ -353,12 +421,20 @@ export function setEncounterRewards(scene: BattleScene, showShop?: boolean, shop
         }
       }
 
-      scene.pushPhase(new SelectModifierPhase(scene, 0, rewards));
+      // If adding rewards for a non-battle encounter
+      //if (!this.scene.currentBattle.mysteryEncounter.didBattle) {
+      //  scene.unshiftPhase(new SelectModifierPhase(scene, 0, rewards));
+      //} else {
+      //  scene.pushPhase(new SelectModifierPhase(scene, 0, rewards));
+      //}
+
+      scene.unshiftPhase(new SelectModifierPhase(scene, 0, rewards));
     }
 
     if (nonShopRewards?.length > 0) {
       nonShopRewards.forEach((reward) => {
-        scene.pushPhase(new ModifierRewardPhase(scene, reward));
+        //scene.pushPhase(new ModifierRewardPhase(scene, reward));
+        scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
       });
 
     }
@@ -370,13 +446,59 @@ export function setEncounterRewards(scene: BattleScene, showShop?: boolean, shop
 }
 
 /**
+ * Will initialize exp phases to follow the mystery encounter (in addition to any combat or other exp earned)
+ * Exp earned will be a simple function that linearly scales with wave index, that can be increased or decreased by the expMultiplier
+ * Exp Share will have no effect (so no accounting for what mon is "on the field")
+ * Exp Balance will still function as normal
+ * @param scene - Battle Scene
+ * @param expMultiplier - default is 100, can be increased or decreased as desired
+ */
+export function setEncounterExp(scene: BattleScene, expMultiplier: number = 100) {
+  //const expBalanceModifier = scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
+  const expVal = scene.currentBattle.waveIndex * expMultiplier;
+  const pokemonExp = new Utils.NumberHolder(expVal);
+  const partyMemberExp = [];
+
+  const party = scene.getParty();
+  party.forEach(pokemon => {
+    this.scene.applyModifiers(PokemonExpBoosterModifier, true, pokemon, pokemonExp);
+    partyMemberExp.push(Math.floor(pokemonExp.value));
+  });
+
+  //if (expBalanceModifier) {
+  //  let totalLevel = 0;
+  //  let totalExp = 0;
+  //  expPartyMembers.forEach((expPartyMember, epm) => {
+  //    totalExp += partyMemberExp[epm];
+  //    totalLevel += expPartyMember.level;
+  //  });
+
+  //  const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
+
+  //  const recipientExpPartyMemberIndexes = [];
+  //  expPartyMembers.forEach((expPartyMember, epm) => {
+  //    if (expPartyMember.level <= medianLevel) {
+  //      recipientExpPartyMemberIndexes.push(epm);
+  //    }
+  //  });
+
+  //  const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
+
+  //  expPartyMembers.forEach((_partyMember, pm) => {
+  //    partyMemberExp[pm] = Phaser.Math.Linear(partyMemberExp[pm], recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0, 0.2 * expBalanceModifier.getStackCount());
+  //  });
+  //}
+}
+
+/**
  * Can be used to exit an encounter without any battles or followup
  * Will skip any shops and rewards, and queue the next encounter phase as normal
  * @param scene
  */
-export function leaveEncounter(scene: BattleScene) {
+export function leaveEncounterWithoutBattle(scene: BattleScene) {
   scene.currentBattle.mysteryEncounter.didBattle = false;
+  const postPhase = scene.findPhase(p => p instanceof PostMysteryEncounterPhase) as PostMysteryEncounterPhase;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
-  scene.pushPhase(new PostMysteryEncounterPhase(scene));
+  scene.pushPhase(postPhase);
 }

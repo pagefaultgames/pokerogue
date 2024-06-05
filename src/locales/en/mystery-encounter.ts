@@ -19,13 +19,15 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_chest_description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
   "mysterious_chest_query": "Will you open it?",
   "mysterious_chest_option_1_label": "Open it",
-  "mysterious_chest_option_2_label": "It might be dangerous, leave it alone",
+  "mysterious_chest_option_2_label": "It's too risky, leave",
   "mysterious_chest_option_1_selected_message": "You open the chest to find...",
   "mysterious_chest_option_2_selected_message": "You hurry along your way,\nwith a slight feeling of regret.",
   "mysterious_chest_option_1_normal_result": "A decent selection of tools and items.",
   "mysterious_chest_option_1_good_result": "Some pretty handy tools and items.",
   "mysterious_chest_option_1_great_result": "A great selection of items!",
   "mysterious_chest_option_1_amazing_result": "Whoa! An amazing choice of items!",
+  "mysterious_chest_option_1_bad_result": `Oh no!@d{32}\nThe chest was trapped!
+  $Your @ec{pokeName} jumps in front of you\nbut is KOed in the process.`,
 
   "dark_deal_intro_message": "A strange man in a tattered coat stands in your way...",
   "dark_deal_speaker": "Shady Guy",

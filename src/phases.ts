@@ -5011,15 +5011,23 @@ export class SelectModifierPhase extends BattlePhase {
 
     const party = this.scene.getParty();
     regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
-    const modifierCount = new Utils.IntegerHolder(3);
+    let modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
 
-    // If mystery encounter with custom shop and first time shop is being rolled, lock the reward tiers for first shop roll
-    const isMysteryEncounterFirstShop = this.scene?.currentBattle?.mysteryEncounter?.lockEncounterRewardTiers && this.modifierTiers?.length > 0;
-    if (isMysteryEncounterFirstShop) {
-      this.scene.currentBattle.mysteryEncounter.lockEncounterRewardTiers = false;
+    let isMysteryEncounterFirstShop = false;
+    if (this.scene?.currentBattle?.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      // If encounter has custom rewards, ignore standard item counts
+      if (this.modifierTiers?.length > 0) {
+        modifierCount = new Utils.IntegerHolder(this.modifierTiers.length);
+      }
+
+      // If mystery encounter with custom shop and first time shop is being rolled, lock the reward tiers for first shop roll
+      isMysteryEncounterFirstShop = this.scene?.currentBattle?.mysteryEncounter?.lockEncounterRewardTiers && this.modifierTiers?.length > 0;
+      if (isMysteryEncounterFirstShop) {
+        this.scene.currentBattle.mysteryEncounter.lockEncounterRewardTiers = false;
+      }
     }
 
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, isMysteryEncounterFirstShop);

@@ -1,16 +1,17 @@
 import BattleScene from "../../battle-scene";
 import { AddPokeballModifierType } from "../../modifier/modifier-type";
-import { EnemyPartyConfig, generateEnemyPartyForBattle, getRandomSpeciesByEggTier, initBattleFromEncounter, leaveEncounter, removeRandomPlayerPartyPokemon } from "../../utils/mystery-encounter-utils";
-import MysteryEncounter, { EncounterRequirements, MysteryEncounterWrapper, OptionSelectMysteryEncounter } from "../mystery-encounter";
+import { EnemyPartyConfig, generateEnemyPartyForBattle, getRandomSpeciesByEggTier, initBattleFromEncounter, leaveEncounterWithoutBattle, getRandomPlayerPokemon } from "../../utils/mystery-encounter-utils";
+import MysteryEncounter, { MysteryEncounterFactory, OptionSelectMysteryEncounter } from "../mystery-encounter";
 import { ModifierRewardPhase } from "../../phases";
 import { getPokemonSpecies } from "../pokemon-species";
 import { Species } from "../enums/species";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import { PokeballType } from "../pokeball";
 import { EggTier } from "../enums/egg-type";
+import { MysteryEncounterRequirements } from "../mystery-encounter-requirements";
 
-export class DarkDealEncounter implements MysteryEncounterWrapper {
-  get(): MysteryEncounter {
+export class DarkDealEncounter implements MysteryEncounterFactory {
+  getEncounter(): MysteryEncounter<OptionSelectMysteryEncounter> {
     return new OptionSelectMysteryEncounter(MysteryEncounterType.DARK_DEAL)
       .introVisualsConfig([
         {
@@ -25,7 +26,7 @@ export class DarkDealEncounter implements MysteryEncounterWrapper {
           repeat: true
         }
       ])
-      .requirements(new EncounterRequirements(2, 180)) // waves 2 to 180
+      .requirements(new MysteryEncounterRequirements(2, 180)) // waves 2 to 180
       .option(
         // onSelect
         async (scene: BattleScene) => {
@@ -43,13 +44,14 @@ export class DarkDealEncounter implements MysteryEncounterWrapper {
         // onPreSelect
         (scene: BattleScene) => {
           // Removes random pokemon from party and adds name to data tokens
-          const removedPokemon = removeRandomPlayerPartyPokemon(scene);
-          scene.currentBattle.mysteryEncounter.dialogueTokens.push([/@ec\{pokeName\}/gi, removedPokemon]);
+          const removedPokemon = getRandomPlayerPokemon(scene, true);
+          scene.removePokemonFromPlayerParty(removedPokemon);
+          scene.currentBattle.mysteryEncounter.dialogueTokens.push([/@ec\{pokeName\}/gi, removedPokemon.name]);
         }
       )
       .option(async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp
-        leaveEncounter(scene);
+        leaveEncounterWithoutBattle(scene);
         return true;
       });
   }

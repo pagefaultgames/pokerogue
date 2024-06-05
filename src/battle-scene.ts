@@ -58,7 +58,8 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
-import MysteryEncounter, { MysteryEncounterData, MysteryEncounterFlags, MysteryEncounterTier, allMysteryEncounters } from "./data/mystery-encounter";
+import MysteryEncounter, { MysteryEncounterTier, allMysteryEncounters } from "./data/mystery-encounter";
+import { MysteryEncounterFlags } from "./data/mystery-encounter-flags";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -717,6 +718,17 @@ export default class BattleScene extends SceneBase {
     return pokemon;
   }
 
+  removePokemonFromPlayerParty(pokemon: PlayerPokemon) {
+    if (!pokemon) {
+      return;
+    }
+
+    const partyIndex = this.party.indexOf(pokemon);
+    this.field.remove(pokemon, true);
+    this.party = this.party.splice(partyIndex, 1);
+    pokemon.destroy();
+  }
+
   addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
 
@@ -904,7 +916,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounterData): Battle {
+  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounter): Battle {
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
     let newDouble: boolean;
     let newBattleType: BattleType;
@@ -995,22 +1007,30 @@ export default class BattleScene extends SceneBase {
     }, newWaveIndex << 3, this.waveSeed);
     this.currentBattle.incrementTurn(this);
 
+    let didSkipMysteryEncounterBattle = false;
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
       // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
       this.currentBattle.double = false;
 
       // Load or generate a mystery encounter
-      let encounter;
+      let encounter: MysteryEncounter;
       if (Overrides.MYSTERY_ENCOUNTER_OVERRIDE && Overrides.MYSTERY_ENCOUNTER_OVERRIDE < allMysteryEncounters.length) {
         encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
       } else {
-        encounter = mysteryEncounter?.encounter?.encounterType >= 0 ? allMysteryEncounters[mysteryEncounter.encounter.encounterType] : null;
+        encounter = mysteryEncounter?.encounterType >= 0 ? allMysteryEncounters[mysteryEncounter.encounterType] : null;
         if (!encounter) {
           const tierValue = Utils.randSeedInt(64);
           const tier = tierValue > 32 ? MysteryEncounterTier.COMMON : tierValue > 16 ? MysteryEncounterTier.UNCOMMON : tierValue > 6 ? MysteryEncounterTier.RARE : MysteryEncounterTier.SUPER_RARE;
           encounter = this.generateMysteryEncounter(tier);
         }
       }
+
+      // Check any flags from previous battles here before resetting
+      // Otherwise, flag data will be lost with reset (encounter objects are shallow copies of same references)
+      didSkipMysteryEncounterBattle = lastBattle?.battleType === BattleType.MYSTERY_ENCOUNTER && !lastBattle?.mysteryEncounter?.didBattle;
+
+      // New encounter object and reset flags
+      encounter.resetFlags();
 
       // Add intro visuals for mystery encounter
       encounter.initIntroVisuals(this);
@@ -1053,8 +1073,7 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.removeAllTags();
-        // If previous enounter was myster encounter and no battle occurred, skip return phase
-        const didSkipMysteryEncounterBattle = lastBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !lastBattle.mysteryEncounter.didBattle;
+        // If previous enounter was mystery encounter and no battle occurred, skip return phase
         if (!didSkipMysteryEncounterBattle) {
           playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
         }

@@ -5,21 +5,20 @@ import UiHandler from "./ui-handler";
 import { Button } from "../enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
-import { MysteryEncounterOption } from "../data/mystery-encounter";
+import { MysteryEncounterOption, OptionSelectMysteryEncounter } from "../data/mystery-encounter";
 import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
 import { PartyUiMode } from "./party-ui-handler";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
-  private optionsContainer: Phaser.GameObjects.Container;
+  private cursorContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image;
+
+  private optionsContainer: Phaser.GameObjects.Container;
 
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
 
   private filteredEncounterOptions: MysteryEncounterOption[] = [];
-
-  protected fieldIndex: integer = 0;
-  protected cursor2: integer = 0;
 
   protected viewPartyIndex: integer = 0;
 
@@ -36,16 +35,17 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       return option.label;
     });
 
+    this.cursorContainer = this.scene.add.container(18, -38.7);
+    this.cursorContainer.setVisible(false);
+    ui.add(this.cursorContainer);
     this.optionsContainer = this.scene.add.container(18, -38.7);
     this.optionsContainer.setVisible(false);
     ui.add(this.optionsContainer);
-
-    // Cursor is added to optionsContainer at index 0, make sure to index options accordingly
-    this.setCursor(this.getCursor());
-
     this.descriptionContainer = this.scene.add.container(0, -152);
     this.descriptionContainer.setVisible(false);
     ui.add(this.descriptionContainer);
+
+    this.setCursor(this.getCursor());
 
     this.descriptionWindow = addWindow(this.scene, 0, 0, 150, 105, false, false, 0, 0, WindowVariant.THIN);
     this.descriptionContainer.add(this.descriptionWindow);
@@ -59,6 +59,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
+    this.cursorContainer.setVisible(true);
     this.descriptionContainer.setVisible(true);
     this.optionsContainer.setVisible(true);
     this.displayEncounterOptions(!(args[0] as boolean || false));
@@ -86,14 +87,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
           this.clear();
           this.scene.ui.setMode(Mode.PARTY, PartyUiMode.VIEW_PARTY, -1, () => {
             this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, true);
-            this.unblockInput();
-            this.setCursor(this.viewPartyIndex);
+            setTimeout(() => {
+              this.setCursor(this.viewPartyIndex);
+              this.unblockInput();
+            }, 300);
           });
         } else if (this.blockInput) {
           success = false;
         } else {
-          const selected = this.filteredEncounterOptions[cursor - 1];
-          if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor - 1)) {
+          const selected = this.filteredEncounterOptions[cursor];
+          if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
             this.clear();
             success = true;
           } else {
@@ -105,13 +108,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       }
     } else {
       switch (this.optionsContainer.length) {
-      case 4:
+      case 3:
         success = this.handleTwoOptionMoveInput(button);
         break;
-      case 5:
+      case 4:
         success = this.handleThreeOptionMoveInput(button);
         break;
-      case 6:
+      case 5:
         success = this.handleFourOptionMoveInput(button);
         break;
       }
@@ -135,11 +138,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       break;
     case Button.DOWN:
       if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(2);
+        success = this.setCursor(1);
       }
       break;
     case Button.LEFT:
-      if (cursor > 1) {
+      if (cursor > 0) {
         success = this.setCursor(cursor - 1);
       }
       break;
@@ -158,7 +161,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const cursor = this.getCursor();
     switch (button) {
     case Button.UP:
-      if (cursor === 3) {
+      if (cursor === 2) {
         success = this.setCursor(cursor - 2);
       } else {
         success = this.setCursor(this.viewPartyIndex);
@@ -166,22 +169,22 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       break;
     case Button.DOWN:
       if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(2);
+        success = this.setCursor(1);
       } else {
-        success = this.setCursor(3);
+        success = this.setCursor(2);
       }
       break;
     case Button.LEFT:
       if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(2);
-      } else if (cursor !== 3) {
+        success = this.setCursor(1);
+      } else if (cursor !== 2) {
         success = this.setCursor(cursor - 1);
       }
       break;
     case Button.RIGHT:
-      if (cursor === 2) {
+      if (cursor === 1) {
         success = this.setCursor(this.viewPartyIndex);
-      } else if (cursor < 2) {
+      } else if (cursor < 1) {
         success = this.setCursor(cursor + 1);
       }
       break;
@@ -195,30 +198,30 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const cursor = this.getCursor();
     switch (button) {
     case Button.UP:
-      if (cursor >= 3 && cursor !== this.viewPartyIndex) {
+      if (cursor >= 2 && cursor !== this.viewPartyIndex) {
         success = this.setCursor(cursor - 2);
       } else {
         success = this.setCursor(this.viewPartyIndex);
       }
       break;
     case Button.DOWN:
-      if (cursor <= 2) {
+      if (cursor <= 1) {
         success = this.setCursor(cursor + 2);
       } else if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(2);
+        success = this.setCursor(1);
       }
       break;
     case Button.LEFT:
       if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(2);
-      } else if (cursor % 2 === 0) {
+        success = this.setCursor(1);
+      } else if (cursor % 2 === 1) {
         success = this.setCursor(cursor - 1);
       }
       break;
     case Button.RIGHT:
-      if (cursor === 2) {
+      if (cursor === 1) {
         success = this.setCursor(this.viewPartyIndex);
-      } else if (cursor % 2 === 1 && cursor !== this.viewPartyIndex) {
+      } else if (cursor % 2 === 0 && cursor !== this.viewPartyIndex) {
         success = this.setCursor(cursor + 1);
       }
       break;
@@ -230,15 +233,14 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   unblockInput() {
     if (this.blockInput) {
       this.blockInput = false;
-
-      for (let i = 1; i < this.optionsContainer.length - 1; i++) {
+      for (let i = 0; i < this.optionsContainer.length - 1; i++) {
         (this.optionsContainer.getAt(i) as Phaser.GameObjects.Text).setAlpha(1);
       }
     }
   }
 
   getCursor(): integer {
-    return this.cursor ? this.cursor : 1;
+    return this.cursor ? this.cursor : 0;
   }
 
   setCursor(cursor: integer): boolean {
@@ -252,29 +254,35 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, "cursor");
-      this.optionsContainer.add(this.cursorObj);
+      this.cursorContainer.add(this.cursorObj);
     }
 
     if (cursor === this.viewPartyIndex) {
       this.cursorObj.setPosition(249, -17);
-    } else if (this.optionsContainer.length === 4) { // 2 Options
-      this.cursorObj.setPosition(-5 + (cursor % 2 === 0 ? 150 : 0), 16);
-    } else if (this.optionsContainer.length === 5) { // 3 Options
-      this.cursorObj.setPosition(-5 + (cursor % 2 === 0 ? 150 : 0), 8 + (cursor > 2 ? 16 : 0));
-    } else if (this.optionsContainer.length === 6) { // 4 Options
-      this.cursorObj.setPosition(-5 + (cursor % 2 === 0 ? 150 : 0), 8 + (cursor > 2 ? 16 : 0));
+    } else if (this.optionsContainer.length === 3) { // 2 Options
+      this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 150 : 0), 16);
+    } else if (this.optionsContainer.length === 4) { // 3 Options
+      this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 150 : 0), 8 + (cursor > 1 ? 16 : 0));
+    } else if (this.optionsContainer.length === 5) { // 4 Options
+      this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 150 : 0), 8 + (cursor > 1 ? 16 : 0));
     }
 
     return changed;
   }
 
   displayEncounterOptions(slideInDescription: boolean = true): void {
-    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
-    this.filteredEncounterOptions = mysteryEncounter.getMysteryEncounterOptions();
+    if (!(this.scene.currentBattle.mysteryEncounter instanceof OptionSelectMysteryEncounter)) {
+      return;
+    }
+    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter as OptionSelectMysteryEncounter;
+    this.filteredEncounterOptions = mysteryEncounter.options;
 
     const titleText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.title);
     const descriptionText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.description);
     const queryText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.query);
+
+    // Clear options container (except cursor)
+    this.optionsContainer.removeAll();
 
     // Options Window
     for (let i = 0; i < this.filteredEncounterOptions.length; i++) {
@@ -333,7 +341,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   clear(): void {
     super.clear();
     this.optionsContainer.setVisible(false);
-    this.optionsContainer.removeBetween(1, this.optionsContainer.length, true);
+    this.optionsContainer.removeAll(true);
     this.descriptionContainer.setVisible(false);
     this.descriptionContainer.removeBetween(1, this.descriptionContainer.length, true);
     this.getUi().getMessageHandler().clearText();

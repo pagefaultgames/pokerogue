@@ -63,7 +63,6 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       }
 
       this.spriteConfigs.forEach((config) => {
-        // TODO: refactor spriteKeys and folder to MysteryEncounterSprite
         this.scene.loadAtlas(config.spriteKey, config.fileRoot);
       });
 
