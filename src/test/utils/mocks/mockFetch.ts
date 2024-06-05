@@ -1,7 +1,7 @@
-import infoHandler from "#app/test/essentials/fetchHandlers/infoHandler";
-import sessionHandler from "#app/test/essentials/fetchHandlers/sessionHandler";
-import titlestatHandler from "#app/test/essentials/fetchHandlers/titlestatHandler";
-import systemHandler from "#app/test/essentials/fetchHandlers/systemHandler";
+import infoHandler from "#app/test/utils/fetchHandlers/infoHandler";
+import sessionHandler from "#app/test/utils/fetchHandlers/sessionHandler";
+import titlestatHandler from "#app/test/utils/fetchHandlers/titlestatHandler";
+import systemHandler from "#app/test/utils/fetchHandlers/systemHandler";
 
 export const MockFetch = (input, init) => {
   const url = typeof input === "string" ? input : input.url;

@@ -4,7 +4,7 @@ import BattleScene from "../battle-scene";
 import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
 import Phaser from "phaser";
-import GameManager from "#app/test/essentials/gameManager";
+import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 
 describe("check some Achievement related stuff", () => {

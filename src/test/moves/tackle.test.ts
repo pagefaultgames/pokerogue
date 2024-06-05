@@ -1,6 +1,6 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/essentials/gameManager";
+import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {Species} from "#app/data/enums/species";
 import {
@@ -9,7 +9,7 @@ import {
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {Moves} from "#app/data/enums/moves";
-import {getMovePosition} from "#app/test/essentials/utils";
+import {getMovePosition} from "#app/test/utils/testUtils";
 import {Command} from "#app/ui/command-ui-handler";
 import {Stat} from "#app/data/pokemon-stat";
 

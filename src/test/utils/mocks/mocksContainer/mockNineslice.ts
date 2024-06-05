@@ -1,4 +1,4 @@
-import MockContainer from "#app/test/essentials/mocks/mocksContainer/mockContainer";
+import MockContainer from "#app/test/utils/mocks/mocksContainer/mockContainer";
 
 
 export default class MockNineslice extends MockContainer {

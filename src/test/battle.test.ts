@@ -1,7 +1,7 @@
 /* eslint-disable */
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import {GameDataType, PlayerGender} from "#app/system/game-data";
-import {generateStarter, getMovePosition, waitUntil,} from "#app/test/essentials/utils";
+import {generateStarter, getMovePosition, waitUntil,} from "#app/test/utils/testUtils";
 import {Mode} from "#app/ui/ui";
 import {GameModes} from "#app/game-mode";
 import {Species} from "#app/data/enums/species";
@@ -36,7 +36,7 @@ import {
   VictoryPhase,
 } from "#app/phases";
 import {Moves} from "#app/data/enums/moves";
-import GameManager from "#app/test/essentials/gameManager";
+import GameManager from "#app/test/utils/gameManager";
 import fs from "fs";
 import Phaser from "phaser";
 import {allSpecies, speciesStarters, starterPassiveAbilities} from "#app/data/pokemon-species";
@@ -301,7 +301,7 @@ describe("Test Battle Phase", () => {
   }, 100000);
 
   it('load 100% data file', async() => {
-      await game.importData('src/test/saves/everything.prsv');
+      await game.importData('src/test/utils/saves/everything.prsv');
       const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
         const species = game.scene.gameData.dexData[key];
         return species.caughtAttr !== 0n;

@@ -1,6 +1,6 @@
-import GameWrapper from "#app/test/essentials/gameWrapper";
+import GameWrapper from "#app/test/utils/gameWrapper";
 import {Mode} from "#app/ui/ui";
-import {generateStarter, waitUntil} from "#app/test/essentials/utils";
+import {generateStarter, waitUntil} from "#app/test/utils/testUtils";
 import {
   CheckSwitchPhase,
   CommandPhase,
@@ -19,8 +19,8 @@ import {
 } from "#app/phases";
 import {GameDataType, PlayerGender} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
-import PhaseInterceptor from "#app/test/essentials/phaseInterceptor";
-import TextInterceptor from "#app/test/essentials/TextInterceptor";
+import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
+import TextInterceptor from "#app/test/utils/TextInterceptor";
 import {expect} from "vitest";
 import {GameModes} from "#app/game-mode";
 import fs from "fs";

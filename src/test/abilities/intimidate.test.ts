@@ -1,6 +1,6 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/essentials/gameManager";
+import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {Abilities} from "#app/data/enums/abilities";
 import {Species} from "#app/data/enums/species";

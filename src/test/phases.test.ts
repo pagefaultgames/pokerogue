@@ -3,7 +3,7 @@ import { LoginPhase, TitlePhase, UnavailablePhase } from "#app/phases.js";
 import { Mode } from "#app/ui/ui.js";
 import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/essentials/gameManager";
+import GameManager from "#app/test/utils/gameManager";
 
 describe("Phases", () => {
   let phaserGame: Phaser.Game;
