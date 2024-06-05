@@ -946,63 +946,62 @@ export class GameData {
 
   public getRunHistoryData(scene: BattleScene, fromCache: boolean): Promise<Object> {
     if (!fromCache) {
-        Utils.apiFetch("savedata/runHistory", true)
-            .then(response => response.text())
-            .then(async response => {
-              if (!response.length || response[0] !== "{") {
-                return null;
-              } else {
-                response = JSON.parse(response);
-                return response["runHistory"];
-              }
-            });
-        }
-    else {
+      Utils.apiFetch("savedata/runHistory", true)
+        .then(response => response.text())
+        .then(async response => {
+          if (!response.length || response[0] !== "{") {
+            return null;
+          } else {
+            response = JSON.parse(response);
+            return response["runHistory"];
+          }
+        });
+    } else {
       return JSON.parse(decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true),true));
     }
   }
 
   public saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean, useCachedRunHistory: boolean = false, sync: boolean = true): Promise<boolean> {
-        const response = useCachedRunHistory ? decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true),true) : this.getRunHistoryData(scene, false);
-        var runHistoryData = response ? JSON.parse(response) : JSON.parse({});
-        
-        const timestamps = Object.keys(runHistoryData);
-        if (timestamps.length >= 25) {
-          delete this.scene.gameData.runHistory[Math.min(timestamps)];
-        }
+    const response = useCachedRunHistory ? JSON.parse(decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true),true)) : this.getRunHistoryData(scene, false);
+    const runHistoryData = response ? response : {};
 
-        const timestamp = (runEntry.timestamp).toString();
-        runHistoryData[timestamp] = {};
-        runHistoryData[timestamp]["entry"] = runEntry;
-        runHistoryData[timestamp]["victory"] = victory;
+    const timestamps = Object.keys(runHistoryData);
+    if (timestamps.length >= 25) {
+      delete this.scene.gameData.runHistory[Math.min(timestamps)];
+    }
 
-        console.log(Object.keys(runHistoryData));
+    const timestamp = (runEntry.timestamp).toString();
+    runHistoryData[timestamp] = {};
+    runHistoryData[timestamp]["entry"] = runEntry;
+    runHistoryData[timestamp]["victory"] = victory;
 
-        const request = {runHistory: runHistoryData};
+    console.log(Object.keys(runHistoryData));
 
-        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
+    const request = {runHistory: runHistoryData};
 
-        if (sync) {
-          Utils.apiPost("savedata/runHistory", JSON.stringify(request), undefined, true)
-            .then(response => response.text())
-            .then(error => {
-              if (sync) {
-                this.scene.lastSavePlayTime = 0;
-              }
-              if (error) {
-                if (error.startsWith("client version out of date")) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith("session out of date")) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-                }
-                console.error(error);
-                return false;
-              }
-              return true;
-            });
-        }
+    localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
+
+    if (sync) {
+      Utils.apiPost("savedata/runHistory", JSON.stringify(request), undefined, true)
+        .then(response => response.text())
+        .then(error => {
+          if (sync) {
+            this.scene.lastSavePlayTime = 0;
+          }
+          if (error) {
+            if (error.startsWith("client version out of date")) {
+              this.scene.clearPhaseQueue();
+              this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+            } else if (error.startsWith("session out of date")) {
+              this.scene.clearPhaseQueue();
+              this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+            }
+            console.error(error);
+            return false;
+          }
+          return true;
+        });
+    }
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
