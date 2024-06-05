@@ -2462,7 +2462,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
    * @returns Returns true if healed from status, false if not
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    if (this.effects.includes(pokemon.status.effect)) {
+    if (this.effects.includes(pokemon.status?.effect)) {
       if (pokemon.getMaxHp() !== pokemon.hp) {
         const scene = pokemon.scene;
         const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
