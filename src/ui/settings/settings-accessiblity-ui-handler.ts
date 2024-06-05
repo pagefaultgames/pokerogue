@@ -2,7 +2,7 @@ import BattleScene from "../../battle-scene";
 import { Mode } from "../ui";
 "#app/inputs-controller.js";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
-import { Setting, SettingType } from "#app/system/settings/settings";
+import { SettingType } from "#app/system/settings/settings";
 
 export default class SettingsAccessibilityUiHandler extends AbstractSettingsUiHandler {
   /**
@@ -12,9 +12,8 @@ export default class SettingsAccessibilityUiHandler extends AbstractSettingsUiHa
    * @param mode - The UI mode, optional.
    */
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode);
+    super(scene, mode, SettingType.ACCESSIBILITY);
     this.title = "Accessibility";
-    this.settings = Setting.filter(s => s.type === SettingType.ACCESSIBILITY && !s.hidden?.());
     this.localStorageKey = "settings";
   }
 }

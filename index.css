@@ -44,7 +44,7 @@ input:-internal-autofill-selected {
 
 /* Touch Controls: */
 
-.touchControls {
+#touchControls {
   --text-shadow-size: 0.65vh;
   --controls-size: 10vh;
   --touch-control-opacity: 0.6;
@@ -67,22 +67,22 @@ input:-internal-autofill-selected {
 }
 
 @media (orientation: landscape) {
-  .touchControls {
+  #touchControls {
     --controls-size: 20vh; 
     --text-shadow-size: 1.3vh;
     --small-button-offset: 4vh;
   }
 }
 
-.touchControls:not(.visible) {
+#touchControls:not(.visible) {
   display: none;
 }
 
-.touchControls.configMode {
+#touchControls.configMode {
   display: block !important;
 }
 
-.touchControls .active {
+#touchControls .active {
   opacity: var(--touch-control-opacity);
 }
 
@@ -107,8 +107,8 @@ input:-internal-autofill-selected {
 /* Hide buttons on specific UIs */
 
 /* Show #cycleForm and #cycleShiny only on STARTER_SELECT and SETTINGS */
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_ACCESSIBILITY']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apadCycleForm,
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_ACCESSIBILITY']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apadCycleShiny {
+#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode^='SETTINGS']) #apadCycleForm,
+#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode^='SETTINGS']) #apadCycleShiny {
   display: none;
 }
 
@@ -128,11 +128,11 @@ input:-internal-autofill-selected {
 
 /* Configuration toolbar */
 
-.touchControls.configMode > .configToolbar {
+#touchControls.configMode > #configToolbar {
   display: flex;
 }
 
-.configToolbar {
+#configToolbar {
   display: none;
   flex-direction: column;
   width: 100%;
@@ -144,19 +144,19 @@ input:-internal-autofill-selected {
   z-index: 9
 }
 
-.configToolbar .buttonRow {
+#configToolbar .buttonRow {
   display: flex;
   justify-content: space-evenly;
   width: 100%;
 }
 
-.configToolbar .row {
+#configToolbar .row {
   display: flex;
   justify-self: flex-start;
   width: 100%;
 }
 
-.configToolbar .btn {
+#configToolbar .btn {
   z-index: 3;
   background-color: var(--color-base);
   display: flex;
@@ -172,11 +172,11 @@ input:-internal-autofill-selected {
   user-select: none;
 }
 
-.configToolbar .btn:active {
+#configToolbar .btn:active {
   opacity: var(--touch-control-opacity)
 }
 
-.configToolbar .orientationLabel {
+#configToolbar .orientationLabel {
   font-size: var(--small-control-size);
   text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
   user-select: none;
