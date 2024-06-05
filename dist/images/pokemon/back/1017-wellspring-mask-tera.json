@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1017-wellspring-mask-tera.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 96,
+				"h": 96
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 6,
+						"w": 96,
+						"h": 85
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 96,
+						"h": 85
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:689ff4514c071d220bf0457da26850d5:b9a6688aea29bea33c6b1b518f1da693:f4f8b58743ad897a5774e4ca3d3eff03$"
+	}
+}

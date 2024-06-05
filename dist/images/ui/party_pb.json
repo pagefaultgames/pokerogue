@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "party_pb.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 20,
+				"h": 46
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "party_pb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 20,
+						"h": 24
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 20,
+						"h": 22
+					},
+					"frame": {
+						"x": 0,
+						"y": 24,
+						"w": 20,
+						"h": 22
+					}
+				},
+				{
+					"filename": "party_pb_sel",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 24
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 24
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 24
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:13f7a00fc4a7a4cc80f3bb82316282f4:922760ce93e3ee2e335fda565facb79d:0a5761cf37c97cf64558a62d03bdb2ee$"
+	}
+}

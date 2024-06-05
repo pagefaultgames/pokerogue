@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "978-droopy.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 40,
+				"h": 40
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 28,
+						"y": 36,
+						"w": 40,
+						"h": 24
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 24
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:b98633bae06dd55e11ab6d7f4484715f:1be2f706df47e38e96126e6e4ec29dde:4a81cfb3bb02b4715c47648a8b0893d2$"
+	}
+}

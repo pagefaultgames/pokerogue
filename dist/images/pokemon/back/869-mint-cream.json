@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "869-mint-cream.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 55,
+				"h": 55
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 30,
+						"y": 20,
+						"w": 36,
+						"h": 55
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 55
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:567b2cbeb4dd05e9ea75a9745678a661:daa4e8bd833c1f1b8fcef7664611a23f:5a3d349b5aaedd43ed9c9acbc0c8652a$"
+	}
+}

@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "791-radiant-sun.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 90,
+				"h": 90
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 77,
+						"h": 90
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 77,
+						"h": 90
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 77,
+						"h": 90
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:7a1d412fed68d8a92fc91d959115bef2:11a839f29cc9df9de8bbb53799c3e642:382595a3abdd8b94dc119ba95937a0c4$"
+	}
+}

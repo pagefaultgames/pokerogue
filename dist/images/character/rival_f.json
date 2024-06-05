@@ -1,0 +1,209 @@
+{
+	"textures": [
+		{
+			"image": "rival_f.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 184,
+				"h": 675
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "angry",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					}
+				},
+				{
+					"filename": "angry_mopen",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					},
+					"frame": {
+						"x": 92,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					}
+				},
+				{
+					"filename": "neutral",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					},
+					"frame": {
+						"x": 0,
+						"y": 135,
+						"w": 92,
+						"h": 135
+					}
+				},
+				{
+					"filename": "shock",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					},
+					"frame": {
+						"x": 92,
+						"y": 135,
+						"w": 92,
+						"h": 135
+					}
+				},
+				{
+					"filename": "smile",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					},
+					"frame": {
+						"x": 0,
+						"y": 270,
+						"w": 92,
+						"h": 135
+					}
+				},
+				{
+					"filename": "smile_eclosed",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					},
+					"frame": {
+						"x": 92,
+						"y": 270,
+						"w": 92,
+						"h": 135
+					}
+				},
+				{
+					"filename": "smile_ehalf",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 92,
+						"h": 135
+					},
+					"frame": {
+						"x": 0,
+						"y": 405,
+						"w": 92,
+						"h": 135
+					}
+				},
+				{
+					"filename": "smile_wave",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 0,
+						"w": 83,
+						"h": 135
+					},
+					"frame": {
+						"x": 0,
+						"y": 540,
+						"w": 83,
+						"h": 135
+					}
+				},
+				{
+					"filename": "smile_wave_wink",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 135
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 0,
+						"w": 83,
+						"h": 135
+					},
+					"frame": {
+						"x": 83,
+						"y": 540,
+						"w": 83,
+						"h": 135
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:1be996f9906a409496e360d67e49ccd0:db1900b6808dc32ed4746255b60aa557:0aaa288a75ecf87b6647cbb7fd0d2ecc$"
+	}
+}

@@ -1,0 +1,14 @@
+{
+  "name": "PokéRogue",
+  "short_name": "PokéRogue",
+  "description": "A Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, and reaching Pokémon stats you never thought possible.",
+  "scope": "/",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#8c8c8c",
+  "theme_color": "#8c8c8c",
+  "icons": [
+    { "src": "logo128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "logo512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

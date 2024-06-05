@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "802-zenith.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 57,
+				"h": 57
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 35,
+						"h": 57
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 35,
+						"h": 57
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 35,
+						"h": 57
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:f69c65cd696033de6b7691c8732c3c51:c965f750efe08221119320c1400ac7ce:95b62f8484a0368ca2169c728028a2c0$"
+	}
+}
