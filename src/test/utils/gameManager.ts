@@ -6,16 +6,12 @@ import {
   CommandPhase,
   EncounterPhase,
   LoginPhase,
-  MessagePhase,
   PostSummonPhase,
   SelectGenderPhase,
   SelectStarterPhase,
-  ShowAbilityPhase,
-  StatChangePhase,
   SummonPhase,
   TitlePhase,
   ToggleDoublePositionPhase,
-  TurnInitPhase,
 } from "#app/phases";
 import {GameDataType, PlayerGender} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
@@ -98,31 +94,19 @@ export default class GameManager {
   startBattle(species?: Species[]): Promise<void> {
     return new Promise(async(resolve) => {
       await this.runToSummon(species);
-      await this.phaseInterceptor.run(PostSummonPhase);
-      await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(SummonPhase) || this.isCurrentPhase(ShowAbilityPhase));
-      await this.phaseInterceptor.run(ShowAbilityPhase, () => this.isCurrentPhase(SummonPhase) ||   this.isCurrentPhase(StatChangePhase));
-      await this.phaseInterceptor.run(StatChangePhase, () => this.isCurrentPhase(MessagePhase) || this.isCurrentPhase(SummonPhase));
-      await this.phaseInterceptor.run(MessagePhase, () => this.isCurrentPhase(SummonPhase));
-      await this.phaseInterceptor.run(SummonPhase);
-      await this.phaseInterceptor.run(ToggleDoublePositionPhase);
-      await this.phaseInterceptor.run(SummonPhase, () => this.isCurrentPhase(CheckSwitchPhase));
-      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.setMode(Mode.MESSAGE);
-        this.endPhase();
-      });
+      await this.phaseInterceptor.runFrom(PostSummonPhase).to(ToggleDoublePositionPhase);
+      await this.phaseInterceptor.run(SummonPhase, () => this.isCurrentPhase(CheckSwitchPhase) || this.isCurrentPhase(PostSummonPhase));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
       }, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.run(CheckSwitchPhase);
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(PostSummonPhase));
       await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.run(PostSummonPhase);
-      await this.phaseInterceptor.run(ShowAbilityPhase, () => this.isCurrentPhase(PostSummonPhase) || this.isCurrentPhase(TurnInitPhase));
-      await this.phaseInterceptor.run(StatChangePhase, () => this.isCurrentPhase(MessagePhase) || this.isCurrentPhase(PostSummonPhase)|| this.isCurrentPhase(TurnInitPhase));
-      await this.phaseInterceptor.run(MessagePhase, () => this.isCurrentPhase(TurnInitPhase));
-      await this.phaseInterceptor.run(PostSummonPhase, () => this.isCurrentPhase(TurnInitPhase));
-      await this.phaseInterceptor.run(TurnInitPhase);
-      await this.phaseInterceptor.run(CommandPhase);
+      await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
+      await this.phaseInterceptor.runFrom(PostSummonPhase).to(CommandPhase);
       await waitUntil(() => this.scene.ui?.getMode() === Mode.COMMAND);
       console.log("==================[New Turn]==================");
       expect(this.scene.ui?.getMode()).toBe(Mode.COMMAND);

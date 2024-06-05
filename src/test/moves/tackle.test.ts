@@ -45,7 +45,6 @@ describe("Moves - Tackle", () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GENGAR);
     await game.startBattle([
       Species.MIGHTYENA,
-      Species.MIGHTYENA,
     ]);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -63,7 +62,6 @@ describe("Moves - Tackle", () => {
   it("TACKLE against not resistant", async() => {
     const moveToUse = Moves.TACKLE;
     await game.startBattle([
-      Species.MIGHTYENA,
       Species.MIGHTYENA,
     ]);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
