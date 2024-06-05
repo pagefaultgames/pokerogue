@@ -1,4 +1,4 @@
-import { fixedBattles } from "./battle";
+import { classicFixedBattles, FixedBattleConfig, FixedBattleConfigs } from "./battle";
 import BattleScene from "./battle-scene";
 import { Biome } from "./data/enums/biome";
 import { Species } from "./data/enums/species";
@@ -6,7 +6,7 @@ import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
 import * as Overrides from "./overrides";
-import { allChallenges, Challenge, copyChallenge } from "./data/challenge";
+import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
 
 export enum GameModes {
   CLASSIC,
@@ -21,7 +21,6 @@ interface GameModeConfig {
   isEndless?: boolean;
   isDaily?: boolean;
   hasTrainers?: boolean;
-  hasFixedBattles?: boolean;
   hasNoShop?: boolean;
   hasShortBiomes?: boolean;
   hasRandomBiomes?: boolean;
@@ -36,7 +35,6 @@ export class GameMode implements GameModeConfig {
   public isEndless: boolean;
   public isDaily: boolean;
   public hasTrainers: boolean;
-  public hasFixedBattles: boolean;
   public hasNoShop: boolean;
   public hasShortBiomes: boolean;
   public hasRandomBiomes: boolean;
@@ -44,14 +42,16 @@ export class GameMode implements GameModeConfig {
   public isSplicedOnly: boolean;
   public isChallenge: boolean;
   public challenges: Challenge[];
+  public battleConfig: FixedBattleConfigs;
 
-  constructor(modeId: GameModes, config: GameModeConfig) {
+  constructor(modeId: GameModes, config: GameModeConfig, battleConfig?: FixedBattleConfigs) {
     this.modeId = modeId;
     this.challenges = [];
     Object.assign(this, config);
     if (this.isChallenge) {
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
+    this.battleConfig = battleConfig || {};
   }
 
   /**
@@ -121,7 +121,7 @@ export class GameMode implements GameModeConfig {
           if (w === waveIndex) {
             continue;
           }
-          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || fixedBattles.hasOwnProperty(w)) {
+          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || this.isFixedBattle(waveIndex)) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
@@ -218,6 +218,31 @@ export class GameMode implements GameModeConfig {
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
+  /**
+   * Checks whether there is a fixed battle on this gamemode on a given wave.
+   * @param {integer} waveIndex The wave to check.
+   * @returns {boolean} If this game mode has a fixed battle on this wave
+   */
+  isFixedBattle(waveIndex: integer): boolean {
+    const dummyConfig = new FixedBattleConfig();
+    return this.battleConfig.hasOwnProperty(waveIndex) || applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig);
+
+  }
+
+  /**
+   * Returns the config for the fixed battle for a particular wave.
+   * @param {integer} waveIndex The wave to check.
+   * @returns {boolean} The fixed battle for this wave.
+   */
+  getFixedBattle(waveIndex: integer): FixedBattleConfig {
+    const challengeConfig = new FixedBattleConfig();
+    if (applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
+      return challengeConfig;
+    } else {
+      return this.battleConfig[waveIndex];
+    }
+  }
+
 
   getClearScoreBonus(): integer {
     switch (this.modeId) {
@@ -275,7 +300,7 @@ export class GameMode implements GameModeConfig {
 export function getGameMode(gameMode: GameModes): GameMode {
   switch (gameMode) {
   case GameModes.CLASSIC:
-    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true });
+    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true }, classicFixedBattles);
   case GameModes.ENDLESS:
     return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
   case GameModes.SPLICED_ENDLESS:
@@ -283,6 +308,6 @@ export function getGameMode(gameMode: GameModes): GameMode {
   case GameModes.DAILY:
     return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
   case GameModes.CHALLENGE:
-    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, hasFixedBattles: true, isChallenge: true });
+    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true }, classicFixedBattles);
   }
 }

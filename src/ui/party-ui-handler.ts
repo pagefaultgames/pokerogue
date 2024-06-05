@@ -126,7 +126,7 @@ export default class PartyUiHandler extends MessageUiHandler {
    */
   private FilterChallengeLegal = (pokemon: PlayerPokemon) => {
     const challengeAllowed = new Utils.BooleanHolder(true);
-    applyChallenges(this.scene, ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
+    applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
     if (!challengeAllowed.value) {
       return `${pokemon.name} can't be used in\nthis challenge!`;
     }

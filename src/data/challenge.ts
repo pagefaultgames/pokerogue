@@ -3,8 +3,11 @@ import { Challenges } from "./enums/challenges";
 import i18next from "#app/plugins/i18n.js";
 import { GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { speciesStarters } from "./pokemon-species";
-import BattleScene from "#app/battle-scene.js";
 import Pokemon from "#app/field/pokemon.js";
+import { BattleType, FixedBattleConfig } from "#app/battle.js";
+import { TrainerType } from "./enums/trainer-type";
+import Trainer, { TrainerVariant } from "#app/field/trainer.js";
+import { GameMode } from "#app/game-mode.js";
 
 export enum ChallengeType {
    /** Challenges which modify what starters you can choose */
@@ -15,6 +18,8 @@ export enum ChallengeType {
   STARTER_MODIFY,
   /** Challenges which limit which pokemon you can have in battle. */
   POKEMON_IN_BATTLE,
+  /** Adds or modifies the fixed battles in a run */
+  FIXED_BATTLES,
 }
 
 /**
@@ -230,7 +235,7 @@ export class SingleGenerationChallenge extends Challenge {
     super(Challenges.SINGLE_GENERATION, 9);
     this.addChallengeType(ChallengeType.STARTER_CHOICE);
     this.addChallengeType(ChallengeType.POKEMON_IN_BATTLE);
-    this.maxSeverity = 2;
+    this.addChallengeType(ChallengeType.FIXED_BATTLES);
   }
 
   apply(challengeType: ChallengeType, args: any[]): boolean {
@@ -255,6 +260,33 @@ export class SingleGenerationChallenge extends Challenge {
         return true;
       }
       break;
+    case ChallengeType.FIXED_BATTLES:
+      const waveIndex = args[0] as integer;
+      const battleConfig = args[1] as FixedBattleConfig;
+      let trainerTypes: TrainerType[] = [];
+      switch (waveIndex) {
+      case 182:
+        trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]),TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
+        break;
+      case 184:
+        trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
+        break;
+      case 186:
+        trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([TrainerType.BEA_ELITE,TrainerType.ALLISTER_ELITE]), TrainerType.LARRY_ELITE ];
+        break;
+      case 188:
+        trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
+        break;
+      case 190:
+        trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
+        break;
+      }
+      if (trainerTypes.length === 0) {
+        return false;
+      } else {
+        battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(scene => new Trainer(scene, trainerTypes[this.value - 1], TrainerVariant.DEFAULT));
+        return true;
+      }
     }
     return false;
   }
@@ -282,7 +314,6 @@ export class SingleTypeChallenge extends Challenge {
     super(Challenges.SINGLE_TYPE, 18);
     this.addChallengeType(ChallengeType.STARTER_CHOICE);
     this.addChallengeType(ChallengeType.POKEMON_IN_BATTLE);
-    this.maxSeverity = 2;
   }
 
   apply(challengeType: ChallengeType, args: any[]): boolean {
@@ -454,12 +485,21 @@ export class LowerStarterPointsChallenge extends Challenge {
   }
 }
 
-export function applyChallenges(scene: BattleScene, challengeType: ChallengeType, ...args: any[]): void {
-  scene.gameMode.challenges.forEach(v => {
+/**
+ * Apply all challenges of a given challenge type.
+ * @param {BattleScene} scene The current scene
+ * @param {ChallengeType} challengeType What challenge type to apply
+ * @param {any[]} args Any args for that challenge type
+ * @returns {boolean} True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
+  let ret = false;
+  gameMode.challenges.forEach(v => {
     if (v.isOfType(challengeType)) {
-      v.apply(challengeType, args);
+      ret ||= v.apply(challengeType, args);
     }
   });
+  return ret;
 }
 
 export function copyChallenge(source: Challenge | any): Challenge {
