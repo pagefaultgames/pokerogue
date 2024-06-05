@@ -73,7 +73,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    const currentLanguage = i18next.language;
+    const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
     const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
