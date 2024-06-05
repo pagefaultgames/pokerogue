@@ -83,7 +83,7 @@ export default class PhaseInterceptor {
           clearInterval(this.intervalRun);
           return resolve();
         }
-      }, 100);
+      });
     });
   }
 
@@ -115,7 +115,7 @@ export default class PhaseInterceptor {
           await this.run(phaseTarget);
           resolve();
         }
-      }, 100);
+      });
     });
   }
 
@@ -154,7 +154,7 @@ export default class PhaseInterceptor {
           clearInterval(this.interval);
           return reject("Skipped phase");
         }
-      }, 100);
+      });
     });
   }
 
@@ -190,7 +190,7 @@ export default class PhaseInterceptor {
           this.prompts.shift().callback();
         }
       }
-    }, 100);
+    });
   }
 
   addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn: () => void) {
