@@ -79,7 +79,7 @@ export class Arena {
     // luck influences encounter rarity
     let luckModifier = 0;
     if (typeof luckValue !== "undefined") {
-      luckModifier = luckValue * (isBoss ? 2 : 0.5);
+      luckModifier = luckValue * (isBoss ? 0.5 : 2);
     }
     const tierValue = Utils.randSeedInt(randVal - luckModifier);
     let tier = !isBoss
