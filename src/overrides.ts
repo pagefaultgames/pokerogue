@@ -1,7 +1,7 @@
 import { TimeOfDay } from "#app/data/enums/time-of-day";
 import { PokeballCounts } from "./battle-scene";
-import { BerryType } from "./data/berry";
 import { Abilities } from "./data/enums/abilities";
+import { BerryType } from "./data/enums/berry-type";
 import { Biome } from "./data/enums/biome";
 import { Species } from "./data/enums/species";
 import { Gender } from "./data/gender";
