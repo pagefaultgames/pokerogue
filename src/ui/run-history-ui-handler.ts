@@ -247,8 +247,9 @@ class RunEntry extends Phaser.GameObjects.Container {
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
           //This allows the enemyParty to be shown - doubles or sings -> 58+(e*8)
-          const enemyIconContainer = this.scene.add.container(58+(e*8),-8);
+          const enemyIconContainer = this.scene.add.container(65+(e*25),-8);
           enemyIconContainer.setScale(0.75);
+          enemyData.boss = false;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemyLevel = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
@@ -286,7 +287,7 @@ class RunEntry extends Phaser.GameObjects.Container {
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
-    const pokemonIconsContainer = this.scene.add.container(144, 17);
+    const pokemonIconsContainer = this.scene.add.container(125, 17);
     var luckValue = 0;
 
     data.party.forEach((p: PokemonData, i: integer) => {
@@ -325,7 +326,10 @@ class RunEntry extends Phaser.GameObjects.Container {
         if (luckValue > 14) {
           luckValue = 14;
         }
-        const luckText = addTextObject(this.scene, 240, 5, `Luck: ${luckValue}`, TextStyle.WINDOW, {color: `${getLuckTextTint(luckValue)}`});
+        const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
+        console.log(luckTextTint);
+        const luckText = addTextObject(this.scene, 240, 5, `Luck: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
+        this.add(luckText);
         break;
     }
     /*
