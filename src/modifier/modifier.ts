@@ -22,6 +22,7 @@ import { Nature } from "#app/data/nature";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
+import { Command } from "#app/ui/command-ui-handler.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -776,7 +777,10 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 
     if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       bypassSpeed.value = true;
-      if (this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW") {
+      const isCommandFight = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
+      const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
+
+      if (isCommandFight && hasQuickClaw) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its quick claw to move faster!"));
       }
       return true;
