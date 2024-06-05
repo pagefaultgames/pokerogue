@@ -1313,6 +1313,14 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  showEnemyModifierBar(): void {
+    this.enemyModifierBar.setVisible(true);
+  }
+
+  hideEnemyModifierBar(): void {
+    this.enemyModifierBar.setVisible(false);
+  }
+
   updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
