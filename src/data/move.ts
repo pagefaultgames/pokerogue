@@ -6242,7 +6242,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),
     new SelfStatusMove(Moves.FOLLOW_ME, Type.NORMAL, -1, 20, -1, 2, 3)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(Moves.NATURE_POWER, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(NaturePowerAttr)
       .ignoresVirtual(),
@@ -6810,7 +6810,8 @@ export function initMoves() {
       .partial(),
     new SelfStatusMove(Moves.RAGE_POWDER, Type.BUG, -1, 20, -1, 2, 5)
       .powderMove()
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true)
+      .partial(),
     new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
       .unimplemented(),
@@ -7378,7 +7379,7 @@ export function initMoves() {
     new AttackMove(Moves.LEAFAGE, Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 7)
       .makesContact(false),
     new StatusMove(Moves.SPOTLIGHT, Type.NORMAL, -1, 15, -1, 3, 7)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, false),
     new StatusMove(Moves.TOXIC_THREAD, Type.POISON, 100, 20, 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
