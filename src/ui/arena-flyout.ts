@@ -1,4 +1,3 @@
-import * as Utils from "../utils";
 import { addTextObject, TextStyle } from "./text";
 import BattleScene from "#app/battle-scene.js";
 import { ArenaTagSide } from "#app/data/arena-tag.js";
@@ -8,7 +7,8 @@ import { addWindow, WindowVariant } from "./ui-theme";
 import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
 import { BattleSceneEventType, TurnEndEvent } from "#app/battle-scene-events.js";
 import { ArenaTagType } from "#app/data/enums/arena-tag-type.js";
-import { TimeOfDay } from "#app/data/enums/time-of-day.js";
+import TimeOfDayWidget from "./time-of-day-widget";
+import * as Utils from "../utils";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -60,12 +60,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
   /** The {@linkcode Phaser.GameObjects.Text} that goes inside of the header */
   private flyoutTextHeader: Phaser.GameObjects.Text;
 
-  /** The {@linkcode Phaser.GameObjects.Sprite} that represents foreground of the current time of day */
-  private readonly timeOfDayIconFg: Phaser.GameObjects.Sprite[] = new Array(2);
-  /** The {@linkcode Phaser.GameObjects.Sprite} that represents background the current time of day */
-  private readonly timeOfDayIconMg: Phaser.GameObjects.Sprite[] = new Array(2);
-  /** The {@linkcode Phaser.GameObjects.Sprite} that represents background the current time of day */
-  private readonly timeOfDayIconBg: Phaser.GameObjects.Sprite[] = new Array(2);
+  private timeOfDayWidget: TimeOfDayWidget;
 
   /** The {@linkcode Phaser.GameObjects.Text} header used to indicate the player's effects */
   private flyoutTextHeaderPlayer: Phaser.GameObjects.Text;
@@ -86,12 +81,9 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
   private readonly onNewArenaEvent =  (event: Event) => this.onNewArena(event);
-  private readonly onTurnInitEvent =  (event: Event) => this.onTurnInit(event);
   private readonly onTurnEndEvent =   (event: Event) => this.onTurnEnd(event);
 
   private readonly onFieldEffectChangedEvent = (event: Event) => this.onFieldEffectChanged(event);
-
-  private debugTime: TimeOfDay = TimeOfDay.DAWN;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
@@ -101,8 +93,8 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.anchorX = 0;
     this.anchorY = -98;
 
-    this.flyoutParent = this.scene.add.container(this.anchorX, this.anchorY);
-    //this.flyoutParent.setAlpha(0);
+    this.flyoutParent = this.scene.add.container(this.anchorX - this.translationX, this.anchorY);
+    this.flyoutParent.setAlpha(0);
     this.add(this.flyoutParent);
 
     this.flyoutContainer = this.scene.add.container(0, 0);
@@ -123,20 +115,8 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutTextHeader);
 
-    for (let i = 0; i < this.timeOfDayIconBg.length; i++) {
-      this.timeOfDayIconBg[i] = this.scene.add.sprite((this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2), 0, "dawn_icon_bg").setOrigin();
-    }
-    this.flyoutContainer.add(this.timeOfDayIconBg);
-
-    for (let i = 0; i < this.timeOfDayIconMg.length; i++) {
-      this.timeOfDayIconMg[i] = this.scene.add.sprite((this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2), 0, "dawn_icon_mg").setOrigin();
-    }
-    this.flyoutContainer.add(this.timeOfDayIconMg);
-
-    for (let i = 0; i < this.timeOfDayIconFg.length; i++) {
-      this.timeOfDayIconFg[i] = this.scene.add.sprite((this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2), 0, "dawn_icon_fg").setOrigin();
-    }
-    this.flyoutContainer.add(this.timeOfDayIconFg);
+    this.timeOfDayWidget = new TimeOfDayWidget(this.scene, (this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2));
+    this.flyoutContainer.add(this.timeOfDayWidget);
 
     this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, "Player", TextStyle.SUMMARY_BLUE);
     this.flyoutTextHeaderPlayer.setFontSize(54);
@@ -188,75 +168,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
     // Subscribes to required events available on game start
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
-    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.TURN_INIT, this.onTurnInitEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
-  }
-
-  private resetIcons() {
-    this.flyoutContainer.moveBelow(this.timeOfDayIconBg[0], this.timeOfDayIconBg[1]);
-    this.flyoutContainer.moveBelow(this.timeOfDayIconMg[0], this.timeOfDayIconBg[1]);
-    this.flyoutContainer.moveBelow(this.timeOfDayIconFg[0], this.timeOfDayIconFg[1]);
-
-    this.timeOfDayIconBg[0].setAlpha(1);
-    this.timeOfDayIconMg[0].setAlpha(1);
-    this.timeOfDayIconFg[0].setAlpha(1);
-  }
-
-  private setTimeOfDayIcon() {
-    //this.timeOfDayIconFg.setTexture(TimeOfDay[this.battleScene.arena.getTimeOfDay()].toLowerCase() + "_icon_fg");
-    //this.timeOfDayIconBg.setTexture(TimeOfDay[this.battleScene.arena.getTimeOfDay()].toLowerCase() + "_icon_bg");
-    this.scene.tweens.killTweensOf([this.timeOfDayIconBg, this.timeOfDayIconMg, this.timeOfDayIconFg]);
-
-    let nextTimeOfDay = this.debugTime + 1;
-    if (nextTimeOfDay > TimeOfDay.NIGHT) {
-      nextTimeOfDay = TimeOfDay.DAWN;
-    }
-
-    this.timeOfDayIconBg[0].setTexture(TimeOfDay[nextTimeOfDay].toLowerCase() + "_icon_bg");
-    this.timeOfDayIconMg[0].setTexture(TimeOfDay[nextTimeOfDay].toLowerCase() + "_icon_mg").setRotation(-90 * (3.14/180));
-    this.timeOfDayIconFg[0].setTexture(TimeOfDay[nextTimeOfDay].toLowerCase() + "_icon_fg");
-
-    this.timeOfDayIconBg[1].setTexture(TimeOfDay[this.debugTime].toLowerCase() + "_icon_bg");
-    this.timeOfDayIconMg[1].setTexture(TimeOfDay[this.debugTime].toLowerCase() + "_icon_mg");
-    this.timeOfDayIconFg[1].setTexture(TimeOfDay[this.debugTime].toLowerCase() + "_icon_fg");
-
-    this.resetIcons();
-
-    const easeRotate = "Bounce.easeOut";
-    const easeFade = "Linear";
-    this.scene.tweens.add({
-      targets: [this.timeOfDayIconMg[0], this.timeOfDayIconMg[1]],
-      angle: "+=90",
-      duration: Utils.fixedInt(1500),
-      ease: easeRotate,
-    });
-    this.scene.tweens.add({
-      targets: [this.timeOfDayIconBg[1], this.timeOfDayIconMg[1], this.timeOfDayIconFg[1]],
-      alpha: 0,
-      duration: Utils.fixedInt(500),
-      ease: easeFade,
-    });
-
-    this.debugTime++;
-    if (this.debugTime > TimeOfDay.NIGHT) {
-      this.debugTime = TimeOfDay.DAWN;
-    }
-
-    const hold1 = this.timeOfDayIconBg[0];
-    const hold2 = this.timeOfDayIconMg[0];
-    const hold3 = this.timeOfDayIconFg[0];
-
-    this.timeOfDayIconBg[0] = this.timeOfDayIconBg[1];
-    this.timeOfDayIconMg[0] = this.timeOfDayIconMg[1];
-    this.timeOfDayIconFg[0] = this.timeOfDayIconFg[1];
-
-    this.timeOfDayIconBg[1] = hold1;
-    this.timeOfDayIconMg[1] = hold2;
-    this.timeOfDayIconFg[1] = hold3;
-  }
-
-  private onTurnInit(event: Event) {
-    //this.setTimeOfDayIcon();
   }
 
   private onNewArena(event: Event) {
@@ -267,8 +179,6 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
-
-    //this.setTimeOfDayIcon();
   }
 
   /**
@@ -436,17 +346,14 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param visible Should the flyout be shown?
    */
   public toggleFlyout(visible: boolean): void {
-    /* this.scene.tweens.add({
+    this.scene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
-    }); */
-
-    if (visible) {
-      this.setTimeOfDayIcon();
-    }
+      onComplete: () => this.timeOfDayWidget.parentVisible = visible,
+    });
   }
 
   public destroy(fromScene?: boolean): void {
