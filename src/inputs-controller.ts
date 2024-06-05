@@ -48,7 +48,7 @@ export interface InterfaceConfig {
     custom?: MappingLayout;
 }
 
-const repeatInputDelayMillis = 250;
+const repeatInputDelayMillis = 500;
 
 // Phaser.Input.Gamepad.GamepadPlugin#refreshPads
 declare module "phaser" {
@@ -88,7 +88,6 @@ declare module "phaser" {
  * providing a unified interface for all input-related interactions.
  */
 export class InputsController {
-  private buttonKeys: Phaser.Input.Keyboard.Key[][];
   private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = new Array();
   private scene: BattleScene;
   public events: Phaser.Events.EventEmitter;
@@ -123,7 +122,6 @@ export class InputsController {
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.time = this.scene.time;
-    this.buttonKeys = [];
     this.selectedDevice = {
       [Device.GAMEPAD]: null,
       [Device.KEYBOARD]: "default"
@@ -247,7 +245,7 @@ export class InputsController {
      *
      * If an interaction is valid and should be processed, it emits an 'input_down' event with details of the interaction.
      */
-  update(): void {
+  update(time: number): void {
     for (const b of Utils.getEnumValues(Button).reverse()) {
       if (
         this.interactions.hasOwnProperty(b) &&
