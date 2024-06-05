@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/plugins/i18n";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -285,7 +285,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "worker_female": {
     "encounter": {
-      1: `It bothers me that people always misunderstand me.
+      1: `It bothers me that people always misunderstand me. 
                 $I'm a lot more pure than everyone thinks.`
     },
     "victory": {
@@ -373,141 +373,141 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "내 전문인 바위 타입 포켓몬으로 널 쓰러뜨려줄게! 덤벼!",
+      2: "바위같은 의지로 널 압도하겠어!",
+      3: "내 포켓몬의 진정한 힘을 보여줄게!"
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
-      3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
+      1: "네 포켓몬의 힘이 바위같은 내 방어를 이겼어!",
+      2: "세상은 넓구나! 너랑 겨뤄볼 수 있어서 즐거웠어.",
+      3: "아마도 난 포켓몬 브리더의 꿈을 이루러 가야할지도…"
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "최선의 공격은 적절한 방어지!\n그게 내 방식이야!",
+      2: "다음에 나한테 더 배우러와. 바위타입과 어떻게 싸워야하는지 알려주지!",
+      3: "아, 여러 지역을 돌아다니며 여행한 보람이 있군!"
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "내 방침은 물타입 포켓몬으로 공격하고 공격하고 또 공격하는 거!",
+      2: "아하핫, 너한테 내 물타입 포켓몬들의 힘을 보여줄게!",
+      3: "내 꿈은 여행을 다니며 강한 트레이너들과 배틀하는 거였어…\n네가 그 충분한 도전자가 될 수 있는지 볼까?"
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "너 정말로 강하구나… 그 실력 인정하도록 할게…",
+      2: "으으… 너 그냥 운이 좋았던거야, 그치?!",
+      3: "우와, 너 대단해! 날 이기다니 믿을 수 없어!"
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "최강인 최이슬! 너한테 좀 심했나?",
+      2: "내 포켓몬들의 우아한 수영 테크닉을 봤길 바랄게!",
+      3: "내 프라이드와 즐거움엔 네 포켓몬들은 상대가 안 돼. "
     }
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "마이 전기 포켓몬은 전쟁에서 미를 구했어요! 하우를 유에게 보여줄게요!",
+      2: "헤이! 쇼크로 유를 항복시키겠어요!",
+      3: "배틀에서 마이 에너미에게 했던 것처럼 유에게도 펀치를 날리겠어요!"
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "와우, 키드! 유어 팀은 진짜 대단하군요!",
+      2: "으흐흑, 유는 스트롱하네요! 마이 전기 트릭도 유에겐 로스트입니다.",
+      3: "앱솔루트하고 쇼킹한 패배였어요!"
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "오우 예! 전기 타입 포켓몬이라면, 미가 월드에서 넘버 원이에요!",
+      2: "하하하! 키드, 이것이 찌릿찌릿 일렉트릭 배틀입니다!",
+      3: "포켓몬 배틀은 전쟁, 앤드 나는 유에게 직접 전투를 보여줬습니다!"
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      1: "아, 오늘은 날씨가 좋네요…\n음, 배틀일까요? 그럼 더 좋죠.",
+      2: "제 포켓몬들의 배틀 실력은 제 꽃꽂이 실력만큼 대단하답니다.",
+      3: "아, 제 포켓몬의 달콤한 향기가 저를 다시 잠들게 하지 않았으면 좋겠는데……",
+      4: "정원에서 꽃을 보면 마음이 편안해져요.”."
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "앗! 제 패배를 인정합니다.",
+      2: "방금 경기 정말 달콤했어요.",
+      3: "아, 제가 진 것 같네요…",
+      4: "앗, 맙소사."
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "저 조금 걱정했어요. 너무 졸려서…",
+      2: "어머, 제 풀 포켓몬이 당신을 압도한 것 같네요.",
+      3: "이 배틀 정말로 편안한 경험이었네요.",
+      4: "어머… 이게 끝인가요?"
     }
   },
   "janine": {
     "encounter": {
-      1: "I am mastering the art of poisonous attacks.\nI shall spar with you today!",
-      2: "Father trusts that I can hold my own.\nI will prove him right!",
-      3: "My ninja techniques are only second to my Father's!\nCan you keep up?"
+      1: "난 독을 사용하는 인술을 갈고 닦고 있어.\n오늘 수련에서는 너랑 대련할거야!",
+      2: "아버지는 내가 잘해낼 수 있다고 신뢰하셔.\n 그게 맞는다는 걸 증명할게!",
+      3: "내 인술은 아버지한테 뒤처지지 않아! 따라올 수 있겠어? "
     },
     "victory": {
-      1: "Even now, I still need training… I understand.",
-      2: "Your battle technique has outmatched mine.",
-      3: "I'm going to really apply myself and improve my skills."
+      1: "역시 아직도, 난 더 수련이 필요해… 납득했어.",
+      2: "네 배틀 기술이 내 인술보다 한 수위야.",
+      3: "더 스스로 갈고 닦아서, 내 인술을 향상 시키겠어."
     },
     "defeat": {
-      1: "Fufufu… the poison has sapped all your strength to battle.",
-      2: "Ha! You didn't stand a chance against my superior ninja skills!",
-      3: "Father's faith in me has proven to not be misplaced."
+      1: "후후후… 독이 네 기력을 모두 가져가버렸네.",
+      2: "하핫, 너 내 인술에 맞설 기회를 잡지 못했구나!",
+      3: "나를 향한 아버지의 신뢰, 틀리지 않았다는 걸 증명해냈어."
     }
   },
   "sabrina": {
     "encounter": {
-      1: "Through my psychic ability, I had a vision of your arrival!",
-      2: "I dislike fighting, but if you wish, I will show you my powers!",
-      3: "I can sense great ambition in you. I shall see if it not unfounded."
+      1: "내 초능력을 통해서, 너의 도착은 예상하고 있었어!",
+      2: "싸우는 건 좋아하지 않지만 네가 원한다면… 나의 힘을 보여줄게!",
+      3: "네게서 큰 염원이 느껴져. 그것이 근거 없는 것이 아닌지 지켜보겠어."
     },
     "victory": {
-      1: "Your power… It far exceeds what I foresaw…",
-      2: "I failed to accurately predict your power.",
-      3: "Even with my immense psychic powers, I cannot sense another as strong as you."
+      1: "너의 힘은… 내가 예견했던 것보다 훨씬 뛰어나…",
+      2: "나는 너의 힘을 정확하게 예측하지 못했어.",
+      3: "나 엄청난 초능력을 가지고도, 너처럼 강한 사람을 느끼지 못했네."
     },
     "defeat": {
-      1: "This victory… It is exactly as I foresaw in my visions!",
-      2: "Perhaps it was another I sensed a great desire in…",
-      3: "Hone your abilities before recklessly charging into battle.\nYou never know what the future may hold if you do…"
+      1: "이 승리는… 내가 환상에서 예견한 그대로네!",
+      2: "아마도 그건, 내가 깊이 느꼈던 또 다른 염원이었을거야…",
+      3: "무모하게 배틀에 임하기 전에 능력을 갈고닦도록.\n넌 미래가 어떻게 될지 예지할 수 없으니까…"
     }
   },
   "blaine": {
     "encounter": {
-      1: "Hah! Hope you brought a Burn Heal!",
-      2: "My fiery Pokémon will incinerate all challengers!",
-      3: "Get ready to play with fire!"
+      1: "우오오~옷! 화상치료제는 잘 준비했는가!",
+      2: "나의 포켓몬은 모든 것을 불꽃으로 태워버리는 강한 녀석들뿐이다!",
+      3: "불꽃과 함께할 준비는 됐는가!"
     },
     "victory": {
-      1: "I have burned down to nothing! Not even ashes remain!",
-      2: "Didn't I stoke the flames high enough?",
-      3: "I'm all burned out… But this makes my motivation to improve burn even hotter!"
+      1: "아무것도 남지 않고 불타버렸다! 재조차 남지 않았어!",
+      2: "내가 불을 너무 세게 피우지 않았나?",
+      3: "불태웠다… 하지만 이건 불꽃을 향상시키려는 내 동기를 더욱 뜨겁게 만드는군!"
     },
     "defeat": {
-      1: "My raging inferno cannot be quelled!",
-      2: "My Pokémon have been powered up with the heat from this victory!",
-      3: "Hah! My passion burns brighter than yours!"
+      1: "나의 타오르는 불길은 진압할 수 없다!",
+      2: "내 포켓몬은 이번 승리의 열기로 더욱 강해졌다!",
+      3: "하! 내 열정이 네 것보다 더 밝게 타오르고 있군!"
     }
   },
   "giovanni": {
     "encounter": {
-      1: "I, the leader of Team Rocket, will make you feel a world of pain!",
-      2: "My training here will be vital before I am to face my old associates again.",
-      3: "I do not think you are prepared for the level of failure you are about to experience!"
+      1: "나, 로켓단의 리더가, 고통의 세계를 느끼게 해주마!",
+      2: "옛 동료들과 다시 만나기 전, 이곳에서의 훈련은 매우 중요하겠군.",
+      3: "너는 곧 경험하게 될 실패에 대한 준비가 되어 있지 않군!"
     },
     "victory": {
-      1: "WHAT! Me, lose?! There is nothing I wish to say to you!",
-      2: "Hmph… You could never understand what I hope to achieve.",
-      3: "This defeat is merely delaying the inevitable.\nI will rise Team Rocket from the ashes in due time."
+      1: "하! 내가 졌다고?! 더 이상 할말이 없군!",
+      2: "흐음… 넌 내가 이루고자 하는 것을 결코 이해할 수 없을 거다.",
+      3: "이 패배는 피할 수 없는 것을 단지 지연시킬 뿐.\n때가 되면 잿더미에서 로켓단을 일으켜 세울 것이다."
     },
     "defeat": {
-      1: "Not being able to measure your own strength shows that you are still but a child.",
-      2: "Do not try to interfere with me again.",
-      3: "I hope you understand how foolish challenging me was."
+      1: "자신의 힘을 스스로 잴수 없다는 것은 네가 아직 꼬맹이라는 것을 보여준다고 할 수 있지.",
+      2: "다시는 나를 방해하지 말도록.",
+      3: "나에게 도전하는 것이 얼마나 어리석은 짓인지 이해했으면 좋겠군."
     }
   },
   "roxanne": {
@@ -788,7 +788,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "cheren": {
     "encounter": {
       1: "You remind me of an old friend. That makes me excited about this Pokémon battle!",
-      2: `Pokémon battles have no meaning if you don't think why you battle.
+      2: `Pokémon battles have no meaning if you don't think why you battle. 
       $Or better said, it makes battling together with Pokémon meaningless.`,
       3: "My name's Cheren! I'm a Gym Leader and a teacher! Pleasure to meet you."
     },
@@ -829,13 +829,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Er… Is it over now?",
-      2: `…What a surprise. You are very strong, aren't you?
+      2: `…What a surprise. You are very strong, aren't you? 
                $I guess my brothers wouldn't have been able to defeat you either…`,
       3: "…Huh. Looks like my timing was, um, off?"
     },
     "defeat": {
       1: "Huh? Did I win?",
-      2: `I guess…
+      2: `I guess… 
                 $I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.`,
       3: "It…it was quite a thrilling experience…"
     }
@@ -864,9 +864,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `With a little more, I could see a future in which I meet the legendary Pokémon.
                 $You're going to help me reach that level!`,
-      2: `It's said that a rainbow-hued Pokémon will come down to appear before a truly powerful Trainer.
-                $I believed that tale, so I have secretly trained here all my life. As a result, I can now see what others cannot.
-                $I see a shadow of the person who will make the Pokémon appear.
+      2: `It's said that a rainbow-hued Pokémon will come down to appear before a truly powerful Trainer. 
+                $I believed that tale, so I have secretly trained here all my life. As a result, I can now see what others cannot. 
+                $I see a shadow of the person who will make the Pokémon appear. 
                 $I believe that person is me! You're going to help me reach that level!`,
       3: "Whether you choose to believe or not, mystic power does exist.",
       4: "You can bear witness to the fruits of my training.",
@@ -931,7 +931,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "drayton": {
     "encounter": {
-      1: `Man, I love chairs. Don't you love chairs? What lifesavers.
+      1: `Man, I love chairs. Don't you love chairs? What lifesavers. 
                 $I don't get why everyone doesn't just sit all the time. Standing up's tiring work!`,
     },
     "victory": {
@@ -956,7 +956,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "viola": {
     "encounter": {
       1: `Whether it's the tears of frustration that follow a loss or the blossoming of joy that comes with victory…
-                $They're both great subjects for my camera! Fantastic! This'll be just fantastic!
+                $They're both great subjects for my camera! Fantastic! This'll be just fantastic! 
                 $Now come at me!`,
       2: "My lens is always focused on victory--I won't let anything ruin this shot!"
     },
@@ -972,14 +972,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "candice": {
     "encounter": {
-      1: `You want to challenge Candice? Sure thing! I was waiting for someone tough!
+      1: `You want to challenge Candice? Sure thing! I was waiting for someone tough! 
                 $But I should tell you, I'm tough because I know how to focus.`,
-      2: `Pokémon, fashion, romance… It's all about focus!
+      2: `Pokémon, fashion, romance… It's all about focus! 
                 $I'll show you just what I mean. Get ready to lose!`
     },
     "victory": {
       1: "I must say, I'm warmed up to you! I might even admire you a little.",
-      2: `Wow! You're great! You've earned my respect!
+      2: `Wow! You're great! You've earned my respect! 
                 $I think your focus and will bowled us over totally. `
     },
     "defeat": {
@@ -1040,7 +1040,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Man oh man… It feels good to go all out and still be defeated!"
     },
     "defeat": {
-      1: `What's important is how ya react to losin'.
+      1: `What's important is how ya react to losin'. 
                 $That's why folks who use losin' as fuel to get better are tough.`,
     }
   },
@@ -1081,8 +1081,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "phoebe": {
     "encounter": {
-      1: `While I trained, I gained the ability to commune with Ghost-type Pokémon.
-                $Yes, the bond I developed with Pokémon is extremely tight.
+      1: `While I trained, I gained the ability to commune with Ghost-type Pokémon. 
+                $Yes, the bond I developed with Pokémon is extremely tight. 
                 $So, come on, just try and see if you can even inflict damage on my Pokémon!`,
     },
     "victory": {
@@ -1094,12 +1094,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "glacia": {
     "encounter": {
-      1: `All I have seen are challenges by weak Trainers and their Pokémon.
+      1: `All I have seen are challenges by weak Trainers and their Pokémon. 
                 $What about you? It would please me to no end if I could go all out against you!`,
     },
     "victory": {
       1: `You and your Pokémon… How hot your spirits burn!
-                $The all-consuming heat overwhelms.
+                $The all-consuming heat overwhelms. 
                 $It's no surprise that my icy skills failed to harm you.`,
     },
     "defeat": {
@@ -1108,7 +1108,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "drake": {
     "encounter": {
-      1: `For us to battle with Pokémon as partners, do you know what it takes? Do you know what is needed?
+      1: `For us to battle with Pokémon as partners, do you know what it takes? Do you know what is needed? 
                 $If you don't, then you will never prevail over me!`,
     },
     "victory": {
@@ -1120,12 +1120,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "wallace": {
     "encounter": {
-      1: `There's something about you… A difference in your demeanor.
-                $I think I sense that in you. Now, show me. Show me the power you wield with your Pokémon.
+      1: `There's something about you… A difference in your demeanor. 
+                $I think I sense that in you. Now, show me. Show me the power you wield with your Pokémon. 
                 $And I, in turn, shall present you with a performance of illusions in water by me and my Pokémon!`,
     },
     "victory": {
-      1: `Bravo. I realize now your authenticity and magnificence as a Pokémon Trainer.
+      1: `Bravo. I realize now your authenticity and magnificence as a Pokémon Trainer. 
                     $I find much joy in having met you and your Pokémon. You have proven yourself worthy.`,
     },
     "defeat": {
@@ -1158,7 +1158,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "malva": {
     "encounter": {
-      1: `I feel like my heart might just burst into flames.
+      1: `I feel like my heart might just burst into flames. 
                 $I'm burning up with my hatred for you, runt!`,
     },
     "victory": {
@@ -1181,7 +1181,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "molayne": {
     "encounter": {
-      1: `I gave the captain position to my cousin Sophocles, but I'm confident in my ability.
+      1: `I gave the captain position to my cousin Sophocles, but I'm confident in my ability. 
                 $My strength is like that of a supernova!`,
     },
     "victory": {
@@ -1240,8 +1240,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Well, would you show this old lady how much you've learned?"
     },
     "victory": {
-      1: `Well! Dear child, I must say, that was most impressive.
-                $Your Pokémon believed in you and did their best to earn you the win.
+      1: `Well! Dear child, I must say, that was most impressive. 
+                $Your Pokémon believed in you and did their best to earn you the win. 
                 $Even though I've lost, I find myself with this silly grin!`,
     },
     "defeat": {
@@ -1267,7 +1267,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "I shall store my memory of you and your Pokémon forever away within my heart."
     },
     "defeat": {
-      1: `Our Pokémon battle was like food for my soul. It shall keep me going.
+      1: `Our Pokémon battle was like food for my soul. It shall keep me going. 
                 $That is how I will pay my respects to you for giving your all in battle!`,
     }
   },
@@ -1301,7 +1301,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Uagh?! Mmmuuuggghhh…"
     },
     "defeat": {
-      1: `Yaaay! I did it! I de-feet-ed you! You can come for… For… An avenge match?
+      1: `Yaaay! I did it! I de-feet-ed you! You can come for… For… An avenge match? 
                 $Come for an avenge match anytime you want!`,
     }
   },
@@ -1341,8 +1341,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "caitlin": {
     "encounter": {
       1: `It's me who appeared when the flower opened up. You who have been waiting…
-                $You look like a Pokémon Trainer with refined strength and deepened kindness.
-                $What I look for in my opponent is superb strength…
+                $You look like a Pokémon Trainer with refined strength and deepened kindness. 
+                $What I look for in my opponent is superb strength… 
                 $Please unleash your power to the fullest!`,
     },
     "victory": {
@@ -1354,7 +1354,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "diantha": {
     "encounter": {
-      1: `Battling against you and your Pokémon, all of you brimming with hope for the future…
+      1: `Battling against you and your Pokémon, all of you brimming with hope for the future… 
                 $Honestly, it just fills me up with energy I need to keep facing each new day! It does!`,
     },
     "victory": {
@@ -1366,14 +1366,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "wikstrom": {
     "encounter": {
-      1: `Well met, young challenger! Verily am I the famed blade of hardened steel, Duke Wikstrom!
+      1: `Well met, young challenger! Verily am I the famed blade of hardened steel, Duke Wikstrom! 
                 $Let the battle begin! En garde!`,
     },
     "victory": {
       1: "Glorious! The trust that you share with your honorable Pokémon surpasses even mine!"
     },
     "defeat": {
-      1: `What manner of magic is this? My heart, it doth hammer ceaselessly in my breast!
+      1: `What manner of magic is this? My heart, it doth hammer ceaselessly in my breast! 
                 $Winning against such a worthy opponent doth give my soul wings--thus do I soar!`,
     }
   },
@@ -1433,8 +1433,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "milo": {
     "encounter": {
-      1: `Sure seems like you understand Pokémon real well.
-               $This is gonna be a doozy of a battle!
+      1: `Sure seems like you understand Pokémon real well. 
+               $This is gonna be a doozy of a battle! 
                $I'll have to Dynamax my Pokémon if I want to win!`,
     },
     "victory": {
@@ -1446,9 +1446,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lucian": {
     "encounter": {
-      1: `Just a moment, please. The book I'm reading has nearly reached its thrilling climax…
-                $The hero has obtained a mystic sword and is about to face their final trial… Ah, never mind.
-                $Since you've made it this far, I'll put that aside and battle you.
+      1: `Just a moment, please. The book I'm reading has nearly reached its thrilling climax… 
+                $The hero has obtained a mystic sword and is about to face their final trial… Ah, never mind. 
+                $Since you've made it this far, I'll put that aside and battle you. 
                 $Let me see if you'll achieve as much glory as the hero of my book!,`
     },
     "victory": {
@@ -1486,7 +1486,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Prepare to learn firsthand how the fiery breath of ferocious battle feels!"
     },
     "victory": {
-      1: `Fortune smiled on me this time, but…
+      1: `Fortune smiled on me this time, but… 
                 $Judging from how the match went, who knows if I will be so lucky next time.`,
     },
     "defeat": {
@@ -1550,10 +1550,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "steven": {
     "encounter": {
-      1: `Tell me… What have you seen on your journey with your Pokémon?
-                $What have you felt, meeting so many other Trainers out there?
-                $Traveling this rich land… Has it awoken something inside you?
-                $I want you to come at me with all that you've learned.
+      1: `Tell me… What have you seen on your journey with your Pokémon? 
+                $What have you felt, meeting so many other Trainers out there? 
+                $Traveling this rich land… Has it awoken something inside you? 
+                $I want you to come at me with all that you've learned. 
                 $My Pokémon and I will respond in turn with all that we know!`,
     },
     "victory": {
@@ -1576,11 +1576,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "iris": {
     "encounter": {
-      1: `Know what? I really look forward to having serious battles with strong Trainers!
-                $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being!
-                #And they are battling alongside Pokémon that have been through countless difficult battles!
-                $If I battle with people like that, not only will I get stronger, my Pokémon will, too!
-                $And we'll get to know each other even better! OK! Brace yourself!
+      1: `Know what? I really look forward to having serious battles with strong Trainers! 
+                $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being! 
+                #And they are battling alongside Pokémon that have been through countless difficult battles! 
+                $If I battle with people like that, not only will I get stronger, my Pokémon will, too! 
+                $And we'll get to know each other even better! OK! Brace yourself! 
                 $I'm Iris, the Pokémon League Champion, and I'm going to defeat you!`,
     },
     "victory": {
@@ -1604,7 +1604,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "geeta": {
     "encounter": {
-      1: `I decided to throw my hat in the ring once more.
+      1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
     },
     "victory": {
@@ -1630,8 +1630,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "We're gonna have an absolutely champion time!"
     },
     "victory": {
-      1: `My time as Champion is over…
-                $But what a champion time it's been!
+      1: `My time as Champion is over… 
+                $But what a champion time it's been! 
                 $Thank you for the greatest battle I've ever had!`,
     },
     "defeat": {
@@ -1695,7 +1695,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "maylene": {
     "encounter": {
-      1: `I've come to challenge you now, and I won't hold anything back.
+      1: `I've come to challenge you now, and I won't hold anything back. 
                     $Please prepare yourself for battle!`,
     },
     "victory": {
@@ -1707,7 +1707,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "fantina": {
     "encounter": {
-      1: `You shall challenge me, yes? But I shall win.
+      1: `You shall challenge me, yes? But I shall win. 
                     $That is what the Gym Leader of Hearthome does, non?`,
     },
     "victory": {
@@ -1719,8 +1719,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "byron": {
     "encounter": {
-      1: `Trainer! You're young, just like my son, Roark.
-                    $With more young Trainers taking charge, the future of Pokémon is bright!
+      1: `Trainer! You're young, just like my son, Roark. 
+                    $With more young Trainers taking charge, the future of Pokémon is bright! 
                     $So, as a wall for young people, I'll take your challenge!`,
     },
     "victory": {
@@ -1748,19 +1748,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `You've got me beat…
-                    $Your desire and the noble way your Pokémon battled for you…
+                    $Your desire and the noble way your Pokémon battled for you… 
                     $I even felt thrilled during our match. That was a very good battle.`,
     },
     "defeat": {
-      1: `It was not shocking at all…
+      1: `It was not shocking at all… 
                     $That is not what I wanted!`,
     }
   },
   "burgh": {
     "encounter": {
-      1: `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it.
+      1: `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it. 
                     $OK! I can hear my battle muse loud and clear. Let's get straight to it!`,
-      2: `Of course, I'm really proud of all of my Pokémon!
+      2: `Of course, I'm really proud of all of my Pokémon! 
                     $Well now… Let's get right to it!`
     },
     "victory": {
@@ -1769,13 +1769,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Wow… It's beautiful somehow, isn't it…",
-      2: `Sometimes I hear people say something was an ugly win.
+      2: `Sometimes I hear people say something was an ugly win. 
                     $I think if you're trying your best, any win is beautiful.`
     }
   },
   "elesa": {
     "encounter": {
-      1: `C'est fini! When I'm certain of that, I feel an electric jolt run through my body!
+      1: `C'est fini! When I'm certain of that, I feel an electric jolt run through my body! 
                     $I want to feel the sensation, so now my beloved Pokémon are going to make your head spin!`,
     },
     "victory": {
@@ -1787,8 +1787,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "skyla": {
     "encounter": {
-      1: `It's finally time for a showdown! That means the Pokémon battle that decides who's at the top, right?
-                    $I love being on the summit! 'Cause you can see forever and ever from high places!
+      1: `It's finally time for a showdown! That means the Pokémon battle that decides who's at the top, right? 
+                    $I love being on the summit! 'Cause you can see forever and ever from high places! 
                     $So, how about you and I have some fun?`,
     },
     "victory": {
@@ -1800,7 +1800,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brycen": {
     "encounter": {
-      1: `There is also strength in being with other people and Pokémon.
+      1: `There is also strength in being with other people and Pokémon. 
                     $Receiving their support makes you stronger. I'll show you this power!`,
     },
     "victory": {
@@ -1812,7 +1812,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "drayden": {
     "encounter": {
-      1: `What I want to find is a young Trainer who can show me a bright future.
+      1: `What I want to find is a young Trainer who can show me a bright future. 
                     $Let's battle with everything we have: your skill, my experience, and the love we've raised our Pokémon with!`,
     },
     "victory": {
@@ -1824,15 +1824,15 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "grant": {
     "encounter": {
-      1: `There is only one thing I wish for.
+      1: `There is only one thing I wish for. 
                     $That by surpassing one another, we find a way to even greater heights.`,
     },
     "victory": {
       1: "You are a wall that I am unable to surmount!"
     },
     "defeat": {
-      1: `Do not give up.
-                    $That is all there really is to it.
+      1: `Do not give up. 
+                    $That is all there really is to it. 
                     $The most important lessons in life are simple.`,
     }
   },
@@ -1860,8 +1860,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "valerie": {
     "encounter": {
-      1: `Oh, if it isn't a young Trainer… It is lovely to get to meet you like this.
-                    $Then I suppose you have earned yourself the right to a battle, as a reward for your efforts.
+      1: `Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. 
+                    $Then I suppose you have earned yourself the right to a battle, as a reward for your efforts. 
                     $The elusive Fairy may appear frail as the breeze and delicate as a bloom, but it is strong.`,
     },
     "victory": {
@@ -1874,7 +1874,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "wulfric": {
     "encounter": {
       1: `You know what? We all talk big about what you learn from battling and bonds and all that…
-                    $But really, I just do it 'cause it's fun.
+                    $But really, I just do it 'cause it's fun. 
                     $Who cares about the grandstanding? Let's get to battling!`,
     },
     "victory": {
@@ -1886,8 +1886,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "kabu": {
     "encounter": {
-      1: `Every Trainer and Pokémon trains hard in pursuit of victory.
-                    $But that means your opponent is also working hard to win.
+      1: `Every Trainer and Pokémon trains hard in pursuit of victory. 
+                    $But that means your opponent is also working hard to win. 
                     $In the end, the match is decided by which side is able to unleash their true potential.`,
     },
     "victory": {
@@ -1899,7 +1899,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bea": {
     "encounter": {
-      1: `Do you have an unshakable spirit that won't be moved, no matter how you are attacked?
+      1: `Do you have an unshakable spirit that won't be moved, no matter how you are attacked? 
                     $I think I'll just test that out, shall I?`,
     },
     "victory": {
@@ -1944,7 +1944,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marnie": {
     "encounter": {
-      1: `The truth is, when all's said and done… I really just wanna become Champion for myself!
+      1: `The truth is, when all's said and done… I really just wanna become Champion for myself! 
                     $So don't take it personal when I kick your butt!`,
     },
     "victory": {
@@ -1959,8 +1959,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "I'm going to defeat the Champion, win the whole tournament, and prove to the world just how strong the great Raihan really is!"
     },
     "victory": {
-      1: `I look this good even when I lose.
-                    $It's a real curse.
+      1: `I look this good even when I lose. 
+                    $It's a real curse. 
                     $Guess it's time for another selfie!`,
     },
     "defeat": {
@@ -1982,7 +1982,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `How're ya feelin' about this battle?
                     $...
-                    $Let's get this show on the road! How strong is our challenger?
+                    $Let's get this show on the road! How strong is our challenger? 
                     $I 'unno! Let's find out together!`,
     },
     "victory": {
@@ -2335,113 +2335,113 @@ export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
 export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
-      1: `Blue: Hey Red, let's show them what we're made of!
-                  $Red: ...
-                  $Blue: This is Pallet Town Power!`,
+      1: `그린: 어이 레드! 우리가 누군지 보여주자고!
+                  $레드: ...
+                  $그린: 태초마을의 힘을 보여주지!`,
     },
     "victory": {
-      1: `Blue: That was a great battle!
-              $Red: ...`,
+      1: `그린: 훌륭한 승부였어!
+              $레드: ...`,
     },
   },
   "red_blue_double": {
     "encounter": {
-      1: `Red: ...!
-                  $Blue: He never talks much.
-                    $Blue: But dont let that fool you! He is a champ after all!`,
+      1: `레드: ...!
+                  $그린: 이 녀석은 여전히 말이 없구나.
+                    $그린: 그렇지만 방심해선 안 돼! 그래도 챔피언이라고!`,
     },
     "victory": {
-      1: `Red: ...!
-                $Blue: Next time we will beat you!`,
+      1: `레드: ...!
+                $그린: 다음에는 우리가 이길 테다!`,
     },
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Tate: Are you suprised?
-                  $Liza: We are two gym leaders at once!
-                  $Tate: We are twins!
-                  $Liza: We dont need to talk to understand each other!
-                  $Tate: Twice the power...
-                  $Liza: Can you handle it?`,
+      1: `풍: 에헤헤... 체육관 관장이
+                  $란: 두 명이나 있어서 놀랐지?
+                  $풍: 우리는 쌍둥이!
+                  $란: 굳이 말을 하지 않아도 서로가 무슨 생각을 하고 있는지
+                  $풍: 자동으로 머릿속에 떠오르니까
+                  $란: 호흡을 척척 맞출 수가 있지!`,
     },
     "victory": {
-      1: `Tate: What? Our combination was perfect!
-                  $Liza: Looks like we need to train more...`,
+      1: `풍: 우, 우리들의
+                  $란: 팀워크가...!`,
     },
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Liza: Hihihi... Are you suprised?
-                  $Tate: Yes, we are really two gym leaders at once!
-                  $Liza: This is my twin brother Tate!
-                  $Tate: And this is my twin sister Liza!
-                  $Liza: Don't you think we are a perfect combination?`
+      1: `란: 우후후... 체육관 관장이
+                  $풍: 두 명이나 있어서 놀랐어?
+                  $란: 우리는 쌍둥이!
+                  $풍: 완벽한 우리의 콤비네이션을
+                  $란: 과연 네가 깨뜨릴 수 있을까?`
     },
     "victory": {
-      1: `Liza: Are we...
-                  $Tate: ...not as strong as we thought?`,
+      1: `란: 우리들이 생각한 만큼
+                  $풍: 우리가 강하지 않았던 걸까?`,
     },
   },
   "wallace_steven_double": {
     "encounter": {
-      1: `Steven: Wallace, let's show them the power of the champions!
-                  $Wallace: We will show you the power of Hoenn!
-                  $Steven: Let's go!`,
+      1: `성호: 윤진! 우리 챔피언의 힘을 보여주자!
+                  $윤진: 호연의 힘을 보여주마!
+                  $성호: 간다!`,
     },
     "victory": {
-      1: `Steven: That was a great battle!
-                  $Wallace: We will win next time!`,
+      1: `성호: 훌륭한 승부였어!
+                  $윤진: 다음엔 우리가 이길 거다!`,
     },
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
-            $Steven: Oh... I see... Let's go then!`,
+      1: `성호: 너 혹시 희귀한 포켓몬 가지고 있니?
+          $윤진: 성호야... 우리는 포켓몬을 자랑하러 온 게 아니라 승부하러 온 거야.
+            $성호: 오... 그렇지... 그럼 간다!`,
     },
     "victory": {
-      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
-            $Wallace: Steven...`,
+      1: `성호: 이제 승부는 끝났으니 포켓몬을 자랑해 볼까!
+            $윤진: 성호야...`,
     },
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Alder: We are the strongest trainers in Unova!
-                  $Iris: Fights against strong trainers are the best!`,
+      1:  `노간주: 우리는 하나 지방 최강의 트레이너들이란다!
+                  $아이리스: 이렇게 강한 트레이너와 싸울 수 있어서 정말 기뻐~!!`,
     },
     "victory": {
-      1:   `Alder: Wow! You are super strong!
-                  $Iris: We will win next time!`,
+      1:   `노간주: 장하구나! 실로 견줄 자가 천하에 없도다!
+                  $아이리스: 다음 번엔 우리가 꼭 이길 거야~!`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris: Welcome Challenger! I am THE Unova Champion!
-                  $Alder: Iris, aren't you a bit too excited?`,
+      1:   `아이리스: 어서 와, 도전자! 내가 바로 하나 지방 챔피언이야~!
+                  $노간주: 아이리스야, 너무 흥분한 것 아니냐?`,
     },
     "victory": {
-      1:    `Iris: A loss like this is not easy to take...
-                  $Alder: But we will only get stronger with every loss!`,
+      1:    `아이리스: 후와아아아아... 최선을 다했는데도... 우리가 져버렸네!
+                  $노간주: 하지만 우리의 패배를 발판 삼아 나아가리라!`,
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Marnie: Brother, let's show them the power of Spikemuth!
-                  $Piers: We bring darkness!`,
+      1:   `마리: 오빠, 스파이크마을의 힘을 보여주자!
+                  $두송: 우리가 어둠을 불러올 것이다!`,
     },
     "victory": {
-      1:  `Marnie: You brought light to our darkness!
-                  $Piers: Its too bright...`,
+      1:  `마리: 네가 우리의 어둠에 빛을 불러왔구나!
+                  $두송: 여긴 너무 밝네...`,
     },
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `Piers: Ready for a concert?
-                    $Marnie: Brother... They are here to fight, not to sing...`,
+      1:  `두송: 큰서트 즐길 준비 됐어?
+                    $마리: 오빠... 얘들은 노래가 아니라 승부를 하러 왔어...`,
     },
     "victory": {
-      1:  `Piers: Now that was a great concert!
-                    $Marnie: Brother...`,
+      1:  `두송: 훌륭한 콘서트였다!
+                    $마리: 오빠...`,
     },
   },
 };

@@ -282,12 +282,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     ENEMY_HEAL: { name: "恢復硬幣", description: "每回合恢復2%最大HP" },
     ENEMY_ATTACK_POISON_CHANCE: { name: "劇毒硬幣" },
     ENEMY_ATTACK_PARALYZE_CHANCE: { name: "麻痹硬幣" },
-    ENEMY_ATTACK_SLEEP_CHANCE: { name: "睡眠硬幣" },
-    ENEMY_ATTACK_FREEZE_CHANCE: { name: "冰凍硬幣" },
     ENEMY_ATTACK_BURN_CHANCE: { name: "灼燒硬幣" },
     ENEMY_STATUS_EFFECT_HEAL_CHANCE: {
       name: "萬靈藥硬幣",
-      description: "增加10%每回合治癒異常狀態的概率",
+      description: "增加2.5%每回合治癒異常狀態的概率",
     },
     ENEMY_ENDURE_CHANCE: { name: "忍受硬幣" },
     ENEMY_FUSED_CHANCE: {
@@ -419,7 +417,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     HARD_METEORITE: "堅硬隕石",
     SMOOTH_METEORITE: "光滑隕石",
     ADAMANT_CRYSTAL: "大金剛寶玉",
-    LUSTROUS_ORB: "白玉寶珠",
+    LUSTROUS_GLOBE: "大白寶玉",
     GRISEOUS_CORE: "大白金寶玉",
     REVEAL_GLASS: "現形鏡",
     GRACIDEA: "葛拉西蒂亞花",

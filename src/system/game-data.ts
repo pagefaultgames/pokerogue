@@ -34,6 +34,8 @@ import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./setti
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
 import { Device } from "#app/enums/devices.js";
+import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect.js";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -1077,6 +1079,9 @@ export class GameData {
         for (const md of v) {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
+          }
+          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+            continue;
           }
           ret.push(new PersistentModifierData(md, player));
         }
