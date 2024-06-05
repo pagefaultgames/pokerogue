@@ -131,8 +131,13 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
 
   populateruns(scene: BattleScene) {
-    const response = this.scene.gameData.getRunHistoryData(this.scene);
-    
+    const fromCache = true;
+    let response = this.scene.gameData.getRunHistoryData(this.scene, fromCache);
+
+    if (!response) {
+      response = this.scene.gameData.getRunHistoryData(this.scene, false);
+    }
+
     const timestamps = Object.keys(response);
     if (timestamps.length > 1) {
       timestamps.sort((a, b) => a - b);
@@ -264,8 +269,7 @@ class RunEntry extends Phaser.GameObjects.Container {
         if (tType === TrainerType.RIVAL) {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()} ${i18next.TObj("trainerNames:rival")}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
-        }
-        else {
+        } else {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()} ${data.trainer.name}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         }

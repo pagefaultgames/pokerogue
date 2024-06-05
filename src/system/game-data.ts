@@ -387,7 +387,7 @@ export class GameData {
         localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
 
         if (!localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
-          localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt('', bypassLogin));
+          localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt("", true));
         }
 
 
@@ -401,8 +401,6 @@ export class GameData {
         this.secretId = systemData.secretId;
 
         this.gender = systemData.gender;
-
-        this.runHistory = systemData.runHistory;
 
         this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
@@ -946,50 +944,46 @@ export class GameData {
     }) as SessionSaveData;
   }
 
-  public getRunHistoryData(scene: BattleScene): Promise<Object> {
-    return JSON.parse(atob(localStorage.getItem(`runHistoryData_${loggedInUser.username}`)));
-    try { Utils.apiFetch(`savedata/runHistory`, true)
-      .then(response => response.text())
-        .then(async response => {
-          if (!response.length || response[0] !== "{") {
-            return resolve(null);
-          }
-          else {
-            return resolve(response);
-          }
-        });
-    }catch(error) {
-          return resolve(JSON.parse(decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, bypassLogin))));
-      }
-  } 
-
-  public saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean, useCachedRunHistory: boolean = false, skipVerification: boolean = false, sync: boolean = false): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success !== null && !success) {
-          return resolve(false);
+  public getRunHistoryData(scene: BattleScene, fromCache: boolean): Promise<Object> {
+    if (!fromCache) {
+        Utils.apiFetch("savedata/runHistory", true)
+            .then(response => response.text())
+            .then(async response => {
+              if (!response.length || response[0] !== "{") {
+                return null;
+              } else {
+                response = JSON.parse(response);
+                return response["runHistory"];
+              }
+            });
         }
-        const response = this.getRunHistoryData(scene);
-        const runHistoryData = response;
-        //const response = useCachedRunHistory ? decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, bypassLogin)) : this.getRunHistoryData(scene);
-        //const runHistoryData = response ? JSON.parse(response) : {};
-        console.log(runHistoryData);
+    else {
+      return JSON.parse(decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true),true));
+    }
+  }
+
+  public saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean, useCachedRunHistory: boolean = false, sync: boolean = true): Promise<boolean> {
+        const response = useCachedRunHistory ? decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true),true) : this.getRunHistoryData(scene, false);
+        var runHistoryData = response ? JSON.parse(response) : JSON.parse({});
+        
         const timestamps = Object.keys(runHistoryData);
         if (timestamps.length >= 25) {
           delete this.scene.gameData.runHistory[Math.min(timestamps)];
         }
-        const currentTime = new Date().getTime();
-        runHistoryData[currentTime] = {};
-        runHistoryData[currentTime]["victory"] = victory;
-        runHistoryData[currentTime]["entry"] = runEntry;
 
-        const maxIntAttrValue = Math.pow(2, 31);
+        const timestamp = (runEntry.timestamp).toString();
+        runHistoryData[timestamp] = {};
+        runHistoryData[timestamp]["entry"] = runEntry;
+        runHistoryData[timestamp]["victory"] = victory;
+
+        console.log(Object.keys(runHistoryData));
+
         const request = {runHistory: runHistoryData};
 
-        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), bypassLogin));
+        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
-        if (!bypassLogin && sync) {
-          Utils.apiPost("savedata/runHistory", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
+        if (sync) {
+          Utils.apiPost("savedata/runHistory", JSON.stringify(request), undefined, true)
             .then(response => response.text())
             .then(error => {
               if (sync) {
@@ -1004,13 +998,12 @@ export class GameData {
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
                 console.error(error);
-                return resolve(false);
+                return false;
               }
-              resolve(true);
+              return true;
             });
-      }
-    });
-  })}
+        }
+  }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
