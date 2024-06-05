@@ -2833,7 +2833,7 @@ export class MoveEffectPhase extends PokemonPhase {
         }
         this.scene.applyModifiers(PokemonResetLoweredStatsModifier, this.player, user);
         this.targets.map(target=> {
-          
+
         });
         this.scene.applyModifiers(HitHealModifier, this.player, user);
       }

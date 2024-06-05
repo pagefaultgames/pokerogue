@@ -1351,7 +1351,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
       const weightMultiplier = party.filter(
-          p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetLoweredStatsModifier) &&
+        p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetLoweredStatsModifier) &&
           (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => selfStatLowerMoves.includes(m.moveId)))).length;
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
       return 3*(weightMultiplier? 2: 1)+(weightMultiplier? weightMultiplier-1: 0);
