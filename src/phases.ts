@@ -4911,7 +4911,8 @@ export class SelectModifierPhase extends BattlePhase {
       let cost: integer;
       switch (rowCursor) {
       case 0:
-        if (!cursor) {
+        switch (cursor) {
+        case 0:
           const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
           if (this.scene.money < rerollCost) {
             this.scene.ui.playError();
@@ -4925,18 +4926,25 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.updateMoneyText();
             this.scene.playSound("buy");
           }
-        } else if (cursor === 1) {
+          break;
+        case 1:
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                    && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                      && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
               this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
             } else {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }
           }, PartyUiHandler.FilterItemMaxStacks);
-        } else {
+          break;
+        case 2:
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
+          });
+          break;
+        case 3:
           this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
           const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
           uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));

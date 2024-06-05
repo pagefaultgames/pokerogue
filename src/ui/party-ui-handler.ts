@@ -1,4 +1,4 @@
-import { CommandPhase } from "../phases";
+import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
@@ -32,7 +32,8 @@ export enum PartyUiMode {
   REMEMBER_MOVE_MODIFIER,
   MODIFIER_TRANSFER,
   SPLICE,
-  RELEASE
+  RELEASE,
+  CHECK
 }
 
 export enum PartyOption {
@@ -290,7 +291,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             if (this.partyUiMode !== PartyUiMode.SPLICE) {
               this.clearOptions();
             }
-            if (this.selectCallback) {
+            if (this.selectCallback && this.partyUiMode !== PartyUiMode.CHECK) {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
                   (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
@@ -312,11 +313,8 @@ export default class PartyUiHandler extends MessageUiHandler {
                 selectCallback(this.cursor, option);
               }
             } else {
-              if (option >= PartyOption.FORM_CHANGE_ITEM && this.scene.getCurrentPhase() instanceof CommandPhase) {
-                switch (this.partyUiMode) {
-                case PartyUiMode.SWITCH:
-                case PartyUiMode.FAINT_SWITCH:
-                case PartyUiMode.POST_BATTLE_SWITCH:
+              if (option >= PartyOption.FORM_CHANGE_ITEM && this.scene.getCurrentPhase() instanceof SelectModifierPhase) {
+                if (this.partyUiMode === PartyUiMode.CHECK) {
                   let formChangeItemModifiers = this.scene.findModifiers(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id) as PokemonFormChangeItemModifier[];
                   if (formChangeItemModifiers.find(m => m.active)) {
                     formChangeItemModifiers = formChangeItemModifiers.filter(m => m.active);
@@ -324,7 +322,6 @@ export default class PartyUiHandler extends MessageUiHandler {
                   const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
                   modifier.active = !modifier.active;
                   this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
-                  break;
                 }
               } else if (this.cursor) {
                 (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
@@ -669,15 +666,6 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.options.push(PartyOption.PASS_BATON);
           }
         }
-        if (this.scene.getCurrentPhase() instanceof CommandPhase) {
-          formChangeItemModifiers = this.scene.findModifiers(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id) as PokemonFormChangeItemModifier[];
-          if (formChangeItemModifiers.find(m => m.active)) {
-            formChangeItemModifiers = formChangeItemModifiers.filter(m => m.active);
-          }
-          for (let i = 0; i < formChangeItemModifiers.length; i++) {
-            this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
-          }
-        }
         break;
       case PartyUiMode.REVIVAL_BLESSING:
         this.options.push(PartyOption.REVIVE);
@@ -702,6 +690,17 @@ export default class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.RELEASE:
         this.options.push(PartyOption.RELEASE);
+        break;
+      case PartyUiMode.CHECK:
+        if (this.scene.getCurrentPhase() instanceof SelectModifierPhase) {
+          formChangeItemModifiers = this.scene.findModifiers(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id) as PokemonFormChangeItemModifier[];
+          if (formChangeItemModifiers.find(m => m.active)) {
+            formChangeItemModifiers = formChangeItemModifiers.filter(m => m.active);
+          }
+          for (let i = 0; i < formChangeItemModifiers.length; i++) {
+            this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
+          }
+        }
         break;
       }
 
