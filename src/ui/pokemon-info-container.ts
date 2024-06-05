@@ -73,13 +73,16 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    const currentLanguage = i18next.language;
+    this.setName("container-pkmn-info");
+    const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
     const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
     infoBg.setOrigin(0.5, 0.5);
+    infoBg.setName("window-info-bg");
 
     this.pokemonMovesContainer = this.scene.add.container(6, 14);
+    this.pokemonMovesContainer.setName("container-pkmn-moves");
 
     this.movesContainerInitialX = this.pokemonMovesContainer.x;
 
@@ -89,21 +92,26 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
     const movesBg = addWindow(this.scene, 0, 0, 58, 52);
     movesBg.setOrigin(1, 0);
+    movesBg.setName("window-moves-bg");
     this.pokemonMovesContainer.add(movesBg);
 
     const movesLabel = addTextObject(this.scene, -movesBg.width / 2, 6, i18next.t("pokemonInfoContainer:moveset"), TextStyle.WINDOW, { fontSize: "64px" });
     movesLabel.setOrigin(0.5, 0);
+    movesLabel.setName("text-moves");
     this.pokemonMovesContainer.add(movesLabel);
 
     for (let m = 0; m < 4; m++) {
       const moveContainer = this.scene.add.container(-6, 18 + 7 * m);
       moveContainer.setScale(0.5);
+      moveContainer.setName("container-move");
 
       const moveBg = this.scene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       moveBg.setOrigin(1, 0);
+      moveBg.setName("nineslice-move-bg");
 
       const moveLabel = addTextObject(this.scene, -moveBg.width / 2, 0, "-", TextStyle.PARTY);
       moveLabel.setOrigin(0.5, 0);
+      moveLabel.setName("text-move-label");
 
       this.pokemonMoveBgs.push(moveBg);
       this.pokemonMoveLabels.push(moveLabel);
@@ -132,38 +140,46 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonGenderLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, i18next.t("pokemonInfoContainer:gender"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderLabelText.setOrigin(1, 0);
     this.pokemonGenderLabelText.setVisible(false);
+    this.pokemonGenderLabelText.setName("text-pkmn-gender-label");
     this.add(this.pokemonGenderLabelText);
 
     this.pokemonGenderText = addTextObject(this.scene, infoContainerTextXPos, 18, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderText.setOrigin(0, 0);
     this.pokemonGenderText.setVisible(false);
+    this.pokemonGenderText.setName("text-pkmn-gender");
     this.add(this.pokemonGenderText);
 
     this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 28, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonAbilityLabelText.setOrigin(1, 0);
+    this.pokemonAbilityLabelText.setName("text-pkmn-ability-label");
     this.add(this.pokemonAbilityLabelText);
 
     this.pokemonAbilityText = addTextObject(this.scene, infoContainerTextXPos, 28, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
+    this.pokemonAbilityText.setName("text-pkmn-ability");
     this.add(this.pokemonAbilityText);
 
     this.pokemonNatureLabelText = addTextObject(this.scene, infoContainerLabelXPos, 38, i18next.t("pokemonInfoContainer:nature"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonNatureLabelText.setOrigin(1, 0);
+    this.pokemonNatureLabelText.setName("text-pkmn-nature-label");
     this.add(this.pokemonNatureLabelText);
 
     this.pokemonNatureText = addBBCodeTextObject(this.scene, infoContainerTextXPos, 38, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize, lineSpacing: 3, maxLines: 2 });
     this.pokemonNatureText.setOrigin(0, 0);
+    this.pokemonNatureText.setName("text-pkmn-nature");
     this.add(this.pokemonNatureText);
 
     this.pokemonShinyIcon = this.scene.add.image(-43.5, 48.5, "shiny_star");
     this.pokemonShinyIcon.setOrigin(0, 0);
     this.pokemonShinyIcon.setScale(0.75);
     this.pokemonShinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
+    this.pokemonShinyIcon.setName("img-pkmn-shiny-icon");
     this.add(this.pokemonShinyIcon);
 
     this.pokemonFusionShinyIcon = this.scene.add.image(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y, "shiny_star_2");
     this.pokemonFusionShinyIcon.setOrigin(0, 0);
     this.pokemonFusionShinyIcon.setScale(0.75);
+    this.pokemonFusionShinyIcon.setName("img-pkmn-fusion-shiny-icon");
     this.add(this.pokemonFusionShinyIcon);
 
     this.setVisible(false);

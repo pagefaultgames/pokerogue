@@ -4,7 +4,7 @@ import { Biome } from "./data/enums/biome";
 import { Moves } from "./data/enums/moves";
 import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
-import { BerryType } from "./data/berry";
+import { BerryType } from "./data/enums/berry-type";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Nature } from "./data/nature";
 import { Type } from "./data/type";
