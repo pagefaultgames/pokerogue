@@ -169,7 +169,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       this.scene.pushPhase(new TitlePhase(this.scene));
       this.scene.getCurrentPhase().end();
       success = true;
-    } else if (button === Button.SUBMIT) {
+    } else if (button === Button.SUBMIT || button === Button.ACTION) {
       const totalDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getDifficulty(), 0);
       const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
       if (totalDifficulty >= totalMinDifficulty) {
