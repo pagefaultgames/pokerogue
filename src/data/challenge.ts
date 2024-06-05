@@ -2,7 +2,7 @@ import * as Utils from "../utils";
 import { Challenges } from "./enums/challenges";
 import i18next from "#app/plugins/i18n.js";
 import { GameData } from "#app/system/game-data.js";
-import PokemonSpecies, { speciesStarters } from "./pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import Pokemon from "#app/field/pokemon.js";
 import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import { TrainerType } from "./enums/trainer-type";
@@ -255,7 +255,7 @@ export class SingleGenerationChallenge extends Challenge {
     case ChallengeType.POKEMON_IN_BATTLE:
       const pokemon = args[0] as Pokemon;
       const isValidPokemon = args[1] as Utils.BooleanHolder;
-      if (pokemon.isPlayer() && (pokemon.species.generation !== this.value || (pokemon.isFusion() && pokemon.fusionSpecies.generation !== this.value))) {
+      if (pokemon.isPlayer() && ((pokemon.species.formIndex === 0 ? pokemon.species : getPokemonSpecies(pokemon.species.speciesId)).generation !== this.value || (pokemon.isFusion() && (pokemon.fusionSpecies.formIndex === 0 ? pokemon.fusionSpecies : getPokemonSpecies(pokemon.fusionSpecies.speciesId)).generation !== this.value))) {
         isValidPokemon.value = false;
         return true;
       }
