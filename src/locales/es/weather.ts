@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "¡Se ha desatado una tormenta de arena!",
   "sandstormLapseMessage": "La tormenta de arena arrecia...",
   "sandstormClearMessage": "La tormenta de arena termino.",
-  "sandstormDamageMessage": "¡La tormenta de arena zarandea al\n{{pokemonName}}{{pokemonPrefix}}!",
+  "sandstormDamageMessage": "¡La tormenta de arena zarandea al\n{{pokemonName}} {{pokemonPrefix}}!",
 
   "hailStartMessage": "¡Ha empezado a granizar!",
   "hailLapseMessage": "Sigue granizando...",
   "hailClearMessage": "Had dejado de granizar.",
-  "hailDamageMessage": "El granizo golpea al\n{{pokemonName}}{{pokemonPrefix}}!",
+  "hailDamageMessage": "El granizo golpea al\n{{pokemonName}} {{pokemonPrefix}}!",
 
   "snowStartMessage": "¡Ha empezado a nevar!",
   "snowLapseMessage": "Sigue nevando...",
