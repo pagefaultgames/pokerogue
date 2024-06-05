@@ -62,6 +62,7 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { calculateAndSortDamageMultipliers } from "./EypoRage/typeEffectiveness";
 
 
 export class LoginPhase extends Phase {
@@ -1129,6 +1130,18 @@ export class PostSummonPhase extends PokemonPhase {
 
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
+
+    // ADD TYPE EFFECTIVENESS CHECK
+    if (this.battlerIndex >0) {
+      console.log("type ckeck init");
+      const dualTypeDefender = [Type[this.scene.getEnemyField()[0].getTypes(true, true)[0]],Type[this.scene.getEnemyField()[0].getTypes(true, true)[1]]];  // Dual type defender
+      calculateAndSortDamageMultipliers(dualTypeDefender, 1, this.scene.getEnemyField()[0].name);
+      if (this.scene.getEnemyField()[1]) {
+        const dualTypeDefender1 = [Type[this.scene.getEnemyField()[1].getTypes(true, true)[0]],Type[this.scene.getEnemyField()[1].getTypes(true, true)[1]]];  // Dual type defender
+        calculateAndSortDamageMultipliers(dualTypeDefender1, 2, this.scene.getEnemyField()[1].name);
+      }
+    }
+
   }
 }
 
