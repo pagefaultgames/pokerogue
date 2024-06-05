@@ -86,7 +86,7 @@ export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 
 /**
- * OPPONENT / ENEMY OVERRIDES
+ * EGG OVERRIDES
  */
 
 export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
