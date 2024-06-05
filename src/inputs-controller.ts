@@ -245,7 +245,7 @@ export class InputsController {
      *
      * If an interaction is valid and should be processed, it emits an 'input_down' event with details of the interaction.
      */
-  update(time: number): void {
+  update(): void {
     for (const b of Utils.getEnumValues(Button).reverse()) {
       if (
         this.interactions.hasOwnProperty(b) &&
