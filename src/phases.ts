@@ -177,10 +177,6 @@ export class TitlePhase extends Phase {
     });
   }
 
-  setGameMode(gameMode: GameModes) {
-    this.gameMode = gameMode;
-  }
-
   showOptions(): void {
     const options: OptionSelectItem[] = [];
     if (loggedInUser.lastSessionSlot > -1) {
@@ -2743,8 +2739,7 @@ export class MoveEffectPhase extends PokemonPhase {
       const applyAttrs: Promise<void>[] = [];
 
       // Move animation only needs one target
-      const temp = new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex());
-      temp.play(this.scene, () => {
+      new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
         for (const target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
             user.turnData.hitCount = 1;
