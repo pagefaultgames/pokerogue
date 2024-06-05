@@ -236,7 +236,7 @@ export default class FightUiHandler extends UiHandler {
    * If there are multiple opponents, the highest effectiveness' color is returned
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string {
-    if (this.scene.typeHints === 0) {
+    if (!this.scene.typeHints) {
       return "white";
     }
 

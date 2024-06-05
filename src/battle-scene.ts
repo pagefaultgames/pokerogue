@@ -137,11 +137,10 @@ export default class BattleScene extends SceneBase {
   public enableVibration: boolean = false;
   /**
    * Defines whether or not to show type effectiveness hints
-   * - 0 - Off: No hints
-   * - 1 - Partial: Only show hints for moves
-   * - 2 - Full: Additionally shows hints in the party screen
+   * - true: No hints
+   * - false: Show hints for moves
    */
-  public typeHints: integer = 0;
+  public typeHints: boolean = false;
 
   public disableMenu: boolean = false;
 

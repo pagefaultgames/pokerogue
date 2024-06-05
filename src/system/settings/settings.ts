@@ -60,7 +60,8 @@ export const SettingKeys = {
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
   Touch_Controls: "TOUCH_CONTROLS",
-  Vibration: "VIBRATION"
+  Vibration: "VIBRATION",
+  Type_Hints: "TYPE_HINTS"
 };
 
 /**
@@ -252,6 +253,13 @@ export const Setting: Array<Setting> = [
     options: AUTO_DISABLED,
     default: 0,
     type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Type_Hints,
+    label: "Type hints",
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
   }
 ];
 
@@ -387,6 +395,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Vibration:
     scene.enableVibration = Setting[index].options[value] !== "Disabled" && hasTouchscreen();
+    break;
+  case SettingKeys.Type_Hints:
+    scene.typeHints = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Language:
     if (value) {

@@ -9,6 +9,7 @@ import { Type, getTypeRgb } from "../data/type";
 import { getVariantTint } from "#app/data/variant";
 import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
+import { WindowVariant, addWindow } from "./ui-theme";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -51,6 +52,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private type2Icon: Phaser.GameObjects.Sprite;
   private type3Icon: Phaser.GameObjects.Sprite;
   private expBar: Phaser.GameObjects.Image;
+
+  // #region Type effectiveness hint objects
+  private effectivenessContainer: Phaser.GameObjects.Container;
+  private effectivenessWindow: Phaser.GameObjects.NineSlice;
+  private effectivenessText: Phaser.GameObjects.Text;
+  // #endregion
 
   public expMaskRect: Phaser.GameObjects.Graphics;
 
@@ -250,6 +257,19 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.type3Icon.setName("icon_type_3");
     this.type3Icon.setOrigin(0, 0);
     this.add(this.type3Icon);
+
+    if (!this.player) {
+      this.effectivenessContainer = this.scene.add.container(0, 0);
+      this.effectivenessContainer.setPositionRelative(this.type1Icon, 22, 4);
+      this.effectivenessContainer.setVisible(false);
+      this.add(this.effectivenessContainer);
+
+      this.effectivenessText = addTextObject(this.scene, 5, 4.5, "", TextStyle.BATTLE_INFO);
+      this.effectivenessWindow = addWindow((this.scene as BattleScene), 0, 0, 0, 20, false, false, null, null, WindowVariant.XTHIN);
+
+      this.effectivenessContainer.add(this.effectivenessWindow);
+      this.effectivenessContainer.add(this.effectivenessText);
+    }
   }
 
   initInfo(pokemon: Pokemon) {
@@ -625,10 +645,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.lastName = pokemon.name;
   }
 
-  updateNameColor(color: string) {
-    this.nameText.setColor(color);
-  }
-
   updatePokemonExp(pokemon: Pokemon, instant?: boolean, levelDurationMultiplier: number = 1): Promise<void> {
     return new Promise(resolve => {
       const levelUp = this.lastLevel < pokemon.level;
@@ -713,6 +729,21 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     battleStatOrder.map((s, i) => {
       this.statNumbers[i].setFrame(battleStats[s].toString());
     });
+  }
+
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    if (this.player || !(this.scene as BattleScene).typeHints || effectiveness === undefined) {
+      this.effectivenessContainer.setVisible(false);
+      return;
+    }
+
+    this.effectivenessText.setText(effectiveness);
+    this.effectivenessWindow.width = 10 + this.effectivenessText.displayWidth;
+    this.effectivenessContainer.setVisible(true);
   }
 
   getBaseY(): number {
