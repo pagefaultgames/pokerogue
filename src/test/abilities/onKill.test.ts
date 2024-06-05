@@ -6,15 +6,7 @@ import {Abilities} from "#app/data/enums/abilities";
 import {Species} from "#app/data/enums/species";
 import {
   CommandPhase,
-  DamagePhase,
   EnemyCommandPhase,
-  FaintPhase,
-  MessagePhase,
-  MoveEffectPhase,
-  MovePhase,
-  ShowAbilityPhase,
-  StatChangePhase,
-  TurnStartPhase,
   VictoryPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
@@ -67,20 +59,7 @@ describe("Abilities Test - onKill", () => {
       const movePosition = getMovePosition(game.scene, 0, moveToUse);
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
-    await game.phaseInterceptor.mustRun(EnemyCommandPhase).catch((error) => expect(error).toBe(EnemyCommandPhase));
-    await game.phaseInterceptor.mustRun(TurnStartPhase).catch((error) => expect(error).toBe(TurnStartPhase));
-
-    await game.phaseInterceptor.mustRun(MovePhase).catch((error) => expect(error).toBe(MovePhase));
-    await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
-    await game.phaseInterceptor.mustRun(MoveEffectPhase).catch((error) => expect(error).toBe(MoveEffectPhase));
-    await game.phaseInterceptor.mustRun(DamagePhase).catch((error) => expect(error).toBe(DamagePhase));
-    await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(FaintPhase));
-    await game.phaseInterceptor.mustRun(FaintPhase).catch((error) => expect(error).toBe(FaintPhase));
-    await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
-    await game.phaseInterceptor.mustRun(ShowAbilityPhase).catch((error) => expect(error).toBe(ShowAbilityPhase));
-    await game.phaseInterceptor.mustRun(StatChangePhase).catch((error) => expect(error).toBe(StatChangePhase));
-    await game.phaseInterceptor.mustRun(MessagePhase).catch((error) => expect(error).toBe(MessagePhase));
-    await game.phaseInterceptor.mustRun(VictoryPhase).catch((error) => expect(error).toBe(VictoryPhase));
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
   }, 120000);

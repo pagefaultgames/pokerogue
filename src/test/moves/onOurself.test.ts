@@ -52,7 +52,7 @@ describe("Moves Test - onOurself", () => {
     expect(battleStatsPokemon[Stat.SPATK]).toBe(0);
 
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
-    expect(battleStatsOpponent[BattleStat.DEF]).toBe(0);
+    expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());

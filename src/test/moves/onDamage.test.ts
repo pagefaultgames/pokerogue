@@ -73,10 +73,7 @@ describe("Moves Test - onDamage", () => {
       Species.MIGHTYENA,
       Species.MIGHTYENA,
     ]);
-
-
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
-
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
