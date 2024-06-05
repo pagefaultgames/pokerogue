@@ -1,15 +1,15 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
+import { Button } from "../enums/buttons";
 import { gameModes } from "../game-mode";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { SessionSaveData } from "../system/game-data";
+import PokemonData from "../system/pokemon-data";
+import * as Utils from "../utils";
+import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import PokemonData from "../system/pokemon-data";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
-import MessageUiHandler from "./message-ui-handler";
-import i18next from "i18next";
-import {Button} from "../enums/buttons";
 
 const sessionSlotCount = 5;
 
@@ -258,7 +258,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
     this.add(slotWindow);
 
-    this.loadingLabel = addTextObject(this.scene, 152, 26, "Loading…", TextStyle.WINDOW);
+    this.loadingLabel = addTextObject(this.scene, 152, 26, i18next.t("menu:loading"), TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);
     this.add(this.loadingLabel);
   }
