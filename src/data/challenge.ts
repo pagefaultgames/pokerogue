@@ -1,6 +1,6 @@
 import * as Utils from "../utils";
 import { Challenges } from "./enums/challenges";
-import i18next, { Localizable } from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n.js";
 import { GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { speciesStarters } from "./pokemon-species";
 import BattleScene from "#app/battle-scene.js";
@@ -20,11 +20,9 @@ export enum ChallengeType {
 /**
  * A challenge object. Exists only to serve as a base class.
  */
-export abstract class Challenge implements Localizable {
+export abstract class Challenge {
   public id: Challenges; // The id of the challenge
 
-  private name: string; // The name of the challenge. Localised.
-  private description: string;
   public value: integer; // The "strength" of the challenge, all challenges have a numerical value.
   public maxValue: integer; // The maximum strength of the challenge.
   public severity: integer; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
