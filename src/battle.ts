@@ -1,5 +1,4 @@
 import BattleScene from "./battle-scene";
-import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
@@ -12,6 +11,7 @@ import { PlayerGender } from "./system/game-data";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
+import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "field/pokemon";
 
 export enum BattleType {
     WILD,
@@ -34,6 +34,11 @@ export interface TurnCommand {
     targets?: BattlerIndex[];
     skip?: boolean;
     args?: any[];
+}
+
+export interface FaintLogEntry {
+  pokemon: Pokemon,
+  turn: number
 }
 
 interface TurnCommands {
@@ -65,8 +70,8 @@ export default class Battle {
   public lastUsedPokeball: PokeballType;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
-  public turnsSincePlayerFaints: number; // The amount of turns after pokemon on the players side have fainted
-  public turnsSinceEnemyFaints: number; // The amount of turns after pokemon on the players side have fainted
+  public playerFaintsHistory: FaintLogEntry[];
+  public enemyFaintsHistory: FaintLogEntry[];
 
   private rngCounter: integer = 0;
 
@@ -95,8 +100,8 @@ export default class Battle {
     this.lastUsedPokeball = null;
     this.playerFaints = 0;
     this.enemyFaints = 0;
-    this.turnsSincePlayerFaints = -1;
-    this.turnsSinceEnemyFaints = -1;
+    this.playerFaintsHistory = [];
+    this.enemyFaintsHistory = [];
   }
 
   private initBattleSpec(): void {
@@ -148,13 +153,6 @@ export default class Battle {
     this.turn++;
     this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
     this.battleSeedState = null;
-
-    if (this.turnsSincePlayerFaints > -1 && this.turnsSincePlayerFaints < 10) {
-      this.turnsSincePlayerFaints++;
-    }
-    if (this.turnsSinceEnemyFaints > -1 && this.turnsSinceEnemyFaints < 10) {
-      this.turnsSinceEnemyFaints++;
-    }
   }
 
   addParticipant(playerPokemon: PlayerPokemon): void {

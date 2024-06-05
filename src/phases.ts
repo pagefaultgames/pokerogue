@@ -3518,10 +3518,10 @@ export class FaintPhase extends PokemonPhase {
     // Track total times pokemon have been KO'd for supreme overlord/last respects
     if (pokemon.isPlayer()) {
       this.scene.currentBattle.playerFaints += 1;
-      this.scene.currentBattle.turnsSincePlayerFaints = 0;
+      this.scene.currentBattle.playerFaintsHistory = [...this.scene.currentBattle.playerFaintsHistory, {pokemon, turn: this.scene.currentBattle.turn}];
     } else {
       this.scene.currentBattle.enemyFaints += 1;
-      this.scene.currentBattle.turnsSinceEnemyFaints = 0;
+      this.scene.currentBattle.enemyFaintsHistory = [...this.scene.currentBattle.enemyFaintsHistory, {pokemon, turn: this.scene.currentBattle.turn}];
     }
 
     this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);

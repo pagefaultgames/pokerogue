@@ -184,6 +184,8 @@ export default class Move implements Localizable {
     return this;
   }
 
+  isRetaliate = () => {};
+
   addAttr(attr: MoveAttr): this {
     this.attrs.push(attr);
     let attrCondition = attr.getCondition();
@@ -6546,7 +6548,14 @@ export function initMoves() {
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
       .attr(CopyTypeAttr),
     new AttackMove(Moves.RETALIATE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => (user.scene.currentBattle.turnsSincePlayerFaints === 1 && user instanceof PlayerPokemon || user.scene.currentBattle.turnsSinceEnemyFaints === 1 && user instanceof EnemyPokemon) ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => {
+        console.log(user.scene.currentBattle.playerFaintsHistory.slice(-1)[0].turn - user.scene.currentBattle.turn);
+        return (
+          user.scene.currentBattle.turn - user.scene.currentBattle.playerFaintsHistory.slice(-1)[0].turn === 1 &&
+        user instanceof PlayerPokemon ||
+        user.scene.currentBattle.turn - user.scene.currentBattle.enemyFaintsHistory.slice(-1)[0].turn === 1 &&
+        user instanceof EnemyPokemon) ? 2 : 1;
+      }),
     new AttackMove(Moves.FINAL_GAMBIT, Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
       .attr(UserHpDamageAttr)
       .attr(SacrificialAttrOnHit),
