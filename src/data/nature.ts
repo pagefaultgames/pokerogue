@@ -32,11 +32,14 @@ export enum Nature {
   QUIRKY
 }
 
-export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT): string {
-  let ret = Utils.toReadableString(Nature[nature]);
-  //Translating nature
-  if (i18next.exists("nature:" + ret)) {
-    ret = i18next.t("nature:" + ret as any);
+export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT, onlyStatEffects: boolean = false): string {
+  let ret = "";
+  if (!onlyStatEffects) {
+    ret = Utils.toReadableString(Nature[nature]);
+    //Translating nature
+    if (i18next.exists("nature:" + ret)) {
+      ret = i18next.t("nature:" + ret as any);
+    }
   }
   if (includeStatEffects) {
     const stats = Utils.getEnumValues(Stat).slice(1);
