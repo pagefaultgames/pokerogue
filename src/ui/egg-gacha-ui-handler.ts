@@ -275,7 +275,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   pull(pullCount?: integer, count?: integer, eggs?: Egg[]): void {
-    if (Overrides.EGG_GACHA_PULL_COUNT && !count) pullCount = Overrides.EGG_GACHA_PULL_COUNT;
+    if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) pullCount = Overrides.EGG_GACHA_PULL_COUNT;
     
     this.eggGachaOptionsContainer.setVisible(false);
     this.setTransitioning(true);
