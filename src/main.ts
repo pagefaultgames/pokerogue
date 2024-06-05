@@ -27,12 +27,6 @@ window.addEventListener("unhandledrejection", (event) => {
   //alert(errorString);
 });
 
-// Reinitialize game with the updated config.scale.autoCenter when 'touchControlsChange' event is dispatched
-window.addEventListener("touchControlsChange", () => {
-  config.scale.autoCenter = shouldCenterWindow() ? Phaser.Scale.CENTER_VERTICALLY : Phaser.Scale.NO_CENTER;
-  reinitializeGame();
-});
-
 /**
  * Determines if the game window should be centered based on the current device and settings.
  *
@@ -46,7 +40,7 @@ window.addEventListener("touchControlsChange", () => {
  */
 const shouldCenterWindow = (): boolean => {
   const touchControlsOptions = Setting.find(s => s.key === SettingKeys.Touch_Controls).options;
-  console.log(touchControlsOptions)
+  console.log(touchControlsOptions);
   const settings = localStorage.hasOwnProperty("settings") ? JSON.parse(localStorage.getItem("settings")) : null;
 
   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
@@ -190,18 +184,6 @@ let game: Phaser.Game;
 const startGame = () => {
   game = new Phaser.Game(config);
   game.sound.pauseOnBlur = false;
-};
-
-/**
- * Reinitializes the game by destroying the current instance and starting a new one.
- * @function reinitializeGame
- * @returns {void}
- */
-const reinitializeGame = (): void => {
-  if (game) {
-    game.destroy(true, false);
-    startGame();
-  }
 };
 
 fetch("/manifest.json")

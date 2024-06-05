@@ -386,8 +386,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.eraseCursor();
     if (this.reloadRequired) {
       if (setting.key === SettingKeys.Touch_Controls) {
-        const event = new CustomEvent("touchControlsChange");
-        return window.dispatchEvent(event);
+        window.location.reload();
+        return;
       }
       this.reloadRequired = false;
       this.scene.reset(true, false, true);
