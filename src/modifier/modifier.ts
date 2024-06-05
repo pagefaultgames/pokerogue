@@ -1,5 +1,5 @@
 import * as ModifierTypes from "./modifier-type";
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase, StatChangePhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
@@ -1072,6 +1072,36 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
       Math.max(Math.floor(pokemon.getMaxHp() / 2), 1), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
 
     pokemon.resetStatus();
+
+    return true;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+}
+
+export class PokemonResetLoweredStatsModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof PokemonResetLoweredStatsModifier;
+  }
+
+  clone() {
+    return new PokemonResetLoweredStatsModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+
+    for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
+      pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
+    }
+
+    pokemon.updateInfo();
 
     return true;
   }
