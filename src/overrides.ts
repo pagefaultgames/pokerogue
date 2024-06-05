@@ -94,7 +94,7 @@ export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 export const EGG_TIER_OVERRIDE: EggTier = EggTier.COMMON;
 export const EGG_SHINY_OVERRIDE: boolean = false;
 export const EGG_VARIANT_OVERRIDE: VariantTier = VariantTier.COMMON;
-
+export const EGG_GACHA_PULL_COUNT: number = 0;
 
 /**
  * MODIFIER / ITEM OVERRIDES
