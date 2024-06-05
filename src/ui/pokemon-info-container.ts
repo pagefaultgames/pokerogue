@@ -62,7 +62,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
   private initialX: number;
   private movesContainerInitialX: number;
-  private initialParentDepth: number;
 
   public statsContainer: StatsContainer;
 
@@ -263,8 +262,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.setVisible(true);
       this.shown = true;
-      this.initialParentDepth = this.parentContainer.depth;
-      this.parentContainer.setDepth(3);
     });
   }
 
@@ -285,7 +282,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   hide(speedMultiplier: number = 1): Promise<void> {
     return new Promise(resolve => {
       if (!this.shown) {
-        this.parentContainer.setDepth(this.initialParentDepth);
         return resolve();
       }
 
@@ -306,7 +302,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           this.pokemonShinyIcon.off("pointerover");
           this.pokemonShinyIcon.off("pointerout");
           (this.scene as BattleScene).ui.hideTooltip();
-          this.parentContainer.setDepth(this.initialParentDepth);
           resolve();
         }
       });
