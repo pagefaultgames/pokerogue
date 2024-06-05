@@ -36,6 +36,7 @@ import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-event
 import { Device } from "#app/enums/devices.js";
 import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
+import { PlayerGender } from "#app/data/enums/player-gender.js";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -45,12 +46,6 @@ export enum GameDataType {
   SETTINGS,
   TUTORIALS,
   SEEN_DIALOGUES
-}
-
-export enum PlayerGender {
-  UNSET,
-  MALE,
-  FEMALE
 }
 
 export enum Passive {
