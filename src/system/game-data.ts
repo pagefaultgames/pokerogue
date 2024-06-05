@@ -898,7 +898,7 @@ export class GameData {
     });
   }
 
-  public parseSessionData(dataStr: string): SessionSaveData {
+  parseSessionData(dataStr: string): SessionSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
@@ -944,28 +944,40 @@ export class GameData {
     }) as SessionSaveData;
   }
 
-  public getRunHistoryData(scene: BattleScene, fromCache: boolean): Promise<Object> {
-    if (!fromCache) {
-      Utils.apiFetch("savedata/runHistory", true)
-        .then(response => response.text())
-        .then(async response => {
-          if (!response.length || response[0] !== "{") {
-            return null;
-          } else {
-            response = JSON.parse(response);
-            return response["runHistory"];
+  async public getRunHistoryData(scene: BattleScene): Promise<Object> {
+    try {
+      const response = await Utils.apiFetch("savedata/runHistory", true);
+      const data = await response.json();
+      if (!data.length || data[0] !== "{") {
+        return null;
+      } else {
+          var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+          if (cachedResponse) {
+            cachedResponse = JSON.parse(decrypt(cachedResponse, true));
           }
-        });
-    } else {
-      return JSON.parse(decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true),true));
+          var cachedRHData = cachedResponse ?? {};
+          //check to see whether cachedData or serverData is more up-to-date 
+          if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+            return cachedRHData;
+          }
+          return data;
+        }
+  } catch(err) {
+      console.log("Something went wrong: ", err);
+      var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+      if (cachedResponse) {
+        cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+      }
+      return cachedResponse ?? {};
     }
-  }
+}
 
-  public saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean, useCachedRunHistory: boolean = false, sync: boolean = true): Promise<boolean> {
-    const response = useCachedRunHistory ? JSON.parse(decrypt(localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true),true)) : this.getRunHistoryData(scene, false);
-    const runHistoryData = response ? response : {};
+  public saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
 
+    const runHistoryData = this.getRunHistoryData(scene);
     const timestamps = Object.keys(runHistoryData);
+
+    //Arbitrary limit of 25 entries per User --> Can increase or decrease
     if (timestamps.length >= 25) {
       delete this.scene.gameData.runHistory[Math.min(timestamps)];
     }
@@ -975,32 +987,15 @@ export class GameData {
     runHistoryData[timestamp]["entry"] = runEntry;
     runHistoryData[timestamp]["victory"] = victory;
 
-    console.log(Object.keys(runHistoryData));
-
-    const request = {runHistory: runHistoryData};
-
     localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
-    if (sync) {
-      Utils.apiPost("savedata/runHistory", JSON.stringify(request), undefined, true)
-        .then(response => response.text())
-        .then(error => {
-          if (sync) {
-            this.scene.lastSavePlayTime = 0;
-          }
-          if (error) {
-            if (error.startsWith("client version out of date")) {
-              this.scene.clearPhaseQueue();
-              this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-            } else if (error.startsWith("session out of date")) {
-              this.scene.clearPhaseQueue();
-              this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-            }
-            console.error(error);
-            return false;
-          }
-          return true;
-        });
+    try {
+      const response = Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
+      return true;
+    }
+    catch (err) {
+      console.log("savedata/runHistory POST failed : ", err);
+      return false;
     }
   }
 
