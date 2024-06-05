@@ -512,8 +512,10 @@ export class EggHatchPhase extends Phase {
           }
         }
 
-        // If variant overwrite is set to RARE or EPIC, filter species pool to only include ones with variants.
-        if (this.egg.variantTier && (this.egg.variantTier === variantTier.RARE || this.egg.variantTier === variantTier.EPIC)) {
+        // If egg variant overwrite is set to RARE or EPIC, filter species pool to only include ones with variants.
+        // also filter if global override is set from overrides.ts
+        if ((this.egg.variantTier && (this.egg.variantTier === variantTier.RARE || this.egg.variantTier === variantTier.EPIC)) ||
+            Overrides.EGG_SHINY_OVERRIDE && Overrides.EGG_VARIANT_OVERRIDE) {
             speciesPool = speciesPool.filter(s => getPokemonSpecies(s).hasVariants());
         }
 
