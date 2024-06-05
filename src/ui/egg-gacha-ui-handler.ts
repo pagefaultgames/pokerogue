@@ -11,6 +11,7 @@ import { Tutorial, handleTutorial } from "../tutorial";
 import { EggTier } from "../data/enums/egg-type";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
+import * as Overrides from "../overrides";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
@@ -370,6 +371,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       eggs = [];
       const tierValueOffset = this.gachaCursor === GachaType.LEGENDARY ? 1 : 0;
       const tiers = new Array(pullCount).fill(null).map(() => {
+        if (Overrides.EGG_TIER_OVERRIDE) return Overrides.EGG_TIER_OVERRIDE;
         const tierValue = Utils.randInt(256);
         return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
       });
