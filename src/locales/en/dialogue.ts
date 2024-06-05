@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/plugins/i18n";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -1578,7 +1578,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Know what? I really look forward to having serious battles with strong Trainers! 
                 $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being! 
-                #And they are battling alongside Pokémon that have been through countless difficult battles! 
+                $And they are battling alongside Pokémon that have been through countless difficult battles! 
                 $If I battle with people like that, not only will I get stronger, my Pokémon will, too! 
                 $And we'll get to know each other even better! OK! Brace yourself! 
                 $I'm Iris, the Pokémon League Champion, and I'm going to defeat you!`,
@@ -2398,12 +2398,12 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
+      1: `Steven: Do you have any rare Pokémon?
+          $Wallace: Steven... We are here for a battle, not to show off our Pokémon.
             $Steven: Oh... I see... Let's go then!`,
     },
     "victory": {
-      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
+      1: `Steven: Now that we are done with the battle, let's show off our Pokémon!
             $Wallace: Steven...`,
     },
   },

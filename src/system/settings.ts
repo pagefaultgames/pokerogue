@@ -277,3 +277,4 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
 
   return true;
 }
+
