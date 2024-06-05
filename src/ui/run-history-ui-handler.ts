@@ -130,13 +130,9 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   }
 
 
-  populateruns(scene: BattleScene) {
-    const fromCache = true;
-    let response = this.scene.gameData.getRunHistoryData(this.scene, fromCache);
+  async populateruns(scene: BattleScene) {
 
-    if (!response) {
-      response = this.scene.gameData.getRunHistoryData(this.scene, false);
-    }
+    const response = await this.scene.gameData.getRunHistoryData(this.scene);
 
     const timestamps = Object.keys(response);
     if (timestamps.length > 1) {
