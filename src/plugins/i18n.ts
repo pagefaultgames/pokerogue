@@ -93,7 +93,7 @@ const alternativeFonts = {
     new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
     new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", {
       unicodeRange: "U+3131-3163, U+AC00-D7AC",
-      sizeAdjust: "125%",
+      sizeAdjust: "133%",
     }),
   ],
 };
