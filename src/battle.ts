@@ -65,6 +65,8 @@ export default class Battle {
   public lastUsedPokeball: PokeballType;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
+  public turnsSincePlayerFaints: number; // The amount of turns after pokemon on the players side have fainted
+  public turnsSinceEnemyFaints: number; // The amount of turns after pokemon on the players side have fainted
 
   private rngCounter: integer = 0;
 
@@ -93,6 +95,8 @@ export default class Battle {
     this.lastUsedPokeball = null;
     this.playerFaints = 0;
     this.enemyFaints = 0;
+    this.turnsSincePlayerFaints = -1;
+    this.turnsSinceEnemyFaints = -1;
   }
 
   private initBattleSpec(): void {
@@ -144,6 +148,13 @@ export default class Battle {
     this.turn++;
     this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
     this.battleSeedState = null;
+
+    if (this.turnsSincePlayerFaints > -1 && this.turnsSincePlayerFaints < 10) {
+      this.turnsSincePlayerFaints++;
+    }
+    if (this.turnsSinceEnemyFaints > -1 && this.turnsSinceEnemyFaints < 10) {
+      this.turnsSinceEnemyFaints++;
+    }
   }
 
   addParticipant(playerPokemon: PlayerPokemon): void {
