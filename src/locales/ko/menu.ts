@@ -38,9 +38,9 @@ export const menu: SimpleTranslationEntries = {
   "girl": "여자",
   "evolving": "…오잉!?\n{{pokemonName}}의 모습이…!",
   "stoppedEvolving": "얼라리…?\n{{pokemonName}}의 변화가 멈췄다!",
-  "pauseEvolutionsQuestion": "{{pokemonName}}를(을) 진화하지 않게 만드시겠습니까?\n포켓몬 화면에서 다시 활성화시킬 수 있습니다.",
+  "pauseEvolutionsQuestion": "{{pokemonName}}[[를]] 진화하지 않게 만드시겠습니까?\n포켓몬 화면에서 다시 활성화시킬 수 있습니다.",
   "evolutionsPaused": "{{pokemonName}}의 진화가 비활성화되었다.",
-  "evolutionDone": "축하합니다! {{pokemonName}}(는)은\n{{evolvedPokemonName}}(으)로 진화했습니다!",
+  "evolutionDone": "축하합니다! {{pokemonName}}[[는]]\n{{evolvedPokemonName}}[[로]] 진화했습니다!",
   "dailyRankings": "일간 랭킹",
   "weeklyRankings": "주간 랭킹",
   "noRankings": "랭킹 정보 없음",
@@ -49,4 +49,6 @@ export const menu: SimpleTranslationEntries = {
   "empty":"빈 슬롯",
   "yes":"예",
   "no":"아니오",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;
