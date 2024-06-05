@@ -133,9 +133,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
 
   async populateruns(scene: BattleScene) {
-
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
-
+    console.log(response);
     const timestamps = Object.keys(response);
     if (timestamps.length > 1) {
       timestamps.sort((a, b) => a - b);
@@ -146,7 +145,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       this.scene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
-    }
+    } 
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
@@ -327,7 +326,6 @@ class RunEntry extends Phaser.GameObjects.Container {
           luckValue = 14;
         }
         const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
-        console.log(luckTextTint);
         const luckText = addTextObject(this.scene, 240, 5, `Luck: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
         this.add(luckText);
         break;

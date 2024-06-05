@@ -948,21 +948,24 @@ export class GameData {
     try {
       const response = await Utils.apiFetch("savedata/runHistory", true);
       const data = await response.json();
-      if (!data.length || data[0] !== "{") {
-        return null;
-      } else {
-          var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
-          if (cachedResponse) {
-            cachedResponse = JSON.parse(decrypt(cachedResponse, true));
-          }
-          var cachedRHData = cachedResponse ?? {};
-          //check to see whether cachedData or serverData is more up-to-date 
-          if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
-            return cachedRHData;
-          }
-          return data;
-      }
-  } catch(err) {
+      console.log(data);
+      if (!data) {
+        throw new Error("No data");
+      } 
+      else {
+        var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+        if (cachedResponse) {
+          cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+        }
+        var cachedRHData = cachedResponse ?? {};
+        //check to see whether cachedData or serverData is more up-to-date 
+        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+          return cachedRHData;
+        }
+        return data;
+    }
+  } 
+  catch(err) {
       console.log("Something went wrong: ", err);
       var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
       if (cachedResponse) {
@@ -976,7 +979,6 @@ export class GameData {
 
     const runHistoryData = await this.getRunHistoryData(scene);
     const timestamps = Object.keys(runHistoryData);
-    console.log(typeof(timestamps[0]));
 
     //Arbitrary limit of 25 entries per User --> Can increase or decrease
     if (timestamps.length >= 25) {
