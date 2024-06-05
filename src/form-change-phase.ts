@@ -93,7 +93,7 @@ export class FormChangePhase extends EvolutionPhase {
                       this.scene.time.delayedCall(900, () => {
                         this.pokemon.changeForm(this.formChange).then(() => {
                           if (!this.modal) {
-                            this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
+                            this.scene.unshiftPhase(new EndEvolutionPhase(this.scene, this.pokemon));
                           }
 
                           this.scene.playSound("shine");

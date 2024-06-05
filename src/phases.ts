@@ -4215,12 +4215,12 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible
-    if (this.isModal && !this.scene.getParty().filter(p => !p.isFainted() && !p.isActive(true)).length) {
+    if (this.isModal && !this.scene.getParty().filter(p => !p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => !p.isFainted() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    if (this.isModal && this.scene.getPlayerField().filter(p => !p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
