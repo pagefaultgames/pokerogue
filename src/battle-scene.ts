@@ -59,6 +59,7 @@ import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
 import ArenaFlyout from "./ui/arena-flyout";
+import { EaseType } from "./ui/enums/ease-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -94,6 +95,8 @@ export default class BattleScene extends SceneBase {
   public reroll: boolean = false;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
+  public showTimeOfDayWidget: boolean = true;
+  public timeOfDayAnimation: EaseType = EaseType.NONE;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableRetries: boolean = false;
