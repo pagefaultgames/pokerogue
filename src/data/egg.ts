@@ -3,6 +3,7 @@ import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import { EggTier } from "./enums/egg-type";
 import i18next from "../plugins/i18n";
+import { VariantTier } from "./enums/variant-tiers";
 
 export const EGG_SEED = 1073741824;
 
@@ -18,13 +19,15 @@ export class Egg {
   public gachaType: GachaType;
   public hatchWaves: integer;
   public timestamp: integer;
+  public variantTier: VariantTier | undefined;
 
-  constructor(id: integer, gachaType: GachaType, hatchWaves: integer, timestamp: integer) {
+  constructor(id: integer, gachaType: GachaType, hatchWaves: integer, timestamp: integer, variantTierOverrite?: VariantTier) {
     this.id = id;
     this.tier = Math.floor(id / EGG_SEED);
     this.gachaType = gachaType;
     this.hatchWaves = hatchWaves;
     this.timestamp = timestamp;
+    this.variantTier = variantTierOverrite;
   }
 
   isManaphyEgg(): boolean {
