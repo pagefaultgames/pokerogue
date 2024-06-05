@@ -373,141 +373,141 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "내 전문인 바위 타입 포켓몬으로 널 쓰러뜨려줄게! 덤벼!",
+      2: "바위같은 의지로 널 압도하겠어!",
+      3: "내 포켓몬의 진정한 힘을 보여줄게!"
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
-      3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
+      1: "네 포켓몬의 힘이 바위같은 내 방어를 이겼어!",
+      2: "세상은 넓구나! 너랑 겨뤄볼 수 있어서 즐거웠어.",
+      3: "아마도 난 포켓몬 브리더의 꿈을 이루러 가야할지도…"
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "최선의 공격은 적절한 방어지!\n그게 내 방식이야!",
+      2: "다음에 나한테 더 배우러와. 바위타입과 어떻게 싸워야하는지 알려주지!",
+      3: "아, 여러 지역을 돌아다니며 여행한 보람이 있군!"
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "내 방침은 물타입 포켓몬으로 공격하고 공격하고 또 공격하는 거!",
+      2: "아하핫, 너한테 내 물타입 포켓몬들의 힘을 보여줄게!",
+      3: "내 꿈은 여행을 다니며 강한 트레이너들과 배틀하는 거였어…\n네가 그 충분한 도전자가 될 수 있는지 볼까?"
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "너 정말로 강하구나… 그 실력 인정하도록 할게…",
+      2: "으으… 너 그냥 운이 좋았던거야, 그치?!",
+      3: "우와, 너 대단해! 날 이기다니 믿을 수 없어!"
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "최강인 최이슬! 너한테 좀 심했나?",
+      2: "내 포켓몬들의 우아한 수영 테크닉을 봤길 바랄게!",
+      3: "내 프라이드와 즐거움엔 네 포켓몬들은 상대가 안 돼. "
     }
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "마이 전기 포켓몬은 전쟁에서 미를 구했어요! 하우를 유에게 보여줄게요!",
+      2: "헤이! 쇼크로 유를 항복시키겠어요!",
+      3: "배틀에서 마이 에너미에게 했던 것처럼 유에게도 펀치를 날리겠어요!"
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "와우, 키드! 유어 팀은 진짜 대단하군요!",
+      2: "으흐흑, 유는 스트롱하네요! 마이 전기 트릭도 유에겐 로스트입니다.",
+      3: "앱솔루트하고 쇼킹한 패배였어요!"
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "오우 예! 전기 타입 포켓몬이라면, 미가 월드에서 넘버 원이에요!",
+      2: "하하하! 키드, 이것이 찌릿찌릿 일렉트릭 배틀입니다!",
+      3: "포켓몬 배틀은 전쟁, 앤드 나는 유에게 직접 전투를 보여줬습니다!"
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      1: "아, 오늘은 날씨가 좋네요…\n음, 배틀일까요? 그럼 더 좋죠.",
+      2: "제 포켓몬들의 배틀 실력은 제 꽃꽂이 실력만큼 대단하답니다.",
+      3: "아, 제 포켓몬의 달콤한 향기가 저를 다시 잠들게 하지 않았으면 좋겠는데……",
+      4: "정원에서 꽃을 보면 마음이 편안해져요.”."
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "앗! 제 패배를 인정합니다.",
+      2: "방금 경기 정말 달콤했어요.",
+      3: "아, 제가 진 것 같네요…",
+      4: "앗, 맙소사."
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "저 조금 걱정했어요. 너무 졸려서…",
+      2: "어머, 제 풀 포켓몬이 당신을 압도한 것 같네요.",
+      3: "이 배틀 정말로 편안한 경험이었네요.",
+      4: "어머… 이게 끝인가요?"
     }
   },
   "janine": {
     "encounter": {
-      1: "I am mastering the art of poisonous attacks.\nI shall spar with you today!",
-      2: "Father trusts that I can hold my own.\nI will prove him right!",
-      3: "My ninja techniques are only second to my Father's!\nCan you keep up?"
+      1: "난 독을 사용하는 인술을 갈고 닦고 있어.\n오늘 수련에서는 너랑 대련할거야!",
+      2: "아버지는 내가 잘해낼 수 있다고 신뢰하셔.\n 그게 맞는다는 걸 증명할게!",
+      3: "내 인술은 아버지한테 뒤처지지 않아! 따라올 수 있겠어? "
     },
     "victory": {
-      1: "Even now, I still need training… I understand.",
-      2: "Your battle technique has outmatched mine.",
-      3: "I'm going to really apply myself and improve my skills."
+      1: "역시 아직도, 난 더 수련이 필요해… 납득했어.",
+      2: "네 배틀 기술이 내 인술보다 한 수위야.",
+      3: "더 스스로 갈고 닦아서, 내 인술을 향상 시키겠어."
     },
     "defeat": {
-      1: "Fufufu… the poison has sapped all your strength to battle.",
-      2: "Ha! You didn't stand a chance against my superior ninja skills!",
-      3: "Father's faith in me has proven to not be misplaced."
+      1: "후후후… 독이 네 기력을 모두 가져가버렸네.",
+      2: "하핫, 너 내 인술에 맞설 기회를 잡지 못했구나!",
+      3: "나를 향한 아버지의 신뢰, 틀리지 않았다는 걸 증명해냈어."
     }
   },
   "sabrina": {
     "encounter": {
-      1: "Through my psychic ability, I had a vision of your arrival!",
-      2: "I dislike fighting, but if you wish, I will show you my powers!",
-      3: "I can sense great ambition in you. I shall see if it not unfounded."
+      1: "내 초능력을 통해서, 너의 도착은 예상하고 있었어!",
+      2: "싸우는 건 좋아하지 않지만 네가 원한다면… 나의 힘을 보여줄게!",
+      3: "네게서 큰 염원이 느껴져. 그것이 근거 없는 것이 아닌지 지켜보겠어."
     },
     "victory": {
-      1: "Your power… It far exceeds what I foresaw…",
-      2: "I failed to accurately predict your power.",
-      3: "Even with my immense psychic powers, I cannot sense another as strong as you."
+      1: "너의 힘은… 내가 예견했던 것보다 훨씬 뛰어나…",
+      2: "나는 너의 힘을 정확하게 예측하지 못했어.",
+      3: "나 엄청난 초능력을 가지고도, 너처럼 강한 사람을 느끼지 못했네."
     },
     "defeat": {
-      1: "This victory… It is exactly as I foresaw in my visions!",
-      2: "Perhaps it was another I sensed a great desire in…",
-      3: "Hone your abilities before recklessly charging into battle.\nYou never know what the future may hold if you do…"
+      1: "이 승리는… 내가 환상에서 예견한 그대로네!",
+      2: "아마도 그건, 내가 깊이 느꼈던 또 다른 염원이었을거야…",
+      3: "무모하게 배틀에 임하기 전에 능력을 갈고닦도록.\n넌 미래가 어떻게 될지 예지할 수 없으니까…"
     }
   },
   "blaine": {
     "encounter": {
-      1: "Hah! Hope you brought a Burn Heal!",
-      2: "My fiery Pokémon will incinerate all challengers!",
-      3: "Get ready to play with fire!"
+      1: "우오오~옷! 화상치료제는 잘 준비했는가!",
+      2: "나의 포켓몬은 모든 것을 불꽃으로 태워버리는 강한 녀석들뿐이다!",
+      3: "불꽃과 함께할 준비는 됐는가!"
     },
     "victory": {
-      1: "I have burned down to nothing! Not even ashes remain!",
-      2: "Didn't I stoke the flames high enough?",
-      3: "I'm all burned out… But this makes my motivation to improve burn even hotter!"
+      1: "아무것도 남지 않고 불타버렸다! 재조차 남지 않았어!",
+      2: "내가 불을 너무 세게 피우지 않았나?",
+      3: "불태웠다… 하지만 이건 불꽃을 향상시키려는 내 동기를 더욱 뜨겁게 만드는군!"
     },
     "defeat": {
-      1: "My raging inferno cannot be quelled!",
-      2: "My Pokémon have been powered up with the heat from this victory!",
-      3: "Hah! My passion burns brighter than yours!"
+      1: "나의 타오르는 불길은 진압할 수 없다!",
+      2: "내 포켓몬은 이번 승리의 열기로 더욱 강해졌다!",
+      3: "하! 내 열정이 네 것보다 더 밝게 타오르고 있군!"
     }
   },
   "giovanni": {
     "encounter": {
-      1: "I, the leader of Team Rocket, will make you feel a world of pain!",
-      2: "My training here will be vital before I am to face my old associates again.",
-      3: "I do not think you are prepared for the level of failure you are about to experience!"
+      1: "나, 로켓단의 리더가, 고통의 세계를 느끼게 해주마!",
+      2: "옛 동료들과 다시 만나기 전, 이곳에서의 훈련은 매우 중요하겠군.",
+      3: "너는 곧 경험하게 될 실패에 대한 준비가 되어 있지 않군!"
     },
     "victory": {
-      1: "WHAT! Me, lose?! There is nothing I wish to say to you!",
-      2: "Hmph… You could never understand what I hope to achieve.",
-      3: "This defeat is merely delaying the inevitable.\nI will rise Team Rocket from the ashes in due time."
+      1: "하! 내가 졌다고?! 더 이상 할말이 없군!",
+      2: "흐음… 넌 내가 이루고자 하는 것을 결코 이해할 수 없을 거다.",
+      3: "이 패배는 피할 수 없는 것을 단지 지연시킬 뿐.\n때가 되면 잿더미에서 로켓단을 일으켜 세울 것이다."
     },
     "defeat": {
-      1: "Not being able to measure your own strength shows that you are still but a child.",
-      2: "Do not try to interfere with me again.",
-      3: "I hope you understand how foolish challenging me was."
+      1: "자신의 힘을 스스로 잴수 없다는 것은 네가 아직 꼬맹이라는 것을 보여준다고 할 수 있지.",
+      2: "다시는 나를 방해하지 말도록.",
+      3: "나에게 도전하는 것이 얼마나 어리석은 짓인지 이해했으면 좋겠군."
     }
   },
   "roxanne": {
