@@ -168,40 +168,41 @@ export const achv: AchievementTranslationEntries = {
     name: "Undefeated",
     description: "Beat the game in classic mode",
   },
+
   "MONO_GEN_ONE": {
-    name: "Generation One",
+    name: "The Original Rival",
     description: "Complete the generation one only challenge.",
   },
   "MONO_GEN_TWO": {
-    name: "Generation TWO",
+    name: "Generation 1.5",
     description: "Complete the generation two only challenge.",
   },
   "MONO_GEN_THREE": {
-    name: "Generation THREE",
+    name: "Too much water?",
     description: "Complete the generation three only challenge.",
   },
   "MONO_GEN_FOUR": {
-    name: "Generation FOUR",
+    name: "Is she really the hardest?",
     description: "Complete the generation four only challenge.",
   },
   "MONO_GEN_FIVE": {
-    name: "Generation FIVE",
+    name: "All Original",
     description: "Complete the generation five only challenge.",
   },
   "MONO_GEN_SIX": {
-    name: "Generation SIX",
+    name: "Almost Royalty",
     description: "Complete the generation six only challenge.",
   },
   "MONO_GEN_SEVEN": {
-    name: "Generation SEVEN",
+    name: "Only Technically",
     description: "Complete the generation seven only challenge.",
   },
   "MONO_GEN_EIGHT": {
-    name: "Generation EIGHT",
+    name: "A Champion Time!",
     description: "Complete the generation eight only challenge.",
   },
   "MONO_GEN_NINE": {
-    name: "Generation NINE",
+    name: "She was going easy on you",
     description: "Complete the generation nine only challenge.",
   },
 
@@ -212,25 +213,25 @@ export const achv: AchievementTranslationEntries = {
     name: "Mono NORMAL",
   },
   "MONO_FIGHTING": {
-    name: "Mono FIGHTING",
+    name: "I Know Kung Fu",
   },
   "MONO_FLYING": {
     name: "Mono FLYING",
   },
   "MONO_POISON": {
-    name: "Mono POISON",
+    name: "Kanto's Favourite",
   },
   "MONO_GROUND": {
     name: "Mono GROUND",
   },
   "MONO_ROCK": {
-    name: "Mono ROCK",
+    name: "Brock Hard",
   },
   "MONO_BUG": {
-    name: "Mono BUG",
+    name: "Sting Like A Beedrill",
   },
   "MONO_GHOST": {
-    name: "Mono GHOST",
+    name: "Who you gonna call?",
   },
   "MONO_STEEL": {
     name: "Mono STEEL",
@@ -239,7 +240,7 @@ export const achv: AchievementTranslationEntries = {
     name: "Mono FIRE",
   },
   "MONO_WATER": {
-    name: "Mono WATER",
+    name: "When It Rains, It Pours",
   },
   "MONO_GRASS": {
     name: "Mono GRASS",
@@ -257,7 +258,7 @@ export const achv: AchievementTranslationEntries = {
     name: "Mono DRAGON",
   },
   "MONO_DARK": {
-    name: "Mono DARK",
+    name: "It's just a phase",
   },
   "MONO_FAIRY": {
     name: "Mono FAIRY",
