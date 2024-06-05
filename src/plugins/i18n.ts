@@ -92,7 +92,7 @@ const alternativeFonts = {
   "ko": [
     new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
     Object.assign(
-      new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", {unicodeRange: "U+3131-3163, U+AC00-D7AC"}),
+      new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC" }),
       { sizeAdjust: "133%" }
     ),
   ],
