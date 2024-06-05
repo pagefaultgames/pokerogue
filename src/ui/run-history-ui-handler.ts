@@ -266,8 +266,9 @@ class RunEntry extends Phaser.GameObjects.Container {
       } else if (data.battleType === BattleType.TRAINER) {
         const tObj = data.trainer.toTrainer(this.scene);
         const tType = TrainerType[data.trainer.trainerType];
-        if (tType === TrainerType.RIVAL) {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()} ${i18next.TObj("trainerNames:rival")}`, TextStyle.WINDOW);
+        if (data.trainer.trainerType >= 375) {
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by Rival`, TextStyle.WINDOW);
+          //otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
         } else {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tType.charAt(0)+tType.substring(1).toLowerCase()} ${data.trainer.name}`, TextStyle.WINDOW);
