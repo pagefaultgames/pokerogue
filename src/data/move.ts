@@ -1495,10 +1495,18 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     this.berriesOnly = berriesOnly;
   }
 
+  /**
+   *
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target Target {@linkcode Pokemon} that the moves applies to
+   * @param move {@linkcode Move} that is used
+   * @param args N/A
+   * @returns {boolean} True if an item was removed
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
     if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-      return true;
+      return false;
     }
 
     const cancelled = new Utils.BooleanHolder(false);
@@ -1518,9 +1526,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
       const removedItem = heldItems[user.randSeedInt(heldItems.length)];
 
       // Decrease item amount and update icon
-      if (!--removedItem.stackCount) {
-        target.scene.removeModifier(removedItem, !target.isPlayer());
-      }
+      !--removedItem.stackCount;
       target.scene.updateModifiers(target.isPlayer());
 
       if (this.berriesOnly) {
@@ -1529,6 +1535,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
         user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${removedItem.type.name}!`));
       }
     }
+
     return true;
   }
 
