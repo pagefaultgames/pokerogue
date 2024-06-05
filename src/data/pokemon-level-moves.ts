@@ -18539,12 +18539,14 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 8, Moves.DOUBLE_TEAM ],
       [ 12, Moves.ELECTRO_BALL ],
       [ 16, Moves.FEINT ],
-      [ 20, Moves.SPARK ],
+      [ 20, Moves.ZIPPY_ZAP ], //Custom
       [ 24, Moves.AGILITY ],
       [ 28, Moves.IRON_TAIL ],
       [ 32, Moves.DISCHARGE ],
+      [ 34, Moves.FLOATY_FALL ], //Custom
       [ 36, Moves.THUNDERBOLT ],
       [ 40, Moves.LIGHT_SCREEN ],
+      [ 42, Moves.SPLISHY_SPLASH ], //Custom
       [ 44, Moves.THUNDER ],
       [ 48, Moves.PIKA_PAPOW ],
     ],
