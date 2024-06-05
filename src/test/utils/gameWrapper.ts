@@ -10,7 +10,7 @@ import UpdateList = Phaser.GameObjects.UpdateList;
 import MockGraphics from "#app/test/utils/mocks/mocksContainer/mockGraphics";
 import MockTextureManager from "#app/test/utils/mocks/mockTextureManager";
 import Phaser from "phaser";
-import {blobToString} from "#app/test/utils/testUtils";
+import {blobToString} from "#app/test/utils/gameManagerUtils";
 import {vi} from "vitest";
 import mockLocalStorage from "#app/test/utils/mocks/mockLocalStorage";
 import mockConsoleLog from "#app/test/utils/mocks/mockConsoleLog";

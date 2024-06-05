@@ -1,11 +1,11 @@
 /* eslint-disable */
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import {GameDataType, PlayerGender} from "#app/system/game-data";
-import {generateStarter, getMovePosition, waitUntil,} from "#app/test/utils/testUtils";
+import {generateStarter, getMovePosition, waitUntil,} from "#app/test/utils/gameManagerUtils";
 import {Mode} from "#app/ui/ui";
 import {GameModes} from "#app/game-mode";
 import {Species} from "#app/data/enums/species";
-import * as overrides from '../overrides';
+import * as overrides from '../../overrides';
 import {Command} from "#app/ui/command-ui-handler";
 import {
   BattleEndPhase,

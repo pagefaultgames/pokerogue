@@ -1,6 +1,6 @@
 import GameWrapper from "#app/test/utils/gameWrapper";
 import {Mode} from "#app/ui/ui";
-import {generateStarter, waitUntil} from "#app/test/utils/testUtils";
+import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
 import {
   CheckSwitchPhase,
   CommandPhase,

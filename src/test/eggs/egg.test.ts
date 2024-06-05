@@ -1,5 +1,5 @@
 import {beforeAll, describe, expect, it} from "vitest";
-import BattleScene from "../battle-scene";
+import BattleScene from "../../battle-scene";
 import { getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg.js";
 import { Species } from "#app/data/enums/species.js";
 import Phaser from "phaser";

@@ -1,6 +1,6 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import {MoneyAchv, Achv, AchvTier, RibbonAchv, DamageAchv, HealAchv, LevelAchv, ModifierAchv, achvs} from "#app/system/achv";
-import BattleScene from "../battle-scene";
+import BattleScene from "../../battle-scene";
 import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
 import Phaser from "phaser";

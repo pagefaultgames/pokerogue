@@ -12,7 +12,7 @@ import {
 import {Mode} from "#app/ui/ui";
 import {Stat} from "#app/data/pokemon-stat";
 import {Moves} from "#app/data/enums/moves";
-import {getMovePosition} from "#app/test/utils/testUtils";
+import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import {Command} from "#app/ui/command-ui-handler";
 import {BattleStat} from "#app/data/battle-stat";
 
