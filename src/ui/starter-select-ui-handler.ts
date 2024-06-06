@@ -407,7 +407,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.valueLimitLabel);
 
     //TODO: back to translated version
-    const startLabel = addTextObject(this.scene, 124, 162, "Random", TextStyle.TOOLTIP_CONTENT);
+    const startLabel = addTextObject(this.scene, 124, 162, "Start", TextStyle.TOOLTIP_CONTENT);
     startLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(startLabel);
 
