@@ -29,10 +29,25 @@ export type ModifierPredicate = (modifier: Modifier) => boolean;
 const iconOverflowIndex = 24;
 
 export const modifierSortFunc = (a: Modifier, b: Modifier) => {
+  const itemNameMatch = a.type.name.localeCompare(b.type.name);
+  const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
   const aId = a instanceof PokemonHeldItemModifier ? a.pokemonId : 4294967295;
   const bId = b instanceof PokemonHeldItemModifier ? b.pokemonId : 4294967295;
 
-  return aId < bId ? 1 : aId > bId ? -1 : 0;
+  //First sort by pokemonID
+  if (aId < bId) {
+    return 1;
+  } else if (aId>bId) {
+    return -1;
+  } else if (aId === bId) {
+    //Then sort by item type
+    if (typeNameMatch === 0) {
+      return itemNameMatch;
+      //Finally sort by item name
+    } else {
+      return typeNameMatch;
+    }
+  }
 };
 
 export class ModifierBar extends Phaser.GameObjects.Container {
@@ -50,18 +65,19 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     this.removeAll(true);
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
-
-    visibleIconModifiers.sort(modifierSortFunc);
+    const nonPokemonSpecificModifiers = visibleIconModifiers.filter(m => !(m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
+    const pokemonSpecificModifiers = visibleIconModifiers.filter(m => (m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
+    const sortedVisibleIconModifiers = nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
 
     const thisArg = this;
 
-    visibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
+    sortedVisibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
       const icon = modifier.getIcon(this.scene as BattleScene);
       if (i >= iconOverflowIndex) {
         icon.setVisible(false);
       }
       this.add(icon);
-      this.setModifierIconPosition(icon, visibleIconModifiers.length);
+      this.setModifierIconPosition(icon, sortedVisibleIconModifiers.length);
       icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
       icon.on("pointerover", () => {
         (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.getDescription(this.scene as BattleScene));
