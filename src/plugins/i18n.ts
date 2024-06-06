@@ -153,7 +153,7 @@ export function initI18n(): void {
     lng: lang,
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "jp"],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -185,6 +185,9 @@ export function initI18n(): void {
       },
       ko: {
         ...koConfig
+      },
+      jp: {
+        ...jpConfig
       },
     },
     postProcess: ["korean-postposition"],
