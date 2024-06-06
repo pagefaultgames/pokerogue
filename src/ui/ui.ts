@@ -38,11 +38,12 @@ import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import {Button} from "../enums/buttons";
 import i18next, {ParseKeys} from "i18next";
-import {PlayerGender} from "#app/system/game-data";
+import { PlayerGender } from "#app/data/enums/player-gender";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
-import SettingsAccessibilityUiHandler from "./settings/settings-accessiblity-ui-handler";
+import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
+import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -63,7 +64,8 @@ export enum Mode {
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
-  SETTINGS_ACCESSIBILITY,
+  SETTINGS_DISPLAY,
+  SETTINGS_AUDIO,
   SETTINGS_GAMEPAD,
   GAMEPAD_BINDING,
   SETTINGS_KEYBOARD,
@@ -101,7 +103,8 @@ const noTransitionModes = [
   Mode.GAMEPAD_BINDING,
   Mode.KEYBOARD_BINDING,
   Mode.SETTINGS,
-  Mode.SETTINGS_ACCESSIBILITY,
+  Mode.SETTINGS_AUDIO,
+  Mode.SETTINGS_DISPLAY,
   Mode.SETTINGS_GAMEPAD,
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
@@ -154,7 +157,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
-      new SettingsAccessibilityUiHandler(scene),
+      new SettingsDisplayUiHandler(scene),
+      new SettingsAudioUiHandler(scene),
       new SettingsGamepadUiHandler(scene),
       new GamepadBindingUiHandler(scene),
       new SettingsKeyboardUiHandler(scene),
