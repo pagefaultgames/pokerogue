@@ -23,7 +23,7 @@ import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFu
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
-import { getPokemonMessage, getPokemonPrefix } from "./messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
@@ -2276,7 +2276,7 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
+        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[pokemon.summonData.disabledMove].name })));
         pokemon.summonData.disabledMove = Moves.NONE;
       }
 
@@ -2643,7 +2643,10 @@ export class MovePhase extends BattlePhase {
     if (this.move.getMove().hasAttr(ChargeAttr)) {
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER) {
-        this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+        this.scene.queueMessage(i18next.t("battle:useMove", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+          moveName: this.move.getName()
+        }), 500);
         return;
       }
     }
@@ -2652,7 +2655,10 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+    this.scene.queueMessage(i18next.t("battle:useMove", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+      moveName: this.move.getName()
+    }), 500);
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents().find(() => true), this.move.getMove());
   }
 
