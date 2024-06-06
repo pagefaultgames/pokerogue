@@ -23,6 +23,8 @@ import { ModifierTier } from "./modifier-tier";
 import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import i18next from "#app/plugins/i18n";
 import { getModifierTierTextTint } from "#app/ui/text";
+import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
+import * as Overrides from "../overrides";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -232,7 +234,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, group?: string) {
     super(localeKey, iconImage, newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
       selectFilter || ((pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || !pokemon.status))) {
+        if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -282,7 +284,7 @@ export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
       ((pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || !pokemon.status) {
+        if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -721,7 +723,7 @@ export class TmModifierType extends PokemonModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
+    return i18next.t(scene.enableMoveInfo ? "modifierType:ModifierType.TmModifierTypeWithInfo.description" : "modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
   }
 }
 
@@ -1673,6 +1675,14 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     }
     options.push(candidate);
   });
+  // OVERRIDE IF NECESSARY
+  if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
+    options.forEach((mod, i) => {
+      // @ts-ignore: keeps throwing don't use string as index error in typedoc run
+      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
+      mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
+    });
+  }
   return options;
 }
 
@@ -1875,8 +1885,9 @@ export class ModifierTypeOption {
 }
 
 export function getPartyLuckValue(party: Pokemon[]): integer {
-  return Phaser.Math.Clamp(party.map(p => p.isFainted() ? 0 : p.getLuck())
+  const luck = Phaser.Math.Clamp(party.map(p => p.isFainted() ? 0 : p.getLuck())
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+  return luck || 0;
 }
 
 export function getLuckString(luckValue: integer): string {

@@ -3,10 +3,11 @@ import i18next from "i18next";
 import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
-import { PlayerGender } from "../game-data";
+import { PlayerGender } from "#app/data/enums/player-gender";
 import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 import { MoneyFormat } from "../../enums/money-format";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
+import { EaseType } from "#app/ui/enums/ease-type.js";
 
 const MUTE = "Mute";
 const VOLUME_OPTIONS = new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : MUTE);
@@ -18,7 +19,8 @@ const AUTO_DISABLED = ["Auto", "Disabled"];
  */
 export enum SettingType {
   GENERAL,
-  ACCESSIBILITY
+  DISPLAY,
+  AUDIO
 }
 
 export interface Setting {
@@ -36,31 +38,35 @@ export interface Setting {
  */
 export const SettingKeys = {
   Game_Speed: "GAME_SPEED",
-  Master_Volume: "MASTER_VOLUME",
-  BGM_Volume: "BGM_VOLUME",
-  SE_Volume: "SE_VOLUME",
-  Language: "LANGUAGE",
-  Damage_Numbers: "DAMAGE_NUMBERS",
-  UI_Theme: "UI_THEME",
-  Window_Type: "WINDOW_TYPE",
-  Tutorials: "TUTORIALS",
-  Enable_Retries: "ENABLE_RETRIES",
-  Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
-  Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
-  Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
-  Money_Format: "MONEY_FORMAT",
-  Sprite_Set: "SPRITE_SET",
-  Move_Animations: "MOVE_ANIMATIONS",
-  Show_Moveset_Flyout: "SHOW_MOVESET_FLYOUT",
-  Show_Arena_Flyout: "SHOW_ARENA_FLYOUT",
-  Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
+  HP_Bar_Speed: "HP_BAR_SPEED",
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
-  HP_Bar_Speed: "HP_BAR_SPEED",
+  Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
+  Battle_Style: "BATTLE_STYLE",
+  Enable_Retries: "ENABLE_RETRIES",
+  Tutorials: "TUTORIALS",
+  Touch_Controls: "TOUCH_CONTROLS",
+  Vibration: "VIBRATION",
+  Language: "LANGUAGE",
+  UI_Theme: "UI_THEME",
+  Window_Type: "WINDOW_TYPE",
+  Money_Format: "MONEY_FORMAT",
+  Damage_Numbers: "DAMAGE_NUMBERS",
+  Move_Animations: "MOVE_ANIMATIONS",
+  Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
+  Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
+  Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
+  Move_Info: "MOVE_INFO",
+  Show_Moveset_Flyout: "SHOW_MOVESET_FLYOUT",
+  Show_Arena_Flyout: "SHOW_ARENA_FLYOUT",
+  Show_Time_Of_Day_Widget: "SHOW_TIME_OF_DAY_WIDGET",
+  Time_Of_Day_Animation: "TIME_OF_DAY_ANIMATION",
+  Sprite_Set: "SPRITE_SET",
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
-  Touch_Controls: "TOUCH_CONTROLS",
-  Vibration: "VIBRATION"
+  Master_Volume: "MASTER_VOLUME",
+  BGM_Volume: "BGM_VOLUME",
+  SE_Volume: "SE_VOLUME"
 };
 
 /**
@@ -75,133 +81,10 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
-    key: SettingKeys.Master_Volume,
-    label: "Master Volume",
-    options: VOLUME_OPTIONS,
-    default: 5,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.BGM_Volume,
-    label: "BGM Volume",
-    options: VOLUME_OPTIONS,
-    default: 10,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.SE_Volume,
-    label: "SE Volume",
-    options: VOLUME_OPTIONS,
-    default: 10,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Language,
-    label: "Language",
-    options: ["English", "Change"],
+    key: SettingKeys.HP_Bar_Speed,
+    label: "HP Bar Speed",
+    options: ["Normal", "Fast", "Faster", "Skip"],
     default: 0,
-    type: SettingType.GENERAL,
-    requireReload: true
-  },
-  {
-    key: SettingKeys.Damage_Numbers,
-    label: "Damage Numbers",
-    options: ["Off", "Simple", "Fancy"],
-    default: 0,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.UI_Theme,
-    label: "UI Theme",
-    options: ["Default", "Legacy"],
-    default: 0,
-    type: SettingType.GENERAL,
-    requireReload: true
-  },
-  {
-    key: SettingKeys.Window_Type,
-    label: "Window Type",
-    options: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
-    default: 0,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Tutorials,
-    label: "Tutorials",
-    options: OFF_ON,
-    default: 1,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Enable_Retries,
-    label: "Enable Retries",
-    options: OFF_ON,
-    default: 0,
-    type: SettingType.ACCESSIBILITY
-  },
-  {
-    key: SettingKeys.Skip_Seen_Dialogues,
-    label: "Skip Seen Dialogues",
-    options: OFF_ON,
-    default: 0,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Candy_Upgrade_Notification,
-    label: "Candy Upgrade Notification",
-    options: ["Off", "Passives Only", "On"],
-    default: 0,
-    type: SettingType.ACCESSIBILITY
-  },
-  {
-    key: SettingKeys.Candy_Upgrade_Display,
-    label: "Candy Upgrade Display",
-    options: ["Icon", "Animation"],
-    default: 0,
-    type: SettingType.ACCESSIBILITY,
-    requireReload: true
-  },
-  {
-    key: SettingKeys.Money_Format,
-    label: "Money Format",
-    options: ["Normal", "Abbreviated"],
-    default: 0,
-    type: SettingType.ACCESSIBILITY
-  },
-  {
-    key: SettingKeys.Sprite_Set,
-    label: "Sprite Set",
-    options: ["Consistent", "Mixed Animated"],
-    default: 0,
-    type: SettingType.GENERAL,
-    requireReload: true
-  },
-  {
-    key: SettingKeys.Move_Animations,
-    label: "Move Animations",
-    options: OFF_ON,
-    default: 1,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Show_Moveset_Flyout,
-    label: "Show Moveset Flyout",
-    options: OFF_ON,
-    default: 1,
-    type: SettingType.ACCESSIBILITY
-  },
-  {
-    key: SettingKeys.Show_Arena_Flyout,
-    label: "Show Battle Effects Flyout",
-    options: OFF_ON,
-    default: 1,
-    type: SettingType.ACCESSIBILITY
-  },
-  {
-    key: SettingKeys.Show_Stats_on_Level_Up,
-    label: "Show Stats on Level Up",
-    options: OFF_ON,
-    default: 1,
     type: SettingType.GENERAL
   },
   {
@@ -219,24 +102,31 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
-    key: SettingKeys.HP_Bar_Speed,
-    label: "HP Bar Speed",
-    options: ["Normal", "Fast", "Faster", "Skip"],
+    key: SettingKeys.Skip_Seen_Dialogues,
+    label: "Skip Seen Dialogues",
+    options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
   },
   {
-    key: SettingKeys.Fusion_Palette_Swaps,
-    label: "Fusion Palette Swaps",
+    key: SettingKeys.Battle_Style,
+    label: "Battle Style",
+    options: ["Switch", "Set"],
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Enable_Retries,
+    label: "Enable Retries",
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Tutorials,
+    label: "Tutorials",
     options: OFF_ON,
     default: 1,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Player_Gender,
-    label: "Player Gender",
-    options: ["Boy", "Girl"],
-    default: 0,
     type: SettingType.GENERAL
   },
   {
@@ -252,6 +142,151 @@ export const Setting: Array<Setting> = [
     options: AUTO_DISABLED,
     default: 0,
     type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Language,
+    label: "Language",
+    options: ["English", "Change"],
+    default: 0,
+    type: SettingType.DISPLAY,
+    requireReload: true
+  },
+  {
+    key: SettingKeys.UI_Theme,
+    label: "UI Theme",
+    options: ["Default", "Legacy"],
+    default: 0,
+    type: SettingType.DISPLAY,
+    requireReload: true
+  },
+  {
+    key: SettingKeys.Window_Type,
+    label: "Window Type",
+    options: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Money_Format,
+    label: "Money Format",
+    options: ["Normal", "Abbreviated"],
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Damage_Numbers,
+    label: "Damage Numbers",
+    options: ["Off", "Simple", "Fancy"],
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Move_Animations,
+    label: "Move Animations",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Show_Stats_on_Level_Up,
+    label: "Show Stats on Level Up",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Candy_Upgrade_Notification,
+    label: "Candy Upgrade Notification",
+    options: ["Off", "Passives Only", "On"],
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Candy_Upgrade_Display,
+    label: "Candy Upgrade Display",
+    options: ["Icon", "Animation"],
+    default: 0,
+    type: SettingType.DISPLAY,
+    requireReload: true
+  },
+  {
+    key: SettingKeys.Move_Info,
+    label: "Move Info",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Show_Moveset_Flyout,
+    label: "Show Moveset Flyout",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Show_Arena_Flyout,
+    label: "Show Battle Effects Flyout",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Show_Time_Of_Day_Widget,
+    label: "Show Time of Day Widget",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY,
+    requireReload: true,
+  },
+  {
+    key: SettingKeys.Time_Of_Day_Animation,
+    label: "Time of Day Animation",
+    options: ["Bounce", "Back"],
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Sprite_Set,
+    label: "Sprite Set",
+    options: ["Consistent", "Mixed Animated"],
+    default: 0,
+    type: SettingType.DISPLAY,
+    requireReload: true
+  },
+  {
+    key: SettingKeys.Fusion_Palette_Swaps,
+    label: "Fusion Palette Swaps",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Player_Gender,
+    label: "Player Gender",
+    options: ["Boy", "Girl"],
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Master_Volume,
+    label: "Master Volume",
+    options: VOLUME_OPTIONS,
+    default: 5,
+    type: SettingType.AUDIO
+  },
+  {
+    key: SettingKeys.BGM_Volume,
+    label: "BGM Volume",
+    options: VOLUME_OPTIONS,
+    default: 10,
+    type: SettingType.AUDIO
+  },
+  {
+    key: SettingKeys.SE_Volume,
+    label: "SE Volume",
+    options: VOLUME_OPTIONS,
+    default: 10,
+    type: SettingType.AUDIO
   }
 ];
 
@@ -312,11 +347,17 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Tutorials:
     scene.enableTutorials = Setting[index].options[value] === "On";
     break;
+  case SettingKeys.Move_Info:
+    scene.enableMoveInfo = Setting[index].options[value] === "On";
+    break;
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Battle_Style:
+    scene.battleStyle = value;
     break;
   case SettingKeys.Candy_Upgrade_Notification:
     if (scene.candyUpgradeNotification === value) {
@@ -353,6 +394,12 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Show_Arena_Flyout:
     scene.showArenaFlyout = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Show_Time_Of_Day_Widget:
+    scene.showTimeOfDayWidget = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Time_Of_Day_Animation:
+    scene.timeOfDayAnimation = Setting[index].options[value] === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
     break;
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value] === "On";
