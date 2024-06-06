@@ -1253,7 +1253,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     }
                   });
 
-                  const egg = new Egg({species: this.lastSpecies.speciesId});
+                  const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId});
                   egg.addEggToGameData(this.scene);
 
                   ui.setMode(Mode.STARTER_SELECT);

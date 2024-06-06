@@ -107,9 +107,10 @@ export class Egg {
     this._variantTier = eggOptions.variantTier ?? (Overrides.EGG_VARIANT_OVERRIDE || this.rollVariant());
     this._species = eggOptions.species ?? this.rollSpecies(eggOptions.scene);
 
-    // Override egg tier if species was given
+    // Override egg tier and hatchwaves if species was given
     if (eggOptions.species) {
       this._tier = this.getEggTierFromSpeciesStarterValue();
+      this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
     }
     if (eggOptions.pulled) {
       this.addEggToGameData(eggOptions.scene);
