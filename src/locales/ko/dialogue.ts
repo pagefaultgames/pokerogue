@@ -943,31 +943,31 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "ramos": {
     "encounter": {
-      1: `Did yeh enjoy the garden playground I made with all these sturdy plants o' mine?
-                $Their strength is a sign o' my strength as a gardener and a Gym Leader! Yeh sure yer up to facing all that?`,
+      1: `그래, 올곧게 자란 초목을 모아서 만든 풀 정글짐은 어땠는가?
+                $자네가 느낀 그것이 나의 체육관 관장으로서의 실력이네! 한번 확인해 보겠나?`,
     },
     "victory": {
-      1: "Yeh believe in yer Pokémon… And they believe in yeh, too… It was a fine battle, sprout."
+      1: "포켓몬은 자네를 믿고, 자네는 그들을 믿는다…가슴이 후련해지는 승부였구먼."
     },
     "defeat": {
-      1: "Hohoho… Indeed. Frail little blades o' grass'll break through even concrete."
+      1: "호호호…연약해 보이는 풀잎은 콘크리트도 뚫을 수 있다네."
     }
   },
   "viola": {
     "encounter": {
-      1: `Whether it's the tears of frustration that follow a loss or the blossoming of joy that comes with victory…
-                $They're both great subjects for my camera! Fantastic! This'll be just fantastic! 
-                $Now come at me!`,
-      2: "My lens is always focused on victory--I won't let anything ruin this shot!"
+      1: `패배의 분함도 승리의 순간도…
+                $둘 다 최고의 피사체야! 정말 멋져 멋져! 
+                $자, 그럼 덤비렴!`,
+      2: "나 비올라는 셔트 찬스를 노리는 것처럼--승리를 노릴 거야!"
     },
     "victory": {
-      1: "You and your Pokémon have shown me a whole new depth of field! Fantastic! Just fantastic!",
-      2: `The world you see through a lens, and the world you see with a Pokémon by your side…
-                $The same world can look entirely different depending on your view.`
+      1: "너와 네 포켓몬은 최고의 콤비구나! 정말 멋져 멋져!",
+      2: `렌즈 너머의 세계와 포켓몬의 마음으로 보는 세계…
+                $똑같이 보이는 풍경이지만 다양한 세계가 겹쳐져 있는 거야.`
     },
     "defeat": {
-      1: "The photo from the moment of my victory will be a real winner, all right!",
-      2: "Yes! I took some great photos!"
+      1: "내가 승리한 순간을 찍은 사진은 정말 멋져 멋져!",
+      2: "좋아! 멋진 사진을 찍었어!"
     }
   },
   "candice": {
