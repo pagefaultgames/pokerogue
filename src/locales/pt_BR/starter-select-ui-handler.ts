@@ -30,7 +30,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectMoveSwapWith": "Escolha o movimento que substituirá",
   "unlockPassive": "Aprender Passiva",
   "reduceCost": "Reduzir Custo",
-  "sameSpeciesEgg": "Comprar um ovo",
+  "sameSpeciesEgg": "Buy an Egg",
   "cycleShiny": "R: » Shiny",
   "cycleForm": "F: » Forma",
   "cycleGender": "G: » Gênero",
