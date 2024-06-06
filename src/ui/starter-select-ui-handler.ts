@@ -1165,7 +1165,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr).forEach((n:Nature) => {
               let x = 0;
               // test what kind of nature we have
-              for (const s:Stat of affectedStats) {
+              for (const s of affectedStats) {
                 if (getNatureStatMultiplier(n, s) > 1) {
                   natureSorted[x].push(n);
                   return;
@@ -1910,7 +1910,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
           if (!isNaN(starterAttributes?.variant)) {
             if (props.shiny = (starterAttributes.variant >= 0)) {
-              props.variant = starterAttributes.variant;
+              props.variant = starterAttributes.variant as Variant;
             }
           }
           props.formIndex = starterAttributes?.form ?? props.formIndex;

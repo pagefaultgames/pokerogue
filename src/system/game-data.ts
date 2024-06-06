@@ -178,7 +178,7 @@ export interface StarterAttributes {
   ability?: integer;
   variant?: integer;
   form?: integer;
-  gender?: boolean;
+  female?: boolean;
 }
 
 export interface StarterDataEntry {
