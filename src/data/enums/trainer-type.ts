@@ -40,6 +40,7 @@ export enum TrainerType {
   RICH,
   RICH_KID,
   ROUGHNECK,
+  SAILOR,
   SCIENTIST,
   SMASHER,
   SNOW_WORKER,

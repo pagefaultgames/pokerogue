@@ -95,6 +95,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "rich_kid_female": "Lady",
   "rich_kids": "Elegantoni",
   "roughneck": "Zuccapelata",
+  "sailor": "Sailor",
   "scientist": "Scienziato",
   "scientist_female": "Scienziata",
   "scientists": "Ricercatori",

@@ -371,6 +371,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Ow! I scorched the tip of my nose!"
     },
   },
+  "sailor": {
+    "encounter": {
+      1: "¡Amigo, te haré caminar por la borda si pierdes!",
+      2: "¡Adelante! ¡Mi orgullo como marinero está en auge!",
+      3: "¡Ah del barco! ¿Estás mareado?"
+    },
+    "victory": {
+      1: "¡Argh! ¡Derrotado por un niño!",
+      2: "¡Tu espíritu me ha hundido!",
+      3: "Creo que soy yo quien está mareado..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
