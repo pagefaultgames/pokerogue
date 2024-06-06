@@ -2113,20 +2113,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const remainValue = valueLimit - newValue;
     for (let g = 0; g < this.genSpecies.length; g++) {
       for (let s = 0; s < this.genSpecies[g].length; s++) {
-        /**
-         * 'speciesStarterValue' is cost of pokemon species.
-         * 'speciesStarterDexEntry' is used to detect if this pokemon is registered in starter.
-         * 'speciesSprite' is sprite object of pokmemon for setting the alpha value.
-         */
+        /** Cost of pokemon species */
         const speciesStarterValue = this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId);
+        /** Used to detect if this pokemon is registered in starter */
         const speciesStarterDexEntry = this.scene.gameData.dexData[this.genSpecies[g][s].speciesId];
+        /** {@linkcode Phaser.GameObjects.Sprite} object of Pokémon for setting the alpha value */
         const speciesSprite = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
 
         /**
          * If remainValue greater than or equal pokemon species, the user can select.
          * so that the alpha value of pokemon sprite set 1.
          *
-         * If speciesStarterDexEntry?.caughtAttr is ture, this species registered in stater.
+         * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
          * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
          */
         if (remainValue >= speciesStarterValue) {
