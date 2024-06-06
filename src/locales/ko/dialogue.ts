@@ -1046,24 +1046,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "kofu": {
     "encounter": {
-      1: "I'mma serve you a full course o' Water-type Pokémon! Don't try to eat 'em, though!"
+      1: "물포켓몬의 풀코스를! 배 터지게 먹여 주도록 하마!"
     },
     "victory": {
-      1: "Vaultin' Veluza! Yer a lively one, aren't ya! A little TOO lively, if I do say so myself!"
+      1: "우옷! 우오오옷! 이렇게 팔팔한 트레이너가 다 있다니!"
     },
     "defeat": {
-      1: "You come back to see me again now, ya hear?"
+      1: "젊은 친구! 다음에 또 만나기를 기대하고 있으마!"
     }
   },
   "tulip": {
     "encounter": {
-      1: "Allow me to put my skills to use to make your cute little Pokémon even more beautiful!"
+      1: "리파의 기술로 너의 포켓몬들을 지금보다 훨~씬 아름답게 만들어 줄게!"
     },
     "victory": {
-      1: "Your strength has a magic to it that cannot be washed away."
+      1: "너의 강함은 풀 수 없는 매직이구나."
     },
     "defeat": {
-      1: "You know, in my line of work, people who lack talent in one area or the other often fade away quickly—never to be heard of again."
+      1: "…리파의 업계에서는 어중간한 재능을 가진 사람은 대체로 금방 사라져 버려."
     }
   },
   "sidney": {
@@ -1193,13 +1193,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rika": {
     "encounter": {
-      1: "I'd say I'll go easy on you, but… I'd be lying! Think fast!"
+      1: "실컷 귀여워해 줄 테니까… 한 번 열심히 해 보라고!"
     },
     "victory": {
-      1: "Not bad, kiddo."
+      1: "너, 꽤 하는구나!"
     },
     "defeat": {
-      1: "Nahahaha! You really are something else, kiddo!"
+      1: "아하하! 제법인데! 역시 너는 재밌는 녀석이라니까!"
     }
   },
   "bruno": {
@@ -1295,14 +1295,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "poppy": {
     "encounter": {
-      1: "Oooh! Do you wanna have a Pokémon battle with me?"
+      1: "우와~! 뽀삐와 포켓몬 승부가 하고 싶으세요?"
     },
     "victory": {
-      1: "Uagh?! Mmmuuuggghhh…"
+      1: "훌쩍, 으에엥~"
     },
     "defeat": {
-      1: `Yaaay! I did it! I de-feet-ed you! You can come for… For… An avenge match? 
-                $Come for an avenge match anytime you want!`,
+      1: `만세~! 만세~ 목수, 성공했어요! 
+                $에헴! 리벤지 매치는 언제든지 받아 줄게요!`,
     }
   },
   "agatha": {
@@ -1390,14 +1390,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "larry_elite": {
     "encounter": {
-      1: `Hello there… It's me, Larry.
-                $I serve as a member of the Elite Four too, yes… Unfortunately for me.`,
+      1: `…안녕하십니까, 청목입니다.
+                $귀찮게도 저는 사천왕도 겸임하고 있습니다.`,
     },
     "victory": {
-      1: "Well, that took the wind from under our wings…"
+      1: "날고 있는 새포켓몬도 떨어뜨릴 기세로군요."
     },
     "defeat": {
-      1: "It's time for a meeting with the boss."
+      1: "치프와 만나기로 한 시각이군요."
     }
   },
   "lance": {
@@ -1483,14 +1483,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hassel": {
     "encounter": {
-      1: "Prepare to learn firsthand how the fiery breath of ferocious battle feels!"
+      1: "맹렬하게 몰아치는 승부의 숨결을 직접 가르쳐 드리겠습니다!!"
     },
     "victory": {
-      1: `Fortune smiled on me this time, but… 
-                $Judging from how the match went, who knows if I will be so lucky next time.`,
+      1: `이번에는 당신이 승리를 쟁취했군요. 
+                $하지만, 시합의 흐름을 보니… 다음 승부는 또 어떻게 될지 모르겠네요.`,
     },
     "defeat": {
-      1: "That was an ace!"
+      1: "저에게 더 배우고 싶은 것이 있으시다면 또 승부하도록 하죠."
     }
   },
   "blue": {
@@ -1662,13 +1662,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "katy": {
     "encounter": {
-      1: "Don't let your guard down unless you would like to find yourself knocked off your feet!"
+      1: "쓰러지고 싶지 않다면 방심하지 말고 열심히 해 봐~"
     },
     "victory": {
-      1: "All of my sweet little Pokémon dropped like flies!"
+      1: "내 포켓몬들 모두 지쳐서 헤벌레~ 해졌어~"
     },
     "defeat": {
-      1: "Eat up, my cute little Vivillon!"
+      1: "비비용~ 많~이 먹으렴~"
     }
   },
   "pryce": {
@@ -1969,60 +1969,60 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brassius": {
     "encounter": {
-      1: "I assume you are ready? Let our collaborative work of art begin!"
+      1: "준비는 됐겠지!? 그럼, 우리 둘의 예술적인 합작품을 한번 만들어 보도록 할까!"
     },
     "victory": {
-      1: "Ahhh…vant-garde!"
+      1: "아… 아방가르드!!"
     },
     "defeat": {
-      1: "I will begin on a new piece at once!"
+      1: "바로 신작을 만들러 가야 하니 이만 실례하겠다!"
     }
   },
   "iono": {
     "encounter": {
-      1: `How're ya feelin' about this battle?
+      1: `자~ 오늘의 각오는~ 모야모야~?
                     $...
-                    $Let's get this show on the road! How strong is our challenger? 
-                    $I 'unno! Let's find out together!`,
+                    $그럼, 이제 시작해 볼까! 
+                    $도전자님의 실력은 과연 과연~!?`,
     },
     "victory": {
-      1: "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
+      1: "너의 반짝임은 1000만볼트!"
     },
     "defeat": {
-      1: "Your eyeballs are MINE!"
+      1: "당신의 눈길을 일렉트릭네트로 뾰로롱!"
     }
   },
   "larry": {
     "encounter": {
-      1: "When all's said and done, simplicity is strongest."
+      1: "그렇습니다. 심플한 것이 가장 강한 것입니다!"
     },
     "victory": {
-      1: "A serving of defeat, huh?"
+      1: "허, 이걸로 한 방 먹은 게 되었군요."
     },
     "defeat": {
-      1: "I'll call it a day."
+      1: "오늘은 저는 이만 실례하겠습니다."
     }
   },
   "ryme": {
     "encounter": {
-      1: "Come on, baby! Rattle me down to the bone!"
+      1: "나의 영혼 흔들어 봐 Come On!"
     },
     "victory": {
-      1: "You're cool, my friend—you move my SOUL!"
+      1: "너의 Cool한 Youth 나의 Soul이 Move!"
     },
     "defeat": {
-      1: "Later, baby!"
+      1: "Bye Bye Baby~!"
     }
   },
   "grusha": {
     "encounter": {
-      1: "All I need to do is make sure the power of my Pokémon chills you to the bone!"
+      1: "내가 너를 철저하게 얼려 버리면 고민할 것도 없겠지!"
     },
     "victory": {
-      1: "Your burning passion… I kinda like it, to be honest."
+      1: "너의 그 열기… 싫지 않아."
     },
     "defeat": {
-      1: "Things didn't heat up for you."
+      1: "너에겐 아직 열기가 부족하구나."
     }
   },
   "marnie_elite": {
