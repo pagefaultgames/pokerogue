@@ -30,72 +30,72 @@ describe("Inputs", () => {
     game = new GameManager(phaserGame);
   });
 
-  it("Mobile - test touch holding for 1ms", async () => {
+  it("Mobile - test touch holding for 1ms - 1 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 1);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("Mobile - test touch holding for 200ms", async () => {
+  it("Mobile - test touch holding for 200ms - 1 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 200);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("Mobile - test touch holding for 300ms", async () => {
+  it("Mobile - test touch holding for 300ms - 2 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 300);
     expect(game.inputsHandler.log.length).toBe(2);
   });
 
-  it("Mobile - test touch holding for 1000ms", async () => {
+  it("Mobile - test touch holding for 1000ms - 4 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 1000);
     expect(game.inputsHandler.log.length).toBe(4);
   });
 
-  it("keyboard - test input holding for 1ms", async() => {
+  it("keyboard - test input holding for 1ms - 1 input", async() => {
     await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 1);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("keyboard - test input holding for 200ms", async() => {
+  it("keyboard - test input holding for 200ms - 1 input", async() => {
     await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 200);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("keyboard - test input holding for 300ms", async() => {
+  it("keyboard - test input holding for 300ms - 2 input", async() => {
     await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 300);
     expect(game.inputsHandler.log.length).toBe(2);
   });
 
-  it("keyboard - test input holding for 1000ms", async() => {
+  it("keyboard - test input holding for 1000ms - 4 input", async() => {
     await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 1000);
     expect(game.inputsHandler.log.length).toBe(4);
   });
 
-  it("keyboard - test input holding for 2000ms", async() => {
+  it("keyboard - test input holding for 2000ms - 8 input", async() => {
     await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 2000);
     expect(game.inputsHandler.log.length).toBe(8);
   });
 
-  it("gamepad - test input holding for 1ms", async() => {
+  it("gamepad - test input holding for 1ms - 1 input", async() => {
     await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 1);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("gamepad - test input holding for 200ms", async() => {
+  it("gamepad - test input holding for 200ms - 1 input", async() => {
     await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 200);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("gamepad - test input holding for 300ms", async() => {
+  it("gamepad - test input holding for 300ms - 2 input", async() => {
     await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 300);
     expect(game.inputsHandler.log.length).toBe(2);
   });
 
-  it("gamepad - test input holding for 1000ms", async() => {
+  it("gamepad - test input holding for 1000ms - 4 input", async() => {
     await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 1000);
     expect(game.inputsHandler.log.length).toBe(4);
   });
 
-  it("gamepad - test input holding for 2000ms", async() => {
+  it("gamepad - test input holding for 2000ms - 8 input", async() => {
     await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 2000);
     expect(game.inputsHandler.log.length).toBe(8);
   });
