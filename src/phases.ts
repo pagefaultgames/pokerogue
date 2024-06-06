@@ -2199,7 +2199,16 @@ export class TurnStartPhase extends FieldPhase {
             const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
             // check if either active pokemon has the ability "Run Away"
             const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
-            runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
+            // check if either active pokemon has the Ghost type
+            const hasGhostType = playerActivePokemon.find(p => p.getTypes(true).includes(Type.GHOST) || (p.getTypes(true).includes(Type.STELLAR) && p.getTypes().includes(Type.GHOST)));
+            //set the runningPokemon property
+            if (hasRunAway !== undefined) {
+              runningPokemon = hasRunAway;
+            } else if (hasGhostType !== undefined) {
+              runningPokemon = hasGhostType;
+            } else {
+              runningPokemon = fasterPokemon;
+            }
           }
         }
         this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
@@ -4825,16 +4834,30 @@ export class AttemptRunPhase extends PokemonPhase {
     super(scene, fieldIndex);
   }
 
+  calculateEscapeChance (playerPokemon: Pokemon, enemyField: EnemyPokemon[]) {
+    const maxEscapeChance = new Utils.IntegerHolder(256);
+    const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
+    const hasGhostType = (playerPokemon.getTypes(true).includes(Type.GHOST) || (playerPokemon.getTypes(true).includes(Type.STELLAR) && playerPokemon.getTypes().includes(Type.GHOST))) ? true : false;
+
+    if (hasGhostType === true) {
+      return maxEscapeChance;
+    }
+
+    return new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % maxEscapeChance.value);
+  }
+
   start() {
     super.start();
 
     const playerPokemon = this.getPokemon();
     const enemyField = this.scene.getEnemyField();
 
-    const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
+    //const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
 
-    const escapeChance = new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256);
+    const escapeChance = this.calculateEscapeChance(playerPokemon, enemyField);
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
+
+    console.log(escapeChance.value.toString());
 
     if (playerPokemon.randSeedInt(256) < escapeChance.value) {
       this.scene.playSound("flee");
