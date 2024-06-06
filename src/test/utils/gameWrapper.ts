@@ -22,6 +22,7 @@ import {MockClock} from "#app/test/utils/mocks/mockClock";
 import BattleScene from "#app/battle-scene.js";
 import {MoveAnim} from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
+import * as battleScene from "#app/battle-scene";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -72,9 +73,11 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 export default class GameWrapper {
   public game: Phaser.Game;
   public scene: BattleScene;
-  public game: Phaser.Game;
 
-  constructor(phaserGame: Phaser.Game) {
+  constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
+    if (bypassLogin) {
+      vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
+    }
     this.game = phaserGame;
     MoveAnim.prototype.getAnim = () => ({
       frames: {},

@@ -13,7 +13,6 @@ import {
   TitlePhase,
   ToggleDoublePositionPhase,
 } from "#app/phases";
-import {GameDataType, PlayerGender} from "#app/system/game-data";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
 import TextInterceptor from "#app/test/utils/TextInterceptor";
@@ -23,6 +22,8 @@ import fs from "fs";
 import { AES, enc } from "crypto-js";
 import {updateUserInfo} from "#app/account";
 import {Species} from "#app/data/enums/species";
+import {PlayerGender} from "#app/data/enums/player-gender";
+import {GameDataType} from "#app/data/enums/game-data-type";
 
 export default class GameManager {
   public gameWrapper: GameWrapper;
@@ -30,9 +31,9 @@ export default class GameManager {
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
 
-  constructor(phaserGame: Phaser.Game) {
+  constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
     BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
-    this.gameWrapper = new GameWrapper(phaserGame);
+    this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
     this.scene = new BattleScene();
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);

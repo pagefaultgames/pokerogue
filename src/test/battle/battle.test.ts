@@ -1,6 +1,5 @@
 /* eslint-disable */
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import {GameDataType, PlayerGender} from "#app/system/game-data";
 import {generateStarter, getMovePosition, waitUntil,} from "#app/test/utils/gameManagerUtils";
 import {Mode} from "#app/ui/ui";
 import {GameModes} from "#app/game-mode";
@@ -10,7 +9,6 @@ import {Command} from "#app/ui/command-ui-handler";
 import {
   BattleEndPhase,
   BerryPhase,
-  CheckSwitchPhase,
   CommandPhase,
   DamagePhase,
   EggLapsePhase,
@@ -26,10 +24,8 @@ import {
   SelectGenderPhase,
   SelectModifierPhase,
   SelectStarterPhase,
-  ShowAbilityPhase, StatChangePhase,
-  SummonPhase,
+  StatChangePhase,
   TitlePhase,
-  ToggleDoublePositionPhase,
   TurnEndPhase,
   TurnInitPhase,
   TurnStartPhase,
@@ -37,10 +33,9 @@ import {
 } from "#app/phases";
 import {Moves} from "#app/data/enums/moves";
 import GameManager from "#app/test/utils/gameManager";
-import fs from "fs";
 import Phaser from "phaser";
-import {allSpecies, speciesStarters, starterPassiveAbilities} from "#app/data/pokemon-species";
-import {Abilities} from "#app/data/enums/abilities";
+import {allSpecies} from "#app/data/pokemon-species";
+import {PlayerGender} from "#app/data/enums/player-gender";
 
 const saveKey = "x0i2O7WRiANTqPmZ";
 

@@ -207,4 +207,8 @@ export default class MockText {
   setAlign(align) {
     // return this.phaserText.setAlign(align);
   }
+
+  setMask() {
+    /// Sets the mask that this Game Object will use to render with.
+  }
 }
