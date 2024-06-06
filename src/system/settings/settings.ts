@@ -111,7 +111,7 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Battle_Style,
     label: "Battle Style",
-    options: ["Shift", "Set"],
+    options: ["Switch", "Set"],
     default: 0,
     type: SettingType.GENERAL
   },
