@@ -35,7 +35,6 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
-import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 
 export const zhCnConfig = {
   ability: ability,
@@ -75,5 +74,4 @@ export const zhCnConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  saveSlotSelectUiHandler: saveSlotSelectUiHandler
 };

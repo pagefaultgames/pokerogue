@@ -49,4 +49,5 @@ export const menu: SimpleTranslationEntries = {
   "empty": "空",
   "yes": "是",
   "no": "否",
+  "overwriteTheData": "Overwrite the data in the selected slot?"
 } as const;

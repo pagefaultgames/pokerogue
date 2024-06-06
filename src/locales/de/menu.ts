@@ -49,4 +49,5 @@ export const menu: SimpleTranslationEntries = {
   "empty":"Leer",
   "yes":"Ja",
   "no":"Nein",
+  "overwriteTheData": "Den ausgewählten Speicherstand überschreiben?"
 } as const;

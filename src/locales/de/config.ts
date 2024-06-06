@@ -35,7 +35,6 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
-import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 
 export const deConfig = {
   ability: ability,
@@ -74,6 +73,5 @@ export const deConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather,
-  saveSlotSelectUiHandler: saveSlotSelectUiHandler
+  weather: weather
 };

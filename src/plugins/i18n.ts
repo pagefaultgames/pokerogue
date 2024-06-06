@@ -210,7 +210,6 @@ declare module "i18next" {
       trainerNames: SimpleTranslationEntries;
       tutorial: SimpleTranslationEntries;
       starterSelectUiHandler: SimpleTranslationEntries;
-      saveSlotSelectUiHandler: SimpleTranslationEntries;
       splashMessages: SimpleTranslationEntries;
       nature: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;

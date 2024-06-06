@@ -49,4 +49,5 @@ export const menu: SimpleTranslationEntries = {
   "empty":"빈 슬롯",
   "yes":"예",
   "no":"아니오",
+  "overwriteTheData": "선택한 슬롯에 데이터를 덮어쓰시겠습니까?"
 } as const;
