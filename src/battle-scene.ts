@@ -145,6 +145,12 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  /**
+   * Determines the selected battle style.
+   * - 0 = 'Shift'
+   * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
+   */
+  public battleStyle: integer = 0;
 
   public disableMenu: boolean = false;
 
