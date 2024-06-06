@@ -1323,18 +1323,19 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 }
 
 export class PostAttackAbAttr extends AbAttr {
-  private attackRequired: boolean;
+  private attackCondition: PokemonAttackCondition;
 
-  constructor(attackRequired: boolean = true) {
+  /** The default attackCondition requires that the selected move is a damaging move */
+  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS)) {
     super();
 
-    this.attackRequired = attackRequired;
+    this.attackCondition = attackCondition;
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     // When attackRequired is true, we require the move to be an attack move and to deal damage before checking secondary requirements.
     // If attackRequired is false, we always defer to the secondary requirements.
-    if (!this.attackRequired || (move.category !== MoveCategory.STATUS && hitResult < HitResult.NO_EFFECT)) {
+    if (this.attackCondition(pokemon, defender, move)) {
       return this.applyPostAttackAfterMoveTypeCheck(pokemon, passive, defender, move, hitResult, args);
     } else {
       return false;
@@ -1347,17 +1348,17 @@ export class PostAttackAbAttr extends AbAttr {
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-  private condition: PokemonAttackCondition;
+  private stealCondition: PokemonAttackCondition;
 
-  constructor(condition?: PokemonAttackCondition) {
+  constructor(stealCondition?: PokemonAttackCondition) {
     super();
 
-    this.condition = condition;
+    this.stealCondition = stealCondition;
   }
 
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, defender, move))) {
+      if (hitResult < HitResult.NO_EFFECT && (!this.stealCondition || this.stealCondition(pokemon, defender, move))) {
         const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
         if (heldItems.length) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
@@ -2097,7 +2098,8 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
   private effects: StatusEffect[];
 
   constructor(...effects: StatusEffect[]) {
-    super(false);
+    /** This effect does not require a damaging move */
+    super((user, target, move) => true);
     this.effects = effects;
   }
   /**
