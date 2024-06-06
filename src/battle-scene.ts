@@ -59,6 +59,7 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";
 
@@ -1048,6 +1049,12 @@ export default class BattleScene extends SceneBase {
       if (resetArenaState) {
         this.arena.removeAllTags();
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+
+        for (const pokemon of this.getParty()) {
+          if (pokemon.hasAbility(Abilities.ICE_FACE)) {
+            pokemon.formIndex = 0;
+          }
+        }
         this.unshiftPhase(new ShowTrainerPhase(this));
       }
       for (const pokemon of this.getParty()) {

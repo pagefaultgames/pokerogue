@@ -3344,6 +3344,48 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
   }
 }
 
+/**
+ * Applies immunity to physical moves.
+ * This is used in Ice Face ability.
+ */
+export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
+  /**
+   * Applies the Ice Face pre-defense ability to the Pokémon.
+   * Removes BattlerTagType.ICE_FACE hit by physical attack and is in Ice Face form.
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {Pokemon} attacker - The attacking Pokémon.
+   * @param {PokemonMove} move - The move being used.
+   * @param {Utils.BooleanHolder} cancelled - A holder for whether the move was cancelled.
+   * @param {any[]} args - Additional arguments.
+   * @returns {boolean} - Whether the immunity was applied.
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const isImmune = super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
+
+    if (isImmune) {
+      const simulated = args.length > 1 && args[1];
+      if (!simulated) {
+        pokemon.removeTag(BattlerTagType.ICE_FACE);
+      }
+    }
+
+    return isImmune;
+  }
+
+  /**
+   * Gets the message triggered when the Pokémon avoids damage using the Ice Face ability.
+   * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
+   * @param {string} abilityName - The name of the ability.
+   * @param {...any} args - Additional arguments.
+   * @returns {string} - The trigger message.
+   */
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: pokemon.name, abilityName: abilityName });
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -4330,8 +4372,14 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      // Add BattlerTagType.ICE_FACE if the pokemon is in ice face form
+      .conditionalAttr(pokemon => pokemon.formIndex === 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0, false)
+      // When summoned with active HAIL or SNOW, add BattlerTagType.ICE_FACE
+      .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
+      // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
+      .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
+      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.getMove().category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
+      .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .unimplemented(),
     new Ability(Abilities.MIMICRY, 8)
