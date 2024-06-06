@@ -3,7 +3,9 @@ import Phaser from "phaser";
 import {InputsController} from "#app/inputs-controller";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import {holdOn} from "#app/test/utils/gameManagerUtils";
-
+import {initTouchControls} from "#app/touch-controls";
+import { JSDOM } from "jsdom";
+import fs from "fs";
 
 
 export default class InputsHandler {
@@ -11,14 +13,25 @@ export default class InputsHandler {
   private events: Phaser.Events.EventEmitter;
   private inputController: InputsController;
   public log = [];
-  private fakePad: Phakepad;
+  private fakePad: Fakepad;
+  private fakeMobile: FakeMobile;
 
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.inputController = this.scene.inputController;
-    this.fakePad = new Phakepad(pad_xbox360);
+    this.fakePad = new Fakepad(pad_xbox360);
+    this.fakeMobile = new FakeMobile();
     this.scene.input.gamepad.gamepads.push(this.fakePad);
     this.init();
+  }
+
+  pressTouch(button: string, duration: integer): Promise<void> {
+    return new Promise(async (resolve) => {
+      this.fakeMobile.touchDown(button);
+      await holdOn(duration);
+      this.fakeMobile.touchUp(button);
+      resolve();
+    });
   }
 
   pressGamepadButton(button: integer, duration: integer): Promise<void> {
@@ -43,6 +56,7 @@ export default class InputsHandler {
     setInterval(() => {
       this.inputController.update();
     });
+    initTouchControls(this.inputController.events);
     this.events = this.inputController.events;
     this.scene.input.gamepad.emit("connected", this.fakePad);
     this.listenInputs();
@@ -59,7 +73,7 @@ export default class InputsHandler {
   }
 }
 
-class Phakepad extends Phaser.Input.Gamepad.Gamepad {
+class Fakepad extends Phaser.Input.Gamepad.Gamepad {
   public id: string;
   public index: number;
 
@@ -67,5 +81,34 @@ class Phakepad extends Phaser.Input.Gamepad.Gamepad {
     super(undefined, {...pad, buttons: pad.deviceMapping, axes: []});
     this.id = "xbox_360_fakepad";
     this.index = 0;
+  }
+}
+
+class FakeMobile {
+  constructor() {
+    const fakeMobilePage = fs.readFileSync("./src/test/utils/fakeMobile.html", {encoding: "utf8", flag: "r"});
+    const dom = new JSDOM(fakeMobilePage);
+    Object.defineProperty(window, "document", {
+      value: dom.window.document,
+      configurable: true,
+    });
+  }
+
+  touchDown(button: string) {
+    const node = document.querySelector(`[data-key][id='${button}']`);
+    if (!node) {
+      return;
+    }
+    const event = new Event("touchstart");
+    node.dispatchEvent(event);
+  }
+
+  touchUp(button: string) {
+    const node = document.querySelector(`[data-key][id='${button}']`);
+    if (!node) {
+      return;
+    }
+    const event = new Event("touchend");
+    node.dispatchEvent(event);
   }
 }
