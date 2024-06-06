@@ -47,7 +47,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       9: "El colegio es aburrido. No hay nada que hacer. Uaa. Solo lucho para pasar el tiempo."
     },
     "victory": {
-      1: ¡Impresionante! Tengo mucho que aprender.",
+      1: "¡Impresionante! Tengo mucho que aprender.",
       2: "No pensé que me vencerías así…",
       3: "Espero la revancha algún día.",
       4: "¡Fue increíblemente divertido! Me dejaste cansada…",
