@@ -27,7 +27,7 @@ export const gameStatsUiHandler: SimpleTranslationEntries = {
   "subLegendsHatched": "Sub-Lendários Chocados",
   "legendsSeen": "Lendários Vistos",
   "legendsCaught": "Lendários Capturados",
-  "legendsHatched": "Legendários Chocados",
+  "legendsHatched": "Lendários Chocados",
   "mythicalsSeen": "Míticos Vistos",
   "mythicalsCaught": "Míticos Capturados",
   "mythicalsHatched": "Míticos Chocados",

@@ -3,7 +3,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonPrefix } from "../messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -23,7 +23,7 @@ import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";
 import { Species } from "./enums/species";
-import {BattlerIndex} from "#app/battle";
+import { BattlerIndex } from "#app/battle";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -156,7 +156,7 @@ export class BlockRecoilDamageAttr extends AbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
-    return i18next.t("abilityTriggers:blockRecoilDamage", {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
+    return i18next.t("abilityTriggers:blockRecoilDamage", {pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName});
   }
 }
 
@@ -878,7 +878,7 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:perishBody", {pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, abilityName: abilityName});
+    return i18next.t("abilityTriggers:perishBody", {pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName});
   }
 }
 
@@ -2462,7 +2462,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
    * @returns Returns true if healed from status, false if not
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    if (this.effects.includes(pokemon.status.effect)) {
+    if (this.effects.includes(pokemon.status?.effect)) {
       if (pokemon.getMaxHp() !== pokemon.hp) {
         const scene = pokemon.scene;
         const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
@@ -2666,7 +2666,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     for (const opp of pokemon.getOpponents()) {
       if (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) {
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
-        pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: `${getPokemonPrefix(opp)}${opp.name}`}));
+        pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: getPokemonNameWithAffix(opp)}));
         hadEffect = true;
       }
 
@@ -2764,8 +2764,12 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @return true if the Dancer ability was resolved
    */
   applyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
+    // List of tags that prevent the Dancer from replicating the move
+    const forbiddenTags = [BattlerTagType.FLYING, BattlerTagType.UNDERWATER,
+      BattlerTagType.UNDERGROUND, BattlerTagType.HIDDEN];
     // The move to replicate cannot come from the Dancer
-    if (source.getBattlerIndex() !== dancer.getBattlerIndex()) {
+    if (source.getBattlerIndex() !== dancer.getBattlerIndex()
+        && !dancer.summonData.tags.some(tag => forbiddenTags.includes(tag.tagType))) {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
@@ -2774,8 +2778,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
         dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move, true));
       }
+      return true;
     }
-    return true;
+    return false;
   }
 
   /**
@@ -3336,6 +3341,48 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
       return super.applyPostSummon(pokemon, passive, args);
     }
     return false;
+  }
+}
+
+/**
+ * Applies immunity to physical moves.
+ * This is used in Ice Face ability.
+ */
+export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
+  /**
+   * Applies the Ice Face pre-defense ability to the Pokémon.
+   * Removes BattlerTagType.ICE_FACE hit by physical attack and is in Ice Face form.
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {Pokemon} attacker - The attacking Pokémon.
+   * @param {PokemonMove} move - The move being used.
+   * @param {Utils.BooleanHolder} cancelled - A holder for whether the move was cancelled.
+   * @param {any[]} args - Additional arguments.
+   * @returns {boolean} - Whether the immunity was applied.
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const isImmune = super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
+
+    if (isImmune) {
+      const simulated = args.length > 1 && args[1];
+      if (!simulated) {
+        pokemon.removeTag(BattlerTagType.ICE_FACE);
+      }
+    }
+
+    return isImmune;
+  }
+
+  /**
+   * Gets the message triggered when the Pokémon avoids damage using the Ice Face ability.
+   * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
+   * @param {string} abilityName - The name of the ability.
+   * @param {...any} args - Additional arguments.
+   * @returns {string} - The trigger message.
+   */
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: pokemon.name, abilityName: abilityName });
   }
 }
 
@@ -4325,8 +4372,14 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      // Add BattlerTagType.ICE_FACE if the pokemon is in ice face form
+      .conditionalAttr(pokemon => pokemon.formIndex === 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0, false)
+      // When summoned with active HAIL or SNOW, add BattlerTagType.ICE_FACE
+      .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
+      // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
+      .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
+      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.getMove().category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
+      .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .unimplemented(),
     new Ability(Abilities.MIMICRY, 8)
