@@ -1,6 +1,26 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const mysteryEncounter: SimpleTranslationEntries = {
+
+  // Mysterious Encounters -- Common Tier
+
+  "mysterious_chest_intro_message": "You keep going and find...@d{64}\na chest?",
+  "mysterious_chest_title": "The Mysterious Chest",
+  "mysterious_chest_description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
+  "mysterious_chest_query": "Will you open it?",
+  "mysterious_chest_option_1_label": "Open it",
+  "mysterious_chest_option_2_label": "It's too risky, leave",
+  "mysterious_chest_option_1_selected_message": "You open the chest to find...",
+  "mysterious_chest_option_2_selected_message": "You hurry along your way,\nwith a slight feeling of regret.",
+  "mysterious_chest_option_1_normal_result": "A decent selection of tools and items.",
+  "mysterious_chest_option_1_good_result": "Some pretty handy tools and items.",
+  "mysterious_chest_option_1_great_result": "A great selection of items!",
+  "mysterious_chest_option_1_amazing_result": "Whoa! An amazing choice of items!",
+  "mysterious_chest_option_1_bad_result": `Oh no!@d{32}\nThe chest was trapped!
+  $Your @ec{pokeName} jumps in front of you\nbut is KOed in the process.`,
+
+  // Mysterious Encounters -- Rare Tier
+
   "mysterious_challengers_intro_message": "Mysterious challengers have appeared!",
   "mysterious_challengers_title": "Mysterious Challengers",
   "mysterious_challengers_description": "If you defeat a challenger, you might impress them enough to receive a boon. If you lose, they might not be so kind.",
@@ -19,20 +39,11 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_challengers_speaker": "Jimmy",
   //"optionTooltip": "[+Some Stuff, -Some other Stuff, ???, this is a really long description of the option you're hovering]",
 
-  "mysterious_chest_intro_message": "You keep going and find...@d{64}\na chest?",
-  "mysterious_chest_title": "The Mysterious Chest",
-  "mysterious_chest_description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
-  "mysterious_chest_query": "Will you open it?",
-  "mysterious_chest_option_1_label": "Open it",
-  "mysterious_chest_option_2_label": "It's too risky, leave",
-  "mysterious_chest_option_1_selected_message": "You open the chest to find...",
-  "mysterious_chest_option_2_selected_message": "You hurry along your way,\nwith a slight feeling of regret.",
-  "mysterious_chest_option_1_normal_result": "A decent selection of tools and items.",
-  "mysterious_chest_option_1_good_result": "Some pretty handy tools and items.",
-  "mysterious_chest_option_1_great_result": "A great selection of items!",
-  "mysterious_chest_option_1_amazing_result": "Whoa! An amazing choice of items!",
-  "mysterious_chest_option_1_bad_result": `Oh no!@d{32}\nThe chest was trapped!
-  $Your @ec{pokeName} jumps in front of you\nbut is KOed in the process.`,
+
+  // Mysterious Encounters -- Epic Tier
+  // Gholdengo Gang
+
+  // Mysterious Encounters -- Legendary Tier
 
   "dark_deal_intro_message": "A strange man in a tattered coat stands in your way...",
   "dark_deal_speaker": "Shady Guy",
@@ -57,15 +68,5 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   $...@d{64} Something emerges\nfrom the device, raging wildly!`,
   "dark_deal_option_2_selected": "Not gonna help a poor fellow out?\nPah!",
   "dark_deal_outro": "You leave, wondering if this was truly the best outcome...",
-
-  "encounter_3": "A Ninjask stands in your way, but, this one seems different?",
-  "encounter_3_id": "Shady Deal",
-  "encounter_3_description": "Bzzzz, bzzzz... \nIt wants you to say yes or no.",
-  "encounter_3_query": "Who will you battle?",
-  "encounter_3_option_1": "Accept", // Give player 30 rogue balls. Fight a legendary Pokémon. Roll for:
-  //  Toxic on your party; lose 60% money; OHKO your highest alive level PKMN; OHKO your two lowest level alive PKMN.
-  "encounter_3_option_2": "Refuse",
-  "encounter_3_option_3": "",
-  "encounter_3_option_4": "",
 
 } as const;
