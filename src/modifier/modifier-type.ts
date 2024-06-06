@@ -23,6 +23,7 @@ import { ModifierTier } from "./modifier-tier";
 import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import i18next from "#app/plugins/i18n";
 import { getModifierTierTextTint } from "#app/ui/text";
+import * as Overrides from "../overrides";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -721,7 +722,7 @@ export class TmModifierType extends PokemonModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
+    return i18next.t(scene.enableMoveInfo ? "modifierType:ModifierType.TmModifierTypeWithInfo.description" : "modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
   }
 }
 
@@ -1673,6 +1674,14 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     }
     options.push(candidate);
   });
+  // OVERRIDE IF NECESSARY
+  if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
+    options.forEach((mod, i) => {
+      // @ts-ignore: keeps throwing don't use string as index error in typedoc run
+      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
+      mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
+    });
+  }
   return options;
 }
 
