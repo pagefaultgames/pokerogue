@@ -1,4 +1,4 @@
-import { GachaType } from "./data/egg";
+import { GachaType } from "./data/enums/gacha-types";
 import { Biome } from "./data/enums/biome";
 import { TrainerType } from "./data/enums/trainer-type";
 import { trainerConfigs } from "./data/trainer-config";

@@ -30,6 +30,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectMoveSwapWith": "교체될 기술을 선택해주세요. 대상:",
   "unlockPassive": "패시브 해금",
   "reduceCost": "코스트 줄이기",
+  "sameSpeciesEgg": "달걀 구매",
   "cycleShiny": "R: 색상 전환",
   "cycleForm": "F: 폼 체인지",
   "cycleGender": "G: 암수 전환",

@@ -1,3 +1,4 @@
+import { EggTier } from "#app/data/enums/egg-type";
 import BattleScene from "../battle-scene";
 import { TrainerType } from "../data/enums/trainer-type";
 import i18next from "../plugins/i18n";
@@ -72,6 +73,17 @@ export function getVoucherTypeIcon(voucherType: VoucherType): string {
     return "mystic_ticket";
   case VoucherType.GOLDEN:
     return "golden_mystic_ticket";
+  }
+}
+
+export function getGuaranteedEggTierFromPullCount(pullCount: number): EggTier {
+  switch (pullCount) {
+  case 10:
+    return EggTier.GREAT;
+  case 25:
+    return EggTier.ULTRA;
+  default:
+    return EggTier.COMMON;
   }
 }
 

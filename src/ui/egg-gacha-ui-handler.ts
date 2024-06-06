@@ -3,8 +3,8 @@ import { Mode } from "./ui";
 import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
-import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
-import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
+import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "../data/egg";
+import { VoucherType, getGuaranteedEggTierFromPullCount, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
@@ -12,6 +12,8 @@ import { EggTier } from "../data/enums/egg-type";
 import {Button} from "../enums/buttons";
 import i18next from "../plugins/i18n";
 import * as Overrides from "../overrides";
+import { GachaType } from "#app/data/enums/gacha-types";
+import { arrayShuffle } from "#app/helper/array_helper";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
@@ -373,58 +375,25 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     }
     if (!eggs) {
       eggs = [];
-      const tierValueOffset = this.gachaCursor === GachaType.LEGENDARY ? 1 : 0;
-      const tiers = new Array(pullCount).fill(null).map(() => {
-        if (Overrides.EGG_TIER_OVERRIDE) {
-          return Overrides.EGG_TIER_OVERRIDE;
-        }
-        const tierValue = Utils.randInt(256);
-        return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
-      });
-      if (pullCount >= 25 && !tiers.filter(t => t >= EggTier.ULTRA).length) {
-        tiers[Utils.randInt(tiers.length)] = EggTier.ULTRA;
-      } else if (pullCount >= 10 && !tiers.filter(t => t >= EggTier.GREAT).length) {
-        tiers[Utils.randInt(tiers.length)] = EggTier.GREAT;
-      }
-      for (let i = 0; i < pullCount; i++) {
-        this.scene.gameData.eggPity[EggTier.GREAT] += 1;
-        this.scene.gameData.eggPity[EggTier.ULTRA] += 1;
-        this.scene.gameData.eggPity[EggTier.MASTER] += 1 + tierValueOffset;
-        // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
-        if (this.scene.gameData.eggPity[EggTier.MASTER] >= 412 && tiers[i] === EggTier.COMMON) {
-          tiers[i] = EggTier.MASTER;
-        } else if (this.scene.gameData.eggPity[EggTier.ULTRA] >= 59 && tiers[i] === EggTier.COMMON) {
-          tiers[i] = EggTier.ULTRA;
-        } else if (this.scene.gameData.eggPity[EggTier.GREAT] >= 9 && tiers[i] === EggTier.COMMON) {
-          tiers[i] = EggTier.GREAT;
-        }
-        this.scene.gameData.eggPity[tiers[i]] = 0;
-      }
 
-      const timestamp = new Date().getTime();
+      for (let i = 1; i <= pullCount; i++) {
+        const eggOptions: IEggOptions = { scene: this.scene, pulled: true, gachaType: this.gachaCursor };
 
-      for (const tier of tiers) {
-        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
-        if (egg.isManaphyEgg()) {
-          this.scene.gameData.gameStats.manaphyEggsPulled++;
-          egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);
-        } else {
-          switch (tier) {
-          case EggTier.GREAT:
-            this.scene.gameData.gameStats.rareEggsPulled++;
-            break;
-          case EggTier.ULTRA:
-            this.scene.gameData.gameStats.epicEggsPulled++;
-            break;
-          case EggTier.MASTER:
-            this.scene.gameData.gameStats.legendaryEggsPulled++;
-            break;
+        // Before creating the last egg, check if the guaranteed egg tier was already generated
+        // if not, override the egg tier
+        if (i === pullCount) {
+          const guaranteedEggTier = getGuaranteedEggTierFromPullCount(pullCount);
+          if (!eggs.some(egg => egg.tier >= guaranteedEggTier)) {
+            eggOptions.tier = guaranteedEggTier;
           }
         }
+
+        const egg = new Egg(eggOptions);
         eggs.push(egg);
-        this.scene.gameData.eggs.push(egg);
-        this.scene.gameData.gameStats.eggsPulled++;
       }
+      // Shuffle the eggs in case the guaranteed one got added as last egg
+      eggs = arrayShuffle<Egg>(eggs);
+
 
       (this.scene.currentBattle ? this.scene.gameData.saveAll(this.scene, true, true, true) : this.scene.gameData.saveSystem()).then(success => {
         if (!success) {
@@ -466,7 +435,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
           const eggSprite = this.scene.add.sprite(0, 0, "egg", `egg_${egg.getKey()}`);
           ret.add(eggSprite);
 
-          const eggText = addTextObject(this.scene, 0, 14, getEggDescriptor(egg), TextStyle.PARTY, { align: "center" });
+          const eggText = addTextObject(this.scene, 0, 14, egg.getEggDescriptor(), TextStyle.PARTY, { align: "center" });
           eggText.setOrigin(0.5, 0);
           eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.ULTRA));
           ret.add(eggText);
