@@ -211,8 +211,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.generateFusionSpecies();
         }
       }
-
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
+      this.fusionLuck = this.luck;
     }
 
     this.generateName();

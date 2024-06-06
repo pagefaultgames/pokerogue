@@ -43,7 +43,8 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { PlayerGender, SessionSaveData } from "./system/game-data";
+import { SessionSaveData } from "./system/game-data";
+import { PlayerGender } from "./data/enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
@@ -61,7 +62,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { BerryUsedEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 
 
 export class LoginPhase extends Phase {
@@ -742,6 +743,8 @@ export class EncounterPhase extends BattlePhase {
     this.scene.updateGameInfo();
 
     this.scene.initSession();
+
+    this.scene.eventTarget.dispatchEvent(new EncounterPhaseEvent());
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
@@ -2586,7 +2589,7 @@ export class MovePhase extends BattlePhase {
         this.scene.getPlayerField().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
-        this.scene.getEnemyParty().forEach(pokemon => {
+        this.scene.getEnemyField().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
       }

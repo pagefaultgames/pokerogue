@@ -17,6 +17,7 @@ import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
+import MoveInfoOverlay from "./move-info-overlay";
 
 const defaultMessage = "Choose a Pokémon.";
 
@@ -73,6 +74,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partySlots: PartySlot[];
   private partyCancelButton: PartyCancelButton;
   private partyMessageBox: Phaser.GameObjects.NineSlice;
+  private moveInfoOverlay: MoveInfoOverlay;
 
   private optionsMode: boolean;
   private optionsScroll: boolean;
@@ -179,6 +181,17 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup(this.scene);
 
+    // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
+    const overlayScale = 1;
+    this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
+      scale: overlayScale,
+      top: true,
+      x: 1,
+      y: -MoveInfoOverlay.getHeight(overlayScale) - 1, //this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+      width: this.scene.game.canvas.width / 12 - 30,
+    });
+    ui.add(this.moveInfoOverlay);
+
     this.options = [];
 
     this.partySlots = [];
@@ -190,6 +203,9 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
 
     super.show(args);
+
+    // reset the infoOverlay
+    this.moveInfoOverlay.clear();
 
     this.partyUiMode = args[0] as PartyUiMode;
 
@@ -244,6 +260,8 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
           return true;
         } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER && option !== PartyOption.CANCEL) {
+          // clear overlay on cancel
+          this.moveInfoOverlay.clear();
           const filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
           if (filterResult === null) {
             this.selectCallback(this.cursor, option);
@@ -407,6 +425,19 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0); /** Move cursor */
           break;
+        }
+
+        // show move description
+        if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+          const option = this.options[this.optionsCursor];
+          const pokemon = this.scene.getParty()[this.cursor];
+          const move = allMoves[pokemon.getLearnableLevelMoves()[option]];
+          if (move) {
+            this.moveInfoOverlay.show(move);
+          } else {
+            // or hide the overlay, in case it's the cancel button
+            this.moveInfoOverlay.clear();
+          }
         }
       }
     } else {
@@ -624,6 +655,11 @@ export default class PartyUiHandler extends MessageUiHandler {
     const learnableLevelMoves = this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER
       ? pokemon.getLearnableLevelMoves()
       : null;
+
+    if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER && learnableLevelMoves?.length) {
+      // show the move overlay with info for the first move
+      this.moveInfoOverlay.show(allMoves[learnableLevelMoves[0]]);
+    }
 
     const itemModifiers = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
       ? this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -874,6 +910,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   clearOptions() {
+    // hide the overlay
+    this.moveInfoOverlay.clear();
     this.optionsMode = false;
     this.optionsScroll = false;
     this.optionsScrollCursor = 0;
@@ -895,6 +933,8 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   clear() {
     super.clear();
+    // hide the overlay
+    this.moveInfoOverlay.clear();
     this.partyContainer.setVisible(false);
     this.clearPartySlots();
   }
