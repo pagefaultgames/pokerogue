@@ -4027,21 +4027,21 @@ export class RemoveScreensAttr extends MoveEffectAttr {
   * @see {@linkcode apply}
 */
 export class SwapArenaTagsAttr extends MoveEffectAttr {
-  public ArenaTags: ArenaTagType[];
+  public SwapTags: ArenaTagType[];
 
 
-  constructor() {
+  constructor(SwapTags: ArenaTagType[]) {
     super(true, MoveEffectTrigger.POST_APPLY);
+    this.SwapTags = SwapTags;
   }
 
   apply(user:Pokemon, target:Pokemon, move:Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
-    const swapTags = [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.MIST, ArenaTagType.REFLECT, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TAILWIND, ArenaTagType.TOXIC_SPIKES];
 
-    const tagPlayerTemp = user.scene.arena.findTagsOnSide((t => swapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
-    const tagEnemyTemp = user.scene.arena.findTagsOnSide((t => swapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
+    const tagPlayerTemp = user.scene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
+    const tagEnemyTemp = user.scene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
 
 
     if (tagPlayerTemp) {
@@ -7295,7 +7295,7 @@ export function initMoves() {
       .attr(FirstAttackDoublePowerAttr)
       .bitingMove(),
     new StatusMove(Moves.COURT_CHANGE, Type.NORMAL, 100, 10, -1, 0, 8)
-      .attr(SwapArenaTagsAttr),
+      .attr(SwapArenaTagsAttr, [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.MIST, ArenaTagType.REFLECT, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TAILWIND, ArenaTagType.TOXIC_SPIKES]),
     new AttackMove(Moves.MAX_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented()

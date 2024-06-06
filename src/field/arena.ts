@@ -547,9 +547,8 @@ export class Arena {
     }
 
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
-    newTag.quiet = quiet;
     this.tags.push(newTag);
-    newTag.onAdd(this);
+    newTag.onAdd(this, quiet);
 
     this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount));
 
@@ -598,8 +597,7 @@ export class Arena {
   removeTagOnSide(tagType: ArenaTagType, side: ArenaTagSide, quiet: boolean = false): boolean {
     const tag = this.getTagOnSide(tagType, side);
     if (tag) {
-      tag.quiet = quiet;
-      tag.onRemove(this);
+      tag.onRemove(this, quiet);
       this.tags.splice(this.tags.indexOf(tag), 1);
 
       this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
