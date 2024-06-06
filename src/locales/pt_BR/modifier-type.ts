@@ -46,7 +46,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonNatureChangeModifierType": {
       name: "Hortelã {{natureName}}",
-      description: "Muda a natureza de um Pokémon para {{natureName}} e a desbloqueia permanentemente para seu inicial",
+      description: "Muda a natureza do Pokémon para {{natureName}} e a desbloqueia permanentemente",
     },
     "DoubleBattleChanceBoosterModifierType": {
       description: "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas",
