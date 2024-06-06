@@ -1379,16 +1379,14 @@ export default class BattleScene extends SceneBase {
   }
 
   animateMoneyChanged(positiveChange: boolean): void {
-    let deltaScale = this.moneyText.scale * 0.14;
-    if (positiveChange) {
-      this.moneyText.setShadowColor("#008000");
-    } else {
-      this.moneyText.setShadowColor("#FF0000");
-      deltaScale = -deltaScale;
+    if (this.tweens.getTweensOf(this.moneyText).length > 0) {
+      return;
     }
+    const deltaScale = this.moneyText.scale * 0.14 * (positiveChange ? 1 : -1);
+    this.moneyText.setShadowColor(positiveChange ? "#008000" : "#FF0000");
     this.tweens.add({
       targets: this.moneyText,
-      duration: Utils.fixedInt(250),
+      duration: 250,
       scale: this.moneyText.scale + deltaScale,
       loop: 0,
       yoyo: true,
