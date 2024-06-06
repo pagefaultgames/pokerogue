@@ -9,7 +9,8 @@ import {Button} from "./enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
-import SettingsAccessibilityUiHandler from "./ui/settings/settings-accessiblity-ui-handler";
+import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
+import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -69,7 +70,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
       [Button.CYCLE_ABILITY]:   () => this.buttonCycleOption(Button.CYCLE_ABILITY),
       [Button.CYCLE_NATURE]:    () => this.buttonCycleOption(Button.CYCLE_NATURE),
-      [Button.V]:   () => this.buttonCycleOption(Button.V),
+      [Button.V]:               () => this.buttonCycleOption(Button.V),
       [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
     };
@@ -114,17 +115,24 @@ export class UiInputs {
   }
 
   buttonStats(pressed: boolean = true): void {
+    // allow access to Button.STATS as a toggle for other elements
+    for (const t of this.scene.getInfoToggles(true)) {
+      t.toggleInfo(pressed);
+    }
+    // handle normal pokemon battle ui
     for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
       p.toggleStats(pressed);
     }
   }
   buttonInfo(pressed: boolean = true): void {
-    if (!this.scene.showMovesetFlyout) {
-      return;
+    if (this.scene.showMovesetFlyout ) {
+      for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
+        p.toggleFlyout(pressed);
+      }
     }
 
-    for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
-      p.toggleFlyout(pressed);
+    if (this.scene.showArenaFlyout) {
+      this.scene.ui.processInfoButton(pressed);
     }
   }
 
@@ -162,7 +170,7 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsAccessibilityUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
+    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);

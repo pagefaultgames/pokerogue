@@ -17,11 +17,13 @@ import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
-import { PlayerGender } from "../system/game-data";
+import { PlayerGender } from "#app/data/enums/player-gender";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
 import { Ability } from "../data/ability.js";
 import i18next from "i18next";
+import {modifierSortFunc} from "../modifier/modifier";
+
 
 enum Page {
   PROFILE,
@@ -695,7 +697,7 @@ export default class SummaryUiHandler extends UiHandler {
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
         const xCoord = 39 + 34 * index;
         const typeIcon = !tera
-          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
+          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
           typeIcon.setScale(0.5);
           const typeRgb = getTypeRgb(type);
@@ -828,8 +830,9 @@ export default class SummaryUiHandler extends UiHandler {
         statsContainer.add(statValue);
       });
 
-      const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[];
+      const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
+        .sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {
         const icon = item.getIcon(this.scene, true);
@@ -897,7 +900,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[this.newMove.type].toLowerCase());
+        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[this.newMove.type].toLowerCase());
         newMoveTypeIcon.setOrigin(0, 1);
         this.extraMoveRowContainer.add(newMoveTypeIcon);
 
@@ -920,7 +923,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveRowsContainer.add(moveRowContainer);
 
         if (move) {
-          const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
+          const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
         }
 

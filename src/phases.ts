@@ -23,7 +23,7 @@ import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFu
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
-import { getPokemonMessage, getPokemonPrefix } from "./messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
@@ -43,7 +43,8 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { PlayerGender, SessionSaveData } from "./system/game-data";
+import { SessionSaveData } from "./system/game-data";
+import { PlayerGender } from "./data/enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
@@ -61,6 +62,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
+import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 import { MysteryEncounterPhase } from "./phases/mystery-encounter-phase";
 import { MysteryEncounterVariant } from "./data/mystery-encounter";
@@ -741,6 +743,8 @@ export class EncounterPhase extends BattlePhase {
     this.scene.updateGameInfo();
 
     this.scene.initSession();
+
+    this.scene.eventTarget.dispatchEvent(new EncounterPhaseEvent());
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
@@ -1789,6 +1793,11 @@ export class CheckSwitchPhase extends BattlePhase {
 
     const pokemon = this.scene.getPlayerField()[this.fieldIndex];
 
+    if (this.scene.battleStyle === 1) {
+      super.end();
+      return;
+    }
+
     if (this.scene.field.getAll().indexOf(pokemon) === -1) {
       this.scene.unshiftPhase(new SummonMissingPhase(this.scene, this.fieldIndex));
       super.end();
@@ -2376,6 +2385,7 @@ export class BerryPhase extends FieldPhase {
                 berryModifier.consumed = false;
               }
             }
+            this.scene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier)); // Announce a berry was used
           }
 
           this.scene.updateModifiers(pokemon.isPlayer());
@@ -2404,7 +2414,7 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
+        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[pokemon.summonData.disabledMove].name })));
         pokemon.summonData.disabledMove = Moves.NONE;
       }
 
@@ -2714,7 +2724,7 @@ export class MovePhase extends BattlePhase {
         this.scene.getPlayerField().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
-        this.scene.getEnemyParty().forEach(pokemon => {
+        this.scene.getEnemyField().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
       }
@@ -2771,7 +2781,10 @@ export class MovePhase extends BattlePhase {
     if (this.move.getMove().hasAttr(ChargeAttr)) {
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER) {
-        this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+        this.scene.queueMessage(i18next.t("battle:useMove", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+          moveName: this.move.getName()
+        }), 500);
         return;
       }
     }
@@ -2780,7 +2793,10 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+    this.scene.queueMessage(i18next.t("battle:useMove", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+      moveName: this.move.getName()
+    }), 500);
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents().find(() => true), this.move.getMove());
   }
 
@@ -5059,6 +5075,7 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
             this.scene.money -= rerollCost;
             this.scene.updateMoneyText();
+            this.scene.animateMoneyChanged(false);
             this.scene.playSound("buy");
           }
         } else if (cursor === 1) {
@@ -5104,6 +5121,7 @@ export class SelectModifierPhase extends BattlePhase {
             if (success) {
               this.scene.money -= cost;
               this.scene.updateMoneyText();
+              this.scene.animateMoneyChanged(false);
               this.scene.playSound("buy");
               (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
             } else {
