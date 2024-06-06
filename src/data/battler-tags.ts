@@ -1,6 +1,6 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonPrefix } from "../messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
@@ -15,6 +15,8 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
+import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { Species } from "./enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -200,6 +202,9 @@ export class InterruptedTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)}
+ */
 export class ConfusedTag extends BattlerTag {
   constructor(turnCount: integer, sourceMove: Moves) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
@@ -235,7 +240,8 @@ export class ConfusedTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nconfused!"));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
-      if (pokemon.randSeedInt(3)) {
+      // 1/3 chance of hitting self with a 40 base power move
+      if (pokemon.randSeedInt(3) === 0) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
@@ -799,7 +805,7 @@ export class ThunderCageTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` trapped\n${getPokemonPrefix(pokemon).toLowerCase()}${pokemon.name}!`);
+    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` trapped\n${getPokemonNameWithAffix(pokemon)}!`);
   }
 }
 
@@ -809,7 +815,7 @@ export class InfestationTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` has been afflicted \nwith an infestation by ${getPokemonPrefix(pokemon.scene.getPokemonById(this.sourceId))}${pokemon.scene.getPokemonById(this.sourceId).name}!`);
+    return getPokemonMessage(pokemon, ` has been afflicted \nwith an infestation by ${getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))}!`);
   }
 }
 
@@ -1350,6 +1356,57 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+/**
+ * Provides the Ice Face ability's effects.
+ */
+export class IceFaceTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  /**
+   * Determines if the Ice Face tag can be added to the Pokémon.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag might be added.
+   * @returns {boolean} - True if the tag can be added, false otherwise.
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
+    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
+    const isFormIceFace = pokemon.formIndex === 0;
+
+
+    // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
+    if ((pokemon.species.speciesId === Species.EISCUE && isFormIceFace) ||  isWeatherSnowOrHail) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Applies the Ice Face tag to the Pokémon.
+   * Triggers a form change to Ice Face if the Pokémon is not in its Ice Face form.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag is added.
+   */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    if (pokemon.formIndex !== 0) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    }
+  }
+
+  /**
+   * Removes the Ice Face tag from the Pokémon.
+   * Triggers a form change to Noice when the tag is removed.
+   * @param {Pokemon} pokemon - The Pokémon from which the tag is removed.
+   */
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1463,6 +1520,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new MinimizeTag();
   case BattlerTagType.DESTINY_BOND:
     return new DestinyBondTag(sourceMove, sourceId);
+  case BattlerTagType.ICE_FACE:
+    return new IceFaceTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

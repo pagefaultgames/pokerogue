@@ -4,7 +4,7 @@ import { Biome } from "./data/enums/biome";
 import { Moves } from "./data/enums/moves";
 import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
-import { BerryType } from "./data/berry";
+import { BerryType } from "./data/enums/berry-type";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Nature } from "./data/nature";
 import { Type } from "./data/type";
@@ -52,95 +52,24 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
  * PLAYER OVERRIDES
  */
 
+// forms can be found in pokemon-species.ts
+export const STARTER_FORM_OVERRIDE: integer = 0;
 // default 5 or 20 for Daily
 export const STARTING_LEVEL_OVERRIDE: integer = 0;
-interface StarterOverride {
-    /**
-   * SPECIES OVERRIDE
-   * will apply to each starter in your party
-   * default is 0 to not override
-   * @example STARTER_OVERRIDE.species = Species.Bulbasaur;
-   */
-
-  species: Species | integer;
-  // forms can be found in pokemon-species.ts
-  form: integer;
-  ability: Abilities;
-  passiveAbility: Abilities;
-  status: StatusEffect;
-  gender: Gender;
-  moveset: Moves[];
-  shiny: boolean;
-  shinyVariant: Variant;
-}
-export const STARTER_OVERRIDE: StarterOverride[] = [
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  }
-];
+/**
+ * SPECIES OVERRIDE
+ * will only apply to the first starter in your party or each enemy pokemon
+ * default is 0 to not override
+ * @example SPECIES_OVERRIDE = Species.Bulbasaur;
+ */
+export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
+export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
+export const GENDER_OVERRIDE: Gender = null;
+export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const SHINY_OVERRIDE: boolean = false;
+export const VARIANT_OVERRIDE: Variant = 0;
 
 /**
  * OPPONENT / ENEMY OVERRIDES
@@ -181,3 +110,11 @@ export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+
+/**
+ * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
+ * Items listed will replace the normal rolls.
+ * If less items are listed than rolled, only some items will be replaced
+ * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+ */
+export const ITEM_REWARD_OVERRIDE: Array<String> = [];

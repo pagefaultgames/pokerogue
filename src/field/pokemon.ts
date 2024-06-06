@@ -44,7 +44,7 @@ import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMov
 import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import * as Overrides from "../overrides";
-import { BerryType } from "../data/berry";
+import { BerryType } from "../data/enums/berry-type";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
@@ -98,7 +98,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
-  public indexInParty: number;
 
   public fieldPosition: FieldPosition;
 
@@ -107,7 +106,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, indexInParty?: number) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
@@ -139,9 +138,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (variant !== undefined) {
       this.variant = variant;
-    }
-    if (indexInParty !== undefined) {
-      this.indexInParty = indexInParty;
     }
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
@@ -215,8 +211,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.generateFusionSpecies();
         }
       }
-
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
+      this.fusionLuck = this.luck;
     }
 
     this.generateName();
@@ -820,7 +816,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.moveset;
 
     // Overrides moveset based on arrays specified in overrides.ts
-    const overrideArray: Array<Moves> = this.isPlayer() ? Overrides.STARTER_OVERRIDE[this.indexInParty]?.moveset : Overrides.OPP_MOVESET_OVERRIDE;
+    const overrideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
     if (overrideArray.length > 0) {
       overrideArray.forEach((move: Moves, index: number) => {
         const ppUsed = this.moveset[index]?.ppUsed || 0;
@@ -905,6 +901,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreOverride && this.summonData?.ability) {
       return allAbilities[this.summonData.ability];
     }
+    if (Overrides.ABILITY_OVERRIDE && this.isPlayer()) {
+      return allAbilities[Overrides.ABILITY_OVERRIDE];
+    }
     if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
@@ -912,10 +911,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
-    if (Overrides.STARTER_OVERRIDE[this.indexInParty]?.ability) {
-      abilityId = Overrides.STARTER_OVERRIDE[this.indexInParty].ability;
-    }
-
     if (abilityId === Abilities.NONE) {
       abilityId = this.species.ability1;
     }
@@ -930,8 +925,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns {Ability} The passive ability of the pokemon
    */
   getPassiveAbility(): Ability {
-    if (Overrides.STARTER_OVERRIDE[this.indexInParty]?.passiveAbility && this.isPlayer()) {
-      return allAbilities[Overrides.STARTER_OVERRIDE[this.indexInParty].passiveAbility];
+    if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
+      return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
     }
     if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
@@ -953,7 +948,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   hasPassive(): boolean {
     // returns override if valid for current case
-    if ((Overrides.STARTER_OVERRIDE[this.indexInParty]?.passiveAbility !== Abilities.NONE && this.isPlayer()) ||
+    if ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer()) ||
         (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer())) {
       return true;
     }
@@ -1173,6 +1168,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.fusionSpecies) {
       const evolutionLevelMoves = levelMoves.slice(0, Math.max(levelMoves.findIndex(lm => !!lm[0]), 0));
       const fusionLevelMoves = this.getFusionSpeciesForm(true).getLevelMoves();
+      const fusionEvolutionLevelMoves = fusionLevelMoves.slice(0, Math.max(fusionLevelMoves.findIndex(flm => !!flm[0]), 0));
       const newLevelMoves: LevelMoves = [];
       while (levelMoves.length && levelMoves[0][0] < startingLevel) {
         levelMoves.shift();
@@ -1183,6 +1179,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (includeEvolutionMoves) {
         for (const elm of evolutionLevelMoves.reverse()) {
           levelMoves.unshift(elm);
+        }
+        for (const felm of fusionEvolutionLevelMoves.reverse()) {
+          fusionLevelMoves.unshift(felm);
         }
       }
       for (let l = includeEvolutionMoves ? 0 : startingLevel; l <= this.level; l++) {
@@ -1278,7 +1277,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the shiny variant
    */
   generateVariant(): Variant {
-    if (!this.shiny || !variantData.hasOwnProperty(this.species.speciesId)) {
+    const formIndex: number = this.formIndex;
+    let variantDataIndex: string | number = this.species.speciesId;
+    if (this.species.forms.length > 0) {
+      const formKey = this.species.forms[formIndex]?.formKey;
+      if (formKey) {
+        variantDataIndex = `${variantDataIndex}-${formKey}`;
+      }
+    }
+    // Checks if there is no variant data for both the index or index with form
+    if (!this.shiny || (!variantData.hasOwnProperty(variantDataIndex) && !variantData.hasOwnProperty(this.species.speciesId))) {
       return 0;
     }
     const rand = Utils.randSeedInt(10);
@@ -2430,10 +2438,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-  * Resets the status of a pokemon
-  * @param revive whether revive should be cured, defaults to true
+  * Resets the status of a pokemon.
+  * @param revive Whether revive should be cured; defaults to true.
+  * @param confusion Whether resetStatus should include confusion or not; defaults to false.
   */
-  resetStatus(revive: boolean = true): void {
+  resetStatus(revive: boolean = true, confusion: boolean = false): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2443,6 +2452,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.setFrameRate(12);
       if (this.getTag(BattlerTagType.NIGHTMARE)) {
         this.lapseTag(BattlerTagType.NIGHTMARE);
+      }
+    }
+    if (confusion) {
+      if (this.getTag(BattlerTagType.CONFUSED)) {
+        this.lapseTag(BattlerTagType.CONFUSED);
       }
     }
   }
@@ -2827,21 +2841,19 @@ export default interface Pokemon {
 
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
-  public indexInParty: number;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData, indexInParty: number) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
-    if (Overrides.STARTER_OVERRIDE[indexInParty]?.status) {
-      this.status = new Status(Overrides.STARTER_OVERRIDE[indexInParty].status);
+    if (Overrides.STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.STATUS_OVERRIDE);
     }
-    this.indexInParty = indexInParty;
 
-    if (Overrides.STARTER_OVERRIDE[this.indexInParty]?.shiny) {
+    if (Overrides.SHINY_OVERRIDE) {
       this.shiny = true;
       this.initShinySparkle();
-      if (Overrides.STARTER_OVERRIDE[this.indexInParty]?.shinyVariant) {
-        this.variant = Overrides.STARTER_OVERRIDE[this.indexInParty].shinyVariant;
+      if (Overrides.VARIANT_OVERRIDE) {
+        this.variant = Overrides.VARIANT_OVERRIDE;
       }
     }
 
@@ -3384,7 +3396,7 @@ export class EnemyPokemon extends Pokemon {
 
             const target = this.scene.getField()[mt];
             let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-            if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND].includes(move.id)) {
+            if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP].includes(move.id)) {
               targetScore = -20;
             } else if (move instanceof AttackMove) {
               const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);

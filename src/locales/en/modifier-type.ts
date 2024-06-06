@@ -99,6 +99,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "TM{{moveId}} - {{moveName}}",
       description: "Teach {{moveName}} to a Pokémon",
     },
+    "TmModifierTypeWithInfo": {
+      name: "TM{{moveId}} - {{moveName}}",
+      description: "Teach {{moveName}} to a Pokémon\n(Hold C or Shift for more info)",
+    },
     "EvolutionItemModifierType": {
       description: "Causes certain Pokémon to evolve",
     },
@@ -230,10 +234,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_HEAL": { name: "Recovery Token", description: "Heals 2% of max HP every turn" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Poison Token" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Paralyze Token" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Sleep Token" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Freeze Token" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Burn Token" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Adds a 10% chance every turn to heal a status condition" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Adds a 2.5% chance every turn to heal a status condition" },
     "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
     "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Adds a 1% chance that a wild Pokémon will be a fusion" },
   },

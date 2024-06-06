@@ -4,7 +4,7 @@ import { Mode } from "../ui";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingType } from "#app/system/settings/settings";
 
-export default class SettingsAccessibilityUiHandler extends AbstractSettingsUiHandler {
+export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
@@ -12,8 +12,8 @@ export default class SettingsAccessibilityUiHandler extends AbstractSettingsUiHa
    * @param mode - The UI mode, optional.
    */
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode, SettingType.ACCESSIBILITY);
-    this.title = "Accessibility";
+    super(scene, mode, SettingType.AUDIO);
+    this.title = "Audio";
     this.localStorageKey = "settings";
   }
 }

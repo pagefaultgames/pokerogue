@@ -371,6 +371,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Ow! I scorched the tip of my nose!"
     },
   },
+  "sailor": {
+    "encounter": {
+      1: "Matey, you're walking the plank if you lose!",
+      2: "Come on then! My sailor's pride is at stake!",
+      3: "Ahoy there! Are you seasick?"
+    },
+    "victory": {
+      1: "Argh! Beaten by a kid!",
+      2: "Your spirit sank me!",
+      3: "I think it's me that's seasick..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
@@ -1578,7 +1590,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Know what? I really look forward to having serious battles with strong Trainers! 
                 $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being! 
-                #And they are battling alongside Pokémon that have been through countless difficult battles! 
+                $And they are battling alongside Pokémon that have been through countless difficult battles! 
                 $If I battle with people like that, not only will I get stronger, my Pokémon will, too! 
                 $And we'll get to know each other even better! OK! Brace yourself! 
                 $I'm Iris, the Pokémon League Champion, and I'm going to defeat you!`,
