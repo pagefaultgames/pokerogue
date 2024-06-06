@@ -1130,13 +1130,11 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         restorePoints = Math.floor(restorePoints * (args[1] as number));
       }
       if (this.fainted || this.healStatus) {
-        pokemon.resetStatus();
+        pokemon.resetStatus(true, true);
       }
       pokemon.hp = Math.min(pokemon.hp + Math.max(Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), 1), pokemon.getMaxHp());
-
       return true;
     }
-
     return false;
   }
 }
@@ -1148,8 +1146,7 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.resetStatus();
-
+    pokemon.resetStatus(true, true);
     return true;
   }
 }
