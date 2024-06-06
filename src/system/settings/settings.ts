@@ -259,14 +259,6 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
-    key: SettingKeys.Language,
-    label: "Language",
-    options: ["English", "Change"],
-    default: 0,
-    type: SettingType.GENERAL,
-    requireReload: true
-  },
-  {
     key: SettingKeys.Move_Touch_Controls,
     label: "Move Touch Controls",
     options: ["Configure"],
