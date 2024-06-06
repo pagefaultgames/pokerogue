@@ -117,4 +117,4 @@ export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
  * If less items are listed than rolled, only some items will be replaced
  * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = ["MEMORY_MUSHROOM", "TM_COMMON", "TM_ULTRA"];
+export const ITEM_REWARD_OVERRIDE: Array<String> = [];
