@@ -2438,10 +2438,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-  * Resets the status of a pokemon
-  * @param revive whether revive should be cured, defaults to true
+  * Resets the status of a pokemon.
+  * @param revive Whether revive should be cured; defaults to true.
+  * @param confusion Whether resetStatus should include confusion or not; defaults to false.
   */
-  resetStatus(revive: boolean = true): void {
+  resetStatus(revive: boolean = true, confusion: boolean = false): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2451,6 +2452,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.setFrameRate(12);
       if (this.getTag(BattlerTagType.NIGHTMARE)) {
         this.lapseTag(BattlerTagType.NIGHTMARE);
+      }
+    }
+    if (confusion) {
+      if (this.getTag(BattlerTagType.CONFUSED)) {
+        this.lapseTag(BattlerTagType.CONFUSED);
       }
     }
   }
@@ -3390,7 +3396,7 @@ export class EnemyPokemon extends Pokemon {
 
             const target = this.scene.getField()[mt];
             let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-            if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND].includes(move.id)) {
+            if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP].includes(move.id)) {
               targetScore = -20;
             } else if (move instanceof AttackMove) {
               const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
