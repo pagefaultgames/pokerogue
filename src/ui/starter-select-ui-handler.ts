@@ -31,6 +31,7 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import MoveInfoOverlay from "./move-info-overlay";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -192,6 +193,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
   private pokemonFormText: Phaser.GameObjects.Text;
+  private moveInfoOverlay : MoveInfoOverlay;
 
   private genMode: boolean;
   private statsMode: boolean;
@@ -661,6 +663,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
+    const overlayScale = 1; // scale for the move info. "2/3" might be another good option...
+    this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
+      scale: overlayScale,
+      top: true,
+      x: 1,
+      y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+    });
+    this.starterSelectContainer.add(this.moveInfoOverlay);
+
     const date = new Date();
     date.setUTCHours(0, 0, 0, 0);
 
@@ -1058,6 +1069,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
+                  this.moveInfoOverlay.show(allMoves[moveset[0]]);
+
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: moveset.map((m: Moves, i: number) => {
                       const option: OptionSelectItem = {
@@ -1065,8 +1078,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           ui.setMode(Mode.STARTER_SELECT).then(() => {
                             ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
+                              const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
+                              this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
+
                               ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                                options: this.speciesStarterMoves.filter((sm: Moves) => sm !== m).map(sm => {
+                                options: possibleMoves.map(sm => {
                                   // make an option for each available starter move
                                   const option = {
                                     label: allMoves[sm].name,
@@ -1074,7 +1090,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                       this.switchMoveHandler(i, sm, m);
                                       showSwapOptions(this.starterMoveset);
                                       return true;
-                                    }
+                                    },
+                                    onHover: () => {
+                                      this.moveInfoOverlay.show(allMoves[sm]);
+                                    },
                                   };
                                   return option;
                                 }).concat({
@@ -1082,25 +1101,37 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                   handler: () => {
                                     showSwapOptions(this.starterMoveset);
                                     return true;
-                                  }
+                                  },
+                                  onHover: () => {
+                                    this.moveInfoOverlay.clear();
+                                  },
                                 }),
+                                supportHover: true,
                                 maxOptions: 8,
                                 yOffset: 19
                               });
                             });
                           });
                           return true;
-                        }
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.show(allMoves[m]);
+                        },
                       };
                       return option;
                     }).concat({
                       label: i18next.t("menu:cancel"),
                       handler: () => {
+                        this.moveInfoOverlay.clear();
                         this.clearText();
                         ui.setMode(Mode.STARTER_SELECT);
                         return true;
-                      }
+                      },
+                      onHover: () => {
+                        this.moveInfoOverlay.clear();
+                      },
                     }),
+                    supportHover: true,
                     maxOptions: 8,
                     yOffset: 19
                   });

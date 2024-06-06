@@ -99,6 +99,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "No.{{moveId}} {{moveName}}",
       description: "포켓몬에게 {{moveName}}[[를]] 가르침",
     },
+    "TmModifierTypeWithInfo": {
+      name: "No.{{moveId}} {{moveName}}",
+      description: "포켓몬에게 {{moveName}}를(을) 가르침\n(Hold C or Shift for more info)",
+    },
     "EvolutionItemModifierType": {
       description: "어느 특정 포켓몬을 진화",
     },
