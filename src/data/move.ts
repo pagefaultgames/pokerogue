@@ -178,7 +178,7 @@ export default class Move implements Localizable {
   /**
    * Adds a new MoveAttr to the move (appends to the attr array)
    * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
-   * @param AttrType the constructor of a MoveAttr class {@linkcode MoveAttr}
+   * @param AttrType {@linkcode MoveAttr} the constructor of a MoveAttr class
    * @param args the args needed to instantiate a the given class
    * @returns the called object {@linkcode Move}
    */
@@ -200,7 +200,7 @@ export default class Move implements Localizable {
    * Adds a new MoveAttr to the move (appends to the attr array)
    * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
    * Almost identical to {@link attr}, except you are passing in a MoveAttr object, instead of a constructor and it's arguments
-   * @param attrAdd the {@linkcode MoveAttr} to add
+   * @param attrAdd {@linkcode MoveAttr} the attribute to add
    * @returns the called object {@linkcode Move}
    */
   addAttr(attrAdd: MoveAttr): this {
@@ -218,7 +218,7 @@ export default class Move implements Localizable {
 
   /**
    * Sets the move target of this move
-   * @param moveTarget the {@linkcode MoveTarget} to set
+   * @param moveTarget {@linkcode MoveTarget} the move target to set
    * @returns the called object {@linkcode Move}
    */
   target(moveTarget: MoveTarget): this {
@@ -228,12 +228,11 @@ export default class Move implements Localizable {
 
   /**
    * Getter function that returns if this Move has a MoveFlag
-   * @param flag the {@linkcode MoveFlags} to check
+   * @param flag {@linkcode MoveFlags} to check
    * @returns boolean
    */
   hasFlag(flag: MoveFlags): boolean {
     // internally it is taking the bitwise AND (MoveFlags are represented as bit-shifts) and returning False if result is 0 and true otherwise
-
     return !!(this.flags & flag);
   }
 
@@ -278,7 +277,7 @@ export default class Move implements Localizable {
   /**
    * Checks if the move is immune to certain types
    * currently only look at case of Grass types and powder moves
-   * @param type a {@linkcode Type} enum
+   * @param type {@linkcode Type} enum
    * @returns boolean
    */
   isTypeImmune(type: Type): boolean {
@@ -294,7 +293,7 @@ export default class Move implements Localizable {
 
   /**
    * Adds a move condition to the move
-   * @param condition Either a {@linkcode MoveCondition} or {@linkcode MoveConditionFunc}, appends to conditions array a new MoveCondition object
+   * @param condition {@linkcode MoveCondition} or {@linkcode MoveConditionFunc}, appends to conditions array a new MoveCondition object
    * @returns the called object {@linkcode Move}
    */
   condition(condition: MoveCondition | MoveConditionFunc): this {
@@ -326,7 +325,7 @@ export default class Move implements Localizable {
 
   /**
    * Sets the flags of the move
-   * @param flag a {@linkcode MoveFlags}
+   * @param flag {@linkcode MoveFlags}
    * @param on a boolean, if True, then "ORs" the flag onto existing ones, if False then "XORs" the flag onto existing ones
    */
   private setFlag(flag: MoveFlags, on: boolean): void {
@@ -537,9 +536,9 @@ export default class Move implements Localizable {
 
   /**
    * Checks if the move flag applies to the pokemon(s) using/receiving the move
-   * @param flag a {@linkcode MoveFlags}
-   * @param user a {@linkcode Pokemon}
-   * @param target a {@linkcode Pokemon}
+   * @param flag {@linkcode MoveFlags}
+   * @param user {@linkcode Pokemon}
+   * @param target {@linkcode Pokemon}
    * @returns boolean
    */
   checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
@@ -565,9 +564,9 @@ export default class Move implements Localizable {
 
   /**
    * Applies each {@linkcode MoveCondition} of this move to the params
-   * @param user a {@linkcode Pokemon} to apply conditions to
-   * @param target a {@linkcode Pokemon} to apply conditions to
-   * @param move a {@linkcode Move} to apply conditions to
+   * @param user {@linkcode Pokemon} to apply conditions to
+   * @param target {@linkcode Pokemon} to apply conditions to
+   * @param move {@linkcode Move} to apply conditions to
    * @returns boolean: false if any of the apply()'s return false, else true
    */
   applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
@@ -582,10 +581,10 @@ export default class Move implements Localizable {
 
   /**
    * Sees if, given the target pokemon, a move fails on it (by looking at each {@linkcode MoveAttr} of this move
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} receiving the move
-   * @param move the {@linkcode Move} using the move
-   * @param cancelled a {@linkcode Utils.BooleanHolder} to be
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} receiving the move
+   * @param move {@linkcode Move} using the move
+   * @param cancelled {@linkcode Utils.BooleanHolder} to hold boolean value
    * @returns string of the failed text, or null
    */
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
@@ -600,9 +599,9 @@ export default class Move implements Localizable {
 
   /**
    * Calculates the userBenefitScore across all the attributes and conditions
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} receiving the move
-   * @param move the {@linkcode Move} using the move
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} receiving the move
+   * @param move {@linkcode Move} using the move
    * @returns integer representing the total benefitScore
    */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -621,9 +620,9 @@ export default class Move implements Localizable {
 
   /**
    * Calculates the targetBenefitScore across all the attributes
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} receiving the move
-   * @param move the {@linkcode Move} using the move
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} receiving the move
+   * @param move {@linkcode Move} using the move
    * @returns integer representing the total benefitScore
    */
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
