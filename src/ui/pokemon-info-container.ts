@@ -49,6 +49,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private readonly infoWindowWidth = 104;
 
   private pokemonFormLabelText: Phaser.GameObjects.Text;
+  private pokemonFormText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonGenderNewText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
@@ -62,6 +63,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonMovesContainers: Phaser.GameObjects.Container[];
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonMoveLabels: Phaser.GameObjects.Text[];
+
+  private numCharsBeforeCutoff = 16;
 
   private initialX: number;
   private movesContainerInitialX: number;
@@ -132,10 +135,15 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     // The font size should be set by language
     const infoContainerTextSize = textSettings?.infoContainerTextSize || "64px";
 
-    this.pokemonFormLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
-    this.pokemonFormLabelText.setOrigin(0, 0);
+    this.pokemonFormLabelText = addTextObject(this.scene, infoContainerLabelXPos, 19, i18next.t("pokemonInfoContainer:form"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonFormLabelText.setOrigin(1, 0);
     this.pokemonFormLabelText.setVisible(false);
     this.add(this.pokemonFormLabelText);
+
+    this.pokemonFormText = addTextObject(this.scene, infoContainerTextXPos, 19, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonFormText.setOrigin(0, 0);
+    this.pokemonFormText.setVisible(false);
+    this.add(this.pokemonFormText);
 
     this.pokemonGenderText = addTextObject(this.scene, -42, -61, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonGenderText.setOrigin(0, 0);
@@ -146,19 +154,19 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonGenderNewText.setVisible(false);
     this.add(this.pokemonGenderNewText);
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 28, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 29, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonAbilityLabelText.setOrigin(1, 0);
     this.add(this.pokemonAbilityLabelText);
 
-    this.pokemonAbilityText = addTextObject(this.scene, infoContainerTextXPos, 28, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonAbilityText = addTextObject(this.scene, infoContainerTextXPos, 29, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
     this.add(this.pokemonAbilityText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, infoContainerLabelXPos, 38, i18next.t("pokemonInfoContainer:nature"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonNatureLabelText = addTextObject(this.scene, infoContainerLabelXPos, 39, i18next.t("pokemonInfoContainer:nature"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonNatureLabelText.setOrigin(1, 0);
     this.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, infoContainerTextXPos, 38, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize, lineSpacing: 3, maxLines: 2 });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, infoContainerTextXPos, 39, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize, lineSpacing: 3, maxLines: 2 });
     this.pokemonNatureText.setOrigin(0, 0);
     this.add(this.pokemonNatureText);
 
@@ -201,22 +209,30 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       if (pokemon.species.forms?.[pokemon.formIndex]?.formName) {
         this.pokemonFormLabelText.setVisible(true);
+        this.pokemonFormText.setVisible(true);
         const newForm = BigInt(Math.pow(2, pokemon.formIndex)) * DexAttr.DEFAULT_FORM;
 
         if ((newForm & caughtAttr) === BigInt(0)) {
-          this.pokemonFormLabelText.setText(i18next.t("pokemonInfoContainer:newForm"));
+          //this.pokemonFormLabelText.setText(i18next.t("pokemonInfoContainer:newForm"));
           this.pokemonFormLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
           this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
         } else {
-          this.pokemonFormLabelText.setText(i18next.t("pokemonInfoContainer:existingForm"));
+          //this.pokemonFormLabelText.setText(i18next.t("pokemonInfoContainer:existingForm"));
           this.pokemonFormLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
           this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
         }
 
+        const formName = pokemon.species.forms?.[pokemon.formIndex]?.formName;
+        this.pokemonFormText.setText(formName.length > this.numCharsBeforeCutoff ? formName.substring(0, this.numCharsBeforeCutoff - 3) + "..." : formName);
+        this.pokemonFormText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormText.width, this.pokemonFormText.height), Phaser.Geom.Rectangle.Contains);
+        this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
+        this.pokemonFormText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+        /*
         this.pokemonFormLabelText.x = (this.pokemonFormLabelText.getLeftCenter().x - this.pokemonFormLabelText.getRightCenter().x) / 2; // using this to center the pokemonFormLabelText horizontally as the text is dynamic and can change
         this.pokemonFormLabelText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormLabelText.width, this.pokemonFormLabelText.height), Phaser.Geom.Rectangle.Contains);
         this.pokemonFormLabelText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
         this.pokemonFormLabelText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+        */
       }
 
       const abilityTextStyle = pokemon.abilityIndex === (pokemon.species.ability2 ? 2 : 1) ? TextStyle.MONEY : TextStyle.WINDOW;
