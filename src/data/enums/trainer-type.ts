@@ -16,6 +16,7 @@ export enum TrainerType {
   DANCER,
   DEPOT_AGENT,
   DOCTOR,
+  FIREBREATHER,
   FISHERMAN,
   GUITARIST,
   HARLEQUIN,

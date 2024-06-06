@@ -12,7 +12,8 @@ import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } fr
 import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
-import { BerryType, getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { BerryType } from "../data/enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
@@ -21,6 +22,7 @@ import { Nature } from "#app/data/nature";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
+import { Command } from "#app/ui/command-ui-handler.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -775,6 +777,12 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 
     if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       bypassSpeed.value = true;
+      const isCommandFight = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
+      const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
+
+      if (isCommandFight && hasQuickClaw) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its quick claw to move faster!"));
+      }
       return true;
     }
 
@@ -848,6 +856,66 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 4;
+  }
+}
+
+/**
+ * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
+ * set {@linkcode StatusEffect} at the end of a turn.
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
+  /** The status effect to be applied by the held item */
+  private effect: StatusEffect;
+
+  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    switch (type.id) {
+    case "TOXIC_ORB":
+      this.effect = StatusEffect.TOXIC;
+      break;
+    case "FLAME_ORB":
+      this.effect = StatusEffect.BURN;
+      break;
+    }
+  }
+
+  /**
+   * Checks if {@linkcode modifier} is an instance of this class,
+   * intentionally ignoring potentially different {@linkcode effect}s
+   * to prevent held item stockpiling since the item obtained first
+   * would be the only item able to {@linkcode apply} successfully.
+   * @override
+   * @param modifier {@linkcode Modifier} being type tested
+   * @return true if {@linkcode modifier} is an instance of
+   * TurnStatusEffectModifier, false otherwise
+   */
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof TurnStatusEffectModifier;
+  }
+
+  clone() {
+    return new TurnStatusEffectModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  /**
+   * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   * @returns true if the status effect was applied successfully, false if
+   * otherwise
+   */
+  apply(args: any[]): boolean {
+    return (args[0] as Pokemon).trySetStatus(this.effect, true, undefined, undefined, this.type.name);
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+
+  getStatusEffect(): StatusEffect {
+    return this.effect;
   }
 }
 
@@ -951,7 +1019,10 @@ export class BerryModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 10;
+    if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(this.berryType)) {
+      return 2;
+    }
+    return 3;
   }
 }
 
@@ -974,7 +1045,7 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     if (!(args[1] as Utils.BooleanHolder).value) {
-      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(this.getMaxStackCount(null)) < this.getStackCount();
+      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(10) < this.getStackCount() * 3;
     }
 
     return true;
@@ -2077,7 +2148,7 @@ export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
 }
 
 export class EnemyTurnHealModifier extends EnemyPersistentModifier {
-  private healPercent: number;
+  public healPercent: number;
 
   constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
     super(type, stackCount);
@@ -2112,23 +2183,24 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 15;
+    return 10;
   }
 }
 
 export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifier {
   public effect: StatusEffect;
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, effect: StatusEffect, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.effect = effect;
-    this.chance = (chancePercent || 10) / 100;
+    //Hardcode temporarily
+    this.chance = .025 * ((this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) ? 2 : 1);
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect && modifier.chance === this.chance;
+    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect;
   }
 
   clone(): EnemyAttackStatusEffectChanceModifier {
@@ -2147,19 +2219,24 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
     return false;
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
 }
 
 export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 10) / 100;
+    //Hardcode temporarily
+    this.chance = .025;
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyStatusEffectHealChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyStatusEffectHealChanceModifier;
   }
 
   clone(): EnemyStatusEffectHealChanceModifier {
@@ -2181,19 +2258,24 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 
     return false;
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
 }
 
 export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
-  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
-    super(type, stackCount);
+  constructor(type: ModifierType, chancePercent?: number, stackCount?: integer) {
+    super(type, stackCount || 10);
 
-    this.chance = (chancePercent || 2.5) / 100;
+    //Hardcode temporarily
+    this.chance = .02;
   }
 
   match(modifier: Modifier) {
-    return modifier instanceof EnemyEndureChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyEndureChanceModifier;
   }
 
   clone() {

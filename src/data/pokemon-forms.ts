@@ -66,7 +66,7 @@ export enum FormChangeItem {
   HARD_METEORITE,
   SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
-  LUSTROUS_ORB,
+  LUSTROUS_GLOBE,
   GRISEOUS_CORE,
   REVEAL_GLASS,
   GRACIDEA,
@@ -520,7 +520,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DIALGA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.ADAMANT_CRYSTAL))
   ],
   [Species.PALKIA]: [
-    new SpeciesFormChange(Species.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_ORB))
+    new SpeciesFormChange(Species.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_GLOBE))
   ],
   [Species.GIRATINA]: [
     new SpeciesFormChange(Species.GIRATINA, "altered", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))
@@ -689,10 +689,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DURALUDON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ZACIAN]: [
-    new SpeciesFormChange(Species.ZACIAN, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
+    new SpeciesFormChange(Species.ZACIAN, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
   ],
   [Species.ZAMAZENTA]: [
-    new SpeciesFormChange(Species.ZAMAZENTA, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
+    new SpeciesFormChange(Species.ZAMAZENTA, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
   ],
   [Species.ETERNATUS]: [
     new SpeciesFormChange(Species.ETERNATUS, "", SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
