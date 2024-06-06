@@ -2196,7 +2196,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
     this.effect = effect;
     //Hardcode temporarily
-    this.chance = .025 * ((this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) ? 2: 1);
+    this.chance = .025 * ((this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) ? 2 : 1);
   }
 
   match(modifier: Modifier): boolean {
