@@ -9,26 +9,35 @@ import { TrainerType } from "./enums/trainer-type";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
 
+/**
+ * An enum for all the challenge types. The parameter entries on these describe the
+ * parameters to use when calling the applyChallenges function.
+ */
 export enum ChallengeType {
-   /** Challenges which modify what starters you can choose
+   /**
+    * Challenges which modify what starters you can choose
     * @param args [0] {@link PokemonSpecies} The species to check
     *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
    */
   STARTER_CHOICE,
-   /** Challenges which modify how many starter points you have
+   /**
+    * Challenges which modify how many starter points you have
     * @param args [0] {@link Utils.NumberHolder} The amount of starter points you have
    */
   STARTER_POINTS,
-  /** Challenges which modify your starters in some way
-   * @param args [0] ???
+  /**
+   * Challenges which modify your starters in some way
+   * Not Fully Implemented
   */
   STARTER_MODIFY,
-  /** Challenges which limit which pokemon you can have in battle.
+  /**
+   * Challenges which limit which pokemon you can have in battle.
    * @param args [0] {@link Pokemon} The pokemon to check
    *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
   */
   POKEMON_IN_BATTLE,
-  /** Adds or modifies the fixed battles in a run
+  /**
+   * Adds or modifies the fixed battles in a run
    * @param args [0] integer The wave to get a battle for
    *             [1] {@link FixedBattleConfig} A new fixed battle. It'll be modified if a battle exists.
   */
@@ -371,7 +380,7 @@ export class SingleTypeChallenge extends Challenge {
 }
 
 /**
- * Implements a mono type challenge.
+ * Implements a fresh start challenge.
  */
 export class FreshStartChallenge extends Challenge {
   constructor() {
