@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "A sandstorm brewed!",
   "sandstormLapseMessage": "The sandstorm rages.",
   "sandstormClearMessage": "The sandstorm subsided.",
-  "sandstormDamageMessage": "{{pokemonPrefix}}{{pokemonName}} is buffeted\nby the sandstorm!",
+  "sandstormDamageMessage": "{{pokemonNameWithAffix}} is buffeted\nby the sandstorm!",
 
   "hailStartMessage": "It started to hail!",
   "hailLapseMessage": "Hail continues to fall.",
   "hailClearMessage": "The hail stopped.",
-  "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} is pelted\nby the hail!",
+  "hailDamageMessage": "{{pokemonNameWithAffix}} is pelted\nby the hail!",
 
   "snowStartMessage": "It started to snow!",
   "snowLapseMessage": "The snow is falling down.",

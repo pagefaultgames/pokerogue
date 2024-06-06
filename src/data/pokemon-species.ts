@@ -920,12 +920,12 @@ export function initSpecies() {
     new PokemonSpecies(Species.PIKACHU, 1, false, false, false, "Mouse Pokémon", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, GrowthRate.MEDIUM_FAST, 50, true, true,
       new PokemonForm("Normal", "", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
       new PokemonForm("Partner", "partner", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, "", true),
-      new PokemonForm("Cosplay", "cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
-      new PokemonForm("Cool Cosplay", "cool-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
-      new PokemonForm("Beauty Cosplay", "beauty-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
-      new PokemonForm("Cute Cosplay", "cute-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
-      new PokemonForm("Smart Cosplay", "smart-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
-      new PokemonForm("Tough Cosplay", "tough-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
+      new PokemonForm("Cosplay", "cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Cool Cosplay", "cool-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Beauty Cosplay", "beauty-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Cute Cosplay", "cute-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Smart Cosplay", "smart-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Tough Cosplay", "tough-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
       new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.ELECTRIC, null, 21, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 420, 45, 60, 65, 100, 75, 75, 190, 50, 112),
     ),
     new PokemonSpecies(Species.RAICHU, 1, false, false, false, "Mouse Pokémon", Type.ELECTRIC, null, 0.8, 30, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 485, 60, 90, 55, 90, 80, 110, 75, 50, 243, GrowthRate.MEDIUM_FAST, 50, true),
@@ -2012,15 +2012,15 @@ export function initSpecies() {
     new PokemonSpecies(Species.TREVENANT, 6, false, false, false, "Elder Tree Pokémon", Type.GHOST, Type.GRASS, 1.5, 71, Abilities.NATURAL_CURE, Abilities.FRISK, Abilities.HARVEST, 474, 85, 110, 76, 65, 82, 56, 60, 50, 166, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.PUMPKABOO, 6, false, false, false, "Pumpkin Pokémon", Type.GHOST, Type.GRASS, 0.4, 5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 49, 66, 70, 44, 55, 51, 120, 50, 67, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Average Size", "", Type.GHOST, Type.GRASS, 0.4, 5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 49, 66, 70, 44, 55, 51, 120, 50, 67, false, null, true),
-      new PokemonForm("Small Size", "small", Type.GHOST, Type.GRASS, 0.3, 3.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 44, 66, 70, 44, 55, 56, 120, 50, 67, false, null, true),
-      new PokemonForm("Large Size", "large", Type.GHOST, Type.GRASS, 0.5, 7.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 54, 66, 70, 44, 55, 46, 120, 50, 67, false, null, true),
-      new PokemonForm("Super Size", "super", Type.GHOST, Type.GRASS, 0.8, 15, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 59, 66, 70, 44, 55, 41, 120, 50, 67, false, null, true),
+      new PokemonForm("Small Size", "small", Type.GHOST, Type.GRASS, 0.3, 3.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 44, 66, 70, 44, 55, 56, 120, 50, 67, false, "", true),
+      new PokemonForm("Large Size", "large", Type.GHOST, Type.GRASS, 0.5, 7.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 54, 66, 70, 44, 55, 46, 120, 50, 67, false, "", true),
+      new PokemonForm("Super Size", "super", Type.GHOST, Type.GRASS, 0.8, 15, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 335, 59, 66, 70, 44, 55, 41, 120, 50, 67, false, "", true),
     ),
     new PokemonSpecies(Species.GOURGEIST, 6, false, false, false, "Pumpkin Pokémon", Type.GHOST, Type.GRASS, 0.9, 12.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 65, 90, 122, 58, 75, 84, 60, 50, 173, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Average Size", "", Type.GHOST, Type.GRASS, 0.9, 12.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 65, 90, 122, 58, 75, 84, 60, 50, 173, false, null, true),
-      new PokemonForm("Small Size", "small", Type.GHOST, Type.GRASS, 0.7, 9.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 55, 85, 122, 58, 75, 99, 60, 50, 173, false, null, true),
-      new PokemonForm("Large Size", "large", Type.GHOST, Type.GRASS, 1.1, 14, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 75, 95, 122, 58, 75, 69, 60, 50, 173, false, null, true),
-      new PokemonForm("Super Size", "super", Type.GHOST, Type.GRASS, 1.7, 39, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 85, 100, 122, 58, 75, 54, 60, 50, 173, false, null, true),
+      new PokemonForm("Small Size", "small", Type.GHOST, Type.GRASS, 0.7, 9.5, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 55, 85, 122, 58, 75, 99, 60, 50, 173, false, "", true),
+      new PokemonForm("Large Size", "large", Type.GHOST, Type.GRASS, 1.1, 14, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 75, 95, 122, 58, 75, 69, 60, 50, 173, false, "", true),
+      new PokemonForm("Super Size", "super", Type.GHOST, Type.GRASS, 1.7, 39, Abilities.PICKUP, Abilities.FRISK, Abilities.INSOMNIA, 494, 85, 100, 122, 58, 75, 54, 60, 50, 173, false, "", true),
     ),
     new PokemonSpecies(Species.BERGMITE, 6, false, false, false, "Ice Chunk Pokémon", Type.ICE, null, 1, 99.5, Abilities.OWN_TEMPO, Abilities.ICE_BODY, Abilities.STURDY, 304, 55, 69, 85, 32, 35, 28, 190, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.AVALUGG, 6, false, false, false, "Iceberg Pokémon", Type.ICE, null, 2, 505, Abilities.OWN_TEMPO, Abilities.ICE_BODY, Abilities.STURDY, 514, 95, 117, 184, 44, 46, 28, 55, 50, 180, GrowthRate.MEDIUM_FAST, 50, false),
