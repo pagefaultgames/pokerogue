@@ -1,5 +1,5 @@
 import * as ModifierTypes from "./modifier-type";
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase, StatChangePhase } from "../phases";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
@@ -1085,17 +1085,17 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
   }
 }
 
-export class PokemonResetLoweredStatsModifier extends PokemonHeldItemModifier {
+export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
 
   matchType(modifier: Modifier) {
-    return modifier instanceof PokemonResetLoweredStatsModifier;
+    return modifier instanceof PokemonResetNegativeStatStageModifier;
   }
 
   clone() {
-    return new PokemonResetLoweredStatsModifier(this.type, this.pokemonId, this.stackCount);
+    return new PokemonResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   apply(args: any[]): boolean {

@@ -6,7 +6,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetLoweredStatsModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetNegativeStatStageModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -2670,7 +2670,6 @@ export class MovePhase extends BattlePhase {
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
   protected targets: BattlerIndex[];
-  protected whoGotHit: Pokemon[];
 
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
     super(scene, battlerIndex);
@@ -2683,7 +2682,6 @@ export class MoveEffectPhase extends PokemonPhase {
       targets.splice(i,i+1);
     }
     this.targets = targets;
-    this.whoGotHit = [];
   }
 
   start() {
@@ -2832,10 +2830,12 @@ export class MoveEffectPhase extends PokemonPhase {
         if (hitsTotal > 1) {
           this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
-        this.scene.applyModifiers(PokemonResetLoweredStatsModifier, this.player, user);
-        this.targets.map(target=> {
-
-        });
+        this.scene.applyModifiers(PokemonResetNegativeStatStageModifier, this.player, user);
+        for (const target of this.targets) {
+          if (this.scene.getPokemonById(target).isActive()) {
+            this.scene.applyModifiers(PokemonResetNegativeStatStageModifier, this.player, this.scene.getPokemonById(target));
+          }
+        }
         this.scene.applyModifiers(HitHealModifier, this.player, user);
       }
     }
