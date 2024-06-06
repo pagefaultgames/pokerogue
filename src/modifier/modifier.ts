@@ -2208,7 +2208,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
   }
 
   getArgs(): any[] {
-    return [ this.effect, this.chance * 100 , this.stackCount];
+    return [ this.effect, this.chance * 100 ];
   }
 
   apply(args: any[]): boolean {
@@ -2244,7 +2244,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   }
 
   getArgs(): any[] {
-    return [ this.chance * 100 , this.stackCount ];
+    return [ this.chance * 100 ];
   }
 
   apply(args: any[]): boolean {
@@ -2283,7 +2283,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   }
 
   getArgs(): any[] {
-    return [ this.chance * 100, this.stackCount ];
+    return [ this.chance * 100 ];
   }
 
   apply(args: any[]): boolean {
