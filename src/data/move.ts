@@ -4057,18 +4057,6 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
       }
     }
 
-    if (tagEnemyTemp && tagPlayerTemp) {
-      for (const swapTagsType of tagPlayerTemp) {
-        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
-        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.ENEMY, true);
-      }
-      for (const swapTagsType of tagEnemyTemp) {
-        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
-        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.PLAYER, true);
-      }
-    }
-
-
 
     user.scene.queueMessage( `${user.name} swapped the battle effects affecting each side of the field!`);
     return true;
