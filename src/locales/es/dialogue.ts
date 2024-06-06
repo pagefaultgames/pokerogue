@@ -373,14 +373,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "sailor": {
     "encounter": {
-      1: "Matey, you're walking the plank if you lose!",
-      2: "Come on, then! My sailor's pride is at stake!",
-      3: "Ahoy, there! Are you seasick?"
+      1: "¡Amigo, te haré caminar por la borda si pierdes!",
+      2: "¡Adelante! ¡Mi orgullo como marinero está en auge!",
+      3: "¡Ah del barco! ¿Estás mareado?"
     },
     "victory": {
-      1: "Argh! Beaten by a kid!",
-      2: "Your spirit sank me!",
-      3: "I was just careless!"
+      1: "¡Argh! ¡Derrotado por un niño!",
+      2: "¡Tu espíritu me ha hundido!",
+      3: "¡Solo fue un despiste!"
     },
   },
   "brock": {
