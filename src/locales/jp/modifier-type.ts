@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "わざのめいちゅうりつを{{accuracyAmount}}ふやす (さいだい100)",
     },
     "PokemonMultiHitModifierType": {
-      description: "Attacks hit one additional time at the cost of a 60/75/82.5% power reduction per stack respectively",
+      description: "こうげきがもういちどあたる。そのたびにいりょくがそれぞれ60/75/82.5%へる",
     },
     "TmModifierType": {
       name: "わざレコード{{moveId}} - {{moveName}}",
