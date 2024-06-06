@@ -11,8 +11,9 @@ import { Phase } from "./phase";
 import { initGameSpeed } from "./system/game-speed";
 import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from "./field/arena";
-import { GameData, PlayerGender } from "./system/game-data";
-import { TextStyle, addTextObject } from "./ui/text";
+import { GameData } from "./system/game-data";
+import { PlayerGender } from "./data/enums/player-gender";
+import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
@@ -58,7 +59,9 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
+import { EaseType } from "./ui/enums/ease-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -70,14 +73,19 @@ const expSpriteKeys: string[] = [];
 
 export let starterColors: StarterColors;
 interface StarterColors {
-	[key: string]: [string, string]
+    [key: string]: [string, string]
 }
 
 export interface PokeballCounts {
-	[pb: string]: integer;
+    [pb: string]: integer;
 }
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
+
+export interface InfoToggle {
+    toggleInfo(force?: boolean): void;
+    isActive(): boolean;
+}
 
 export default class BattleScene extends SceneBase {
   public rexUI: UIPlugin;
@@ -94,8 +102,11 @@ export default class BattleScene extends SceneBase {
   public reroll: boolean = false;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
+  public showTimeOfDayWidget: boolean = true;
+  public timeOfDayAnimation: EaseType = EaseType.NONE;
   public showLevelUpStats: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
+  public enableMoveInfo: boolean = true;
   public enableRetries: boolean = false;
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
@@ -119,22 +130,28 @@ export default class BattleScene extends SceneBase {
   public skipSeenDialogues: boolean = false;
 
   /**
-	 * Defines the experience gain display mode.
-	 *
-	 * @remarks
-	 * The `expParty` can have several modes:
-	 * - `0` - Default: The normal experience gain display, nothing changed.
-	 * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
-	 * - `2` - Skip: No level up frame nor message.
-	 *
-	 * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
-	 * @default 0 - Uses the default normal experience gain display.
-	 */
+     * Defines the experience gain display mode.
+     *
+     * @remarks
+     * The `expParty` can have several modes:
+     * - `0` - Default: The normal experience gain display, nothing changed.
+     * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
+     * - `2` - Skip: No level up frame nor message.
+     *
+     * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
+     * @default 0 - Uses the default normal experience gain display.
+     */
   public expParty: integer = 0;
   public hpBarSpeed: integer = 0;
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  /**
+   * Determines the selected battle style.
+   * - 0 = 'Shift'
+   * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
+   */
+  public battleStyle: integer = 0;
 
   public disableMenu: boolean = false;
 
@@ -207,6 +224,8 @@ export default class BattleScene extends SceneBase {
   public rngCounter: integer = 0;
   public rngSeedOverride: string = "";
   public rngOffset: integer = 0;
+
+  private infoToggles: InfoToggle[] = [];
 
   /**
    * Allows subscribers to listen for events
@@ -390,28 +409,28 @@ export default class BattleScene extends SceneBase {
 
     this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
     this.biomeWaveText.setName("text-biome-wave");
-    this.biomeWaveText.setOrigin(1, 0);
+    this.biomeWaveText.setOrigin(1, 0.5);
     this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setName("text-money");
-    this.moneyText.setOrigin(1, 0);
+    this.moneyText.setOrigin(1, 0.5);
     this.fieldUI.add(this.moneyText);
 
     this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.scoreText.setName("text-score");
-    this.scoreText.setOrigin(1, 0);
+    this.scoreText.setOrigin(1, 0.5);
     this.fieldUI.add(this.scoreText);
 
     this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.luckText.setName("text-luck");
-    this.luckText.setOrigin(1, 0);
+    this.luckText.setOrigin(1, 0.5);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
     this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
     this.luckLabelText.setName("text-luck-label");
-    this.luckLabelText.setOrigin(1, 0);
+    this.luckLabelText.setOrigin(1, 0.5);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
 
@@ -514,7 +533,7 @@ export default class BattleScene extends SceneBase {
     this.playTimeTimer = this.time.addEvent({
       delay: Utils.fixedInt(1000),
       repeat: -1,
-    	callback: () => {
+      callback: () => {
         if (this.gameData) {
           this.gameData.gameStats.playTime++;
         }
@@ -598,25 +617,25 @@ export default class BattleScene extends SceneBase {
 
         /*const loadPokemonAssets: Promise<void>[] = [];
 
-				for (let s of Object.keys(speciesStarters)) {
-					const species = getPokemonSpecies(parseInt(s));
-					loadPokemonAssets.push(species.loadAssets(this, false, 0, false));
-				}
+                for (let s of Object.keys(speciesStarters)) {
+                    const species = getPokemonSpecies(parseInt(s));
+                    loadPokemonAssets.push(species.loadAssets(this, false, 0, false));
+                }
 
-				Promise.all(loadPokemonAssets).then(() => {
-					const starterCandyColors = {};
-					const rgbaToHexFunc = (r, g, b) => [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+                Promise.all(loadPokemonAssets).then(() => {
+                    const starterCandyColors = {};
+                    const rgbaToHexFunc = (r, g, b) => [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
 
-					for (let s of Object.keys(speciesStarters)) {
-						const species = getPokemonSpecies(parseInt(s));
+                    for (let s of Object.keys(speciesStarters)) {
+                        const species = getPokemonSpecies(parseInt(s));
 
-						starterCandyColors[species.speciesId] = species.generateCandyColors(this).map(c => rgbaToHexFunc(c[0], c[1], c[2]));
-					}
+                        starterCandyColors[species.speciesId] = species.generateCandyColors(this).map(c => rgbaToHexFunc(c[0], c[1], c[2]));
+                    }
 
-					console.log(JSON.stringify(starterCandyColors));
+                    console.log(JSON.stringify(starterCandyColors));
 
-					resolve();
-				});*/
+                    resolve();
+                });*/
 
         resolve();
       });
@@ -681,6 +700,16 @@ export default class BattleScene extends SceneBase {
       : ret;
   }
 
+  // store info toggles to be accessible by the ui
+  addInfoToggle(infoToggle: InfoToggle): void {
+    this.infoToggles.push(infoToggle);
+  }
+
+  // return the stored info toggles; used by ui-inputs
+  getInfoToggles(activeOnly: boolean = false): InfoToggle[] {
+    return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
+  }
+
   getPokemonById(pokemonId: integer): Pokemon {
     const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
     return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
@@ -727,7 +756,7 @@ export default class BattleScene extends SceneBase {
     const container = this.add.container(x, y);
 
     const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
-    	icon.setFrame(pokemon.getIconId(true));
+    icon.setFrame(pokemon.getIconId(true));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
     if (icon.frame.name !== pokemon.getIconId(true)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
@@ -1020,6 +1049,12 @@ export default class BattleScene extends SceneBase {
       if (resetArenaState) {
         this.arena.removeAllTags();
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+
+        for (const pokemon of this.getParty()) {
+          if (pokemon.hasAbility(Abilities.ICE_FACE)) {
+            pokemon.formIndex = 0;
+          }
+        }
         this.unshiftPhase(new ShowTrainerPhase(this));
       }
       for (const pokemon of this.getParty()) {
@@ -1313,6 +1348,14 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  showEnemyModifierBar(): void {
+    this.enemyModifierBar.setVisible(true);
+  }
+
+  hideEnemyModifierBar(): void {
+    this.enemyModifierBar.setVisible(false);
+  }
+
   updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
@@ -1327,12 +1370,28 @@ export default class BattleScene extends SceneBase {
       return;
     }
     const formattedMoney =
-			this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
+            this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
     this.moneyText.setText(`₽${formattedMoney}`);
     this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
       this.moneyText.setVisible(true);
     }
+  }
+
+  animateMoneyChanged(positiveChange: boolean): void {
+    if (this.tweens.getTweensOf(this.moneyText).length > 0) {
+      return;
+    }
+    const deltaScale = this.moneyText.scale * 0.14 * (positiveChange ? 1 : -1);
+    this.moneyText.setShadowColor(positiveChange ? "#008000" : "#FF0000");
+    this.tweens.add({
+      targets: this.moneyText,
+      duration: 250,
+      scale: this.moneyText.scale + deltaScale,
+      loop: 0,
+      yoyo: true,
+      onComplete: (_) => this.moneyText.setShadowColor(getTextColor(TextStyle.MONEY, true)),
+    });
   }
 
   updateScoreText(): void {
@@ -1378,7 +1437,10 @@ export default class BattleScene extends SceneBase {
 
   updateUIPositions(): void {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
-    this.biomeWaveText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
+    const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
+    this.biomeWaveText.setY(
+      -(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0) + (biomeWaveTextHeight / 2)
+    );
     this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
     [ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
@@ -1418,7 +1480,7 @@ export default class BattleScene extends SceneBase {
 
   randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level);
+      return this.arena.randomSpecies(waveIndex, level,null , getPartyLuckValue(this.party));
     }
     const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
       if (!filterAllEvolutions) {
@@ -1780,6 +1842,7 @@ export default class BattleScene extends SceneBase {
   addMoney(amount: integer): void {
     this.money = Math.min(this.money + amount, Number.MAX_SAFE_INTEGER);
     this.updateMoneyText();
+    this.animateMoneyChanged(true);
     this.validateAchvs(MoneyAchv);
   }
 
@@ -1917,7 +1980,7 @@ export default class BattleScene extends SceneBase {
         const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
         newItemModifier.pokemonId = target.id;
         const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
-					&& (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
+                    && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
         let removeOld = true;
         if (matchingModifier) {
           const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
@@ -2021,8 +2084,8 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-	* Removes all modifiers from enemy of PersistentModifier type
-	*/
+    * Removes all modifiers from enemy of PersistentModifier type
+    */
   clearEnemyModifiers(): void {
     const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
     for (const m of modifiersToRemove) {
@@ -2032,8 +2095,8 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-	* Removes all modifiers from enemy of PokemonHeldItemModifier type
-	*/
+    * Removes all modifiers from enemy of PokemonHeldItemModifier type
+    */
   clearEnemyHeldItemModifiers(): void {
     const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
     for (const m of modifiersToRemove) {

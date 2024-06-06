@@ -98,6 +98,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "招式學習器 {{moveId}} - {{moveName}}",
       description: "教會一隻寶可夢{{moveName}}",
     },
+    TmModifierTypeWithInfo: {
+      name: "TM{{moveId}} - {{moveName}}",
+      description: "教會一隻寶可夢{{moveName}}\n(Hold C or Shift for more info)",
+    },
     EvolutionItemModifierType: { description: "使某些寶可夢進化" },
     FormChangeItemModifierType: { description: "使某些寶可夢更改形態" },
     FusePokemonModifierType: {
@@ -208,7 +212,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     MULTI_LENS: { name: "多重鏡" },
     HEALING_CHARM: {
       name: "治癒護符",
-      description: "HP恢復量增加10% (含復活)",
+      description: "HP恢復量增加10% (不含復活)",
     },
     CANDY_JAR: { name: "糖果罐", description: "神奇糖果提供的升級提升1級" },
     BERRY_POUCH: {
@@ -282,12 +286,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     ENEMY_HEAL: { name: "恢復硬幣", description: "每回合恢復2%最大HP" },
     ENEMY_ATTACK_POISON_CHANCE: { name: "劇毒硬幣" },
     ENEMY_ATTACK_PARALYZE_CHANCE: { name: "麻痹硬幣" },
-    ENEMY_ATTACK_SLEEP_CHANCE: { name: "睡眠硬幣" },
-    ENEMY_ATTACK_FREEZE_CHANCE: { name: "冰凍硬幣" },
     ENEMY_ATTACK_BURN_CHANCE: { name: "灼燒硬幣" },
     ENEMY_STATUS_EFFECT_HEAL_CHANCE: {
       name: "萬靈藥硬幣",
-      description: "增加10%每回合治癒異常狀態的概率",
+      description: "增加2.5%每回合治癒異常狀態的概率",
     },
     ENEMY_ENDURE_CHANCE: { name: "忍受硬幣" },
     ENEMY_FUSED_CHANCE: {

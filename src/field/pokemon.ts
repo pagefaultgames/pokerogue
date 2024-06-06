@@ -211,8 +211,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.generateFusionSpecies();
         }
       }
-
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
+      this.fusionLuck = this.luck;
     }
 
     this.generateName();
@@ -1168,6 +1168,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.fusionSpecies) {
       const evolutionLevelMoves = levelMoves.slice(0, Math.max(levelMoves.findIndex(lm => !!lm[0]), 0));
       const fusionLevelMoves = this.getFusionSpeciesForm(true).getLevelMoves();
+      const fusionEvolutionLevelMoves = fusionLevelMoves.slice(0, Math.max(fusionLevelMoves.findIndex(flm => !!flm[0]), 0));
       const newLevelMoves: LevelMoves = [];
       while (levelMoves.length && levelMoves[0][0] < startingLevel) {
         levelMoves.shift();
@@ -1178,6 +1179,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (includeEvolutionMoves) {
         for (const elm of evolutionLevelMoves.reverse()) {
           levelMoves.unshift(elm);
+        }
+        for (const felm of fusionEvolutionLevelMoves.reverse()) {
+          fusionLevelMoves.unshift(felm);
         }
       }
       for (let l = includeEvolutionMoves ? 0 : startingLevel; l <= this.level; l++) {
@@ -1273,7 +1277,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the shiny variant
    */
   generateVariant(): Variant {
-    if (!this.shiny || !variantData.hasOwnProperty(this.species.speciesId)) {
+    const formIndex: number = this.formIndex;
+    let variantDataIndex: string | number = this.species.speciesId;
+    if (this.species.forms.length > 0) {
+      const formKey = this.species.forms[formIndex]?.formKey;
+      if (formKey) {
+        variantDataIndex = `${variantDataIndex}-${formKey}`;
+      }
+    }
+    // Checks if there is no variant data for both the index or index with form
+    if (!this.shiny || (!variantData.hasOwnProperty(variantDataIndex) && !variantData.hasOwnProperty(this.species.speciesId))) {
       return 0;
     }
     const rand = Utils.randSeedInt(10);
@@ -2425,10 +2438,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-  * Resets the status of a pokemon
-  * @param revive whether revive should be cured, defaults to true
+  * Resets the status of a pokemon.
+  * @param revive Whether revive should be cured; defaults to true.
+  * @param confusion Whether resetStatus should include confusion or not; defaults to false.
   */
-  resetStatus(revive: boolean = true): void {
+  resetStatus(revive: boolean = true, confusion: boolean = false): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2438,6 +2452,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.setFrameRate(12);
       if (this.getTag(BattlerTagType.NIGHTMARE)) {
         this.lapseTag(BattlerTagType.NIGHTMARE);
+      }
+    }
+    if (confusion) {
+      if (this.getTag(BattlerTagType.CONFUSED)) {
+        this.lapseTag(BattlerTagType.CONFUSED);
       }
     }
   }
@@ -3377,7 +3396,7 @@ export class EnemyPokemon extends Pokemon {
 
             const target = this.scene.getField()[mt];
             let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-            if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND].includes(move.id)) {
+            if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP].includes(move.id)) {
               targetScore = -20;
             } else if (move instanceof AttackMove) {
               const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
