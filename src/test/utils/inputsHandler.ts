@@ -30,6 +30,15 @@ export default class InputsHandler {
     });
   }
 
+  pressKeyboardKey(key: integer, duration: integer): Promise<void> {
+    return new Promise(async (resolve) => {
+      this.scene.input.keyboard.emit("keydown", {keyCode: key});
+      await holdOn(duration);
+      this.scene.input.keyboard.emit("keyup", {keyCode: key});
+      resolve();
+    });
+  }
+
   init(): void {
     setInterval(() => {
       this.inputController.update();
@@ -53,7 +62,6 @@ export default class InputsHandler {
 class Phakepad extends Phaser.Input.Gamepad.Gamepad {
   public id: string;
   public index: number;
-  public buttons: Phaser.Input.Gamepad.Button[];
 
   constructor(pad) {
     super(undefined, {...pad, buttons: pad.deviceMapping, axes: []});
