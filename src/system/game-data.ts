@@ -34,27 +34,12 @@ import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./setti
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
 import { Device } from "#app/enums/devices.js";
+import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect.js";
+import { PlayerGender } from "#app/data/enums/player-gender";
+import { GameDataType } from "#app/data/enums/game-data-type";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
-
-export enum GameDataType {
-  SYSTEM,
-  SESSION,
-  SETTINGS,
-  TUTORIALS,
-  SEEN_DIALOGUES
-}
-
-export enum PlayerGender {
-  UNSET,
-  MALE,
-  FEMALE
-}
-
-export enum Passive {
-  UNLOCKED = 1,
-  ENABLED = 2
-}
 
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
@@ -1077,6 +1062,9 @@ export class GameData {
         for (const md of v) {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
+          }
+          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+            continue;
           }
           ret.push(new PersistentModifierData(md, player));
         }

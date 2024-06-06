@@ -3,10 +3,11 @@ import i18next from "i18next";
 import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
-import { PlayerGender } from "../game-data";
+import { PlayerGender } from "#app/data/enums/player-gender";
 import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 import { MoneyFormat } from "../../enums/money-format";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
+import { EaseType } from "#app/ui/enums/ease-type.js";
 
 const MUTE = "Mute";
 const VOLUME_OPTIONS = new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : MUTE);
@@ -44,6 +45,7 @@ export const SettingKeys = {
   UI_Theme: "UI_THEME",
   Window_Type: "WINDOW_TYPE",
   Tutorials: "TUTORIALS",
+  Move_Info: "MOVE_INFO",
   Enable_Retries: "ENABLE_RETRIES",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
@@ -53,6 +55,8 @@ export const SettingKeys = {
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Moveset_Flyout: "SHOW_MOVESET_FLYOUT",
   Show_Arena_Flyout: "SHOW_ARENA_FLYOUT",
+  Show_Time_Of_Day_Widget: "SHOW_TIME_OF_DAY_WIDGET",
+  Time_Of_Day_Animation: "TIME_OF_DAY_ANIMATION",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
@@ -133,6 +137,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
+    key: SettingKeys.Move_Info,
+    label: "Move Info",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.ACCESSIBILITY
+  },
+  {
     key: SettingKeys.Enable_Retries,
     label: "Enable Retries",
     options: OFF_ON,
@@ -195,6 +206,21 @@ export const Setting: Array<Setting> = [
     label: "Show Battle Effects Flyout",
     options: OFF_ON,
     default: 1,
+    type: SettingType.ACCESSIBILITY
+  },
+  {
+    key: SettingKeys.Show_Time_Of_Day_Widget,
+    label: "Show Time of Day Widget",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.ACCESSIBILITY,
+    requireReload: true,
+  },
+  {
+    key: SettingKeys.Time_Of_Day_Animation,
+    label: "Time of Day Animation",
+    options: ["Bounce", "Back"],
+    default: 0,
     type: SettingType.ACCESSIBILITY
   },
   {
@@ -312,6 +338,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Tutorials:
     scene.enableTutorials = Setting[index].options[value] === "On";
     break;
+  case SettingKeys.Move_Info:
+    scene.enableMoveInfo = Setting[index].options[value] === "On";
+    break;
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value] === "On";
     break;
@@ -353,6 +382,12 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Show_Arena_Flyout:
     scene.showArenaFlyout = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Show_Time_Of_Day_Widget:
+    scene.showTimeOfDayWidget = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Time_Of_Day_Animation:
+    scene.timeOfDayAnimation = Setting[index].options[value] === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
     break;
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value] === "On";
