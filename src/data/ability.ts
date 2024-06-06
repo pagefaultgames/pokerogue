@@ -3344,10 +3344,6 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
  * This is used in Ice Face ability.
  */
 export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
-  constructor(immuneCondition: PreDefendAbAttrCondition) {
-    super(immuneCondition);
-  }
-
   /**
    * Applies the Ice Face pre-defense ability to the Pokémon.
    * Removes BattlerTagType.ICE_FACE hit by physical attack and is in Ice Face form.
