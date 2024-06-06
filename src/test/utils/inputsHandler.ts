@@ -13,6 +13,7 @@ export default class InputsHandler {
   private events: Phaser.Events.EventEmitter;
   private inputController: InputsController;
   public log = [];
+  public logUp = [];
   private fakePad: Fakepad;
   private fakeMobile: FakeMobile;
 
@@ -67,9 +68,9 @@ export default class InputsHandler {
       this.log.push({type: "input_down", button: event.button});
     }, this);
 
-    // this.events.on("input_up", (event) => {
-    //   this.log.push({type: "input_up", button: event.button});
-    // }, this);
+    this.events.on("input_up", (event) => {
+      this.logUp.push({type: "input_up", button: event.button});
+    }, this);
   }
 }
 

@@ -552,7 +552,6 @@ export class InputsController {
     }
     const duration = Date.now() - this.interactions[button].pressTime;
     if (duration >= repeatInputDelayMillis) {
-      console.log("duration:", duration);
       return true;
     }
   }
