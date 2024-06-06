@@ -218,8 +218,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "BATON": { name: "바톤", description: "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 함" },
 
-    "SHINY_CHARM": { name: "빛나는부적", description: "야생 포켓몬이 색이 다른 포켓몬으로 등장할 확률을 급격히 증가" },
-    "ABILITY_CHARM": { name: "특성부적", description: "야생 포켓몬이 숨겨진 특성을 가지고 등장할 확률을 급격히 증가" },
+    "SHINY_CHARM": { name: "빛나는부적", description: "야생 포켓몬이 색이 다른 포켓몬으로 등장할 확률을 급격히 높인다." },
+    "ABILITY_CHARM": { name: "특성부적", description: "야생 포켓몬이 숨겨진 특성을 가지고 등장할 확률을 급격히 높인다." },
 
     "IV_SCANNER": { name: "개체값탐지기", description: "야생 포켓몬의 개체값을 확인 가능하다. 높은 값부터, 확인할 수 있는 개체값이 두 종류씩 추가된다." },
 
