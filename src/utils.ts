@@ -263,6 +263,7 @@ export const isLocal = (
 // Set the server URL based on whether it's local or not
 export const serverUrl = isLocal ? `${window.location.hostname}:${window.location.port}` : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
+// used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = false;
 
 export function setCookie(cName: string, cValue: string): void {
@@ -286,6 +287,11 @@ export function getCookie(cName: string): string {
   return "";
 }
 
+/**
+ * When locally running the game, "pings" the local server
+ * with a GET request to verify if a server is running,
+ * sets isLocalServerConnected based on results
+ */
 export function localPing() {
   if (isLocal) {
     apiFetch("game/titlestats")
