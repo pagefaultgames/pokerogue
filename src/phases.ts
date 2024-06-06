@@ -4857,8 +4857,6 @@ export class AttemptRunPhase extends PokemonPhase {
     const escapeChance = this.calculateEscapeChance(playerPokemon, enemyField);
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
-    console.log(escapeChance.value.toString());
-
     if (playerPokemon.randSeedInt(256) < escapeChance.value) {
       this.scene.playSound("flee");
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
