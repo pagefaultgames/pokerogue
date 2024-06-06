@@ -3,7 +3,7 @@ import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../f
 import { MysteryEncounterType } from "./enums/mystery-encounter-type";
 import MysteryEncounterDialogue, { allMysteryEncounterDialogue } from "./mystery-encounter-dialogue";
 import MysteryEncounterOption from "./mystery-encounter-option";
-import { MysteryEncounterRequirements } from "./mystery-encounter-requirements";
+import { EncounterRequirement } from "./mystery-encounter-requirements";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -32,29 +32,57 @@ export default interface MysteryEncounter {
    * Optional params
    */
   encounterTier?: MysteryEncounterTier;
-  requirements?: MysteryEncounterRequirements;
+  requirements?: EncounterRequirement[];
   doEncounterRewards?: (scene: BattleScene) => boolean;
 
 
   /**
    * Post-construct / Auto-populated params
    */
+
+  /**
+   * Dialogue object containing all the dialogue, messages, tooltips, etc. for an encounter
+   */
   dialogue?: MysteryEncounterDialogue;
+
+  /**
+   * Object instance containing sprite data for an encounter when it is being spawned
+   * Otherwise, will be undefined
+   * You probably shouldn't do anything with this unless you have a very specific need
+   */
   introVisuals?: MysteryEncounterIntroVisuals;
 
 
   /**
    * Flags
    */
-  // Can be set for things like programatic dialogue (party pokemon of name "xyz", etc.)
-  // Example use: see MYSTERIOUS_CHEST
+
+  /**
+   * Can be set for uses programatic dialogue during an encounter (storing the name of one of the party's pokemon, etc.)
+   * Example use: see MYSTERIOUS_CHEST
+   */
   dialogueTokens?: [RegExp, string][];
-  // Should be set depending upon option selected
+
+  /**
+   * Should be set depending upon option selected as part of an encounter
+   * For example, if there is no battle as part of the encounter/selected option, should be set to NO_BATTLE
+   * Defaults to DEFAULT
+   */
   encounterVariant?: MysteryEncounterVariant;
-  // Flag to check if first time item shop is being shown for encounter. Will be set to false after shop is shown (so can't reroll same rarity items)
+
+  /**
+   * Flag for checking if it's the first time a shop is being shown for an encounter.
+   * Defaults to true so that the first shop does not override the specified rewards.
+   * Will be set to false after a shop is shown (so can't reroll same rarity items for free)
+   */
   lockEncounterRewardTiers?: boolean;
 }
 
+/**
+ * MysteryEncounter class that defines the logic for a single encounter
+ * These objects will be saved as part of session data any time the player is on a floor with an encounter
+ * Unless you know what you're doing, you should use MysteryEncounterBuilder to create an instance for this class
+ */
 export default class MysteryEncounter implements MysteryEncounter {
   constructor(encounter: MysteryEncounter) {
     Object.assign(this, encounter);
@@ -62,19 +90,25 @@ export default class MysteryEncounter implements MysteryEncounter {
     this.dialogue = allMysteryEncounterDialogue[this.encounterType];
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.lockEncounterRewardTiers = true;
+    this.requirements = this.requirements ? this.requirements : [];
   }
 
+  /**
+   * Checks if the current scene state meets the requirements for the MysteryEncounter to spawn
+   * This is used to filter the pool of encounters down to only the ones with all requirements met
+   * @param scene
+   * @returns
+   */
   meetsRequirements?(scene: BattleScene) {
-    return this.requirements.meetsRequirements(scene);
+    return !this.requirements.some(requirement => !requirement.meetsRequirement(scene));
   }
 
+  /**
+   * Initializes encounter intro sprites based on the sprite configs defined in spriteConfigs
+   * @param scene
+   */
   initIntroVisuals?(scene: BattleScene) {
     this.introVisuals = new MysteryEncounterIntroVisuals(scene, this);
-  }
-
-  resetFlags?() {
-    this.encounterVariant = MysteryEncounterVariant.DEFAULT;
-    this.lockEncounterRewardTiers = true;
   }
 }
 
@@ -85,7 +119,7 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
 
   dialogue?: MysteryEncounterDialogue;
   encounterTier?: MysteryEncounterTier;
-  requirements?: MysteryEncounterRequirements;
+  requirements?: EncounterRequirement[] = [];
   dialogueTokens?: [RegExp, string][];
   doEncounterRewards?: (scene: BattleScene) => boolean;
 
@@ -93,10 +127,21 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * REQUIRED
    */
 
+  /**
+   * Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
+   * @param encounterType
+   * @returns this
+   */
   withEncounterType(encounterType: MysteryEncounterType): this & Pick<MysteryEncounter, "encounterType"> {
     return Object.assign(this, { encounterType: encounterType });
   }
 
+  /**
+   * Defines an option for the encounter
+   * There should be at least 2 options defined and no more than 4
+   * @param option - MysteryEncounterOption to add, can use MysteryEncounterOptionBuilder to create instance
+   * @returns
+   */
   withOption(option: MysteryEncounterOption): this & Pick<MysteryEncounter, "options"> {
     if (this.options[0] === null) {
       return Object.assign(this, { options: [ option, this.options[0] ] });
@@ -108,6 +153,12 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     }
   }
 
+  /**
+   * Defines the sprites that will be shown on the enemy field when the encounter spawns
+   * Can be one or more sprites, recommended not to exceed 4
+   * @param spriteConfigs
+   * @returns
+   */
   withIntroSpriteConfigs(spriteConfigs: MysteryEncounterSpriteConfig[]): this & Pick<MysteryEncounter, "spriteConfigs"> {
     return Object.assign(this, { spriteConfigs: spriteConfigs });
   }
@@ -116,14 +167,45 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * OPTIONAL
    */
 
+  /**
+   * Sets the rarity tier for an encounter
+   * If not specified, defaults to COMMON
+   * Tiers are:
+   * COMMON 32/64 odds
+   * UNCOMMON 16/64 odds
+   * RARE 10/64 odds
+   * SUPER_RARE 6/64 odds
+   * ULTRA_RARE Not currently used
+   * @param encounterType
+   * @returns
+   */
   withEncounterTier(encounterType: MysteryEncounterTier): this & Required<Pick<MysteryEncounter, "encounterType">> {
     return Object.assign(this, { encounterType: encounterType });
   }
 
-  withRequirements(requirements: MysteryEncounterRequirements): this & Required<Pick<MysteryEncounter, "requirements">> {
-    return Object.assign(this, { requirements: requirements });
+  /**
+   * Specifies a requirement for an encounter
+   * For example, passing requirement as "new WaveCountRequirement([2, 180])" would create a requirement that the encounter can only be spawned between waves 2 and 180
+   * Existing Requirement objects are defined in mystery-encounter-requirements.ts, and more can always be created to meet a requirement need
+   * @param requirement
+   * @returns
+   */
+  withRequirement(requirement: EncounterRequirement): this & Required<Pick<MysteryEncounter, "requirements">> {
+    this.requirements.push(requirement);
+    return Object.assign(this, { requirements: this.requirements });
   }
 
+  /**
+   * Can set custom encounter rewards via this callback function
+   * If rewards are always deterministic for an encounter, this is a good way to set them
+   *
+   * NOTE: If rewards are dependent on options selected, runtime data, etc.,
+   * It may be better to programmatically set doEncounterRewards elsewhere.
+   * For instance, doEncounterRewards could instead be set inside the onOptionPhase() callback function for a MysteryEncounterOption
+   * Check other existing mystery encounters for examples on how to use this
+   * @param doEncounterRewards - synchronous callback function to perform during rewards phase of the encounter
+   * @returns
+   */
   withRewards(doEncounterRewards: (scene: BattleScene) => boolean): this & Required<Pick<MysteryEncounter, "doEncounterRewards">> {
     return Object.assign(this, { doEncounterRewards: doEncounterRewards });
   }

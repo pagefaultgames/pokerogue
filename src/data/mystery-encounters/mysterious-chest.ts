@@ -5,7 +5,7 @@ import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter"
 import * as Utils from "../../utils";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import { Species } from "../enums/species";
-import { MysteryEncounterRequirements } from "../mystery-encounter-requirements";
+import { WaveCountRequirement } from "../mystery-encounter-requirements";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 export const MysteriousChestEncounter: MysteryEncounter = new MysteryEncounterBuilder()
@@ -17,7 +17,7 @@ export const MysteriousChestEncounter: MysteryEncounter = new MysteryEncounterBu
       hasShadow: true
     }
   ])
-  .withRequirements(new MysteryEncounterRequirements(2, 180)) // waves 2 to 180
+  .withRequirement(new WaveCountRequirement([2, 180])) // waves 2 to 180
   .withOption(new MysteryEncounterOptionBuilder()
     .withOptionPhase(async (scene: BattleScene) => {
       // Open the chest

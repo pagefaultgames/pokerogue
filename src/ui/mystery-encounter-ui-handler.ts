@@ -42,14 +42,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.cursorContainer = this.scene.add.container(18, -38.7);
     this.cursorContainer.setVisible(false);
     ui.add(this.cursorContainer);
-    this.optionsContainer = this.scene.add.container(18, -38.7);
+    this.optionsContainer = this.scene.add.container(12, -38.7);
     this.optionsContainer.setVisible(false);
     ui.add(this.optionsContainer);
     this.descriptionContainer = this.scene.add.container(0, -152);
     this.descriptionContainer.setVisible(false);
     ui.add(this.descriptionContainer);
-
-    this.tooltipContainer = this.scene.add.container(0, -152);
+    this.tooltipContainer = this.scene.add.container(210, -48);
     this.tooltipContainer.setVisible(false);
     ui.add(this.tooltipContainer);
 
@@ -58,10 +57,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.descriptionWindow = addWindow(this.scene, 0, 0, 150, 105, false, false, 0, 0, WindowVariant.THIN);
     this.descriptionContainer.add(this.descriptionWindow);
 
-    this.tooltipWindow = addWindow(this.scene, 0, 0, 150, 20, false, false, 0, 0, WindowVariant.THIN);
+    this.tooltipWindow = addWindow(this.scene, 0, 0, 110, 48, false, false, 0, 0, WindowVariant.THIN);
     this.tooltipContainer.add(this.tooltipWindow);
 
-    this.rarityBall = this.scene.add.sprite(140, 10, "pb");
+    this.rarityBall = this.scene.add.sprite(141, 9, "pb");
+    this.rarityBall.setScale(0.75);
     this.descriptionContainer.add(this.rarityBall);
   }
 
@@ -269,13 +269,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     if (cursor === this.viewPartyIndex) {
-      this.cursorObj.setPosition(249, -17);
+      this.cursorObj.setPosition(246, -17);
     } else if (this.optionsContainer.length === 3) { // 2 Options
-      this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 150 : 0), 16);
+      this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 15);
     } else if (this.optionsContainer.length === 4) { // 3 Options
-      this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 150 : 0), 8 + (cursor > 1 ? 16 : 0));
+      this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
     } else if (this.optionsContainer.length === 5) { // 4 Options
-      this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 150 : 0), 8 + (cursor > 1 ? 16 : 0));
+      this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
     }
 
     return changed;
@@ -297,13 +297,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       let optionText;
       switch (this.filteredEncounterOptions.length) {
       case 2:
-        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, 8, "-", TextStyle.WINDOW);
+        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       case 3:
-        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, i < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       case 4:
-        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 150, i < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       }
       const text = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.options[i].buttonLabel);
@@ -321,19 +321,19 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addTextObject(this.scene, 254, -24, "View Party", TextStyle.PARTY);
+    const viewPartyText = addTextObject(this.scene, 256, -24, "View Party", TextStyle.PARTY);
     this.optionsContainer.add(viewPartyText);
 
     // Description Window
-    const titleTextObject = addTextObject(this.scene, 65 - (titleText.length), 6, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 830 } });
+    const titleTextObject = addTextObject(this.scene, 0, 0, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });
     this.descriptionContainer.add(titleTextObject);
+    titleTextObject.setPosition(72 - titleTextObject.displayWidth / 2, 5.5);
 
     // Rarity of encounter
     const ballType = getPokeballAtlasKey(mysteryEncounter.encounterTier as number);
     this.rarityBall.setTexture(ballType, ballType);
 
-    const longText = "\nThis is a super super super\nsuper long super super\nsuper super long super super super super long\ndescription.";
-    const descriptionTextObject = addTextObject(this.scene, 6, 25, descriptionText + longText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const descriptionTextObject = addTextObject(this.scene, 6, 25, descriptionText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
     const descriptionTextMaskRect = this.scene.make.graphics({});
@@ -346,7 +346,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     descriptionTextObject.setMask(abilityDescriptionTextMask);
 
-    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 14.83);
+    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 10);
 
     if (this.descriptionScrollTween) {
       this.descriptionScrollTween.remove();
@@ -354,15 +354,14 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // Animates the description text moving upwards
-    if (descriptionLineCount > 2) {
-      //descriptionTextObject.setY(69);
+    if (descriptionLineCount > 6) {
       this.descriptionScrollTween = this.scene.tweens.add({
         targets: descriptionTextObject,
         delay: Utils.fixedInt(2000),
         loop: -1,
         hold: Utils.fixedInt(2000),
-        duration: Utils.fixedInt((descriptionLineCount - 2) * 2000),
-        y: `-=${14.83 * (descriptionLineCount - 3)}`
+        duration: Utils.fixedInt((descriptionLineCount - 6) * 2000),
+        y: `-=${10 * (descriptionLineCount - 6)}`
       });
     }
 
@@ -386,41 +385,37 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   }
 
   displayOptionTooltip() {
-    //const selected = this.filteredEncounterOptions[cursor];
     const cursor = this.getCursor();
+    // Clear tooltip box
+    if (this.tooltipContainer.length > 1) {
+      this.tooltipContainer.removeBetween(1, this.tooltipContainer.length, true);
+    }
+    this.tooltipContainer.setVisible(true);
+
     if (Utils.isNullOrUndefined(cursor) || cursor > this.optionsContainer.length - 2) {
-      // Ignore hovers on view party
-      this.tooltipContainer.setVisible(false);
+      // Ignore hovers on view party button
       return;
     }
 
-    const hoveredOption = this.optionsContainer.getAt(cursor);
     const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
     const text = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor].buttonTooltip);
 
+
     if (text) {
-      //const styledText = getBBCodeFrag(text, TextStyle.SUMMARY_BLUE);
-      this.tooltipContainer.removeBetween(1, this.tooltipContainer.length, true);
-
-      const tooltipTextObject = addTextObject(this.scene, 6, 3.5, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }, fontSize: "72px", color: "#40c8f8", shadow: { color: "#006090" } });
-
+      const tooltipTextObject = addTextObject(this.scene, 6, 7, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 600 }, fontSize: "72px" });
       this.tooltipContainer.add(tooltipTextObject);
-      this.tooltipContainer.setVisible(true);
-
-      this.tooltipContainer.setPositionRelative(hoveredOption, 0, -62);
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
       const tooltipTextMaskRect = this.scene.make.graphics({});
       tooltipTextMaskRect.setScale(6);
       tooltipTextMaskRect.fillStyle(0xFFFFFF);
       tooltipTextMaskRect.beginPath();
-      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 185, 150, 11);
-
+      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
 
       const textMask = tooltipTextMaskRect.createGeometryMask();
       tooltipTextObject.setMask(textMask);
 
-      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 11.1);
+      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 11.2);
 
       if (this.tooltipScrollTween) {
         this.tooltipScrollTween.remove();
@@ -428,19 +423,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       }
 
       // Animates the tooltip text moving upwards
-      if (tooltipLineCount > 1) {
-        //descriptionTextObject.setY(69);
+      if (tooltipLineCount > 3) {
         this.tooltipScrollTween = this.scene.tweens.add({
           targets: tooltipTextObject,
-          delay: Utils.fixedInt(1000),
+          delay: Utils.fixedInt(1200),
           loop: -1,
-          hold: Utils.fixedInt(1000),
-          duration: Utils.fixedInt((tooltipLineCount - 1) * 1500),
-          y: `-=${11.1 * (tooltipLineCount - 1)}`
+          hold: Utils.fixedInt(1200),
+          duration: Utils.fixedInt((tooltipLineCount - 3) * 1200),
+          y: `-=${11.2 * (tooltipLineCount - 3)}`
         });
       }
-    } else {
-      this.tooltipContainer.setVisible(false);
     }
   }
 

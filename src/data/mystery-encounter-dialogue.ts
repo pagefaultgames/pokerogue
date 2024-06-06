@@ -91,6 +91,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
       options: [
         {
           buttonLabel: "mysteryEncounter:mysterious_challengers_option_1_label",
+          buttonTooltip: "mysteryEncounter:mysterious_challengers_option_1_tooltip",
           selected: [
             {
               text: "mysteryEncounter:mysterious_challengers_option_selected_message"
@@ -99,6 +100,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
         },
         {
           buttonLabel: "mysteryEncounter:mysterious_challengers_option_2_label",
+          buttonTooltip: "mysteryEncounter:mysterious_challengers_option_2_tooltip",
           selected: [
             {
               text: "mysteryEncounter:mysterious_challengers_option_selected_message"
@@ -107,6 +109,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
         },
         {
           buttonLabel: "mysteryEncounter:mysterious_challengers_option_3_label",
+          buttonTooltip: "mysteryEncounter:mysterious_challengers_option_3_tooltip",
           selected: [
             {
               text: "mysteryEncounter:mysterious_challengers_option_selected_message"
@@ -115,6 +118,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
         },
         {
           buttonLabel: "mysteryEncounter:mysterious_challengers_option_4_label",
+          buttonTooltip: "mysteryEncounter:mysterious_challengers_option_4_tooltip",
           selected: [
             {
               text: "mysteryEncounter:mysterious_challengers_option_4_selected_message"
@@ -176,7 +180,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
       options: [
         {
           buttonLabel: "mysteryEncounter:dark_deal_option_1_label",
-          buttonTooltip: "mysteryEncounter:optionTooltip",
+          buttonTooltip: "mysteryEncounter:dark_deal_option_1_tooltip",
           selected: [
             {
               speaker: "mysteryEncounter:dark_deal_speaker",
@@ -189,7 +193,6 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
         },
         {
           buttonLabel: "mysteryEncounter:dark_deal_option_2_label",
-          buttonTooltip: "mysteryEncounter:optionTooltip",
           selected: [
             {
               speaker: "mysteryEncounter:dark_deal_speaker",

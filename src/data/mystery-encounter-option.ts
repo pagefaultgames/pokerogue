@@ -1,9 +1,8 @@
 import BattleScene from "../battle-scene";
-import { isNullOrUndefined } from "../utils";
-import { MysteryEncounterRequirements } from "./mystery-encounter-requirements";
+import { EncounterRequirement } from "./mystery-encounter-requirements";
 
 export default interface MysteryEncounterOption {
-  requirements?: MysteryEncounterRequirements;
+  requirements?: EncounterRequirement[];
   // Executes before any following dialogue or business logic from option. Cannot be async. Usually this will be for calculating dialogueTokens or performing data updates
   onPreOptionPhase?: (scene: BattleScene) => void | boolean;
   // Business logic for option
@@ -15,24 +14,23 @@ export default interface MysteryEncounterOption {
 export default class MysteryEncounterOption implements MysteryEncounterOption {
   constructor(option: MysteryEncounterOption) {
     Object.assign(this, option);
+    this.requirements = this.requirements ? this.requirements : [];
   }
 
   meetsRequirements?(scene: BattleScene) {
-    if (isNullOrUndefined(this.requirements)) {
-      return true;
-    }
-    return this.requirements.meetsRequirements(scene);
+    return !this.requirements.some(requirement => !requirement.meetsRequirement(scene));
   }
 }
 
 export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOption> {
-  requirements?: MysteryEncounterRequirements;
+  requirements?: EncounterRequirement[] = [];
   onPreOptionPhase?: (scene: BattleScene) => void | boolean;
   onOptionPhase?: (scene: BattleScene) => Promise<void | boolean>;
   onPostOptionPhase?: (scene: BattleScene) => void | boolean;
 
-  withRequirements(requirements: MysteryEncounterRequirements): this & Required<Pick<MysteryEncounterOption, "requirements">> {
-    return Object.assign(this, { requirements: requirements });
+  withRequirement(requirement: EncounterRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
+    this.requirements.push(requirement);
+    return Object.assign(this, { requirements: this.requirements });
   }
 
   withPreOptionPhase(onPreOptionPhase: (scene: BattleScene) => void | boolean): this & Required<Pick<MysteryEncounterOption, "onPreOptionPhase">> {

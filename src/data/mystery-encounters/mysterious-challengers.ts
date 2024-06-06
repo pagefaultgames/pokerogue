@@ -6,7 +6,7 @@ import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import { TrainerType } from "../enums/trainer-type";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { MysteryEncounterRequirements } from "../mystery-encounter-requirements";
+import { WaveCountRequirement } from "../mystery-encounter-requirements";
 
 export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
@@ -27,7 +27,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
       hasShadow: true
     }
   ])
-  .withRequirements(new MysteryEncounterRequirements(50, 180)) // waves 50 to 180
+  .withRequirement(new WaveCountRequirement([50, 180])) // waves 50 to 180
   .withOption(new MysteryEncounterOptionBuilder()
     .withOptionPhase(async (scene: BattleScene) => {
       // Spawn easy fight (75% standard strength) with memory mushroom reward

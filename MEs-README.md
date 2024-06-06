@@ -1,11 +1,11 @@
 # 📝 Immediate things on the to-do platter
 
-- Add logic to handle spawning boss encounters 🔨
+- Add logic to handle spawning boss encounters ✔️
 - Bugfix not getting a reward at the end of battle ME 🔨
 - Add logic for awarding exp to the party (outside of a normal combat) 🔨
 - Add logic for choosing a Pokémon from party for some effect (trades, sacrifices, etc) 🔨
-- Introduce more text tree hierarchy -- for better organization of encounters, options and dialogue text/layers 🔨
-- More steps to encounters -- ie Option --> __Dialogue: "You chose to not open the chest"__ --> Efects -> __Dialogue: "You walk away with regret"__ 🔨
+- Introduce more text tree hierarchy -- for better organization of encounters, options and dialogue text/layers ✔️
+- More steps to encounters -- ie Option --> __Dialogue: "You chose to not open the chest"__ --> Efects -> __Dialogue: "You walk away with regret"__ ✔️
 
 # 📝 Things to (eventually) be done for Mystery Encounters ("MEs"):
 - Add "Mysterious Events" (MEs) to gamemodes Classic and Endless ✔️ 
@@ -66,13 +66,14 @@
   ### **Functions/ Helper functions** defined in __/utils/mystery-encounter-utils.ts__ for ME to happen, if applicable. They can be:
     - Giving the player X item ✔️
     - Giving the player X item from Y item pool ❌
-    - Letting the player choose from X items
-    - Letting the player choose from X items from Y item pool ❌ 
+    - Letting the player choose from X items ❌
+    - Letting the player choose from X item tiers ✔️
+    - Letting the player choose multiple items from an item pool ❌ 
     - Start a combat encounter with a trainer ✔️
-    - Start a combat encounter with a wild pokémon (from biome) ❌
-    - Start a combat encounter with a wild pokémon (boss) ❌
+    - Start a combat encounter with a wild pokémon (from biome) ✔️
+    - Start a combat encounter with a wild pokémon (boss) ✔️
     - XP to a Pokémon (similar to rare candy?) ❌
-    - XP to the whole party (similar to rarer candy?) ❌     
+    - XP to the whole party (similar to rarer candy?) ✔️
     - Set a hazard ❌
     - Set a weather ❌
     - Status one or many Pokémon if your party -- if they can be statused ❌

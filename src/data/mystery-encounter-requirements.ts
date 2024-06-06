@@ -5,92 +5,208 @@ import { Biome } from "./enums/biome";
 import { Species } from "./enums/species";
 import { WeatherType } from "./weather";
 
-export class MysteryEncounterRequirements {
-  minWaveIndex?: number;
-  maxWaveIndex?: number;
-  requiredBiomes?: Biome[];
-  requiredWeather?: WeatherType[];
-  requiredPartyPokemon?: Species[];
-  requiredPokemonAbilities?: Abilities[];
-  requiredItems?: string[]; // TODO: not implemented
-  requiredMoney?: number;
-  requiredPartyLevel?: number; // Total party level
-  requiredPokemonLevelRange?: [number, number]; // Range that is optionially mapped to requiredPartyPokemon if they are set
+export interface EncounterRequirement {
+  meetsRequirement(scene: BattleScene): boolean;
+}
 
-  constructor(minWaveIndex: number = 0,
-    maxWaveIndex: number = 0,
-    requiredBiomes: Biome[] = [],
-    requiredWeather: WeatherType[] = [],
-    requiredPartyPokemon: Species[] = [],
-    requiredPokemonAbilities: Abilities[] = [],
-    requiredItems: string[] = [],
-    requiredMoney: number = 0,
-    requiredPartyLevel: number = 0,
-    requiredPokemonLevelRange: [number, number] = null) {
+export class WaveCountRequirement implements EncounterRequirement {
+  waveRange: [number, number];
 
-    this.minWaveIndex = minWaveIndex;
-    this.maxWaveIndex = maxWaveIndex;
-    this.requiredBiomes = requiredBiomes;
-    this.requiredWeather = requiredWeather;
-    this.requiredPartyPokemon = requiredPartyPokemon;
-    this.requiredPokemonAbilities = requiredPokemonAbilities;
-    this.requiredItems = requiredItems;
-    this.requiredMoney = requiredMoney;
-    this.requiredPartyLevel = requiredPartyLevel;
-    this.requiredPokemonLevelRange = requiredPokemonLevelRange;
+  /**
+   * Used for specifying a unique wave or wave range requirement
+   * If minWaveIndex and maxWaveIndex are equivalent, will check for exact wave number
+   * @param waveRange - [min, max]
+   */
+  constructor(waveRange: [number, number]) {
+    this.waveRange = waveRange;
   }
 
-  meetsRequirements(scene: BattleScene): boolean {
-    // Wave index
-    const waveIndex = scene.currentBattle.waveIndex;
-    if (waveIndex >= 0 && (this?.minWaveIndex >= 0 && this.minWaveIndex > waveIndex) || (this?.maxWaveIndex >= 0 && this.maxWaveIndex < waveIndex)) {
-      return false;
+  meetsRequirement(scene: BattleScene): boolean {
+    if (!isNullOrUndefined(this?.waveRange) && this.waveRange?.[0] <= this.waveRange?.[1]) {
+      const waveIndex = scene.currentBattle.waveIndex;
+      if (waveIndex >= 0 && (this?.waveRange?.[0] >= 0 && this.waveRange?.[0] > waveIndex) || (this?.waveRange?.[1] >= 0 && this.waveRange?.[1] < waveIndex)) {
+        return false;
+      }
     }
 
-    // Biome
+
+    return true;
+  }
+}
+
+export class BiomeRequirement implements EncounterRequirement {
+  requiredBiomes: Biome[] = [];
+
+  constructor(biomes: Biome | Biome[]) {
+    if (biomes instanceof Array) {
+      this.requiredBiomes = biomes;
+    } else {
+      this.requiredBiomes.push(biomes);
+    }
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
     const currentBiome = scene.arena?.biomeType;
     if (!isNullOrUndefined(currentBiome) && this?.requiredBiomes?.length > 0 && !this.requiredBiomes.includes(currentBiome)) {
       return false;
     }
 
-    // Weather
+    return true;
+  }
+}
+
+export class WeatherRequirement implements EncounterRequirement {
+  requiredWeather?: WeatherType[];
+
+  constructor(weather: WeatherType | WeatherType[]) {
+    if (weather instanceof Array) {
+      this.requiredWeather = weather;
+    } else {
+      this.requiredWeather.push(weather);
+    }
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
     const currentWeather = scene.arena?.weather?.weatherType;
     if (!isNullOrUndefined(currentWeather) && this?.requiredWeather?.length > 0 && !this.requiredWeather.includes(currentWeather)) {
       return false;
     }
 
-    // Party contains X pokemon
+    return true;
+  }
+}
+
+export class PartySpeciesRequirement implements EncounterRequirement {
+  requiredPartyPokemon: Species[];
+
+  /**
+   * Party contains at least one of the specified species
+   * To check if party contains multiple different species or species ranges, use multiple instances of this class
+   * @param species
+   */
+  constructor(species: Species | Species[]) {
+    if (species instanceof Array) {
+      this.requiredPartyPokemon = species;
+    } else {
+      this.requiredPartyPokemon.push(species);
+    }
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
     if (!isNullOrUndefined(partyPokemon) && this?.requiredPartyPokemon?.length > 0 && partyPokemon.filter((pokemon) => this.requiredPartyPokemon.includes(pokemon.species.speciesId)).length === 0) {
       return false;
     }
 
-    // Party contains pokemon with X ability
-    if (!isNullOrUndefined(partyPokemon) && this?.requiredPokemonAbilities?.length > 0 && partyPokemon.filter((pokemon) => this.requiredPokemonAbilities.filter((ability) => pokemon.hasAbility(ability)).length > 0).length === 0) {
+    return true;
+  }
+}
+
+export class PartyAbilityRequirement implements EncounterRequirement {
+  requiredAbilities: Abilities[];
+
+  /**
+   * Party contains at least one of the specified abilities
+   * To check if party contains multiple different abilities or ability ranges, use multiple instances of this class
+   * @param ability
+   */
+  constructor(ability: Abilities | Abilities[]) {
+    if (ability instanceof Array) {
+      this.requiredAbilities = ability;
+    } else {
+      this.requiredAbilities.push(ability);
+    }
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
+    const partyPokemon = scene.getParty();
+    if (!isNullOrUndefined(partyPokemon) && this?.requiredAbilities?.length > 0 && partyPokemon.filter((pokemon) => this.requiredAbilities.filter((ability) => pokemon.hasAbility(ability)).length > 0).length === 0) {
       return false;
     }
 
+    return true;
+  }
+}
+
+export class PartyItemRequirement implements EncounterRequirement {
+  requiredItems?: string[]; // TODO: not implemented
+
+
+  constructor(item: string | string[]) {
+    if (item instanceof Array) {
+      this.requiredItems = item;
+    } else {
+      this.requiredItems.push(item);
+    }
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
     // TODO: Item reqs
 
-    // Money
-    const money = scene.money;
-    if (!isNullOrUndefined(money) && this?.requiredMoney > 0 && this.requiredMoney > money) {
-      return false;
-    }
+    return true;
+  }
+}
 
-    // Party level over threshold
+export class PartyLevelRequirement implements EncounterRequirement {
+  requiredPartyLevel?: number;
+
+  /**
+   * Used to check total party level is at or above a threshold
+   * @param levelTotal
+   */
+  constructor(levelTotal: number) {
+    this.requiredPartyLevel = levelTotal;
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
     let partyLevel = 0;
+    const partyPokemon = scene.getParty();
     partyPokemon?.forEach((pokemon) => partyLevel += pokemon.level);
     if (partyLevel > 0 && this?.requiredPartyLevel > 0 && partyLevel < this.requiredPartyLevel) {
       return false;
     }
 
+    return true;
+  }
+}
+
+export class PokemonLevelRequirement implements EncounterRequirement {
+  requiredLevelRange?: [number, number];
+
+  /**
+   * Specifies a level range that at least one party pokemon must be in
+   * If min and max are equivalent, will check for exact wave number
+
+   */
+  constructor(levelRange: [number, number]) {
+    this.requiredLevelRange = levelRange;
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
     // Party Pokemon inside required level range
-    if (!isNullOrUndefined(this?.requiredPokemonLevelRange) && this.requiredPokemonLevelRange[0] <= this.requiredPokemonLevelRange[1]) {
-      const pokemonInRange = partyPokemon?.filter((pokemon) => pokemon.level >= this.requiredPokemonLevelRange[0] && pokemon.level <= this.requiredPokemonLevelRange[1]);
+    if (!isNullOrUndefined(this?.requiredLevelRange) && this.requiredLevelRange?.[0] <= this.requiredLevelRange?.[1]) {
+      const partyPokemon = scene.getParty();
+      const pokemonInRange = partyPokemon?.filter((pokemon) => pokemon.level >= this.requiredLevelRange[0] && pokemon.level <= this.requiredLevelRange[1]);
       if (pokemonInRange.length === 0) {
         return false;
       }
+    }
+
+    return true;
+  }
+}
+
+export class MoneyRequirement implements EncounterRequirement {
+  requiredMoney: number;
+
+  constructor(requiredMoney: number) {
+    this.requiredMoney = requiredMoney;
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
+    const money = scene.money;
+    if (!isNullOrUndefined(money) && this?.requiredMoney > 0 && this.requiredMoney > money) {
+      return false;
     }
 
     return true;

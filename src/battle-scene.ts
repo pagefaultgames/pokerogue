@@ -967,7 +967,7 @@ export default class BattleScene extends SceneBase {
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && (newWaveIndex > 180 || newWaveIndex < 3))) {
         // Roll for mystery encounter instead of wild battle (25% chance)
         const roll = Utils.randSeedInt(64);
-        const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE || 16;
+        const successRate = Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? 25 : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE;
 
         if (roll <= successRate) {
           // Successful roll, this is a mystery encounter
@@ -2270,7 +2270,7 @@ export default class BattleScene extends SceneBase {
   getMysteryEncounter(override: MysteryEncounter): MysteryEncounter {
     // Loading override or session encounter
     let encounter: MysteryEncounter;
-    if (Overrides.MYSTERY_ENCOUNTER_OVERRIDE && Overrides.MYSTERY_ENCOUNTER_OVERRIDE < allMysteryEncounters.length) {
+    if (!Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && Overrides.MYSTERY_ENCOUNTER_OVERRIDE < allMysteryEncounters.length) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
     } else {
       encounter = override?.encounterType >= 0 ? allMysteryEncounters[override?.encounterType] : null;

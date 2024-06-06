@@ -15,7 +15,6 @@ import {TimeOfDay} from "#app/data/enums/time-of-day";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
-import { MysteryEncounterType } from "./data/enums/mystery-encounter-type";
 
 /**
  * Overrides for testing different in game situations
@@ -91,9 +90,9 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  */
 
 // 1 to 100 (percent), set to null to ignore
-export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 100;
+export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = null;
 // Can use MysteryEncounterType, set to null to ignore (e.g. MysteryEncounterType.DARK_DEAL)
-export const MYSTERY_ENCOUNTER_OVERRIDE: number = MysteryEncounterType.DARK_DEAL;
+export const MYSTERY_ENCOUNTER_OVERRIDE: number = null;
 
 /**
  * MODIFIER / ITEM OVERRIDES

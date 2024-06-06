@@ -8,7 +8,7 @@ import { Species } from "../enums/species";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import { PokeballType } from "../pokeball";
 import { EggTier } from "../enums/egg-type";
-import { MysteryEncounterRequirements } from "../mystery-encounter-requirements";
+import { WaveCountRequirement } from "../mystery-encounter-requirements";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
@@ -26,7 +26,7 @@ export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
       repeat: true
     }
   ])
-  .withRequirements(new MysteryEncounterRequirements(2, 180)) // waves 2 to 180
+  .withRequirement(new WaveCountRequirement([2, 180])) // waves 2 to 180
   .withOption(new MysteryEncounterOptionBuilder()
     .withPreOptionPhase((scene: BattleScene) => {
       // Removes random pokemon from party and adds name to dialogue data tokens
