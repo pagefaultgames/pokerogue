@@ -1202,6 +1202,29 @@ export class BoostHealAttr extends HealAttr {
 }
 
 /**
+ * Heals the target only if it is the ally
+ * @extends HealAttr
+ * @see {@linkcode apply}
+ */
+export class HealOnAllyAttr extends HealAttr {
+  /**
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.getAlly() === target) {
+      super.apply(user, target, move, args);
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
  * Heals user as a side effect of a move that hits a target.
  * Healing is based on {@linkcode healRatio} * the amount of damage dealt or a stat of the target.
  * @extends MoveEffectAttr
@@ -3036,6 +3059,31 @@ export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
 
     if (user.isTerastallized() && user.getBattleStat(Stat.ATK, target, move) > user.getBattleStat(Stat.SPATK, target, move)) {
       category.value = MoveCategory.PHYSICAL;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Change the move category to status when used on the ally
+ * @extends VariableMoveCategoryAttr
+ * @see {@linkcode apply}
+ */
+export class StatusCategoryOnAllyAttr extends VariableMoveCategoryAttr {
+  /**
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   * @param args [0] {@linkcode Utils.IntegerHolder} The category of the move
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const category = (args[0] as Utils.IntegerHolder);
+
+    if (user.getAlly() === target) {
+      category.value = MoveCategory.STATUS;
       return true;
     }
 
@@ -6966,8 +7014,9 @@ export function initMoves() {
     new AttackMove(Moves.THROAT_CHOP, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7)
       .partial(),
     new AttackMove(Moves.POLLEN_PUFF, Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
-      .ballBombMove()
-      .partial(),
+      .attr(StatusCategoryOnAllyAttr)
+      .attr(HealOnAllyAttr, 0.5, true, false)
+      .ballBombMove(),
     new AttackMove(Moves.ANCHOR_SHOT, Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1),
     new StatusMove(Moves.PSYCHIC_TERRAIN, Type.PSYCHIC, -1, 10, -1, 0, 7)
