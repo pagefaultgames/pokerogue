@@ -512,158 +512,158 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "roxanne": {
     "encounter": {
-      1: "Would you kindly demonstrate how you battle?",
-      2: "You can learn many things by battling many trainers.",
-      3: "Oh, you caught me strategizing.\nWould you like to battle?"
+      1: "당신이 어떻게 싸우는지 보여주시겠어요?",
+      2: "당신은 여러 트레이너와 싸우면서 많은 것을 배울 수 있을거예요.",
+      3: "아, 전략짜는 거 들켰네요.\n배틀할까요?"
     },
     "victory": {
-      1: "Oh, I appear to have lost.\nI understand.",
-      2: "It seems that I still have so much more to learn when it comes to battle.",
-      3: "I'll take what I learned here today to heart."
+      1: "아, 제가 진 것 같네요.\n승복하겠습니다.",
+      2: "전 아직도 포켓몬 배틀에 대해서 한참 더 배워야할 것 같네요.",
+      3: "오늘 여기서 배운 것들을 마음에 담아둬야겠어요."
     },
     "defeat": {
-      1: "I have learned many things from our battle.\nI hope you have too.",
-      2: "I look forward to battling you again.\nI hope you'll use what you've learned here.",
-      3: "I won due to everything I have learned."
+      1: "전 방금 승부에서 많은 것을 배웠습니다.\n당신도 그랬길 바래요.",
+      2: "다시 붙을 날이 기대되네요.\n당신이 여기서 배운 걸 활용할 수 있길 바랍니다.",
+      3: "여태까지 공부해온 것 덕분에 이겼네요."
     }
   },
   "brawly": {
     "encounter": {
-      1: "Oh man, a challenger!\nLet's see what you can do!",
-      2: "You seem like a big splash.\nLet's battle!",
-      3: "Time to create a storm!\nLet's go!"
+      1: "오, 도전자잖아!\n어디 한 번 볼까!",
+      2: "넌 큰 파란을 일으킬 것 같군.\n승부다!",
+      3: "폭풍을 일으킬 시간이야!\n가자!"
     },
     "victory": {
-      1: "Oh woah, you've washed me out!",
-      2: "You surfed my wave and crashed me down!",
-      3: "I feel like I'm lost in Granite Cave!"
+      1: "우와, 너 날 씻겨버렸네!",
+      2: "내 파도를 타고, 나까지 밀어내다니!",
+      3: "바위 동굴에서 길을 잃은 기분이야!"
     },
     "defeat": {
-      1: "Haha, I surfed the big wave!\nChallenge me again sometime.",
-      2: "Surf with me again some time!",
-      3: "Just like the tides come in and out, I hope you return to challenge me again."
+      1: "하핫, 난 큰 파도를 탔다고!\n언제 또 도전해주라.",
+      2: "언젠가 또 같이 서핑하자고!",
+      3: "파도가 밀려왔다가 밀려나듯, 언젠가 너도 다시 도전하러 와."
     }
   },
   "wattson": {
     "encounter": {
-      1: "Time to get shocked!\nWahahahaha!",
-      2: "I'll make sparks fly!\nWahahahaha!",
-      3: "I hope you brought Paralyz Heal!\nWahahahaha!"
+      1: "찌릿찌릿해질 때가 됐군!\n와하하하핫!",
+      2: "스파크가 튀도록 해주마!\n와하하하하!",
+      3: "와하하하하!\n마비 치료제를 가져왔길 바라네!"
     },
     "victory": {
-      1: "Seems like I'm out of charge!\nWahahahaha!",
-      2: "You've completely grounded me!\nWahahahaha!",
-      3: "Thanks for the thrill!\nWahahahaha!"
+      1: "이 몸 배터리가 다 됐군!\n와하하하하!",
+      2: "자네 완전히 날 좌초시켰군!\n와하하하핫!",
+      3: "스릴 넘치는 배틀, 고맙네!\n와하하하하하!"
     },
     "defeat": {
-      1: "Recharge your batteries and challenge me again sometime!\nWahahahaha!",
-      2: "I hope you found our battle electrifying!\nWahahahaha!",
-      3: "Aren't you shocked I won?\nWahahahaha!"
+      1: "자네의 배터리 재충전하게. 그리고 나에게 도전하러 돌아오도록!\n와하하하핫!",
+      2: "방금 배틀이 자네에게 짜릿짜릿했길 바란다네!\n와하하하하!",
+      3: "자네 혹시 내가 이겨서 충격 받았나?\n와하하하핫!"
     }
   },
   "flannery": {
     "encounter": {
-      1: "Nice to meet you! Wait, no…\nI will crush you!",
-      2: "I've only been a leader for a little while, but I'll smoke you!",
-      3: "It's time to demonstrate the moves my grandfather has taught me! Let's battle!"
+      1: "어서오세요! 잠깐, 아냐…\n너를 무너뜨려줄게!",
+      2: "난 체육관 관장이 된지는 얼마 안됐지만, 널 태워버릴거야!",
+      3: "할아버지에게 배운 기술을 한 수 보여줄게! 승부다!"
     },
     "victory": {
-      1: "You remind me of my grandfather…\nNo wonder I lost.",
-      2: "Am I trying too hard?\nI should relax, can't get too heated.",
-      3: "Losing isn't going to smother me out.\nTime to reignite training!"
+      1: "너 우리 할아버지를 생각나게 하네…\n내가 진 게 놀랍진 않아.",
+      2: "나 너무 열심히 하는 건가?\n너무 열 올리면 안되니깐, 진정해야겠어.",
+      3: "패배는 날 꺼뜨릴 수 없어.\n트레이닝으로 다시 불을 붙일 때야!"
     },
     "defeat": {
-      1: "I hope I've made my grandfather proud…\nLet's battle again some time.",
-      2: "I…I can't believe I won!\nDoing things my way worked!",
-      3: "Let's exchange burning hot moves again soon!"
+      1: "할아버지가 자랑스러워하시길…\n언젠가 다시 배틀하자.",
+      2: "내…내가 이기다니!\n내 방식대로 한 게 통했어!",
+      3: "조만간 다시 뜨겁게 불타오르는 배틀을 하자!"
     }
   },
   "norman": {
     "encounter": {
-      1: "I'm surprised you managed to get here.\nLet's battle.",
-      2: "I'll do everything in my power as a Gym Leader to win.\nLet's go!",
-      3: "You better give this your all.\nIt's time to battle!"
+      1: "여기까지 오다니 놀랍군.\n한 번 겨뤄볼까.",
+      2: "관장으로서 최선을 다해 널 이길 거란다.\n가자!",
+      3: "최선을 다하는 게 좋을 거야.\n승부할 시간이다!"
     },
     "victory": {
-      1: "I lost to you…?\nRules are rules, though.",
-      2: "Was moving from Olivine a mistake…?",
-      3: "I can't believe it.\nThat was a great match."
+      1: "내가 지다니…?\n규칙은 규칙이니, 흐음.",
+      2: "담청시티에서 이사한 게 문제였나…?",
+      3: "믿을 수 없구나.\n훌륭한 승부였어."
     },
     "defeat": {
-      1: "We both tried our best.\nI hope we can battle again soon.",
-      2: "You should try challenging my kid instead.\nYou might learn something!",
-      3: "Thank you for the excellent battle.\nBetter luck next time."
+      1: "우린 둘 다 최선을 다했지.\n다시 대결할 수 있었으면 좋겠구나.",
+      2: "우리 집 꼬마에게 도전해보는 것도 좋겠군.\n아마 뭔가 배울 수 있을거다!",
+      3: "방금 전 배틀 완벽했어.\n다음에도 행운이 함께하길."
     }
   },
   "winona": {
     "encounter": {
-      1: "I've been soaring the skies looking for prey…\nAnd you're my target!",
-      2: "No matter how our battle is, my Flying Pokémon and I will triumph with grace. Let's battle!",
-      3: "I hope you aren't scared of heights.\nLet's ascend!"
+      1: "저는 먹이를 찾아서 하늘을 날아다녔어요…\n그리고 당신은 제 타겟입니다!",
+      2: "배틀이 어떻게 되든, 전 제 비행 포켓몬과 우아하게 승리하겠어요. 승부합시다!",
+      3: "당신이 높은 곳을 무서워하지 않기를.\n자, 날아올라요!"
     },
     "victory": {
-      1: "You're the first Trainer I've seen with more grace than I.\nExcellently played.",
-      2: "Oh, my Flying Pokémon have plummeted!\nVery well.",
-      3: "Though I may have fallen, my Pokémon will continue to fly!"
+      1: "저보다 우아하게 나서는 트레이너는 처음 봤습니다.\n훌륭하시네요.",
+      2: "이런, 제 비행 포켓몬이 추락해버렸네요!\n훌륭한 배틀이었습니다.",
+      3: "비록 전 떨어졌지만, 제 포켓몬은 다시 날아갈 겁니다!"
     },
     "defeat": {
-      1: "My Flying Pokémon and I will forever dance elegantly!",
-      2: "I hope you enjoyed our show.\nOur graceful dance is finished.",
-      3: "Won't you come see our elegant choreography again?"
+      1: "제 비행 포켓몬과 영원히 우아하게 춤출게요.",
+      2: "우리의 쇼가 즐거웠길 바라요.\우아한 춤은 끝났습니다.",
+      3: "우리의 엘레강스한 안무를 다시 보러오지 않을래요?"
     }
   },
   "tate": {
     "encounter": {
-      1: "Hehehe…\nWere you surprised to see me without my sister?",
-      2: "I can see what you're thinking…\nYou want to battle!",
-      3: "How can you defeat someone…\nWho knows your every move?"
+      1: "헤헤헤…\n내가 란과 같이 있지 않아서 놀랐지?",
+      2: "네가 무슨 생각을 하는지 알아…\n승부하고 싶은거지!",
+      3: "네 움직임을 모두 알고 있는데…\n어떻게 이기려고?"
     },
     "victory": {
-      1: "It can't be helped…\nI miss Liza…",
-      2: "Your bond with your Pokémon was stronger than mine.",
-      3: "If I were with Liza, we would have won.\nWe can finish each other's thoughts!"
+      1: "어쩔 수 없지…\n란이 보고싶다아…",
+      2: "너와 네 포켓몬과의 유대, 나보다 더 견고한걸.",
+      3: "란이랑 함께였다면, 우리가 이겼어.\n둘이선 더 잘 할 수 있다구!"
     },
     "defeat": {
-      1: "My Pokémon and I are superior!",
-      2: "If you can't even defeat me, you'll never be able to defeat Liza either.",
-      3: "It's all thanks to my strict training with Liza.\nI can make myself one with Pokémon."
+      1: "내 포켓몬과 나는 우수하다구!",
+      2: "날 못 이긴다면, 넌 란한테도 절대로 못 이겨.",
+      3: "란과 함께한 엄격한 훈련 덕이야.\n덕분에 포켓몬과 하나가 될 수 있었어."
     }
   },
   "liza": {
     "encounter": {
-      1: "Fufufu…\nWere you surprised to see me without my brother?",
-      2: "I can determine what you desire…\nYou want to battle, don't you?",
-      3: "How can you defeat someone…\nWho's one with their Pokémon?"
+      1: "후후후…\n내가 풍과 같이 있지 않아서 놀랐지?",
+      2: "네가 무얼 바라는지 알아…\n포켓몬 배틀, 맞지?",
+      3: "포켓몬과 하나가 된 사람…\n어떻게 이기려고?"
     },
     "victory": {
-      1: "It can't be helped…\nI miss Tate…",
-      2: "Your bond with your Pokémon…\nIt's stronger than mine.",
-      3: "If I were with Tate, we would have won.\nWe can finish each other's sentences!"
+      1: "어쩔 수 없지…\n풍이 보고싶다아…",
+      2: "너와 네 포켓몬과의 유대, 나보다 더 견고한걸.",
+      3: "풍이랑 함께였다면, 우리가 이겼어.\n둘이선 더 잘 할 수 있다구!"
     },
     "defeat": {
-      1: "My Pokémon and I are victorious.",
-      2: "If you can't even defeat me, you'll never be able to defeat Tate either.",
-      3: "It's all thanks to my strict training with Tate.\nI can synchronize myself with my Pokémon."
+      1: "내 포켓몬과 내가 승리한거야.",
+      2: "날 못 이긴다면, 넌 풍한테도 절대로 못 이겨.",
+      3: "풍과 함께한 엄격한 훈련 덕이야.\n덕분에 포켓몬과 싱크로 될 수 있었어."
     }
   },
   "juan": {
     "encounter": {
-      1: "Now's not the time to act coy.\nLet's battle!",
-      2: "Ahahaha, You'll be witness to my artistry with Water Pokémon!",
-      3: "A typhoon approaches!\nWill you be able to test me?",
-      4: "Please, you shall bear witness to our artistry.\nA grand illusion of water sculpted by my Pokémon and myself!"
+      1: "지금은 겸양을 부릴 때가 아니군요.\n승부합시다!",
+      2: "아하하하, 물 포켓몬과 함께 아트를 보여드리겠습니다!",
+      3: "태풍이 다가오는군요!\n저를 테스트해주시겠습니까?",
+      4: "자, 마음껏 봐주십시오.\n저와 포켓몬이 이루어내는 물의 일루전을!"
     },
     "victory": {
-      1: "You may be a genius who can take on Wallace!",
-      2: "I focused on elegance while you trained.\nIt's only natural that you defeated me.",
-      3: "Ahahaha!\nVery well, You have won this time.",
-      4: "From you, I sense the brilliant shine of skill that will overcome all."
+      1: "당신은 윤진 관장을 뛰어넘을 지니어스군요!",
+      2: "당신이 훈련할 때 저는 엘레강스에 집중했습니다.\n당신이 이기는 건 당연하죠.",
+      3: "아하하하하!\n잘했습니다, 이번엔 당신이 이겼네요.",
+      4: "모든 것을 극복하는 브릴리언트 스킬, 당신에게 느껴지네요."
     },
     "defeat": {
-      1: "My Pokémon and I have sculpted an illusion of Water and come out victorious.",
-      2: "Ahahaha, I have won, and you have lost.",
-      3: "Shall I loan you my outfit? It may help you battle!\nAhahaha, I jest!",
-      4: "I'm the winner! Which is to say, you lost."
+      1: "저와 포켓몬이 이루어내는 물의 일루전이 승리했습니다.",
+      2: "아하하핫, 저는 이겼고, 당신은 졌습니다.",
+      3: "겉옷 빌려드릴까요? 아마도 배틀에 도움이 될겁니다!\n아하하하, 농담입니다!",
+      4: "제가 승리자군요! 그리고, 당신은 졌네요."
     }
   },
   "crasher_wake": {
