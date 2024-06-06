@@ -1,15 +1,15 @@
 # 📝 Immediate things on the to-do platter
 
-- Add logic to handle spawning boss encounters ✔️
-- Bugfix not getting a reward at the end of battle ME 🔨
 - Add logic for awarding exp to the party (outside of a normal combat) 🔨
-- Add logic for choosing a Pokémon from party for some effect (trades, sacrifices, etc) 🔨
-- Introduce more text tree hierarchy -- for better organization of encounters, options and dialogue text/layers ✔️
-- More steps to encounters -- ie Option --> __Dialogue: "You chose to not open the chest"__ --> Efects -> __Dialogue: "You walk away with regret"__ ✔️
+
 
 # 📝 Things to (eventually) be done for Mystery Encounters ("MEs"):
 - Add "Mysterious Events" (MEs) to gamemodes Classic and Endless ✔️ 
 - MEs need to have a chance to spawn ✔️
+- Add logic to handle spawning boss encounters ✔️
+- Introduce more text tree hierarchy -- for better organization of encounters, options and dialogue text/layers ✔️
+- More steps to encounters -- ie Option --> __Dialogue: "You chose to not open the chest"__ --> Efects -> __Dialogue: "You walk away with regret"__ ✔️
+- Bugfix not getting a reward at the end of battle ME (some others less game-breaking ones might be present, check "Known bugs")✔️
 
 
 ## A ME should __**always have**__:
@@ -65,22 +65,29 @@
 
   ### **Functions/ Helper functions** defined in __/utils/mystery-encounter-utils.ts__ for ME to happen, if applicable. They can be:
     - Giving the player X item ✔️
-    - Giving the player X item from Y item pool ❌
-    - Letting the player choose from X items ❌
-    - Letting the player choose from X item tiers ✔️
-    - Letting the player choose multiple items from an item pool ❌ 
+    - Giving the player X item from a certain tier ✔️
+    - Letting the player choose from items ✔️
+    - Letting the player choose from X items from a certain tier ✔️
     - Start a combat encounter with a trainer ✔️
     - Start a combat encounter with a wild pokémon (from biome) ✔️
     - Start a combat encounter with a wild pokémon (boss) ✔️
-    - XP to a Pokémon (similar to rare candy?) ❌
     - XP to the whole party (similar to rarer candy?) ✔️
-    - Set a hazard ❌
-    - Set a weather ❌
-    - Status one or many Pokémon if your party -- if they can be statused ❌
-    - Damage one or many Pokémon in your party ❌
-    - Give the player a Pokémon from a pool (useful for reg. professors/traders) ❌
-    - Remove a PKMN from the player's party (Porygon ME) ❌
+    - Remove a PKMN from the player's party (Porygon ME) ✔️
     - Steal from player (Gholdengo ME) ❌
+
+# 📝 Known bugs (squash 'em all!):
+
+- None at them moment. Still more testing needs to be done.
+
+# 📝 Other things/functionalities that won't make it in the MVP but are planned to accomodate future MEs:
+
+- Set a hazard ❌
+- Set a weather ❌
+- Status one or many Pokémon if your party -- if they can be statused ❌
+- Damage one or many Pokémon in your party ❌
+- Give the player a Pokémon from a pool (useful for reg. professors/traders) ❌
+- XP to a Pokémon (similar to rare candy?) ❌
+- Add logic for choosing a Pokémon from party for some effect (trades, sacrifices, etc) ❌
 
 
 Note on rarity: once the ME roll finalises, another roll decides which rarity pool the ME belongs to, and a final roll takes in different weights in the rarity tier pool to decide the ME that occurs, among the available ones in that pool.
