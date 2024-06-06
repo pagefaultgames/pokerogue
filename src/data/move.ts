@@ -536,9 +536,9 @@ export default class Move implements Localizable {
 
   /**
    * Checks if the move flag applies to the pokemon(s) using/receiving the move
-   * @param flag {@linkcode MoveFlags}
-   * @param user {@linkcode Pokemon}
-   * @param target {@linkcode Pokemon}
+   * @param flag {@linkcode MoveFlags} MoveFlag to check on user and/or target
+   * @param user {@linkcode Pokemon} the Pokemon using the move
+   * @param target {@linkcode Pokemon} the Pokemon receiving the move
    * @returns boolean
    */
   checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
