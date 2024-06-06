@@ -164,10 +164,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "parasol_lady": {
     "encounter": {
-      1: "우아함과 침착함으로 배틀을 맞이할 시간이랍니다!",
+      1: "우아함과 침착함으로 승부하겠습니다!",
     },
     "victory": {
-      1: "제 우아함은 깨지지 않는답니다!",
+      1: "그래도 제 우아함은 무너지지 않아요!",
     }
   },
   "twins": {
@@ -189,7 +189,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cyclist": {
     "encounter": {
-      1: "내가 만든 먼지가 먹을 준비하시지!",
+      1: "내가 만든 먼지나 마실 준비하시지!",
       2: "준비하라구! 난 널 먼지 속에 놓고 올 거니까!",
       3: "전력을 다해야 할 거야, 네가 날 따라올 수 있는지 지켜보겠어!"
     },
