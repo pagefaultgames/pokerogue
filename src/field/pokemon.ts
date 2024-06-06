@@ -1671,7 +1671,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (cancelled.value) {
         result = HitResult.NO_EFFECT;
       } else {
-        const typeBoost = source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === move.type) as TypeBoostTag;
+        const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
         if (typeBoost) {
           power.value *= typeBoost.boostValue;
           if (typeBoost.oneUse) {
@@ -3762,6 +3762,19 @@ export enum HitResult {
 
 export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;
 
+/**
+ * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
+ * These are the moves assigned to a {@linkcode Pokemon} object.
+ * It links to {@linkcode Move} class via the move ID.
+ * Compared to {@linkcode Move}, this class also tracks if a move has received.
+ * PP Ups, amount of PP used, and things like that.
+ * @see {@linkcode isUsable} - checks if move is disabled, out of PP, or not implemented.
+ * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
+ * @see {@linkcode usePp} - removes a point of PP from the move.
+ * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
+ * @see {@linkcode getPpRatio} - returns the current PP amount / max PP amount.
+ * @see {@linkcode getName} - returns name of {@linkcode Move}.
+ **/
 export class PokemonMove {
   public moveId: Moves;
   public ppUsed: integer;
