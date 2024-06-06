@@ -107,6 +107,96 @@ describe("Battle order", () => {
     expect(order[3]).toBe(1);
   }, 20000);
 
+  it("double - speed tie", async() => {
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    await game.startBattle([
+      Species.BULBASAUR,
+      Species.BLASTOISE,
+    ]);
+    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
+    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 100;
+    game.scene.getParty()[0].stats[Stat.SPD] = 100;
+    game.scene.getParty()[1].stats[Stat.SPD] = 100;
+
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
+      handler.processInput(Button.ACTION);
+    });
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
+      handler.processInput(Button.ACTION);
+    });
+    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
+    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const order = phase.getOrder();
+    expect(order[0]).toBe(0);
+    expect(order[1]).toBe(1);
+    expect(order[2]).toBe(2);
+    expect(order[3]).toBe(3);
+  }, 20000);
+
+  it("double - speed tie betwen 1 opp and 1 player", async() => {
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    await game.startBattle([
+      Species.BULBASAUR,
+      Species.BLASTOISE,
+    ]);
+    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
+    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
+    game.scene.getParty()[0].stats[Stat.SPD] = 100;
+    game.scene.getParty()[1].stats[Stat.SPD] = 150;
+
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
+      handler.processInput(Button.ACTION);
+    });
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
+      handler.processInput(Button.ACTION);
+    });
+    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
+    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const order = phase.getOrder();
+    expect(order[0]).toBe(1);
+    expect(order[1]).toBe(3);
+    expect(order[2]).toBe(0);
+    expect(order[3]).toBe(2);
+  }, 20000);
+
   it("Player faster than opponent 50 vs 150", async() => {
     await game.startBattle([
       Species.BULBASAUR,
