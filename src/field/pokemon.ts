@@ -387,18 +387,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Currently checks whether the Pokemon is a stand alone form (i.e. A type of cosplay Pikachu)
    * Used for excluding Pokemon Form from form changing items appearing in shop and evolving.
-   * @param isPrimary boolean: true for checking primary Pokemon, false for checking fused Pokemon
+   * @param formIndex integer form index to check
    * @returns {boolean} true if Pokemon's form is stand alone.
    */
-  isStandAloneForm(isPrimary: boolean): boolean {
-    if (isPrimary) {
-      if (this.getFormKey().includes("cosplay")) {
-        return true;
-      }
-    } else {
-      if (this.getFusionFormKey().includes("cosplay")) {
-        return true;
-      }
+
+  isStandAloneForm(formIndex: integer): boolean {
+    if (this.species.forms && formIndex) { // Check if exists before proceeding
+      return this.species.forms[formIndex].getFormIsStandAlone();
     }
     return false;
   }

@@ -118,7 +118,7 @@ export class SpeciesFormChange {
       return false;
     }
 
-    const formKeys = pokemon.species.forms.map(f => f.formKey);
+    const formKeys = pokemon.species.forms.filter(f => !f.getFormIsStandAlone()).map(f => f.formKey); // think this solves it.
     if (formKeys[pokemon.formIndex] !== this.preFormKey) {
       return false;
     }
