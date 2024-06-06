@@ -380,7 +380,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "¡Argh! ¡Derrotado por un niño!",
       2: "¡Tu espíritu me ha hundido!",
-      3: "¡Solo fue un despiste!"
+      3: "Creo que soy yo quien está mareado..."
     },
   },
   "brock": {
