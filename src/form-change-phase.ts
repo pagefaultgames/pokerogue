@@ -8,8 +8,9 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { BattleSpec } from "./enums/battle-spec";
-import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
+import { BattlePhase, GameOverPhase, MovePhase, PokemonHealPhase, ToggleDoublePositionPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
+import i18next from "i18next";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -278,6 +279,25 @@ export class QuietFormChangePhase extends BattlePhase {
   }
 
   end(): void {
+    // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
+    if (this.pokemon.isPlayer() && this.pokemon.isOnField() && !this.pokemon.isAllowedInBattle()) {
+      this.scene.queueMessage(i18next.t("challenges:illegalEvolution", {"pokemon": this.pokemon.name}), null, true);
+
+      const allowedPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+
+      if (!allowedPokemon.length) {
+        // If there are no longer any legal pokemon in the party, game over.
+        this.scene.clearPhaseQueue();
+        this.scene.unshiftPhase(new GameOverPhase(this.scene));
+      } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
+        // If there is at least one pokemon in the back that is legal to switch in, force a switch.
+        (this.pokemon as PlayerPokemon).switchOut(false, true);
+      }
+      if (allowedPokemon.length === 1 && this.scene.currentBattle.double) {
+        this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
+      }
+    }
+
     if (this.pokemon.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon instanceof EnemyPokemon) {
       this.scene.playBgm();
       this.pokemon.summonData.battleStats = [ 0, 0, 0, 0, 0, 0, 0 ];
