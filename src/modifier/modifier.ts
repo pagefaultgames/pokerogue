@@ -2195,7 +2195,8 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     super(type, stackCount);
 
     this.effect = effect;
-    this.chance = (chancePercent || 5) / 100;
+    //Hardcode temporarily
+    this.chance = .025 * ((this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) ? 2 : 1);
   }
 
   match(modifier: Modifier): boolean {
@@ -2230,7 +2231,8 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 2.5) / 100;
+    //Hardcode temporarily
+    this.chance = .025;
   }
 
   match(modifier: Modifier): boolean {
@@ -2268,7 +2270,8 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   constructor(type: ModifierType, chancePercent?: number, stackCount?: integer) {
     super(type, stackCount || 10);
 
-    this.chance = (chancePercent || 2) / 100;
+    //Hardcode temporarily
+    this.chance = .02;
   }
 
   match(modifier: Modifier) {
