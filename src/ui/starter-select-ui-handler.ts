@@ -1442,7 +1442,36 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   createButtonFromIconText(iconSetting, gamepadType, translatedText, instructionTextSize): void {
-    const iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
+    let iconPath;
+    // touch controls cannot be rebound as is, and are just emulating a keyboard event.
+    // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
+    if (gamepadType === "touch") {
+      gamepadType = "keyboard";
+      switch (iconSetting) {
+      case SettingKeyboard.Button_Cycle_Shiny:
+        iconPath = "R.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Form:
+        iconPath = "F.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Gender:
+        iconPath = "G.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Ability:
+        iconPath = "E.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Nature:
+        iconPath = "N.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Variant:
+        iconPath = "V.png";
+        break;
+      default:
+        break;
+      }
+    } else {
+      iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
+    }
     const iconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, gamepadType, iconPath);
     iconElement.setScale(0.675);
     iconElement.setOrigin(0.0, 0.0);
@@ -1467,7 +1496,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (this.scene.inputMethod === "gamepad") {
       gamepadType = this.scene.inputController.getConfig(this.scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
     } else {
-      gamepadType = "keyboard";
+      gamepadType = this.scene.inputMethod;
     }
 
     if (this.speciesStarterDexEntry?.caughtAttr) {
