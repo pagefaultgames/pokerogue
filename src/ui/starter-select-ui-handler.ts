@@ -1430,6 +1430,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           break;
         case Button.CYCLE_GENDER:
           if (this.canCycleGender) {
+            starterData.starterAttributes.female = !props.female;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
             success = true;
           }
@@ -1913,6 +1914,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
           }
           props.formIndex = starterAttributes?.form ?? props.formIndex;
+          props.female = starterAttributes?.female ?? props.female;
 
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature);
         }

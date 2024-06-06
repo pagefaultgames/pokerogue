@@ -174,10 +174,11 @@ export interface StarterMoveData {
 }
 
 export interface StarterAttributes {
-    nature: integer;
-    ability: integer;
-    variant: integer;
-    form: integer;
+  nature?: integer;
+  ability?: integer;
+  variant?: integer;
+  form?: integer;
+  gender?: boolean;
 }
 
 export interface StarterDataEntry {
@@ -189,7 +190,7 @@ export interface StarterDataEntry {
   passiveAttr: integer;
   valueReduction: integer;
   classicWinCount: integer;
-  starterAttributes: StarterAttributes;
+  starterAttributes?: StarterAttributes;
 }
 
 export interface StarterData {
