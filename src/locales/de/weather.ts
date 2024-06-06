@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "Ein Sandsturm kommt auf!",
   "sandstormLapseMessage": "Der Sandsturm tobt.",
   "sandstormClearMessage": "Der Sandsturm legt sich.",
-  "sandstormDamageMessage": " Der Sandsturm fügt {{pokemonPrefix}}{{pokemonName}} Schaden zu!",
+  "sandstormDamageMessage": " Der Sandsturm fügt {{pokemonNameWithAffix}} Schaden zu!",
 
   "hailStartMessage": "Es fängt an zu hageln!",
   "hailLapseMessage": "Der Hagelsturm tobt.",
   "hailClearMessage": "Der Hagelsturm legt sich.",
-  "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} wird von Hagelkörnern getroffen!",
+  "hailDamageMessage": "{{pokemonNameWithAffix}} wird von Hagelkörnern getroffen!",
 
   "snowStartMessage": "Es fängt an zu schneien!",
   "snowLapseMessage": "Der Schneesturm tobt.",
