@@ -4,7 +4,7 @@ import { Mode } from "../ui";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { Setting, SettingType } from "#app/system/settings/settings";
 
-export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
+export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
