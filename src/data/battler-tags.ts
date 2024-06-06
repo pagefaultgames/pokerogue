@@ -15,6 +15,8 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
+import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { Species } from "./enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -1354,6 +1356,57 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+/**
+ * Provides the Ice Face ability's effects.
+ */
+export class IceFaceTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  /**
+   * Determines if the Ice Face tag can be added to the Pokémon.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag might be added.
+   * @returns {boolean} - True if the tag can be added, false otherwise.
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
+    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
+    const isFormIceFace = pokemon.formIndex === 0;
+
+
+    // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
+    if ((pokemon.species.speciesId === Species.EISCUE && isFormIceFace) ||  isWeatherSnowOrHail) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Applies the Ice Face tag to the Pokémon.
+   * Triggers a form change to Ice Face if the Pokémon is not in its Ice Face form.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag is added.
+   */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    if (pokemon.formIndex !== 0) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    }
+  }
+
+  /**
+   * Removes the Ice Face tag from the Pokémon.
+   * Triggers a form change to Noice when the tag is removed.
+   * @param {Pokemon} pokemon - The Pokémon from which the tag is removed.
+   */
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1467,6 +1520,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new MinimizeTag();
   case BattlerTagType.DESTINY_BOND:
     return new DestinyBondTag(sourceMove, sourceId);
+  case BattlerTagType.ICE_FACE:
+    return new IceFaceTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
