@@ -199,7 +199,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MULTI_LENS": { name: "多重镜" },
 
-    "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (含复活)" },
+    "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (不含复活)" },
     "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级额外增加1级" },
 
     "BERRY_POUCH": { name: "树果袋", description: "使用树果时有30%的几率不会消耗树果" },
