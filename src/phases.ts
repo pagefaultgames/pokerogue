@@ -2832,7 +2832,7 @@ export class MoveEffectPhase extends PokemonPhase {
         }
         this.scene.applyModifiers(PokemonResetNegativeStatStageModifier, this.player, user);
         for (const target of this.targets) {
-          if (this.scene.getPokemonById(target).isActive()) {
+          if (this.scene.getPokemonById(target)?.isActive()) {
             this.scene.applyModifiers(PokemonResetNegativeStatStageModifier, this.player, this.scene.getPokemonById(target));
           }
         }
