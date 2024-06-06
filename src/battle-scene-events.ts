@@ -21,6 +21,11 @@ export enum BattleSceneEventType {
   BERRY_USED = "onBerryUsed",
 
   /**
+   * Triggers at the start of each new encounter
+   * @see {@linkcode EncounterPhaseEvent}
+   */
+  ENCOUNTER_PHASE = "onEncounterPhase",
+  /**
    * Triggers on the first turn of a new battle
    * @see {@linkcode TurnInitEvent}
    */
@@ -85,6 +90,15 @@ export class BerryUsedEvent extends Event {
   }
 }
 
+/**
+ * Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events
+ * @extends Event
+*/
+export class EncounterPhaseEvent extends Event {
+  constructor() {
+    super(BattleSceneEventType.ENCOUNTER_PHASE);
+  }
+}
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events
  * @extends Event
