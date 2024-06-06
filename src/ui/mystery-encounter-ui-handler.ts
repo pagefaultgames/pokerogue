@@ -8,6 +8,8 @@ import i18next from "i18next";
 import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
 import { PartyUiMode } from "./party-ui-handler";
 import MysteryEncounterOption from "../data/mystery-encounter-option";
+import * as Utils from "../utils";
+import { getPokeballAtlasKey } from "../data/pokeball";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -17,6 +19,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
+  private descriptionScrollTween: Phaser.Tweens.Tween;
+  private rarityBall: Phaser.GameObjects.Sprite;
 
   private filteredEncounterOptions: MysteryEncounterOption[] = [];
 
@@ -45,6 +49,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     this.descriptionWindow = addWindow(this.scene, 0, 0, 150, 105, false, false, 0, 0, WindowVariant.THIN);
     this.descriptionContainer.add(this.descriptionWindow);
+
+    this.rarityBall = this.scene.add.sprite(140, 10, "pb");
+    this.descriptionContainer.add(this.rarityBall);
   }
 
   show(args: any[]): boolean {
@@ -308,7 +315,44 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const titleTextObject = addTextObject(this.scene, 65 - (titleText.length), 6, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 830 } });
     this.descriptionContainer.add(titleTextObject);
 
-    const descriptionTextObject = addTextObject(this.scene, 6, 25, descriptionText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    // Rarity of encounter
+    const ballType = getPokeballAtlasKey(mysteryEncounter.encounterTier as number);
+    this.rarityBall.setTexture(ballType, ballType);
+
+    const longText = "\nThis is a super super super\nsuper long super super\nsuper super long super super super super long\ndescription.";
+    const descriptionTextObject = addTextObject(this.scene, 6, 25, descriptionText + longText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+
+    // Sets up the mask that hides the description text to give an illusion of scrollingzz
+    const descriptionTextMaskRect = this.scene.make.graphics({});
+    descriptionTextMaskRect.setScale(6);
+    descriptionTextMaskRect.fillStyle(0xFFFFFF);
+    descriptionTextMaskRect.beginPath();
+    descriptionTextMaskRect.fillRect(6, 54, 206, 60);
+
+    const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
+
+    descriptionTextObject.setMask(abilityDescriptionTextMask);
+
+    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 14.83);
+
+    if (this.descriptionScrollTween) {
+      this.descriptionScrollTween.remove();
+      this.descriptionScrollTween = null;
+    }
+
+    // Animates the description text moving upwards
+    if (descriptionLineCount > 2) {
+      //descriptionTextObject.setY(69);
+      this.descriptionScrollTween = this.scene.tweens.add({
+        targets: descriptionTextObject,
+        delay: Utils.fixedInt(2000),
+        loop: -1,
+        hold: Utils.fixedInt(2000),
+        duration: Utils.fixedInt((descriptionLineCount - 2) * 2000),
+        y: `-=${14.83 * (descriptionLineCount - 3)}`
+      });
+    }
+
     this.descriptionContainer.add(descriptionTextObject);
 
     const queryTextObject = addTextObject(this.scene, 65 - (queryText.length), 90, queryText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
@@ -316,12 +360,12 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Slide in description container
     if (slideInDescription) {
-      this.descriptionContainer.x -= 100;
+      this.descriptionContainer.x -= 150;
       this.scene.tweens.add({
         targets: this.descriptionContainer,
-        x: "+=100",
+        x: "+=150",
         ease: "Sine.easeInOut",
-        duration: 750
+        duration: 1000
       });
     }
   }
@@ -331,7 +375,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.optionsContainer.setVisible(false);
     this.optionsContainer.removeAll(true);
     this.descriptionContainer.setVisible(false);
-    this.descriptionContainer.removeBetween(1, this.descriptionContainer.length, true);
+    // Keeps container background and pokeball
+    this.descriptionContainer.removeBetween(2, this.descriptionContainer.length, true);
     this.getUi().getMessageHandler().clearText();
     this.eraseCursor();
   }

@@ -53,8 +53,6 @@ export default interface MysteryEncounter {
   encounterVariant?: MysteryEncounterVariant;
   // Flag to check if first time item shop is being shown for encounter. Will be set to false after shop is shown (so can't reroll same rarity items)
   lockEncounterRewardTiers?: boolean;
-  // If no battle occurred during mysteryEncounter, flag should be set to false
-  didBattle?: boolean;
 }
 
 export default class MysteryEncounter implements MysteryEncounter {
@@ -64,7 +62,6 @@ export default class MysteryEncounter implements MysteryEncounter {
     this.dialogue = allMysteryEncounterDialogue[this.encounterType];
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.lockEncounterRewardTiers = true;
-    this.didBattle = true;
   }
 
   meetsRequirements?(scene: BattleScene) {

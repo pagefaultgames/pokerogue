@@ -422,19 +422,11 @@ export function setEncounterRewards(scene: BattleScene, showShop?: boolean, shop
         }
       }
 
-      // If adding rewards for a non-battle encounter
-      //if (!this.scene.currentBattle.mysteryEncounter.didBattle) {
-      //  scene.unshiftPhase(new SelectModifierPhase(scene, 0, rewards));
-      //} else {
-      //  scene.pushPhase(new SelectModifierPhase(scene, 0, rewards));
-      //}
-
       scene.unshiftPhase(new SelectModifierPhase(scene, 0, rewards));
     }
 
     if (nonShopRewards?.length > 0) {
       nonShopRewards.forEach((reward) => {
-        //scene.pushPhase(new ModifierRewardPhase(scene, reward));
         scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
       });
 
