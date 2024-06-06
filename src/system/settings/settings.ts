@@ -3,7 +3,7 @@ import i18next from "i18next";
 import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
-import { PlayerGender } from "../game-data";
+import { PlayerGender } from "#app/data/enums/player-gender";
 import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
 import { MoneyFormat } from "../../enums/money-format";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
@@ -44,6 +44,7 @@ export const SettingKeys = {
   UI_Theme: "UI_THEME",
   Window_Type: "WINDOW_TYPE",
   Tutorials: "TUTORIALS",
+  Move_Info: "MOVE_INFO",
   Enable_Retries: "ENABLE_RETRIES",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
@@ -131,6 +132,13 @@ export const Setting: Array<Setting> = [
     options: OFF_ON,
     default: 1,
     type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Move_Info,
+    label: "Move Info",
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.ACCESSIBILITY
   },
   {
     key: SettingKeys.Enable_Retries,
@@ -311,6 +319,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Tutorials:
     scene.enableTutorials = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Move_Info:
+    scene.enableMoveInfo = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value] === "On";
