@@ -1372,7 +1372,7 @@ export class IceFaceTag extends BattlerTag {
 
 
     // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
-    if (pokemon.species.speciesId === Species.EISCUE ||  isWeatherSnowOrHail || isFormIceFace) {
+    if ((pokemon.species.speciesId === Species.EISCUE && isFormIceFace) ||  isWeatherSnowOrHail) {
       return true;
     }
     return false;
