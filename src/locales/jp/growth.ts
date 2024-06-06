@@ -1,10 +1,10 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const growth: SimpleTranslationEntries = {
-  "Erratic": "Erratic",
-  "Fast": "Fast",
-  "Medium_Fast": "Medium Fast",
-  "Medium_Slow": "Medium Slow",
-  "Slow": "Slow",
-  "Fluctuating": "Fluctuating"
+  "Erratic": "60まんタイプ",
+  "Fast": "80まんタイプ",
+  "Medium_Fast": "100まんタイプ",
+  "Medium_Slow": "105まんタイプ",
+  "Slow": "125まんタイプ",
+  "Fluctuating": "164まんタイプ"
 } as const;

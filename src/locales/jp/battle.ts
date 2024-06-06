@@ -26,7 +26,7 @@ export const battle: SimpleTranslationEntries = {
   "learnMove": "{{pokemonName}}は　あたらしく\n{{moveName}}を　おぼえた！",
   "learnMovePrompt": "{{pokemonName}}は　あたらしく\n{{moveName}}を　おぼえたい……",
   "learnMoveLimitReached": "しかし　{{pokemonName}}は　わざを　4つ\nおぼえるので　せいいっぱいだ！",
-  "learnMoveReplaceQuestion": "{{moveName}}の　かわりに\nほかの　わざを　わすれさせますか？", 
+  "learnMoveReplaceQuestion": "{{moveName}}の　かわりに\nほかの　わざを　わすれさせますか？",
   "learnMoveStopTeaching": "それでは……　{{moveName}}を\nおぼえるのを　あきらめますか？",
   "learnMoveNotLearned": "{{pokemonName}}は　{{moveName}}を\nおぼえずに　おわった！",
   "learnMoveForgetQuestion": "どの　わざを\nわすれさせたい？",

@@ -1,9 +1,9 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const commandUiHandler: SimpleTranslationEntries = {
-  "fight": "Fight",
-  "ball": "Ball",
-  "pokemon": "Pokémon",
-  "run": "Run",
-  "actionMessage": "What will\n{{pokemonName}} do?",
+  "fight": "たたかう",
+  "ball": "ボール",
+  "pokemon": "ポケモン",
+  "run": "にげる",
+  "actionMessage": "{{pokemonName}}は　どうする？",
 } as const;
