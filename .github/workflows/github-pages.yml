@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   pages:
@@ -33,6 +36,7 @@ jobs:
           node-version: 20
 
       - name: Checkout repository for Github Pages
+        if: github.event_name == 'push'
         uses: actions/checkout@v3
         with:
           path: pokerogue_gh
@@ -52,6 +56,7 @@ jobs:
           npx typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
 
       - name: Commit & Push docs
+        if: github.event_name == 'push'
         run: |
           cd pokerogue_gh
           git config user.email "github-actions[bot]@users.noreply.github.com"
