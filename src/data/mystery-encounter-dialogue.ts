@@ -7,6 +7,7 @@ export class TextDisplay {
 
 export class OptionTextDisplay {
   buttonLabel: TemplateStringsArray | `mysteryEncounter:${string}`;
+  buttonTooltip?: TemplateStringsArray | `mysteryEncounter:${string}`;
   selected?: TextDisplay[];
 }
 
@@ -175,6 +176,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
       options: [
         {
           buttonLabel: "mysteryEncounter:dark_deal_option_1_label",
+          buttonTooltip: "mysteryEncounter:optionTooltip",
           selected: [
             {
               speaker: "mysteryEncounter:dark_deal_speaker",
@@ -187,6 +189,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
         },
         {
           buttonLabel: "mysteryEncounter:dark_deal_option_2_label",
+          buttonTooltip: "mysteryEncounter:optionTooltip",
           selected: [
             {
               speaker: "mysteryEncounter:dark_deal_speaker",

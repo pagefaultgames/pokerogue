@@ -13,6 +13,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_challengers_option_4_selected_message": "You hurry along your way, with a slight feeling of regret.",
   "mysterious_challengers_outro_win": "The mysterious challengers were defeated!",
   "mysterious_challengers_speaker": "Jimmy",
+  "optionTooltip": "[+Some Stuff, -Some other Stuff, ???, this is a really long description of the option you're hovering]",
 
   "mysterious_chest_intro_message": "You keep going and find...@d{64}\na chest?",
   "mysterious_chest_title": "The Mysterious Chest",
@@ -31,10 +32,11 @@ export const mysteryEncounter: SimpleTranslationEntries = {
 
   "dark_deal_intro_message": "A strange man in a tattered coat stands in your way...",
   "dark_deal_speaker": "Shady Guy",
-  "dark_deal_intro_dialogue": `Hey, you!
-    $I've been working on a new device\nto bring out a Pokémon's latent power!
-    $It completely rebinds the Pokémon's atoms\nat a molecular level into a far more powerful form.
-    $Hehe...@d{64} I just need some sac-@d{32}\nErr, test subjects, to prove it works.`,
+  //"dark_deal_intro_dialogue": `Hey, you!
+  //  $I've been working on a new device\nto bring out a Pokémon's latent power!
+  //  $It completely rebinds the Pokémon's atoms\nat a molecular level into a far more powerful form.
+  //  $Hehe...@d{64} I just need some sac-@d{32}\nErr, test subjects, to prove it works.`,
+  "dark_deal_intro_dialogue": "Hey, you!",
   "dark_deal_title": "Dark Deal",
   "dark_deal_description": "The disturbing fellow holds up some Pokéballs.\n\"I'll make it worth your while! You can have these strong Pokéballs as payment, All I need is a Pokémon from your team! Hehe...\"",
   "dark_deal_query": "What will you do?",

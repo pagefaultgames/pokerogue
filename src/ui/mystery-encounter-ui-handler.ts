@@ -17,6 +17,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   private optionsContainer: Phaser.GameObjects.Container;
 
+  private tooltipWindow: Phaser.GameObjects.NineSlice;
+  private tooltipContainer: Phaser.GameObjects.Container;
+  private tooltipScrollTween: Phaser.Tweens.Tween;
+
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
   private descriptionScrollTween: Phaser.Tweens.Tween;
@@ -45,10 +49,17 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.descriptionContainer.setVisible(false);
     ui.add(this.descriptionContainer);
 
+    this.tooltipContainer = this.scene.add.container(0, -152);
+    this.tooltipContainer.setVisible(false);
+    ui.add(this.tooltipContainer);
+
     this.setCursor(this.getCursor());
 
     this.descriptionWindow = addWindow(this.scene, 0, 0, 150, 105, false, false, 0, 0, WindowVariant.THIN);
     this.descriptionContainer.add(this.descriptionWindow);
+
+    this.tooltipWindow = addWindow(this.scene, 0, 0, 150, 20, false, false, 0, 0, WindowVariant.THIN);
+    this.tooltipContainer.add(this.tooltipWindow);
 
     this.rarityBall = this.scene.add.sprite(140, 10, "pb");
     this.descriptionContainer.add(this.rarityBall);
@@ -116,6 +127,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         success = this.handleFourOptionMoveInput(button);
         break;
       }
+
+      this.displayOptionTooltip();
     }
 
     if (success) {
@@ -322,7 +335,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const longText = "\nThis is a super super super\nsuper long super super\nsuper super long super super super super long\ndescription.";
     const descriptionTextObject = addTextObject(this.scene, 6, 25, descriptionText + longText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
 
-    // Sets up the mask that hides the description text to give an illusion of scrollingzz
+    // Sets up the mask that hides the description text to give an illusion of scrolling
     const descriptionTextMaskRect = this.scene.make.graphics({});
     descriptionTextMaskRect.setScale(6);
     descriptionTextMaskRect.fillStyle(0xFFFFFF);
@@ -368,6 +381,67 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         duration: 1000
       });
     }
+
+    this.displayOptionTooltip();
+  }
+
+  displayOptionTooltip() {
+    //const selected = this.filteredEncounterOptions[cursor];
+    const cursor = this.getCursor();
+    if (Utils.isNullOrUndefined(cursor) || cursor > this.optionsContainer.length - 2) {
+      // Ignore hovers on view party
+      this.tooltipContainer.setVisible(false);
+      return;
+    }
+
+    const hoveredOption = this.optionsContainer.getAt(cursor);
+    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
+    const text = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor].buttonTooltip);
+
+    if (text) {
+      //const styledText = getBBCodeFrag(text, TextStyle.SUMMARY_BLUE);
+      this.tooltipContainer.removeBetween(1, this.tooltipContainer.length, true);
+
+      const tooltipTextObject = addTextObject(this.scene, 6, 3.5, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }, fontSize: "72px", color: "#40c8f8", shadow: { color: "#006090" } });
+
+      this.tooltipContainer.add(tooltipTextObject);
+      this.tooltipContainer.setVisible(true);
+
+      this.tooltipContainer.setPositionRelative(hoveredOption, 0, -62);
+
+      // Sets up the mask that hides the description text to give an illusion of scrolling
+      const tooltipTextMaskRect = this.scene.make.graphics({});
+      tooltipTextMaskRect.setScale(6);
+      tooltipTextMaskRect.fillStyle(0xFFFFFF);
+      tooltipTextMaskRect.beginPath();
+      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 185, 150, 11);
+
+
+      const textMask = tooltipTextMaskRect.createGeometryMask();
+      tooltipTextObject.setMask(textMask);
+
+      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 11.1);
+
+      if (this.tooltipScrollTween) {
+        this.tooltipScrollTween.remove();
+        this.tooltipScrollTween = null;
+      }
+
+      // Animates the tooltip text moving upwards
+      if (tooltipLineCount > 1) {
+        //descriptionTextObject.setY(69);
+        this.tooltipScrollTween = this.scene.tweens.add({
+          targets: tooltipTextObject,
+          delay: Utils.fixedInt(1000),
+          loop: -1,
+          hold: Utils.fixedInt(1000),
+          duration: Utils.fixedInt((tooltipLineCount - 1) * 1500),
+          y: `-=${11.1 * (tooltipLineCount - 1)}`
+        });
+      }
+    } else {
+      this.tooltipContainer.setVisible(false);
+    }
   }
 
   clear(): void {
@@ -375,6 +449,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.optionsContainer.setVisible(false);
     this.optionsContainer.removeAll(true);
     this.descriptionContainer.setVisible(false);
+    this.tooltipContainer.setVisible(false);
     // Keeps container background and pokeball
     this.descriptionContainer.removeBetween(2, this.descriptionContainer.length, true);
     this.getUi().getMessageHandler().clearText();
