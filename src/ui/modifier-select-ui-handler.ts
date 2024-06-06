@@ -1,18 +1,16 @@
 import i18next from "i18next";
 import BattleScene from "../battle-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
+import { allMoves } from "../data/move";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { Button } from "../enums/buttons";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
+import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
 import { handleTutorial, Tutorial } from "../tutorial";
 import * as Utils from "../utils";
 import AwaitableUiHandler from "./awaitable-ui-handler";
+import MoveInfoOverlay from "./move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import { Mode } from "./ui";
-import {Button} from "../enums/buttons";
-import MoveInfoOverlay from "./move-info-overlay";
-import { allMoves } from "../data/move";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 

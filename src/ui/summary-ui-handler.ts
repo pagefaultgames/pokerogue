@@ -22,14 +22,6 @@ import * as Utils from "../utils";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import { getBiomeName } from "../data/biomes";
-import { Nature, getNatureStatMultiplier } from "../data/nature";
-import { loggedInUser } from "../account";
-import { PlayerGender } from "#app/data/enums/player-gender";
-import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "../enums/buttons";
-import { Ability } from "../data/ability.js";
-import i18next from "i18next";
 
 enum Page {
   PROFILE,
