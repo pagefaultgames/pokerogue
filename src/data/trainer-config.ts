@@ -920,7 +920,7 @@ export const signatureSpecies: SignatureSpecies = {
   BLUE: [[Species.GYARADOS, Species.EXEGGUTOR, Species.ARCANINE], Species.HO_OH, [Species.RHYPERIOR, Species.MAGNEZONE]], // Alakazam lead, Mega Pidgeot
   RED: [Species.LUGIA, Species.SNORLAX, [Species.ESPEON, Species.UMBREON, Species.SYLVEON]], // GMax Pikachu lead, Mega gen 1 starter
   LANCE_CHAMPION: [Species.DRAGONITE, Species.KINGDRA, Species.ALOLA_EXEGGUTOR], // Aerodactyl lead, Mega Latias/Latios
-  STEVEN: [Species.AGGRON, [Species.ARMALDO, Species.CRADILY], Species.DIALGA], // Skarmorly lead, Mega Metagross
+  STEVEN: [Species.AGGRON, [Species.ARMALDO, Species.CRADILY], Species.DIALGA], // Skarmory lead, Mega Metagross
   WALLACE: [Species.MILOTIC, Species.PALKIA, Species.LUDICOLO], // Pelipper lead, Mega Swampert
   CYNTHIA: [Species.GIRATINA, Species.LUCARIO, Species.TOGEKISS], // Spiritomb lead, Mega Garchomp
   ALDER: [Species.VOLCARONA, Species.ZEKROM, [Species.ACCELGOR, Species.ESCAVALIER], Species.KELDEO], // Bouffalant/Braviary lead
@@ -1300,6 +1300,7 @@ export const trainerConfigs: TrainerConfigs = {
     })),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(signatureSpecies["NEMONA"],false)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.LYCANROC], TrainerSlot.TRAINER, true, p => {
+      p.formIndex = 0; // Midday form
       p.generateAndPopulateMoveset();
     })),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(signatureSpecies["KIERAN"],true)
