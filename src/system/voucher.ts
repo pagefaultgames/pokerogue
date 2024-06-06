@@ -108,12 +108,13 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
           : VoucherType.PREMIUM;
         const key = TrainerType[trainerType];
         const trainerName = trainerConfigs[trainerType].name;
+        const trainer = trainerConfigs[trainerType];
+        const title = trainer.title ? ` (${trainer.title})` : "";
         vouchers[key] = new Voucher(
           voucherType,
-          i18next.t("voucher:defeatTrainer", { trainerName })
+          `${i18next.t("voucher:defeatTrainer", { trainerName })} ${title}`,
         );
       }
-
       const voucherKeys = Object.keys(vouchers);
       for (const k of voucherKeys) {
         vouchers[k].id = k;
