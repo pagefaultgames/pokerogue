@@ -731,10 +731,10 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   constructor(evolutionItem: EvolutionItem) {
     super("", EvolutionItem[evolutionItem].toLowerCase(), (_type, args) => new Modifiers.EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
-        if (pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.item === this.evolutionItem
+        if (!pokemon.isStandAloneForm(true) && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.item === this.evolutionItem
           && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX)) {
           return null;
-        } else if (pokemon.isFusion() && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.item === this.evolutionItem
+        } else if (pokemon.isFusion() && !pokemon.isStandAloneForm(false) && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.item === this.evolutionItem
         && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX)) {
           return null;
         }
@@ -769,6 +769,8 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
       (pokemon: PlayerPokemon) => {
         // Make sure the Pokemon has alternate forms
         if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)
+          // Exclude stand alone forms
+          && !pokemon.isStandAloneForm(true)
           // Get all form changes for this species with an item trigger, including any compound triggers
           && pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
           // Returns true if any form changes match this item
@@ -885,11 +887,11 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       }
 
       const evolutionItemPool = [
-        party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
+        party.filter(p => !p.isStandAloneForm(true) && pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
           const evolutions = pokemonEvolutions[p.species.speciesId];
           return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
         }).flat(),
-        party.filter(p => p.isFusion() && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)).map(p => {
+        party.filter(p => p.isFusion() && !p.isStandAloneForm(false) && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)).map(p => {
           const evolutions = pokemonEvolutions[p.fusionSpecies.speciesId];
           return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === p.getFusionFormKey()) && (!e.condition || e.condition.predicate(p)));
         }).flat()
@@ -911,7 +913,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
 
-      const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
+      const formChangeItemPool = party.filter(p => !p.isStandAloneForm(true)).filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
         return formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
           && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || party[0].scene.getModifiers(Modifiers.GigantamaxAccessModifier).length))
