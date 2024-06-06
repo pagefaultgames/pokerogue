@@ -167,7 +167,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * takes as input a boolean function and returns the first MoveAttr in attrs that matches true
+   * Takes as input a boolean function and returns the first MoveAttr in attrs that matches true
    * @param attrPredicate
    * @returns the first {@linkcode MoveAttr} element in attrs that makes the input function return true
    */
@@ -227,7 +227,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * getter function that returns if this Move has a MoveFlag
+   * Getter function that returns if this Move has a MoveFlag
    * @param flag the {@linkcode MoveFlags} to check
    * @returns boolean
    */
@@ -238,7 +238,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * getter function that returns if the move hits multiple targets
+   * Getter function that returns if the move hits multiple targets
    * @returns boolean
    */
   isMultiTarget(): boolean {
@@ -258,7 +258,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * getter function that returns if the move targets itself or an ally
+   * Getter function that returns if the move targets itself or an ally
    * @returns boolean
    */
 
@@ -275,6 +275,12 @@ export default class Move implements Localizable {
     return false;
   }
 
+  /**
+   * Checks if the move is immune to certain types
+   * currently only look at case of Grass types and powder moves
+   * @param type a {@linkcode Type} enum
+   * @returns boolean
+   */
   isTypeImmune(type: Type): boolean {
     switch (type) {
     case Type.GRASS:
@@ -286,6 +292,11 @@ export default class Move implements Localizable {
     return false;
   }
 
+  /**
+   * Adds a move condition to the move
+   * @param condition Either a {@linkcode MoveCondition} or {@linkcode MoveConditionFunc}, appends to conditions array a new MoveCondition object
+   * @returns the called object {@linkcode Move}
+   */
   condition(condition: MoveCondition | MoveConditionFunc): this {
     if (typeof condition === "function") {
       condition = new MoveCondition(condition as MoveConditionFunc);
@@ -295,17 +306,31 @@ export default class Move implements Localizable {
     return this;
   }
 
+  /**
+   * Marks the move as "partial": appends texts to the move name
+   * @returns the called object {@linkcode Move}
+   */
   partial(): this {
     this.nameAppend += " (P)";
     return this;
   }
 
+  /**
+   * Marks the move as "unimplemented": appends texts to the move name
+   * @returns the called object {@linkcode Move}
+   */
   unimplemented(): this {
     this.nameAppend += " (N)";
     return this;
   }
 
+  /**
+   * Sets the flags of the move
+   * @param flag a {@linkcode MoveFlags}
+   * @param on a boolean, if True, then "ORs" the flag onto existing ones, if False then "XORs" the flag onto existing ones
+   */
   private setFlag(flag: MoveFlags, on: boolean): void {
+    // bitwise OR and bitwise XOR respectively
     if (on) {
       this.flags |= flag;
     } else {
@@ -313,51 +338,110 @@ export default class Move implements Localizable {
     }
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.MAKES_CONTACT} flag for the calling Move
+   * @param makesContact The value (boolean) to set the flag to
+   * @returns The {@linkcode Move} that called this function
+   */
   makesContact(makesContact?: boolean): this {
     this.setFlag(MoveFlags.MAKES_CONTACT, makesContact);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.IGNORE_PROTECT} flag for the calling Move
+   * @param ignoresProtect The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.CURSE}
+   * @returns The {@linkcode Move} that called this function
+   */
   ignoresProtect(ignoresProtect?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_PROTECT, ignoresProtect);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.IGNORE_VIRTUAL} flag for the calling Move
+   * @param ignoresVirtual The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.NATURE_POWER}
+   * @returns The {@linkcode Move} that called this function
+   */
   ignoresVirtual(ignoresVirtual?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.SOUND_BASED} flag for the calling Move
+   * @param soundBased The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.UPROAR}
+   * @returns The {@linkcode Move} that called this function
+   */
   soundBased(soundBased?: boolean): this {
     this.setFlag(MoveFlags.SOUND_BASED, soundBased);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.HIDE_USER} flag for the calling Move
+   * @param hidesUser The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.TELEPORT}
+   * @returns The {@linkcode Move} that called this function
+   */
   hidesUser(hidesUser?: boolean): this {
     this.setFlag(MoveFlags.HIDE_USER, hidesUser);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.HIDE_TARGET} flag for the calling Move
+   * @param hidesTarget The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.WHIRLWIND}
+   * @returns The {@linkcode Move} that called this function
+   */
   hidesTarget(hidesTarget?: boolean): this {
     this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.BITING_MOVE} flag for the calling Move
+   * @param bitingMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.BITE}
+   * @returns The {@linkcode Move} that called this function
+   */
   bitingMove(bitingMove?: boolean): this {
     this.setFlag(MoveFlags.BITING_MOVE, bitingMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.PULSE_MOVE} flag for the calling Move
+   * @param pulseMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.WATER_PULSE}
+   * @returns The {@linkcode Move} that called this function
+   */
   pulseMove(pulseMove?: boolean): this {
     this.setFlag(MoveFlags.PULSE_MOVE, pulseMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.PUNCHING_MOVE} flag for the calling Move
+   * @param punchingMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.DRAIN_PUNCH}
+   * @returns The {@linkcode Move} that called this function
+   */
   punchingMove(punchingMove?: boolean): this {
     this.setFlag(MoveFlags.PUNCHING_MOVE, punchingMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.SLICING_MOVE} flag for the calling Move
+   * @param slicingMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.X_SCISSOR}
+   * @returns The {@linkcode Move} that called this function
+   */
   slicingMove(slicingMove?: boolean): this {
     this.setFlag(MoveFlags.SLICING_MOVE, slicingMove);
     return this;
@@ -374,42 +458,92 @@ export default class Move implements Localizable {
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.BALLBOMB_MOVE} flag for the calling Move
+   * @param ballBombMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.ELECTRO_BALL}
+   * @returns The {@linkcode Move} that called this function
+   */
   ballBombMove(ballBombMove?: boolean): this {
     this.setFlag(MoveFlags.BALLBOMB_MOVE, ballBombMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.POWDER_MOVE} flag for the calling Move
+   * @param powderMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.STUN_SPORE}
+   * @returns The {@linkcode Move} that called this function
+   */
   powderMove(powderMove?: boolean): this {
     this.setFlag(MoveFlags.POWDER_MOVE, powderMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.DANCE_MOVE} flag for the calling Move
+   * @param danceMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.PETAL_DANCE}
+   * @returns The {@linkcode Move} that called this function
+   */
   danceMove(danceMove?: boolean): this {
     this.setFlag(MoveFlags.DANCE_MOVE, danceMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.WIND_MOVE} flag for the calling Move
+   * @param windMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.HURRICANE}
+   * @returns The {@linkcode Move} that called this function
+   */
   windMove(windMove?: boolean): this {
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.TRIAGE_MOVE} flag for the calling Move
+   * @param triageMove The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.ABSORB}
+   * @returns The {@linkcode Move} that called this function
+   */
   triageMove(triageMove?: boolean): this {
     this.setFlag(MoveFlags.TRIAGE_MOVE, triageMove);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.IGNORE_ABILITIES} flag for the calling Move
+   * @param ignoresAbilities sThe value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.SUNSTEEL_STRIKE}
+   * @returns The {@linkcode Move} that called this function
+   */
   ignoresAbilities(ignoresAbilities?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
     return this;
   }
 
+  /**
+   * Sets the {@linkcode MoveFlags.CHECK_ALL_HITS} flag for the calling Move
+   * @param checkAllHits The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.TRIPLE_AXEL}
+   * @returns The {@linkcode Move} that called this function
+   */
   checkAllHits(checkAllHits?: boolean): this {
     this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
     return this;
   }
 
+  /**
+   * Checks if the move flag applies to the pokemon(s) using/receiving the move
+   * @param flag a {@linkcode MoveFlags}
+   * @param user a {@linkcode Pokemon}
+   * @param target a {@linkcode Pokemon}
+   * @returns boolean
+   */
   checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
+    // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
     case MoveFlags.MAKES_CONTACT:
       if (user.hasAbilityWithAttr(IgnoreContactAbAttr)) {
@@ -429,6 +563,13 @@ export default class Move implements Localizable {
     return !!(this.flags & flag);
   }
 
+  /**
+   * Applies each {@linkcode MoveCondition} of this move to the params
+   * @param user a {@linkcode Pokemon} to apply conditions to
+   * @param target a {@linkcode Pokemon} to apply conditions to
+   * @param move a {@linkcode Move} to apply conditions to
+   * @returns boolean: false if any of the apply()'s return false, else true
+   */
   applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
     for (const condition of this.conditions) {
       if (!condition.apply(user, target, move)) {
@@ -439,6 +580,14 @@ export default class Move implements Localizable {
     return true;
   }
 
+  /**
+   * Sees if, given the target pokemon, a move fails on it (by looking at each {@linkcode MoveAttr} of this move
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target the {@linkcode Pokemon} receiving the move
+   * @param move the {@linkcode Move} using the move
+   * @param cancelled a {@linkcode Utils.BooleanHolder} to be
+   * @returns string of the failed text, or null
+   */
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
     for (const attr of this.attrs) {
       const failedText = attr.getFailedText(user, target, move, cancelled);
@@ -449,6 +598,13 @@ export default class Move implements Localizable {
     return null;
   }
 
+  /**
+   * Calculates the userBenefitScore across all the attributes and conditions
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target the {@linkcode Pokemon} receiving the move
+   * @param move the {@linkcode Move} using the move
+   * @returns integer representing the total benefitScore
+   */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = 0;
 
@@ -463,10 +619,18 @@ export default class Move implements Localizable {
     return score;
   }
 
+  /**
+   * Calculates the targetBenefitScore across all the attributes
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target the {@linkcode Pokemon} receiving the move
+   * @param move the {@linkcode Move} using the move
+   * @returns integer representing the total benefitScore
+   */
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = 0;
 
     for (const attr of this.attrs) {
+      // conditionals to check if the move is self targeting (if so then you are applying the move to yourself, not the target)
       score += attr.getTargetBenefitScore(user, !attr.selfTarget ? target : user, move) * (target !== user && attr.selfTarget ? -1 : 1);
     }
 
