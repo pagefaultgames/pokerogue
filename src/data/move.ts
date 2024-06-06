@@ -2191,7 +2191,7 @@ export class StockpileStatChangeAttr extends StatChangeAttr {
    *   - if true, we save 1 under levels
    *   - if false, we save -1 under levels
    */
-  constructor(gainStats:boolean = true) {
+  constructor(gainStats: boolean = true) {
     super(
       [ BattleStat.DEF, BattleStat.SPDEF ],
       gainStats ? 1 : -1,
@@ -5163,16 +5163,8 @@ export class VariableTargetAttr extends MoveAttr {
  * @returns number of stockpile BattleTagTypes on the Pokemon
  */
 function getStockpiles(user: Pokemon) : integer {
-  let s = 0;
   const stock = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
-
-  for (let x = 0 ; x < stock.length ; x++){
-    if (user.getTag(stock[x])){
-      s++;
-    }
-  }
-
-  return s;
+  return stock.filter((stock) => user.getTag(stock)).length;
 }
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
