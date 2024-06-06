@@ -4852,8 +4852,6 @@ export class AttemptRunPhase extends PokemonPhase {
     const playerPokemon = this.getPokemon();
     const enemyField = this.scene.getEnemyField();
 
-    //const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
-
     const escapeChance = this.calculateEscapeChance(playerPokemon, enemyField);
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
