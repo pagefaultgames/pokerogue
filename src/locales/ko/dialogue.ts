@@ -546,7 +546,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "wattson": {
     "encounter": {
-      1: "찌릿찌릿해질때가 됐군!\n와하하하핫!",
+      1: "찌릿찌릿해질 때가 됐군!\n와하하하핫!",
       2: "스파크가 튀도록 해주마!\n와하하하하!",
       3: "와하하하하!\n마비 치료제를 가져왔길 바라네!"
     },
