@@ -6683,7 +6683,7 @@ export function initMoves() {
       .condition((user, target, move) => user.battleData.berriesEaten.length > 0),
     new StatusMove(Moves.ROTOTILLER, Type.GROUND, -1, 10, 100, 0, 6)
       .target(MoveTarget.ALL)
-      .unimplemented(),
+      .attr(StatChangeAttr, [BattleStat.ATK, BattleStat.SPATK], 1, false, (user, target, move) => target.isGrounded() && target.isOfType(Type.GRASS)),
     new StatusMove(Moves.STICKY_WEB, Type.BUG, -1, 20, -1, 0, 6)
       .attr(AddArenaTrapTagAttr, ArenaTagType.STICKY_WEB)
       .target(MoveTarget.ENEMY_SIDE),
