@@ -1692,7 +1692,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [Biome.SEA]: {
     [BiomePoolTier.COMMON]: [ TrainerType.SWIMMER ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.SAILOR ],
+    [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -1713,7 +1713,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.BEACH]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.FISHERMAN, TrainerType.PARASOL_LADY, TrainerType.SAILOR ],
+    [BiomePoolTier.COMMON]: [ TrainerType.FISHERMAN, TrainerType.PARASOL_LADY ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1823,7 +1823,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.VOLCANO]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.FIREBREATHER ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -7304,9 +7304,8 @@ export function initBiomes() {
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ TrainerType.SAILOR, [
-      [ Biome.SEA, BiomePoolTier.UNCOMMON ],
-      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    [ TrainerType.FIREBREATHER, [
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
     [ TrainerType.BROCK, [
