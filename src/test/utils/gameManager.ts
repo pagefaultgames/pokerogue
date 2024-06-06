@@ -24,12 +24,14 @@ import {updateUserInfo} from "#app/account";
 import {Species} from "#app/data/enums/species";
 import {PlayerGender} from "#app/data/enums/player-gender";
 import {GameDataType} from "#app/data/enums/game-data-type";
+import InputsHandler from "#app/test/utils/inputsHandler";
 
 export default class GameManager {
   public gameWrapper: GameWrapper;
   public scene: BattleScene;
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
+  public inputsHandler: InputsHandler;
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
     BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
@@ -38,6 +40,7 @@ export default class GameManager {
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
+    this.inputsHandler = new InputsHandler(this.scene);
   }
 
   setMode(mode: Mode) {
