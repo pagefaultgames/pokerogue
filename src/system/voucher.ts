@@ -109,7 +109,7 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
         const key = TrainerType[trainerType];
         const trainerName = trainerConfigs[trainerType].name;
         const trainer = trainerConfigs[trainerType];
-       const title = trainer.title ? ` (${trainer.title})` : "";
+        const title = trainer.title ? ` (${trainer.title})` : "";
         vouchers[key] = new Voucher(
           voucherType,
           `${i18next.t("voucher:defeatTrainer", { trainerName })} ${title}`,
