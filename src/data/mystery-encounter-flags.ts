@@ -1,7 +1,7 @@
 export class MysteryEncounterFlags {
-  encounteredEvents: number[];
+  encounteredEvents: number[] = [];
 
-  constructor(encounteredEvents?: number[]) {
-    this.encounteredEvents = encounteredEvents;
+  constructor(flags: MysteryEncounterFlags) {
+    Object.assign(this, flags);
   }
 }

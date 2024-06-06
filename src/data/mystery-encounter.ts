@@ -1,17 +1,16 @@
 import BattleScene from "../battle-scene";
 import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../field/mystery-encounter-intro";
-import { isNullOrUndefined } from "../utils";
 import { MysteryEncounterType } from "./enums/mystery-encounter-type";
-import EncounterDialogue, { allMysteryEncounterDialogue } from "./mystery-encounter-dialogue";
+import MysteryEncounterDialogue, { allMysteryEncounterDialogue } from "./mystery-encounter-dialogue";
+import MysteryEncounterOption from "./mystery-encounter-option";
 import { MysteryEncounterRequirements } from "./mystery-encounter-requirements";
-import { DarkDealEncounter } from "./mystery-encounters/dark-deal";
-import { MysteriousChallengersEncounter } from "./mystery-encounters/mysterious-challengers";
-import { MysteriousChestEncounter } from "./mystery-encounters/mysterious-chest";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
   TRAINER_BATTLE,
-  WILD_BATTLE
+  WILD_BATTLE,
+  BOSS_BATTLE,
+  NO_BATTLE
 }
 
 export enum MysteryEncounterTier {
@@ -22,142 +21,117 @@ export enum MysteryEncounterTier {
   ULTRA_RARE // Not currently used
 }
 
-export default abstract class MysteryEncounter<T extends MysteryEncounter<T> = any> {
+export default interface MysteryEncounter {
+  /**
+   * Required params
+   */
   encounterType: MysteryEncounterType;
-  encounterTier: MysteryEncounterTier;
-  dialogue: EncounterDialogue;
-  encounterRequirements: MysteryEncounterRequirements;
-  introVisuals: MysteryEncounterIntroVisuals;
+  options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
   spriteConfigs: MysteryEncounterSpriteConfig[];
-  doEncounterRewards: (scene: BattleScene) => boolean = null;
-  dialogueTokens: [RegExp, string][] = [];
+  /**
+   * Optional params
+   */
+  encounterTier?: MysteryEncounterTier;
+  requirements?: MysteryEncounterRequirements;
+  doEncounterRewards?: (scene: BattleScene) => boolean;
 
-  // Flags
-  encounterVariant: MysteryEncounterVariant = MysteryEncounterVariant.DEFAULT; // Should be set depending upon option selected
-  lockEncounterRewardTiers: boolean = true; // Flag to check if first time item shop is being shown for encounter. Will be set to false after shop is shown (so can't reroll same rarity items)
-  didBattle: boolean = true; // If no battle occurred during mysteryEncounter, flag should be set to false
 
-  constructor(encounterType: MysteryEncounterType, encounterTier: MysteryEncounterTier = MysteryEncounterTier.COMMON) {
-    this.encounterType = encounterType;
-    this.encounterTier = encounterTier;
+  /**
+   * Post-construct / Auto-populated params
+   */
+  dialogue?: MysteryEncounterDialogue;
+  introVisuals?: MysteryEncounterIntroVisuals;
+
+
+  /**
+   * Flags
+   */
+  // Can be set for things like programatic dialogue (party pokemon of name "xyz", etc.)
+  // Example use: see MYSTERIOUS_CHEST
+  dialogueTokens?: [RegExp, string][];
+  // Should be set depending upon option selected
+  encounterVariant?: MysteryEncounterVariant;
+  // Flag to check if first time item shop is being shown for encounter. Will be set to false after shop is shown (so can't reroll same rarity items)
+  lockEncounterRewardTiers?: boolean;
+  // If no battle occurred during mysteryEncounter, flag should be set to false
+  didBattle?: boolean;
+}
+
+export default class MysteryEncounter implements MysteryEncounter {
+  constructor(encounter: MysteryEncounter) {
+    Object.assign(this, encounter);
+    this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
     this.dialogue = allMysteryEncounterDialogue[this.encounterType];
-  }
-
-  introVisualsConfig(spriteConfigs: MysteryEncounterSpriteConfig[]): this {
-    this.spriteConfigs = spriteConfigs;
-    return this;
-  }
-
-  requirements<U extends MysteryEncounterRequirements>(encounterRequirements: U): this {
-    this.encounterRequirements = encounterRequirements;
-    return this;
-  }
-
-  rewards(doEncounterRewards: (scene: BattleScene) => boolean): this {
-    this.doEncounterRewards = doEncounterRewards;
-    return this;
-  }
-
-  meetsRequirements(scene: BattleScene) {
-    return this.encounterRequirements.meetsRequirements(scene);
-  }
-
-  initIntroVisuals(scene: BattleScene) {
-    this.introVisuals = new MysteryEncounterIntroVisuals(scene, this);
-  }
-
-  resetFlags() {
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.lockEncounterRewardTiers = true;
     this.didBattle = true;
   }
-}
 
-export default interface MysteryEncounter<T extends MysteryEncounter<T>> {
-  encounterType: MysteryEncounterType;
-  encounterTier: MysteryEncounterTier;
-  dialogue: EncounterDialogue;
-  encounterRequirements: MysteryEncounterRequirements;
-  introVisuals: MysteryEncounterIntroVisuals;
-  spriteConfigs: MysteryEncounterSpriteConfig[];
-  doEncounterRewards: (scene: BattleScene) => boolean;
-  dialogueTokens: [RegExp, string][];
-}
-
-export class MysteryEncounterOption {
-  requirements?: MysteryEncounterRequirements;
-  label: string;
-
-  // Executes before any following dialogue or business logic from option. Cannot be async. Usually this will be for calculating dialogueTokens or performing data updates
-  onPreSelect: (scene: BattleScene) => void | boolean;
-
-  // Business logic for option
-  onSelect: (scene: BattleScene) => Promise<void | boolean>;
-
-  // Executes after the encounter is over. Cannot be async. Usually this will be for calculating dialogueTokens or performing data updates
-  onPostSelect: (scene: BattleScene) => void | boolean;
-
-  constructor(onSelect: (scene: BattleScene) => Promise<void | boolean>, onPreSelect?: (scene: BattleScene) => void | boolean, onPostSelect?: (scene: BattleScene) => void | boolean, requirements?: MysteryEncounterRequirements) {
-    this.onSelect = onSelect;
-    this.onPreSelect = onPreSelect;
-    this.onPostSelect = onPostSelect;
-    this.requirements = requirements;
-  }
-
-  meetsRequirements(scene: BattleScene) {
-    if (isNullOrUndefined(this.requirements)) {
-      return true;
-    }
+  meetsRequirements?(scene: BattleScene) {
     return this.requirements.meetsRequirements(scene);
   }
-}
 
-/**
- * Concrete class for a mystery encounter with option selections
- */
-export class OptionSelectMysteryEncounter extends MysteryEncounter<OptionSelectMysteryEncounter> {
-  options: MysteryEncounterOption[] = [];
-  constructor(encounterType: MysteryEncounterType, encounterTier: MysteryEncounterTier = MysteryEncounterTier.COMMON) {
-    super(encounterType, encounterTier);
+  initIntroVisuals?(scene: BattleScene) {
+    this.introVisuals = new MysteryEncounterIntroVisuals(scene, this);
   }
 
-  option<T extends MysteryEncounterRequirements>(onSelect: (scene: BattleScene) => Promise<void | boolean>, onPreSelect?: (scene: BattleScene) => void | boolean, onPostSelect?: (scene: BattleScene) => void | boolean, optionRequirements?: T): this {
-    const option = new MysteryEncounterOption(onSelect, onPreSelect, onPostSelect, optionRequirements);
-    this.options.push(option);
+  resetFlags?() {
+    this.encounterVariant = MysteryEncounterVariant.DEFAULT;
+    this.lockEncounterRewardTiers = true;
+  }
+}
 
-    return this;
+export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
+  encounterType?: MysteryEncounterType;
+  options?: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]] = [null, null];
+  spriteConfigs?: MysteryEncounterSpriteConfig[];
+
+  dialogue?: MysteryEncounterDialogue;
+  encounterTier?: MysteryEncounterTier;
+  requirements?: MysteryEncounterRequirements;
+  dialogueTokens?: [RegExp, string][];
+  doEncounterRewards?: (scene: BattleScene) => boolean;
+
+  /**
+   * REQUIRED
+   */
+
+  withEncounterType(encounterType: MysteryEncounterType): this & Pick<MysteryEncounter, "encounterType"> {
+    return Object.assign(this, { encounterType: encounterType });
+  }
+
+  withOption(option: MysteryEncounterOption): this & Pick<MysteryEncounter, "options"> {
+    if (this.options[0] === null) {
+      return Object.assign(this, { options: [ option, this.options[0] ] });
+    } else if (this.options[1] === null) {
+      return Object.assign(this, { options: [this.options[0], option ] });
+    } else {
+      this.options.push(option);
+      return Object.assign(this, { options: this.options });
+    }
+  }
+
+  withIntroSpriteConfigs(spriteConfigs: MysteryEncounterSpriteConfig[]): this & Pick<MysteryEncounter, "spriteConfigs"> {
+    return Object.assign(this, { spriteConfigs: spriteConfigs });
   }
 
   /**
-   * Copies everything except flags so that new MysteryEncounters start with wiped flag values
-   * @returns
+   * OPTIONAL
    */
-  copy(): OptionSelectMysteryEncounter {
-    const newEncounter = new OptionSelectMysteryEncounter(this.encounterType, this.encounterTier);
-    newEncounter.options = this.options;
-    newEncounter.dialogue = this.dialogue;
-    newEncounter.encounterRequirements = this.encounterRequirements;
-    newEncounter.introVisuals = this.introVisuals;
-    newEncounter.spriteConfigs = this.spriteConfigs;
-    newEncounter.doEncounterRewards = this.doEncounterRewards;
-    newEncounter.dialogueTokens = this.dialogueTokens;
 
-    return newEncounter;
+  withEncounterTier(encounterType: MysteryEncounterTier): this & Required<Pick<MysteryEncounter, "encounterType">> {
+    return Object.assign(this, { encounterType: encounterType });
   }
-}
 
+  withRequirements(requirements: MysteryEncounterRequirements): this & Required<Pick<MysteryEncounter, "requirements">> {
+    return Object.assign(this, { requirements: requirements });
+  }
 
-// Factory class used to build and return MysteryEncounters (see data/mystery-encounters/)
-export interface MysteryEncounterFactory {
-  getEncounter(): MysteryEncounter;
-}
+  withRewards(doEncounterRewards: (scene: BattleScene) => boolean): this & Required<Pick<MysteryEncounter, "doEncounterRewards">> {
+    return Object.assign(this, { doEncounterRewards: doEncounterRewards });
+  }
 
-export const allMysteryEncounters: MysteryEncounter[] = [];
-
-export function initMysteryEncounters() {
-  allMysteryEncounters.push(
-    new MysteriousChallengersEncounter().getEncounter(),
-    new MysteriousChestEncounter().getEncounter(),
-    new DarkDealEncounter().getEncounter()
-  );
+  build(this: MysteryEncounter) {
+    return new MysteryEncounter(this);
+  }
 }

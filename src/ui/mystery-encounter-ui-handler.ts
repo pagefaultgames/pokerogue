@@ -5,9 +5,9 @@ import UiHandler from "./ui-handler";
 import { Button } from "../enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
-import { MysteryEncounterOption, OptionSelectMysteryEncounter } from "../data/mystery-encounter";
 import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
 import { PartyUiMode } from "./party-ui-handler";
+import MysteryEncounterOption from "../data/mystery-encounter-option";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -31,10 +31,6 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    const commands = this.filteredEncounterOptions.map((option) => {
-      return option.label;
-    });
-
     this.cursorContainer = this.scene.add.container(18, -38.7);
     this.cursorContainer.setVisible(false);
     ui.add(this.cursorContainer);
@@ -49,11 +45,6 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     this.descriptionWindow = addWindow(this.scene, 0, 0, 150, 105, false, false, 0, 0, WindowVariant.THIN);
     this.descriptionContainer.add(this.descriptionWindow);
-
-    for (let c = 0; c < commands.length; c++) {
-      const commandText = addTextObject(this.scene, c % 2 === 0 ? 0 : 90, c < 2 ? 0 : 16, commands[c], TextStyle.WINDOW);
-      this.optionsContainer.add(commandText);
-    }
   }
 
   show(args: any[]): boolean {
@@ -271,10 +262,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   }
 
   displayEncounterOptions(slideInDescription: boolean = true): void {
-    if (!(this.scene.currentBattle.mysteryEncounter instanceof OptionSelectMysteryEncounter)) {
-      return;
-    }
-    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter as OptionSelectMysteryEncounter;
+    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
     this.filteredEncounterOptions = mysteryEncounter.options;
 
     const titleText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.title);

@@ -35,8 +35,7 @@ import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
 import { Device } from "#app/enums/devices.js";
 import { MysteryEncounterFlags } from "../data/mystery-encounter-flags";
-import { MysteryEncounterFlagData } from "./mystery-encounter-flags-data";
-import { MysteryEncounterData } from "./mystery-encounter-data";
+import MysteryEncounter from "../data/mystery-encounter";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -123,10 +122,10 @@ export interface SessionSaveData {
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
-  mysteryEncounter: MysteryEncounterData<any>;
+  mysteryEncounter: MysteryEncounter;
   gameVersion: string;
   timestamp: integer;
-  mysteryEncounterFlagData: MysteryEncounterFlagData;
+  mysteryEncounterFlags: MysteryEncounterFlags;
 }
 
 interface Unlocks {
@@ -801,8 +800,8 @@ export class GameData {
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      mysteryEncounter: scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ? new MysteryEncounterData(scene.currentBattle.mysteryEncounter) : null,
-      mysteryEncounterFlagData: scene?.mysteryEncounterFlags ? new MysteryEncounterFlagData(scene.mysteryEncounterFlags) : null
+      mysteryEncounter: scene.currentBattle.mysteryEncounter,
+      mysteryEncounterFlags: scene.mysteryEncounterFlags
     } as SessionSaveData;
   }
 
@@ -890,13 +889,13 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.mysteryEncounterFlags = sessionData?.mysteryEncounterFlagData?.encounterFlags ? sessionData?.mysteryEncounterFlagData?.encounterFlags : new MysteryEncounterFlags();
+          scene.mysteryEncounterFlags = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterFlags(null);
 
           scene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const mysteryEncounterConfig = sessionData?.mysteryEncounter?.encounter || null;
+          const mysteryEncounterConfig = sessionData?.mysteryEncounter;
           const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterConfig);
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
@@ -1098,11 +1097,11 @@ export class GameData {
       }
 
       if (k === "mysteryEncounter") {
-        return new MysteryEncounterData(v);
+        return new MysteryEncounter(v);
       }
 
       if (k === "mysteryEncounterFlags") {
-        return new MysteryEncounterFlagData(v);
+        return new MysteryEncounterFlags(v);
       }
 
       return v;

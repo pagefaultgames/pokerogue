@@ -1,10 +1,11 @@
 import i18next from "i18next";
 import BattleScene from "../battle-scene";
-import { MysteryEncounterOption } from "../data/mystery-encounter";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
 import { hideMysteryEncounterIntroVisuals } from "../utils/mystery-encounter-utils";
 import { EggLapsePhase, NewBattlePhase } from "../phases";
+import MysteryEncounterOption from "../data/mystery-encounter-option";
+import { MysteryEncounterVariant } from "../data/mystery-encounter";
 
 export class MysteryEncounterPhase extends Phase {
   constructor(scene: BattleScene) {
@@ -23,17 +24,17 @@ export class MysteryEncounterPhase extends Phase {
   }
 
   handleOptionSelect(option: MysteryEncounterOption, index: number): boolean {
-    if (option.onPreSelect) {
-      option.onPreSelect(this.scene);
+    if (option.onPreOptionPhase) {
+      option.onPreOptionPhase(this.scene);
     }
 
-    if (!option.onSelect) {
+    if (!option.onOptionPhase) {
       return false;
     }
 
     const endDialogueAndContinueEncounter = () => {
-      this.scene.unshiftPhase(new MysteryEncounterOptionSelectedPhase(this.scene, option.onSelect));
-      this.scene.unshiftPhase(new PostMysteryEncounterPhase(this.scene, option.onPostSelect));
+      this.scene.unshiftPhase(new MysteryEncounterOptionSelectedPhase(this.scene, option.onOptionPhase));
+      this.scene.unshiftPhase(new PostMysteryEncounterPhase(this.scene, option.onPostOptionPhase));
       this.end();
     };
 
@@ -109,7 +110,7 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
     hideMysteryEncounterIntroVisuals(this.scene).then(() => {
       this.onPostOptionSelect(this.scene).then(() => {
         // doEncounterRewards will instead be called from the VictoryPhase in the case of a combat encounter
-        if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards && !this.scene.currentBattle.mysteryEncounter.didBattle) {
+        if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards && this.scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
           this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
         }
 

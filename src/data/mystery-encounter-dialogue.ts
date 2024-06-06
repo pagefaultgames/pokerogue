@@ -17,14 +17,14 @@ export class EncounterOptionsDialogue {
   options: [OptionTextDisplay, OptionTextDisplay, ...OptionTextDisplay[]]; // Options array with minimum 2 options
 }
 
-export default class EncounterDialogue {
+export default class MysteryEncounterDialogue {
   intro?: TextDisplay[];
   encounterOptionsDialogue: EncounterOptionsDialogue;
   outro?: TextDisplay[];
 }
 
 export interface EncounterTypeDialogue {
-  [key: integer]: EncounterDialogue
+  [key: integer]: MysteryEncounterDialogue
 }
 
 export function getEncounterTypeDialogue(): EncounterTypeDialogue {

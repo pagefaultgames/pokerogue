@@ -19,7 +19,7 @@ import {initAbilities} from "#app/data/ability";
 import {initTrainerTypeDialogue} from "#app/data/dialogue";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
-import { initMysteryEncounters } from "./data/mystery-encounter";
+import { initMysteryEncounters } from "./data/mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   constructor() {

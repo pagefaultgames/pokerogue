@@ -263,6 +263,7 @@ export function generateEnemyPartyForBattle(scene: BattleScene, partyConfig: Ene
         if (normalCount - 1 >= e) {
           enemySpecies = partyConfig?.pokemonSpecies?.[e];
         } else if (bossCount - 1 >= e - normalCount) {
+          scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.BOSS_BATTLE;
           isBoss = true;
           enemySpecies = partyConfig?.pokemonBosses?.[e];
         } else {
@@ -442,7 +443,7 @@ export function setEncounterRewards(scene: BattleScene, showShop?: boolean, shop
     return true;
   };
 
-  scene.currentBattle.mysteryEncounter.rewards(rewardsFunction);
+  scene.currentBattle.mysteryEncounter.doEncounterRewards = rewardsFunction;
 }
 
 /**
@@ -496,7 +497,7 @@ export function setEncounterExp(scene: BattleScene, expMultiplier: number = 100)
  * @param scene
  */
 export function leaveEncounterWithoutBattle(scene: BattleScene) {
-  scene.currentBattle.mysteryEncounter.didBattle = false;
+  scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.NO_BATTLE;
   const postPhase = scene.findPhase(p => p instanceof PostMysteryEncounterPhase) as PostMysteryEncounterPhase;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
