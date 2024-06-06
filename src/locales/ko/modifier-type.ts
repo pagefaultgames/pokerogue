@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "기술의 명중률이 {{accuracyAmount}} 증가 (최대 100)",
     },
     "PokemonMultiHitModifierType": {
-      description: "공격이 가진 갯수에 따라 60/75/82.5%의 위력으로 한번 더 명중",
+      description: "지닌 개수(최대 3개)마다 추가 공격을 하는 대신, 공격력이 60%(1개)/75%(2개)/82.5%(3개)만큼 감소합니다.",
     },
     "TmModifierType": {
       name: "No.{{moveId}} {{moveName}}",
