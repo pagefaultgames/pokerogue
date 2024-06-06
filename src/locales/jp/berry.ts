@@ -2,47 +2,47 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
-    name: "Sitrus Berry",
-    effect: "Restores 25% HP if HP is below 50%",
+    name: "オボンのみ",
+    effect: "HP 50%のとき HPを 25パーセント かいふくする",
   },
   "LUM": {
-    name: "Lum Berry",
-    effect: "Cures any non-volatile status condition and confusion",
+    name: "ラムのみ",
+    effect: "すべての じょうたい いじょうと こんらんを かいふくする",
   },
   "ENIGMA": {
-    name: "Enigma Berry",
-    effect: "Restores 25% HP if hit by a super effective move",
+    name: "ナゾのみ",
+    effect: "こうかばつぐんの わざを うけたとき HPを 25パーセント かいふくする",
   },
   "LIECHI": {
-    name: "Liechi Berry",
-    effect: "Raises Attack if HP is below 25%",
+    name: "チイラのみ",
+    effect: "HP 25%のとき こうげきが あがる",
   },
   "GANLON": {
-    name: "Ganlon Berry",
-    effect: "Raises Defense if HP is below 25%",
+    name: "リュガのみ",
+    effect: "HP 25%のとき ぼうぎょが あがる",
   },
   "PETAYA": {
-    name: "Petaya Berry",
-    effect: "Raises Sp. Atk if HP is below 25%",
+    name: "ヤタピのみ",
+    effect: "HP 25%のとき とくこうが あがる",
   },
   "APICOT": {
-    name: "Apicot Berry",
-    effect: "Raises Sp. Def if HP is below 25%",
+    name: "ズアのみ",
+    effect: "HP 25%のとき とくぼうが あがる",
   },
   "SALAC": {
-    name: "Salac Berry",
-    effect: "Raises Speed if HP is below 25%",
+    name: "カムラのみ",
+    effect: "HP 25%のとき すばやさが あがる",
   },
   "LANSAT": {
-    name: "Lansat Berry",
-    effect: "Raises critical hit ratio if HP is below 25%",
+    name: "サンのみ",
+    effect: "HP 25%のとき こうげきが きゅうしょに あたりやすくなる",
   },
   "STARF": {
-    name: "Starf Berry",
-    effect: "Sharply raises a random stat if HP is below 25%",
+    name: "スターのみ",
+    effect: "HP 25%のとき のうりょくの どれか 1つが ぐーんと あがる",
   },
   "LEPPA": {
-    name: "Leppa Berry",
-    effect: "Restores 10 PP to a move if its PP reaches 0",
+    name: "ヒメリのみ",
+    effect: "PPが 0に なった わざの PPを 10だけ かいふくする",
   },
 } as const;
