@@ -207,16 +207,16 @@ export class TitlePhase extends Phase {
               }
             },
             {
-              label: GameMode.getModeName(GameModes.ENDLESS),
+              label: GameMode.getModeName(GameModes.CHALLENGE),
               handler: () => {
-                setModeAndEnd(GameModes.ENDLESS);
+                setModeAndEnd(GameModes.CHALLENGE);
                 return true;
               }
             },
             {
-              label: GameMode.getModeName(GameModes.CHALLENGE),
+              label: GameMode.getModeName(GameModes.ENDLESS),
               handler: () => {
-                setModeAndEnd(GameModes.CHALLENGE);
+                setModeAndEnd(GameModes.ENDLESS);
                 return true;
               }
             }
