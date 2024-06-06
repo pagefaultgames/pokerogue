@@ -382,13 +382,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "sailor": {
     "encounter": {
       1: "Matey, you're walking the plank if you lose!",
-      2: "Come on, then! My sailor's pride is at stake!",
-      3: "Ahoy, there! Are you seasick?"
+      2: "Come on then! My sailor's pride is at stake!",
+      3: "Ahoy there! Are you seasick?"
     },
     "victory": {
       1: "Argh! Beaten by a kid!",
       2: "Your spirit sank me!",
-      3: "I was just careless!"
+      3: "I think it's me that's seasick..."
     },
   },
   "brock": {
