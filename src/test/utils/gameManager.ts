@@ -40,7 +40,6 @@ export default class GameManager {
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
-    this.inputsHandler = new InputsHandler(this.scene);
   }
 
   setMode(mode: Mode) {

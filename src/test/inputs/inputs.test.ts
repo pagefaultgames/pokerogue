@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
+import InputsHandler from "#app/test/utils/inputsHandler";
 
 
 describe("Inputs", () => {
@@ -28,6 +29,7 @@ describe("Inputs", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    game.inputsHandler = new InputsHandler(game.scene);
   });
 
   it("Mobile - test touch holding for 1ms - 1 input", async () => {
