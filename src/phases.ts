@@ -637,8 +637,26 @@ export abstract class FieldPhase extends BattlePhase {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
-      return aSpeed < bSpeed ? 1 : aSpeed > bSpeed ? -1 : !this.scene.randBattleSeedInt(2) ? -1 : 1;
+      // The pokemon with the higher speed stat goes first if not tied, if tied the pokemon with the lower id goes first
+      return bSpeed - aSpeed !== 0 ? bSpeed - aSpeed : a.id - b.id;
     });
+
+    // Randomisation of speed tie code.
+    // We do this outside of the sort function because how sort functions work is
+    // an implementation detail which differs by browser.
+    const speeds = orderedTargets.map(p => p.getBattleStat(Stat.SPD));
+    for (let i = 1; i < orderedTargets.length; i++) {
+      if (speeds[i] === speeds[i-1]) {
+        const lower = i - 1;
+        let upper = i;
+        while (upper + 1 < orderedTargets.length && speeds[upper] === speeds[i]) {
+          upper++;
+        }
+        const tiedPokemon = Utils.randSeedShuffle(orderedTargets.splice(lower, upper - lower + 1));
+        orderedTargets.splice(lower, 0, ...tiedPokemon);
+        i = upper;
+      }
+    }
 
     const speedReversed = new Utils.BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, speedReversed);
