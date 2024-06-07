@@ -1,13 +1,14 @@
 # 📝 Most immediate things on the to-do platter
 
 - ### High priority
-    - 🐛 Game crashes after Dark Deal scientist is done talking to you 🛠️ (Fixed)
-    - 🐛 Accepting the scientist's offer causes the "thing" to your PKMN happen, but nothing else changes (ME doesn't continue as it should) 🛠️ (Fixed)
-      - Only out for this seems to be to refuse the offer, which also seems to cause a crash if the next fight is a trainer battle. 🛠️
+    - 🐛 Opening the chest simply moves you to a wild battle against nothingness, which you can escape after you get bored of it.
+    - 🐛 Weaker trainers from Mysterious Challenger crashes the game when the reward screen should come out
 
 - ### Medium priority
     - 🐛 PKMN Sprites and their HP/lvl bar doesn't get properly recalled when finding an ME or when meeting Rival. 🛠️
     - ⚙️ "Steal from player" functionality (Gholdengo ME) ❌
+    - ⚙️ Add some spacing logic to MEs spawning so you don't get floods/droughts of MEs ❌
+    - ⚙️ Push Dark Deal ME to a higher wave requirement (+30) as it seems to be functioning (mostly) bugless.
 
 
 # 📝 Things to be done before Mystery Encounters ("MEs") MVP is finished:
@@ -19,7 +20,7 @@
   - Bug-ish implementation of Common ME 2 🛠️
   - Bug-ish implementation of Rare ME 1 ✔️
   - Bug-ish implementation of Epic ME 1 🛠️
-  - Bug-ish implementation of Legendary ME 1 🛠️
+  - Bug-ish implementation of Legendary ME 1 ✔️
 
 - ## First round of playtesting (Alpha)
   - Establish a placeholder odd for MEs to happen closer to real implementation ❌
@@ -101,18 +102,15 @@ Mysterious Encounters aim to be an addition to PokeRogue that will fundamentally
 
 # 📝 Known bugs (squash 'em all!):
   - ## 🔴 __**Really bad ones**__
-    -🐛 Game crashes after Dark Deal scientist is done talking to you 🛠️
-      - To reproduce: Start a game. Find ME. Finish dialogue.
-    - 🐛 Accepting the scientist's offer causes the "thing" to your PKMN happen, but nothing else changes (ME doesn't continue as it should) 🛠️
-      - To reproduce: (After previous crash): Reload the run, click on "Accept".
-    - 🐛 Refusing the Deal and moving onto the next battle (in this case, a trainer battle) also crashed the game after the trainer dialogue
-      - To reproduce: Refuse the scientist's deal. Run into a trainer. Finish dialogue.
+    - 🐛 Opening the chest simply moves you to a wild battle against nothingness, which you can escape after you get bored of it.
+    - 🐛 Weaker trainers from Mysterious Challenger crashes the game when the reward screen should come out
 
   - ## 🟡 __**Bad ones under certain circumstances**__
-    - 🐛 PKMN Sprites and their HP/lvl bar doesn't get properly recalled when finding an ME or when meeting Rival
-      - To reproduce: Encounter an ME, a trainer, or the rival.
+    - 🐛 Needs further replication : At wave 51, wild PKMN encounter caused a freezed after pressing "ESC" key upon being asked to switch PKMNs
 
   - ## 🟢 __**Non-game breaking**__
+    - 🐛 Scientist will remember the first PKMN it "did the thing on" and never ever forget it, even in future runs. Only affects dialogue.
+    - 🐛 Any ME that procs and wave (?)(?)(1) has its sprite removed. Only the sprite is affected.
 
 
 # 🗿 Other cool things/functionalities that won't make it in the MVP but are planned to accomodate future MEs:
@@ -128,6 +126,7 @@ Mysterious Encounters aim to be an addition to PokeRogue that will fundamentally
 - A Pokémon X in player's party can learn Y move
 - A Pokémon X in player's party knows Y move
 - A Pokémon X in player's party has Y ability
+- A Pokémon X in player's party belongs to a pre-defined pool (ie. "Ultrabeasts")
 
 #### More outcomes (with helper functions)
 - Status one or many Pokémon if your party -- if they can be statused 
@@ -137,4 +136,5 @@ Mysterious Encounters aim to be an addition to PokeRogue that will fundamentally
 - Give the player a Pokémon from a pool (useful for reg. professors/traders) 
 - XP to a Pokémon (similar to rare candy?) 
 - Add logic for choosing a Pokémon from party for some effect (trades, sacrifices, etc) 
-- Add logic for awarding exp to the party (outside of a normal combat) 
+- Add logic for awarding exp to the party (outside of a normal combat)
+- Encounter/pull a PKMN from a pre-defined pool (ie. "Ultrabeasts")
