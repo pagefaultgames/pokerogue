@@ -24,7 +24,6 @@ import BattleScene from "#app/battle-scene.js";
 import {MoveAnim} from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 import * as battleScene from "#app/battle-scene";
-import {initI18n} from "#app/plugins/i18n";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -77,7 +76,6 @@ export default class GameWrapper {
   public scene: BattleScene;
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
-    initI18n();
     Phaser.Math.RND.sow([ 'test' ]);
     vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {

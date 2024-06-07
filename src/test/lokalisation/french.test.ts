@@ -3,12 +3,14 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import {Species} from "#app/data/enums/species";
 import i18next from "i18next";
+import {initI18n} from "#app/plugins/i18n";
 
 describe("Lokalization - french", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
+    initI18n();
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
