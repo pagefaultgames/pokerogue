@@ -62,6 +62,7 @@ import { NewArenaEvent } from "./battle-scene-events";
 import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";
+import { ExpNotification } from "./enums/exp-notification";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -141,7 +142,7 @@ export default class BattleScene extends SceneBase {
      * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
      * @default 0 - Uses the default normal experience gain display.
      */
-  public expParty: integer = 0;
+  public expParty: ExpNotification = 0;
   public hpBarSpeed: integer = 0;
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
