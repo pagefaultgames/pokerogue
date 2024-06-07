@@ -3393,7 +3393,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   args: any[],
   showAbilityInstant: boolean = false,
   quiet: boolean = false,
-): Promise<void> {
+) {
   for (const passive of [false, true]) {
     if (!pokemon.canApplyAbility(passive)) {
       continue;
@@ -3408,7 +3408,11 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
 
       pokemon.scene.setPhaseQueueSplice();
 
-      const result = await applyFunc(attr, passive);
+      let result = applyFunc(attr, passive);
+      if (result instanceof Promise) {
+        result = await result;
+      }
+
       if (result) {
         if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
           pokemon.battleData.abilitiesApplied.push(ability.id);
