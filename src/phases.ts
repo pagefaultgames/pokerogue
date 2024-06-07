@@ -649,7 +649,7 @@ export abstract class FieldPhase extends BattlePhase {
       if (speeds[i] === speeds[i-1]) {
         const lower = i - 1;
         let upper = i;
-        while (upper + 1 < orderedTargets.length && speeds[upper] === speeds[i]) {
+        while (upper + 1 < orderedTargets.length && speeds[upper + 1] === speeds[i]) {
           upper++;
         }
         const tiedPokemon = Utils.randSeedShuffle(orderedTargets.splice(lower, upper - lower + 1));
