@@ -1693,15 +1693,13 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     this.enemySpDef = 0;
     this.enemyCountTally = 0;
 
-    if (pokemon.getOpponents()[0].summonData !== undefined) {
-      for (const opponent of pokemon.getOpponents()) {
-        this.enemyCountTally++;
-        this.enemyDef += opponent.getBattleStat(Stat.DEF);
-        this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
-      }
-      this.enemyDef = Math.round(this.enemyDef / this.enemyCountTally);
-      this.enemySpDef = Math.round(this.enemySpDef / this.enemyCountTally);
+    for (const opponent of pokemon.getOpponents()) {
+      this.enemyCountTally++;
+      this.enemyDef += opponent.getBattleStat(Stat.DEF);
+      this.enemySpDef += opponent.getBattleStat(Stat.SPDEF);
     }
+    this.enemyDef = Math.round(this.enemyDef / this.enemyCountTally);
+    this.enemySpDef = Math.round(this.enemySpDef / this.enemyCountTally);
 
     if (this.enemyDef < this.enemySpDef) {
       this.stats = [BattleStat.ATK];
