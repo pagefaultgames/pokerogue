@@ -1695,26 +1695,26 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "maylene": {
     "encounter": {
-      1: `I've come to challenge you now, and I won't hold anything back. 
-                    $Please prepare yourself for battle!`,
+      1: `지금 당신에게 도전하러 왔어요.
+                    $전력을 다할 테니 각오하세요!`,
     },
     "victory": {
-      1: "I admit defeat…"
+      1: "나의 패배입니다…"
     },
     "defeat": {
-      1: "That was awesome."
+      1: "멋진 승부였습니다."
     }
   },
   "fantina": {
     "encounter": {
-      1: `You shall challenge me, yes? But I shall win. 
-                    $That is what the Gym Leader of Hearthome does, non?`,
+      1: `당신도 도전해 보세요. 전 당신을 이기겠어요.
+                    $그것이 체육관 관장!`,
     },
     "victory": {
-      1: "You are so fantastically strong. I know why I have lost."
+      1: "당신 최고로 강해요. 나 진 것 알아요."
     },
     "defeat": {
-      1: "I am so, so, very happy!"
+      1: "너무, 너무 행복해요!"
     }
   },
   "byron": {
