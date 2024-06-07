@@ -12,7 +12,7 @@ export default class MockTextureManager {
   private scene;
   public add;
   public displayList;
-  public containers = [];
+  public list = [];
 
   constructor(scene) {
     this.scene = scene;
@@ -34,11 +34,15 @@ export default class MockTextureManager {
   }
 
   container(x, y) {
-    return new MockContainer(this, x, y);
+    const container = new MockContainer(this, x, y);
+    this.list.push(container);
+    return container;
   }
 
   sprite(x,y, texture) {
-    return new MockSprite(this, x, y, texture);
+    const sprite = new MockSprite(this, x, y, texture);
+    this.list.push(sprite);
+    return sprite;
   }
 
   existing(obj) {
@@ -50,22 +54,32 @@ export default class MockTextureManager {
   }
 
   rectangle(x, y, width, height, fillColor) {
-    return new MockRectangle(this, x, y, width, height, fillColor);
+    const rectangle = new MockRectangle(this, x, y, width, height, fillColor);
+    this.list.push(rectangle);
+    return rectangle;
   }
 
   nineslice(x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight) {
-    return new MockNineslice(this, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight);
+    const nineSlice = new MockNineslice(this, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight);
+    this.list.push(nineSlice);
+    return nineSlice;
   }
 
   image(x, y, texture) {
-    return new MockImage(this, x, y, texture);
+    const image = new MockImage(this, x, y, texture);
+    this.list.push(image);
+    return image;
   }
 
   text(x, y, content, styleOptions) {
-    return new MockText(this, x, y, content, styleOptions);
+    const text = new MockText(this, x, y, content, styleOptions);
+    this.list.push(text);
+    return text;
   }
 
   polygon(x, y, content, fillColor, fillAlpha) {
-    return new MockPolygon(this, x, y, content, fillColor, fillAlpha);
+    const polygon = new MockPolygon(this, x, y, content, fillColor, fillAlpha);
+    this.list.push(polygon);
+    return polygon;
   }
 }

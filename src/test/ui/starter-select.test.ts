@@ -547,7 +547,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.CATERPIE);
   }, 20000);
 
-  it("Check if first pokemon in party is pidgey from gen 1 and 1rd row, 6th column ", async() => {
+  it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1) ", async() => {
     await game.importData("src/test/utils/saves/everything.prsv");
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
@@ -562,7 +562,7 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.RIGHT);
+      handler.processInput(Button.DOWN);
       handler.processInput(Button.ACTION);
     });
     let options: OptionSelectItem[];
@@ -590,9 +590,9 @@ describe("UI - Starter select", () => {
       });
     });
     expect(starterSelectUiHandler.starterGens[0]).toBe(0);
-    expect(starterSelectUiHandler.starterCursors[0]).toBe(4);
-    expect(starterSelectUiHandler.cursorObj.x).toBe(132 + 5 * 18);
-    expect(starterSelectUiHandler.cursorObj.y).toBe(10);
+    expect(starterSelectUiHandler.starterCursors[0]).toBe(12);
+    expect(starterSelectUiHandler.cursorObj.x).toBe(132 + 4 * 18);
+    expect(starterSelectUiHandler.cursorObj.y).toBe(28);
 
     game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
@@ -607,6 +607,6 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.WEEDLE);
+    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.NIDORAN_M);
   }, 20000);
 });

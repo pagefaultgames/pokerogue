@@ -11,6 +11,7 @@ export default class MockContainer {
   private style;
   public frame;
   protected textureManager;
+  public list = [];
 
   constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;
@@ -82,7 +83,7 @@ export default class MockContainer {
   }
 
   destroy() {
-
+    this.list = [];
   }
 
   setShadow(shadowXpos, shadowYpos, shadowColor) {
@@ -137,58 +138,12 @@ export default class MockContainer {
     // Sets the depth of this Game Object.
   }
 
-  add(obj) {
-    // Adds a child to this Game Object.
-    const whitelist = ["ArenaBase", "PlayerPokemon", "EnemyPokemon"];
-    const key = obj.constructor.name;
-    if (whitelist.includes(key) || obj.texture?.key?.includes("trainer_")) {
-      this.textureManager.containers.push(obj);
-    }
-  }
-
   setTexture(texture) {
     // Sets the texture this Game Object will use to render with.
   }
 
   clearTint() {
     // Clears any previously set tint.
-  }
-
-  removeAll() {
-    // Removes all Game Objects from this Container.
-  }
-
-  addAt(index, obj) {
-  }
-
-  remove(obj) {
-    const key = obj.constructor.name;
-    for (const [index, texture] of this.textureManager.containers.entries()) {
-      const textureKey = texture?.constructor.name;
-      if (texture?.name === obj.name && key === textureKey) {
-        delete this.textureManager.containers[index];
-        return;
-      }
-    }
-  }
-
-  getIndex(obj) {
-    const key = obj.constructor.name;
-    for (const [index, texture] of this.textureManager.containers.entries()) {
-      const textureKey = texture?.constructor.name;
-      if (texture?.name === obj.name && key === textureKey) {
-        return index;
-      }
-    }
-    return -1;
-  }
-
-  getAt(index) {
-    return this;
-  }
-
-  getAll() {
-    return this.textureManager.containers;
   }
 
   sendToBack() {
@@ -212,6 +167,41 @@ export default class MockContainer {
   }
 
   on(event, callback, source) {
+  }
+
+  add(obj) {
+    // Adds a child to this Game Object.
+    this.list.push(obj);
+  }
+
+  removeAll() {
+    // Removes all Game Objects from this Container.
+    this.list = [];
+  }
+
+  addAt(obj, index) {
+    // Adds a Game Object to this Container at the given index.
+    this.list.splice(index, 0, obj);
+  }
+
+  remove(obj) {
+    const index = this.list.indexOf(obj);
+    if (index !== -1) {
+      this.list.splice(index, 1);
+    }
+  }
+
+  getIndex(obj) {
+    const index = this.list.indexOf(obj);
+    return index || -1;
+  }
+
+  getAt(index) {
+    return this.list[index];
+  }
+
+  getAll() {
+    return this.list;
   }
 
 }

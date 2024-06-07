@@ -6,6 +6,7 @@ export default class MockText {
   private splitRegExp;
   private scene;
   private textureManager;
+  public list = [];
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
     this.textureManager = textureManager;
@@ -194,6 +195,7 @@ export default class MockText {
 
   destroy() {
     // return this.phaserText.destroy();
+    this.list = [];
   }
 
   setAlpha(alpha) {
@@ -224,5 +226,40 @@ export default class MockText {
       x: 0,
       y: 0,
     };
+  }
+
+  add(obj) {
+    // Adds a child to this Game Object.
+    this.list.push(obj);
+  }
+
+  removeAll() {
+    // Removes all Game Objects from this Container.
+    this.list = [];
+  }
+
+  addAt(obj, index) {
+    // Adds a Game Object to this Container at the given index.
+    this.list.splice(index, 0, obj);
+  }
+
+  remove(obj) {
+    const index = this.list.indexOf(obj);
+    if (index !== -1) {
+      this.list.splice(index, 1);
+    }
+  }
+
+  getIndex(obj) {
+    const index = this.list.indexOf(obj);
+    return index || -1;
+  }
+
+  getAt(index) {
+    return this.list[index];
+  }
+
+  getAll() {
+    return this.list;
   }
 }
