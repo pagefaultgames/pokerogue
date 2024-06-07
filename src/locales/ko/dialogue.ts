@@ -1134,7 +1134,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lorelei": {
     "encounter": {
-      1: `얼음 포켓몬은 나를 대적할 사람이 없지! 빙결의 길은 강해!
+      1: `얼음포켓몬을 내보내면 대적할 사람이 없지! 상대를 얼린다는 건 매우 강력한 공격이야.
                 $네 포켓몬이 꽁꽁 얼면 그때부턴 내 손바닥 위거든! 아하하! 준비됐어?`,
     },
     "victory": {
