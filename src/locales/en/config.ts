@@ -41,7 +41,8 @@ import {
   statusEffectDescriptor,
   statusEffectHealText,
   statusEffectObtainText, statusEffectOverlapText, statusEffectSourceClause
-} from "#app/locales/en/status-effect";
+} from "./status-effect";
+import {arenaTag} from "./arena-tag";
 
 export const enConfig = {
   ability: ability,
@@ -88,4 +89,5 @@ export const enConfig = {
   statusEffectActivationText: statusEffectActivationText,
   statusEffectOverlapText: statusEffectOverlapText,
   statusEffectSourceClause: statusEffectSourceClause,
+  arenaTag: arenaTag
 };

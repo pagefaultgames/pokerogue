@@ -240,6 +240,7 @@ declare module "i18next" {
         statusEffectActivationText: SimpleTranslationEntries;
         statusEffectOverlapText: SimpleTranslationEntries;
         statusEffectSourceClause: SimpleTranslationEntries;
+        arenaTag: SimpleTranslationEntries;
     };
   }
 }

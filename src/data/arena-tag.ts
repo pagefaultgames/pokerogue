@@ -2,7 +2,7 @@ import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
-import { getPokemonMessage } from "../messages";
+import {getPokemonNameWithAffix} from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
 import { StatusEffect } from "./status-effect";
@@ -73,7 +73,8 @@ export class MistTag extends ArenaTag {
 
     const source = arena.scene.getPokemonById(this.sourceId);
     if (!quiet) {
-      arena.scene.queueMessage(getPokemonMessage(source, "'s team became\nshrouded in mist!"));
+      arena.scene.queueMessage(i18next.t("arenaTag:mist", { pokemonName: getPokemonNameWithAffix(source)}));
+
     }
   }
 
@@ -203,7 +204,7 @@ abstract class ConditionalProtectTag extends ArenaTag {
          && this.protectConditionFunc(...args.slice(2))) {
       (args[0] as Utils.BooleanHolder).value = true;
       new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
-      arena.scene.queueMessage(`${super.getMoveName()} protected ${getPokemonMessage(target, "!")}`);
+      arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtect", { moveName: super.getMoveName(), pokemonName: getPokemonNameWithAffix(target)}));
       return true;
     }
     return false;
@@ -261,7 +262,7 @@ class MatBlockTag extends ConditionalProtectTag {
 
   onAdd(arena: Arena) {
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(getPokemonMessage(source, " intends to flip up a mat\nand block incoming attacks!"));
+    arena.scene.queueMessage(i18next.t("arenaTag:matBlockTag", { pokemonName: getPokemonNameWithAffix(source)}));
   }
 }
 
@@ -295,7 +296,7 @@ class WishTag extends ArenaTag {
   onAdd(arena: Arena): void {
     const user = arena.scene.getPokemonById(this.sourceId);
     this.battlerIndex = user.getBattlerIndex();
-    this.triggerMessage = getPokemonMessage(user, "'s wish\ncame true!");
+    this.triggerMessage = i18next.t("arenaTag:wishTag", { pokemonName: getPokemonNameWithAffix(user)});
     this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
   }
 
@@ -415,7 +416,7 @@ class SpikesTag extends ArenaTrapTag {
         const damageHpRatio = 1 / (10 - 2 * this.layers);
         const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
 
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is hurt\nby the spikes!"));
+        pokemon.scene.queueMessage(i18next.t("arenaTag:spikesTag", { pokemonName: getPokemonNameWithAffix(pokemon)}));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
@@ -441,7 +442,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
 
     const source = arena.scene.getPokemonById(this.sourceId);
     if (!quiet) {
-      arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
+      arena.scene.queueMessage(i18next.t("arenaTag:toxicSpikesOnAdd", { moveName: this.getMoveName(), opponentName: source.getOpponentDescriptor()}));
     }
   }
 
@@ -456,7 +457,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
       if (pokemon.isOfType(Type.POISON)) {
         this.neutralized = true;
         if (pokemon.scene.arena.removeTag(this.tagType)) {
-          pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` absorbed the ${this.getMoveName()}!`));
+          pokemon.scene.queueMessage(i18next.t("arenaTag:mist", { pokemonName: getPokemonNameWithAffix(pokemon),moveName: this.getMoveName()}));
           return true;
         }
       } else if (!pokemon.status) {
@@ -618,11 +619,11 @@ export class TrickRoomTag extends ArenaTag {
   }
 
   onAdd(arena: Arena): void {
-    arena.scene.queueMessage(getPokemonMessage(arena.scene.getPokemonById(this.sourceId), " twisted\nthe dimensions!"));
+    arena.scene.queueMessage(i18next.t("arenaTag:trickRoomOnAdd", { pokemonName: getPokemonNameWithAffix(arena.scene.getPokemonById(this.sourceId))}));
   }
 
   onRemove(arena: Arena): void {
-    arena.scene.queueMessage("The twisted dimensions\nreturned to normal!");
+    arena.scene.queueMessage(i18next.t("arenaTag:trickRoomOnRemove"));
   }
 }
 
