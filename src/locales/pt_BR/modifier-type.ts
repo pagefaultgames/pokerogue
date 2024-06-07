@@ -113,8 +113,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Combina dois Pokémon (transfere Habilidade, divide os atributos base e tipos, compartilha os movimentos)",
     },
     "TerastallizeModifierType": {
-      name: "{{teraType}} Fragmento Tera",
-      description: "{{teraType}} Terastalize um Pokémon por até 10 batalhas",
+      name: "Fragmento Tera {{teraType}}",
+      description: "Terastalize um Pokémon para o tipo {{teraType}} por 10 ondas",
     },
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente",
