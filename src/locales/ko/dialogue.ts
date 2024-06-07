@@ -277,7 +277,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "worker": {
     "encounter": {
-      1: "사람들이 저를 오해하는 게 신경 쓰여요. 저는 그것보다 훨씬 깨끗합니다.",
+      1: "사람들이 저를 오해하는 게 신경 쓰여요. 전 생각보다 훨씬 깨끗하답니다.",
     },
     "victory": {
       1: "피부가 타는 게 싫어서, 일하는 동안엔 그늘에 머물고 싶어요.",
@@ -286,7 +286,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "worker_female": {
     "encounter": {
       1: `사람들이 나를 오해하는 게 신경 쓰여.
-                $나는 그것보다 훨씬 깨끗한데.`
+                $나는 생각보다 훨씬 깨끗한데.`
     },
     "victory": {
       1: "피부가 타는 게 싫어서, 일하는 동안엔 그늘에 머물고 싶어."
@@ -297,7 +297,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "worker_double": {
     "encounter": {
-      1: "어떻게 널 부실 수 있는지 보여줄게. 우린 현장에서 수련해왔거든!",
+      1: "너를 무너뜨릴 수 있다는 것을 보여줄게. 우리는 실전 경험이 있거든!",
     },
     "victory": {
       1: "이상하네… 어떻게 이럴 수 있지… 힘으로 압도할수 없다니.",
