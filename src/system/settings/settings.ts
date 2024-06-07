@@ -4,7 +4,7 @@ import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
 import { PlayerGender } from "#app/data/enums/player-gender";
-import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
 import { MoneyFormat } from "../../enums/money-format";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#app/ui/enums/ease-type.js";
