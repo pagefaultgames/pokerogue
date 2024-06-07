@@ -25,6 +25,7 @@ import {Species} from "#app/data/enums/species";
 import {PlayerGender} from "#app/data/enums/player-gender";
 import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
+import {ExpNotification} from "#app/enums/exp-notification";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -105,7 +106,7 @@ export default class GameManager {
       this.scene.moveAnimations = false;
       this.scene.showLevelUpStats = false;
       this.scene.expGainsSpeed = 3;
-      this.scene.expParty = 3;
+      this.scene.expParty = ExpNotification.SKIP;
       this.scene.hpBarSpeed = 3;
       resolve();
     });
