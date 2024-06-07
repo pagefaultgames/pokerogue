@@ -1619,7 +1619,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "pryce": {
     "encounter": {
-      1: `年轻并不能确保胜利！经验才是关键。`,
+      1: `年轻不代表能获得胜利！经验才是关键。`,
     },
     "victory": {
       1: `无与伦比！赢得完美，试着不要忘记你现在的感受。`,
