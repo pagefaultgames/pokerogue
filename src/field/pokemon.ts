@@ -760,14 +760,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getHpRatio(precise: boolean = false): number {
-    if(precise) return this.hp / this.getMaxHp()
-    
+    if (precise) {
+      return this.hp / this.getMaxHp();
+    }
+
     const ratio = this.hp / this.getMaxHp();
     /**
-     * Multiplying by 100 and dividing by 100 could work for smaller numbers. 
+     * Multiplying by 100 and dividing by 100 could work for smaller numbers.
      * For higher numbers need to be multiplied by 10^n and divided by 10^n, where n is digits in maxHP
      */
-    const multiplier = Math.pow(10, this.getMaxHp().toString().length)
+    const multiplier = Math.pow(10, this.getMaxHp().toString().length);
     return Math.round(ratio * multiplier) / multiplier;
   }
 
