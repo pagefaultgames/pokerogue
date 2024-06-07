@@ -4,104 +4,104 @@ import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins
 export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
-      1: "Hey, wanna battle?",
-      2: "Are you a new trainer too?",
-      3: "Hey, I haven't seen you before. Let's battle!",
-      4: "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      5: "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
-      6: "All right! Let's go!",
-      7: "All right! Here I come! I'll show you my power!",
-      8: "Haw haw haw... I'll show you how hawesome my Pokémon are!",
-      9: "No need to waste time saying hello. Bring it on whenever you're ready!",
-      10: "Don't let your guard down, or you may be crying when a kid beats you.",
-      11: "I've raised my Pokémon with great care. You're not allowed to hurt them!",
-      12: "Glad you made it! It won't be an easy job from here.",
-      13: "The battles continue forever! Welcome to the world with no end!"
+      1: "Hey, ¿quieres luchar?",
+      2: "¿También eres un entrenador novato?",
+      3: "No te había visto antes. ¡Vamos a luchar!",
+      4: "Perdí y estoy intentando buscar nuevos Pokémon.\n¡Espera, pareces débil! ¡Vamos, a luchar!",
+      5: "¿Nos conocimos o no? Ni me acuerdo. ¡Supongo que es un gusto conocerte!",
+      6: "¡Venga, vamos!",
+      7: "¡Allá voy! ¡Te enseñaré mi poder!",
+      8: "¡Ja ja ja! ¡Te enseñaré lo jimpresionante que es mi equipo!",
+      9: "No pierdas tiempo saludando. ¡Adelante, cuando estés listo!",
+      10: "No bajes la guardia o llorarás porque un niño te ganó.",
+      11: "He cuidado a mis Pokémon con cariño. ¡Prohibido hacerles daño!",
+      12: "¡Encantado de que lo lograses! A partir de aquí no será fácil.",
+      13: "¡Las batallas continúan para siempre! ¡Bienvenido al mundo sin fin!"
     },
     "victory": {
-      1: "Wow! You're strong!",
-      2: "I didn't stand a chance, huh?",
-      3: "I'll find you again when I'm older and beat you!",
-      4: "Ugh. I don't have any more Pokémon.",
-      5: "No way… NO WAY! How could I lose again…",
-      6: "No! I lost!",
-      7: "Whoa! You are incredible! I'm amazed and surprised!",
-      8: "Could it be… How… My Pokémon and I are the strongest, though…",
-      9: "I won't lose next time! Let's battle again sometime!",
-      10: "Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!",
-      11: "Your Pokémon are more amazing! Trade with me!",
-      12: "I got a little carried away earlier, but what job was I talking about?",
-      13: "Ahaha! There it is! That's right! You're already right at home in this world!"
+      1: "¡Guau! ¡Eres fuerte!",
+      2: "¿No tuve oportunidad, eh?",
+      3: "¡Cuando sea mayor te encontraré y te ganaré!",
+      4: "Ay. No tengo más Pokémon.",
+      5: "Imposible… ¡IMPOSIBLE! Cómo pude perder de nuevo…",
+      6: "¡No! ¡Perdí!",
+      7: "¡Guau! ¡Eres increíble! ¡Estoy alucinado y sorprendido!",
+      8: "Puede ser… Cómo… Aunque mis Pokémon y yo somos los más fuertes…",
+      9: "¡No perderé a la próxima! ¡Luchemos otra vez pronto!",
+      10: "¡Oye! ¡No ves que solo soy un niño! ¡No es justo que vayas así conmigo!",
+      11: "¡Tus Pokémon molan más! ¡Intercámbiamelos!",
+      12: "Me perdí antes pero, ¿de qué tarea estaba hablando antes?",
+      13: "¡Jajaja! ¡Esa es! ¡Correcto! ¡Ya te sientes como en casa en este mundo!"
     }
   },
   "lass": {
     "encounter": {
-      1: "Let's have a battle, shall we?",
-      2: "You look like a new trainer. Let's have a battle!",
-      3: "I don't recognize you. How about a battle?",
-      4: "Let's have a fun Pokémon battle!",
-      5: "I'll show you the ropes of how to really use Pokémon!",
-      6: "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      7: "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      8: "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      9: "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      1: "¿Luchemos, podría ser?",
+      2: "Pareces novato. ¡Luchemos!",
+      3: "No te reconozco. ¿Un combate?",
+      4: "¡Tengamos un combate Pokémon divertido!",
+      5: "¡Te enseñaré lo básico de cómo entrenar Pokémon!",
+      6: "¡Un combate serio empieza por un comienzo serio! ¿Seguro que estás listo?",
+      7: "Solo se es joven una vez. Y solo tienes una oportunidad en una batalla. Pronto, solo serás un recuerdo.",
+      8: "Asegúrate de ir fácil conmigo, ¿vale? ¡Pero seré seria luchando!",
+      9: "El colegio es aburrido. No hay nada que hacer. Uaa. Solo lucho para pasar el tiempo."
     },
     "victory": {
-      1: "That was impressive! I've got a lot to learn.",
-      2: "I didn't think you'd beat me that bad…",
-      3: "I hope we get to have a rematch some day.",
-      4: "That was pretty amazingly fun! You've totally exhausted me…",
-      5: "You actually taught me a lesson! You're pretty amazing!",
-      6: "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      7: "I don't need memories like this. Deleting memory…",
-      8: "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      9: "I'm actually getting tired of battling… There's gotta be something new to do…"
+      1: "¡Impresionante! Tengo mucho que aprender.",
+      2: "No pensé que me vencerías así…",
+      3: "Espero la revancha algún día.",
+      4: "¡Fue increíblemente divertido! Me dejaste cansada…",
+      5: "¡Me enseñaste una lección! ¡Eres increíble!",
+      6: "En serio, he perdido. O sea, es seriamente decepcionante, pero tú eres realmente guay.",
+      7: "No necesito estos recuerdos. Borrando recuerdos…",
+      8: "¡Te dije que fueses fácil conmigo! Aun así, me gusta cuando eres serio.",
+      9: "Me canso de luchar… Habrá algo nuevo que hacer…"
     }
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "Pokémon obedientes, Pokémon egoístas… Los Pokémon tienen características únicas.",
+      2: "Aunque tengo descendencia y comportamiento pobre, he cuidado muy bien a mis Pokémon.",
+      3: "¿Tienes disciplina con tus Pokémon? Malcriarlos mucho no es bueno.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "Es importante cuidar y mimar todas las características de los Pokémon.",
+      2: "No como mi diabólica personalidad, mis Pokémon son muy buenos.",
+      3: "Malcriar puede arruinar a los Pokémon y a los humanos.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "No deberías enfadarte con tu Pokémon, aún tras un combate perdido.",
+      2: "¿Eh? ¿Buen Pokémon? Me acostumbro a cuidarlos.",
+      3: "No importa el cariño que le tengas a tus Pokémon, tienes que ser serio si se portan mal."
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "Los Pokémon nunca te traicionan, te devuelven el amor que les diste.",
+      2: "¿Puedo darte un consejo para entrenar bien tus Pokémon?",
+      3: "Cuidé estos Pokémon con un método especial."
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "Ugh… No se supone que acabaría así. ¿Les cuidé de forma errónea?",
+      2: "Cómo pudo pasarle esto a mi Pokémon... ¿Qué le das a tu Pokémon?",
+      3: "Si pierdo, solo fue un pasatiempo. Mi ego se ve intacto."
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "Esto demuestra que los Pokémon aceptaron mi amor.",
+      2: "El truco detrás de atrapar buenos Pokémon es cuidar buenos Pokémon.",
+      3: "Los Pokémon serán fuertes o débiles según los cuides."
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "¡Uy uy uy! ¡Hiciste que huyera un pez!\n¿Qué harás al respecto?",
+      2: "¡Vete! ¡Espantas los Pokémon!",
+      3: "¡Veamos si pescas una victoria!",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "Olvídalo.",
+      2: "A la siguiente, ¡pescaré mi victoria!",
+      3: "Infravaloré la corriente esta vez.",
     },
   },
   "fisherman_female": {
