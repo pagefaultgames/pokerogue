@@ -797,7 +797,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
       const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
 
       if (isCommandFight && hasQuickClaw) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its quick claw to move faster!"));
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its Quick Claw to move faster!"));
       }
       return true;
     }
