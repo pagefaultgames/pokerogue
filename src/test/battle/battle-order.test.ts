@@ -36,8 +36,8 @@ describe("Battle order", () => {
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(Abilities.INSOMNIA);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([Moves.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async() => {

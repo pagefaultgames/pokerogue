@@ -35,7 +35,7 @@ describe("Moves - Tackle", () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(97);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([moveToUse]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
     vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   });

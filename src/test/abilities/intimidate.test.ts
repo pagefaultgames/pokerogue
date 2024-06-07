@@ -36,7 +36,8 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(Abilities.INTIMIDATE);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "ability", "get").mockReturnValue(Abilities.INTIMIDATE);
   });
 
   it("INTIMIDATE", async() => {
