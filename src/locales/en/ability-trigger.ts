@@ -1,5 +1,4 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
-import {getPokemonNameWithAffix} from "#app/messages";
 
 export const abilityTriggers: SimpleTranslationEntries = {
   "blockRecoilDamage" : "{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!",
@@ -55,4 +54,3 @@ export const abilityTriggers: SimpleTranslationEntries = {
 
 } as const;
 
-`${i18next.t("abilityTriggers:typeImmunityHealAb", { pokemonName: getPokemonNameWithAffix(pokemon),abilityName: abilityName })}`;
