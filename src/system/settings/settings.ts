@@ -480,15 +480,15 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             },
             {
               label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt_BR")
+              handler: () => changeLocaleHandler("pt-BR")
             },
             {
               label: "简体中文",
-              handler: () => changeLocaleHandler("zh_CN")
+              handler: () => changeLocaleHandler("zh-CN")
             },
             {
               label: "繁體中文",
-              handler: () => changeLocaleHandler("zh_TW")
+              handler: () => changeLocaleHandler("zh-TW")
             },
             {
               label: "한국어",
