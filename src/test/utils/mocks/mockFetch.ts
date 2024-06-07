@@ -1,8 +1,3 @@
-import infoHandler from "#app/test/utils/fetchHandlers/infoHandler";
-import sessionHandler from "#app/test/utils/fetchHandlers/sessionHandler";
-import titlestatHandler from "#app/test/utils/fetchHandlers/titlestatHandler";
-import systemHandler from "#app/test/utils/fetchHandlers/systemHandler";
-
 export const MockFetch = (input, init) => {
   const url = typeof input === "string" ? input : input.url;
 
@@ -10,12 +5,12 @@ export const MockFetch = (input, init) => {
   let responseText;
 
   const handlers = {
-    "account/info": infoHandler,
-    "savedata/session": sessionHandler,
-    "savedata/system": systemHandler,
+    "account/info": {"username":"greenlamp","lastSessionSlot":0},
+    "savedata/session": {},
+    "savedata/system": {},
     "savedata/updateall": "",
     "daily/rankingpagecount": { data: 0 },
-    "game/titlestats": titlestatHandler,
+    "game/titlestats": {"playerCount":0,"battleCount":5},
     "daily/rankings": [],
   };
 
