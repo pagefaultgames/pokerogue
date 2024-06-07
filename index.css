@@ -112,9 +112,13 @@ input:-internal-autofill-selected {
   display: none;
 }
 
-/* Show #apadInfo and #apadStats only in battle */
-#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apadInfo,
-#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apadStats {
+/* Show #apadInfo only in battle */
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']) #apadInfo {
+  display: none;
+}
+
+/* Show #apadInfo only in battle and target select */
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']):not([data-ui-mode='MODIFIER_SELECT']) #apadStats {
   display: none;
 }
 

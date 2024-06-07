@@ -320,6 +320,7 @@ export default class BattleScene extends SceneBase {
 
     const field = this.add.container(0, 0);
     field.setScale(6);
+    field.setName("container-field");
 
     this.field = field;
 
@@ -455,9 +456,13 @@ export default class BattleScene extends SceneBase {
     const loadPokemonAssets = [];
 
     this.arenaPlayer = new ArenaBase(this, true);
+    this.arenaPlayer.setName("container-arena-player");
     this.arenaPlayerTransition = new ArenaBase(this, true);
+    this.arenaPlayerTransition.setName("container-arena-player-transition");
     this.arenaEnemy = new ArenaBase(this, false);
+    this.arenaEnemy.setName("container-arena-enemy");
     this.arenaNextEnemy = new ArenaBase(this, false);
+    this.arenaNextEnemy.setName("container-arena-next-enemy");
 
     this.arenaBgTransition.setVisible(false);
     this.arenaPlayerTransition.setVisible(false);
@@ -472,6 +477,7 @@ export default class BattleScene extends SceneBase {
 
     const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
     trainer.setOrigin(0.5, 1);
+    trainer.setName("sprite-trainer");
 
     field.add(trainer);
 
