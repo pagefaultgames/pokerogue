@@ -22,6 +22,9 @@ export default class PhaseInterceptor {
   private prompts;
   private phaseFrom;
 
+  /**
+   * List of phases with their corresponding start methods.
+   */
   private PHASES = [
     [LoginPhase, this.startPhase],
     [TitlePhase, this.startPhase],
@@ -55,6 +58,10 @@ export default class PhaseInterceptor {
     [ShinySparklePhase, this.startPhase],
   ];
 
+  /**
+   * Constructor to initialize the scene and properties, and to start the phase handling.
+   * @param scene - The scene to be managed.
+   */
   constructor(scene) {
     this.scene = scene;
     this.log = [];
@@ -64,11 +71,21 @@ export default class PhaseInterceptor {
     this.startPromptHander();
   }
 
+  /**
+   * Method to set the starting phase.
+   * @param phaseFrom - The phase to start from.
+   * @returns The instance of the PhaseInterceptor.
+   */
   runFrom(phaseFrom) {
     this.phaseFrom = phaseFrom;
     return this;
   }
 
+  /**
+   * Method to transition to a target phase.
+   * @param phaseTo - The phase to transition to.
+   * @returns A promise that resolves when the transition is complete.
+   */
   async to(phaseTo): Promise<void> {
     return new Promise(async (resolve) => {
       await this.run(this.phaseFrom);
@@ -87,7 +104,12 @@ export default class PhaseInterceptor {
     });
   }
 
-
+  /**
+   * Method to run a phase with an optional skip function.
+   * @param phaseTarget - The phase to run.
+   * @param skipFn - Optional skip function.
+   * @returns A promise that resolves when the phase is run.
+   */
   run(phaseTarget, skipFn?): Promise<void> {
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve) => {
@@ -101,7 +123,11 @@ export default class PhaseInterceptor {
     });
   }
 
-
+  /**
+   * Method to ensure a phase is run, to throw error on test if not.
+   * @param phaseTarget - The phase to run.
+   * @returns A promise that resolves when the phase is run.
+   */
   mustRun(phaseTarget): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
@@ -119,6 +145,12 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Method to execute actions when about to run a phase. Does not run the phase, stop right before.
+   * @param phaseTarget - The phase to run.
+   * @param skipFn - Optional skip function.
+   * @returns A promise that resolves when the phase is about to run.
+   */
   whenAboutToRun(phaseTarget, skipFn?): Promise<void> {
     return new Promise(async (resolve) => {
       this.waitUntil(phaseTarget, skipFn).then(() => {
@@ -129,6 +161,12 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Method to remove a phase from the list.
+   * @param phaseTarget - The phase to remove.
+   * @param skipFn - Optional skip function.
+   * @returns A promise that resolves when the phase is removed.
+   */
   remove(phaseTarget, skipFn?): Promise<void> {
     return new Promise(async (resolve) => {
       this.waitUntil(phaseTarget, skipFn).then(() => {
@@ -141,6 +179,12 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Method to wait until a specific phase is reached.
+   * @param phaseTarget - The phase to wait for.
+   * @param skipFn - Optional skip function.
+   * @returns A promise that resolves when the phase is reached.
+   */
   waitUntil(phaseTarget, skipFn?): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     return new Promise((resolve, reject) => {
@@ -158,6 +202,9 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Method to initialize phases and their corresponding methods.
+   */
   initPhases() {
     for (const [phase, method] of this.PHASES) {
       const originalStart = phase.prototype.start;
@@ -166,6 +213,10 @@ export default class PhaseInterceptor {
     }
   }
 
+  /**
+   * Method to start a phase and log it.
+   * @param phase - The phase to start.
+   */
   startPhase(phase) {
     this.log.push(phase.name);
     const instance = this.scene.getCurrentPhase();
@@ -177,6 +228,9 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Method to start the prompt handler.
+   */
   startPromptHander() {
     this.promptInterval = setInterval(() => {
       if (this.prompts.length) {
@@ -193,6 +247,13 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Method to add an action to the next prompt.
+   * @param phaseTarget - The target phase for the prompt.
+   * @param mode - The mode of the UI.
+   * @param callback - The callback function to execute.
+   * @param expireFn - The function to determine if the prompt has expired.
+   */
   addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn: () => void) {
     this.prompts.push({
       phaseTarget,
@@ -202,6 +263,12 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Restores the original state of phases and clears intervals.
+   *
+   * This function iterates through all phases and resets their `start` method to the original
+   * function stored in `this.phases`. Additionally, it clears the `promptInterval` and `interval`.
+   */
   restoreOg() {
     for (const [phase] of this.PHASES) {
       phase.prototype.start = this.phases[phase.name];

@@ -26,6 +26,9 @@ import {PlayerGender} from "#app/data/enums/player-gender";
 import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
 
+/**
+ * Class to manage the game state and transitions between phases.
+ */
 export default class GameManager {
   public gameWrapper: GameWrapper;
   public scene: BattleScene;
@@ -33,6 +36,11 @@ export default class GameManager {
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
 
+  /**
+   * Creates an instance of GameManager.
+   * @param phaserGame - The Phaser game instance.
+   * @param bypassLogin - Whether to bypass the login phase.
+   */
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
     BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
@@ -42,10 +50,19 @@ export default class GameManager {
     this.gameWrapper.setScene(this.scene);
   }
 
+  /**
+   * Sets the game mode.
+   * @param mode - The mode to set.
+   */
   setMode(mode: Mode) {
     this.scene.ui?.setMode(mode);
   }
 
+  /**
+   * Waits until the specified mode is set.
+   * @param mode - The mode to wait for.
+   * @returns A promise that resolves when the mode is set.
+   */
   waitMode(mode: Mode): Promise<void> {
     return new Promise(async (resolve) => {
       await waitUntil(() => this.scene.ui?.getMode() === mode);
@@ -53,14 +70,28 @@ export default class GameManager {
     });
   }
 
+  /**
+   * Ends the current phase.
+   */
   endPhase() {
     this.scene.getCurrentPhase().end();
   }
 
+  /**
+   * Adds an action to be executed on the next prompt.
+   * @param phaseTarget - The target phase.
+   * @param mode - The mode to wait for.
+   * @param callback - The callback to execute.
+   * @param expireFn - Optional function to determine if the prompt has expired.
+   */
   onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void) {
     this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn);
   }
 
+  /**
+   * Runs the game to the title phase.
+   * @returns A promise that resolves when the title phase is reached.
+   */
   runToTitle(): Promise<void> {
     return new Promise(async(resolve) => {
       await this.phaseInterceptor.run(LoginPhase);
@@ -80,6 +111,11 @@ export default class GameManager {
     });
   }
 
+  /**
+   * Runs the game to the summon phase.
+   * @param species - Optional array of species to summon.
+   * @returns A promise that resolves when the summon phase is reached.
+   */
   runToSummon(species?: Species[]): Promise<void> {
     return new Promise(async(resolve) => {
       await this.runToTitle();
@@ -94,6 +130,11 @@ export default class GameManager {
     });
   }
 
+  /**
+   * Starts a battle.
+   * @param species - Optional array of species to start the battle with.
+   * @returns A promise that resolves when the battle is started.
+   */
   startBattle(species?: Species[]): Promise<void> {
     return new Promise(async(resolve) => {
       await this.runToSummon(species);
@@ -118,67 +159,37 @@ export default class GameManager {
     });
   }
 
-  // doAttack(moveIndex, pokemonIndex= 0, target= 0): Promise<void> {
-  //   const mode = this.scene.ui?.getMode();
-  //   return new Promise(async (resolve, reject) => {
-  //     if (mode !== Mode.COMMAND) {
-  //       return reject("Invalid mode");
-  //     }
-  //     this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-  //     await waitUntil(() => this.scene.ui.getMode() === Mode.FIGHT);
-  //     const movePosition = await this.getMovePosition(this.scene, pokemonIndex, moveIndex);
-  //     (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-  //
-  //     //Message if opp is KO, Command if waiting for player to choose next action
-  //     await waitUntil(() => (this.isVictory() && this.scene.ui?.getMode() === Mode.MESSAGE) || this.scene.ui?.getMode() === Mode.COMMAND);
-  //     return resolve();
-  //   });
-  // }
-  //
-  // doAttackDouble(moveIndex, moveIndex2, target= 0, target2): Promise<void> {
-  //   const mode = this.scene.ui?.getMode();
-  //   return new Promise(async (resolve, reject) => {
-  //     if (mode !== Mode.COMMAND) {
-  //       return reject("Invalid mode");
-  //     }
-  //     this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-  //     await waitUntil(() => this.scene.ui.getMode() === Mode.FIGHT);
-  //     const movePosition = await getMovePosition(this.scene, 0, moveIndex);
-  //     const movePosition2 = await getMovePosition(this.scene, 1, moveIndex2);
-  //     (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-  //     if (this.scene.currentBattle.double) {
-  //       await waitUntil(() => this.scene.ui?.getMode() === Mode.TARGET_SELECT);
-  //       let targetHandler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-  //       targetHandler.processInput(Button.ACTION);
-  //       await waitUntil(() => this.scene.ui.getMode() === Mode.COMMAND);
-  //       this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-  //       await waitUntil(() => this.scene.ui.getMode() === Mode.FIGHT);
-  //       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition2, false);
-  //       await waitUntil(() => this.scene.ui?.getMode() === Mode.TARGET_SELECT);
-  //       targetHandler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-  //       targetHandler.processInput(Button.ACTION);
-  //     }
-  //
-  //
-  //     //Message if opp is KO, Command if waiting for player to choose next action
-  //     await waitUntil(() => (this.isVictory() && this.scene.ui?.getMode() === Mode.MESSAGE) || this.scene.ui?.getMode() === Mode.COMMAND);
-  //     return resolve();
-  //   });
-  // }
-
+  /**
+   * Checks if the player has won the battle.
+   * @returns True if the player has won, otherwise false.
+   */
   isVictory() {
     return this.scene.currentBattle.enemyParty.every(pokemon => pokemon.isFainted());
   }
 
+  /**
+   * Checks if the current phase matches the target phase.
+   * @param phaseTarget - The target phase.
+   * @returns True if the current phase matches the target phase, otherwise false.
+   */
   isCurrentPhase(phaseTarget) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     return this.scene.getCurrentPhase().constructor.name === targetName;
   }
 
+  /**
+   * Checks if the current mode matches the target mode.
+   * @param mode - The target mode.
+   * @returns True if the current mode matches the target mode, otherwise false.
+   */
   isCurrentMode(mode: Mode) {
     return this.scene.ui?.getMode() === mode;
   }
 
+  /**
+   * Exports the save data to import it in a test game.
+   * @returns A promise that resolves with the exported save data.
+   */
   exportSaveToTest(): Promise<string> {
     return new Promise(async (resolve) => {
       await this.scene.gameData.saveAll(this.scene, true, true, true, true);
@@ -190,6 +201,11 @@ export default class GameManager {
     });
   }
 
+  /**
+   * Imports game data from a file.
+   * @param path - The path to the data file.
+   * @returns A promise that resolves with a tuple containing a boolean indicating success and an integer status code.
+   */
   async importData(path): Promise<[boolean, integer]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, {encoding: "utf8", flag: "r"});
