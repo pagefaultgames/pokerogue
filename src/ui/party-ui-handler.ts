@@ -18,6 +18,7 @@ import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
+import i18next from "i18next";
 
 const defaultMessage = "Choose a Pokémon.";
 
@@ -130,6 +131,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   };
 
   public static NoEffectMessage = "It won't have any effect.";
+
+  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
@@ -810,7 +813,11 @@ export default class PartyUiHandler extends MessageUiHandler {
             const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
             optionName = `${modifier.active ? "Deactivate" : "Activate"} ${modifier.type.name}`;
           } else {
-            optionName = Utils.toReadableString(PartyOption[option]);
+            if (this.localizedOptions.includes(option)) {
+              optionName = i18next.t(`partyUiHandler:${PartyOption[option]}`);
+            } else {
+              optionName = Utils.toReadableString(PartyOption[option]);
+            }
           }
           break;
         }
