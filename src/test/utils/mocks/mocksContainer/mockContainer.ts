@@ -146,11 +146,6 @@ export default class MockContainer {
     }
   }
 
-  getAt(index) {
-    // Returns the child at the given index.
-    return this;
-  }
-
   setTexture(texture) {
     // Sets the texture this Game Object will use to render with.
   }

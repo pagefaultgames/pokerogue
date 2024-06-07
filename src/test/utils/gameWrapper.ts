@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 import * as main from "#app/main";
 import fs from "fs";
 import InputManager = Phaser.Input.InputManager;

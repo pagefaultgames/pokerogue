@@ -16,10 +16,11 @@ export default class MockSprite {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
     Phaser.GameObjects.Sprite.prototype.setInteractive = this.setInteractive;
+    // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setTexture = this.setTexture;
     Phaser.GameObjects.Sprite.prototype.setSizeToFrame = this.setSizeToFrame;
     Phaser.GameObjects.Sprite.prototype.setFrame = this.setFrame;
-    Phaser.GameObjects.Sprite.prototype.disable = this.disable;
+    // Phaser.GameObjects.Sprite.prototype.disable = this.disable;
 
     // Phaser.GameObjects.Sprite.prototype.texture = { frameTotal: 1, get: () => null };
     this.phaserSprite = new Phaser.GameObjects.Sprite(textureManager.scene, x, y, texture);

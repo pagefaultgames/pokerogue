@@ -3,7 +3,6 @@ import MockContainer from "#app/test/utils/mocks/mocksContainer/mockContainer";
 
 export default class MockNineslice extends MockContainer {
   private texture;
-  private frame;
   private leftWidth;
   private rightWidth;
   private topHeight;
