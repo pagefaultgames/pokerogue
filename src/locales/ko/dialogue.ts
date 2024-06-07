@@ -243,64 +243,64 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "scientist": {
     "encounter": {
-      1: "My research will lead this world to peace and joy.",
+      1: "제 연구는 이 세상을 평화와 기쁨으로 이끌 겁니다.",
     },
     "victory": {
-      1: "I am a genius… I am not supposed to lose against someone like you…",
+      1: "전 천재니까… 당신 같은 사람에게 질 수 없는데…",
     },
   },
   "school_kid": {
     "encounter": {
-      1: "…Heehee. I'm confident in my calculations and analysis.",
-      2: "I'm gaining as much experience as I can because I want to be a Gym Leader someday."
+      1: "…헤헷. 계산과 분석에는 자신 있어.",
+      2: "언젠가 체육관 관장이 되고 싶어서, 최대한 많은 경험을 쌓고 있어."
     },
     "victory": {
-      1: "Ohhhh… Calculation and analysis are perhaps no match for chance…",
-      2: "Even difficult, trying experiences have their purpose, I suppose."
+      1: "으아아… 이번에는 아마 계산과 분석이 빗나간 것 같아…",
+      2: "내가 보기엔, 어렵고 힘든 경험도 나름의 의미가 있는 것 같아."
     }
   },
   "artist": {
     "encounter": {
-      1: "I used to be popular, but now I am all washed up.",
+      1: "예전엔 인기가 많았지만, 지금은 모두 사라졌다네.",
     },
     "victory": {
-      1: "As times change, values also change. I realized that too late.",
+      1: "시대가 변하면, 가치관도 변하지. 난 그걸 너무 늦게 깨달았어.",
     },
   },
   "guitarist": {
     "encounter": {
-      1: "Get ready to feel the rhythm of defeat as I strum my way to victory!",
+      1: "패배의 리듬을 느낄 준비는 됐겠지? 내가 승리할 거니까!",
     },
     "victory": {
-      1: "Silenced for now, but my melody of resilience will play on.",
+      1: "지금은 조용하지만, 회복의 멜로디를 연주할 거야.",
     },
   },
   "worker": {
     "encounter": {
-      1: "It bothers me that people always misunderstand me. I'm a lot more pure than everyone thinks.",
+      1: "사람들이 저를 오해하는 게 신경 쓰여요. 전 생각보다 훨씬 깨끗하답니다.",
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work.",
+      1: "피부가 타는 게 싫어서, 일하는 동안엔 그늘에 머물고 싶어요.",
     },
   },
   "worker_female": {
     "encounter": {
-      1: `It bothers me that people always misunderstand me. 
-                $I'm a lot more pure than everyone thinks.`
+      1: `사람들이 나를 오해하는 게 신경 쓰여.
+                $나는 생각보다 훨씬 깨끗한데.`
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      1: "피부가 타는 게 싫어서, 일하는 동안엔 그늘에 머물고 싶어."
     },
     "defeat": {
-      1: "My body and mind aren't necessarily always in sync."
+      1: "생각처럼 몸이 잘 안따라주네."
     }
   },
   "worker_double": {
     "encounter": {
-      1: "I'll show you we can break you. We've been training in the field!",
+      1: "너를 무너뜨릴 수 있다는 것을 보여줄게. 우리는 실전 경험이 있거든!",
     },
     "victory": {
-      1: "How strange… How could this be… I shouldn't have been outmuscled.",
+      1: "이상하네… 어떻게 이럴 수 있지… 힘으로 압도할 수 없다니.",
     },
   },
   "hex_maniac": {

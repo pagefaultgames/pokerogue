@@ -277,8 +277,10 @@ export const isLocal = (
    /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
   window.location.port !== "") || window.location.hostname === "";
 
+export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port+1}`;
+
 // Set the server URL based on whether it's local or not
-export const serverUrl = isLocal ? `${window.location.hostname}:${window.location.port}` : "";
+export const serverUrl = isLocal ? localServerUrl : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = false;
