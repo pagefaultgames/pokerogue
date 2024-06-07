@@ -20,6 +20,8 @@ import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChang
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
 import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./arena-events";
+import { Abilities } from "#app/data/enums/abilities.js";
+import { SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
 
 export class Arena {
   public scene: BattleScene;
@@ -317,6 +319,13 @@ export class Arena {
     } else {
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
     }
+
+    this.scene.getField(true).forEach( p => {
+      if ((p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM)) {
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+      }
+    }
+    );
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
