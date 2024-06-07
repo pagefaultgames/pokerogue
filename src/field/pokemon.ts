@@ -1070,7 +1070,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
-  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon): TypeDamageMultiplier {
+  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon, ignoreStrongWinds: boolean = false): TypeDamageMultiplier {
     if (moveType === Type.STELLAR) {
       return this.isTerastallized() ? 2 : 1;
     }
@@ -1089,7 +1089,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
     // Handle strong winds lowering effectiveness of types super effective against pure flying
-    if (this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2) {
+    if (!ignoreStrongWinds && this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2) {
       multiplier /= 2;
     }
     return multiplier;
