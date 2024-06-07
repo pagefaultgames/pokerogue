@@ -17,7 +17,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "ポケモンの HPを {{restorePoints}} または {{restorePercent}}%のどちらか高いほうをかいふくする",
+      description: "ポケモンの HPを {{restorePoints}} または {{restorePercent}}%のどちらか たかいほうを かいふくする",
       extra: {
         "fully": "ポケモンのHPをすべてかいふくする",
         "fullyWithStatus": "ポケモンの HPと じょうたいいじょうを かいふくする",
@@ -27,7 +27,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "ひんしになってしまったポケモンの HP {{restorePercent}}%を かいふくする",
     },
     "PokemonStatusHealModifierType": {
-      description: "全てのじょうたいいじょうを なおす",
+      description: "すべてのじょうたいいじょうを なおす",
     },
     "PokemonPpRestoreModifierType": {
       description: "ポケモンが おぼえている わざの PPを {{restorePoints}}ずつ かいふくする",
