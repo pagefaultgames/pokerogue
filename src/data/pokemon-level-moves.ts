@@ -8448,8 +8448,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 72, Moves.LUNAR_BLESSING ],
   ],
   [Species.PHIONE]: [
-    [ 1, Moves.BUBBLE ],
-    [ 1, Moves.WATER_SPORT ],
+    [ 1, Moves.WATER_GUN ],
     [ 9, Moves.CHARM ],
     [ 16, Moves.SUPERSONIC ],
     [ 24, Moves.BUBBLE_BEAM ],
@@ -8459,11 +8458,12 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 54, Moves.AQUA_RING ],
     [ 61, Moves.DIVE ],
     [ 69, Moves.RAIN_DANCE ],
+    [ 75, Moves.TAKE_HEART ],
   ],
   [Species.MANAPHY]: [
-    [ 1, Moves.BUBBLE ],
+    [ 1, Moves.HEART_SWAP ],
     [ 1, Moves.TAIL_GLOW ],
-    [ 1, Moves.WATER_SPORT ],
+    [ 1, Moves.WATER_GUN ],
     [ 9, Moves.CHARM ],
     [ 16, Moves.SUPERSONIC ],
     [ 24, Moves.BUBBLE_BEAM ],
@@ -8473,7 +8473,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 54, Moves.AQUA_RING ],
     [ 61, Moves.DIVE ],
     [ 69, Moves.RAIN_DANCE ],
-    [ 76, Moves.HEART_SWAP ],
+    [ 76, Moves.TAKE_HEART ],
   ],
   [Species.DARKRAI]: [
     [ 1, Moves.DISABLE ],
@@ -18539,12 +18539,14 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 8, Moves.DOUBLE_TEAM ],
       [ 12, Moves.ELECTRO_BALL ],
       [ 16, Moves.FEINT ],
-      [ 20, Moves.SPARK ],
+      [ 20, Moves.ZIPPY_ZAP ], //Custom
       [ 24, Moves.AGILITY ],
       [ 28, Moves.IRON_TAIL ],
       [ 32, Moves.DISCHARGE ],
+      [ 34, Moves.FLOATY_FALL ], //Custom
       [ 36, Moves.THUNDERBOLT ],
       [ 40, Moves.LIGHT_SCREEN ],
+      [ 42, Moves.SPLISHY_SPLASH ], //Custom
       [ 44, Moves.THUNDER ],
       [ 48, Moves.PIKA_PAPOW ],
     ],

@@ -1,3 +1,5 @@
+import i18next from "i18next";
+
 export const MissingTextureKey = "__MISSING";
 
 export function toReadableString(str: string): string {
@@ -125,6 +127,23 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
   return items[Math.floor(easedValue * items.length)];
 }
 
+/**
+ * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
+ * @param {Array} items An array of items.
+ * @returns {Array} A new shuffled array of items.
+ */
+export function randSeedShuffle<T>(items: T[]): T[] {
+  if (items.length <= 1) {
+    return items;
+  }
+  const newArray = items.slice(0);
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Phaser.Math.RND.integerInRange(0, i);
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
@@ -215,6 +234,26 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ""}${suffix}`;
 }
 
+// Abbreviations from 10^0 to 10^33
+const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
+
+export function formatFancyLargeNumber(number: number, rounded: number = 2): string {
+  let exponent: number;
+
+  if (number < 1000) {
+    exponent = 0;
+  } else {
+    const maxExp = AbbreviationsLargeNumber.length - 1;
+
+    exponent = Math.floor(Math.log(number) / Math.log(1000));
+    exponent = Math.min(exponent, maxExp);
+
+    number /= Math.pow(1000, exponent);
+  }
+
+  return `${(exponent === 0) ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+}
+
 export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
@@ -232,9 +271,17 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
-export const isLocal = window.location.hostname === "localhost" || window.location.hostname === "";
-export const serverUrl = isLocal ? "http://localhost:8001" : "";
+// Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
+export const isLocal = (
+  (window.location.hostname === "localhost" ||
+   /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
+  window.location.port !== "") || window.location.hostname === "";
+
+// Set the server URL based on whether it's local or not
+export const serverUrl = isLocal ? `${window.location.hostname}:${window.location.port}` : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
+// used to disable api calls when isLocal is true and a server is not found
+export let isLocalServerConnected = false;
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
@@ -257,8 +304,22 @@ export function getCookie(cName: string): string {
   return "";
 }
 
+/**
+ * When locally running the game, "pings" the local server
+ * with a GET request to verify if a server is running,
+ * sets isLocalServerConnected based on results
+ */
+export function localPing() {
+  if (isLocal) {
+    apiFetch("game/titlestats")
+      .then(resolved => isLocalServerConnected = true,
+        rejected => isLocalServerConnected = false
+      );
+  }
+}
+
 export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return new Promise((resolve, reject) => {
+  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
     const request = {};
     if (authed) {
       const sId = getCookie(sessionIdKey);
@@ -269,11 +330,11 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
     fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
-  });
+  }) : new Promise(() => {});
 }
 
 export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return new Promise((resolve, reject) => {
+  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
     const headers = {
       "Accept": contentType,
       "Content-Type": contentType,
@@ -287,7 +348,7 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
     fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));
-  });
+  }) : new Promise(() => {});
 }
 
 export class BooleanHolder {
@@ -358,3 +419,86 @@ export function rgbHexToRgba(hex: string) {
 export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
+
+/*This function returns true if the current lang is available for some functions
+If the lang is not in the function, it usually means that lang is going to use the default english version
+This function is used in:
+- summary-ui-handler.ts: If the lang is not available, it'll use types.json (english)
+English itself counts as not available
+*/
+export function verifyLang(lang?: string): boolean {
+  //IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
+  if (!lang) {
+    lang = i18next.resolvedLanguage;
+  }
+
+  switch (lang) {
+  case "es":
+  case "fr":
+  case "de":
+  case "it":
+  case "zh_CN":
+  case "zh_TW":
+  case "pt_BR":
+  case "ko":
+    return true;
+  default:
+    return false;
+  }
+}
+
+/**
+ * Prints the type and name of all game objects in a container for debuggin purposes
+ * @param container container with game objects inside it
+ */
+export function printContainerList(container: Phaser.GameObjects.Container): void {
+  console.log(container.list.map(go => {
+    return {type: go.type, name: go.name};
+  }));
+}
+
+
+/**
+ * Truncate a string to a specified maximum length and add an ellipsis if it exceeds that length.
+ *
+ * @param str - The string to be truncated.
+ * @param maxLength - The maximum length of the truncated string, defaults to 10.
+ * @returns The truncated string with an ellipsis if it was longer than maxLength.
+ */
+export function truncateString(str: String, maxLength: number = 10) {
+  // Check if the string length exceeds the maximum length
+  if (str.length > maxLength) {
+    // Truncate the string and add an ellipsis
+    return str.slice(0, maxLength - 3) + "..."; // Subtract 3 to accommodate the ellipsis
+  }
+  // Return the original string if it does not exceed the maximum length
+  return str;
+}
+
+/**
+ * Perform a deep copy of an object.
+ *
+ * @param values - The object to be deep copied.
+ * @returns A new object that is a deep copy of the input.
+ */
+export function deepCopy(values: object): object {
+  // Convert the object to a JSON string and parse it back to an object to perform a deep copy
+  return JSON.parse(JSON.stringify(values));
+}
+
+/**
+ * Convert a space-separated string into a capitalized and underscored string.
+ *
+ * @param input - The string to be converted.
+ * @returns The converted string with words capitalized and separated by underscores.
+ */
+export function reverseValueToKeySetting(input) {
+  // Split the input string into an array of words
+  const words = input.split(" ");
+  // Capitalize the first letter of each word and convert the rest to lowercase
+  const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+  // Join the capitalized words with underscores and return the result
+  return capitalizedWords.join("_");
+}
+
+

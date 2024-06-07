@@ -10,6 +10,7 @@ export const menu: SimpleTranslationEntries = {
   "continue": "Continua",
   "newGame": "Nuova Partita",
   "loadGame": "Carica Partita",
+  "settings": "Settings",
   "dailyRun": "Corsa Giornaliera (Beta)",
   "selectGameMode": "Seleziona una modalità di gioco.",
   "logInOrCreateAccount": "Accedi o crea un nuovo account per iniziare. Non è richiesta un'email!",
@@ -48,4 +49,6 @@ export const menu: SimpleTranslationEntries = {
   "empty":"Vuoto",
   "yes":"Si",
   "no":"No",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;
