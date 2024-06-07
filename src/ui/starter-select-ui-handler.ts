@@ -207,8 +207,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
-  private starterGens: integer[] = [];
-  private starterCursors: integer[] = [];
+  public starterGens: integer[] = [];
+  public starterCursors: integer[] = [];
   private pokerusGens: integer[] = [];
   private pokerusCursors: integer[] = [];
   private starterAttr: bigint[] = [];
@@ -227,7 +227,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private canAddParty: boolean;
 
   private assetLoadCancelled: Utils.BooleanHolder;
-  private cursorObj: Phaser.GameObjects.Image;
+  public cursorObj: Phaser.GameObjects.Image;
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterIcons: Phaser.GameObjects.Sprite[];

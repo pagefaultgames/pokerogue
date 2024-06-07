@@ -40,6 +40,10 @@ export class Achv {
     return i18next.t(`achv:${this.localizationKey}.name`);
   }
 
+  getDescription(): string {
+    return this.description;
+  }
+
   getIconImage(): string {
     return this.iconImage;
   }
@@ -259,14 +263,12 @@ export const achvs = {
   CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY","",  "CLASSIC_VICTORY.description", "relic_crown", 150),
 };
 
-{
-  (function() {
-    const achvKeys = Object.keys(achvs);
-    achvKeys.forEach((a: string, i: integer) => {
-      achvs[a].id = a;
-      if (achvs[a].hasParent) {
-        achvs[a].parentId = achvKeys[i - 1];
-      }
-    });
-  })();
+export function initAchievements() {
+  const achvKeys = Object.keys(achvs);
+  achvKeys.forEach((a: string, i: integer) => {
+    achvs[a].id = a;
+    if (achvs[a].hasParent) {
+      achvs[a].parentId = achvKeys[i - 1];
+    }
+  });
 }

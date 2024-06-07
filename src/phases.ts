@@ -149,7 +149,7 @@ export class LoginPhase extends Phase {
 export class TitlePhase extends Phase {
   private loaded: boolean;
   private lastSessionData: SessionSaveData;
-  private gameMode: GameModes;
+  public gameMode: GameModes;
 
   constructor(scene: BattleScene) {
     super(scene);
@@ -527,59 +527,62 @@ export class SelectStarterPhase extends Phase {
           return this.end();
         }
         this.scene.sessionSlotId = slotId;
-
-        const party = this.scene.getParty();
-        const loadPokemonAssets: Promise<void>[] = [];
-        starters.forEach((starter: Starter, i: integer) => {
-          if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-            starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
-          }
-          const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-          let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-          if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-            starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
-          }
-          let starterGender = starter.species.malePercent !== null
-            ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-            : Gender.GENDERLESS;
-          if (Overrides.GENDER_OVERRIDE !== null) {
-            starterGender = Overrides.GENDER_OVERRIDE;
-          }
-          const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
-          starterPokemon.tryPopulateMoveset(starter.moveset);
-          if (starter.passive) {
-            starterPokemon.passive = true;
-          }
-          starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
-          if (starter.pokerus) {
-            starterPokemon.pokerus = true;
-          }
-          if (this.scene.gameMode.isSplicedOnly) {
-            starterPokemon.generateFusionSpecies(true);
-          }
-          starterPokemon.setVisible(false);
-          party.push(starterPokemon);
-          loadPokemonAssets.push(starterPokemon.loadAssets());
-        });
-        overrideModifiers(this.scene);
-        overrideHeldItems(this.scene, party[0]);
-        Promise.all(loadPokemonAssets).then(() => {
-          SoundFade.fadeOut(this.scene, this.scene.sound.get("menu"), 500, true);
-          this.scene.time.delayedCall(500, () => this.scene.playBgm());
-          if (this.scene.gameMode.isClassic) {
-            this.scene.gameData.gameStats.classicSessionsPlayed++;
-          } else {
-            this.scene.gameData.gameStats.endlessSessionsPlayed++;
-          }
-          this.scene.newBattle();
-          this.scene.arena.init();
-          this.scene.sessionPlayTime = 0;
-          this.scene.lastSavePlayTime = 0;
-          this.end();
-        });
+        this.initBattle(starters);
       });
     }, this.gameMode);
+  }
+
+  initBattle(starters: Starter[]) {
+    const party = this.scene.getParty();
+    const loadPokemonAssets: Promise<void>[] = [];
+    starters.forEach((starter: Starter, i: integer) => {
+      if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
+        starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
+      }
+      const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+      let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+      if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
+        starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
+      }
+      let starterGender = starter.species.malePercent !== null
+        ? !starterProps.female ? Gender.MALE : Gender.FEMALE
+        : Gender.GENDERLESS;
+      if (Overrides.GENDER_OVERRIDE !== null) {
+        starterGender = Overrides.GENDER_OVERRIDE;
+      }
+      const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
+      const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
+      starterPokemon.tryPopulateMoveset(starter.moveset);
+      if (starter.passive) {
+        starterPokemon.passive = true;
+      }
+      starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
+      if (starter.pokerus) {
+        starterPokemon.pokerus = true;
+      }
+      if (this.scene.gameMode.isSplicedOnly) {
+        starterPokemon.generateFusionSpecies(true);
+      }
+      starterPokemon.setVisible(false);
+      party.push(starterPokemon);
+      loadPokemonAssets.push(starterPokemon.loadAssets());
+    });
+    overrideModifiers(this.scene);
+    overrideHeldItems(this.scene, party[0]);
+    Promise.all(loadPokemonAssets).then(() => {
+      SoundFade.fadeOut(this.scene, this.scene.sound.get("menu"), 500, true);
+      this.scene.time.delayedCall(500, () => this.scene.playBgm());
+      if (this.scene.gameMode.isClassic) {
+        this.scene.gameData.gameStats.classicSessionsPlayed++;
+      } else {
+        this.scene.gameData.gameStats.endlessSessionsPlayed++;
+      }
+      this.scene.newBattle();
+      this.scene.arena.init();
+      this.scene.sessionPlayTime = 0;
+      this.scene.lastSavePlayTime = 0;
+      this.end();
+    });
   }
 }
 
