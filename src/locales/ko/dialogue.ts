@@ -300,7 +300,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "너를 무너뜨릴 수 있다는 것을 보여줄게. 우리는 실전 경험이 있거든!",
     },
     "victory": {
-      1: "이상하네… 어떻게 이럴 수 있지… 힘으로 압도할수 없다니.",
+      1: "이상하네… 어떻게 이럴 수 있지… 힘으로 압도할 수 없다니.",
     },
   },
   "hex_maniac": {
