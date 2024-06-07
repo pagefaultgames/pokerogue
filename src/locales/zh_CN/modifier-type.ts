@@ -99,6 +99,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "招式学习器 {{moveId}} - {{moveName}}",
       description: "教会一只宝可梦{{moveName}}",
     },
+    "TmModifierTypeWithInfo": {
+      name: "招式学习器 {{moveId}} - {{moveName}}",
+      description: "教会一只宝可梦{{moveName}}\n(Hold C or Shift for more info)",
+    },
     "EvolutionItemModifierType": {
       description: "使某些宝可梦进化",
     },
@@ -195,10 +199,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MULTI_LENS": { name: "多重镜" },
 
-    "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (含复活)" },
+    "HEALING_CHARM": { name: "治愈护符", description: "HP回复量增加10% (不含复活)" },
     "CANDY_JAR": { name: "糖果罐", description: "神奇糖果提供的升级额外增加1级" },
 
-    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有33%的几率不会消耗树果" },
+    "BERRY_POUCH": { name: "树果袋", description: "使用树果时有30%的几率不会消耗树果" },
 
     "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷入濒死状态" },
 
@@ -208,6 +212,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "吃剩的东西", description: "携带该道具的宝可梦在每个回合结束时恢复\n最大HP的1/16" },
     "SHELL_BELL": { name: "贝壳之铃", description: "携带该道具的宝可梦在攻击对方成功造成伤\n害时，携带者的HP会恢复其所造成伤害\n的1/8" },
+
+    "TOXIC_ORB": { name: "Toxic Orb", description: "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle" },
+    "FLAME_ORB": { name: "Flame Orb", description: "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle" },
 
     "BATON": { name: "接力棒", description: "允许在切换宝可梦时保留能力变化, 对陷阱\n同样生效" },
 
@@ -227,10 +234,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_HEAL": { name: "回复硬币", description: "每回合回复2%最大HP" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "剧毒硬币" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "麻痹硬币" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "睡眠硬币" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "冰冻硬币" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "灼烧硬币" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "万灵药硬币", description: "增加10%每回合治愈异常状态的概率" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "万灵药硬币", description: "增加2.5%每回合治愈异常状态的概率" },
     "ENEMY_ENDURE_CHANCE": { name: "忍受硬币" },
     "ENEMY_FUSED_CHANCE": { name: "融合硬币", description: "增加1%野生融合宝可梦出现概率" },
   },
@@ -362,7 +367,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "坚硬陨石",
     "SMOOTH_METEORITE": "光滑陨石",
     "ADAMANT_CRYSTAL": "大金刚宝玉",
-    "LUSTROUS_ORB": "白玉宝珠",
+    "LUSTROUS_GLOBE": "大白宝玉",
     "GRISEOUS_CORE": "大白金宝玉",
     "REVEAL_GLASS": "现形镜",
     "GRACIDEA": "葛拉西蒂亚花",

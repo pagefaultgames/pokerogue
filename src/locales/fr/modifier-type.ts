@@ -99,6 +99,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "CT{{moveId}} - {{moveName}}",
       description: "Apprend la capacité {{moveName}} à un Pokémon",
     },
+    "TmModifierTypeWithInfo": {
+      name: "CT{{moveId}} - {{moveName}}",
+      description: "Apprend la capacité {{moveName}} à un Pokémon\n(Hold C or Shift for more info)",
+    },
     "EvolutionItemModifierType": {
       description: "Permet à certains Pokémon d’évoluer",
     },
@@ -198,7 +202,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
     "CANDY_JAR": { name: "Bonbonnière", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
-    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 33% de chances qu’une Baie utilisée ne soit pas consommée" },
+    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 30% de chances qu’une Baie utilisée ne soit pas consommée" },
 
     "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
 
@@ -208,6 +212,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "Restes", description: "Soigne à chaque tour 1/16 des PV max d’un Pokémon" },
     "SHELL_BELL": { name: "Grelot Coque", description: "Soigne 1/8 des dégâts infligés par un Pokémon" },
+
+    "TOXIC_ORB": { name: "Orbe Toxique", description: "Un orbe bizarre qui empoisonne gravement son porteur durant le combat" },
+    "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brûle son porteur durant le combat" },
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
@@ -227,10 +234,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_HEAL": { name: "Jeton Soin", description: "Soigne 2% des PV max à chaque tour" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Jeton Poison" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Jeton Paralysie" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Jeton Sommeil" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Jeton Gel" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Jeton Brulure" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 10% de chances à chaque tour de se soigner d’un problème de statut." },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 2.5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { name: "Jeton Ténacité" },
     "ENEMY_FUSED_CHANCE": { name: "Jeton Fusion", description: "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
   },
@@ -362,7 +367,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Méteorite Solide",
     "SMOOTH_METEORITE": "Méteorite Lisse",
     "ADAMANT_CRYSTAL": "Globe Adamant",
-    "LUSTROUS_ORB": "Orbe Perlé",
+    "LUSTROUS_GLOBE": "Globe Perlé",
     "GRISEOUS_CORE": "Globe Platiné",
     "REVEAL_GLASS": "Miroir Sacré",
     "GRACIDEA": "Gracidée",
