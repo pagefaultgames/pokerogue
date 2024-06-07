@@ -3,7 +3,7 @@ import { BerryTranslationEntries } from "#app/plugins/i18n";
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
     name: "オボンのみ",
-    effect: "HP 50%のとき HPを 25パーセント かいふくする",
+    effect: "HP 50%いかのとき HPを 25パーセント かいふくする",
   },
   "LUM": {
     name: "ラムのみ",
@@ -15,31 +15,31 @@ export const berry: BerryTranslationEntries = {
   },
   "LIECHI": {
     name: "チイラのみ",
-    effect: "HP 25%のとき こうげきが あがる",
+    effect: "HP 25%いかのとき こうげきが あがる",
   },
   "GANLON": {
     name: "リュガのみ",
-    effect: "HP 25%のとき ぼうぎょが あがる",
+    effect: "HP 25%いかのとき ぼうぎょが あがる",
   },
   "PETAYA": {
     name: "ヤタピのみ",
-    effect: "HP 25%のとき とくこうが あがる",
+    effect: "HP 25%いかのとき とくこうが あがる",
   },
   "APICOT": {
     name: "ズアのみ",
-    effect: "HP 25%のとき とくぼうが あがる",
+    effect: "HP 25%いかのとき とくぼうが あがる",
   },
   "SALAC": {
     name: "カムラのみ",
-    effect: "HP 25%のとき すばやさが あがる",
+    effect: "HP 25%いかのとき すばやさが あがる",
   },
   "LANSAT": {
     name: "サンのみ",
-    effect: "HP 25%のとき こうげきが きゅうしょに あたりやすくなる",
+    effect: "HP 25%いかのとき こうげきが きゅうしょに あたりやすくなる",
   },
   "STARF": {
     name: "スターのみ",
-    effect: "HP 25%のとき のうりょくの どれか 1つが ぐーんと あがる",
+    effect: "HP 25%いかのとき のうりょくの どれか 1つが ぐーんと あがる",
   },
   "LEPPA": {
     name: "ヒメリのみ",
