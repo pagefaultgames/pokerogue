@@ -62,84 +62,64 @@ interface StarterOverride {
    * @example STARTER_OVERRIDE.species = Species.Bulbasaur;
    */
 
-  species: Species | integer;
-  // forms can be found in pokemon-species.ts
-  form: integer;
-  ability: Abilities;
-  passiveAbility: Abilities;
-  status: StatusEffect;
-  gender: Gender;
-  moveset: Moves[];
-  shiny: boolean;
-  shinyVariant: Variant;
+  /** override species of the starter
+  * @example Species.Bulbasaur
+  */
+  species?: Species | integer;
+  /** override form of the starter
+  * forms can be found in {@link pokemon-species.ts}
+  * @example 1
+  */
+  form?: integer;
+  /** override ability of the starter
+  * @example Abilities.ADAPTABILITY
+  */
+  ability?: Abilities;
+  /** override passive ability of the starter
+  * @example Abilities.AERILATE
+  */
+  passiveAbility?: Abilities;
+  /** override status of the starter
+  * @example StatusEffect.BURN
+  */
+  status?: StatusEffect;
+  /** override gender of the starter
+  * @example Gender.FEMALE
+  */
+  gender?: Gender;
+  /** override moveset of the starter
+  * @example [Moves.ABSORB, Moves.BABY_DOLL_EYES]
+  */
+  moveset?: Moves[];
+  /** override shiny of the starter
+  * @example true
+  */
+  shiny?: boolean;
+  /** override shiny variant of the starter
+  * @example 0 - standard shiny
+  * @example 1 - rare shiny
+  * @example 2 - epic shiny
+  */
+  shinyVariant?: Variant;
 }
+const starterOverrideDefault = {
+  species: 0,
+  form: 0,
+  ability: Abilities.NONE,
+  passiveAbility: Abilities.NONE,
+  status: StatusEffect.NONE,
+  gender: null,
+  moveset: [],
+  shiny: false,
+  shinyVariant: 0 as Variant,
+};
 export const STARTER_OVERRIDE: StarterOverride[] = [
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  },
-  {
-    species: 0,
-    form: 0,
-    ability: Abilities.NONE,
-    passiveAbility: Abilities.NONE,
-    status: StatusEffect.NONE,
-    gender: null,
-    moveset: [],
-    shiny: false,
-    shinyVariant: 0,
-  }
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault
 ];
 
 /**
