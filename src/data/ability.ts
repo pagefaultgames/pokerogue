@@ -3117,7 +3117,7 @@ export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
    * @param args N/A
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
-  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     const weatherType = pokemon.scene.arena.weather.weatherType;
     let turnOffWeather = false;
 
@@ -3526,7 +3526,7 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
    * @param {any[]} args - Additional arguments.
    * @returns {boolean} - Whether the immunity was applied.
    */
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const isImmune = super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
 
     if (isImmune) {
@@ -4557,7 +4557,7 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
       // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
-      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.getMove().category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
+      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .unimplemented(),
