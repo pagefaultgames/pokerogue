@@ -149,7 +149,7 @@ export class LoginPhase extends Phase {
 export class TitlePhase extends Phase {
   private loaded: boolean;
   private lastSessionData: SessionSaveData;
-  private gameMode: GameModes;
+  public gameMode: GameModes;
 
   constructor(scene: BattleScene) {
     super(scene);
