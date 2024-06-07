@@ -62,6 +62,7 @@ import { NewArenaEvent } from "./battle-scene-events";
 import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";
+import { BattleStyle } from "./enums/battle-style";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -151,7 +152,7 @@ export default class BattleScene extends SceneBase {
    * - 0 = 'Shift'
    * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
    */
-  public battleStyle: integer = 0;
+  public battleStyle: integer = BattleStyle.SHIFT;
 
   public disableMenu: boolean = false;
 
