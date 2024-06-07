@@ -118,14 +118,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: `是时候潜水了！`,
+      2: `让我们一起乘风破浪，赢得胜利！`,
+      3: `该一鸣惊人了！`,
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: `沉浸在失败中！`,
+      2: `失败的波浪！`,
+      3: `后浪死在沙滩上，我猜。`,
     },
   },
   "backpacker": {
@@ -1168,7 +1168,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `让我展示一下我从学习中获得的知识。`,
+      1: `我是阿笔！对虫系宝可梦的熟悉不会输给任何人的！`,
     },
     "victory": {
       1: `哇，太棒了！你是个宝可梦专家！$我的研究还没有完成。好吧，你赢了。`,
