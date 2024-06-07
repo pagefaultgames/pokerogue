@@ -146,13 +146,13 @@ body {
   margin-left: 10%;
 }
 
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_ACCESSIBILITY']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadRectBtnContainer > .apadSqBtn,
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_ACCESSIBILITY']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadSqBtnContainer
+#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_DISPLAY']):not([data-ui-mode='SETTINGS_AUDIO']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadRectBtnContainer > .apadSqBtn:not(.apadBattle),
+#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_DISPLAY']):not([data-ui-mode='SETTINGS_AUDIO']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadSqBtnContainer > .apadSqBtn:not(.apadBattle)
 {
   display: none;
 }
 
-#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apad .apadBattle {
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']):not([data-ui-mode='MODIFIER_SELECT']) #apad .apadBattle {
   display: none;
 }
 

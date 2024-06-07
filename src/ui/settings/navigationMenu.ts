@@ -27,11 +27,12 @@ export class NavigationManager {
   constructor() {
     this.modes = [
       Mode.SETTINGS,
-      Mode.SETTINGS_ACCESSIBILITY,
+      Mode.SETTINGS_DISPLAY,
+      Mode.SETTINGS_AUDIO,
       Mode.SETTINGS_GAMEPAD,
       Mode.SETTINGS_KEYBOARD,
     ];
-    this.labels = ["General", "Accessibility", "Gamepad", "Keyboard"];
+    this.labels = ["General", "Display", "Audio", "Gamepad", "Keyboard"];
   }
 
   public reset() {
