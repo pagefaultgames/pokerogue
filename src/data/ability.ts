@@ -3409,6 +3409,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
       pokemon.scene.setPhaseQueueSplice();
 
       let result = applyFunc(attr, passive);
+      // TODO Remove this when promises get reworked PR#924
       if (result instanceof Promise) {
         result = await result;
       }
