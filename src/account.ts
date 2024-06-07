@@ -9,10 +9,6 @@ export interface UserInfo {
 export let loggedInUser: UserInfo = null;
 export const clientSessionId = Utils.randomString(32);
 
-export function setLoggedInUser(username: string, lastSessionSlot: integer): void {
-  loggedInUser = { username, lastSessionSlot };
-}
-
 export function updateUserInfo(): Promise<[boolean, integer]> {
   return new Promise<[boolean, integer]>(resolve => {
     if (bypassLogin) {
