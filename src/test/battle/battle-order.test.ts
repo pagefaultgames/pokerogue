@@ -69,10 +69,10 @@ describe("Battle order", () => {
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 150;
-    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
     game.scene.getParty()[0].stats[Stat.SPD] = 50;
     game.scene.getParty()[1].stats[Stat.SPD] = 50;
+    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 150;
+    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
@@ -114,10 +114,10 @@ describe("Battle order", () => {
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
-    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 100;
     game.scene.getParty()[0].stats[Stat.SPD] = 100;
     game.scene.getParty()[1].stats[Stat.SPD] = 100;
+    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
+    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 100;
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
@@ -159,10 +159,10 @@ describe("Battle order", () => {
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
-    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
     game.scene.getParty()[0].stats[Stat.SPD] = 100;
     game.scene.getParty()[1].stats[Stat.SPD] = 150;
+    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
+    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
