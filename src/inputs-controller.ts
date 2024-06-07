@@ -120,7 +120,6 @@ export class InputsController {
 
   constructor(scene: BattleScene) {
     this.scene = scene;
-    this.time = this.scene.time;
     this.selectedDevice = {
       [Device.GAMEPAD]: null,
       [Device.KEYBOARD]: "default"
