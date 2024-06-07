@@ -38,10 +38,12 @@ import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import {Button} from "../enums/buttons";
 import i18next, {ParseKeys} from "i18next";
-import {PlayerGender} from "#app/system/game-data";
+import { PlayerGender } from "#app/data/enums/player-gender";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
+import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
+import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -62,6 +64,8 @@ export enum Mode {
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
+  SETTINGS_DISPLAY,
+  SETTINGS_AUDIO,
   SETTINGS_GAMEPAD,
   GAMEPAD_BINDING,
   SETTINGS_KEYBOARD,
@@ -99,6 +103,8 @@ const noTransitionModes = [
   Mode.GAMEPAD_BINDING,
   Mode.KEYBOARD_BINDING,
   Mode.SETTINGS,
+  Mode.SETTINGS_AUDIO,
+  Mode.SETTINGS_DISPLAY,
   Mode.SETTINGS_GAMEPAD,
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
@@ -151,6 +157,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
+      new SettingsDisplayUiHandler(scene),
+      new SettingsAudioUiHandler(scene),
       new SettingsGamepadUiHandler(scene),
       new GamepadBindingUiHandler(scene),
       new SettingsKeyboardUiHandler(scene),
@@ -170,6 +178,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
+    this.setName("container-ui");
     for (const handler of this.handlers) {
       handler.setup();
     }
@@ -216,6 +225,21 @@ export default class UI extends Phaser.GameObjects.Container {
 
   getMessageHandler(): BattleMessageUiHandler {
     return this.handlers[Mode.MESSAGE] as BattleMessageUiHandler;
+  }
+
+  processInfoButton(pressed: boolean) {
+    if (this.overlayActive) {
+      return false;
+    }
+
+    const battleScene = this.scene as BattleScene;
+    if ([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
+      battleScene?.processInfoButton(pressed);
+      return true;
+    }
+
+    battleScene?.processInfoButton(false);
+    return true;
   }
 
   processInput(button: Button): boolean {
