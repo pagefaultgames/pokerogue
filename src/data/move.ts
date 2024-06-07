@@ -99,6 +99,7 @@ export default class Move implements Localizable {
   public id: Moves;
   public name: string;
   public type: Type;
+  public defaultType: Type;
   public category: MoveCategory;
   public moveTarget: MoveTarget;
   public power: integer;
@@ -118,6 +119,7 @@ export default class Move implements Localizable {
 
     this.nameAppend = "";
     this.type = type;
+    this.defaultType = type;
     this.category = category;
     this.moveTarget = defaultMoveTarget;
     this.power = power;
@@ -1629,7 +1631,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
       }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0))
         && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
-        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, new PokemonMove(move.id), null,this.effect);
+        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null,this.effect);
         return true;
       }
     }
@@ -3323,23 +3325,22 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GENESECT)) {
       const form = user.species.speciesId === Species.GENESECT ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Shock Drive
-        type.value = Type.ELECTRIC;
+        move.type = Type.ELECTRIC;
         break;
       case 2: // Burn Drive
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 3: // Chill Drive
-        type.value = Type.ICE;
+        move.type = Type.ICE;
         break;
       case 4: // Douse Drive
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       default:
-        type.value = Type.NORMAL;
+        move.type = Type.NORMAL;
         break;
       }
       return true;
@@ -3353,14 +3354,13 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)) {
       const form = user.species.speciesId === Species.MORPEKO ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Hangry Mode
-        type.value = Type.DARK;
+        move.type = Type.DARK;
         break;
       default: // Full Belly Mode
-        type.value = Type.ELECTRIC;
+        move.type = Type.ELECTRIC;
         break;
       }
       return true;
@@ -3374,17 +3374,16 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.PALDEA_TAUROS)) {
       const form = user.species.speciesId === Species.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Blaze breed
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 2: // Aqua breed
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       default:
-        type.value = Type.FIGHTING;
+        move.type = Type.FIGHTING;
         break;
       }
       return true;
@@ -3398,32 +3397,31 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.OGERPON)) {
       const form = user.species.speciesId === Species.OGERPON ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Wellspring Mask
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       case 2: // Hearthflame Mask
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 3: // Cornerstone Mask
-        type.value = Type.ROCK;
+        move.type = Type.ROCK;
         break;
       case 4: // Teal Mask Tera
-        type.value = Type.GRASS;
+        move.type = Type.GRASS;
         break;
       case 5: // Wellspring Mask Tera
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       case 6: // Hearthflame Mask Tera
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 7: // Cornerstone Mask Tera
-        type.value = Type.ROCK;
+        move.type = Type.ROCK;
         break;
       default:
-        type.value = Type.GRASS;
+        move.type = Type.GRASS;
         break;
       }
       return true;
@@ -3436,23 +3434,21 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
-      const type = (args[0] as Utils.IntegerHolder);
-
       switch (user.scene.arena.weather?.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       case WeatherType.SANDSTORM:
-        type.value = Type.ROCK;
+        move.type = Type.ROCK;
         break;
       case WeatherType.HAIL:
       case WeatherType.SNOW:
-        type.value = Type.ICE;
+        move.type = Type.ICE;
         break;
       default:
         return false;
@@ -3484,20 +3480,18 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
     }
 
     const currentTerrain = user.scene.arena.getTerrainType();
-    const type = (args[0] as Utils.IntegerHolder);
-
     switch (currentTerrain) {
     case TerrainType.MISTY:
-      type.value = Type.FAIRY;
+      move.type = Type.FAIRY;
       break;
     case TerrainType.ELECTRIC:
-      type.value = Type.ELECTRIC;
+      move.type = Type.ELECTRIC;
       break;
     case TerrainType.GRASSY:
-      type.value = Type.GRASS;
+      move.type = Type.GRASS;
       break;
     case TerrainType.PSYCHIC:
-      type.value = Type.PSYCHIC;
+      move.type = Type.PSYCHIC;
       break;
     default:
       return false;
@@ -3508,8 +3502,6 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
 
 export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const type = (args[0] as Utils.IntegerHolder);
-
     const iv_val = Math.floor(((user.ivs[Stat.HP] & 1)
       +(user.ivs[Stat.ATK] & 1) * 2
       +(user.ivs[Stat.DEF] & 1) * 4
@@ -3517,7 +3509,7 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
       +(user.ivs[Stat.SPATK] & 1) * 16
       +(user.ivs[Stat.SPDEF] & 1) * 32) * 15/63);
 
-    type.value = [
+    move.type = [
       Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
       Type.ROCK, Type.BUG, Type.GHOST, Type.STEEL,
       Type.FIRE, Type.WATER, Type.GRASS, Type.ELECTRIC,
@@ -3529,16 +3521,14 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
 
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const type = (args[0] as Utils.IntegerHolder);
-
     const userTypes = user.getTypes(true);
 
     if (userTypes.includes(Type.STELLAR)) { // will not change to stellar type
       const nonTeraTypes = user.getTypes();
-      type.value = nonTeraTypes[0];
+      move.type = nonTeraTypes[0];
       return true;
     } else if (userTypes.length > 0) {
-      type.value = userTypes[0];
+      move.type = userTypes[0];
       return true;
     } else {
       return false;
@@ -4345,7 +4335,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   	// Check if the move category is not STATUS or if the switch out condition is not met
       if (!this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
-        applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
+        applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, move, null);
         return resolve(false);
       }
 
