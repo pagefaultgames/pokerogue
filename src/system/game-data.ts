@@ -181,6 +181,38 @@ export interface StarterAttributes {
   female?: boolean;
 }
 
+export interface StarterPreferences {
+  [key: integer]: StarterAttributes;
+}
+
+// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
+// if they ever add private static variables, move this into StarterPrefs
+const StarterPrefers_DEFAULT : string = "{}";
+let StarterPrefers_private_latest : string = StarterPrefers_DEFAULT;
+
+// This is its own class as StarterPreferences...
+// - don't need to be loaded on startup
+// - isn't stored with other data
+// - don't require to be encrypted
+// - shouldn't require calls outside of the starter selection
+export class StarterPrefs {
+  // called on starter selection show once
+  static load(): StarterPreferences {
+    return JSON.parse(
+      StarterPrefers_private_latest = (localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT)
+    );
+  }
+
+  // called on starter selection clear, always
+  static save(prefs: StarterPreferences): void {
+    const pStr : string = JSON.stringify(prefs);
+    if (pStr !== StarterPrefers_private_latest) {
+      // something changed, store the update
+      localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+    }
+  }
+}
+
 export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData;
   eggMoves: integer;
@@ -190,7 +222,6 @@ export interface StarterDataEntry {
   passiveAttr: integer;
   valueReduction: integer;
   classicWinCount: integer;
-  starterAttributes?: StarterAttributes;
 }
 
 export interface StarterData {
