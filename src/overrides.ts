@@ -4,7 +4,7 @@ import { Biome } from "./data/enums/biome";
 import { Moves } from "./data/enums/moves";
 import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
-import { BerryType } from "./data/berry";
+import { BerryType } from "./data/enums/berry-type";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Nature } from "./data/nature";
 import { Type } from "./data/type";
@@ -110,3 +110,11 @@ export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+
+/**
+ * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
+ * Items listed will replace the normal rolls.
+ * If less items are listed than rolled, only some items will be replaced
+ * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+ */
+export const ITEM_REWARD_OVERRIDE: Array<String> = [];
