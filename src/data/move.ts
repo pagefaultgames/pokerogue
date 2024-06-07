@@ -4036,11 +4036,21 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * The attribute for the force Switch Out moves.
+ * Splits into two, depending on the contructor, real force switch, or switch that allows
+ * the user to choose which party member to switch into.
+ */
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
   private partyChoice: boolean;
 
+  /**
+   * @param user Whether it affects the User or not (U-Turn etc.)
+   * @param batonPass Whether it takes baton pass into account
+   * @param partyChoice Whether you want to user to be able to choose which pokemon to switch into (defaulted true)
+   */
   constructor(user?: boolean, batonPass?: boolean, partyChoice: boolean = true) {
     super(false, MoveEffectTrigger.POST_APPLY, true);
     this.user = !!user;
