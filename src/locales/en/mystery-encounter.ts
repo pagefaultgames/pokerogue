@@ -21,10 +21,10 @@ export const mysteryEncounter: SimpleTranslationEntries = {
 
   // Mysterious Encounters -- Rare Tier
 
-  "mysterious_challengers_intro_message": "Mysterious challengers have appeared!",
+  "mysterious_challengers_intro_message": "A figure stands ahead, but you can't quite figure out who it is. It looks like a trainer, like...",
   "mysterious_challengers_title": "Mysterious Challengers",
   "mysterious_challengers_description": "If you defeat a challenger, you might impress them enough to receive a boon. If you lose, they might not be so kind.",
-  "mysterious_challengers_query": "Who will you battle?",
+  "mysterious_challengers_query": "What type of trainer is it?",
   "mysterious_challengers_option_1_label": "A weak, clever foe",
   "mysterious_challengers_option_1_tooltip": "Battle an easy opponent for middling rewards and exp",
   "mysterious_challengers_option_2_label": "A strong foe",
@@ -32,10 +32,10 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_challengers_option_3_label": "The mightiest foe",
   "mysterious_challengers_option_3_tooltip": "Battle a hard opponent for great rewards and exp",
   "mysterious_challengers_option_4_label": "Leave",
-  "mysterious_challengers_option_4_tooltip": "No rewards or exp",
+  "mysterious_challengers_option_4_tooltip": "Avoid battle and leave",
   "mysterious_challengers_option_selected_message": "The trainer steps forward...",
   "mysterious_challengers_option_4_selected_message": "You hurry along your way, with a slight feeling of regret.",
-  "mysterious_challengers_outro_win": "The mysterious challengers were defeated!",
+  "mysterious_challengers_outro_win": "The mysterious challenger was defeated!",
   "mysterious_challengers_speaker": "Jimmy",
   //"optionTooltip": "[+Some Stuff, -Some other Stuff, ???, this is a really long description of the option you're hovering]",
 
