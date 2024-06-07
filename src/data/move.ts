@@ -5913,6 +5913,7 @@ export function initMoves() {
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)
       .condition(userSleptOrComatoseCondition)
+      .target(MoveTarget.ALL_ENEMIES)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(PartyStatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
