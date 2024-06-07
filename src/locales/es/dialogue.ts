@@ -359,6 +359,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "I'll tune up for the next race."
     },
   },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "¡Amigo, te haré caminar por la borda si pierdes!",
+      2: "¡Adelante! ¡Mi orgullo como marinero está en auge!",
+      3: "¡Ah del barco! ¿Estás mareado?"
+    },
+    "victory": {
+      1: "¡Argh! ¡Derrotado por un niño!",
+      2: "¡Tu espíritu me ha hundido!",
+      3: "Creo que soy yo quien está mareado..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
@@ -1203,8 +1227,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
