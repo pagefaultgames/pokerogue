@@ -20,6 +20,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay : MoveInfoOverlay;
+  private moveInfoOverlayActive : boolean = false;
 
   private rowCursor: integer = 0;
   private player: boolean;
@@ -99,6 +100,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       }
+      this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
     }
 
@@ -242,6 +244,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         if (!originalOnActionInput(this.rowCursor, this.cursor)) {
           this.awaitingActionInput = true;
           this.onActionInput = originalOnActionInput;
+        } else {
+          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+          this.moveInfoOverlay.setVisible(false);
+          this.moveInfoOverlay.active = false; // this is likely unnecessary, but it should help future prove the UI
         }
       }
     } else if (button === Button.CANCEL) {
@@ -252,6 +258,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           this.awaitingActionInput = false;
           this.onActionInput = null;
           originalOnActionInput(-1);
+          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+          this.moveInfoOverlay.setVisible(false);
+          this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action
         }
       }
     } else {
@@ -403,6 +412,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   clear() {
     super.clear();
 
+    this.moveInfoOverlay.clear();
+    this.moveInfoOverlayActive = false;
     this.awaitingActionInput = false;
     this.onActionInput = null;
     this.getUi().clearText();

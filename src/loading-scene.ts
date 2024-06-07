@@ -135,7 +135,6 @@ export class LoadingScene extends SceneBase {
     this.loadImage("summary_stats_overlay_exp", "ui");
     this.loadImage("summary_moves", "ui");
     this.loadImage("summary_moves_effect", "ui");
-    this.loadImage("summary_moves_effect_type", "ui");
     this.loadImage("summary_moves_overlay_row", "ui");
     this.loadImage("summary_moves_overlay_pp", "ui");
     this.loadAtlas("summary_moves_cursor", "ui");
