@@ -189,7 +189,7 @@ describe("LevelAchv", () => {
   });
 });
 
-describe.skip("ModifierAchv", () => {
+describe("ModifierAchv", () => {
   it("should create an instance of ModifierAchv", () => {
     const modifierAchv = new ModifierAchv("", "Test Modifier Achievement", "Test Description", "modifier_icon", 10, () => true);
     expect(modifierAchv).toBeInstanceOf(ModifierAchv);
