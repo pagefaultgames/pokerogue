@@ -421,6 +421,34 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.FIREBREATHER]: [
+    {
+      encounter: [
+        "dialogue:firebreather.encounter.1",
+        "dialogue:firebreather.encounter.2",
+        "dialogue:firebreather.encounter.3",
+      ],
+      victory: [
+        "dialogue:firebreather.victory.1",
+        "dialogue:firebreather.victory.2",
+        "dialogue:firebreather.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.SAILOR]: [
+    {
+      encounter: [
+        "dialogue:sailor.encounter.1",
+        "dialogue:sailor.encounter.2",
+        "dialogue:sailor.encounter.3",
+      ],
+      victory: [
+        "dialogue:sailor.victory.1",
+        "dialogue:sailor.victory.2",
+        "dialogue:sailor.victory.3",
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "dialogue:brock.encounter.1",

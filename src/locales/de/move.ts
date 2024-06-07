@@ -3715,23 +3715,23 @@ export const move: MoveTranslationEntries = {
   },
   "blazingTorque": {
     name: "Hitzeturbo",
-    effect: "The user revs their blazing engine into the target. This may also leave the target with a burn."
+    effect: "Der Anwender rammt seinen glühend heißen Motor in das Ziel. Dieses erleidet eventuell Verbrennungen."
   },
   "wickedTorque": {
     name: "Finsterturbo",
-    effect: "The user revs their engine into the target with malicious intent. This may put the target to sleep."
+    effect: "Der Anwender rammt seinen Motor mit böswilliger Absicht in das Ziel. Dieses schläft eventuell ein."
   },
   "noxiousTorque": {
     name: "Toxiturbo",
-    effect: "The user revs their poisonous engine into the target. This may also poison the target."
+    effect: "Der Anwender rammt seinen giftigen Motor in das Ziel. Dieses wird eventuell vergiftet."
   },
   "combatTorque": {
     name: "Raufturbo",
-    effect: "The user revs their engine forcefully into the target. This may also leave the target with paralysis."
+    effect: "Der Anwender rammt seinen Motor gewaltvoll in das Ziel. Dieses wird eventuell paralysiert."
   },
   "magicalTorque": {
     name: "Zauberturbo",
-    effect: "The user revs their fae-like engine into the target. This may also confuse the target."
+    effect: "Der Anwender rammt seinen feenartigen Motor in das Ziel. Dieses wird eventuell verwirrt."
   },
   "bloodMoon": {
     name: "Blutmond",
@@ -3767,7 +3767,7 @@ export const move: MoveTranslationEntries = {
   },
   "thunderclap": {
     name: "Sturmblitz",
-    effect: "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack."
+    effect: "Bei dieser Erstschlag-Attacke lässt der Anwender einen Blitz auf das Ziel einschlagen. Sie gelingt nur, wenn dieses gerade eine Angriffsattacke vorbereitet."
   },
   "mightyCleave": {
     name: "Wuchtklinge",

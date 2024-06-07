@@ -48,6 +48,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "depot_agent": "Bahnangestellter",
   "doctor": "Arzt",
   "doctor_female": "Ärztin",
+  "firebreather": "Feuerspucker",
   "fisherman": "Angler",
   "fisherman_female": "Angler", // Seems to be the same in german but exists in other languages like italian
   "gentleman": "Gentleman",
@@ -94,6 +95,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "rich_kid_female": "Rich Kid",
   "rich_kids": "Schnösel",
   "roughneck": "Raufbold",
+  "sailor": "Matrose",
   "scientist": "Forscher",
   "scientist_female": "Forscherin",
   "scientists": "Forscher",

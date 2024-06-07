@@ -36,11 +36,11 @@ export const menu: SimpleTranslationEntries = {
   "boyOrGirl": "¿Eres un chico o una chica?",
   "boy": "Chico",
   "girl": "Chica",
-  "evolving": "¿Uh?\n¡{{pokemonName}} está evolucionando!",
-  "stoppedEvolving": "{{pokemonName}} no ha evolucionado.",
+  "evolving": "¡Anda!\n¡{{pokemonName}} está evolucionando!",
+  "stoppedEvolving": "¿Eh?\n¡La evolución de {{pokemonName}} se ha detenido!",
   "pauseEvolutionsQuestion": "¿Quieres detener las evoluciones de {{pokemonName}}?\nSiempre pueden ser reactivadas desde la pantalla de tu equipo.",
   "evolutionsPaused": "Se han detenido las evoluciones para {{pokemonName}}.",
-  "evolutionDone": "¡Felicidades!\n¡Tu {{pokemonName}} ha evolucionado a {{evolvedPokemonName}}!",
+  "evolutionDone": "¡Enhorabuena!\n¡Tu {{pokemonName}} ha evolucionado a {{evolvedPokemonName}}!",
   "dailyRankings": "Rankings Diarios",
   "weeklyRankings": "Rankings Semanales",
   "noRankings": "Sin Rankings",
@@ -49,4 +49,6 @@ export const menu: SimpleTranslationEntries = {
   "empty":"Vacío",
   "yes":"Sí",
   "no":"No",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;

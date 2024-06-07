@@ -48,6 +48,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "depot_agent": "역무원",
   "doctor": "의사",
   "doctor_female": "간호사", // doctor_f.png 파일이 간호사
+  "firebreather": "Firebreather",
   "fisherman": "낚시꾼",
   "fisherman_female": "낚시꾼",
   "gentleman": "신사",
@@ -100,6 +101,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "smasher": "테니스선수",
   "snow_worker": "작업원",
   "snow_worker_female": "작업원",
+  "sailor": "선원",
   "striker": "축구선수",
   "school_kid": "학원끝난 아이",
   "school_kid_female": "학원끝난 아이",
