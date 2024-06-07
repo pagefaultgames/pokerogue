@@ -54,7 +54,7 @@ function getTestRunStarters(scene, seed, species) {
   for (const specie of species) {
     const starterSpeciesForm = getPokemonSpeciesForm(specie, 0);
     const starterSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
-    const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, 0, undefined, undefined, undefined, undefined, undefined, undefined);
+    const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
     const starter: Starter = {
       species: starterSpecies,
       dexAttr: pokemon.getDexAttr(),
