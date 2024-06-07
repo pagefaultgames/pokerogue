@@ -93,11 +93,15 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "기술의 명중률이 {{accuracyAmount}} 증가 (최대 100)",
     },
     "PokemonMultiHitModifierType": {
-      description: "공격이 가진 갯수에 따라 60/75/82.5%의 위력으로 한번 더 명중",
+      description: "지닌 개수(최대 3개)마다 추가 공격을 하는 대신, 공격력이 60%(1개)/75%(2개)/82.5%(3개)만큼 감소합니다.",
     },
     "TmModifierType": {
       name: "No.{{moveId}} {{moveName}}",
       description: "포켓몬에게 {{moveName}}[[를]] 가르침",
+    },
+    "TmModifierTypeWithInfo": {
+      name: "No.{{moveId}} {{moveName}}",
+      description: "포켓몬에게 {{moveName}}를(을) 가르침\n(Hold C or Shift for more info)",
     },
     "EvolutionItemModifierType": {
       description: "어느 특정 포켓몬을 진화",

@@ -98,6 +98,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "招式學習器 {{moveId}} - {{moveName}}",
       description: "教會一隻寶可夢{{moveName}}",
     },
+    TmModifierTypeWithInfo: {
+      name: "TM{{moveId}} - {{moveName}}",
+      description: "教會一隻寶可夢{{moveName}}\n(Hold C or Shift for more info)",
+    },
     EvolutionItemModifierType: { description: "使某些寶可夢進化" },
     FormChangeItemModifierType: { description: "使某些寶可夢更改形態" },
     FusePokemonModifierType: {
@@ -208,7 +212,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     MULTI_LENS: { name: "多重鏡" },
     HEALING_CHARM: {
       name: "治癒護符",
-      description: "HP恢復量增加10% (含復活)",
+      description: "HP恢復量增加10% (不含復活)",
     },
     CANDY_JAR: { name: "糖果罐", description: "神奇糖果提供的升級提升1級" },
     BERRY_POUCH: {

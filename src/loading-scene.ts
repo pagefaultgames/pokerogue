@@ -29,6 +29,7 @@ export class LoadingScene extends SceneBase {
   }
 
   preload() {
+    Utils.localPing();
     this.load["manifest"] = this.game["manifest"];
 
     if (!isMobile()) {
@@ -95,10 +96,18 @@ export class LoadingScene extends SceneBase {
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
 
-    this.loadImage("dawn_icon", "ui");
-    this.loadImage("day_icon", "ui");
-    this.loadImage("dusk_icon", "ui");
-    this.loadImage("night_icon", "ui");
+    this.loadImage("dawn_icon_fg", "ui");
+    this.loadImage("dawn_icon_mg", "ui");
+    this.loadImage("dawn_icon_bg", "ui");
+    this.loadImage("day_icon_fg", "ui");
+    this.loadImage("day_icon_mg", "ui");
+    this.loadImage("day_icon_bg", "ui");
+    this.loadImage("dusk_icon_fg", "ui");
+    this.loadImage("dusk_icon_mg", "ui");
+    this.loadImage("dusk_icon_bg", "ui");
+    this.loadImage("night_icon_fg", "ui");
+    this.loadImage("night_icon_mg", "ui");
+    this.loadImage("night_icon_bg", "ui");
 
     this.loadImage("pb_tray_overlay_player", "ui");
     this.loadImage("pb_tray_overlay_enemy", "ui");
@@ -126,6 +135,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("summary_stats_overlay_exp", "ui");
     this.loadImage("summary_moves", "ui");
     this.loadImage("summary_moves_effect", "ui");
+    this.loadImage("summary_moves_effect_type", "ui");
     this.loadImage("summary_moves_overlay_row", "ui");
     this.loadImage("summary_moves_overlay_pp", "ui");
     this.loadAtlas("summary_moves_cursor", "ui");
