@@ -51,5 +51,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"否",
   "disclaimer": "DISCLAIMER",
   "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed.",
-  "overwriteTheData": "Overwrite the data in the selected slot?"  
+  "overwriteTheData": "Overwrite the data in the selected slot?"
 } as const;
