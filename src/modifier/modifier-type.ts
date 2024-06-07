@@ -1344,46 +1344,46 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.LIGHT_BALL, (party: Pokemon[]) => {
-      // If a party member is a Pikachu or knows Fling and does not have a Light Ball already, it can appear
-      return party.some(p => (p.species.speciesId === Species.PIKACHU || p.getMoveset(true).some(m => m.moveId === Moves.FLING)) && !p.getHeldItems().some(i => {
+      // If a party member is a Pikachu (or is fused with one) or knows Fling and does not have a Light Ball already, it can appear
+      return party.some(p => ((p.getSpeciesForm(true).speciesId === Species.PIKACHU || p.getFusionSpeciesForm(true).speciesId === Species.PIKACHU) || p.getMoveset(true).some(m => m.moveId === Moves.FLING))
+      && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
           return (i as Modifiers.SpeciesStatBoosterModifier).getSpecies().includes(Species.PIKACHU);
-        } else {
-          return false;
         }
+        return false;
       })) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.THICK_CLUB, (party: Pokemon[]) => {
       const checkedSpecies = [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK ];
-      // If a party member is one of the checked species and does not have a Thick Club already, it can appear
-      return party.some(p => checkedSpecies.includes(p.species.speciesId) && !p.getHeldItems().some(i => {
+      // If a party member is one of the checked species (or is fused with one) and does not have a Thick Club already, it can appear
+      return party.some(p => (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || p.isFusion() ? checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId) : false)
+      && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
-          return (i as Modifiers.SpeciesStatBoosterModifier).getSpecies().includes(p.species.speciesId);
-        } else {
-          return false;
+          return (i as Modifiers.SpeciesStatBoosterModifier).getSpecies().includes(Species.CUBONE);
         }
+        return false;
       })) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.QUICK_POWDER, (party: Pokemon[]) => {
-      // If a party member is Ditto and does not have a Quick Powder already, it can appear
-      return party.some(p => p.species.speciesId === Species.DITTO && !p.getHeldItems().some(i => {
+      // If a party member is Ditto (or is fused with one) and does not have a Quick Powder already, it can appear
+      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || p.getFusionSpeciesForm(true).speciesId === Species.DITTO)
+      && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
           const modifierInstance = i as Modifiers.SpeciesStatBoosterModifier;
-          return modifierInstance.getSpecies().includes(p.species.speciesId) && modifierInstance.getStats().includes(Stat.SPD);
-        } else {
-          return false;
+          return modifierInstance.getSpecies().includes(Species.DITTO) && modifierInstance.getStats().includes(Stat.SPD);
         }
+        return false;
       })) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.METAL_POWDER, (party: Pokemon[]) => {
-      // If a party member is Ditto and does not have a Metal Powder already, it can appear
-      return party.some(p => p.species.speciesId === Species.DITTO && !p.getHeldItems().some(i => {
+      // If a party member is Ditto (or is fused with one) and does not have a Metal Powder already, it can appear
+      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || p.getFusionSpeciesForm(true).speciesId === Species.DITTO)
+      && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
           const modifierInstance = i as Modifiers.SpeciesStatBoosterModifier;
-          return modifierInstance.getSpecies().includes(p.species.speciesId) && modifierInstance.getStats().includes(Stat.DEF);
-        } else {
-          return false;
+          return modifierInstance.getSpecies().includes(Species.DITTO) && modifierInstance.getStats().includes(Stat.DEF);
         }
+        return false;
       })) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
