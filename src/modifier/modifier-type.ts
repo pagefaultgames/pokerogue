@@ -1352,7 +1352,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.TM_ULTRA, 12),
+    new WeightedModifierType(modifierTypes.TM_ULTRA, 14),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 4),
