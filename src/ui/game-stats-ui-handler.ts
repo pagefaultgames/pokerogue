@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
