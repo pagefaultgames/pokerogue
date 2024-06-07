@@ -854,22 +854,22 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "roark": {
     "encounter": {
-      1: "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
-      2: "Here goes! These are my rocking Pokémon, my pride and joy!",
-      3: "Rock-type Pokémon are simply the best!",
-      4: "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!"
+      1: "트레이너로서 너의 실력이 어느 정도인지 그리고 함께 싸울 포켓몬이 얼마나 강한지 확인해보겠어!",
+      2: "자 간다! 내 자랑이자 기쁨인 바위타입 포켓몬들이야!",
+      3: "바위타입 포켓몬이야말로 최고지!",
+      4: "트레이너로서 너의 실력이 어느 정도인지 그리고 함께 싸울 포켓몬이 얼마나 강한지 확인해보겠어!"
     },
     "victory": {
-      1: "W-what? That can't be! My buffed-up Pokémon!",
-      2: "…We lost control there. Next time I'd like to challenge you to a Fossil-digging race underground.",
-      3: "With skill like yours, it's natural for you to win.",
-      4: "Wh-what?! It can't be! Even that wasn't enough?",
-      5: "I blew it."
+      1: "이-이럴수가! 열심히 단련시킨 포켓몬들이!",
+      2: "…져버린 건가. 다음엔 지하통로에서 화석캐기 승부를 하고 싶구나.",
+      3: "네 실력이라면 승리는 당연한 결과겠지.",
+      4: "뭐-뭐야?! 이럴 수가! 이것도 부족했단 말인가?",
+      5: "내가 실수했군."
     },
     "defeat": {
-      1: "See? I'm proud of my rocking battle style!",
-      2: "Thanks! The battle gave me confidence that I may be able to beat my dad!",
-      3: "I feel like I just smashed through a really stubborn boulder!"
+      1: "봤지? 이게 바로 내가 자랑하는 바위 스타일 전투야!",
+      2: "고마워! 이번 승부로 아버지를 이길 수 있겠다는 자신감이 생겼어!",
+      3: "정말 단단한 바위를 뚫고 나온 기분인데!"
     }
   },
   "morty": {
@@ -1001,13 +1001,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "gardenia": {
     "encounter": {
-      1: "You have a winning aura about you. So, anyway, this will be fun. Let's have our battle!"
+      1: "너에게선 승리의 기운이 느껴져. 어쨌든 재밌을 것 같아. 포켓몬 승부하자!"
     },
     "victory": {
-      1: "Amazing! You're very good, aren't you?"
+      1: "대단해! 너 정말 강하구나!"
     },
     "defeat": {
-      1: "Yes! My Pokémon and I are perfectly good!"
+      1: "그렇지! 나와 포켓몬은 완벽해!"
     }
   },
   "aaron": {
@@ -1707,26 +1707,26 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "maylene": {
     "encounter": {
-      1: `I've come to challenge you now, and I won't hold anything back. 
-                    $Please prepare yourself for battle!`,
+      1: `지금 당신에게 도전하러 왔어요.
+                    $전력을 다할 테니 각오하세요!`,
     },
     "victory": {
-      1: "I admit defeat…"
+      1: "나의 패배입니다…"
     },
     "defeat": {
-      1: "That was awesome."
+      1: "멋진 승부였습니다."
     }
   },
   "fantina": {
     "encounter": {
-      1: `You shall challenge me, yes? But I shall win. 
-                    $That is what the Gym Leader of Hearthome does, non?`,
+      1: `당신도 도전해 보세요. 전 당신을 이기겠어요.
+                    $그것이 체육관 관장!`,
     },
     "victory": {
-      1: "You are so fantastically strong. I know why I have lost."
+      1: "당신 최고로 강해요. 나 진 것 알아요."
     },
     "defeat": {
-      1: "I am so, so, very happy!"
+      1: "너무, 너무 행복해요!"
     }
   },
   "byron": {
