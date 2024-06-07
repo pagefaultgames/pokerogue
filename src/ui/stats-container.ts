@@ -3,9 +3,10 @@ import BattleScene from "../battle-scene";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 
-const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
 const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
+const ivChartLabelxOffset= [0,5,7,-5,-5,0];
+const ivChartLabelyOffset= [0,5,0,5,0,0]; // doing this so attack does not overlap with (+N)
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export class StatsContainer extends Phaser.GameObjects.Container {
@@ -13,20 +14,22 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   private statsIvsCache: integer[];
   private ivChart: Phaser.GameObjects.Polygon;
   private ivStatValueTexts: BBCodeText[];
+  private ivChartSize: any;
 
   constructor(scene: BattleScene, x: number, y: number, showDiff?: boolean) {
     super(scene, x, y);
 
     this.showDiff = !!showDiff;
 
+    this.ivChartSize = this.showDiff ? 24 : 20; // use showDiff to know if in post battle or new game screen
+
     this.setup();
   }
 
   setup() {
     this.setName("container-stats");
-    const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
-
-    const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
+    const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ this.ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], this.ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
+    const ivChartBg = this.scene.add.polygon(this.showDiff ? 48 : 36, this.showDiff ? 44 : 50, ivChartBgData, 0xd8e0f0, 0.625);
     ivChartBg.setOrigin(0, 0);
 
     const ivChartBorder = this.scene.add.polygon(ivChartBg.x, ivChartBg.y, ivChartBgData)
@@ -34,7 +37,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     ivChartBorder.setOrigin(0, 0);
 
     const ivChartBgLines = [ [ 0, -1, 0, 1 ], [ -0.825, -0.5, 0.825, 0.5 ], [ 0.825, -0.5, -0.825, 0.5 ] ].map(coords => {
-      const line = new Phaser.GameObjects.Line(this.scene, ivChartBg.x, ivChartBg.y, ivChartSize * coords[0], ivChartSize * coords[1], ivChartSize * coords[2], ivChartSize * coords[3], 0xffffff)
+      const line = new Phaser.GameObjects.Line(this.scene, ivChartBg.x, ivChartBg.y, this.ivChartSize * coords[0], this.ivChartSize * coords[1], this.ivChartSize * coords[2], this.ivChartSize * coords[3], 0xffffff)
         .setLineWidth(0.5);
       line.setOrigin(0, 0);
       return line;
@@ -51,10 +54,10 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (this.ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325 + (this.showDiff ? 0 : ivChartLabelxOffset[i]), ivChartBg.y + (this.ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[i]), getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT, {fontSize: 50});
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivChartLabelxOffset[i]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT, {fontSize: 50});
       this.ivStatValueTexts[i].setOrigin(0.5);
 
       this.add(statLabel);
@@ -64,7 +67,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
 
   updateIvs(ivs: integer[], originalIvs?: integer[]): void {
     if (ivs) {
-      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
+      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * this.ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * this.ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
       this.statsIvsCache = ivChartData.slice(0);
 
