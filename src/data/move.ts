@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr} from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, MoveImmunityAbAttr, applyPreDefendAbAttrs} from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
@@ -4063,7 +4063,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  if (switchOutTarget instanceof PlayerPokemon) {
 	  	if (switchOutTarget.hp) {
 	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
-          this.partyChoice ? (switchOutTarget as PlayerPokemon).forceSwitchOut(true).then(() => resolve(true)) : (switchOutTarget as PlayerPokemon).switchOut(true).then(() => resolve(true));
+          this.partyChoice ? (switchOutTarget as PlayerPokemon).switchOut(true).then(() => resolve(true)) : (switchOutTarget as PlayerPokemon).forceSwitchOut(true).then(() => resolve(true));
 	  	} else {
           resolve(false);
         }
@@ -4111,9 +4111,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
     const blockedByAbility = new Utils.BooleanHolder(false);
     applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
-    target.getTag(BattlerTagType.INGRAIN) ? blockedByAbility.value = true : null;
-    //target.hasAbility(Abilities.SOUNDPROOF) ? blockedByAbility.value = true : null;
+    applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, new PokemonMove(move.id), blockedByAbility);
 
+    target.getTag(BattlerTagType.INGRAIN) ? blockedByAbility.value = true : null;
     return blockedByAbility.value ? getPokemonMessage(target, " can't be switched out!") : null;
   }
 
@@ -4122,7 +4122,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      if (!this.user && move.category === MoveCategory.STATUS && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.isMax()) || target.getTag(BattlerTagType.INGRAIN)) {
+      if (!this.user && (move.category === MoveCategory.STATUS || move.category === MoveCategory.PHYSICAL) && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.hasAbilityWithAttr(MoveImmunityAbAttr) || target.isMax()) || target.getTag(BattlerTagType.INGRAIN)) {
         return false;
       }
 
@@ -5131,7 +5131,7 @@ export function initMoves() {
       .windMove(),
     new AttackMove(Moves.WING_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, 0, 1),
     new StatusMove(Moves.WHIRLWIND, Type.NORMAL, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr)
+      .attr(ForceSwitchOutAttr, false, false, false)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .ignoresProtect()
       .hidesTarget()
@@ -5209,7 +5209,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.ROAR, Type.NORMAL, -1, 20, -1, -6, 1) // TODO: Fix the animation in general and soundproof edge case (it works it is just ugly)
-      .attr(ForceSwitchOutAttr)
+      .attr(ForceSwitchOutAttr, false, false, false)
       .ignoresProtect()
       .soundBased(),
     new StatusMove(Moves.SING, Type.NORMAL, 55, 15, -1, 0, 1)
@@ -6492,7 +6492,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
       .attr(StatChangeAttr, BattleStat.SPD, 2, true),
     new AttackMove(Moves.CIRCLE_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr),
+      .attr(ForceSwitchOutAttr, false, false, false),
     new AttackMove(Moves.INCINERATE, Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .partial(),
@@ -6530,7 +6530,7 @@ export function initMoves() {
     new AttackMove(Moves.FROST_BREATH, Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, 100, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.DRAGON_TAIL, Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr),
+      .attr(ForceSwitchOutAttr, false, false, false),
     new SelfStatusMove(Moves.WORK_UP, Type.NORMAL, -1, 30, -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, true),
     new AttackMove(Moves.ELECTROWEB, Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 5)
