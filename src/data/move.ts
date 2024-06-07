@@ -4404,7 +4404,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
     const blockedByAbility = new Utils.BooleanHolder(false);
     applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
-    applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, new PokemonMove(move.id), blockedByAbility);
+    applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, move, blockedByAbility);
 
     target.getTag(BattlerTagType.INGRAIN) ? blockedByAbility.value = true : null;
     return blockedByAbility.value ? getPokemonMessage(target, " can't be switched out!") : null;
