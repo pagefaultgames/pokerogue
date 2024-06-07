@@ -633,11 +633,12 @@ export abstract class FieldPhase extends BattlePhase {
     const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
-    let orderedTargets: Pokemon[] = playerField.concat(enemyField).sort((a: Pokemon, b: Pokemon) => {
+    // We shuffle the list before sorting so speed ties produce random results
+    let orderedTargets: Pokemon[] = Utils.randSeedShuffle(playerField.concat(enemyField)).sort((a: Pokemon, b: Pokemon) => {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
-      return aSpeed < bSpeed ? 1 : aSpeed > bSpeed ? -1 : !this.scene.randBattleSeedInt(2) ? -1 : 1;
+      return bSpeed - aSpeed;
     });
 
     const speedReversed = new Utils.BooleanHolder(false);

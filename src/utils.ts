@@ -127,6 +127,23 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
   return items[Math.floor(easedValue * items.length)];
 }
 
+/**
+ * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
+ * @param {Array} items An array of items.
+ * @returns {Array} A new shuffled array of items.
+ */
+export function randSeedShuffle<T>(items: T[]): T[] {
+  if (items.length <= 1) {
+    return items;
+  }
+  const newArray = items.slice(0);
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Phaser.Math.RND.integerInRange(0, i);
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
