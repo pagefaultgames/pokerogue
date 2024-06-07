@@ -1,7 +1,6 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import infoHandler from "#app/test/utils/fetchHandlers/infoHandler";
 import {apiFetch} from "#app/utils";
 import {waitUntil} from "#app/test/utils/gameManagerUtils";
 
@@ -31,7 +30,7 @@ describe("Test misc", () => {
       return response.json();
     }).then(data => {
       spy(); // Call the spy function
-      expect(data).toEqual(infoHandler);
+      expect(data).toEqual({"username":"greenlamp","lastSessionSlot":0});
     });
     expect(spy).toHaveBeenCalled();
   });
@@ -44,7 +43,7 @@ describe("Test misc", () => {
       return response.json();
     }).then(data => {
       spy(); // Call the spy function
-      expect(data).toEqual(infoHandler);
+      expect(data).toEqual({"username":"greenlamp","lastSessionSlot":0});
     });
     expect(spy).toHaveBeenCalled();
   });
@@ -55,7 +54,7 @@ describe("Test misc", () => {
 
     expect(response.ok).toBe(true);
     expect(response.status).toBe(200);
-    expect(data).toEqual(infoHandler);
+    expect(data).toEqual({"username":"greenlamp","lastSessionSlot":0});
   });
 
   it("test apifetch mock sync", async () => {
