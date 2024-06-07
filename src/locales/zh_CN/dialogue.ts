@@ -382,30 +382,6 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "好像是我晕船了…"
     },
   },
-  "firebreather": {
-    "encounter": {
-      1: "My flames shall devour you!",
-      2: "My soul is on fire. I'll show you how hot it burns!",
-      3: "Step right up and take a look!"
-    },
-    "victory": {
-      1: "I burned down to ashes...",
-      2: "Yow! That's hot!",
-      3: "Ow! I scorched the tip of my nose!"
-    },
-  },
-  "sailor": {
-    "encounter": {
-      1: "Matey, you're walking the plank if you lose!",
-      2: "Come on then! My sailor's pride is at stake!",
-      3: "Ahoy there! Are you seasick?"
-    },
-    "victory": {
-      1: "Argh! Beaten by a kid!",
-      2: "Your spirit sank me!",
-      3: "I think it's me that's seasick..."
-    },
-  },
   "brock": {
     "encounter": {
       1: `我对岩石属性宝可梦的专精会击败你！来吧！`,
