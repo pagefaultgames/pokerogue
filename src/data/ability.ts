@@ -2590,7 +2590,7 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
 
     if (!berryModifier) {
       pokemon.scene.addModifier(new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1));
-    } else {
+    } else if (berryModifier.stackCount < berryModifier.getMaxHeldItemCount(pokemon)) {
       berryModifier.stackCount++;
     }
 
