@@ -1651,7 +1651,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "chuck": {
     "encounter": {
-      1: "하! 나에게 도전하겠다고? 용감하거나, 혹은 무지막지한 녀석이군?"
+      1: "하! 나에게 도전하겠다고? 용감한 거냐, 아니면 그냥 무모한 거냐?"
     },
     "victory": {
       1: "자네 강하군! 나를 제자로 삼아주겠나?"
