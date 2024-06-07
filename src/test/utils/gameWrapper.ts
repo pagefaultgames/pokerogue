@@ -75,6 +75,7 @@ export default class GameWrapper {
   public scene: BattleScene;
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
+    Phaser.Math.RND.sow([ 'test' ]);
     if (bypassLogin) {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
     }
