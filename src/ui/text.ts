@@ -48,7 +48,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "fr":{},
   "it":{},
   "pt_BR":{},
-  "zh_CN":{},
+  "zh_CN":{
+    summaryFontSize: "85px",
+  },
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
