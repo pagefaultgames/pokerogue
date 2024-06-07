@@ -283,7 +283,7 @@ export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${windo
 export const serverUrl = isLocal ? localServerUrl : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
-export let isLocalServerConnected = false;
+export let isLocalServerConnected = true;
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
