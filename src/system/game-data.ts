@@ -281,7 +281,10 @@ export class GameData {
     const EGG_SEED = 1073741824;
     this.eggs = [
       new Egg(1, 1, 5, new Date().getTime()),
+      new Egg(1, 1, 5, new Date().getTime()),
+      new Egg(1, 1, 5, new Date().getTime()),
       new Egg(1 + EGG_SEED, 1, 15, new Date().getTime()),
+      new Egg(1 + EGG_SEED * 2, 1, 50, new Date().getTime()),
       new Egg(1 + EGG_SEED * 2, 1, 50, new Date().getTime()),
       new Egg(1 + EGG_SEED * 3, GachaType.LEGENDARY, 100, new Date().getTime())
     ];
@@ -1455,7 +1458,7 @@ export class GameData {
         }
       };
 
-      if (!this.scene.skipEggHatchingAnimation && newCatch && speciesStarters.hasOwnProperty(species.speciesId)) { // Save this info for a potential hatch summary screen
+      if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
       } else {
@@ -1501,7 +1504,7 @@ export class GameData {
     this.starterData[species.speciesId].candyCount += count;
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, skipAnimations?: boolean): Promise<boolean> {
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, skipAnimation?: boolean): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1522,8 +1525,8 @@ export class GameData {
 
       this.starterData[speciesId].eggMoves |= value;
 
-      if (this.scene.skipEggHatchingAnimation) { // I don't fully understand what promises do so double check this
-        resolve(false);
+      if (skipAnimation) {
+        resolve(false); // Double check this resolve.
         return;
       }
 

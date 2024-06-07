@@ -71,24 +71,44 @@ export class EggHatchPhase extends Phase {
   start() {
     super.start();
 
-    if (this.scene.skipEggHatchingAnimation) {
-      this.updateEggData();
-      return;
+    if (!this.egg) {
+      return this.end();
+    }
+
+    const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === this.egg.id);
+
+    if (eggIndex === -1) {
+      return this.end();
+    }
+
+    this.scene.gameData.eggs.splice(eggIndex, 1);
+
+    // The game will try to unfuse any Pokemon even though eggs should not generate fused Pokemon in the first place. Then remove this?
+    const pokemon = this.generatePokemon();
+    if (pokemon.fusionSpecies) {
+      pokemon.clearFusionSpecies();
+    }
+
+    this.pokemon = pokemon;
+
+    // If Pokemon is new, show animation no matter setting.
+    let newPokemon = false;
+    const dexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
+    const caughtAttr = dexEntry.caughtAttr;
+    if (!caughtAttr && speciesStarters.hasOwnProperty(this.pokemon.species.speciesId)) {
+      newPokemon = true;
+    }
+
+    // TODO: See how this data loads/what UI looks like when you're hatching the max possible eggs at once
+    // Skip animations for eggs whose tiers are lower than the desired setting.
+    if (!newPokemon && this.scene.skipEggHatchingAnimation !== 0) {
+      if (this.egg.tier < this.scene.skipEggHatchingAnimation) {
+        this.updateEggData();
+        return;
+      }
     }
 
     this.scene.ui.setModeForceTransition(Mode.EGG_HATCH_SCENE).then(() => {
-
-      if (!this.egg) {
-        return this.end();
-      }
-
-      const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === this.egg.id);
-
-      if (eggIndex === -1) {
-        return this.end();
-      }
-
-      this.scene.gameData.eggs.splice(eggIndex, 1);
 
       this.scene.fadeOutBgm(null, false);
 
@@ -143,15 +163,7 @@ export class EggHatchPhase extends Phase {
 
       this.eggHatchContainer.add(this.infoContainer);
 
-      // The game will try to unfuse any Pokemon even though eggs should not generate fused Pokemon in the first place
-      const pokemon = this.generatePokemon();
-      if (pokemon.fusionSpecies) {
-        pokemon.clearFusionSpecies();
-      }
-
       this.pokemonSprite.setVisible(false);
-
-      this.pokemon = pokemon;
 
       pokemon.loadAssets().then(() => {
         this.canSkip = true;
@@ -381,21 +393,6 @@ export class EggHatchPhase extends Phase {
    * Just the code that updates game data so you can skip animations.
    */
   updateEggData() {
-    if (!this.egg) { // When would this ever happen?
-      return super.end();
-    }
-
-    const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === this.egg.id);
-
-    if (eggIndex === -1) {
-      return super.end();
-    }
-
-    this.scene.gameData.eggs.splice(eggIndex, 1);
-
-    const pokemon = this.generatePokemon();
-    this.pokemon = pokemon;
-
     // Update/reduce count of hatching eggs when revealed if count is at least 1
     if (this.eggsToHatchCount > 1) {
       this.eggsToHatchCount -= 1;
@@ -415,12 +412,12 @@ export class EggHatchPhase extends Phase {
       this.scene.validateAchv(achvs.HATCH_SHINY);
     }
 
+    // This info is good for a summary page.
     this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
     this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => { // What are these promises doing...
-      this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, true).then(() => {
+      this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, true).then(() => { // wait.
         this.scene.ui.showText(null, 0);
-        //this.end();
-        super.end(); // or else it's going to try a nonexistent handler ui...
+        super.end();
       });
     });
   }
