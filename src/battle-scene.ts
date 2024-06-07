@@ -62,6 +62,7 @@ import { NewArenaEvent } from "./battle-scene-events";
 import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";
+import { ExpNotification } from "./enums/exp-notification";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -141,7 +142,7 @@ export default class BattleScene extends SceneBase {
      * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
      * @default 0 - Uses the default normal experience gain display.
      */
-  public expParty: integer = 0;
+  public expParty: ExpNotification = 0;
   public hpBarSpeed: integer = 0;
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
@@ -158,7 +159,7 @@ export default class BattleScene extends SceneBase {
   public gameData: GameData;
   public sessionSlotId: integer;
 
-  private phaseQueue: Phase[];
+  public phaseQueue: Phase[];
   private phaseQueuePrepend: Phase[];
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
@@ -200,7 +201,7 @@ export default class BattleScene extends SceneBase {
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
-  private modifiers: PersistentModifier[];
+  public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
@@ -299,7 +300,8 @@ export default class BattleScene extends SceneBase {
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
     (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
-    this.time.delayedCall(20, () => this.launchBattle());
+
+    this.launchBattle();
   }
 
   update() {
@@ -946,7 +948,8 @@ export default class BattleScene extends SceneBase {
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
-    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
+    const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
+    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
     let newDouble: boolean;
     let newBattleType: BattleType;
     let newTrainer: Trainer;
@@ -1005,6 +1008,9 @@ export default class BattleScene extends SceneBase {
 
     if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
       newDouble = true;
+    }
+    if (Overrides.SINGLE_BATTLE_OVERRIDE) {
+      newDouble = false;
     }
 
     const lastBattle = this.currentBattle;
