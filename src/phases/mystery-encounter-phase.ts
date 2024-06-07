@@ -123,11 +123,6 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
     //this.scene.pushPhase(new PostMysteryEncounterPhase(this.scene));
     hideMysteryEncounterIntroVisuals(this.scene).then(() => {
       this.onOptionSelect(this.scene).finally(() => {
-        // doEncounterRewards will instead be called from the VictoryPhase in the case of a combat encounter
-        if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards && this.scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
-          this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
-        }
-
         this.end();
       });
     });
@@ -183,9 +178,23 @@ export class MysteryEncounterBattlePhase extends Phase {
         this.endBattleSetup(scene);
       }
     } else if (encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+      // Show enemy trainer
       const trainer = scene.currentBattle.trainer;
-      trainer.untint(100, "Sine.easeOut");
-      trainer.playAnim();
+      trainer.alpha = 0;
+      trainer.x += 16;
+      trainer.y -= 16;
+      scene.tweens.add({
+        targets: scene.currentBattle.trainer,
+        x: "-=16",
+        y: "+=16",
+        alpha: 1,
+        ease: "Sine.easeInOut",
+        duration: 750,
+        onComplete: () => {
+          trainer.untint(100, "Sine.easeOut");
+          trainer.playAnim();
+        }
+      });
 
       const doSummon = () => {
         scene.currentBattle.started = true;

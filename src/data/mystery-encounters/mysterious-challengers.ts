@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
 import { ModifierTier } from "../../modifier/modifier-tier";
 import { modifierTypes } from "../../modifier/modifier-type";
-import { EnemyPartyConfig, generateEnemyPartyForBattle, initBattleFromEncounter, leaveEncounterWithoutBattle, setEncounterRewards, showTrainerDialogue } from "../../utils/mystery-encounter-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards } from "../../utils/mystery-encounter-utils";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import { TrainerType } from "../enums/trainer-type";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
@@ -35,11 +35,10 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
         levelMultiplier: 0.75,
         trainerType: TrainerType.SCHOOL_KID
       };
-      generateEnemyPartyForBattle(scene, config);
-      return showTrainerDialogue(scene).then(() => {
-        initBattleFromEncounter(scene);
-        setEncounterRewards(scene, false, null, false, [modifierTypes.MEMORY_MUSHROOM]);
-      });
+
+      setEncounterRewards(scene, false, null, false, [modifierTypes.MEMORY_MUSHROOM]);
+
+      return initBattleWithEnemyConfig(scene, config);
     })
     .build())
   .withOption(new MysteryEncounterOptionBuilder()
@@ -49,11 +48,10 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
         levelMultiplier: 1,
         trainerType: TrainerType.SCIENTIST
       };
-      generateEnemyPartyForBattle(scene, config);
-      return showTrainerDialogue(scene).then(() => {
-        initBattleFromEncounter(scene);
-        setEncounterRewards(scene, true, [ModifierTier.ULTRA], true);
-      });
+
+      setEncounterRewards(scene, true, [ModifierTier.ULTRA], true);
+
+      return initBattleWithEnemyConfig(scene, config);
     })
     .build())
   .withOption(new MysteryEncounterOptionBuilder()
@@ -63,11 +61,10 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
         levelMultiplier: 1.5,
         trainerType: TrainerType.ACE_TRAINER
       };
-      generateEnemyPartyForBattle(scene, config);
-      return showTrainerDialogue(scene).then(() => {
-        initBattleFromEncounter(scene);
-        setEncounterRewards(scene, true, [ModifierTier.ROGUE], true);
-      });
+
+      setEncounterRewards(scene, true, [ModifierTier.ROGUE], true);
+
+      return initBattleWithEnemyConfig(scene, config);
     })
     .build())
   .withOption(new MysteryEncounterOptionBuilder()

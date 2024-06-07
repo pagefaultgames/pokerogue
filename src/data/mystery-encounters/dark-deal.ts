@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
 import { AddPokeballModifierType } from "../../modifier/modifier-type";
-import { EnemyPartyConfig, generateEnemyPartyForBattle, getRandomSpeciesByEggTier, leaveEncounterWithoutBattle, getRandomPlayerPokemon } from "../../utils/mystery-encounter-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, getRandomSpeciesByEggTier, leaveEncounterWithoutBattle, getRandomPlayerPokemon } from "../../utils/mystery-encounter-utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { ModifierRewardPhase } from "../../phases";
 import { getPokemonSpecies } from "../pokemon-species";
@@ -45,7 +45,7 @@ export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
         levelMultiplier: 1.5,
         pokemonBosses: [bossSpecies]
       };
-      return generateEnemyPartyForBattle(scene, config);
+      return initBattleWithEnemyConfig(scene, config);
       //initBattleFromEncounter(scene);
     })
     .build())

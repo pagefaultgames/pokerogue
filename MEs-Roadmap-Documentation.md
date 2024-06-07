@@ -1,8 +1,8 @@
 # 📝 Most immediate things on the to-do platter
 
 - ### High priority
-    - 🐛 Game crashes after Dark Deal scientist is done talking to you 🛠️
-    - 🐛 Accepting the scientist's offer causes the "thing" to your PKMN happen, but nothing else changes (ME doesn't continue as it should) 🛠️
+    - 🐛 Game crashes after Dark Deal scientist is done talking to you 🛠️ (Fixed)
+    - 🐛 Accepting the scientist's offer causes the "thing" to your PKMN happen, but nothing else changes (ME doesn't continue as it should) 🛠️ (Fixed)
       - Only out for this seems to be to refuse the offer, which also seems to cause a crash if the next fight is a trainer battle. 🛠️
 
 - ### Medium priority

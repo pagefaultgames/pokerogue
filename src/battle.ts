@@ -12,7 +12,7 @@ import { PlayerGender } from "./data/enums/player-gender";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
-import MysteryEncounter from "./data/mystery-encounter";
+import MysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounter";
 
 export enum BattleType {
   WILD,
@@ -196,7 +196,7 @@ export default class Battle {
 
   getBgmOverride(scene: BattleScene): string {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
-    if (this.battleType === BattleType.TRAINER) {
+    if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
       if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
       }

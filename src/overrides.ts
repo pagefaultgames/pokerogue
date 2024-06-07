@@ -90,7 +90,7 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  */
 
 // 1 to 100 (percent), set to null to ignore
-export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 100;
+export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 30;
 // Can use MysteryEncounterType, set to null to ignore (e.g. MysteryEncounterType.DARK_DEAL)
 export const MYSTERY_ENCOUNTER_OVERRIDE: number = null;
 

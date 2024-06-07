@@ -213,7 +213,7 @@ export class EnemyPartyConfig {
  * @param levelMultiplier - multiplier to adjust enemy levels up and down for harder or easier battles
  * @param trainerType - optional, if set will generate a team based on passed trainer type and configure a trainer battle instead of wild
  */
-export function generateEnemyPartyForBattle(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
+export function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
   const loaded = false;
   const loadEnemyAssets = [];
 
