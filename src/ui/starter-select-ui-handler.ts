@@ -1027,7 +1027,42 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   }
                 }
                 const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-                return this.addToParty(species, isDupe);
+                if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+                  const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+                  cursorObj.setVisible(true);
+                  cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+                  const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+                  this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+                  this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+                  this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
+                  this.starterGens.push(this.getGenCursorWithScroll());
+                  this.starterCursors.push(this.cursor);
+                  this.starterAttr.push(this.dexAttrCursor);
+                  this.starterAbilityIndexes.push(this.abilityCursor);
+                  this.starterNatures.push(this.natureCursor as unknown as Nature);
+                  this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+                  if (this.speciesLoaded.get(species.speciesId)) {
+                    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
+                  }
+                  if (this.starterCursors.length === 6 || this.value === this.getValueLimit()) {
+                    this.tryStart();
+                  }
+                  this.updateInstructions();
+
+                  /**
+                   * If the user can't select a pokemon anymore,
+                   * go to start button.
+                   */
+                  if (!this.canAddParty) {
+                    this.startCursorObj.setVisible(true);
+                    this.setGenMode(true);
+                  }
+
+                  ui.playSelect();
+                } else {
+                  ui.playError();
+                }
+                return true;
               },
               overrideSound: true
             },
@@ -1406,46 +1441,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     return success || error;
-  }
-
-  addToParty(species: PokemonSpecies, isDupe?: boolean) {
-    const ui = this.getUi();
-    if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
-      const cursorObj = this.starterCursorObjs[this.starterCursors.length];
-      cursorObj.setVisible(true);
-      cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-      const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-      this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
-      this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
-      this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
-      this.starterGens.push(this.getGenCursorWithScroll());
-      this.starterCursors.push(this.cursor);
-      this.starterAttr.push(this.dexAttrCursor);
-      this.starterAbilityIndexes.push(this.abilityCursor);
-      this.starterNatures.push(this.natureCursor as unknown as Nature);
-      this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
-      if (this.speciesLoaded.get(species.speciesId)) {
-        getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
-      }
-      if (this.starterCursors.length === 6 || this.value === this.getValueLimit()) {
-        this.tryStart();
-      }
-      this.updateInstructions();
-
-      /**
-       * If the user can't select a pokemon anymore,
-       * go to start button.
-       */
-      if (!this.canAddParty) {
-        this.startCursorObj.setVisible(true);
-        this.setGenMode(true);
-      }
-
-      ui.playSelect();
-    } else {
-      ui.playError();
-    }
-    return true;
   }
 
   switchMoveHandler(i: number, newMove: Moves, move: Moves) {
