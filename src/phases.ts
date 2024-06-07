@@ -4303,7 +4303,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
         this.end();
       }
     } else if (this.scene.expGainsSpeed < 3) {
-      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === ExpNotification.ONLY_LEVEL_UP, newLevel).then(() => {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, false, newLevel).then(() => {
         setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
       });
     } else {
