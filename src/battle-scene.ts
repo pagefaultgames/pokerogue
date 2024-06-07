@@ -62,6 +62,7 @@ import { NewArenaEvent } from "./battle-scene-events";
 import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";
+import { ExpNotification } from "./enums/exp-notification";
 import { BattleStyle } from "./enums/battle-style";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -142,7 +143,7 @@ export default class BattleScene extends SceneBase {
      * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
      * @default 0 - Uses the default normal experience gain display.
      */
-  public expParty: integer = 0;
+  public expParty: ExpNotification = 0;
   public hpBarSpeed: integer = 0;
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
@@ -321,6 +322,7 @@ export default class BattleScene extends SceneBase {
 
     const field = this.add.container(0, 0);
     field.setScale(6);
+    field.setName("container-field");
 
     this.field = field;
 
@@ -456,9 +458,13 @@ export default class BattleScene extends SceneBase {
     const loadPokemonAssets = [];
 
     this.arenaPlayer = new ArenaBase(this, true);
+    this.arenaPlayer.setName("container-arena-player");
     this.arenaPlayerTransition = new ArenaBase(this, true);
+    this.arenaPlayerTransition.setName("container-arena-player-transition");
     this.arenaEnemy = new ArenaBase(this, false);
+    this.arenaEnemy.setName("container-arena-enemy");
     this.arenaNextEnemy = new ArenaBase(this, false);
+    this.arenaNextEnemy.setName("container-arena-next-enemy");
 
     this.arenaBgTransition.setVisible(false);
     this.arenaPlayerTransition.setVisible(false);
@@ -473,6 +479,7 @@ export default class BattleScene extends SceneBase {
 
     const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
     trainer.setOrigin(0.5, 1);
+    trainer.setName("sprite-trainer");
 
     field.add(trainer);
 
