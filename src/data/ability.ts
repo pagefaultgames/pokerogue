@@ -1726,7 +1726,9 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    if (!pokemon.scene.arena.weather?.isImmutable()) {
+    if ((this.weatherType === WeatherType.HEAVY_RAIN ||
+      this.weatherType === WeatherType.HARSH_SUN ||
+      this.weatherType === WeatherType.STRONG_WINDS) || !pokemon.scene.arena.weather?.isImmutable()) {
       return pokemon.scene.arena.trySetWeather(this.weatherType, true);
     }
 
@@ -1847,6 +1849,52 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
     if (pokemon.status) {
       pokemon.resetStatus();
       pokemon.updateInfo();
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
+ */
+export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
+
+  /**
+   * @param pokemon The {@linkcode Pokemon} with the ability
+   * @param passive N/A
+   * @param args N/A
+   * @returns {boolean} Returns true if the weather clears, otherwise false.
+   */
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    const weatherType = pokemon.scene.arena.weather.weatherType;
+    let turnOffWeather = false;
+
+    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
+    switch (weatherType) {
+    case (WeatherType.HARSH_SUN):
+      if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
+          && pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    case (WeatherType.HEAVY_RAIN):
+      if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
+          && pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    case (WeatherType.STRONG_WINDS):
+      if (pokemon.hasAbility(Abilities.DELTA_STREAM)
+          && pokemon.scene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    }
+
+    if (turnOffWeather) {
+      pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
       return true;
     }
 
@@ -2981,6 +3029,55 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 
 export class PostFaintAbAttr extends AbAttr {
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    return false;
+  }
+}
+
+/**
+ * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon fainting
+ */
+export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
+
+  /**
+   * @param pokemon The {@linkcode Pokemon} with the ability
+   * @param passive N/A
+   * @param attacker N/A
+   * @param move N/A
+   * @param hitResult N/A
+   * @param args N/A
+   * @returns {boolean} Returns true if the weather clears, otherwise false.
+   */
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    const weatherType = pokemon.scene.arena.weather.weatherType;
+    let turnOffWeather = false;
+
+    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
+    switch (weatherType) {
+    case (WeatherType.HARSH_SUN):
+      if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
+          && pokemon.scene.getField(true).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    case (WeatherType.HEAVY_RAIN):
+      if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
+          && pokemon.scene.getField(true).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    case (WeatherType.STRONG_WINDS):
+      if (pokemon.hasAbility(Abilities.DELTA_STREAM)
+          && pokemon.scene.getField(true).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
+        turnOffWeather = true;
+      }
+      break;
+    }
+
+    if (turnOffWeather) {
+      pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+      return true;
+    }
+
     return false;
   }
 }
@@ -4161,13 +4258,22 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(PreSwitchOutClearWeatherAbAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
+      .attr(PreSwitchOutClearWeatherAbAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
+      .attr(PreSwitchOutClearWeatherAbAttr)
+      .attr(PostFaintClearWeatherAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
