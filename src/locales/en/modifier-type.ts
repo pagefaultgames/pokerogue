@@ -178,6 +178,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Soothe Bell" },
 
+    "LIGHT_BALL": { name: "Light Ball", description: "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },
+    "THICK_CLUB": { name: "Thick Club", description: "This hard bone of unknown origin boosts Cubone or Marowak's Attack stat." },
+    "QUICK_POWDER": { name: "Quick Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Speed stat." },
+    "METAL_POWDER": { name: "Metal Powder", description: "Extremely find yet hard, this odd powder boosts Ditto's Defense stat." },
+
     "SOUL_DEW": { name: "Soul Dew", description: "Increases the influence of a Pokémon's nature on its stats by 10% (additive)" },
 
     "NUGGET": { name: "Nugget" },

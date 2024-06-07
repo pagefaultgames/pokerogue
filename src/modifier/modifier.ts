@@ -22,6 +22,7 @@ import { Nature } from "#app/data/nature";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
+import { Species } from "#app/data/enums/species.ts";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -912,6 +913,82 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
 
   getStatusEffect(): StatusEffect {
     return this.effect;
+  }
+}
+
+/**
+ * Modifier used for held items that apply {@linkcode Stat} boost(s) using a
+ * multiplier if the holder is of a specific {@linkcode Species}.
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class SpeciesStatBoosterModifier extends PokemonHeldItemModifier {
+  /** The species that the held item's stat boost(s) apply to */
+  private species: Species[];
+  /** The stats that the held item boosts */
+  private stats: Stat[];
+  /** The multiplier used to increase the relevant stat(s) */
+  private multiplier: integer;
+
+  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: integer, species: Species[], stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.stats = stats;
+    this.multiplier = multiplier;
+    this.species = species;
+  }
+
+  clone() {
+    return new SpeciesStatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.species, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.stats, this.multiplier, this.species ];
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof SpeciesStatBoosterModifier) {
+      const modifierInstance = modifier as SpeciesStatBoosterModifier;
+      if (modifierInstance.multiplier === this.multiplier && modifierInstance.species.length === this.species.length && modifierInstance.stats.length === this.stats.length) {
+        return modifierInstance.species.every((e, i) => e === this.species[i]) && modifierInstance.stats.every((e, i) => e === this.stats[i]);
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
+   * in {@linkcode stats} and if the holder's {@linkcode Species} is listed in {@linkcode species}.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} being checked at the time
+   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns true if the stat boost applies successfully, false otherwise
+   */
+  apply(args: any[]): boolean {
+    /** The actual {@linkcode Species} of the holder, ignoring the effect of moves like Transform */
+    const speciesId = (args[0] as Pokemon).getSpeciesForm(true).speciesId;
+    const stat = args[1] as Stat;
+    const statValue = args[2] as Utils.NumberHolder;
+
+    if (this.stats.includes(stat) && this.species.includes(speciesId)) {
+      statValue.value *= this.multiplier;
+      return true;
+    }
+
+    return false;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+
+  getSpecies(): Species[] {
+    return this.species;
+  }
+
+  getStats(): Stat[] {
+    return this.stats;
   }
 }
 
