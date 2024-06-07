@@ -1,10 +1,10 @@
+import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { ModifierTier } from "../modifier/modifier-tier";
-import { EggTier } from "../data/enums/egg-type";
 import BattleScene from "../battle-scene";
+import { EggTier } from "../data/enums/egg-type";
 import { UiTheme } from "../enums/ui-theme";
-import i18next from "i18next";
+import { ModifierTier } from "../modifier/modifier-tier";
 
 export enum TextStyle {
   MESSAGE,
@@ -45,10 +45,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "en":{},
   "de":{},
   "es":{},
-  "it":{},
   "fr":{},
-  "zh_CN":{},
+  "it":{},
   "pt_BR":{},
+  "zh_CN":{},
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
@@ -98,7 +98,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 }
 
 function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
-  const lang = i18next.language;
+  const lang = i18next.resolvedLanguage;
   let shadowXpos = 4;
   let shadowYpos = 5;
 
