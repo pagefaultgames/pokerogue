@@ -5,3 +5,4 @@ export const fightUiHandler: SimpleTranslationEntries = {
   "power": "Power",
   "accuracy": "Accuracy",
 } as const;
+

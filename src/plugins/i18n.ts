@@ -234,6 +234,12 @@ declare module "i18next" {
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
       partyUiHandler: SimpleTranslationEntries;
+      statusEffectHealText: SimpleTranslationEntries;
+        statusEffectDescriptor: SimpleTranslationEntries;
+        statusEffectObtainText: SimpleTranslationEntries;
+        statusEffectActivationText: SimpleTranslationEntries;
+        statusEffectOverlapText: SimpleTranslationEntries;
+        statusEffectSourceClause: SimpleTranslationEntries;
     };
   }
 }

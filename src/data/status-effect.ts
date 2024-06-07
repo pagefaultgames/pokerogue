@@ -1,4 +1,5 @@
 import * as Utils from "../utils";
+import i18next from "i18next";
 
 export enum StatusEffect {
   NONE,
@@ -32,20 +33,20 @@ export class Status {
 }
 
 export function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText?: string): string {
-  const sourceClause = sourceText ? ` ${statusEffect !== StatusEffect.SLEEP ? "by" : "from"} ${sourceText}` : "";
+  const sourceClause = sourceText ? ` ${statusEffect !== StatusEffect.SLEEP ? i18next.t("statusEffectSourceClause:by") : i18next.t("statusEffectSourceClause:from")} ${sourceText}` : "";
   switch (statusEffect) {
   case StatusEffect.POISON:
-    return `\nwas poisoned${sourceClause}!`;
+    return i18next.t("statusEffectObtainText:poison", { sourceClause: sourceClause });
   case StatusEffect.TOXIC:
-    return `\nwas badly poisoned${sourceClause}!`;
+    return i18next.t("statusEffectObtainText:toxic", { sourceClause: sourceClause });
   case StatusEffect.PARALYSIS:
-    return ` was paralyzed${sourceClause}!\nIt may be unable to move!`;
+    return i18next.t("statusEffectObtainText:paralysis", { sourceClause: sourceClause });
   case StatusEffect.SLEEP:
-    return `\nfell asleep${sourceClause}!`;
+    return i18next.t("statusEffectObtainText:sleep", { sourceClause: sourceClause });
   case StatusEffect.FREEZE:
-    return `\nwas frozen solid${sourceClause}!`;
+    return i18next.t("statusEffectObtainText:freeze", { sourceClause: sourceClause });
   case StatusEffect.BURN:
-    return `\nwas burned${sourceClause}!`;
+    return i18next.t("statusEffectObtainText:burn", { sourceClause: sourceClause });
   }
 
   return "";
@@ -55,15 +56,15 @@ export function getStatusEffectActivationText(statusEffect: StatusEffect): strin
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return " is hurt\nby poison!";
+    return i18next.t("statusEffectActivationText:poison");
   case StatusEffect.PARALYSIS:
-    return " is paralyzed!\nIt can't move!";
+    return i18next.t("statusEffectActivationText:paralysis");
   case StatusEffect.SLEEP:
-    return " is fast asleep.";
+    return i18next.t("statusEffectActivationText:sleep");
   case StatusEffect.FREEZE:
-    return " is\nfrozen solid!";
+    return i18next.t("statusEffectActivationText:freeze");
   case StatusEffect.BURN:
-    return " is hurt\nby its burn!";
+    return i18next.t("statusEffectActivationText:burn");
   }
 
   return "";
@@ -73,15 +74,15 @@ export function getStatusEffectOverlapText(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return " is\nalready poisoned!";
+    return i18next.t("statusEffectOverlapText:poison");
   case StatusEffect.PARALYSIS:
-    return " is\nalready paralyzed!";
+    return i18next.t("statusEffectOverlapText:paralysis");
   case StatusEffect.SLEEP:
-    return " is\nalready asleep!";
+    return i18next.t("statusEffectOverlapText:sleep");
   case StatusEffect.FREEZE:
-    return " is\nalready frozen!";
+    return i18next.t("statusEffectOverlapText:freeze");
   case StatusEffect.BURN:
-    return " is\nalready burned!";
+    return i18next.t("statusEffectOverlapText:burn");
   }
 
   return "";
@@ -91,15 +92,15 @@ export function getStatusEffectHealText(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return " was\ncured of its poison!";
+    return i18next.t("statusEffectHealText:poison");
   case StatusEffect.PARALYSIS:
-    return " was\nhealed of paralysis!";
+    return i18next.t("statusEffectHealText:paralysis");
   case StatusEffect.SLEEP:
-    return " woke up!";
+    return i18next.t("statusEffectHealText:sleep");
   case StatusEffect.FREEZE:
-    return " was\ndefrosted!";
+    return i18next.t("statusEffectHealText:freeze");
   case StatusEffect.BURN:
-    return " was\nhealed of its burn!";
+    return i18next.t("statusEffectHealText:burn");
   }
 
   return "";
@@ -109,15 +110,15 @@ export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
   case StatusEffect.TOXIC:
-    return "poisoning";
+    return i18next.t("statusEffectDescriptor:poison");
   case StatusEffect.PARALYSIS:
-    return "paralysis";
+    return i18next.t("statusEffectDescriptor:paralysis");
   case StatusEffect.SLEEP:
-    return "sleep";
+    return i18next.t("statusEffectDescriptor:sleep");
   case StatusEffect.FREEZE:
-    return "freezing";
+    return i18next.t("statusEffectDescriptor:freeze");
   case StatusEffect.BURN:
-    return "burn";
+    return i18next.t("statusEffectDescriptor:burn");
   }
 }
 
