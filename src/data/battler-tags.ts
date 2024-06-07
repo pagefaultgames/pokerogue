@@ -126,7 +126,9 @@ export class TrappedTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(this.getTrapMessage(pokemon));
+    if (!pokemon.isOfType(Type.GHOST)) {
+      pokemon.scene.queueMessage(this.getTrapMessage(pokemon));
+    }
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -689,7 +691,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.findTag(t => t instanceof DamagingTrapTag);
+    return !pokemon.findTag(t => t instanceof DamagingTrapTag);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {

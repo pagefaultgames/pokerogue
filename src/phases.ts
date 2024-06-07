@@ -21,7 +21,7 @@ import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, DamagingTrapTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage, getPokemonPrefix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
@@ -1905,7 +1905,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
       } else {
-        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
+        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag);
         const trapped = new Utils.BooleanHolder(false);
         const batonPass = isSwitch && args[0] as boolean;
         if (!batonPass) {
@@ -1920,7 +1920,9 @@ export class CommandPhase extends FieldPhase {
             this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
           }
         } else if (trapTag) {
-          if (trapTag.sourceMove === Moves.INGRAIN && this.scene.getPokemonById(trapTag.sourceId).isOfType(Type.GHOST)) {
+          const canSwitch = (trapTag.sourceMove === Moves.INGRAIN && this.scene.getPokemonById(trapTag.sourceId).isOfType(Type.GHOST)) ||
+                            (trapTag instanceof DamagingTrapTag && playerPokemon.isOfType(Type.GHOST));
+          if (canSwitch) {
             success = true;
             this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
