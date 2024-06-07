@@ -40,6 +40,10 @@ export class Achv {
     return i18next.t(`achv:${this.localizationKey}.name`);
   }
 
+  getDescription(): string {
+    return this.description;
+  }
+
   getIconImage(): string {
     return this.iconImage;
   }

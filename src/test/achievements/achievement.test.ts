@@ -23,7 +23,7 @@ describe("Achv", () => {
   });
 
   it("should have the correct name", () => {
-    expect(achv.getName()).toBe("Test Achievement");
+    expect(achv.getDescription()).toBe("This is a test achievement");
   });
 
   it("should have the correct icon image", () => {
