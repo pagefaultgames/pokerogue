@@ -37,6 +37,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
 
 export const frConfig = {
   ability: ability,
@@ -77,5 +78,6 @@ export const frConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather
+  weather: weather,
+  partyUiHandler: partyUiHandler
 };

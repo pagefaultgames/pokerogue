@@ -13,7 +13,7 @@ import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from "./field/arena";
 import { GameData } from "./system/game-data";
 import { PlayerGender } from "./data/enums/player-gender";
-import { TextStyle, addTextObject } from "./ui/text";
+import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
@@ -59,8 +59,10 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
 import { NewArenaEvent } from "./battle-scene-events";
+import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";
+import { ExpNotification } from "./enums/exp-notification";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -140,11 +142,17 @@ export default class BattleScene extends SceneBase {
      * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
      * @default 0 - Uses the default normal experience gain display.
      */
-  public expParty: integer = 0;
+  public expParty: ExpNotification = 0;
   public hpBarSpeed: integer = 0;
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  /**
+   * Determines the selected battle style.
+   * - 0 = 'Shift'
+   * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
+   */
+  public battleStyle: integer = 0;
 
   public disableMenu: boolean = false;
 
@@ -313,6 +321,7 @@ export default class BattleScene extends SceneBase {
 
     const field = this.add.container(0, 0);
     field.setScale(6);
+    field.setName("container-field");
 
     this.field = field;
 
@@ -402,28 +411,28 @@ export default class BattleScene extends SceneBase {
 
     this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
     this.biomeWaveText.setName("text-biome-wave");
-    this.biomeWaveText.setOrigin(1, 0);
+    this.biomeWaveText.setOrigin(1, 0.5);
     this.fieldUI.add(this.biomeWaveText);
 
     this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setName("text-money");
-    this.moneyText.setOrigin(1, 0);
+    this.moneyText.setOrigin(1, 0.5);
     this.fieldUI.add(this.moneyText);
 
     this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.scoreText.setName("text-score");
-    this.scoreText.setOrigin(1, 0);
+    this.scoreText.setOrigin(1, 0.5);
     this.fieldUI.add(this.scoreText);
 
     this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.luckText.setName("text-luck");
-    this.luckText.setOrigin(1, 0);
+    this.luckText.setOrigin(1, 0.5);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
     this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
     this.luckLabelText.setName("text-luck-label");
-    this.luckLabelText.setOrigin(1, 0);
+    this.luckLabelText.setOrigin(1, 0.5);
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
 
@@ -448,9 +457,13 @@ export default class BattleScene extends SceneBase {
     const loadPokemonAssets = [];
 
     this.arenaPlayer = new ArenaBase(this, true);
+    this.arenaPlayer.setName("container-arena-player");
     this.arenaPlayerTransition = new ArenaBase(this, true);
+    this.arenaPlayerTransition.setName("container-arena-player-transition");
     this.arenaEnemy = new ArenaBase(this, false);
+    this.arenaEnemy.setName("container-arena-enemy");
     this.arenaNextEnemy = new ArenaBase(this, false);
+    this.arenaNextEnemy.setName("container-arena-next-enemy");
 
     this.arenaBgTransition.setVisible(false);
     this.arenaPlayerTransition.setVisible(false);
@@ -465,6 +478,7 @@ export default class BattleScene extends SceneBase {
 
     const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
     trainer.setOrigin(0.5, 1);
+    trainer.setName("sprite-trainer");
 
     field.add(trainer);
 
@@ -1042,6 +1056,12 @@ export default class BattleScene extends SceneBase {
       if (resetArenaState) {
         this.arena.removeAllTags();
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+
+        for (const pokemon of this.getParty()) {
+          if (pokemon.hasAbility(Abilities.ICE_FACE)) {
+            pokemon.formIndex = 0;
+          }
+        }
         this.unshiftPhase(new ShowTrainerPhase(this));
       }
       for (const pokemon of this.getParty()) {
@@ -1365,6 +1385,22 @@ export default class BattleScene extends SceneBase {
     }
   }
 
+  animateMoneyChanged(positiveChange: boolean): void {
+    if (this.tweens.getTweensOf(this.moneyText).length > 0) {
+      return;
+    }
+    const deltaScale = this.moneyText.scale * 0.14 * (positiveChange ? 1 : -1);
+    this.moneyText.setShadowColor(positiveChange ? "#008000" : "#FF0000");
+    this.tweens.add({
+      targets: this.moneyText,
+      duration: 250,
+      scale: this.moneyText.scale + deltaScale,
+      loop: 0,
+      yoyo: true,
+      onComplete: (_) => this.moneyText.setShadowColor(getTextColor(TextStyle.MONEY, true)),
+    });
+  }
+
   updateScoreText(): void {
     this.scoreText.setText(`Score: ${this.score.toString()}`);
     this.scoreText.setVisible(this.gameMode.isDaily);
@@ -1408,7 +1444,10 @@ export default class BattleScene extends SceneBase {
 
   updateUIPositions(): void {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
-    this.biomeWaveText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
+    const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
+    this.biomeWaveText.setY(
+      -(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0) + (biomeWaveTextHeight / 2)
+    );
     this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
     [ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
@@ -1810,6 +1849,7 @@ export default class BattleScene extends SceneBase {
   addMoney(amount: integer): void {
     this.money = Math.min(this.money + amount, Number.MAX_SAFE_INTEGER);
     this.updateMoneyText();
+    this.animateMoneyChanged(true);
     this.validateAchvs(MoneyAchv);
   }
 

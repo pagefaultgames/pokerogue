@@ -42,6 +42,7 @@ export const SettingKeys = {
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
+  Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
@@ -104,6 +105,13 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Skip_Seen_Dialogues,
     label: "Skip Seen Dialogues",
     options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Battle_Style,
+    label: "Battle Style",
+    options: ["Switch", "Set"],
     default: 0,
     type: SettingType.GENERAL
   },
@@ -348,6 +356,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value] === "On";
     break;
+  case SettingKeys.Battle_Style:
+    scene.battleStyle = value;
+    break;
   case SettingKeys.Candy_Upgrade_Notification:
     if (scene.candyUpgradeNotification === value) {
       break;
@@ -469,15 +480,15 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             },
             {
               label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt_BR")
+              handler: () => changeLocaleHandler("pt-BR")
             },
             {
               label: "简体中文",
-              handler: () => changeLocaleHandler("zh_CN")
+              handler: () => changeLocaleHandler("zh-CN")
             },
             {
               label: "繁體中文",
-              handler: () => changeLocaleHandler("zh_TW")
+              handler: () => changeLocaleHandler("zh-TW")
             },
             {
               label: "한국어",

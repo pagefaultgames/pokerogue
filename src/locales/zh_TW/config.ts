@@ -37,6 +37,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
 
 export const zhTwConfig = {
   ability: ability,
@@ -77,5 +78,6 @@ export const zhTwConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather
+  weather: weather,
+  partyUiHandler: partyUiHandler
 };
