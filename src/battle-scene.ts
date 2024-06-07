@@ -534,6 +534,10 @@ export default class BattleScene extends SceneBase {
       this.playTimeTimer.destroy();
     }
 
+    if (Utils.isNullOrUndefined(this.mysteryEncounterFlags)) {
+      this.mysteryEncounterFlags = new MysteryEncounterFlags(null);
+    }
+
     this.playTimeTimer = this.time.addEvent({
       delay: Utils.fixedInt(1000),
       repeat: -1,
@@ -763,7 +767,7 @@ export default class BattleScene extends SceneBase {
 
     const partyIndex = this.party.indexOf(pokemon);
     this.field.remove(pokemon, true);
-    this.party = this.party.splice(partyIndex, 1);
+    this.party.splice(partyIndex, 1);
     pokemon.destroy();
   }
 
@@ -1094,8 +1098,8 @@ export default class BattleScene extends SceneBase {
       if (resetArenaState) {
         this.arena.removeAllTags();
 
-        // If previous enounter was mystery encounter and no battle occurred, skip return phase
-        if (lastBattle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
+        // If last battle was mystery encounter and no battle occurred, skip return phase
+        if (lastBattle?.mysteryEncounter?.encounterVariant !== MysteryEncounterVariant.NO_BATTLE) {
           playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
           for (const pokemon of this.getParty()) {

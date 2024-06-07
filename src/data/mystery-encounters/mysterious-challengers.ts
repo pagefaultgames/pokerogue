@@ -27,7 +27,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
       hasShadow: true
     }
   ])
-  .withRequirement(new WaveCountRequirement([50, 180])) // waves 50 to 180
+  .withRequirement(new WaveCountRequirement([2, 180])) // waves 50 to 180
   .withOption(new MysteryEncounterOptionBuilder()
     .withOptionPhase(async (scene: BattleScene) => {
       // Spawn easy fight (75% standard strength) with memory mushroom reward

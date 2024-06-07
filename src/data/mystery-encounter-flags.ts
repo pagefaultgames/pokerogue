@@ -1,7 +1,11 @@
+import * as Utils from "../utils";
+
 export class MysteryEncounterFlags {
   encounteredEvents: number[] = [];
 
   constructor(flags: MysteryEncounterFlags) {
-    Object.assign(this, flags);
+    if (!Utils.isNullOrUndefined(flags)) {
+      Object.assign(this, flags);
+    }
   }
 }

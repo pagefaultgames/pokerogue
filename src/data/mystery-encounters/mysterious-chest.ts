@@ -47,8 +47,8 @@ export const MysteriousChestEncounter: MysteryEncounter = new MysteryEncounterBu
         await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_amazing_result")
           .then(() => leaveEncounterWithoutBattle(scene));
       } else {
-        // Your highest level Pok�mon gets OHKO. Progress with no rewards (24%)
-        const highestLevelPokemon = getHighestLevelPlayerPokemon(scene);
+        // Your highest level unfainted Pok�mon gets OHKO. Progress with no rewards (24%)
+        const highestLevelPokemon = getHighestLevelPlayerPokemon(scene, true);
         koPlayerPokemon(highestLevelPokemon);
         scene.currentBattle.mysteryEncounter.dialogueTokens.push([/@ec\{pokeName\}/gi, highestLevelPokemon.name]);
         // Show which Pokemon was KOed, then leave encounter with no rewards

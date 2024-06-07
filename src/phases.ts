@@ -63,9 +63,9 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 import { MysteryEncounterPhase } from "./phases/mystery-encounter-phase";
 import { MysteryEncounterVariant } from "./data/mystery-encounter";
+import { handleMysteryEncounterVictory } from "./utils/mystery-encounter-utils";
 
 
 export class LoginPhase extends Phase {
@@ -1351,8 +1351,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   */
   preSummon(): void {
     const partyMember = this.getPokemon();
-    // If the Pokemon about to be sent out is fainted, switch to the first non-fainted Pokemon
-    if (partyMember.isFainted()) {
+    // If the Pokemon about to be sent out is fainted or no longer in the party, switch to the first non-fainted Pokemon
+    if (partyMember.isFainted() || (this.player && Utils.isNullOrUndefined(this.getParty().find(p => p.id === partyMember.id)))) {
       console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
       const party = this.getParty();
 
@@ -1395,10 +1395,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.pbTrayEnemy.hide();
       this.scene.ui.showText(message, null, () => this.summon());
     } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      if (this.scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.WILD_BATTLE) {
-        this.scene.pbTrayEnemy.hide();
-        this.summonWild();
-      }
+      this.scene.pbTrayEnemy.hide();
+      this.summonWild();
     }
   }
 
@@ -1482,11 +1480,6 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
   summonWild(): void {
     const pokemon = this.getPokemon();
-
-    //const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.pokeball));
-    //pokeball.setVisible(false);
-    //pokeball.setOrigin(0.5, 0.625);
-    //this.scene.field.add(pokeball);
 
     if (this.fieldIndex === 1) {
       pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
@@ -1992,7 +1985,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.showText(null, 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
-      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !this.scene.currentBattle.mysteryEncounter.catchAllowed) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noPokeballMysteryEncounter"), null, () => {
@@ -3869,19 +3862,20 @@ export class VictoryPhase extends PokemonPhase {
       }
     }
 
+    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      handleMysteryEncounterVictory(this.scene);
+      this.end();
+      return;
+    }
+
     if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true))) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
-      if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+      if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
       }
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
-        if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-          // Mystery encounters only provide rewards if set on the encounter
-          if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
-            this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
-          }
-        } else if (this.scene.currentBattle.waveIndex % 10) {
+        if (this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
         } else if (this.scene.gameMode.isDaily) {
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));
@@ -4007,7 +4001,9 @@ export class ModifierRewardPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.doReward().then(() => this.end());
+    this.doReward().then(() => {
+      this.end();
+    });
   }
 
   doReward(): Promise<void> {

@@ -4,6 +4,7 @@ import { MysteryEncounterType } from "./enums/mystery-encounter-type";
 import MysteryEncounterDialogue, { allMysteryEncounterDialogue } from "./mystery-encounter-dialogue";
 import MysteryEncounterOption from "./mystery-encounter-option";
 import { EncounterRequirement } from "./mystery-encounter-requirements";
+import * as Utils from "../utils";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -76,6 +77,17 @@ export default interface MysteryEncounter {
    * Will be set to false after a shop is shown (so can't reroll same rarity items for free)
    */
   lockEncounterRewardTiers?: boolean;
+
+  /**
+   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
+   */
+  selectedOption?: MysteryEncounterOption;
+
+  /**
+   * Can be set to true or false depending on the type of encounter
+   * Defaults to false
+   */
+  catchAllowed?: boolean;
 }
 
 /**
@@ -85,11 +97,14 @@ export default interface MysteryEncounter {
  */
 export default class MysteryEncounter implements MysteryEncounter {
   constructor(encounter: MysteryEncounter) {
-    Object.assign(this, encounter);
+    if (!Utils.isNullOrUndefined(encounter)) {
+      Object.assign(this, encounter);
+    }
     this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
     this.dialogue = allMysteryEncounterDialogue[this.encounterType];
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.lockEncounterRewardTiers = true;
+    this.dialogueTokens = this.dialogueTokens ? this.dialogueTokens : [];
     this.requirements = this.requirements ? this.requirements : [];
   }
 
@@ -208,6 +223,16 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    */
   withRewards(doEncounterRewards: (scene: BattleScene) => boolean): this & Required<Pick<MysteryEncounter, "doEncounterRewards">> {
     return Object.assign(this, { doEncounterRewards: doEncounterRewards });
+  }
+
+  /**
+ * Can set whether catching is allowed or not on the encounter
+ * This flag can also be programmatically set inside option event functions or elsewhere
+ * @param catchAllowed - if true, allows enemy pokemon to be caught during the encounter
+ * @returns
+ */
+  withCatchAllowed(catchAllowed: boolean): this & Required<Pick<MysteryEncounter, "catchAllowed">> {
+    return Object.assign(this, { catchAllowed: catchAllowed });
   }
 
   build(this: MysteryEncounter) {

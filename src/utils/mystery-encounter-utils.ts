@@ -1,7 +1,6 @@
 import i18next from "i18next";
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
-import { SyncEncounterNatureAbAttr, applyAbAttrs } from "../data/ability";
 import { EggTier } from "../data/enums/egg-type";
 import { Species } from "../data/enums/species";
 import { TrainerType } from "../data/enums/trainer-type";
@@ -14,8 +13,8 @@ import Trainer, { TrainerVariant } from "../field/trainer";
 import { ExtraModifierModifier, PokemonExpBoosterModifier } from "../modifier/modifier";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { ModifierPoolType, ModifierTypeFunc, regenerateModifierPoolThresholds } from "../modifier/modifier-type";
-import { ModifierRewardPhase, SelectModifierPhase, SummonPhase } from "../phases";
-import { PostMysteryEncounterPhase } from "../phases/mystery-encounter-phase";
+import { BattleEndPhase, EggLapsePhase, ModifierRewardPhase, SelectModifierPhase, TrainerVictoryPhase } from "../phases";
+import { MysteryEncounterBattlePhase, PostMysteryEncounterPhase } from "../phases/mystery-encounter-phase";
 import * as Utils from "../utils";
 
 /**
@@ -61,27 +60,26 @@ export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<bo
  * Will never remove the player's last non-fainted Pokemon (if they only have 1)
  * Otherwise, picks a Pokemon completely at random and removes from the party
  * @param scene
+ * @param unfainted - default false. If true, only picks from unfainted mons. If there is only 1 unfainted mon left and doNotReturnLastUnfaintedMon is also true, will return fainted mon
  * @param doNotReturnLastUnfaintedMon - If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
-export function getRandomPlayerPokemon(scene: BattleScene, doNotReturnLastUnfaintedMon?: boolean): PlayerPokemon {
+export function getRandomPlayerPokemon(scene: BattleScene, unfainted: boolean = false, doNotReturnLastUnfaintedMon: boolean = true): PlayerPokemon {
   const party = scene.getParty();
   let chosenIndex: number;
   let chosenPokemon: PlayerPokemon;
+  const unfaintedMons = party.filter(p => !p.isFainted());
   const faintedMons = party.filter(p => p.isFainted());
 
-  if (doNotReturnLastUnfaintedMon) {
+  if (doNotReturnLastUnfaintedMon && unfaintedMons.length === 1) {
+    chosenIndex = Utils.randSeedInt(faintedMons.length);
+    chosenPokemon = faintedMons.at(chosenIndex);
+  } else if (unfainted) {
+    chosenIndex = Utils.randSeedInt(unfaintedMons.length);
+    chosenPokemon = unfaintedMons.at(chosenIndex);
+  } else {
     chosenIndex = Utils.randSeedInt(party.length);
     chosenPokemon = party.at(chosenIndex);
-  } else {
-    // Do not get un-fainted mon if it's the last one in the party
-    if (faintedMons.length === party.length - 1) {
-      chosenIndex = Utils.randSeedInt(faintedMons.length);
-      chosenPokemon = faintedMons.at(chosenIndex);
-    } else {
-      chosenIndex = Utils.randSeedInt(party.length);
-      chosenPokemon = party.at(chosenIndex);
-    }
   }
 
   return chosenPokemon;
@@ -90,24 +88,26 @@ export function getRandomPlayerPokemon(scene: BattleScene, doNotReturnLastUnfain
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
+ * @param unfainted - default false. If true, only picks from unfainted mons.
  * @returns
  */
-export function getHighestLevelPlayerPokemon(scene: BattleScene): PlayerPokemon {
+export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon;
-  party.forEach(p => pokemon = pokemon && pokemon?.level <= p?.level ? pokemon : p);
+  party.forEach(p => pokemon = (unfainted && p.isFainted() ? pokemon : pokemon?.level < p?.level ? p : pokemon));
   return pokemon;
 }
 
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
+ * @param unfainted - default false. If true, only picks from unfainted mons.
  * @returns
  */
-export function getLowestLevelPlayerPokemon(scene: BattleScene): PlayerPokemon {
+export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon;
-  party.forEach(p => pokemon = pokemon && pokemon?.level >= p?.level ? pokemon : p);
+  party.forEach(p => pokemon = (unfainted && p.isFainted() ? pokemon : pokemon?.level > p?.level ? p : pokemon));
   return pokemon;
 }
 
@@ -154,7 +154,7 @@ export function showEncounterDialogue(scene: BattleScene, textContentKey: Templa
     });
   }
 
-  this.scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
+  scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
 }
 
 /**
@@ -213,7 +213,7 @@ export class EnemyPartyConfig {
  * @param levelMultiplier - multiplier to adjust enemy levels up and down for harder or easier battles
  * @param trainerType - optional, if set will generate a team based on passed trainer type and configure a trainer battle instead of wild
  */
-export function generateEnemyPartyForBattle(scene: BattleScene, partyConfig: EnemyPartyConfig): void {
+export function generateEnemyPartyForBattle(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
   const loaded = false;
   const loadEnemyAssets = [];
 
@@ -271,13 +271,6 @@ export function generateEnemyPartyForBattle(scene: BattleScene, partyConfig: Ene
         }
 
         battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss);
-
-        //if (scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-        //  battle.enemyParty[e].ivs = new Array(6).fill(31);
-        //}
-        scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
-          applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
-        });
       }
     }
 
@@ -300,7 +293,9 @@ export function generateEnemyPartyForBattle(scene: BattleScene, partyConfig: Ene
     console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
   });
 
-  Promise.all(loadEnemyAssets).then(() => {
+  scene.pushPhase(new MysteryEncounterBattlePhase(scene));
+
+  return Promise.all(loadEnemyAssets).then(() => {
     battle.enemyParty.forEach((enemyPokemon, e) => {
       if (e < (partyConfig?.doubleBattle ? 2 : 1)) {
         enemyPokemon.setVisible(false);
@@ -359,30 +354,32 @@ export function showTrainerDialogue(scene: BattleScene): Promise<boolean> {
   });
 }
 
+// TODO: remove and just use generateEnemyPartyForBattle (see dark deal)
 export function initBattleFromEncounter(scene: BattleScene) {
-  scene.currentBattle.started = true;
-  scene.playBgm(undefined);
-  scene.pbTray.showPbTray(scene.getParty());
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
-    scene.pbTrayEnemy.showPbTray(scene.getEnemyParty());
+  //scene.currentBattle.started = true;
+  //scene.playBgm(undefined);
+  //scene.pbTray.showPbTray(scene.getParty());
+  //if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+  //  scene.pbTrayEnemy.showPbTray(scene.getEnemyParty());
 
-    // Hide enemy trainer
-    scene.tweens.add({
-      targets: scene.currentBattle.trainer,
-      x: "+=16",
-      y: "-=16",
-      alpha: 0,
-      ease: "Sine.easeInOut",
-      duration: 750
-    });
-  }
+  //  // Hide enemy trainer
+  //  scene.tweens.add({
+  //    targets: scene.currentBattle.trainer,
+  //    x: "+=16",
+  //    y: "-=16",
+  //    alpha: 0,
+  //    ease: "Sine.easeInOut",
+  //    duration: 750
+  //  });
+  //}
 
+  //doMysteryEncounterBattle(scene, true);
 
-  const availablePartyMembers = scene.getEnemyParty().filter(p => !p.isFainted()).length;
-  scene.unshiftPhase(new SummonPhase(scene, 0, false));
-  if (scene.currentBattle.double && availablePartyMembers > 1) {
-    scene.unshiftPhase(new SummonPhase(scene, 1, false));
-  }
+  //const availablePartyMembers = scene.getEnemyParty().filter(p => !p.isFainted()).length;
+  //scene.unshiftPhase(new SummonPhase(scene, 0, false));
+  //if (scene.currentBattle.double && availablePartyMembers > 1) {
+  //  scene.unshiftPhase(new SummonPhase(scene, 1, false));
+  //}
 }
 
 /**
@@ -454,7 +451,7 @@ export function setEncounterExp(scene: BattleScene, expMultiplier: number = 100)
 
   const party = scene.getParty();
   party.forEach(pokemon => {
-    this.scene.applyModifiers(PokemonExpBoosterModifier, true, pokemon, pokemonExp);
+    scene.applyModifiers(PokemonExpBoosterModifier, true, pokemon, pokemonExp);
     partyMemberExp.push(Math.floor(pokemonExp.value));
   });
 
@@ -490,8 +487,32 @@ export function setEncounterExp(scene: BattleScene, expMultiplier: number = 100)
  */
 export function leaveEncounterWithoutBattle(scene: BattleScene) {
   scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.NO_BATTLE;
-  const postPhase = scene.findPhase(p => p instanceof PostMysteryEncounterPhase) as PostMysteryEncounterPhase;
+  //const postPhase = scene.findPhase(p => p instanceof PostMysteryEncounterPhase) as PostMysteryEncounterPhase;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
-  scene.pushPhase(postPhase);
+  //scene.pushPhase(postPhase);
+  handleMysteryEncounterVictory(scene);
+}
+
+export function handleMysteryEncounterVictory(scene: BattleScene) {
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
+    scene.pushPhase(new EggLapsePhase(scene));
+    if (scene.currentBattle.mysteryEncounter.doEncounterRewards) {
+      scene.currentBattle.mysteryEncounter.doEncounterRewards(scene);
+    }
+    scene.pushPhase(new PostMysteryEncounterPhase(scene));
+  } else if (!scene.getEnemyParty().find(p => scene.currentBattle.mysteryEncounter.encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
+    scene.pushPhase(new BattleEndPhase(scene));
+    if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+      scene.pushPhase(new TrainerVictoryPhase(scene));
+    }
+    if (scene.gameMode.isEndless || !scene.gameMode.isWaveFinal(scene.currentBattle.waveIndex)) {
+      scene.pushPhase(new EggLapsePhase(scene));
+      if (scene.currentBattle.mysteryEncounter.doEncounterRewards) {
+        scene.currentBattle.mysteryEncounter.doEncounterRewards(scene);
+      }
+
+      scene.pushPhase(new PostMysteryEncounterPhase(scene));
+    }
+  }
 }

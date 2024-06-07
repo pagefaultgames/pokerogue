@@ -146,6 +146,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
       options: [
         {
           buttonLabel: "mysteryEncounter:mysterious_chest_option_1_label",
+          buttonTooltip: "mysteryEncounter:mysterious_chest_option_1_tooltip",
           selected: [
             {
               text: "mysteryEncounter:mysterious_chest_option_1_selected_message"
@@ -154,6 +155,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
         },
         {
           buttonLabel: "mysteryEncounter:mysterious_chest_option_2_label",
+          buttonTooltip: "mysteryEncounter:mysterious_chest_option_2_tooltip",
           selected: [
             {
               text: "mysteryEncounter:mysterious_chest_option_2_selected_message"
@@ -193,6 +195,7 @@ export const allMysteryEncounterDialogue: EncounterTypeDialogue  = {
         },
         {
           buttonLabel: "mysteryEncounter:dark_deal_option_2_label",
+          buttonTooltip: "mysteryEncounter:dark_deal_option_2_tooltip",
           selected: [
             {
               speaker: "mysteryEncounter:dark_deal_speaker",
