@@ -211,4 +211,18 @@ export default class MockText {
   setMask() {
     /// Sets the mask that this Game Object will use to render with.
   }
+
+  getBottomLeft() {
+    return {
+      x: 0,
+      y: 0,
+    };
+  }
+
+  getTopLeft() {
+    return {
+      x: 0,
+      y: 0,
+    };
+  }
 }
