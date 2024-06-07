@@ -2929,6 +2929,27 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
+  forceSwitchOut(removeFromField: boolean = false): Promise<void> {
+    return new Promise( resolve => {
+      this.resetTurnData();
+      this.resetSummonData();
+      this.hideInfo();
+      this.setVisible(false);
+
+
+      const slotIndex = Utils.randIntRange(this.scene.currentBattle.getBattlerCount(), this.scene.getParty().length);
+      if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, false));
+      }
+      if (removeFromField) {
+        this.setVisible(false);
+        this.scene.field.remove(this);
+        this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
+      }
+      resolve();
+    });
+  }
+
   addFriendship(friendship: integer): void {
     const starterSpeciesId = this.species.getRootSpeciesId();
     const fusionStarterSpeciesId = this.isFusion() ? this.fusionSpecies.getRootSpeciesId() : 0;
