@@ -117,6 +117,7 @@ export default class BattleScene extends SceneBase {
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
   public skipSeenDialogues: boolean = false;
+  public skipEggHatchingAnimation: boolean = false;
 
   /**
 	 * Defines the experience gain display mode.

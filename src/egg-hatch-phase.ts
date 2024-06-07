@@ -71,6 +71,11 @@ export class EggHatchPhase extends Phase {
   start() {
     super.start();
 
+    if (this.scene.skipEggHatchingAnimation) {
+      this.updateEggData();
+      return;
+    }
+
     this.scene.ui.setModeForceTransition(Mode.EGG_HATCH_SCENE).then(() => {
 
       if (!this.egg) {
@@ -369,6 +374,54 @@ export class EggHatchPhase extends Phase {
       targets: this.eggHatchOverlay,
       alpha: 0,
       ease: "Cubic.easeOut"
+    });
+  }
+
+  /**
+   * Just the code that updates game data so you can skip animations.
+   */
+  updateEggData() {
+    if (!this.egg) { // When would this ever happen?
+      return super.end();
+    }
+
+    const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === this.egg.id);
+
+    if (eggIndex === -1) {
+      return super.end();
+    }
+
+    this.scene.gameData.eggs.splice(eggIndex, 1);
+
+    const pokemon = this.generatePokemon();
+    this.pokemon = pokemon;
+
+    // Update/reduce count of hatching eggs when revealed if count is at least 1
+    if (this.eggsToHatchCount > 1) {
+      this.eggsToHatchCount -= 1;
+    }
+
+    const isShiny = this.pokemon.isShiny();
+    if (this.pokemon.species.subLegendary) {
+      this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
+    }
+    if (this.pokemon.species.legendary) {
+      this.scene.validateAchv(achvs.HATCH_LEGENDARY);
+    }
+    if (this.pokemon.species.mythical) {
+      this.scene.validateAchv(achvs.HATCH_MYTHICAL);
+    }
+    if (isShiny) {
+      this.scene.validateAchv(achvs.HATCH_SHINY);
+    }
+
+    this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+    this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => { // What are these promises doing...
+      this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, true).then(() => {
+        this.scene.ui.showText(null, 0);
+        //this.end();
+        super.end(); // or else it's going to try a nonexistent handler ui...
+      });
     });
   }
 

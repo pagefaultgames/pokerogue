@@ -5080,6 +5080,12 @@ export class EggLapsePhase extends Phase {
       }
 
     }
+
+    if (this.scene.skipEggHatchingAnimation) {
+      // or like eggsToHatchCount "are about to hatch. Skip animations?" But I'm doing this as a setting for now.
+      this.scene.queueMessage(eggsToHatch.length + " eggs have hatched!"); // technically the egg hatches happen after this phase but the message should be fine here
+      // I'd like it for the Player to press a button to get past these two messages as an acknowledgement. Right now it automatically goes away after a short time.
+    }
     this.end();
   }
 }

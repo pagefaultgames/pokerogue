@@ -46,6 +46,7 @@ export const SettingKeys = {
   Tutorials: "TUTORIALS",
   Enable_Retries: "ENABLE_RETRIES",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
+  Skip_Egg_Hatching_Animations: "SKIP_EGG_HATCHING_ANIMATIONS",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Money_Format: "MONEY_FORMAT",
@@ -142,6 +143,13 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Skip_Seen_Dialogues,
     label: "Skip Seen Dialogues",
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Skip_Egg_Hatching_Animations,
+    label: "Skip Egg Hatching Animation",
     options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
@@ -317,6 +325,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Skip_Egg_Hatching_Animations:
+    scene.skipEggHatchingAnimation = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Candy_Upgrade_Notification:
     if (scene.candyUpgradeNotification === value) {
