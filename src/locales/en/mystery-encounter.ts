@@ -1,22 +1,8 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const mysteryEncounter: SimpleTranslationEntries = {
-  "mysterious_challengers_intro_message": "Mysterious challengers have appeared!",
-  "mysterious_challengers_title": "Mysterious Challengers",
-  "mysterious_challengers_description": "If you defeat a challenger, you might impress them enough to receive a boon. But some look tough, are you up to the challenge?",
-  "mysterious_challengers_query": "Who will you battle?",
-  "mysterious_challengers_option_1_label": "A weak, clever foe",
-  "mysterious_challengers_option_1_tooltip": "(+) Easy Battle\n(+) Weak Rewards",
-  "mysterious_challengers_option_2_label": "A strong foe",
-  "mysterious_challengers_option_2_tooltip": "(+) Medium Battle\n(+) Medium Rewards",
-  "mysterious_challengers_option_3_label": "The mightiest foe",
-  "mysterious_challengers_option_3_tooltip": "(+) Hard Battle\n(+) Great Rewards",
-  "mysterious_challengers_option_4_label": "Leave",
-  "mysterious_challengers_option_4_tooltip": "(-) No Rewards",
-  "mysterious_challengers_option_selected_message": "The trainer steps forward...",
-  "mysterious_challengers_option_4_selected_message": "You hurry along your way, with a slight feeling of regret.",
-  "mysterious_challengers_outro_win": "The mysterious challengers were defeated!",
-  "mysterious_challengers_speaker": "Jimmy",
+
+  // Mysterious Encounters -- Common Tier
 
   "mysterious_chest_intro_message": "You keep going and find...@d{64}\na chest?",
   "mysterious_chest_title": "The Mysterious Chest",
@@ -34,6 +20,31 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_chest_option_1_amazing_result": "Whoa! An amazing choice of items!",
   "mysterious_chest_option_1_bad_result": `Oh no!@d{32}\nThe chest was trapped!
   $Your @ec{pokeName} jumps in front of you\nbut is KOed in the process.`,
+
+  // Mysterious Encounters -- Rare Tier
+
+  "mysterious_challengers_intro_message": "Mysterious challengers have appeared!",
+  "mysterious_challengers_title": "Mysterious Challengers",
+  "mysterious_challengers_description": "If you defeat a challenger, you might impress them enough to receive a boon. But some look tough, are you up to the challenge?",
+  "mysterious_challengers_query": "Who will you battle?",
+  "mysterious_challengers_option_1_label": "A weak, clever foe",
+  "mysterious_challengers_option_1_tooltip": "(+) Easy Battle\n(+) Weak Rewards",
+  "mysterious_challengers_option_2_label": "A strong foe",
+  "mysterious_challengers_option_2_tooltip": "(+) Medium Battle\n(+) Medium Rewards",
+  "mysterious_challengers_option_3_label": "The mightiest foe",
+  "mysterious_challengers_option_3_tooltip": "(+) Hard Battle\n(+) Great Rewards",
+  "mysterious_challengers_option_4_label": "Leave",
+  "mysterious_challengers_option_4_tooltip": "(-) No Rewards",
+  "mysterious_challengers_option_selected_message": "The trainer steps forward...",
+  "mysterious_challengers_option_4_selected_message": "You hurry along your way, with a slight feeling of regret.",
+  "mysterious_challengers_outro_win": "The mysterious challengers were defeated!",
+  "mysterious_challengers_speaker": "Jimmy",
+
+
+  // Mysterious Encounters -- Epic Tier
+  // Gholdengo Gang
+
+  // Mysterious Encounters -- Legendary Tier
 
   "dark_deal_intro_message": "A strange man in a tattered coat stands in your way...",
   "dark_deal_speaker": "Shady Guy",
