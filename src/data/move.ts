@@ -3323,64 +3323,63 @@ export class VariableMoveTypeAttr extends MoveAttr {
 
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS || Species.SILVALLY)) {
-      const form = user.species.speciesId === Species.ARCEUS || Species.SILVALLY ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS && Species.SILVALLY)) {
+      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies.formIndex;
 
       switch (form) {
       case 1: // Fist Plate / Fighting Memory
-        type.value = Type.FIGHTING;
+        move.type = Type.FIGHTING;
         break;
       case 2: // Sky Plate / Flying Memory
-        type.value = Type.FLYING;
+        move.type = Type.FLYING;
         break;
       case 3: // Toxic Plate / Poison Memory
-        type.value = Type.POISON;
+        move.type = Type.POISON;
         break;
       case 4: // Earth Plate / Ground Memory
-        type.value = Type.GROUND;
+        move.type = Type.GROUND;
         break;
       case 5: // Stone Plate / Rock Memory
-        type.value = Type.ROCK;
+        move.type = Type.ROCK;
         break;
       case 6: // Insect Plate / Bug Memory
-        type.value = Type.BUG;
+        move.type = Type.BUG;
         break;
       case 7: // Spooky Plate / Ghost Memory
-        type.value = Type.GHOST;
+        move.type = Type.GHOST;
         break;
       case 8: // Iron Plate / Steel Memory
-        type.value = Type.STEEL;
+        move.type = Type.STEEL;
         break;
       case 9: // Flame Plate / Fire Memory
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 10: // Splash Plate / Water Memory
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       case 11: // Meadow Plate / Grass Memory
-        type.value = Type.GRASS;
+        move.type = Type.GRASS;
         break;
       case 12: // Zap Plate / Electric Memory
-        type.value = Type.ELECTRIC;
+        move.type = Type.ELECTRIC;
         break;
       case 13: // Mind Plate / Psychic Memory
-        type.value = Type.PSYCHIC;
+        move.type = Type.PSYCHIC;
         break;
       case 14: // Icicle Plate / Ice Memory
-        type.value = Type.ICE;
+        move.type = Type.ICE;
         break;
       case 15: // Draco Plate / Dragon Memory
-        type.value = Type.DRAGON;
+        move.type = Type.DRAGON;
         break;
       case 16: // Dread Plate / Dark Memory
-        type.value = Type.DARK;
+        move.type = Type.DARK;
         break;
       case 17: // Pixie Plate / Fairy Memory
-        type.value = Type.FAIRY;
+        move.type = Type.FAIRY;
         break;
       default:
-        type.value = Type.NORMAL;
+        move.type = Type.NORMAL;
         break;
       }
       return true;
