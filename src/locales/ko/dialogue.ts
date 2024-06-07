@@ -1210,7 +1210,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "하? 어떻게 내가 진 거지?"
     },
     "defeat": {
-      1: "얼마든지 내게 도전 할 수있 지만, 결과는 절대 바뀌지 않을 거다!"
+      1: "얼마든지 내게 도전 할 수 있지만, 결과는 절대 바뀌지 않을 거다!"
     }
   },
   "bugsy": {
@@ -1640,7 +1640,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "whitney": {
     "encounter": {
-      1: "있지! 포켓몬들말이야, 정말 너무 귀엽지?"
+      1: "있지! 포켓몬들 말이야, 정말 너무 귀엽지?"
     },
     "victory": {
       1: "흑! 으아앙! 너무해!"
@@ -1673,7 +1673,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "pryce": {
     "encounter": {
-      1: "젊음만으로는 승리를 보장할수 없다! 중요한 것은 경험이다."
+      1: "젊음만으로는 승리를 보장할 수 없다! 중요한 것은 경험이다."
     },
     "victory": {
       1: "특출하군! 완벽해. 지금 이 느낌을 잊지 말도록."
