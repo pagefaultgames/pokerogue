@@ -159,7 +159,7 @@ export default class BattleScene extends SceneBase {
   public gameData: GameData;
   public sessionSlotId: integer;
 
-  private phaseQueue: Phase[];
+  public phaseQueue: Phase[];
   private phaseQueuePrepend: Phase[];
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
@@ -201,7 +201,7 @@ export default class BattleScene extends SceneBase {
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
-  private modifiers: PersistentModifier[];
+  public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
@@ -300,7 +300,8 @@ export default class BattleScene extends SceneBase {
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
     (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
-    this.time.delayedCall(20, () => this.launchBattle());
+
+    this.launchBattle();
   }
 
   update() {
@@ -947,7 +948,8 @@ export default class BattleScene extends SceneBase {
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
-    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
+    const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
+    const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
     let newDouble: boolean;
     let newBattleType: BattleType;
     let newTrainer: Trainer;
@@ -1006,6 +1008,9 @@ export default class BattleScene extends SceneBase {
 
     if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
       newDouble = true;
+    }
+    if (Overrides.SINGLE_BATTLE_OVERRIDE) {
+      newDouble = false;
     }
 
     const lastBattle = this.currentBattle;
