@@ -1447,7 +1447,6 @@ const trainerModifierPool: ModifierPool = {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
   [ModifierTier.ROGUE]: [
-    new WeightedModifierType(modifierTypes.REVIVER_SEED, 2),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 1),
