@@ -1,5 +1,4 @@
 import "vitest-canvas-mock";
-import "#app/test/phaser.setup";
 import "#app/test/fontFace.setup";
 import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
 import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
@@ -9,8 +8,10 @@ import {initPokemonForms} from "#app/data/pokemon-forms";
 import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
-import { initMysteryEncounters } from "../data/mystery-encounter";
+import {initAchievements} from "#app/system/achv.js";
+import { initMysteryEncounters } from "../data/mystery-encounters/mystery-encounters";
 
+initAchievements();
 initStatsKeys();
 initPokemonPrevolutions();
 initBiomes();

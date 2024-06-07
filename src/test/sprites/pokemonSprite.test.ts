@@ -1,8 +1,8 @@
 import {beforeAll, describe, expect, it} from "vitest";
-import _masterlist from "../../public/images/pokemon/variant/_masterlist.json";
+import _masterlist from "../../../public/images/pokemon/variant/_masterlist.json";
 import fs from "fs";
 import path from "path";
-import {getAppRootDir} from "#app/test/testUtils";
+import {getAppRootDir} from "#app/test/sprites/spritesUtils";
 
 const deepCopy = (data) => {
   return JSON.parse(JSON.stringify(data));

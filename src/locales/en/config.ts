@@ -36,6 +36,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
 
 export const enConfig = {
   ability: ability,
@@ -62,6 +63,7 @@ export const enConfig = {
   menuUiHandler: menuUiHandler,
   modifierType: modifierType,
   move: move,
+  mysteryEncounter: mysteryEncounter,
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,
@@ -73,7 +75,7 @@ export const enConfig = {
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
-  weather: weather,
   voucher: voucher,
-  mysteryEncounter: mysteryEncounter
+  weather: weather,
+  partyUiHandler: partyUiHandler
 };
