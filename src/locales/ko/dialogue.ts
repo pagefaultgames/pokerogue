@@ -906,51 +906,51 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "crispin": {
     "encounter": {
-      1: "I wanna win, so that's exactly what I'll do!",
-      2: "I battle because I wanna battle! And you know what? That's how it should be!"
+      1: "이기고 싶으니까 이기고 말겠어!",
+      2: "싸우고 싶으면 싸운다! 이거면 충분하지 않아!?"
     },
     "victory": {
-      1: "I wanted to win…but I lost!",
-      2: "I lost…'cause I couldn't win!"
+      1: "이기고 싶었는데…졌잖아!",
+      2: "이기지 못해서…지고 말았어!"
     },
     "defeat": {
-      1: "Hey, wait a sec. Did I just win? I think I just won! Talk about satisfying!",
-      2: "Wooo! That was amazing!"
+      1: "잠시만. 나 지금 이긴거지? 이긴 거 맞지! 기분 좋은데!",
+      2: "우와아! 이거 굉장한데!"
     }
   },
   "amarys": {
     "encounter": {
-      1: `I want to be the one to help a certain person. That being the case, I cannot afford to lose.
-                $… Our battle starts now.`,
+      1: `네리네는 그 사람을 구원하고 싶습니다. 그렇기에 패배는 용납되지 않습니다.
+                $… 승부를 시작합니다.`,
     },
     "victory": {
-      1: "I am… not enough, I see."
+      1: "네리네는… 안 된다는 건가요."
     },
     "defeat": {
-      1: "Victory belongs to me. Well fought."
+      1: "네리네가 승리했습니다. 수고하셨습니다."
     }
   },
   "lacey": {
     "encounter": {
-      1: "I'll be facing you with my usual party as a member of the Elite Four."
+      1: "이번에는 사천왕으로서 승부하는 거니까 평소 사용하는 아이들로 상대해 드릴게요!"
     },
     "victory": {
-      1: "That was a great battle!"
+      1: "멋진 포켓몬 배틀이었어요!"
     },
     "defeat": {
-      1: "Let's give your Pokémon a nice round of applause for their efforts!"
+      1: "당신의 포켓몬의 노력에 박수를 보내주세요!"
     }
   },
   "drayton": {
     "encounter": {
-      1: `Man, I love chairs. Don't you love chairs? What lifesavers. 
-                $I don't get why everyone doesn't just sit all the time. Standing up's tiring work!`,
+      1: `의자는 좋은 거야. 너도 그렇게 생각해? 정말 고마운 물건이지. 
+                $왜 다들 앉지 않는 걸까. 서 있는 건 힘들잖아!`,
     },
     "victory": {
-      1: "Guess I should've expected that!"
+      1: "전보다 더 강해질 줄이야!"
     },
     "defeat": {
-      1: "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?"
+      1: "헤헤헷! 내 승리야. 분한 건 알겠지만 카지처럼 나가떨어지지마, 응?"
     }
   },
   "ramos": {
