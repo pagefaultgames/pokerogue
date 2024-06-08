@@ -697,19 +697,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "falkner": {
     "encounter": {
-      1: "I'll show you the real power of the magnificent bird Pokémon!",
-      2: "Winds, stay with me!",
-      3: "Dad! I hope you're watching me battle from above!"
+      1: "넓은 하늘을 화려하게 나는 새 포켓몬의 진정한 강함을 알게 해주겠다!",
+      2: "바람이여, 나에게 오라!",
+      3: "아버지, 내 시합을 하늘에서도 봐줘!"
     },
     "victory": {
-      1: "I understand… I'll bow out gracefully.",
-      2: "A defeat is a defeat. You are strong indeed.",
-      3: "…Shoot! Yeah, I lost."
+      1: "알았다… 미련없이 땅에 내려가지.",
+      2: "패배는 패배니까. 넌 정말 강하군.",
+      3: "…큭! 그래, 내가 졌다."
     },
     "defeat": {
-      1: "Dad! I won with your cherished bird Pokémon…",
-      2: "Bird Pokémon are the best after all!",
-      3: "Feels like I'm catching up to my dad!"
+      1: "아버지! 소중히 여기던 새 포켓몬으로 이겼어…",
+      2: "언제나 새 포켓몬이 최강이다!",
+      3: "아버지를 따라 잡은 기분이군!"
     }
   },
   "nessa": {
@@ -874,34 +874,34 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "morty": {
     "encounter": {
-      1: `With a little more, I could see a future in which I meet the legendary Pokémon.
-                $You're going to help me reach that level!`,
-      2: `It's said that a rainbow-hued Pokémon will come down to appear before a truly powerful Trainer. 
-                $I believed that tale, so I have secretly trained here all my life. As a result, I can now see what others cannot. 
-                $I see a shadow of the person who will make the Pokémon appear. 
-                $I believe that person is me! You're going to help me reach that level!`,
-      3: "Whether you choose to believe or not, mystic power does exist.",
-      4: "You can bear witness to the fruits of my training.",
-      5: "You must make your soul one with that of Pokémon. Can you do this?",
-      6: "Say, do you want to be part of my training?"
+      1: `조금만 더 노력하면, 내가 전설의 포켓몬을 만나는 미래가 보여.
+                $내가 그 수준에 도달할 수 있게 도와줘!`,
+      2: `커다란 무지개색 포켓몬은 진정한 강함을 가진 트레이너 앞에 나타난다는 이야기가 있어. 
+                $난 그 이야기를 믿고, 줄곧 이 곳에서 몰래 수행하고 있어. 그 결과로, 다른 사람들은 볼 수 없는 것을 볼 수 있게 됐지. 
+                $내겐 그 포켓몬을 나타나게 할 사람의 그림자가 보이거든. 
+                $난 그게 나라고 믿어! 넌 내가 그 수준에 올라갈 수 있도록 도와줘야겠어!`,
+      3: "네가 믿든 믿지 않든, 불가사의한 힘은 존재해.",
+      4: "넌 내 수련의 결실을 보게 될 거야.",
+      5: "포켓몬과 너의 영혼을 하나로 만들어야 해. 가능하겠어?",
+      6: "저기, 너 내 수행의 일부분이 되고 싶은거지?"
     },
     "victory": {
-      1: "I'm not good enough yet…",
-      2: `I see… Your journey has taken you to far-away places and you have witnessed much more than I.
-                $I envy you for that…`,
-      3: "How is this possible…",
-      4: `I don't think our potentials are so different.
-                $But you seem to have something more than that… So be it.`,
-      5: "Guess I need more training.",
-      6: "That's a shame."
+      1: "나는 아직 멀었구나…",
+      2: `그래… 여행으로 먼 곳을 돌아다니면서, 나보다 훨씬 많은 것을 봐왔구나.
+                $네가 조금 부럽네…`,
+      3: "이게 어떻게 가능한 거지…",
+      4: `우리의 잠재력은 그렇게 다르진 않은 것 같아.
+                $그치만 넌 그것과 다른 무언가를 많이 갖고 있는 것 같네… 흐음.`,
+      5: "수련이 더 필요하겠군.",
+      6: "안타깝게 됐네."
     },
     "defeat": {
-      1: "I moved… one step ahead again.",
-      2: "Fufufu…",
-      3: "Wh-what?! It can't be! Even that wasn't enough?",
-      4: "I feel like I just smashed through a really stubborn boulder!",
-      5: "Ahahahah!",
-      6: "I knew I would win!"
+      1: "내가…다시 한 발짝 앞섰어.",
+      2: "후후훗…",
+      3: "뭐-뭐야?! 이럴 수가! 그것도 부족해?",
+      4: "정말 단단한 바위를 뚫고 나온 기분인데!",
+      5: "아하하하하!",
+      6: "내가 이길 줄 알았어!"
     }
   },
   "crispin": {
@@ -1146,26 +1146,26 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lorelei": {
     "encounter": {
-      1: `No one can best me when it comes to icy Pokémon! Freezing moves are powerful!
-                $Your Pokémon will be at my mercy when they are frozen solid! Hahaha! Are you ready?`,
+      1: `얼음포켓몬을 내보내면 대적할 사람이 없지! 상대를 얼린다는 건 매우 강력한 공격이야.
+                $네 포켓몬이 꽁꽁 얼면 그때부턴 내 손바닥 위거든! 아하하! 준비됐어?`,
     },
     "victory": {
-      1: "How dare you!"
+      1: "어떻게 감히!"
     },
     "defeat": {
-      1: "There's nothing you can do once you're frozen."
+      1: "얼어붙은 넌 아무것도 할 수 없어."
     }
   },
   "will": {
     "encounter": {
-      1: `I have trained all around the world, making my psychic Pokémon powerful.
-                $I can only keep getting better! Losing is not an option!`,
+      1: `나는 전세계를 돌아다니며, 강한 에스퍼 포켓몬을 만들도록 수행해왔다.
+                $계속 더 정진하겠다! 패배는 선택지에 없어!`,
     },
     "victory": {
-      1: "I… I can't… believe it…"
+      1: "이… 내가… 믿을수 없어…"
     },
     "defeat": {
-      1: "That was close. I wonder what it is that you lack."
+      1: "근소한 차이였다. 네게 부족한 것이 무엇인지 궁금하군."
     }
   },
   "malva": {
@@ -1216,35 +1216,35 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bruno": {
     "encounter": {
-      1: "We will grind you down with our superior power! Hoo hah!"
+      1: "우월한 힘으로 너를 부숴주지! 우! 하~앗!"
     },
     "victory": {
-      1: "Why? How could I lose?"
+      1: "하? 어떻게 내가 진 거지?"
     },
     "defeat": {
-      1: "You can challenge me all you like, but the results will never change!"
+      1: "얼마든지 내게 도전 할 수 있지만, 결과는 절대 바뀌지 않을 거다!"
     }
   },
   "bugsy": {
     "encounter": {
-      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
+      1: "내 이름은 호일! 벌레 포켓몬에 대해서라면 누구에게도 지지 않아!"
     },
     "victory": {
-      1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
+      1: "우와, 대단해! 넌 포켓몬 전문가구나!\n내 연구는 아직 안 끝났네. 응, 네가 이겼어."
     },
     "defeat": {
-      1: "Thanks! Thanks to our battle, I was also able to make progress in my research!"
+      1: "고마워! 방금 승부 덕분에, 내 연구도 진전을 이룬 것 같아!"
     }
   },
   "koga": {
     "encounter": {
-      1: "Fwahahahaha! Pokémon are not merely about brute force--you shall see soon enough!"
+      1: "후하하하! 포켓몬은 딘순히 강한 것만이 아니다--곧 알려주지!"
     },
     "victory": {
-      1: "Ah! You've proven your worth!"
+      1: "하! 스스로 증명해냈군!"
     },
     "defeat": {
-      1: "Have you learned to fear the techniques of the ninja?"
+      1: "인술을 피하는 방법을 배워보겠나?"
     }
   },
   "bertha": {
@@ -1319,13 +1319,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "agatha": {
     "encounter": {
-      1: "Pokémon are for battling! I'll show you how a real Trainer battles!"
+      1: "포켓몬은 싸우게 하려고 있는 것이야! 진정한 싸움이라는 것을 보여주겠다!"
     },
     "victory": {
-      1: "Oh my! You're something special, child!"
+      1: "이런! 넌 무언가 특별하구나, 꼬마야!"
     },
     "defeat": {
-      1: "Bahaha. That's how a proper battle's done!"
+      1: "바하하하. 제대로 된 승부는 이렇게 하는거다!"
     }
   },
   "flint": {
@@ -1414,33 +1414,33 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lance": {
     "encounter": {
-      1: "I've been waiting for you. Allow me to test your skill.",
-      2: "I thought that you would be able to get this far. Let's get this started."
+      1: "널 기다리고 있었다. 그 실력을 시험해보겠어.",
+      2: "여기까지 올 수 있을거라고 생각했다. 슬슬 시작해볼까."
     },
     "victory": {
-      1: "You got me. You are magnificent!",
-      2: "I never expected another trainer to beat me… I'm surprised."
+      1: "날 따라잡았군. 훌륭해!",
+      2: "다른 트레이너가 날 이길 거라곤 생각 못했는데… 놀랍군."
     },
     "defeat": {
-      1: "That was close. Want to try again?",
-      2: "It's not that you are weak. Don't let it bother you."
+      1: "근소하군. 다시 해볼까?",
+      2: "네가 약해서가 아니다. 신경쓰지 말도록."
     }
   },
   "karen": {
     "encounter": {
-      1: "I am Karen. Would you care for a showdown with my Dark-type Pokémon?",
-      2: "I am unlike those you've already met.",
-      3: "You've assembled a charming team. Our battle should be a good one."
+      1: "난 카렌! 내 악 타입 포켓몬과의 승부를 원하니?",
+      2: "난 네가 이전에 만났던 트레이너들과는 달라.",
+      3: "강한 포켓몬, 약한 포켓몬, 그런 건 사람이 멋대로 정하는 것."
     },
     "victory": {
-      1: "No! I can't win. How did you become so strong?",
-      2: "I will not stray from my chosen path.",
-      3: "The Champion is looking forward to meeting you."
+      1: "좋아하는 마음이 전해진다면 포켓몬도 답할거야. 그렇게 강해지는 거지",
+      2: "난 내가 선택한 길을 걸어갈거야.",
+      3: "챔피언이 너를 기다리고 있어."
     },
     "defeat": {
-      1: "That's about what I expected.",
-      2: "Well, that was relatively entertaining.",
-      3: "Come visit me anytime."
+      1: "정말 강한 트레이너라면 좋아하는 포켓몬으로 이길 수 있도록 열심히 해야 해.",
+      2: "뭐, 비교적 재밌었어.",
+      3: "언제라도 다시 찾아와, 상대해줄게."
     }
   },
   "milo": {
@@ -1507,13 +1507,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "blue": {
     "encounter": {
-      1: "You must be pretty good to get this far."
+      1: "여기까지 왔다니, 실력이 꽤 봐줄만 할 것 같은데."
     },
     "victory": {
-      1: "I've only lost to him and now to you… Him? Hee, hee…"
+      1: "그 녀석한테만 지는 줄 알았는데… 누구냐고? 하, 하…"
     },
     "defeat": {
-      1: "See? My power is what got me here."
+      1: "봤지? 여기까지 온 내 실력."
     }
   },
   "piers": {
@@ -1540,24 +1540,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "jasmine": {
     "encounter": {
-      1: "Oh… Your Pokémon are impressive. I think I will enjoy this."
+      1: "와… 당신의 포켓몬은 인상적이네요. 재미있을 것 같아요."
     },
     "victory": {
-      1: "You are truly strong. I'll have to try much harder, too."
+      1: "당신은 정말 강하네요. 저도 더 열심히 노력해야겠어요."
     },
     "defeat": {
-      1: "I never expected to win."
+      1: "이길 줄은 몰랐어요."
     }
   },
   "lance_champion": {
     "encounter": {
-      1: "I am still the Champion. I won't hold anything back."
+      1: "여전히 난 챔피언이다. 더이상 주저할 게 없군."
     },
     "victory": {
-      1: "This is the emergence of a new Champion."
+      1: "새로운 챔피언의 등장이군."
     },
     "defeat": {
-      1: "I successfully defended my Championship."
+      1: "성공적으로 챔피언 자리를 지켜냈다."
     }
   },
   "steven": {
@@ -1652,24 +1652,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "whitney": {
     "encounter": {
-      1: "Hey! Don't you think Pokémon are, like, super cute?"
+      1: "있지! 포켓몬들 말이야, 정말 너무 귀엽지?"
     },
     "victory": {
-      1: "Waaah! Waaah! You're so mean!"
+      1: "흑! 으아앙! 너무해!"
     },
     "defeat": {
-      1: "And that's that!"
+      1: "이걸로 끝!"
     }
   },
   "chuck": {
     "encounter": {
-      1: "Hah! You want to challenge me? Are you brave or just ignorant?"
+      1: "하! 나에게 도전하겠다고? 용감한 거냐, 아니면 그냥 무모한 거냐?"
     },
     "victory": {
-      1: "You're strong! Would you please make me your apprentice?"
+      1: "자네 강하군! 나를 제자로 삼아주겠나?"
     },
     "defeat": {
-      1: "There. Do you realize how much more powerful I am than you?"
+      1: "자. 내가 자네보다 얼마나 더 강력한지 깨달았겠지?"
     }
   },
   "katy": {
@@ -1685,24 +1685,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "pryce": {
     "encounter": {
-      1: "Youth alone does not ensure victory! Experience is what counts."
+      1: "젊음만으로는 승리를 보장할 수 없다! 중요한 것은 경험이다."
     },
     "victory": {
-      1: "Outstanding! That was perfect. Try not to forget what you feel now."
+      1: "특출하군! 완벽해. 지금 이 느낌을 잊지 말도록."
     },
     "defeat": {
-      1: "Just as I envisioned."
+      1: "내가 예상했던 그대로군."
     }
   },
   "clair": {
     "encounter": {
-      1: "Do you know who I am? And you still dare to challenge me?"
+      1: "내가 누군지 알지? 그런데도 감히 내게 도전해?"
     },
     "victory": {
-      1: "I wonder how far you can get with your skill level. This should be fascinating."
+      1: "네 실력이 어디까지 올라갈 수 있는지 궁금하네. 아주 흥미진진하겠어."
     },
     "defeat": {
-      1: "That's that."
+      1: "끝이다."
     }
   },
   "maylene": {
