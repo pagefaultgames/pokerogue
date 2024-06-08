@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "每日挑战 (Beta)",
   "loadGame": "加载游戏",
   "newGame": "新游戏",
+  "settings": "设置",
   "selectGameMode": "选择一个游戏模式",
   "logInOrCreateAccount": "登录或创建账户以开始游戏。无需邮箱！",
   "username": "用户名",
@@ -44,8 +45,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "每周排名",
   "noRankings": "无排名",
   "loading": "加载中...",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "在线玩家",
-  "empty": "空",
   "yes": "是",
   "no": "否",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;

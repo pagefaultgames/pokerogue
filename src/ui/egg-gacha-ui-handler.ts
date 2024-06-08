@@ -61,16 +61,20 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(bg);
 
     const hatchFrameNames = this.scene.anims.generateFrameNames("gacha_hatch", { suffix: ".png", start: 1, end: 4 });
-    this.scene.anims.create({
-      key: "open",
-      frames: hatchFrameNames,
-      frameRate: 12
-    });
-    this.scene.anims.create({
-      key: "close",
-      frames: hatchFrameNames.reverse(),
-      frameRate: 12
-    });
+    if (!(this.scene.anims.exists("open"))) {
+      this.scene.anims.create({
+        key: "open",
+        frames: hatchFrameNames,
+        frameRate: 12
+      });
+    }
+    if (!(this.scene.anims.exists("close"))) {
+      this.scene.anims.create({
+        key: "close",
+        frames: hatchFrameNames.reverse(),
+        frameRate: 12
+      });
+    }
 
     Utils.getEnumValues(GachaType).forEach((gachaType, g) => {
       const gachaTypeKey = GachaType[gachaType].toString().toLowerCase();
@@ -373,6 +377,20 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         tiers[Utils.randInt(tiers.length)] = EggTier.ULTRA;
       } else if (pullCount >= 10 && !tiers.filter(t => t >= EggTier.GREAT).length) {
         tiers[Utils.randInt(tiers.length)] = EggTier.GREAT;
+      }
+      for (let i = 0; i < pullCount; i++) {
+        this.scene.gameData.eggPity[EggTier.GREAT] += 1;
+        this.scene.gameData.eggPity[EggTier.ULTRA] += 1;
+        this.scene.gameData.eggPity[EggTier.MASTER] += 1 + tierValueOffset;
+        // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
+        if (this.scene.gameData.eggPity[EggTier.MASTER] >= 412 && tiers[i] === EggTier.COMMON) {
+          tiers[i] = EggTier.MASTER;
+        } else if (this.scene.gameData.eggPity[EggTier.ULTRA] >= 59 && tiers[i] === EggTier.COMMON) {
+          tiers[i] = EggTier.ULTRA;
+        } else if (this.scene.gameData.eggPity[EggTier.GREAT] >= 9 && tiers[i] === EggTier.COMMON) {
+          tiers[i] = EggTier.GREAT;
+        }
+        this.scene.gameData.eggPity[tiers[i]] = 0;
       }
 
       const timestamp = new Date().getTime();

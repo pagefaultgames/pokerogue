@@ -1,6 +1,6 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonPrefix } from "../messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
@@ -15,6 +15,8 @@ import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
+import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { Species } from "./enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -202,6 +204,9 @@ export class InterruptedTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)}
+ */
 export class ConfusedTag extends BattlerTag {
   constructor(turnCount: integer, sourceMove: Moves) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
@@ -237,7 +242,8 @@ export class ConfusedTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nconfused!"));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
-      if (pokemon.randSeedInt(3)) {
+      // 1/3 chance of hitting self with a 40 base power move
+      if (pokemon.randSeedInt(3) === 0) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
@@ -253,6 +259,51 @@ export class ConfusedTag extends BattlerTag {
 
   getDescriptor(): string {
     return "confusion";
+  }
+}
+
+/**
+ * Tag applied to the {@linkcode Move.DESTINY_BOND} user.
+ * @extends BattlerTag
+ * @see {@linkcode apply}
+ */
+export class DestinyBondTag extends BattlerTag {
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
+  }
+
+  /**
+   * Lapses either before the user's move and does nothing
+   * or after receiving fatal damage. When the damage is fatal,
+   * the attacking Pokemon is taken down as well, unless it's a boss.
+   *
+   * @param {Pokemon} pokemon Pokemon that is attacking the Destiny Bond user.
+   * @param {BattlerTagLapseType} lapseType CUSTOM or PRE_MOVE
+   * @returns false if the tag source fainted or one turn has passed since the application
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType !== BattlerTagLapseType.CUSTOM) {
+      return super.lapse(pokemon, lapseType);
+    }
+    const source = pokemon.scene.getPokemonById(this.sourceId);
+    if (!source.isFainted()) {
+      return true;
+    }
+
+    if (source.getAlly() === pokemon) {
+      return false;
+    }
+
+    const targetMessage = getPokemonMessage(pokemon, "");
+
+    if (pokemon.isBossImmune()) {
+      pokemon.scene.queueMessage(`${targetMessage} is unaffected\nby the effects of Destiny Bond.`);
+      return false;
+    }
+
+    pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`);
+    pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
+    return false;
   }
 }
 
@@ -348,7 +399,7 @@ export class SeedTag extends BattlerTag {
           pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
 
           const damage = pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 8), 1));
-          const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr);
+          const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
           pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(),
             !reverseDrain ? damage : damage * -1,
             !reverseDrain ? getPokemonMessage(pokemon, "'s health is\nsapped by Leech Seed!") : getPokemonMessage(source, "'s Leech Seed\nsucked up the liquid ooze!"),
@@ -466,7 +517,7 @@ export class EncoreTag extends BattlerTag {
       return false;
     }
 
-    if (allMoves[repeatableMove.move].getAttrs(ChargeAttr).length && repeatableMove.result === MoveResult.OTHER) {
+    if (allMoves[repeatableMove.move].hasAttr(ChargeAttr) && repeatableMove.result === MoveResult.OTHER) {
       return false;
     }
 
@@ -756,7 +807,7 @@ export class ThunderCageTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` trapped\n${getPokemonPrefix(pokemon).toLowerCase()}${pokemon.name}!`);
+    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` trapped\n${getPokemonNameWithAffix(pokemon)}!`);
   }
 }
 
@@ -766,7 +817,7 @@ export class InfestationTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` has been afflicted \nwith an infestation by ${getPokemonPrefix(pokemon.scene.getPokemonById(this.sourceId))}${pokemon.scene.getPokemonById(this.sourceId).name}!`);
+    return getPokemonMessage(pokemon, ` has been afflicted \nwith an infestation by ${getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))}!`);
   }
 }
 
@@ -1335,7 +1386,7 @@ export class CursedTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4));
+        pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 4), 1));
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt by the ${this.getMoveName()}!`));
       }
     }
@@ -1344,122 +1395,173 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+/**
+ * Provides the Ice Face ability's effects.
+ */
+export class IceFaceTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  /**
+   * Determines if the Ice Face tag can be added to the Pokémon.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag might be added.
+   * @returns {boolean} - True if the tag can be added, false otherwise.
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
+    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
+    const isFormIceFace = pokemon.formIndex === 0;
+
+
+    // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
+    if ((pokemon.species.speciesId === Species.EISCUE && isFormIceFace) ||  isWeatherSnowOrHail) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Applies the Ice Face tag to the Pokémon.
+   * Triggers a form change to Ice Face if the Pokémon is not in its Ice Face form.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag is added.
+   */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    if (pokemon.formIndex !== 0) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    }
+  }
+
+  /**
+   * Removes the Ice Face tag from the Pokémon.
+   * Triggers a form change to Noice when the tag is removed.
+   * @param {Pokemon} pokemon - The Pokémon from which the tag is removed.
+   */
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
-    case BattlerTagType.RECHARGING:
-      return new RechargingTag(sourceMove);
-    case BattlerTagType.FLINCHED:
-      return new FlinchedTag(sourceMove);
-    case BattlerTagType.INTERRUPTED:
-      return new InterruptedTag(sourceMove);
-    case BattlerTagType.CONFUSED:
-      return new ConfusedTag(turnCount, sourceMove);
-    case BattlerTagType.INFATUATED:
-      return new InfatuatedTag(sourceMove, sourceId);
-    case BattlerTagType.SEEDED:
-      return new SeedTag(sourceId);
-    case BattlerTagType.NIGHTMARE:
-      return new NightmareTag();
-    case BattlerTagType.FRENZY:
-      return new FrenzyTag(sourceMove, sourceId);
-    case BattlerTagType.CHARGING:
-      return new ChargingTag(sourceMove, sourceId);
-    case BattlerTagType.ENCORE:
-      return new EncoreTag(sourceId);
-    case BattlerTagType.HELPING_HAND:
-      return new HelpingHandTag(sourceId);
-    case BattlerTagType.INGRAIN:
-      return new IngrainTag(sourceId);
-    case BattlerTagType.AQUA_RING:
-      return new AquaRingTag();
-    case BattlerTagType.DROWSY:
-      return new DrowsyTag();
-    case BattlerTagType.TRAPPED:
-      return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
-    case BattlerTagType.BIND:
-      return new BindTag(turnCount, sourceId);
-    case BattlerTagType.WRAP:
-      return new WrapTag(turnCount, sourceId);
-    case BattlerTagType.FIRE_SPIN:
-      return new FireSpinTag(turnCount, sourceId);
-    case BattlerTagType.WHIRLPOOL:
-      return new WhirlpoolTag(turnCount, sourceId);
-    case BattlerTagType.CLAMP:
-      return new ClampTag(turnCount, sourceId);
-    case BattlerTagType.SAND_TOMB:
-      return new SandTombTag(turnCount, sourceId);
-    case BattlerTagType.MAGMA_STORM:
-      return new MagmaStormTag(turnCount, sourceId);
-    case BattlerTagType.SNAP_TRAP:
-      return new SnapTrapTag(turnCount, sourceId);
-    case BattlerTagType.THUNDER_CAGE:
-      return new ThunderCageTag(turnCount, sourceId);
-    case BattlerTagType.INFESTATION:
-      return new InfestationTag(turnCount, sourceId);
-    case BattlerTagType.PROTECTED:
-      return new ProtectedTag(sourceMove);
-    case BattlerTagType.SPIKY_SHIELD:
-      return new ContactDamageProtectedTag(sourceMove, 8);
-    case BattlerTagType.KINGS_SHIELD:
-      return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.ATK, -1);
-    case BattlerTagType.OBSTRUCT:
-      return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.DEF, -2);
-    case BattlerTagType.SILK_TRAP:
-      return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.SPD, -1);
-    case BattlerTagType.BANEFUL_BUNKER:
-      return new ContactPoisonProtectedTag(sourceMove);
-    case BattlerTagType.BURNING_BULWARK:
-      return new ContactBurnProtectedTag(sourceMove);
-    case BattlerTagType.ENDURING:
-      return new EnduringTag(sourceMove);
-    case BattlerTagType.STURDY:
-      return new SturdyTag(sourceMove);
-    case BattlerTagType.PERISH_SONG:
-      return new PerishSongTag(turnCount);
-    case BattlerTagType.TRUANT:
-      return new TruantTag();
-    case BattlerTagType.SLOW_START:
-      return new SlowStartTag();
-    case BattlerTagType.PROTOSYNTHESIS:
-      return new WeatherHighestStatBoostTag(tagType, Abilities.PROTOSYNTHESIS, WeatherType.SUNNY, WeatherType.HARSH_SUN);
-    case BattlerTagType.QUARK_DRIVE:
-      return new TerrainHighestStatBoostTag(tagType, Abilities.QUARK_DRIVE, TerrainType.ELECTRIC);
-    case BattlerTagType.FLYING:
-    case BattlerTagType.UNDERGROUND:
-    case BattlerTagType.UNDERWATER:
-    case BattlerTagType.HIDDEN:
-      return new HideSpriteTag(tagType, turnCount, sourceMove);
-    case BattlerTagType.FIRE_BOOST:
-      return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
-    case BattlerTagType.CRIT_BOOST:
-      return new CritBoostTag(tagType, sourceMove);
-    case BattlerTagType.ALWAYS_CRIT:
-      return new AlwaysCritTag(sourceMove);
-    case BattlerTagType.NO_CRIT:
-      return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
-    case BattlerTagType.IGNORE_ACCURACY:
-      return new IgnoreAccuracyTag(sourceMove);
-    case BattlerTagType.BYPASS_SLEEP:
-      return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
-    case BattlerTagType.IGNORE_FLYING:
-      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
-    case BattlerTagType.GROUNDED:
-      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount - 1, sourceMove);
-    case BattlerTagType.SALT_CURED:
-      return new SaltCuredTag(sourceId);
-    case BattlerTagType.CURSED:
-      return new CursedTag(sourceId);
-    case BattlerTagType.CHARGED:
-      return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
-    case BattlerTagType.MAGNET_RISEN:
-      return new MagnetRisenTag(tagType, sourceMove);
-    case BattlerTagType.MINIMIZED:
-      return new MinimizeTag();
-    case BattlerTagType.IMPRISON:
-      return new ImprisonTag(sourceMove);
-    case BattlerTagType.NONE:
-    default:
-        return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  case BattlerTagType.RECHARGING:
+    return new RechargingTag(sourceMove);
+  case BattlerTagType.FLINCHED:
+    return new FlinchedTag(sourceMove);
+  case BattlerTagType.INTERRUPTED:
+    return new InterruptedTag(sourceMove);
+  case BattlerTagType.CONFUSED:
+    return new ConfusedTag(turnCount, sourceMove);
+  case BattlerTagType.INFATUATED:
+    return new InfatuatedTag(sourceMove, sourceId);
+  case BattlerTagType.SEEDED:
+    return new SeedTag(sourceId);
+  case BattlerTagType.NIGHTMARE:
+    return new NightmareTag();
+  case BattlerTagType.FRENZY:
+    return new FrenzyTag(sourceMove, sourceId);
+  case BattlerTagType.CHARGING:
+    return new ChargingTag(sourceMove, sourceId);
+  case BattlerTagType.ENCORE:
+    return new EncoreTag(sourceId);
+  case BattlerTagType.HELPING_HAND:
+    return new HelpingHandTag(sourceId);
+  case BattlerTagType.INGRAIN:
+    return new IngrainTag(sourceId);
+  case BattlerTagType.AQUA_RING:
+    return new AquaRingTag();
+  case BattlerTagType.DROWSY:
+    return new DrowsyTag();
+  case BattlerTagType.TRAPPED:
+    return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  case BattlerTagType.BIND:
+    return new BindTag(turnCount, sourceId);
+  case BattlerTagType.WRAP:
+    return new WrapTag(turnCount, sourceId);
+  case BattlerTagType.FIRE_SPIN:
+    return new FireSpinTag(turnCount, sourceId);
+  case BattlerTagType.WHIRLPOOL:
+    return new WhirlpoolTag(turnCount, sourceId);
+  case BattlerTagType.CLAMP:
+    return new ClampTag(turnCount, sourceId);
+  case BattlerTagType.SAND_TOMB:
+    return new SandTombTag(turnCount, sourceId);
+  case BattlerTagType.MAGMA_STORM:
+    return new MagmaStormTag(turnCount, sourceId);
+  case BattlerTagType.SNAP_TRAP:
+    return new SnapTrapTag(turnCount, sourceId);
+  case BattlerTagType.THUNDER_CAGE:
+    return new ThunderCageTag(turnCount, sourceId);
+  case BattlerTagType.INFESTATION:
+    return new InfestationTag(turnCount, sourceId);
+  case BattlerTagType.PROTECTED:
+    return new ProtectedTag(sourceMove);
+  case BattlerTagType.SPIKY_SHIELD:
+    return new ContactDamageProtectedTag(sourceMove, 8);
+  case BattlerTagType.KINGS_SHIELD:
+    return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.ATK, -1);
+  case BattlerTagType.OBSTRUCT:
+    return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.DEF, -2);
+  case BattlerTagType.SILK_TRAP:
+    return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.SPD, -1);
+  case BattlerTagType.BANEFUL_BUNKER:
+    return new ContactPoisonProtectedTag(sourceMove);
+  case BattlerTagType.BURNING_BULWARK:
+    return new ContactBurnProtectedTag(sourceMove);
+  case BattlerTagType.ENDURING:
+    return new EnduringTag(sourceMove);
+  case BattlerTagType.STURDY:
+    return new SturdyTag(sourceMove);
+  case BattlerTagType.PERISH_SONG:
+    return new PerishSongTag(turnCount);
+  case BattlerTagType.TRUANT:
+    return new TruantTag();
+  case BattlerTagType.SLOW_START:
+    return new SlowStartTag();
+  case BattlerTagType.PROTOSYNTHESIS:
+    return new WeatherHighestStatBoostTag(tagType, Abilities.PROTOSYNTHESIS, WeatherType.SUNNY, WeatherType.HARSH_SUN);
+  case BattlerTagType.QUARK_DRIVE:
+    return new TerrainHighestStatBoostTag(tagType, Abilities.QUARK_DRIVE, TerrainType.ELECTRIC);
+  case BattlerTagType.FLYING:
+  case BattlerTagType.UNDERGROUND:
+  case BattlerTagType.UNDERWATER:
+  case BattlerTagType.HIDDEN:
+    return new HideSpriteTag(tagType, turnCount, sourceMove);
+  case BattlerTagType.FIRE_BOOST:
+    return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
+  case BattlerTagType.CRIT_BOOST:
+    return new CritBoostTag(tagType, sourceMove);
+  case BattlerTagType.ALWAYS_CRIT:
+    return new AlwaysCritTag(sourceMove);
+  case BattlerTagType.NO_CRIT:
+    return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
+  case BattlerTagType.IGNORE_ACCURACY:
+    return new IgnoreAccuracyTag(sourceMove);
+  case BattlerTagType.BYPASS_SLEEP:
+    return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+  case BattlerTagType.IGNORE_FLYING:
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+  case BattlerTagType.GROUNDED:
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount - 1, sourceMove);
+  case BattlerTagType.SALT_CURED:
+    return new SaltCuredTag(sourceId);
+  case BattlerTagType.CURSED:
+    return new CursedTag(sourceId);
+  case BattlerTagType.CHARGED:
+    return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
+  case BattlerTagType.MAGNET_RISEN:
+    return new MagnetRisenTag(tagType, sourceMove);
+  case BattlerTagType.MINIMIZED:
+    return new MinimizeTag();
+  case BattlerTagType.IMPRISON:
+    return new ImprisonTag(sourceMove);
+  case BattlerTagType.NONE:
+  default:
+    return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 }
 
@@ -1473,4 +1575,3 @@ export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
   tag.loadTag(source);
   return tag;
 }
-

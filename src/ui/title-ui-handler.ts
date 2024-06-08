@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { DailyRunScoreboard } from "./daily-run-scoreboard";
-import OptionSelectUiHandler from "./option-select-ui-handler";
+import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
@@ -14,7 +14,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
 
-  private titleStatsTimer: number;
+  private titleStatsTimer: NodeJS.Timeout;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -38,7 +38,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.titleContainer.add(this.dailyRunScoreboard);
 
-    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
+    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 109, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 

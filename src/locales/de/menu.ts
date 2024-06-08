@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "Täglicher Run (Beta)",
   "loadGame": "Spiel laden",
   "newGame": "Neues Spiel",
+  "settings": "Einstellungen",
   "selectGameMode": "Wähle einen Spielmodus",
   "logInOrCreateAccount": "Melde dich an oder erstelle einen Account zum starten. Keine Email nötig!",
   "username": "Benutzername",
@@ -29,7 +30,7 @@ export const menu: SimpleTranslationEntries = {
   "confirmPassword": "Bestätige Passwort",
   "registrationAgeWarning": "Mit der Registrierung bestätigen Sie, dass Sie 13 Jahre oder älter sind.",
   "backToLogin": "Zurück zur Anmeldung",
-  "failedToLoadSaveData": "Speicherdaten konnten nicht geladen werden. Bitte laden Sie die Seite neu.\nWenn dies weiterhin der Fall ist, wenden Sie sich bitte an den Administrator.",
+  "failedToLoadSaveData": "Speicherdaten konnten nicht geladen werden. Bitte laden Sie die Seite neu.\nÜberprüfe den #announcements-Kanal im Discord bei anhaltenden Problemen",
   "sessionSuccess": "Sitzung erfolgreich geladen.",
   "failedToLoadSession": "Ihre Sitzungsdaten konnten nicht geladen werden.\nSie könnten beschädigt sein.",
   "boyOrGirl": "Bist du ein Junge oder ein Mädchen?",
@@ -44,8 +45,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Wöchentliche Rangliste",
   "noRankings": "Keine Rangliste",
   "loading": "Lade…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Spieler Online",
-  "empty":"Leer",
   "yes":"Ja",
   "no":"Nein",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;

@@ -99,6 +99,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "TM{{moveId}} - {{moveName}}",
       description: "Teach {{moveName}} to a Pokémon",
     },
+    "TmModifierTypeWithInfo": {
+      name: "TM{{moveId}} - {{moveName}}",
+      description: "Teach {{moveName}} to a Pokémon\n(Hold C or Shift for more info)",
+    },
     "EvolutionItemModifierType": {
       description: "Causes certain Pokémon to evolve",
     },
@@ -198,7 +202,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HEALING_CHARM": { name: "Healing Charm", description: "Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives)" },
     "CANDY_JAR": { name: "Candy Jar", description: "Increases the number of levels added by Rare Candy items by 1" },
 
-    "BERRY_POUCH": { name: "Berry Pouch", description: "Adds a 33% chance that a used berry will not be consumed" },
+    "BERRY_POUCH": { name: "Berry Pouch", description: "Adds a 30% chance that a used berry will not be consumed" },
 
     "FOCUS_BAND": { name: "Focus Band", description: "Adds a 10% chance to survive with 1 HP after being damaged enough to faint" },
 
@@ -208,6 +212,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "LEFTOVERS": { name: "Leftovers", description: "Heals 1/16 of a Pokémon's maximum HP every turn" },
     "SHELL_BELL": { name: "Shell Bell", description: "Heals 1/8 of a Pokémon's dealt damage" },
+
+    "TOXIC_ORB": { name: "Toxic Orb", description: "Badly poisons its holder at the end of the turn if they do not have a status condition already" },
+    "FLAME_ORB": { name: "Flame Orb", description: "Burns its holder at the end of the turn if they do not have a status condition already" },
 
     "BATON": { name: "Baton", description: "Allows passing along effects when switching Pokémon, which also bypasses traps" },
 
@@ -227,10 +234,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_HEAL": { name: "Recovery Token", description: "Heals 2% of max HP every turn" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Poison Token" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Paralyze Token" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Sleep Token" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Freeze Token" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Burn Token" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Adds a 10% chance every turn to heal a status condition" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Adds a 2.5% chance every turn to heal a status condition" },
     "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
     "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Adds a 1% chance that a wild Pokémon will be a fusion" },
   },
@@ -362,7 +367,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Hard Meteorite",
     "SMOOTH_METEORITE": "Smooth Meteorite",
     "ADAMANT_CRYSTAL": "Adamant Crystal",
-    "LUSTROUS_ORB": "Lustrous Orb",
+    "LUSTROUS_GLOBE": "Lustrous Globe",
     "GRISEOUS_CORE": "Griseous Core",
     "REVEAL_GLASS": "Reveal Glass",
     "GRACIDEA": "Gracidea",

@@ -9,6 +9,19 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
+import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
+import {initBiomes} from "#app/data/biomes";
+import {initEggMoves} from "#app/data/egg-moves";
+import {initPokemonForms} from "#app/data/pokemon-forms";
+import {initSpecies} from "#app/data/pokemon-species";
+import {initMoves} from "#app/data/move";
+import {initAbilities} from "#app/data/ability";
+import {initAchievements} from "#app/system/achv";
+import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { initChallenges } from "./data/challenge";
+import i18next from "i18next";
+import { initStatsKeys } from "./ui/game-stats-ui-handler";
+import { initVouchers } from "./system/voucher";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -19,6 +32,7 @@ export class LoadingScene extends SceneBase {
   }
 
   preload() {
+    Utils.localPing();
     this.load["manifest"] = this.game["manifest"];
 
     if (!isMobile()) {
@@ -84,6 +98,19 @@ export class LoadingScene extends SceneBase {
     this.loadImage("icon_tera", "ui");
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
+
+    this.loadImage("dawn_icon_fg", "ui");
+    this.loadImage("dawn_icon_mg", "ui");
+    this.loadImage("dawn_icon_bg", "ui");
+    this.loadImage("day_icon_fg", "ui");
+    this.loadImage("day_icon_mg", "ui");
+    this.loadImage("day_icon_bg", "ui");
+    this.loadImage("dusk_icon_fg", "ui");
+    this.loadImage("dusk_icon_mg", "ui");
+    this.loadImage("dusk_icon_bg", "ui");
+    this.loadImage("night_icon_fg", "ui");
+    this.loadImage("night_icon_mg", "ui");
+    this.loadImage("night_icon_bg", "ui");
 
     this.loadImage("pb_tray_overlay_player", "ui");
     this.loadImage("pb_tray_overlay_enemy", "ui");
@@ -196,6 +223,21 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("pb", "");
     this.loadAtlas("items", "");
     this.loadAtlas("types", "");
+
+    // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
+    const lang = i18next.resolvedLanguage;
+    if (lang !== "en") {
+      if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`types_${lang}`, "");
+      } else {
+        // Fallback to English
+        this.loadAtlas("types", "");
+      }
+    } else {
+      this.loadAtlas("types", "");
+    }
+
+
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
 
@@ -225,6 +267,10 @@ export class LoadingScene extends SceneBase {
         this.loadAtlas(`pokemon_icons_${i}v`, "");
       }
     }
+
+    this.loadAtlas("dualshock", "inputs");
+    this.loadAtlas("xbox", "inputs");
+    this.loadAtlas("keyboard", "inputs");
 
     this.loadSe("select");
     this.loadSe("menu_open");
@@ -284,6 +330,19 @@ export class LoadingScene extends SceneBase {
     this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
 
     this.loadLoadingScreen();
+
+    initVouchers();
+    initAchievements();
+    initStatsKeys();
+    initPokemonPrevolutions();
+    initBiomes();
+    initEggMoves();
+    initPokemonForms();
+    initTrainerTypeDialogue();
+    initSpecies();
+    initMoves();
+    initAbilities();
+    initChallenges();
   }
 
   loadLoadingScreen() {
@@ -308,14 +367,17 @@ export class LoadingScene extends SceneBase {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    const logo = this.add.image(width / 2, 240, "");
+    const midWidth = width / 2;
+    const midHeight = height / 2;
+
+    const logo = this.add.image(midWidth, 240, "");
     logo.setVisible(false);
     logo.setOrigin(0.5, 0.5);
     logo.setScale(4);
 
     const percentText = this.make.text({
-      x: width / 2,
-      y: height / 2 - 24,
+      x: midWidth,
+      y: midHeight - 24,
       text: "0%",
       style: {
         font: "72px emerald",
@@ -325,8 +387,8 @@ export class LoadingScene extends SceneBase {
     percentText.setOrigin(0.5, 0.5);
 
     const assetText = this.make.text({
-      x: width / 2,
-      y: height / 2 + 48,
+      x: midWidth,
+      y: midHeight + 48,
       text: "",
       style: {
         font: "48px emerald",
@@ -334,6 +396,32 @@ export class LoadingScene extends SceneBase {
       },
     });
     assetText.setOrigin(0.5, 0.5);
+
+    const disclaimerText = this.make.text({
+      x: midWidth,
+      y: assetText.y + 152,
+      text: i18next.t("menu:disclaimer"),
+      style: {
+        font: "72px emerald",
+        color: "#DA3838",
+      },
+    });
+    disclaimerText.setOrigin(0.5, 0.5);
+
+    const disclaimerDescriptionText = this.make.text({
+      x: midWidth,
+      y: disclaimerText.y + 120,
+      text: i18next.t("menu:disclaimerDescription"),
+      style: {
+        font: "48px emerald",
+        color: "#ffffff",
+        align: "center"
+      },
+    });
+    disclaimerDescriptionText.setOrigin(0.5, 0.5);
+
+    disclaimerText.setVisible(false);
+    disclaimerDescriptionText.setVisible(false);
 
     const intro = this.add.video(0, 0);
     intro.setOrigin(0, 0);
@@ -344,11 +432,11 @@ export class LoadingScene extends SceneBase {
       percentText.setText(`${Math.floor(parsedValue * 100)}%`);
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 0.8);
-      progressBar.fillRect(width / 2 - 320, 360, 640 * parsedValue, 64);
+      progressBar.fillRect(midWidth - 320, 360, 640 * parsedValue, 64);
     });
 
     this.load.on("fileprogress", file => {
-      assetText.setText(`Loading asset: ${file.key}`);
+      assetText.setText(i18next.t("menu:loadingAsset", { assetName: file.key }));
     });
 
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
@@ -379,6 +467,8 @@ export class LoadingScene extends SceneBase {
             ease: "Sine.easeIn"
           });
           loadingGraphics.map(g => g.setVisible(true));
+          disclaimerText.setVisible(true);
+          disclaimerDescriptionText.setVisible(true);
         });
         intro.play();
         break;

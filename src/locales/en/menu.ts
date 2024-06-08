@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "Daily Run (Beta)",
   "loadGame": "Load Game",
   "newGame": "New Game",
+  "settings": "Settings",
   "selectGameMode": "Select a game mode.",
   "logInOrCreateAccount": "Log in or create an account to start. No email required!",
   "username": "Username",
@@ -29,7 +30,7 @@ export const menu: SimpleTranslationEntries = {
   "confirmPassword": "Confirm Password",
   "registrationAgeWarning": "By registering, you confirm you are of 13 years of age or older.",
   "backToLogin": "Back to Login",
-  "failedToLoadSaveData": "Failed to load save data. Please reload the page.\nIf this continues, please contact the administrator.",
+  "failedToLoadSaveData": "Failed to load save data. Please reload the page.\nIf this persists, please check #announcements in Discord.",
   "sessionSuccess": "Session loaded successfully.",
   "failedToLoadSession": "Your session data could not be loaded.\nIt may be corrupted.",
   "boyOrGirl": "Are you a boy or a girl?",
@@ -44,8 +45,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Weekly Rankings",
   "noRankings": "No Rankings",
   "loading": "Loading…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Players Online",
-  "empty":"Empty",
   "yes":"Yes",
   "no":"No",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;

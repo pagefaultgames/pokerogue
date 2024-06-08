@@ -608,9 +608,11 @@ function parseEggMoves(content: string): void {
   console.log(output);
 }
 
-const eggMovesStr = "";
-if (eggMovesStr) {
-  setTimeout(() => {
-    parseEggMoves(eggMovesStr);
-  }, 1000);
+export function initEggMoves() {
+  const eggMovesStr = "";
+  if (eggMovesStr) {
+    setTimeout(() => {
+      parseEggMoves(eggMovesStr);
+    }, 1000);
+  }
 }
