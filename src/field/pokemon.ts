@@ -1069,6 +1069,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
+  /**
+   * @returns The type damage multiplier or undefined if it's a status move
+   */
+  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
+    if (move.getMove().category === MoveCategory.STATUS) {
+      return undefined;
+    }
+
+    return this.getAttackMoveEffectiveness(source, move);
+  }
+
   getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove): TypeDamageMultiplier {
     const move = pokemonMove.getMove();
     const typeless = move.hasAttr(TypelessAttr);
@@ -1588,11 +1599,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    this.battleInfo.updateEffectiveness(effectiveness);
+  }
+
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
   }
+
   toggleFlyout(visible: boolean): void {
-    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
+    this.battleInfo.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {
