@@ -38,3 +38,4 @@ coverage
 # Local Documentation
 /typedoc
 
+/.vs
