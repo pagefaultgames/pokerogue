@@ -1532,6 +1532,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
       valueLimit.value = 15;
+      break;
     default:
       valueLimit.value = 10;
     }
