@@ -1,13 +1,13 @@
 import i18next from "i18next";
 import { classicFixedBattles, FixedBattleConfig, FixedBattleConfigs } from "./battle";
 import BattleScene from "./battle-scene";
+import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
 import { Biome } from "./data/enums/biome";
 import { Species } from "./data/enums/species";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Overrides from "./overrides";
 import * as Utils from "./utils";
-import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
 
 export enum GameModes {
   CLASSIC,
@@ -278,22 +278,22 @@ export class GameMode implements GameModeConfig {
     case GameModes.DAILY:
       return i18next.t("gameMode:dailyRun");
     case GameModes.CHALLENGE:
-      return "Challenge";
+      return i18next.t("gameMode:challenge");
     }
   }
 
   static getModeName(modeId: GameModes): string {
     switch (modeId) {
     case GameModes.CLASSIC:
-      return "Classic";
+      return i18next.t("gameMode:classic");
     case GameModes.ENDLESS:
-      return "Endless";
+      return i18next.t("gameMode:endless");
     case GameModes.SPLICED_ENDLESS:
-      return "Endless (Spliced)";
+      return i18next.t("gameMode:endlessSpliced");
     case GameModes.DAILY:
-      return "Daily Run";
+      return i18next.t("gameMode:dailyRun");
     case GameModes.CHALLENGE:
-      return "Challenge";
+      return i18next.t("gameMode:challenge");
     }
   }
 }

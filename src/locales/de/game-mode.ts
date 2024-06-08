@@ -6,4 +6,5 @@ export const gameMode: SimpleTranslationEntries = {
   "endlessSpliced": "Endlos (Fusion)",
   "dailyRun": "Täglicher Run",
   "unknown": "Unbekannt",
+  "challenge": "Challenge",
 } as const;
