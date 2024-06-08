@@ -416,11 +416,11 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): Get
   };
 }
 
-interface FixedBattleConfigs {
+export interface FixedBattleConfigs {
     [key: integer]: FixedBattleConfig
 }
 
-export const fixedBattles: FixedBattleConfigs = {
+export const classicFixedBattles: FixedBattleConfigs = {
   [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
     .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
   [8]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
