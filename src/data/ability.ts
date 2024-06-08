@@ -985,7 +985,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return `${i18next.t("abilityTriggers:postDefendMoveDisableAb", { pokemonName: getPokemonNameWithAffix(this.attacker),attackName: this.move.name() })}`;
+    return `${i18next.t("abilityTriggers:postDefendMoveDisableAb", { pokemonName: getPokemonNameWithAffix(this.attacker),attackName: this.move.name })}`;
   }
 }
 
