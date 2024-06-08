@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 export const challenges: SimpleTranslationEntries = {
   "title": "适用挑战条件",
   "points": "Bad Ideas",
-  "confirm_start": "Proceed with these challenges?",
+  "confirm_start": "要执行这些挑战吗？",
   "singleGeneration.name": "单一世代",
   "singleGeneration.value.0": "关闭",
   "singleGeneration.desc.0": "你只能使用所选世代的宝可梦",
