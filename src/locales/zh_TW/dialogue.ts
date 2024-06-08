@@ -1146,13 +1146,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hala": {
     "encounter": {
-      1: "老哈拉讓你放開嗓子！"
+      1: `老哈拉讓你放開嗓子！`
     },
     "victory": {
-      1: "我能感受到你在旅途中所獲得的力量。"
+      1: `我能感受到你在旅途中所獲得的力量。`
     },
     "defeat": {
-      1: "啊哈哈。多麼有趣的戰鬥。"
+      1: `啊哈哈。多麼有趣的戰鬥。`
     }
   },
   "molayne": {
@@ -1164,6 +1164,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: `啊哈哈。多麼有趣的戰鬥。`,
+    }
+  },
+  "rika": {
+    "encounter": {
+      1: `我要對你手下留情，但……騙你的啦！ $好好動腦！`,
+    },
+    "victory": {
+      1: `不錯，小子。`,
+    },
+    "defeat": {
+      1: `啊哈哈哈哈！你真的很特别，小子！`,
     }
   },
   "bruno": {
