@@ -8,7 +8,7 @@ export const challenges: SimpleTranslationEntries = {
   "singleGeneration.value.0": "Désactivé",
   "singleGeneration.desc.0": "Vous ne pouvez choisir que des Pokémon de la génération sélectionnée.",
   "singleGeneration.value.1": "1G",
-  "singleGeneration.desc.1": "Vous ne pouvez choisir que des Pokémon de 1ere génération.",
+  "singleGeneration.desc.1": "Vous ne pouvez choisir que des Pokémon de 1re génération.",
   "singleGeneration.value.2": "2G",
   "singleGeneration.desc.2": "Vous ne pouvez choisir que des Pokémon de 2e génération.",
   "singleGeneration.value.3": "3G",
