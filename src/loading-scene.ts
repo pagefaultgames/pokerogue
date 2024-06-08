@@ -20,6 +20,7 @@ import {initAchievements} from "#app/system/achv";
 import {initTrainerTypeDialogue} from "#app/data/dialogue";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
+import { initVouchers } from "./system/voucher";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -329,6 +330,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
+    initVouchers();
     initAchievements();
     initStatsKeys();
     initPokemonPrevolutions();

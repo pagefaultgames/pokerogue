@@ -9,7 +9,9 @@ import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
 import {initAchievements} from "#app/system/achv.js";
+import { initVouchers } from "#app/system/voucher.js";
 
+initVouchers();
 initAchievements();
 initStatsKeys();
 initPokemonPrevolutions();
