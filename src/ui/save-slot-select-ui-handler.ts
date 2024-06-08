@@ -266,7 +266,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
 
-    const gameModeLabel = addTextObject(this.scene, 8, 5, `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("gameMode:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
+    const gameModeLabel = addTextObject(this.scene, 8, 5, `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
     const timestampLabel = addTextObject(this.scene, 8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
