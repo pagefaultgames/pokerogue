@@ -57,7 +57,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonNatureLabelText: Phaser.GameObjects.Text;
   private pokemonNatureText: BBCodeText;
   private pokemonShinyIcon: Phaser.GameObjects.Image;
-  private pokemonShinyNewIcon: Phaser.GameObjects.Image;
+  private pokemonShinyNewIcon: Phaser.GameObjects.Text;
   private pokemonFusionShinyIcon: Phaser.GameObjects.Image;
   private pokemonMovesContainer: Phaser.GameObjects.Container;
   private pokemonMovesContainers: Phaser.GameObjects.Container[];
@@ -192,9 +192,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonShinyIcon.setName("img-pkmn-shiny-icon");
     this.add(this.pokemonShinyIcon);
 
-    this.pokemonShinyNewIcon = addTextObject(this.scene, this.pokemonShinyIcon.x + 12, this.pokemonShinyIcon.y, "", TextStyle.WINDOW, { fontSize: "64px" });
+    this.pokemonShinyNewIcon = addTextObject(this.scene, this.pokemonShinyIcon.x + 12, this.pokemonShinyIcon.y, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonShinyNewIcon.setOrigin(0, 0);
-    this.pokemonShinyNewIcon.setName("img-pkmn-shiny-new-icon");
+    this.pokemonShinyNewIcon.setName("text-pkmn-shiny-new-icon");
     this.add(this.pokemonShinyNewIcon);
     this.pokemonShinyNewIcon.setVisible(false);
 
@@ -296,7 +296,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
         this.pokemonShinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
 
-        const newShiny = BigInt(Math.pow(2, pokemon.shiny));
+        const newShiny = BigInt(Math.pow(2, (pokemon.shiny ? 1 : 0)));
         const newVariant = BigInt(Math.pow(2, pokemon.variant + 4));
 
         this.pokemonShinyNewIcon.setText("(+)");
