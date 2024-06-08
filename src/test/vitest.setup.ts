@@ -1,5 +1,4 @@
 import "vitest-canvas-mock";
-import "#app/test/phaser.setup";
 import "#app/test/fontFace.setup";
 import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
 import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
@@ -9,7 +8,9 @@ import {initPokemonForms} from "#app/data/pokemon-forms";
 import {initSpecies} from "#app/data/pokemon-species";
 import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
+import {initAchievements} from "#app/system/achv.js";
 
+initAchievements();
 initStatsKeys();
 initPokemonPrevolutions();
 initBiomes();

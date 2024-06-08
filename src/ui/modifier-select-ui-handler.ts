@@ -9,6 +9,7 @@ import { handleTutorial, Tutorial } from "../tutorial";
 import {Button} from "../enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
+import * as Utils from "./../utils";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -20,6 +21,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay : MoveInfoOverlay;
+  private moveInfoOverlayActive : boolean = false;
 
   private rowCursor: integer = 0;
   private player: boolean;
@@ -99,6 +101,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       }
+      this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
     }
 
@@ -242,6 +245,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         if (!originalOnActionInput(this.rowCursor, this.cursor)) {
           this.awaitingActionInput = true;
           this.onActionInput = originalOnActionInput;
+        } else {
+          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+          this.moveInfoOverlay.setVisible(false);
+          this.moveInfoOverlay.active = false; // this is likely unnecessary, but it should help future prove the UI
         }
       }
     } else if (button === Button.CANCEL) {
@@ -252,6 +259,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           this.awaitingActionInput = false;
           this.onActionInput = null;
           originalOnActionInput(-1);
+          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+          this.moveInfoOverlay.setVisible(false);
+          this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action
         }
       }
     } else {
@@ -389,7 +399,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   updateRerollCostText(): void {
     const canReroll = this.scene.money >= this.rerollCost;
 
-    this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString("en-US")}`);
+    const formattedMoney = Utils.formatMoney(this.scene.moneyFormat, this.rerollCost);
+
+    this.rerollCostText.setText(`₽${formattedMoney}`);
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -403,6 +415,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   clear() {
     super.clear();
 
+    this.moveInfoOverlay.clear();
+    this.moveInfoOverlayActive = false;
     this.awaitingActionInput = false;
     this.onActionInput = null;
     this.getUi().clearText();
@@ -645,7 +659,9 @@ class ModifierOption extends Phaser.GameObjects.Container {
     const scene = this.scene as BattleScene;
     const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString("en-US")}`);
+    const formattedMoney = Utils.formatMoney(scene.moneyFormat, this.modifierTypeOption.cost);
+
+    this.itemCostText.setText(`₽${formattedMoney}`);
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }
