@@ -51,6 +51,9 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
       case "ko":
         this.settings[languageIndex].options[0] = "한국어";
         break;
+      default:
+        this.settings[languageIndex].options[0] = "English";
+        break;
       }
     }
 
