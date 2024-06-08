@@ -206,7 +206,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "FOCUS_BAND": { name: "Fokusband", description: "Fügt eine 10% Chance hinzu, dass Angriffe die zur Kampfunfähigkeit führen mit 1 KP überlebt werden" },
 
-    "QUICK_CLAW": { name: "Flinkklaue", description: "Fügt eine 10% Change hinzu als erster anzugreifen. (Nach Prioritätsangriffen)" },
+    "QUICK_CLAW": { name: "Flinkklaue", description: "Fügt eine 10% Change hinzu als Erster anzugreifen. (Nach Prioritätsangriffen)" },
 
     "KINGS_ROCK": { name: "King-Stein", description: "Fügt eine 10% Chance hinzu, dass der Gegner nach einem Angriff zurückschreckt" },
 
