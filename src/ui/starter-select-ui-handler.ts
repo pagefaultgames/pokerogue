@@ -18,9 +18,10 @@ import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { Button } from "../enums/buttons";
-import { GameModes, gameModes } from "../game-mode";
-import { TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { GameModes } from "../game-mode";
+import { SelectChallengePhase, TitlePhase } from "../phases";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { Passive as PassiveAttr } from "#app/data/enums/passive";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -30,6 +31,8 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import * as Challenge from "../data/challenge";
+import MoveInfoOverlay from "./move-info-overlay";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -63,13 +66,18 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "35px",
   },
+  "fr":{
+    starterInfoTextSize: "54px",
+    instructionTextSize: "42px",
+  },
   "it":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  "fr":{
-    starterInfoTextSize: "54px",
-    instructionTextSize: "42px",
+  "pt_BR":{
+    starterInfoTextSize: "47px",
+    instructionTextSize: "38px",
+    starterInfoXPos: 33,
   },
   "zh":{
     starterInfoTextSize: "40px",
@@ -81,6 +89,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "42px",
     starterInfoXPos: 33,
   },
+  "ko":{
+    starterInfoTextSize: "52px",
+    instructionTextSize: "38px",
+  }
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
@@ -182,6 +194,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
   private pokemonFormText: Phaser.GameObjects.Text;
+  private moveInfoOverlay : MoveInfoOverlay;
 
   private genMode: boolean;
   private statsMode: boolean;
@@ -195,8 +208,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
-  private starterGens: integer[] = [];
-  private starterCursors: integer[] = [];
+  public starterGens: integer[] = [];
+  public starterCursors: integer[] = [];
   private pokerusGens: integer[] = [];
   private pokerusCursors: integer[] = [];
   private starterAttr: bigint[] = [];
@@ -212,9 +225,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private canCycleNature: boolean;
   private canCycleVariant: boolean;
   private value: integer = 0;
+  private canAddParty: boolean;
 
   private assetLoadCancelled: Utils.BooleanHolder;
-  private cursorObj: Phaser.GameObjects.Image;
+  public cursorObj: Phaser.GameObjects.Image;
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterIcons: Phaser.GameObjects.Sprite[];
@@ -232,7 +246,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private iconAnimHandler: PokemonIconAnimHandler;
 
   private starterSelectCallback: StarterSelectCallback;
-  private gameMode: GameModes;
 
   protected blockInput: boolean = false;
 
@@ -242,7 +255,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.language;
+    const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
 
@@ -509,11 +522,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type1Icon.setScale(0.5);
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type2Icon.setScale(0.5);
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
@@ -694,19 +707,28 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.statsContainer);
 
+    // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
+    const overlayScale = 1;
+    this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
+      scale: overlayScale,
+      top: true,
+      x: 1,
+      y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+    });
+    this.starterSelectContainer.add(this.moveInfoOverlay);
+
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
     this.updateInstructions();
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 2 && args[0] instanceof Function && typeof args[1] === "number") {
+    this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
+    if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
 
       this.starterSelectContainer.setVisible(true);
-
-      this.gameMode = args[1];
 
       this.setGenMode(false);
       this.setCursor(0);
@@ -933,7 +955,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.blockInput = true;
         this.scene.clearPhaseQueue();
-        this.scene.pushPhase(new TitlePhase(this.scene));
+        if (this.scene.gameMode.isChallenge) {
+          this.scene.pushPhase(new SelectChallengePhase(this.scene));
+        } else {
+          this.scene.pushPhase(new TitlePhase(this.scene));
+        }
         this.scene.getCurrentPhase().end();
         success = true;
       }
@@ -1005,7 +1031,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   }
                 }
                 const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-                if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+
+                const isValidForChallenge = new Utils.BooleanHolder(true);
+                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
+
+                if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                   const cursorObj = this.starterCursorObjs[this.starterCursors.length];
                   cursorObj.setVisible(true);
                   cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
@@ -1026,6 +1056,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     this.tryStart();
                   }
                   this.updateInstructions();
+
+                  /**
+                   * If the user can't select a pokemon anymore,
+                   * go to start button.
+                   */
+                  if (!this.canAddParty) {
+                    this.startCursorObj.setVisible(true);
+                    this.setGenMode(true);
+                  }
+
                   ui.playSelect();
                 } else {
                   ui.playError();
@@ -1047,6 +1087,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
+                  this.moveInfoOverlay.show(allMoves[moveset[0]]);
+
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: moveset.map((m: Moves, i: number) => {
                       const option: OptionSelectItem = {
@@ -1054,8 +1096,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           ui.setMode(Mode.STARTER_SELECT).then(() => {
                             ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
+                              const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
+                              this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
+
                               ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                                options: this.speciesStarterMoves.filter((sm: Moves) => sm !== m).map(sm => {
+                                options: possibleMoves.map(sm => {
                                   // make an option for each available starter move
                                   const option = {
                                     label: allMoves[sm].name,
@@ -1063,7 +1108,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                       this.switchMoveHandler(i, sm, m);
                                       showSwapOptions(this.starterMoveset);
                                       return true;
-                                    }
+                                    },
+                                    onHover: () => {
+                                      this.moveInfoOverlay.show(allMoves[sm]);
+                                    },
                                   };
                                   return option;
                                 }).concat({
@@ -1071,25 +1119,37 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                   handler: () => {
                                     showSwapOptions(this.starterMoveset);
                                     return true;
-                                  }
+                                  },
+                                  onHover: () => {
+                                    this.moveInfoOverlay.clear();
+                                  },
                                 }),
+                                supportHover: true,
                                 maxOptions: 8,
                                 yOffset: 19
                               });
                             });
                           });
                           return true;
-                        }
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.show(allMoves[m]);
+                        },
                       };
                       return option;
                     }).concat({
                       label: i18next.t("menu:cancel"),
                       handler: () => {
+                        this.moveInfoOverlay.clear();
                         this.clearText();
                         ui.setMode(Mode.STARTER_SELECT);
                         return true;
-                      }
+                      },
+                      onHover: () => {
+                        this.moveInfoOverlay.clear();
+                      },
                     }),
+                    supportHover: true,
                     maxOptions: 8,
                     yOffset: 19
                   });
@@ -1309,7 +1369,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
           }
           break;
-        case Button.CYCLE_VARIANT:
+        case Button.V:
           if (this.canCycleVariant) {
             let newVariant = props.variant;
             do {
@@ -1335,11 +1395,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case Button.UP:
           if (row) {
             success = this.setCursor(this.cursor - 9);
+          } else {
+            // when strictly opposite starter based on rows length
+            // does not exits, set cursor on the second to last row
+            if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor + (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor + (rows - 1) * 9);
+            }
           }
           break;
         case Button.DOWN:
           if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 9);
+          } else {
+            // if there is no starter below while being on the second to
+            // last row, adjust cursor position with one line less
+            if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
+              success = this.setCursor(this.cursor - (rows - 2) * 9);
+            } else {
+              success = this.setCursor(this.cursor - (rows - 1) * 9);
+            }
           }
           break;
         case Button.LEFT:
@@ -1451,13 +1527,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   getValueLimit(): integer {
-    switch (this.gameMode) {
+    const valueLimit = new Utils.IntegerHolder(0);
+    switch (this.scene.gameMode.modeId) {
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
-      return 15;
+      valueLimit.value = 15;
+      break;
     default:
-      return 10;
+      valueLimit.value = 10;
     }
+
+    Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
+
+    return valueLimit.value;
   }
 
   setCursor(cursor: integer): boolean {
@@ -2074,11 +2156,48 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
+
+    /**
+     * this loop is used to set the Sprite's alpha value and check if the user can select other pokemon more.
+     */
+    this.canAddParty = false;
+    const remainValue = valueLimit - newValue;
     for (let g = 0; g < this.genSpecies.length; g++) {
       for (let s = 0; s < this.genSpecies[g].length; s++) {
-        (this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite).setAlpha((newValue + this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId)) > valueLimit ? 0.375 : 1);
+        /** Cost of pokemon species */
+        const speciesStarterValue = this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId);
+        /** Used to detect if this pokemon is registered in starter */
+        const speciesStarterDexEntry = this.scene.gameData.dexData[this.genSpecies[g][s].speciesId];
+        /** {@linkcode Phaser.GameObjects.Sprite} object of Pokémon for setting the alpha value */
+        const speciesSprite = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
+
+        /**
+         * If remainValue greater than or equal pokemon species and the pokemon is legal for this challenge, the user can select.
+         * so that the alpha value of pokemon sprite set 1.
+         *
+         * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
+         * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
+         */
+        const isValidForChallenge = new Utils.BooleanHolder(true);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge);
+
+        const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
+
+        if (canBeChosen) {
+          speciesSprite.setAlpha(1);
+          if (speciesStarterDexEntry?.caughtAttr) {
+            this.canAddParty = true;
+          }
+        } else {
+          /**
+           * If it can't be chosen, the user can't select.
+           * so that the alpha value of pokemon sprite set 0.375.
+           */
+          speciesSprite.setAlpha(0.375);
+        }
       }
     }
+
     this.value = newValue;
     return true;
   }
@@ -2100,8 +2219,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        const startRun = (gameMode: GameModes) => {
-          this.scene.gameMode = gameModes[gameMode];
+        const startRun = () => {
           this.scene.money = this.scene.gameMode.getStartingMoney();
           ui.setMode(Mode.STARTER_SELECT);
           const thisObj = this;
@@ -2120,7 +2238,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             };
           }));
         };
-        startRun(this.gameMode);
+        startRun();
       }, cancel, null, null, 19);
     });
 

@@ -1333,6 +1333,27 @@
 					}
 				},
 				{
+					"filename": "173_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 11,
+						"w": 18,
+						"h": 18
+					},
+					"frame": {
+						"x": 174,
+						"y": 253,
+						"w": 18,
+						"h": 18
+					}
+				},
+				{
 					"filename": "173_3",
 					"rotated": false,
 					"trimmed": true,

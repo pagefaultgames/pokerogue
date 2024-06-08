@@ -66,7 +66,7 @@ export enum FormChangeItem {
   HARD_METEORITE,
   SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
-  LUSTROUS_ORB,
+  LUSTROUS_GLOBE,
   GRISEOUS_CORE,
   REVEAL_GLASS,
   GRACIDEA,
@@ -321,7 +321,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   const isRevert = !isMega && formChange.formKey === pokemon.species.forms[0].formKey;
   const prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe " : "Wild " : "Your ";
   if (isMega) {
-    return `${prefix}${preName} mega-evolved\ninto ${pokemon.name}!`;
+    return `${prefix}${preName} Mega Evolved\ninto ${pokemon.name}!`;
   }
   if (isGmax) {
     return `${prefix}${preName} Gigantamaxed\ninto ${pokemon.name}!`;
@@ -363,7 +363,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.PIDGEOT, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.PIDGEOTITE))
   ],
   [Species.PIKACHU]: [
-    new SpeciesFormChange(Species.PIKACHU, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(Species.PIKACHU, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.PIKACHU, "partner", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.MEOWTH]: [
     new SpeciesFormChange(Species.MEOWTH, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
@@ -397,7 +398,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.LAPRAS, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.EEVEE]: [
-    new SpeciesFormChange(Species.EEVEE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(Species.EEVEE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.EEVEE, "partner", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.SNORLAX]: [
     new SpeciesFormChange(Species.SNORLAX, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
@@ -520,7 +522,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DIALGA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.ADAMANT_CRYSTAL))
   ],
   [Species.PALKIA]: [
-    new SpeciesFormChange(Species.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_ORB))
+    new SpeciesFormChange(Species.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_GLOBE))
   ],
   [Species.GIRATINA]: [
     new SpeciesFormChange(Species.GIRATINA, "altered", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))
@@ -689,10 +691,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DURALUDON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ZACIAN]: [
-    new SpeciesFormChange(Species.ZACIAN, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
+    new SpeciesFormChange(Species.ZACIAN, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
   ],
   [Species.ZAMAZENTA]: [
-    new SpeciesFormChange(Species.ZAMAZENTA, "hero", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
+    new SpeciesFormChange(Species.ZAMAZENTA, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
   ],
   [Species.ETERNATUS]: [
     new SpeciesFormChange(Species.ETERNATUS, "", SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
@@ -730,6 +732,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.GALAR_DARMANITAN]: [
     new SpeciesFormChange(Species.GALAR_DARMANITAN, "", "zen", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.GALAR_DARMANITAN, "zen", "", new SpeciesFormChangeManualTrigger(), true)
+  ],
+  [Species.EISCUE]: [
+    new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true),
   ]
 };
 

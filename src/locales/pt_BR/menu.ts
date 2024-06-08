@@ -49,4 +49,6 @@ export const menu: SimpleTranslationEntries = {
   "empty": "Vazio",
   "yes": "Sim",
   "no": "Não",
+  "disclaimer": "AVISO",
+  "disclaimerDescription": "Este jogo é um produto inacabado; ele pode ter problemas de jogabilidade (incluindo possíveis perdas de dados salvos),\n sofrer alterações sem aviso prévio e pode ou não ser atualizado ou concluído."
 } as const;
