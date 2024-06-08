@@ -66,7 +66,8 @@ export const SettingKeys = {
   Player_Gender: "PLAYER_GENDER",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
-  SE_Volume: "SE_VOLUME"
+  SE_Volume: "SE_VOLUME",
+  Music_Preference: "MUSIC_PREFERENCE"
 };
 
 /**
@@ -287,6 +288,14 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO
+  },
+  {
+    key: SettingKeys.Music_Preference,
+    label: "Music Preference",
+    options: ["Consistent", "Mixed"],
+    default: 0,
+    type: SettingType.AUDIO,
+    requireReload: true
   }
 ];
 
@@ -334,6 +343,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.SE_Volume:
     scene.seVolume = value ? parseInt(Setting[index].options[value]) * 0.01 : 0;
     scene.updateSoundVolume();
+    break;
+  case SettingKeys.Music_Preference:
+    scene.musicPreference = value;
     break;
   case SettingKeys.Damage_Numbers:
     scene.damageNumbersMode = value;
@@ -480,15 +492,15 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             },
             {
               label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt_BR")
+              handler: () => changeLocaleHandler("pt-BR")
             },
             {
               label: "简体中文",
-              handler: () => changeLocaleHandler("zh_CN")
+              handler: () => changeLocaleHandler("zh-CN")
             },
             {
               label: "繁體中文",
-              handler: () => changeLocaleHandler("zh_TW")
+              handler: () => changeLocaleHandler("zh-TW")
             },
             {
               label: "한국어",
