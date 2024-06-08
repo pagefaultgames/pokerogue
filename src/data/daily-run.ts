@@ -28,7 +28,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
   const starters: Starter[] = [];
 
   scene.executeWithSeedOffset(() => {
-    const startingLevel = this.scene.gameMode.getStartingLevel();
+    const startingLevel = scene.gameMode.getStartingLevel();
 
     if (/\d{18}$/.test(seed)) {
       for (let s = 0; s < 3; s++) {
