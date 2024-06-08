@@ -49,6 +49,9 @@ export class Achv {
     return i18next.t(`${prefix}achv:${this.localizationKey}.name` as ParseKeys);
   }
 
+  getDescription(): string {
+    return this.description;
+  }
 
   getIconImage(): string {
     return this.iconImage;
