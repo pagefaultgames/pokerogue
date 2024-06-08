@@ -127,6 +127,23 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
   return items[Math.floor(easedValue * items.length)];
 }
 
+/**
+ * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
+ * @param {Array} items An array of items.
+ * @returns {Array} A new shuffled array of items.
+ */
+export function randSeedShuffle<T>(items: T[]): T[] {
+  if (items.length <= 1) {
+    return items;
+  }
+  const newArray = items.slice(0);
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Phaser.Math.RND.integerInRange(0, i);
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
@@ -260,11 +277,13 @@ export const isLocal = (
    /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
   window.location.port !== "") || window.location.hostname === "";
 
+export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port+1}`;
+
 // Set the server URL based on whether it's local or not
-export const serverUrl = isLocal ? `${window.location.hostname}:${window.location.port}` : "";
+export const serverUrl = isLocal ? localServerUrl : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
-export let isLocalServerConnected = false;
+export let isLocalServerConnected = true;
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
