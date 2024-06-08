@@ -16,7 +16,7 @@ import { trainerConfigs } from "../data/trainer-config";
 import { SettingKeys, resetSettings, setSetting } from "./settings/settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
-import { Egg, GachaType } from "../data/egg";
+import { Egg } from "../data/egg";
 import { VoucherType, vouchers } from "./voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
@@ -478,41 +478,38 @@ export class GameData {
           });
         }
 
-        // this.eggs = systemData.eggs
-        //   ? systemData.eggs.map(e => e.toEgg())
-        //   : [];
-        const eggsTestData = [
-          { id: 1, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 2, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 3, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 4, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 5, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 6, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 7, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 8, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 9, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 10, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 },
-          { id: 11, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 12, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 13, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 14, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 15, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 16, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 17, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 18, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 19, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 20, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 }
-        ];
 
-<<<<<<< HEAD
-        const eggDataArray: EggData[] = eggsTestData.map(data => new EggData(data));
+        // const eggsTestData = [
+        //   { id: 1, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 2, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 3, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 4, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
+        //   { id: 5, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 6, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 7, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
+        //   { id: 8, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 9, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
+        //   { id: 10, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 },
+        //   { id: 11, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 12, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 13, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 14, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
+        //   { id: 15, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 16, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 17, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
+        //   { id: 18, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
+        //   { id: 19, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
+        //   { id: 20, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 }
+        // ];
 
-        this.eggs = eggDataArray.map(eggData => eggData.toEgg());
-=======
+        // const eggDataArray: EggData[] = eggsTestData.map(data => new EggData(data));
+
+        this.eggs = systemData.eggs
+          ? systemData.eggs.map(e => e.toEgg())
+          : [];
         this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
         this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
 
->>>>>>> a01cb96de65b8431f74e8bdd146d66de5a3ec30c
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
         this.defaultDexData = null;
@@ -1467,6 +1464,7 @@ export class GameData {
         if (showMessage) {
           this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
         }
+        resolve();
       } else {
         checkPrevolution();
       }
@@ -1534,6 +1532,8 @@ export class GameData {
       this.scene.playSound("level_up_fanfare");
       if (showMessage) {
         this.scene.ui.showText(`${eggMoveIndex === 3 ? "Rare " : ""}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
+      } else {
+        resolve(true);
       }
     });
   }
