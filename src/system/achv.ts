@@ -237,23 +237,23 @@ export function getAchievementDescription(localizationKey: string): string {
   case "CLASSIC_VICTORY":
     return i18next.t(`${genderPrefix}achv:CLASSIC_VICTORY.description` as ParseKeys);
   case "MONO_GEN_ONE":
-    return i18next.t("achv:MONO_GEN_ONE.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_ONE.description` as ParseKeys);
   case "MONO_GEN_TWO":
-    return i18next.t("achv:MONO_GEN_TWO.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_TWO.description` as ParseKeys);
   case "MONO_GEN_THREE":
-    return i18next.t("achv:MONO_GEN_THREE.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_THREE.description` as ParseKeys);
   case "MONO_GEN_FOUR":
-    return i18next.t("achv:MONO_GEN_FOUR.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_FOUR.description` as ParseKeys);
   case "MONO_GEN_FIVE":
-    return i18next.t("achv:MONO_GEN_FIVE.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_FIVE.description` as ParseKeys);
   case "MONO_GEN_SIX":
-    return i18next.t("achv:MONO_GEN_SIX.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_SIX.description` as ParseKeys);
   case "MONO_GEN_SEVEN":
-    return i18next.t("achv:MONO_GEN_SEVEN.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_SEVEN.description` as ParseKeys);
   case "MONO_GEN_EIGHT":
-    return i18next.t("achv:MONO_GEN_EIGHT.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_EIGHT.description` as ParseKeys);
   case "MONO_GEN_NINE":
-    return i18next.t("achv:MONO_GEN_NINE.description");
+    return i18next.t(`${genderPrefix}achv:MONO_GEN_NINE.description` as ParseKeys);
   case "MONO_NORMAL":
   case "MONO_FIGHTING":
   case "MONO_FLYING":
@@ -272,7 +272,7 @@ export function getAchievementDescription(localizationKey: string): string {
   case "MONO_DRAGON":
   case "MONO_DARK":
   case "MONO_FAIRY":
-    return i18next.t("achv:MonoType.description", {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
+    return i18next.t(`${genderPrefix}achv:MonoType.description` as ParseKeys, {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
   default:
     return "";
   }

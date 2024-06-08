@@ -11,7 +11,7 @@ export const PGMachv: AchievementTranslationEntries = {
 
 
   "MoneyAchv": {
-    description: "Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an",
+    description: "Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an.",
   },
   "10K_MONEY": {
     name: "Besserverdiener",
@@ -27,7 +27,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "DamageAchv": {
-    description: "Füge mit einem Treffer {{damageAmount}} Schaden zu",
+    description: "Füge mit einem Treffer {{damageAmount}} Schaden zu.",
   },
   "250_DMG": {
     name: "Harte Treffer",
@@ -43,7 +43,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "HealAchv": {
-    description: "Heile {{healAmount}} {{HP}} auf einmal. Mit einer Attacke, Fähigkeit oder einem gehaltenen Gegenstand",
+    description: "Heile {{healAmount}} {{HP}} auf einmal. Mit einer Attacke, Fähigkeit oder einem gehaltenen Gegenstand.",
   },
   "250_HEAL": {
     name: "Anfänger-Heiler",
@@ -59,7 +59,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "LevelAchv": {
-    description: "Erhöhe das Level eines Pokémon auf {{level}}",
+    description: "Erhöhe das Level eines Pokémon auf {{level}}.",
   },
   "LV_100": {
     name: "Warte, es gibt mehr!",
@@ -72,7 +72,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "RibbonAchv": {
-    description: "Sammle insgesamt {{ribbonAmount}} Bänder",
+    description: "Sammle insgesamt {{ribbonAmount}} Bänder.",
   },
   "10_RIBBONS": {
     name: "Champion der Pokémon Liga",
@@ -92,83 +92,177 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "TRANSFER_MAX_BATTLE_STAT": {
     name: "Teamwork",
-    description: "Nutze Staffette, während der Anwender mindestens eines Statuswertes maximiert hat",
+    description: "Nutze Staffette, während der Anwender mindestens eines Statuswertes maximiert hat.",
   },
   "MAX_FRIENDSHIP": {
     name: "Freundschaftsmaximierung",
-    description: "Erreiche maximale Freundschaft bei einem Pokémon",
+    description: "Erreiche maximale Freundschaft bei einem Pokémon.",
   },
   "MEGA_EVOLVE": {
     name: "Megaverwandlung",
-    description: "Megaentwickle ein Pokémon",
+    description: "Megaentwickle ein Pokémon.",
   },
   "GIGANTAMAX": {
     name: "Absolute Einheit",
-    description: "Gigadynamaximiere ein Pokémon",
+    description: "Gigadynamaximiere ein Pokémon.",
   },
   "TERASTALLIZE": {
     name: "Typen-Bonus Enthusiast",
-    description: "Terrakristallisiere ein Pokémon",
+    description: "Terrakristallisiere ein Pokémon.",
   },
   "STELLAR_TERASTALLIZE": {
     name: "Der geheime Typ",
-    description: "Terrakristallisiere ein Pokémon zum Typen Stellar",
+    description: "Terrakristallisiere ein Pokémon zum Typen Stellar.",
   },
   "SPLICE": {
     name: "Unendliche Fusion",
-    description: "Kombiniere zwei Pokémon mit einem DNS-Keil",
+    description: "Kombiniere zwei Pokémon mit einem DNS-Keil.",
   },
   "MINI_BLACK_HOLE": {
     name: "Ein Loch voller Items",
-    description: "Erlange ein Mini-Schwarzes Loch",
+    description: "Erlange ein Mini-Schwarzes Loch.",
   },
   "CATCH_MYTHICAL": {
     name: "Mysteriöses!",
-    description: "Fange ein mysteriöses Pokémon",
+    description: "Fange ein mysteriöses Pokémon.",
   },
   "CATCH_SUB_LEGENDARY": {
     name: "Sub-Legendär",
-    description: "Fange ein sub-legendäres Pokémon",
+    description: "Fange ein sub-legendäres Pokémon.",
   },
   "CATCH_LEGENDARY": {
     name: "Legendär",
-    description: "Fange ein legendäres Pokémon",
+    description: "Fange ein legendäres Pokémon.",
   },
   "SEE_SHINY": {
     name: "Schillerndes Licht",
-    description: "Finde ein wildes schillerndes Pokémon",
+    description: "Finde ein wildes schillerndes Pokémon.",
   },
   "SHINY_PARTY": {
     name: "Das ist Hingabe",
-    description: "Habe ein Team aus schillernden Pokémon",
+    description: "Habe ein Team aus schillernden Pokémon.",
   },
   "HATCH_MYTHICAL": {
     name: "Mysteriöses Ei",
-    description: "Lass ein mysteriöses Pokémon aus einem Ei schlüpfen",
+    description: "Lass ein mysteriöses Pokémon aus einem Ei schlüpfen.",
   },
   "HATCH_SUB_LEGENDARY": {
     name: "Sub-Legendäres Ei",
-    description: "Lass ein sub-legendäres Pokémon aus einem Ei schlüpfen",
+    description: "Lass ein sub-legendäres Pokémon aus einem Ei schlüpfen.",
   },
   "HATCH_LEGENDARY": {
     name: "Legendäres Ei",
-    description: "Lass ein legendäres Pokémon aus einem Ei schlüpfen",
+    description: "Lass ein legendäres Pokémon aus einem Ei schlüpfen.",
   },
   "HATCH_SHINY": {
     name: "Schillerndes Ei",
-    description: "Lass ein schillerndes Pokémon aus einem Ei schlüpfen",
+    description: "Lass ein schillerndes Pokémon aus einem Ei schlüpfen.",
   },
   "HIDDEN_ABILITY": {
     name: "Geheimes Talent",
-    description: "Fang ein Pokémon mit versteckter Fähigkeit",
+    description: "Fang ein Pokémon mit versteckter Fähigkeit.",
   },
   "PERFECT_IVS": {
     name: "Zertifikat der Echtheit",
-    description: "Erhalte ein Pokémon mit perfekten IS-Werten",
+    description: "Erhalte ein Pokémon mit perfekten IS-Werten.",
   },
   "CLASSIC_VICTORY": {
     name: "Ungeschlagen",
-    description: "Beende den klassischen Modus erfolgreich",
+    description: "Beende den klassischen Modus erfolgreich.",
+  },
+  "MONO_GEN_ONE": {
+    name: "Der originale Rivale",
+    description: "Schließe die 'Nur 1. Generation' Herausforderung ab.",
+  },
+  "MONO_GEN_TWO": {
+    name: "Generation 1.5",
+    description: "Schließe die 'Nur 2. Generation' Herausforderung ab.",
+  },
+  "MONO_GEN_THREE": {
+    name: "Zu viel Wasser?",
+    description: "Schließe die 'Nur 3. Generation' Herausforderung ab.",
+  },
+  "MONO_GEN_FOUR": {
+    name: "Ist SIE wirklich die Stärkste?",
+    description: "Schließe die 'Nur 4. Generation' Herausforderung ab.",
+  },
+  "MONO_GEN_FIVE": {
+    name: "Komplett Original",
+    description: "Schließe die 'Nur 5. Generation' Herausforderung ab.",
+  },
+  "MONO_GEN_SIX": {
+    name: "Fast Königlich",
+    description: "Schließe die 'Nur 6. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_SEVEN": {
+    name: "Technisch gesehen",
+    description: "Schließe die 'Nur 7. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_EIGHT": {
+    name: "Die Zeit des Champions",
+    description: "Schließe die 'Nur 8. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_NINE": {
+    name: "Sie hat es dir leicht gemacht...",
+    description: "Schließe die 'Nur 9. Generation' Herausforderung ab."
+  },
+
+  "MonoType": {
+    description: "Beende die Monotyp-{{type}} Herausforderung."
+  },
+  "MONO_NORMAL": {
+    name: "Normaler Typ",
+  },
+  "MONO_FIGHTING": {
+    name: "Ich kenne Kung Fu."
+  },
+  "MONO_FLYING": {
+    name: "Ich glaube ich kann fliegen.",
+  },
+  "MONO_POISON": {
+    name: "Kantos Liebling",
+  },
+  "MONO_GROUND": {
+    name: "Auf dem Boden bleiben.",
+  },
+  "MONO_ROCK": {
+    name: "So hart wie Rocko.",
+  },
+  "MONO_BUG": {
+    name: "Steche wie ein Bibor.",
+  },
+  "MONO_GHOST": {
+    name: "Wer wird angerufen?",
+  },
+  "MONO_STEEL": {
+    name: "Stahlharte Entschlossenheit",
+  },
+  "MONO_FIRE": {
+    name: "Brennende Leidenschaft",
+  },
+  "MONO_WATER": {
+    name: "Wenn es regnet, schüttet es!",
+  },
+  "MONO_GRASS": {
+    name: "Grüner Daumen",
+  },
+  "MONO_ELECTRIC": {
+    name: "Elektrisierend",
+  },
+  "MONO_PSYCHIC": {
+    name: "Übernatürliches Talent",
+  },
+  "MONO_ICE": {
+    name: "Eis Eis Baby",
+  },
+  "MONO_DRAGON": {
+    name: "Siegfried bist du es?",
+  },
+  "MONO_DARK": {
+    name: "Es ist nur eine Phase!",
+  },
+  "MONO_FAIRY": {
+    name: "Ein ewiges Abenteuer!",
   },
 } as const;
 
@@ -250,5 +344,34 @@ export const PGFachv: AchievementTranslationEntries = {
   "HIDDEN_ABILITY": PGMachv.HIDDEN_ABILITY,
   "PERFECT_IVS": PGMachv.PERFECT_IVS,
   "CLASSIC_VICTORY": PGMachv.CLASSIC_VICTORY,
+  "MONO_GEN_ONE": PGMachv.MONO_GEN_ONE,
+  "MONO_GEN_TWO": PGMachv.MONO_GEN_TWO,
+  "MONO_GEN_THREE": PGMachv.MONO_GEN_THREE,
+  "MONO_GEN_FOUR": PGMachv.MONO_GEN_FOUR,
+  "MONO_GEN_FIVE": PGMachv.MONO_GEN_FIVE,
+  "MONO_GEN_SIX": PGMachv.MONO_GEN_SIX,
+  "MONO_GEN_SEVEN": PGMachv.MONO_GEN_SEVEN,
+  "MONO_GEN_EIGHT": PGMachv.MONO_GEN_EIGHT,
+  "MONO_GEN_NINE": PGMachv.MONO_GEN_NINE,
+
+  "MonoType": PGMachv.MonoType,
+  "MONO_NORMAL": PGMachv.MONO_NORMAL,
+  "MONO_FIGHTING": PGMachv.MONO_FIGHTING,
+  "MONO_FLYING": PGMachv.MONO_FLYING,
+  "MONO_POISON": PGMachv.MONO_POISON,
+  "MONO_GROUND": PGMachv.MONO_GROUND,
+  "MONO_ROCK": PGMachv.MONO_ROCK,
+  "MONO_BUG": PGMachv.MONO_BUG,
+  "MONO_GHOST": PGMachv.MONO_GHOST,
+  "MONO_STEEL": PGMachv.MONO_STEEL,
+  "MONO_FIRE": PGMachv.MONO_FIRE,
+  "MONO_WATER": PGMachv.MONO_WATER,
+  "MONO_GRASS": PGMachv.MONO_GRASS,
+  "MONO_ELECTRIC": PGMachv.MONO_ELECTRIC,
+  "MONO_PSYCHIC": PGMachv.MONO_PSYCHIC,
+  "MONO_ICE": PGMachv.MONO_ICE,
+  "MONO_DRAGON": PGMachv.MONO_DRAGON,
+  "MONO_DARK": PGMachv.MONO_DARK,
+  "MONO_FAIRY": PGMachv.MONO_FAIRY,
 } as const;
 

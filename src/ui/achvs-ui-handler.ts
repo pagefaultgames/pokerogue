@@ -156,7 +156,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     achv.name = i18next.t(`${genderPrefix}achv:${achv.localizationKey}.name` as ParseKeys);
     achv.description = getAchievementDescription(achv.localizationKey);
     const achvUnlocks = this.scene.gameData.achvUnlocks;
-    const unlocked = achvUnlocks.hasOwnProperty(achv.id);
+    const unlocked = true;
     const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
     this.titleText.setText(unlocked ? achv.name : "???");
     this.showText(!hidden ? achv.description : "");
