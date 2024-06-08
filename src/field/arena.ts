@@ -321,11 +321,10 @@ export class Arena {
     }
 
     this.scene.getField(true).forEach( p => {
-      if ((p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM)) {
+      if ((p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) || false /** Cherrim will also go here */) {
         this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
-    }
-    );
+    });
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));

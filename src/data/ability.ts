@@ -16,7 +16,7 @@ import { Stat } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";
 import { TerrainType } from "./terrain";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
@@ -1765,6 +1765,35 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
       return pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
     }
 
+    return false;
+  }
+}
+
+/**
+ * Ability attribute that allows for triggering a form change based on the weather on summon
+ * Used for Forecast and Flower Gift
+ */
+export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
+  private ability: Abilities;
+
+  constructor(ability: Abilities) {
+    super(true);
+
+    this.ability = ability;
+  }
+
+  /**
+   * Calls the speciesFormChangeWeatherTrigger if it is the specific Pokemon and ability
+   * @param pokemon the Pokemon with this ability
+   * @param passive n/a
+   * @param args n/a
+   * @returns true if a form change was attempted, false otherwise
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
+      return true;
+    }
     return false;
   }
 }
@@ -3780,7 +3809,7 @@ export function initAbilities() {
     new Ability(Abilities.FORECAST, 3)
       .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .unimplemented(),
+      .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FORECAST),
     new Ability(Abilities.STICKY_HOLD, 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
