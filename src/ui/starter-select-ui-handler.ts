@@ -1729,7 +1729,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
-          [ this.pokemonCandyIcon, this.pokemonCandyOverlayIcon, this.pokemonCandyDarknessOverlay, this.pokemonCandyCountText ].map(c => c.setVisible(false));
+          [
+            this.pokemonCandyIcon,
+            this.pokemonCandyOverlayIcon,
+            this.pokemonCandyDarknessOverlay,
+            this.pokemonCandyCountText,
+            this.pokemonHatchedIcon,
+            this.pokemonHatchedCountText
+          ].map(c => c.setVisible(false));
+        } else if (species.speciesId === Species.ETERNATUS) {
+          this.pokemonHatchedIcon.setVisible(false);
+          this.pokemonHatchedCountText.setVisible(false);
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
@@ -1740,6 +1750,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
+          this.pokemonHatchedIcon.setVisible(true);
+          this.pokemonHatchedCountText.setVisible(true);
 
           let currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
           if (!currentFriendship || currentFriendship === undefined) {
