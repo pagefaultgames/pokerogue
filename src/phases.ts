@@ -5088,7 +5088,15 @@ export class EggLapsePhase extends Phase {
     super.start();
 
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
-      return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
+      let doubledEggHatch = false;
+      for (const pokemon of this.scene.getParty()) {
+        if (pokemon.hasAbility(Abilities.FLAME_BODY) || pokemon.hasAbility(Abilities.MAGMA_ARMOR) || pokemon.hasAbility(Abilities.STEAM_ENGINE)) {
+          doubledEggHatch = true;
+        }
+      }
+      egg.hatchWaves -= doubledEggHatch ? 2 : 1;
+
+      return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : egg.hatchWaves < 1;
     });
 
     let eggsToHatchCount: integer = eggsToHatch.length;
