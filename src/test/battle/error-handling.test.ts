@@ -6,7 +6,7 @@ import {
   EncounterPhase,
   LoginPhase,
   SelectGenderPhase,
-  SelectStarterPhase,
+  SelectStarterPhase, SummonPhase,
   TitlePhase,
 } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
@@ -67,7 +67,6 @@ describe("Test Battle Phase", () => {
       game.scene.gameData.gender = PlayerGender.MALE;
       game.endPhase();
     }, () => game.isCurrentPhase(TitlePhase));
-    await game.phaseInterceptor.runFrom(SelectGenderPhase).to(TitlePhase);
     game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(game.scene);
@@ -75,7 +74,7 @@ describe("Test Battle Phase", () => {
       game.scene.pushPhase(new EncounterPhase(game.scene, false));
       selectStarterPhase.initBattle(starters);
     });
-    await game.phaseInterceptor.run(EncounterPhase);
+    await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
   }, 20000);
 });
 

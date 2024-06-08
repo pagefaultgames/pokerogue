@@ -97,14 +97,15 @@ export default class PhaseInterceptor {
       await this.run(this.phaseFrom);
       this.phaseFrom = null;
       const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
-      this.intervalRun = setInterval(async () => {
+      this.intervalRun = setInterval(async() => {
         const currentPhase = this.onHold?.length && this.onHold[0];
-        if (currentPhase && currentPhase.name !== targetName) {
-          await this.run(currentPhase.name);
-        } else if (currentPhase.name === targetName) {
-          await this.run(currentPhase.name);
+        if (currentPhase && currentPhase.name === targetName) {
           clearInterval(this.intervalRun);
+          await this.run(currentPhase);
           return resolve();
+        }
+        if (currentPhase && currentPhase.name !== targetName) {
+          await this.run(currentPhase);
         }
       });
     });
