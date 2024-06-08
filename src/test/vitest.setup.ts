@@ -1,4 +1,5 @@
 import "vitest-canvas-mock";
+import "./utils/errorInterceptor";
 import "#app/test/fontFace.setup";
 import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
 import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";

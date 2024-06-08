@@ -6,10 +6,11 @@ import {
   LoginPhase, MessagePhase, MoveEffectPhase, MoveEndPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
   PostSummonPhase,
   SelectGenderPhase, SelectModifierPhase,
-  SelectStarterPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
+  SelectStarterPhase, SelectTargetPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
   TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, VictoryPhase
 } from "#app/phases";
 import UI, {Mode} from "#app/ui/ui";
+import {Phase} from "#app/phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -23,45 +24,47 @@ export default class PhaseInterceptor {
   private phaseFrom;
   private inProgress;
   private originalSetMode;
+  private originalSuperEnd;
 
   /**
    * List of phases with their corresponding start methods.
    */
   private PHASES = [
-    [LoginPhase, this.startPhase, this.endPhase],
-    [TitlePhase, this.startPhase, this.endPhase],
-    [SelectGenderPhase, this.startPhase, this.endPhase],
-    [EncounterPhase, this.startPhase, this.endPhase],
-    [SelectStarterPhase, this.startPhase, this.endPhase],
-    [PostSummonPhase, this.startPhase, this.endPhase],
-    [SummonPhase, this.startPhase, this.endPhase],
-    [ToggleDoublePositionPhase, this.startPhase, this.endPhase],
-    [CheckSwitchPhase, this.startPhase, this.endPhase],
-    [ShowAbilityPhase, this.startPhase, this.endPhase],
-    [MessagePhase, this.startPhase, this.endPhase],
-    [TurnInitPhase, this.startPhase, this.endPhase],
-    [CommandPhase, this.startPhase, this.endPhase],
-    [EnemyCommandPhase, this.startPhase, this.endPhase],
-    [TurnStartPhase, this.startPhase, this.endPhase],
-    [MovePhase, this.startPhase, this.endPhase],
-    [MoveEffectPhase, this.startPhase, this.endPhase],
-    [DamagePhase, this.startPhase, this.endPhase],
-    [FaintPhase, this.startPhase, this.endPhase],
-    [BerryPhase, this.startPhase, this.endPhase],
-    [TurnEndPhase, this.startPhase, this.endPhase],
-    [BattleEndPhase, this.startPhase, this.endPhase],
-    [EggLapsePhase, this.startPhase, this.endPhase],
-    [SelectModifierPhase, this.startPhase, this.endPhase],
-    [NextEncounterPhase, this.startPhase, this.endPhase],
-    [NewBattlePhase, this.startPhase, this.endPhase],
-    [VictoryPhase, this.startPhase, this.endPhase],
-    [MoveEndPhase, this.startPhase, this.endPhase],
-    [StatChangePhase, this.startPhase, this.endPhase],
-    [ShinySparklePhase, this.startPhase, this.endPhase],
+    [LoginPhase, this.startPhase],
+    [TitlePhase, this.startPhase],
+    [SelectGenderPhase, this.startPhase],
+    [EncounterPhase, this.startPhase],
+    [SelectStarterPhase, this.startPhase],
+    [PostSummonPhase, this.startPhase],
+    [SummonPhase, this.startPhase],
+    [ToggleDoublePositionPhase, this.startPhase],
+    [CheckSwitchPhase, this.startPhase],
+    [ShowAbilityPhase, this.startPhase],
+    [MessagePhase, this.startPhase],
+    [TurnInitPhase, this.startPhase],
+    [CommandPhase, this.startPhase],
+    [EnemyCommandPhase, this.startPhase],
+    [TurnStartPhase, this.startPhase],
+    [MovePhase, this.startPhase],
+    [MoveEffectPhase, this.startPhase],
+    [DamagePhase, this.startPhase],
+    [FaintPhase, this.startPhase],
+    [BerryPhase, this.startPhase],
+    [TurnEndPhase, this.startPhase],
+    [BattleEndPhase, this.startPhase],
+    [EggLapsePhase, this.startPhase],
+    [SelectModifierPhase, this.startPhase],
+    [NextEncounterPhase, this.startPhase],
+    [NewBattlePhase, this.startPhase],
+    [VictoryPhase, this.startPhase],
+    [MoveEndPhase, this.startPhase],
+    [StatChangePhase, this.startPhase],
+    [ShinySparklePhase, this.startPhase],
+    [SelectTargetPhase, this.startPhase],
   ];
 
   private endBySetMode = [
-    TitlePhase, SelectGenderPhase, CheckSwitchPhase
+    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase
   ];
 
   /**
@@ -92,20 +95,29 @@ export default class PhaseInterceptor {
    * @param phaseTo - The phase to transition to.
    * @returns A promise that resolves when the transition is complete.
    */
-  async to(phaseTo): Promise<void> {
-    return new Promise(async (resolve) => {
-      await this.run(this.phaseFrom);
+  async to(phaseTo, runTarget: boolean = true): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      await this.run(this.phaseFrom).catch((e) => reject(e));
       this.phaseFrom = null;
       const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
       this.intervalRun = setInterval(async() => {
         const currentPhase = this.onHold?.length && this.onHold[0];
         if (currentPhase && currentPhase.name === targetName) {
           clearInterval(this.intervalRun);
-          await this.run(currentPhase);
+          if (!runTarget) {
+            return resolve();
+          }
+          await this.run(currentPhase).catch((e) => {
+            clearInterval(this.intervalRun);
+            return reject(e);
+          });
           return resolve();
         }
         if (currentPhase && currentPhase.name !== targetName) {
-          await this.run(currentPhase);
+          await this.run(currentPhase).catch((e) => {
+            clearInterval(this.intervalRun);
+            return reject(e);
+          });
         }
       });
     });
@@ -127,14 +139,16 @@ export default class PhaseInterceptor {
           if (currentPhase.name !== targetName) {
             clearInterval(interval);
             if (skipFn && skipFn()) {
-              resolve();
+              this.onHold.unshift(currentPhase);
+              return resolve();
             }
-            reject(`Wrong phase: ${currentPhase.name} instead of ${targetName}`);
+            clearInterval(interval);
+            return reject(`Wrong phase: this is ${currentPhase.name} and not ${targetName}`);
           }
+          clearInterval(interval);
           this.inProgress = {
             name: currentPhase.name,
             callback: () => {
-              clearInterval(interval);
               resolve();
             },
           };
@@ -149,17 +163,16 @@ export default class PhaseInterceptor {
    */
   initPhases() {
     this.originalSetMode = UI.prototype.setMode;
-    UI.prototype.setMode = (mode, args) => this.setMode(mode, args);
-    for (const [phase, methodStart, methodEnd] of this.PHASES) {
+    this.originalSuperEnd = Phase.prototype.end;
+    UI.prototype.setMode = (mode, ...args) => this.setMode.call(this, mode, ...args);
+    Phase.prototype.end = () => this.superEndPhase.call(this, Phase);
+    for (const [phase, methodStart] of this.PHASES) {
       const originalStart = phase.prototype.start;
-      const originalEnd = phase.prototype.end;
       this.phases[phase.name] = {
         start: originalStart,
-        end: originalEnd,
         endBySetMode: this.endBySetMode.some((elm) => elm.name === phase.name),
       };
       phase.prototype.start = () => methodStart.call(this, phase);
-      phase.prototype.end = () => methodEnd.call(this, phase);
     }
   }
 
@@ -182,10 +195,12 @@ export default class PhaseInterceptor {
    * Method to end a phase and log it.
    * @param phase - The phase to start.
    */
-  endPhase(phase) {
+  superEndPhase() {
     const instance = this.scene.getCurrentPhase();
-    this.phases[phase.name].end.apply(instance);
+    console.log(`%c INTERCEPTED Super End Phase ${instance.constructor.name}`, "color:red;");
+    this.originalSuperEnd.apply(instance);
     this.inProgress?.callback();
+    this.inProgress = undefined;
   }
 
   /**
@@ -199,6 +214,7 @@ export default class PhaseInterceptor {
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
     if (this.phases[currentPhase.constructor.name].endBySetMode) {
       this.inProgress?.callback();
+      this.inProgress = undefined;
     }
     return ret;
   }
@@ -247,9 +263,9 @@ export default class PhaseInterceptor {
   restoreOg() {
     for (const [phase] of this.PHASES) {
       phase.prototype.start = this.phases[phase.name].start;
-      phase.prototype.end = this.phases[phase.name].end;
     }
     UI.prototype.setMode = this.originalSetMode;
+    Phase.prototype.end = this.originalSuperEnd;
     clearInterval(this.promptInterval);
     clearInterval(this.interval);
   }

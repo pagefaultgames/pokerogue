@@ -2,21 +2,17 @@ import GameWrapper from "#app/test/utils/gameWrapper";
 import {Mode} from "#app/ui/ui";
 import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
 import {
-  CheckSwitchPhase,
   CommandPhase,
   EncounterPhase,
   LoginPhase,
   PostSummonPhase,
   SelectGenderPhase,
   SelectStarterPhase,
-  SummonPhase,
   TitlePhase,
-  ToggleDoublePositionPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
 import TextInterceptor from "#app/test/utils/TextInterceptor";
-import {expect} from "vitest";
 import {GameModes, getGameMode} from "#app/game-mode";
 import fs from "fs";
 import { AES, enc } from "crypto-js";
@@ -138,25 +134,18 @@ export default class GameManager {
    * @returns A promise that resolves when the battle is started.
    */
   startBattle(species?: Species[]): Promise<void> {
-    return new Promise(async(resolve) => {
+    return new Promise(async(resolve, reject) => {
       await this.runToSummon(species);
-      await this.phaseInterceptor.runFrom(PostSummonPhase).to(ToggleDoublePositionPhase);
-      await this.phaseInterceptor.run(SummonPhase, () => this.isCurrentPhase(CheckSwitchPhase) || this.isCurrentPhase(PostSummonPhase));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
-      }, () => this.isCurrentPhase(PostSummonPhase));
+      }, () => this.isCurrentPhase(CommandPhase));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
-      }, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.runFrom(PostSummonPhase).to(CommandPhase);
-      await waitUntil(() => this.scene.ui?.getMode() === Mode.COMMAND);
+      }, () => this.isCurrentPhase(CommandPhase));
+      await this.phaseInterceptor.runFrom(PostSummonPhase).to(CommandPhase).catch((e) => reject(e));
       console.log("==================[New Turn]==================");
-      expect(this.scene.ui?.getMode()).toBe(Mode.COMMAND);
-      expect(this.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
       return resolve();
     });
   }
