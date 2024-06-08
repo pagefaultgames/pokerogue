@@ -46,7 +46,6 @@ export const menu: SimpleTranslationEntries = {
   "pauseEvolutionsQuestion": "Vuoi sospendere le evoluzioni per {{pokemonName}}?\nLe evoluzioni possono essere riattivate dalla schermata del party.",
   "evolutionsPaused": "Le evoluzioni sono state sospese per {{pokemonName}}.",
   "evolutionDone": "Congratulazioni!\n{{pokemonName}} si è evoluto in {{evolvedPokemonName}}!",
-  "empty":"Vuoto",
   "yes":"Si",
   "no":"No",
   "disclaimer": "DISCLAIMER",
