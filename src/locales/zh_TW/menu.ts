@@ -46,7 +46,6 @@ export const menu: SimpleTranslationEntries = {
   "noRankings": "無排名",
   "loading": "加載中…",
   "playersOnline": "在線玩家",
-  "empty":"空",
   "yes":"是",
   "no":"否",
   "disclaimer": "DISCLAIMER",
