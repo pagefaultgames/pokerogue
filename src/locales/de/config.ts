@@ -37,6 +37,13 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
+import {
+  statusEffectActivationText,
+  statusEffectDescriptor,
+  statusEffectHealText,
+  statusEffectObtainText, statusEffectOverlapText, statusEffectSourceClause
+} from "./status-effect";
+import {arenaTag} from "./arena-tag";
 
 export const deConfig = {
   ability: ability,
@@ -77,5 +84,12 @@ export const deConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler
+  partyUiHandler: partyUiHandler,
+  statusEffectHealText: statusEffectHealText,
+  statusEffectDescriptor: statusEffectDescriptor,
+  statusEffectObtainText: statusEffectObtainText,
+  statusEffectActivationText: statusEffectActivationText,
+  statusEffectOverlapText: statusEffectOverlapText,
+  statusEffectSourceClause: statusEffectSourceClause,
+  arenaTag: arenaTag
 };
