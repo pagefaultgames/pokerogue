@@ -14,6 +14,7 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "SPDEFshortened": "SpVert",
     "SPD": "Initiative",
     "SPDshortened": "Init",
+    "LUCK": "Glück"
   },
 
   Type: {
@@ -38,4 +39,11 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "FAIRY": "Fee",
     "STELLAR": "Stellar",
   },
+
+  Move: {
+    "POWER": "Stärke",
+    "ACCURACY": "Genauigkeit",
+    "CATEGORY": "Kategorie",
+    "PP": "AP"
+  }
 } as const;

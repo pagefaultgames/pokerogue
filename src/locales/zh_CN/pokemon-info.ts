@@ -38,4 +38,10 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "FAIRY": "妖精",
     "STELLAR": "星晶",
   },
+
+  Move: {
+    "POWER": "威力",
+    "ACCURACY": "命中",
+    "PP": "PP"
+  }
 } as const;
