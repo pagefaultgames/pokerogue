@@ -1,14 +1,16 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
 import { deConfig } from "#app/locales/de/config.js";
 import { enConfig } from "#app/locales/en/config.js";
 import { esConfig } from "#app/locales/es/config.js";
 import { frConfig } from "#app/locales/fr/config.js";
 import { itConfig } from "#app/locales/it/config.js";
+import { koConfig } from "#app/locales/ko/config.js";
 import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
-import { zhTWConfig } from "#app/locales/zh_TW/config.js";
+import { zhTwConfig } from "#app/locales/zh_TW/config.js";
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -53,15 +55,65 @@ export interface PokemonInfoTranslationEntries {
 
 export interface BerryTranslationEntry {
   name: string,
-  effect: string
+  effect: string,
 }
 
 export interface BerryTranslationEntries {
   [key: string]: BerryTranslationEntry
 }
 
+export interface AchievementTranslationEntry {
+  name?: string,
+  description?: string,
+}
+
+export interface AchievementTranslationEntries {
+  [key: string]: AchievementTranslationEntry;
+}
+
+export interface DialogueTranslationEntry {
+  [key: number]: string;
+}
+
+export interface DialogueTranslationCategory {
+  [category: string]: DialogueTranslationEntry;
+}
+
+export interface DialogueTranslationEntries {
+  [trainertype: string]: DialogueTranslationCategory;
+}
+
+
 export interface Localizable {
   localize(): void;
+}
+
+const alternativeFonts = {
+  "ko": [
+    new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
+  ],
+};
+
+function loadFont(language: string) {
+  if (!alternativeFonts[language]) {
+    language = language.split(/[-_/]/)[0];
+  }
+  if (alternativeFonts[language]) {
+    alternativeFonts[language].forEach((fontFace: FontFace) => {
+      document.fonts.add(fontFace);
+    });
+
+    const altFontLanguages = Object.keys(alternativeFonts);
+    altFontLanguages.splice(altFontLanguages.indexOf(language), 0);
+  }
+
+  (Object.values(alternativeFonts)).forEach(fontFaces => {
+    fontFaces.forEach(fontFace => {
+      if (fontFace && fontFace.status === "loaded") {
+        document.fonts.delete(fontFace);
+      }
+    });
+  });
 }
 
 export function initI18n(): void {
@@ -76,7 +128,10 @@ export function initI18n(): void {
     lang = localStorage.getItem("prLang");
   }
 
-
+  loadFont(lang);
+  i18next.on("languageChanged", lng=> {
+    loadFont(lng);
+  });
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -94,11 +149,11 @@ export function initI18n(): void {
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.use(LanguageDetector).init({
+  i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init({
     lng: lang,
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -119,22 +174,27 @@ export function initI18n(): void {
       de: {
         ...deConfig
       },
-      pt_BR: {
+      "pt-BR": {
         ...ptBrConfig
       },
-      zh_CN: {
+      "zh-CN": {
         ...zhCnConfig
       },
-      zh_TW: {
-        ...zhTWConfig
-      }
+      "zh-TW": {
+        ...zhTwConfig
+      },
+      ko: {
+        ...koConfig
+      },
     },
+    postProcess: ["korean-postposition"],
   });
 }
 
 // Module declared to make referencing keys in the localization files type-safe.
 declare module "i18next" {
   interface CustomTypeOptions {
+    defaultNS: "menu"; // Even if we don't use it, i18next requires a valid default namespace
     resources: {
       menu: SimpleTranslationEntries;
       menuUiHandler: SimpleTranslationEntries;
@@ -160,7 +220,21 @@ declare module "i18next" {
       modifierType: ModifierTypeTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-	  voucher: SimpleTranslationEntries;
+      achv: AchievementTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
+      biome: SimpleTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
     };
   }
 }
