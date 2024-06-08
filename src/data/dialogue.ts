@@ -449,6 +449,32 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.CAMPER]: [
+    {
+      encounter: [
+        "dialogue:camper.encounter.1",
+        "dialogue:camper.encounter.2",
+        "dialogue:camper.encounter.3",
+      ],
+      victory: [
+        "dialogue:camper.victory.1",
+        "dialogue:camper.victory.2",
+        "dialogue:camper.victory.3",
+      ]
+    },
+    {
+      encounter: [
+        "dialogue:picknicker.encounter.1",
+        "dialogue:picknicker.encounter.2",
+        "dialogue:picknicker.encounter.3",
+      ],
+      victory: [
+        "dialogue:picknicker.victory.1",
+        "dialogue:picknicker.victory.2",
+        "dialogue:picknicker.victory.3",
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "dialogue:brock.encounter.1",

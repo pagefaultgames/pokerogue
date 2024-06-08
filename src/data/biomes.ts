@@ -1626,7 +1626,7 @@ export const biomePokemonPools: BiomePokemonPools = {
 export const biomeTrainerPools: BiomeTrainerPools = {
   [Biome.TOWN]: {
     [BiomePoolTier.COMMON]: [ TrainerType.YOUNGSTER ],
-    [BiomePoolTier.UNCOMMON]: [],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.CAMPER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -1636,7 +1636,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.PLAINS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.TWINS ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.TWINS, TrainerType.CAMPER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.CYCLIST ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1647,7 +1647,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.GRASS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.SCHOOL_KID ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.SCHOOL_KID, TrainerType.CAMPER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1658,7 +1658,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.TALL_GRASS]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.CAMPER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER, TrainerType.RANGER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -7313,6 +7313,14 @@ export function initBiomes() {
       [ Biome.BEACH, BiomePoolTier.COMMON ]
     ]
     ],
+    [ TrainerType.CAMPER, [
+      [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
+      [ Biome.PLAINS, BiomePoolTier.COMMON ],
+      [ Biome.GRASS, BiomePoolTier.COMMON ],
+      [ Biome.TALL_GRASS, BiomePoolTier.COMMON ]
+    ]
+    ],
+
     [ TrainerType.BROCK, [
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
