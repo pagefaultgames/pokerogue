@@ -15,7 +15,6 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   private statsIvsCache: integer[];
   private ivChart: Phaser.GameObjects.Polygon;
   private ivStatValueTexts: BBCodeText[];
-  private ivChartSize: any;
 
   constructor(scene: BattleScene, x: number, y: number, showDiff?: boolean) {
     super(scene, x, y);
