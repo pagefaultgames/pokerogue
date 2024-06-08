@@ -1022,14 +1022,16 @@ export default class BattleScene extends SceneBase {
         this.arena.removeAllTags();
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
         this.unshiftPhase(new ShowTrainerPhase(this));
-
-        for (const pokemon of this.getParty()) {
-          pokemon.resetBattleData();
-          applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+      }
+      for (const pokemon of this.getParty()) {
+        if (pokemon) {
+          if (resetArenaState) {
+            pokemon.resetBattleData();
+            applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon, true);
+          }
           this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
         }
       }
-
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
         this.pushPhase(new NextEncounterPhase(this));
       } else {
