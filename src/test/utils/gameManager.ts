@@ -17,7 +17,7 @@ import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
 import TextInterceptor from "#app/test/utils/TextInterceptor";
 import {expect} from "vitest";
-import {GameModes} from "#app/game-mode";
+import {GameModes, getGameMode} from "#app/game-mode";
 import fs from "fs";
 import { AES, enc } from "crypto-js";
 import {updateUserInfo} from "#app/account";
@@ -121,8 +121,9 @@ export default class GameManager {
     return new Promise(async(resolve) => {
       await this.runToTitle();
       this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+        this.scene.gameMode = getGameMode(GameModes.CLASSIC);
         const starters = generateStarter(this.scene, species);
-        const selectStarterPhase = new SelectStarterPhase(this.scene, GameModes.CLASSIC);
+        const selectStarterPhase = new SelectStarterPhase(this.scene);
         this.scene.pushPhase(new EncounterPhase(this.scene, false));
         selectStarterPhase.initBattle(starters);
       });

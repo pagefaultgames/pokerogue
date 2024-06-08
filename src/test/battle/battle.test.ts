@@ -35,6 +35,7 @@ import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {allSpecies} from "#app/data/pokemon-species";
 import {PlayerGender} from "#app/data/enums/player-gender";
+import { getGameMode } from "#app/game-mode.js";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -229,8 +230,9 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.mustRun(SelectGenderPhase).catch((error) => expect(error).toBe(SelectGenderPhase));
     await game.phaseInterceptor.mustRun(TitlePhase).catch((error) => expect(error).toBe(TitlePhase));
     game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(game.scene);
-      const selectStarterPhase = new SelectStarterPhase(game.scene, GameModes.CLASSIC);
+      const selectStarterPhase = new SelectStarterPhase(game.scene);
       game.scene.pushPhase(new EncounterPhase(game.scene, false));
       selectStarterPhase.initBattle(starters);
     });
