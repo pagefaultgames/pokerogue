@@ -21,3 +21,5 @@ initPokemonForms();
 initSpecies();
 initMoves();
 initAbilities();
+
+global.testFailed = false;

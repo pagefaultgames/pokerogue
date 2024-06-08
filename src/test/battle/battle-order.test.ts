@@ -5,7 +5,7 @@ import * as overrides from "#app/overrides";
 import {Abilities} from "#app/data/enums/abilities";
 import {Species} from "#app/data/enums/species";
 import {
-  CommandPhase, EnemyCommandPhase,
+  CommandPhase, EnemyCommandPhase, SelectTargetPhase,
   TurnStartPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
@@ -55,7 +55,6 @@ describe("Battle order", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
     await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order[0]).toBe(2);
@@ -77,7 +76,6 @@ describe("Battle order", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
     await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order[0]).toBe(0);
@@ -118,9 +116,7 @@ describe("Battle order", () => {
       const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order.indexOf(0)).toBeGreaterThan(order.indexOf(2));
@@ -163,9 +159,7 @@ describe("Battle order", () => {
       const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order.indexOf(3)).toBeLessThan(order.indexOf(0));
@@ -207,9 +201,7 @@ describe("Battle order", () => {
       const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order.indexOf(1)).toBeLessThan(order.indexOf(0));
