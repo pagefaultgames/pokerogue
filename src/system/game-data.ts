@@ -1582,7 +1582,7 @@ export class GameData {
       : attr & DexAttr.DEFAULT_VARIANT ? DexAttr.DEFAULT_VARIANT : attr & DexAttr.VARIANT_2 ? DexAttr.VARIANT_2 : attr & DexAttr.VARIANT_3 ? DexAttr.VARIANT_3 : DexAttr.DEFAULT_VARIANT;
     ret |= this.getFormAttr(this.getFormIndex(attr));
 
-    const localOnlyStarterData = this.scene.gameData.localOnlyStarterData[species.speciesId];
+    const localOnlyStarterData = this.localOnlyStarterData[species.speciesId];
     return localOnlyStarterData?.dexAttrCursor ?? ret;
   }
 
