@@ -51,6 +51,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "neutralizingGasAb": "{{pokemonName}}'s Neutralizing Gas filled the area!",
   "asOneGlastrierAb": "{{pokemonName}} has two abilities",
   "asOneSpectrierAb": "{{pokemonName}} has two abilities",
+  "airlockAb": "The effects of weather disappeared!",
 
 } as const;
 
