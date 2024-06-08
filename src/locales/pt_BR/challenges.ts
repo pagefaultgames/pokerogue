@@ -2,8 +2,8 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const challenges: SimpleTranslationEntries = {
   "title": "Desafios",
-  "points": "Bad Ideas",
-  "confirm_start": "Continuar com esses desafios?",
+  "start": "Iniciar",
+  "illegalEvolution": "{{pokemon}} não pode ser escolhido\nnesse desafio!",
   "singleGeneration.name": "Geração Única",
   "singleGeneration.value.0": "Desligado",
   "singleGeneration.desc.0": "Você só pode user Pokémon de uma única geração.",
