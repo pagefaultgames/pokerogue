@@ -19,7 +19,27 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import {
+  FusePokemonModifierType,
+  ModifierPoolType,
+  ModifierType,
+  ModifierTypeFunc,
+  ModifierTypeOption,
+  PokemonModifierType,
+  PokemonMoveModifierType,
+  PokemonPpRestoreModifierType,
+  PokemonPpUpModifierType,
+  RememberMoveModifierType,
+  TmModifierType,
+  getDailyRunStarterModifiers,
+  getEnemyBuffModifierForWave,
+  getModifierType,
+  getPlayerModifierTypeOptions,
+  getPlayerShopModifierTypeOptionsForWave,
+  modifierTypes,
+  regenerateModifierPoolThresholds,
+  CustomModifierSettings
+} from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
@@ -4947,12 +4967,14 @@ export class AttemptRunPhase extends PokemonPhase {
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
   private modifierTiers: ModifierTier[];
+  private customModifierSettings: CustomModifierSettings;
 
-  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[]) {
+  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings) {
     super(scene);
 
     this.rerollCount = rerollCount;
     this.modifierTiers = modifierTiers;
+    this.customModifierSettings = customModifierSettings;
   }
 
   start() {
@@ -4966,10 +4988,22 @@ export class SelectModifierPhase extends BattlePhase {
 
     const party = this.scene.getParty();
     regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
-    const modifierCount = new Utils.IntegerHolder(3);
+    let  modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
+
+    // If custom modifiers are specified, overrides default item count
+    if (!!this.customModifierSettings) {
+      const newCount = (this.customModifierSettings.guaranteedModifierTiers?.length || 0) + (this.customModifierSettings.guaranteedModifiers?.length || 0);
+      if (this.customModifierSettings.fillRemaining) {
+        const originalCount = modifierCount.value;
+        modifierCount = new Utils.IntegerHolder(originalCount > newCount ? originalCount : newCount);
+      } else {
+        modifierCount = new Utils.IntegerHolder(newCount);
+      }
+    }
+
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
 
     const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
@@ -5149,7 +5183,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined);
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
