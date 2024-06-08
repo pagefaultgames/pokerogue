@@ -56,6 +56,9 @@ export const battle: SimpleTranslationEntries = {
   "skipItemQuestion": "Tem certeza de que não quer escolher um item?",
   "eggHatching": "Opa?",
   "ivScannerUseQuestion": "Quer usar o Scanner de IVs em {{pokemonName}}?",
+  "wildPokemonWithAffix": "{{pokemonName}} selvagem",
+  "foePokemonWithAffix": "{{pokemonName}} adversário",
+  "useMove": "{{pokemonNameWithAffix}} usou {{moveName}}!",
   "drainMessage": "{{pokemonName}} teve sua\nenergia drenada!",
   "regainHealth": "{{pokemonName}} recuperou\npontos de saúde!"
 } as const;
