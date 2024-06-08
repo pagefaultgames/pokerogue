@@ -1,6 +1,8 @@
 import i18next from "i18next";
 import BattleScene from "../battle-scene";
+import { Button } from "../enums/buttons";
 import { GameMode } from "../game-mode";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { SessionSaveData } from "../system/game-data";
 import PokemonData from "../system/pokemon-data";
 import * as Utils from "../utils";
