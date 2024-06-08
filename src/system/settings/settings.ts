@@ -71,6 +71,7 @@ export const SettingKeys = {
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
   SE_Volume: "SE_VOLUME",
+  Music_Preference: "MUSIC_PREFERENCE",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS"
 };
 
@@ -294,6 +295,14 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO
   },
   {
+    key: SettingKeys.Music_Preference,
+    label: "Music Preference",
+    options: ["Consistent", "Mixed"],
+    default: 0,
+    type: SettingType.AUDIO,
+    requireReload: true
+  },
+  {
     key: SettingKeys.Move_Touch_Controls,
     label: "Move Touch Controls",
     options: ["Configure"],
@@ -348,6 +357,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.SE_Volume:
     scene.seVolume = value ? parseInt(Setting[index].options[value]) * 0.01 : 0;
     scene.updateSoundVolume();
+    break;
+  case SettingKeys.Music_Preference:
+    scene.musicPreference = value;
     break;
   case SettingKeys.Damage_Numbers:
     scene.damageNumbersMode = value;
