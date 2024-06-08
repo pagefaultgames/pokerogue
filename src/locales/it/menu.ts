@@ -40,6 +40,7 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Classifica Settimanale",
   "noRankings": "Nessuna Classifica",
   "loading": "Caricamento…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Giocatori Online",
   "evolving": "Cosa?\n{{pokemonName}} si evolvendo!",
   "stoppedEvolving": "{{pokemonName}} ha smesso di evolversi.",
