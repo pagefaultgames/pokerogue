@@ -284,6 +284,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(Mode.EGG_LIST);
           success = true;
         } else {
+          ui.showText(i18next.t("menuUiHandler:noEggs"));
           error = true;
         }
         break;
