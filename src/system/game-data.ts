@@ -1586,7 +1586,6 @@ export class GameData {
     ret |= this.getFormAttr(this.getFormIndex(attr));
 
     const localOnlyStarterData = this.localOnlyStarterData[species.speciesId];
-    console.log(localOnlyStarterData);
     return localOnlyStarterData?.dexAttrCursor ?? ret;
   }
 
