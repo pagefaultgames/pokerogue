@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const challenges: SimpleTranslationEntries = {
   "title": "Challenge Modifiers",
-  "confirm_start": "Proceed with these challenges?",
+  "start": "Start",
   "illegalEvolution": "{{pokemon}} changed into an ineligble pokemon\nfor this challenge!",
   "singleGeneration.name": "Mono Gen",
   "singleGeneration.value.0": "Off",
