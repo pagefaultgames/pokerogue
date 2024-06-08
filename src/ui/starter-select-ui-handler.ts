@@ -1300,10 +1300,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           success = true;
         }
       } else {
+        this.scene.gameData.localOnlyStarterData[this.lastSpecies.speciesId] ??= {};
+        const speciesStarterData = this.scene.gameData.localOnlyStarterData[this.lastSpecies.speciesId];
+
         const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
         const rows = Math.ceil(genStarters / 9);
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
+        console.log(props);
         switch (button) {
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
@@ -1356,7 +1360,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newAbilityIndex !== this.abilityCursor);
-            this.scene.gameData.localOnlyStarterData[this.lastSpecies.speciesId].abilityIndex = newAbilityIndex;
+            speciesStarterData.abilityIndex = newAbilityIndex;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
             success = true;
           }
@@ -1366,7 +1370,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
             const natureIndex = natures.indexOf(this.natureCursor);
             const newNature = natures[(natureIndex + 1) % natures.length];
-            this.scene.gameData.localOnlyStarterData[this.lastSpecies.speciesId].nature = newNature;
+            speciesStarterData.nature = newNature;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
             success = true;
           }
@@ -1886,6 +1890,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.dexAttrCursor |= this.scene.gameData.getFormAttr(formIndex !== undefined ? formIndex : (formIndex = oldProps.formIndex));
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
+
+      const localOnlyStarterData = this.scene.gameData.localOnlyStarterData[species.speciesId];
+      if (localOnlyStarterData) {
+        localOnlyStarterData.dexAttrCursor = this.dexAttrCursor;
+      }
     }
 
     this.pokemonSprite.setVisible(false);
