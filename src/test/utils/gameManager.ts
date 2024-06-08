@@ -22,6 +22,7 @@ import {PlayerGender} from "#app/data/enums/player-gender";
 import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import {ExpNotification} from "#app/enums/exp-notification";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -39,6 +40,8 @@ export default class GameManager {
    * @param bypassLogin - Whether to bypass the login phase.
    */
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
+    localStorage.clear();
+    ErrorInterceptor.getInstance().clear();
     BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
     this.scene = new BattleScene();
@@ -90,14 +93,14 @@ export default class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   runToTitle(): Promise<void> {
-    return new Promise(async(resolve) => {
-      await this.phaseInterceptor.run(LoginPhase);
+    return new Promise(async(resolve, reject) => {
+      await this.phaseInterceptor.run(LoginPhase).catch((e) => reject(e));
       this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
         this.scene.gameData.gender = PlayerGender.MALE;
         this.endPhase();
       }, () => this.isCurrentPhase(TitlePhase));
-      await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
-      await this.phaseInterceptor.run(TitlePhase);
+      await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase)).catch((e) => reject(e));
+      await this.phaseInterceptor.run(TitlePhase).catch((e) => reject(e));
       this.scene.gameSpeed = 5;
       this.scene.moveAnimations = false;
       this.scene.showLevelUpStats = false;
@@ -114,8 +117,8 @@ export default class GameManager {
    * @returns A promise that resolves when the summon phase is reached.
    */
   runToSummon(species?: Species[]): Promise<void> {
-    return new Promise(async(resolve) => {
-      await this.runToTitle();
+    return new Promise(async(resolve, reject) => {
+      await this.runToTitle().catch((e) => reject(e));
       this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
         const starters = generateStarter(this.scene, species);
@@ -123,7 +126,7 @@ export default class GameManager {
         this.scene.pushPhase(new EncounterPhase(this.scene, false));
         selectStarterPhase.initBattle(starters);
       });
-      await this.phaseInterceptor.run(EncounterPhase);
+      await this.phaseInterceptor.run(EncounterPhase).catch((e) => reject(e));
       resolve();
     });
   }
@@ -135,7 +138,7 @@ export default class GameManager {
    */
   startBattle(species?: Species[]): Promise<void> {
     return new Promise(async(resolve, reject) => {
-      await this.runToSummon(species);
+      await this.runToSummon(species).catch((e) => reject(e));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();

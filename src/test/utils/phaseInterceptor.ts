@@ -7,10 +7,11 @@ import {
   PostSummonPhase,
   SelectGenderPhase, SelectModifierPhase,
   SelectStarterPhase, SelectTargetPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
-  TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, VictoryPhase
+  TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, UnavailablePhase, VictoryPhase
 } from "#app/phases";
 import UI, {Mode} from "#app/ui/ui";
 import {Phase} from "#app/phase";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 
 export default class PhaseInterceptor {
   public scene;
@@ -61,6 +62,7 @@ export default class PhaseInterceptor {
     [StatChangePhase, this.startPhase],
     [ShinySparklePhase, this.startPhase],
     [SelectTargetPhase, this.startPhase],
+    [UnavailablePhase, this.startPhase],
   ];
 
   private endBySetMode = [
@@ -80,6 +82,15 @@ export default class PhaseInterceptor {
     this.startPromptHander();
   }
 
+  rejectAll(error) {
+    if (this.inProgress) {
+      clearInterval(this.promptInterval);
+      clearInterval(this.interval);
+      clearInterval(this.intervalRun);
+      this.inProgress.onError(error);
+    }
+  }
+
   /**
    * Method to set the starting phase.
    * @param phaseFrom - The phase to start from.
@@ -97,6 +108,7 @@ export default class PhaseInterceptor {
    */
   async to(phaseTo, runTarget: boolean = true): Promise<void> {
     return new Promise(async (resolve, reject) => {
+      ErrorInterceptor.getInstance().add(this);
       await this.run(this.phaseFrom).catch((e) => reject(e));
       this.phaseFrom = null;
       const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
@@ -133,13 +145,16 @@ export default class PhaseInterceptor {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve, reject) => {
+      ErrorInterceptor.getInstance().add(this);
       const interval = setInterval(async () => {
         const currentPhase = this.onHold.shift();
         if (currentPhase) {
           if (currentPhase.name !== targetName) {
             clearInterval(interval);
-            if (skipFn && skipFn()) {
+            const skip = skipFn && skipFn(currentPhase.name);
+            if (skip) {
               this.onHold.unshift(currentPhase);
+              ErrorInterceptor.getInstance().remove(this);
               return resolve();
             }
             clearInterval(interval);
@@ -149,8 +164,10 @@ export default class PhaseInterceptor {
           this.inProgress = {
             name: currentPhase.name,
             callback: () => {
+              ErrorInterceptor.getInstance().remove(this);
               resolve();
             },
+            onError: (error) => reject(error),
           };
           currentPhase.call();
         }
@@ -189,6 +206,11 @@ export default class PhaseInterceptor {
         this.phases[phase.name].start.apply(instance);
       }
     });
+  }
+
+  unlock() {
+    this.inProgress?.callback();
+    this.inProgress = undefined;
   }
 
   /**
@@ -268,5 +290,6 @@ export default class PhaseInterceptor {
     Phase.prototype.end = this.originalSuperEnd;
     clearInterval(this.promptInterval);
     clearInterval(this.interval);
+    clearInterval(this.intervalRun);
   }
 }
