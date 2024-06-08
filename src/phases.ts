@@ -543,14 +543,16 @@ export class SelectStarterPhase extends Phase {
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
       this.scene.ui.clearText();
-      this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
-        if (slotId === -1) {
-          this.scene.clearPhaseQueue();
-          this.scene.pushPhase(new TitlePhase(this.scene));
-          return this.end();
-        }
-        this.scene.sessionSlotId = slotId;
-        this.initBattle(starters);
+      this.scene.ui.setMode(Mode.POINT_SHOP, () => { // Can pass along whatever you want to this scope
+        this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+          if (slotId === -1) {
+            this.scene.clearPhaseQueue();
+            this.scene.pushPhase(new TitlePhase(this.scene));
+            return this.end();
+          }
+          this.scene.sessionSlotId = slotId;
+          this.initBattle(starters);
+        });
       });
     });
   }

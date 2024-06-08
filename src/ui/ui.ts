@@ -45,6 +45,7 @@ import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-han
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
+import PointShopUiHandler from "./point-shop-ui-hnadler";
 
 export enum Mode {
   MESSAGE,
@@ -58,6 +59,7 @@ export enum Mode {
   PARTY,
   SUMMARY,
   STARTER_SELECT,
+  POINT_SHOP,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
   CONFIRM,
@@ -90,6 +92,7 @@ const transitionModes = [
   Mode.PARTY,
   Mode.SUMMARY,
   Mode.STARTER_SELECT,
+  Mode.POINT_SHOP,
   Mode.EVOLUTION_SCENE,
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
@@ -153,6 +156,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new PartyUiHandler(scene),
       new SummaryUiHandler(scene),
       new StarterSelectUiHandler(scene),
+      new PointShopUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
       new ConfirmUiHandler(scene),
