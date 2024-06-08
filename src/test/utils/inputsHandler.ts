@@ -54,9 +54,6 @@ export default class InputsHandler {
   }
 
   init(): void {
-    setInterval(() => {
-      this.inputController.update();
-    });
     initTouchControls(this.inputController.events);
     this.events = this.inputController.events;
     this.scene.input.gamepad.emit("connected", this.fakePad);
