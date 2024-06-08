@@ -18,8 +18,8 @@ import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { Button } from "../enums/buttons";
-import { GameModes, gameModes } from "../game-mode";
-import { TitlePhase } from "../phases";
+import { GameModes } from "../game-mode";
+import { SelectChallengePhase, TitlePhase } from "../phases";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
 import { Passive as PassiveAttr } from "#app/data/enums/passive";
 import { Tutorial, handleTutorial } from "../tutorial";
@@ -31,6 +31,7 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
@@ -245,7 +246,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private iconAnimHandler: PokemonIconAnimHandler;
 
   private starterSelectCallback: StarterSelectCallback;
-  private gameMode: GameModes;
 
   protected blockInput: boolean = false;
 
@@ -724,13 +724,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   show(args: any[]): boolean {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
-    if (args.length >= 2 && args[0] instanceof Function && typeof args[1] === "number") {
+    if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
 
       this.starterSelectContainer.setVisible(true);
-
-      this.gameMode = args[1];
 
       this.setGenMode(false);
       this.setCursor(0);
@@ -957,7 +955,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.blockInput = true;
         this.scene.clearPhaseQueue();
-        this.scene.pushPhase(new TitlePhase(this.scene));
+        if (this.scene.gameMode.isChallenge) {
+          this.scene.pushPhase(new SelectChallengePhase(this.scene));
+        } else {
+          this.scene.pushPhase(new TitlePhase(this.scene));
+        }
         this.scene.getCurrentPhase().end();
         success = true;
       }
@@ -1029,7 +1031,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   }
                 }
                 const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-                if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+
+                const isValidForChallenge = new Utils.BooleanHolder(true);
+                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
+
+                if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                   const cursorObj = this.starterCursorObjs[this.starterCursors.length];
                   cursorObj.setVisible(true);
                   cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
@@ -1521,13 +1527,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   getValueLimit(): integer {
-    switch (this.gameMode) {
+    const valueLimit = new Utils.IntegerHolder(0);
+    switch (this.scene.gameMode.modeId) {
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
-      return 15;
+      valueLimit.value = 15;
     default:
-      return 10;
+      valueLimit.value = 10;
     }
+
+    Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
+
+    return valueLimit.value;
   }
 
   setCursor(cursor: integer): boolean {
@@ -2160,20 +2171,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const speciesSprite = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
 
         /**
-         * If remainValue greater than or equal pokemon species, the user can select.
+         * If remainValue greater than or equal pokemon species and the pokemon is legal for this challenge, the user can select.
          * so that the alpha value of pokemon sprite set 1.
          *
          * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
          * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
          */
-        if (remainValue >= speciesStarterValue) {
+        const isValidForChallenge = new Utils.BooleanHolder(true);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge);
+
+        const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
+
+        if (canBeChosen) {
           speciesSprite.setAlpha(1);
           if (speciesStarterDexEntry?.caughtAttr) {
             this.canAddParty = true;
           }
         } else {
           /**
-           * If remainValue less than pokemon, the use can't select.
+           * If it can't be chosen, the user can't select.
            * so that the alpha value of pokemon sprite set 0.375.
            */
           speciesSprite.setAlpha(0.375);
@@ -2202,8 +2218,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        const startRun = (gameMode: GameModes) => {
-          this.scene.gameMode = gameModes[gameMode];
+        const startRun = () => {
           this.scene.money = this.scene.gameMode.getStartingMoney();
           ui.setMode(Mode.STARTER_SELECT);
           const thisObj = this;
@@ -2222,7 +2237,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             };
           }));
         };
-        startRun(this.gameMode);
+        startRun();
       }, cancel, null, null, 19);
     });
 

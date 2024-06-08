@@ -222,6 +222,7 @@ declare module "i18next" {
       berry: BerryTranslationEntries;
       achv: AchievementTranslationEntries;
       gameStatsUiHandler: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
       pokemonInfoContainer: SimpleTranslationEntries;

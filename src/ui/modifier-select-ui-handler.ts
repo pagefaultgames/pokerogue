@@ -18,6 +18,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private rerollButtonContainer: Phaser.GameObjects.Container;
   private lockRarityButtonContainer: Phaser.GameObjects.Container;
   private transferButtonContainer: Phaser.GameObjects.Container;
+  private checkButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay : MoveInfoOverlay;
@@ -45,7 +46,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.modifierContainer = this.scene.add.container(0, 0);
     ui.add(this.modifierContainer);
 
-    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
+    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 71, -64);
     this.transferButtonContainer.setName("container-transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
@@ -54,6 +55,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
+
+    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
+    this.checkButtonContainer.setName("container-use-btn");
+    this.checkButtonContainer.setVisible(false);
+    ui.add(this.checkButtonContainer);
+
+    const checkButtonText = addTextObject(this.scene, -4, -2, "Check Team", TextStyle.PARTY);
+    checkButtonText.setName("text-use-btn");
+    checkButtonText.setOrigin(1, 0);
+    this.checkButtonContainer.add(checkButtonText);
 
     this.rerollButtonContainer = this.scene.add.container(16, -64);
     this.rerollButtonContainer.setName("container-reroll-brn");
@@ -120,6 +131,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
+
+    this.checkButtonContainer.setVisible(false);
+    this.checkButtonContainer.setAlpha(0);
 
     this.rerollButtonContainer.setVisible(false);
     this.rerollButtonContainer.setAlpha(0);
@@ -204,12 +218,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
 
       this.rerollButtonContainer.setAlpha(0);
+      this.checkButtonContainer.setAlpha(0);
       this.lockRarityButtonContainer.setAlpha(0);
       this.rerollButtonContainer.setVisible(true);
+      this.checkButtonContainer.setVisible(true);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
 
       this.scene.tweens.add({
-        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer ],
+        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer, this.checkButtonContainer ],
         alpha: 1,
         duration: 250
       });
@@ -267,7 +283,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (!this.rowCursor && this.cursor === 2) {
+        if (this.rowCursor === 0 && this.cursor === 3) {
           success = this.setCursor(0);
         } else if (this.rowCursor < this.shopOptionsRows.length + 1) {
           success = this.setRowCursor(this.rowCursor + 1);
@@ -276,13 +292,29 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       case Button.DOWN:
         if (this.rowCursor) {
           success = this.setRowCursor(this.rowCursor - 1);
-        } else if (this.lockRarityButtonContainer.visible && !this.cursor) {
-          success = this.setCursor(2);
+        } else if (this.lockRarityButtonContainer.visible && this.cursor === 0) {
+          success = this.setCursor(3);
         }
         break;
       case Button.LEFT:
         if (!this.rowCursor) {
-          success = this.cursor === 1 && this.rerollButtonContainer.visible && this.setCursor(0);
+          switch (this.cursor) {
+          case 0:
+            success = false;
+            break;
+          case 1:
+            success = this.rerollButtonContainer.visible && this.setCursor(0);
+            break;
+          case 2:
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(1);
+            } else if (this.rerollButtonContainer.visible) {
+              success = this.setCursor(0);
+            } else {
+              success = false;
+            }
+            break;
+          }
         } else if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
         } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
@@ -291,7 +323,21 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         break;
       case Button.RIGHT:
         if (!this.rowCursor) {
-          success = this.cursor !== 1 && this.transferButtonContainer.visible && this.setCursor(1);
+          switch (this.cursor) {
+          case 0:
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(1);
+            } else {
+              success = this.setCursor(2);
+            }
+            break;
+          case 1:
+            success = this.setCursor(2);
+            break;
+          case 2:
+            success = false;
+            break;
+          }
         } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
           success = this.setCursor(this.cursor + 1);
         } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
@@ -337,12 +383,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         // prepare the move overlay to be shown with the toggle
         this.moveInfoOverlay.show(allMoves[type.moveId]);
       }
-    } else if (!cursor) {
+    } else if (cursor === 0) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText("Spend money to reroll your item options.");
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 120, -60);
       ui.showText("Transfer a held item from one Pokémon to another.");
+    } else if (cursor === 2) {
+      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 60, -60);
+      ui.showText("Check your team or use a form changing item.");
     } else {
       this.cursorObj.setPosition(6, -60);
       ui.showText("Lock item rarities on reroll (affects reroll cost).");
@@ -354,14 +403,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   setRowCursor(rowCursor: integer): boolean {
     const lastRowCursor = this.rowCursor;
 
-    if (rowCursor !== lastRowCursor && (rowCursor || this.rerollButtonContainer.visible || this.transferButtonContainer.visible)) {
+    if (rowCursor !== lastRowCursor) {
       this.rowCursor = rowCursor;
       let newCursor = Math.round(this.cursor / Math.max(this.getRowItems(lastRowCursor) - 1, 1) * (this.getRowItems(rowCursor) - 1));
-      if (!rowCursor) {
-        if (!newCursor && !this.rerollButtonContainer.visible) {
+      if (rowCursor === 0) {
+        if (newCursor === 0 && !this.rerollButtonContainer.visible) {
           newCursor = 1;
-        } else if (newCursor && !this.transferButtonContainer.visible) {
-          newCursor = 0;
+        }
+        if (newCursor === 1 && !this.transferButtonContainer.visible) {
+          newCursor = 2;
         }
       }
       this.cursor = -1;
@@ -375,7 +425,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private getRowItems(rowCursor: integer): integer {
     switch (rowCursor) {
     case 0:
-      return 2;
+      return 3;
     case 1:
       return this.options.length;
     default:
@@ -437,7 +487,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onComplete: () => options.forEach(o => o.destroy())
     });
 
-    [ this.rerollButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer ].forEach(container => {
+    [ this.rerollButtonContainer, this.checkButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer ].forEach(container => {
       if (container.visible) {
         this.scene.tweens.add({
           targets: container,

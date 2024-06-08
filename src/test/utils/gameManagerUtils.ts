@@ -3,7 +3,7 @@ import {getDailyRunStarters} from "#app/data/daily-run";
 import {Gender} from "#app/data/gender";
 import {Species} from "#app/data/enums/species";
 import {Starter} from "#app/ui/starter-select-ui-handler";
-import {GameModes, gameModes} from "#app/game-mode";
+import {GameModes, getGameMode} from "#app/game-mode";
 import {getPokemonSpecies, getPokemonSpeciesForm} from "#app/data/pokemon-species";
 import {PlayerPokemon} from "#app/field/pokemon";
 
@@ -49,7 +49,7 @@ function getTestRunStarters(scene, seed, species) {
     return getDailyRunStarters(scene, seed);
   }
   const starters: Starter[] = [];
-  const startingLevel = gameModes[GameModes.CLASSIC].getStartingLevel();
+  const startingLevel = getGameMode(GameModes.CLASSIC).getStartingLevel();
 
   for (const specie of species) {
     const starterSpeciesForm = getPokemonSpeciesForm(specie, 0);
