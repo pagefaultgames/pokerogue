@@ -11,6 +11,7 @@ export enum TrainerType {
   BIKER,
   BLACK_BELT,
   BREEDER,
+  CAMPER,
   CLERK,
   CYCLIST,
   DANCER,
