@@ -59,5 +59,5 @@ export const battle: SimpleTranslationEntries = {
   "wildPokemonWithAffix": "야생 {{pokemonName}}",
   "foePokemonWithAffix": "상대 {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!",
-  "useQuickClaw": "used its Quick Claw to move faster!"
+  "useQuickClaw": "{{pokemonName}} used its Quick Claw to move faster!"
 } as const;

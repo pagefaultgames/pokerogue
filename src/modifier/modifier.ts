@@ -9,7 +9,7 @@ import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import { getPokemonMessage } from "../messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
@@ -798,7 +798,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
       const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
 
       if (isCommandFight && hasQuickClaw) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` ${i18next.t("battle:useQuickClaw")}`));
+        pokemon.scene.queueMessage(i18next.t("battle:useQuickClaw", {pokemonName: getPokemonNameWithAffix(pokemon)}));
       }
       return true;
     }
