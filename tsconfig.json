@@ -16,5 +16,10 @@
 		},
 		"outDir": "./build",
 		"noEmit": true
-	}
+	},
+	"typedocOptions": {
+        "entryPoints": ["src/"],
+		"entryPointStrategy": "expand",
+        "out": "typedoc",
+    }
 }

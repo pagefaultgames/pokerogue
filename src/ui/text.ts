@@ -1,10 +1,10 @@
+import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { ModifierTier } from "../modifier/modifier-tier";
-import { EggTier } from "../data/enums/egg-type";
 import BattleScene from "../battle-scene";
+import { EggTier } from "../data/enums/egg-type";
 import { UiTheme } from "../enums/ui-theme";
-import i18next from "i18next";
+import { ModifierTier } from "../modifier/modifier-tier";
 
 export enum TextStyle {
   MESSAGE,
@@ -22,8 +22,11 @@ export enum TextStyle {
   SUMMARY_GRAY,
   SUMMARY_GREEN,
   MONEY,
+  STATS_LABEL,
+  STATS_VALUE,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
+  SETTINGS_LOCKED,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
   MOVE_INFO_CONTENT
@@ -42,10 +45,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "en":{},
   "de":{},
   "es":{},
-  "it":{},
   "fr":{},
-  "zh_CN":{},
+  "it":{},
   "pt_BR":{},
+  "zh_CN":{},
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
@@ -59,6 +62,15 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   }
 
   return ret;
+}
+
+export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
+  const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  obj.setScale(0.1666666667);
+  obj.setShadow(shadowXpos, shadowYpos, shadowColor);
+  if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
+    obj.setLineSpacing(5);
+  }
 }
 
 export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
@@ -85,8 +97,8 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
   return ret;
 }
 
-function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
-  const lang = i18next.language;
+function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
+  const lang = i18next.resolvedLanguage;
   let shadowXpos = 4;
   let shadowYpos = 5;
 
@@ -112,8 +124,36 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   case TextStyle.WINDOW_ALT:
     shadowXpos = 3;
     shadowYpos = 3;
+    break;
+  case TextStyle.STATS_LABEL:
+    let fontSizeLabel = "96px";
+    switch (lang) {
+    case "de":
+      fontSizeLabel = "80px";
+      break;
+    default:
+      fontSizeLabel = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeLabel;
+    break;
+  case TextStyle.STATS_VALUE:
+    shadowXpos = 3;
+    shadowYpos = 3;
+    let fontSizeValue = "96px";
+    switch (lang) {
+    case "de":
+      fontSizeValue = "80px";
+      break;
+    default:
+      fontSizeValue = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeValue;
+    break;
   case TextStyle.MESSAGE:
   case TextStyle.SETTINGS_LABEL:
+  case TextStyle.SETTINGS_LOCKED:
   case TextStyle.SETTINGS_SELECTED:
     styleOptions.fontSize = languageSettings[lang]?.summaryFontSize || "96px";
     break;
@@ -197,8 +237,13 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.SUMMARY_GOLD:
   case TextStyle.MONEY:
     return !shadow ? "#e8e8a8" : "#a0a060";
+  case TextStyle.SETTINGS_LOCKED:
   case TextStyle.SUMMARY_GRAY:
     return !shadow ? "#a0a0a0" : "#636363";
+  case TextStyle.STATS_LABEL:
+    return !shadow ? "#f8b050" : "#c07800";
+  case TextStyle.STATS_VALUE:
+    return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.SUMMARY_GREEN:
     return !shadow ? "#78c850" : "#306850";
   case TextStyle.SETTINGS_LABEL:
