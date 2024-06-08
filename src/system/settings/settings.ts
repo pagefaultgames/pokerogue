@@ -42,6 +42,7 @@ export const SettingKeys = {
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
+  Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
@@ -65,7 +66,8 @@ export const SettingKeys = {
   Player_Gender: "PLAYER_GENDER",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
-  SE_Volume: "SE_VOLUME"
+  SE_Volume: "SE_VOLUME",
+  Music_Preference: "MUSIC_PREFERENCE"
 };
 
 /**
@@ -104,6 +106,13 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Skip_Seen_Dialogues,
     label: "Skip Seen Dialogues",
     options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Battle_Style,
+    label: "Battle Style",
+    options: ["Switch", "Set"],
     default: 0,
     type: SettingType.GENERAL
   },
@@ -279,6 +288,14 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO
+  },
+  {
+    key: SettingKeys.Music_Preference,
+    label: "Music Preference",
+    options: ["Consistent", "Mixed"],
+    default: 0,
+    type: SettingType.AUDIO,
+    requireReload: true
   }
 ];
 
@@ -327,6 +344,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.seVolume = value ? parseInt(Setting[index].options[value]) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
+  case SettingKeys.Music_Preference:
+    scene.musicPreference = value;
+    break;
   case SettingKeys.Damage_Numbers:
     scene.damageNumbersMode = value;
     break;
@@ -347,6 +367,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Battle_Style:
+    scene.battleStyle = value;
     break;
   case SettingKeys.Candy_Upgrade_Notification:
     if (scene.candyUpgradeNotification === value) {
@@ -469,15 +492,15 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             },
             {
               label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt_BR")
+              handler: () => changeLocaleHandler("pt-BR")
             },
             {
               label: "简体中文",
-              handler: () => changeLocaleHandler("zh_CN")
+              handler: () => changeLocaleHandler("zh-CN")
             },
             {
               label: "繁體中文",
-              handler: () => changeLocaleHandler("zh_TW")
+              handler: () => changeLocaleHandler("zh-TW")
             },
             {
               label: "한국어",
