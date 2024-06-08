@@ -55,6 +55,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
   private moveInfo: MoveInfo[] = new Array();
 
+  /** Current state of the flyout's visibility */
+  public flyoutVisible: boolean = false;
+
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
   private readonly onMoveUsedEvent = (event: Event) => this.onMoveUsed(event);
   private readonly onBerryUsedEvent = (event: Event) => this.onBerryUsed(event);
@@ -170,6 +173,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   /** Animates the flyout to either show or hide it by applying a fade and translation */
   toggleFlyout(visible: boolean): void {
+    this.flyoutVisible = visible;
+
     this.scene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
