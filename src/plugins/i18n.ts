@@ -174,13 +174,13 @@ export function initI18n(): void {
       de: {
         ...deConfig
       },
-      pt_BR: {
+      "pt-BR": {
         ...ptBrConfig
       },
-      zh_CN: {
+      "zh-CN": {
         ...zhCnConfig
       },
-      zh_TW: {
+      "zh-TW": {
         ...zhTwConfig
       },
       ko: {
@@ -234,6 +234,7 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
     };
   }
 }

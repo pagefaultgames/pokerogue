@@ -46,7 +46,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonNatureChangeModifierType": {
       name: "Hortelã {{natureName}}",
-      description: "Muda a natureza de um Pokémon para {{natureName}} e a desbloqueia permanentemente para seu inicial",
+      description: "Muda a natureza do Pokémon para {{natureName}} e a desbloqueia permanentemente",
     },
     "DoubleBattleChanceBoosterModifierType": {
       description: "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas",
@@ -99,6 +99,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "TM{{moveId}} - {{moveName}}",
       description: "Ensina {{moveName}} a um Pokémon",
     },
+    "TmModifierTypeWithInfo": {
+      name: "TM{{moveId}} - {{moveName}}",
+      description: "Ensina {{moveName}} a um Pokémon\n(Segure C ou Shift para mais informações)",
+    },
     "EvolutionItemModifierType": {
       description: "Faz certos Pokémon evoluírem",
     },
@@ -109,8 +113,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Combina dois Pokémon (transfere Habilidade, divide os atributos base e tipos, compartilha os movimentos)",
     },
     "TerastallizeModifierType": {
-      name: "{{teraType}} Fragmento Tera",
-      description: "{{teraType}} Terastalize um Pokémon por até 10 batalhas",
+      name: "Fragmento Tera {{teraType}}",
+      description: "Terastalize um Pokémon para o tipo {{teraType}} por 10 ondas",
     },
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente",

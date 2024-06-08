@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
+import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
@@ -7,6 +7,8 @@ import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import {Button} from "../enums/buttons";
+import MoveInfoOverlay from "./move-info-overlay";
+import { allMoves } from "../data/move";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -18,6 +20,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private checkButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
+  private moveInfoOverlay : MoveInfoOverlay;
+  private moveInfoOverlayActive : boolean = false;
 
   private rowCursor: integer = 0;
   private player: boolean;
@@ -84,6 +88,21 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonText = addTextObject(this.scene, -4, -2, "Lock Rarities", TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
+
+    // prepare move overlay
+    const overlayScale = 1;
+    this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
+      delayVisibility: true,
+      scale: overlayScale,
+      onSide: true,
+      right: true,
+      x: 1,
+      y: -MoveInfoOverlay.getHeight(overlayScale, true) -1,
+      width: (this.scene.game.canvas.width / 6) - 2,
+    });
+    ui.add(this.moveInfoOverlay);
+    // register the overlay to receive toggle events
+    this.scene.addInfoToggle(this.moveInfoOverlay);
   }
 
   show(args: any[]): boolean {
@@ -92,6 +111,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       }
+      this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
     }
 
@@ -240,6 +260,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         if (!originalOnActionInput(this.rowCursor, this.cursor)) {
           this.awaitingActionInput = true;
           this.onActionInput = originalOnActionInput;
+        } else {
+          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+          this.moveInfoOverlay.setVisible(false);
+          this.moveInfoOverlay.active = false; // this is likely unnecessary, but it should help future prove the UI
         }
       }
     } else if (button === Button.CANCEL) {
@@ -250,6 +274,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           this.awaitingActionInput = false;
           this.onActionInput = null;
           originalOnActionInput(-1);
+          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+          this.moveInfoOverlay.setVisible(false);
+          this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action
         }
       }
     } else {
@@ -339,6 +366,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.cursorObj.setScale(this.rowCursor === 1 ? 2 : this.rowCursor >= 2 ? 1.5 : 1);
 
+    // the modifier selection has been updated, always hide the overlay
+    this.moveInfoOverlay.clear();
     if (this.rowCursor) {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
       if (this.rowCursor < 2) {
@@ -346,7 +375,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       } else {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
       }
-      ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
+
+      const type = options[this.cursor].modifierTypeOption.type;
+      ui.showText(type.getDescription(this.scene));
+      if (type instanceof TmModifierType) {
+        // prepare the move overlay to be shown with the toggle
+        this.moveInfoOverlay.show(allMoves[type.moveId]);
+      }
     } else if (cursor === 0) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText("Spend money to reroll your item options.");
@@ -427,6 +462,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   clear() {
     super.clear();
 
+    this.moveInfoOverlay.clear();
+    this.moveInfoOverlayActive = false;
     this.awaitingActionInput = false;
     this.onActionInput = null;
     this.getUi().clearText();

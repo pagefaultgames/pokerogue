@@ -8,7 +8,7 @@ import { Moves } from "./data/enums/moves";
 import { TrainerType } from "./data/enums/trainer-type";
 import { GameMode } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
-import { PlayerGender } from "./system/game-data";
+import { PlayerGender } from "./data/enums/player-gender";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";

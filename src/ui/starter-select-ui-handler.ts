@@ -20,7 +20,8 @@ import { Type } from "../data/type";
 import { Button } from "../enums/buttons";
 import { GameModes } from "../game-mode";
 import { TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { Passive as PassiveAttr } from "#app/data/enums/passive";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -31,6 +32,7 @@ import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Challenge from "../data/challenge";
+import MoveInfoOverlay from "./move-info-overlay";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -192,6 +194,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
   private pokemonFormText: Phaser.GameObjects.Text;
+  private moveInfoOverlay : MoveInfoOverlay;
 
   private genMode: boolean;
   private statsMode: boolean;
@@ -205,8 +208,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
-  private starterGens: integer[] = [];
-  private starterCursors: integer[] = [];
+  public starterGens: integer[] = [];
+  public starterCursors: integer[] = [];
   private pokerusGens: integer[] = [];
   private pokerusCursors: integer[] = [];
   private starterAttr: bigint[] = [];
@@ -222,9 +225,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private canCycleNature: boolean;
   private canCycleVariant: boolean;
   private value: integer = 0;
+  private canAddParty: boolean;
 
   private assetLoadCancelled: Utils.BooleanHolder;
-  private cursorObj: Phaser.GameObjects.Image;
+  public cursorObj: Phaser.GameObjects.Image;
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterIcons: Phaser.GameObjects.Sprite[];
@@ -703,12 +707,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.statsContainer);
 
+    // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
+    const overlayScale = 1;
+    this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
+      scale: overlayScale,
+      top: true,
+      x: 1,
+      y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+    });
+    this.starterSelectContainer.add(this.moveInfoOverlay);
+
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
     this.updateInstructions();
   }
 
   show(args: any[]): boolean {
+    this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
@@ -1037,6 +1052,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     this.tryStart();
                   }
                   this.updateInstructions();
+
+                  /**
+                   * If the user can't select a pokemon anymore,
+                   * go to start button.
+                   */
+                  if (!this.canAddParty) {
+                    this.startCursorObj.setVisible(true);
+                    this.setGenMode(true);
+                  }
+
                   ui.playSelect();
                 } else {
                   ui.playError();
@@ -1058,6 +1083,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
+                  this.moveInfoOverlay.show(allMoves[moveset[0]]);
+
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: moveset.map((m: Moves, i: number) => {
                       const option: OptionSelectItem = {
@@ -1065,8 +1092,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           ui.setMode(Mode.STARTER_SELECT).then(() => {
                             ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
+                              const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
+                              this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
+
                               ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                                options: this.speciesStarterMoves.filter((sm: Moves) => sm !== m).map(sm => {
+                                options: possibleMoves.map(sm => {
                                   // make an option for each available starter move
                                   const option = {
                                     label: allMoves[sm].name,
@@ -1074,7 +1104,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                       this.switchMoveHandler(i, sm, m);
                                       showSwapOptions(this.starterMoveset);
                                       return true;
-                                    }
+                                    },
+                                    onHover: () => {
+                                      this.moveInfoOverlay.show(allMoves[sm]);
+                                    },
                                   };
                                   return option;
                                 }).concat({
@@ -1082,25 +1115,37 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                   handler: () => {
                                     showSwapOptions(this.starterMoveset);
                                     return true;
-                                  }
+                                  },
+                                  onHover: () => {
+                                    this.moveInfoOverlay.clear();
+                                  },
                                 }),
+                                supportHover: true,
                                 maxOptions: 8,
                                 yOffset: 19
                               });
                             });
                           });
                           return true;
-                        }
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.show(allMoves[m]);
+                        },
                       };
                       return option;
                     }).concat({
                       label: i18next.t("menu:cancel"),
                       handler: () => {
+                        this.moveInfoOverlay.clear();
                         this.clearText();
                         ui.setMode(Mode.STARTER_SELECT);
                         return true;
-                      }
+                      },
+                      onHover: () => {
+                        this.moveInfoOverlay.clear();
+                      },
                     }),
+                    supportHover: true,
                     maxOptions: 8,
                     yOffset: 19
                   });
@@ -2106,16 +2151,48 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
+
+    /**
+     * this loop is used to set the Sprite's alpha value and check if the user can select other pokemon more.
+     */
+    this.canAddParty = false;
+    const remainValue = valueLimit - newValue;
     for (let g = 0; g < this.genSpecies.length; g++) {
       for (let s = 0; s < this.genSpecies[g].length; s++) {
+        /** Cost of pokemon species */
+        const speciesStarterValue = this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId);
+        /** Used to detect if this pokemon is registered in starter */
+        const speciesStarterDexEntry = this.scene.gameData.dexData[this.genSpecies[g][s].speciesId];
+        /** {@linkcode Phaser.GameObjects.Sprite} object of Pokémon for setting the alpha value */
+        const speciesSprite = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
+
+        /**
+         * If remainValue greater than or equal pokemon species and the pokemon is legal for this challenge, the user can select.
+         * so that the alpha value of pokemon sprite set 1.
+         *
+         * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
+         * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
+         */
         const isValidForChallenge = new Utils.BooleanHolder(true);
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge);
 
-        const canBeChosen = (newValue + this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId)) <= valueLimit && isValidForChallenge.value;
+        const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 
-        (this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite).setAlpha(canBeChosen ? 1 : 0.375);
+        if (canBeChosen) {
+          speciesSprite.setAlpha(1);
+          if (speciesStarterDexEntry?.caughtAttr) {
+            this.canAddParty = true;
+          }
+        } else {
+          /**
+           * If it can't be chosen, the user can't select.
+           * so that the alpha value of pokemon sprite set 0.375.
+           */
+          speciesSprite.setAlpha(0.375);
+        }
       }
     }
+
     this.value = newValue;
     return true;
   }

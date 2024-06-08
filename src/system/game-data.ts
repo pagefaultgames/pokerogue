@@ -36,28 +36,11 @@ import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-event
 import { Device } from "#app/enums/devices.js";
 import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
+import { PlayerGender } from "#app/data/enums/player-gender";
+import { GameDataType } from "#app/data/enums/game-data-type";
 import ChallengeData from "./challenge-data";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
-
-export enum GameDataType {
-  SYSTEM,
-  SESSION,
-  SETTINGS,
-  TUTORIALS,
-  SEEN_DIALOGUES
-}
-
-export enum PlayerGender {
-  UNSET,
-  MALE,
-  FEMALE
-}
-
-export enum Passive {
-  UNLOCKED = 1,
-  ENABLED = 2
-}
 
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
@@ -78,13 +61,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   }
 }
 
-function encrypt(data: string, bypassLogin: boolean): string {
+export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => btoa(data)
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
-function decrypt(data: string, bypassLogin: boolean): string {
+export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => atob(data)
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
@@ -512,7 +495,7 @@ export class GameData {
     });
   }
 
-  private parseSystemData(dataStr: string): SystemSaveData {
+  parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
@@ -531,7 +514,7 @@ export class GameData {
     }) as SystemSaveData;
   }
 
-  private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+  convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
     if (!shorten) {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
