@@ -3393,7 +3393,7 @@ export const move: MoveTranslationEntries = {
     effect: "무수히 많은 불덩이로 공격한다. 화상 상태로 만들 때가 있다. 상대가 상태 이상인 경우 위력이 2배가 된다."
   },
   ceaselessEdge: {
-    name: "비검천충파",
+    name: "비검천중파",
     effect: "조개껍질 검으로 공격한다. 조개껍질 파편은 압정이 되어 상대의 발밑에 흩어진다."
   },
   bleakwindStorm: {
