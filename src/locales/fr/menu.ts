@@ -43,6 +43,7 @@ export const menu: SimpleTranslationEntries = {
   "playersOnline": "Joueurs Connectés",
   "yes":"Oui",
   "no":"Non",
-  "disclaimer": "DISCLAIMER",
+  "disclaimer": "AVERTISSEMENT",
   "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
+  "disclaimerDescription": "Ce jeu n’est pas un produit fini et peut contenir des problèmes de jouabilité, dont de possibles pertes de sauvegardes,\nmodifications sans avertissement et pourrait ou non être mis à jour ou terminé."
 } as const;
