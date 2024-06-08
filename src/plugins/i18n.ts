@@ -203,6 +203,7 @@ declare module "i18next" {
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
       biome: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
