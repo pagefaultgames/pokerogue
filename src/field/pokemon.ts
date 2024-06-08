@@ -1098,7 +1098,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         const exposedTags = this.getTags(ExposedTag) as ExposedTag[];
-        if (exposedTags.some(t => t.ignoreImmunity(types, moveType))) {
+        if (exposedTags.some(t => t.ignoreImmunity(defType, moveType))) {
           return 1;
         }
       }

@@ -7,7 +7,7 @@ import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
-import { getTypeDamageMultiplier, Type } from "./type";
+import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -1218,11 +1218,13 @@ export class MagnetRisenTag extends TypeImmuneTag {
  * @see {@linkcode ignoreImmunity}
  */
 export class ExposedTag extends BattlerTag {
-  private immuneType: Type;
+  private defenderType: Type;
+  private allowedTypes: Type[];
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, type: Type) {
+  constructor(tagType: BattlerTagType, sourceMove: Moves, defenderType: Type, allowedTypes: Type[]) {
     super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
-    this.immuneType = type;
+    this.defenderType = defenderType;
+    this.allowedTypes = allowedTypes;
   }
 
   /**
@@ -1231,17 +1233,17 @@ export class ExposedTag extends BattlerTag {
   */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.immuneType = source.type as Type;
+    this.defenderType = source.defenderType as Type;
+    this.allowedTypes = source.allowedTypes as Type[];
   }
 
   /**
-   * @param types {@linkcode Type[]} of the Pokemon
+   * @param types {@linkcode Type} of the defending Pokemon
    * @param moveType {@linkcode Type} of the move targetting it
-   * @returns true if Pokemon is of tag's type and that type is immune to the move
+   * @returns true if the move should be allowed to target the defender.
    */
-  ignoreImmunity(types: Type[], moveType: Type): boolean {
-    return types.includes(this.immuneType)
-              && getTypeDamageMultiplier(moveType, this.immuneType) === 0;
+  ignoreImmunity(type: Type, moveType: Type): boolean {
+    return type === this.defenderType && this.allowedTypes.includes(moveType);
   }
 }
 
@@ -1561,9 +1563,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
   case BattlerTagType.IGNORE_GHOST:
-    return new ExposedTag(tagType, sourceMove, Type.GHOST);
+    return new ExposedTag(tagType, sourceMove, Type.GHOST, [Type.NORMAL, Type.FIGHTING]);
   case BattlerTagType.IGNORE_DARK:
-    return new ExposedTag(tagType, sourceMove, Type.DARK);
+    return new ExposedTag(tagType, sourceMove, Type.DARK, [Type.PSYCHIC]);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
