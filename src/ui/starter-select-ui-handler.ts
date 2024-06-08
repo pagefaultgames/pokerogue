@@ -1307,7 +1307,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const rows = Math.ceil(genStarters / 9);
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
-        console.log(props);
         switch (button) {
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
