@@ -9,7 +9,7 @@ import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
-import { GameModes, gameModes } from "../game-mode";
+import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
@@ -38,6 +38,7 @@ import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { PlayerGender } from "#app/data/enums/player-gender";
 import { GameDataType } from "#app/data/enums/game-data-type";
+import ChallengeData from "./challenge-data";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -107,6 +108,7 @@ export interface SessionSaveData {
   trainer: TrainerData;
   gameVersion: string;
   timestamp: integer;
+  challenges: ChallengeData[];
 }
 
 interface Unlocks {
@@ -780,7 +782,8 @@ export class GameData {
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
     } as SessionSaveData;
   }
 
@@ -829,7 +832,10 @@ export class GameData {
         const initSessionFromData = async sessionData => {
           console.debug(sessionData);
 
-          scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
+          scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
+          if (sessionData.challenges) {
+            scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+          }
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
@@ -1073,6 +1079,17 @@ export class GameData {
 
       if (k === "arena") {
         return new ArenaData(v);
+      }
+
+      if (k === "challenges") {
+        const ret: ChallengeData[] = [];
+        if (v === null) {
+          v = [];
+        }
+        for (const c of v) {
+          ret.push(new ChallengeData(c));
+        }
+        return ret;
       }
 
       return v;

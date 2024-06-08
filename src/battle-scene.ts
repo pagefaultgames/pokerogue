@@ -20,8 +20,8 @@ import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesF
 import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
-import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
-import { GameMode, GameModes, gameModes } from "./game-mode";
+import Battle, { BattleType, FixedBattleConfig } from "./battle";
+import { GameMode, GameModes, getGameMode } from "./game-mode";
 import FieldSpritePipeline from "./pipelines/field-sprite";
 import SpritePipeline from "./pipelines/sprite";
 import PartyExpBar from "./ui/party-exp-bar";
@@ -853,7 +853,7 @@ export default class BattleScene extends SceneBase {
       this.gameData = new GameData(this);
     }
 
-    this.gameMode = gameModes[GameModes.CLASSIC];
+    this.gameMode = getGameMode(GameModes.CLASSIC);
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
@@ -961,8 +961,8 @@ export default class BattleScene extends SceneBase {
 
     const playerField = this.getPlayerField();
 
-    if (this.gameMode.hasFixedBattles && fixedBattles.hasOwnProperty(newWaveIndex) && trainerData === undefined) {
-      battleConfig = fixedBattles[newWaveIndex];
+    if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
+      battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
       newDouble = battleConfig.double;
       newBattleType = battleConfig.battleType;
       this.executeWithSeedOffset(() => newTrainer = battleConfig.getTrainer(this), (battleConfig.seedOffsetWaveIndex || newWaveIndex) << 8);
