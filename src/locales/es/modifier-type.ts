@@ -130,7 +130,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
 
     "RARE_CANDY": { name: "Carameloraro" },
-    "RARER_CANDY": { name: "Rarer Candy" },
+    "RARER_CANDY": { name: "Caramelorarísimo" },
 
     "MEGA_BRACELET": { name: "Mega-aro", description: "Las Megapiedras están disponibles" },
     "DYNAMAX_BAND": { name: "Maximuñequera", description: "Las Maxisetas están disponibles" },
@@ -162,14 +162,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PP_UP": { name: "Más PP" },
     "PP_MAX": { name: "Máx PP" },
 
-    "LURE": { name: "Lure" },
-    "SUPER_LURE": { name: "Super Lure" },
-    "MAX_LURE": { name: "Max Lure" },
+    "LURE": { name: "Incienso" },
+    "SUPER_LURE": { name: "Superincienso" },
+    "MAX_LURE": { name: "Incienso Máximo" },
 
-    "MEMORY_MUSHROOM": { name: "Memory Mushroom", description: "Recall one Pokémon's forgotten move" },
+    "MEMORY_MUSHROOM": { name: "Seta Recuerdo", description: "Recuerda un movimiento olvidado de un Pokémon." },
 
     "EXP_SHARE": { name: "Repartir EXP", description: "Los que no combatan reciben el 20% de la EXP" },
-    "EXP_BALANCE": { name: "EXP. Balance", description: "Da mayor parte de la EXP recibida a los miembros del equipo que tengan menos nivel" },
+    "EXP_BALANCE": { name: "Equilibrar EXP", description: "Da mayor parte de la EXP recibida a los miembros del equipo que tengan menos nivel" },
 
     "OVAL_CHARM": { name: "Amuleto Oval", description: "Cada Pokémon combatiente recibe un 10% adicional de la EXP total" },
 
@@ -197,7 +197,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GRIP_CLAW": { name: "Garra Garfio" },
     "WIDE_LENS": { name: "Lupa" },
 
-    "MULTI_LENS": { name: "Multi Lens" },
+    "MULTI_LENS": { name: "Multilupa" },
 
     "HEALING_CHARM": { name: "Amuleto curación", description: "Aumenta la efectividad de los movimientos y objetos de curacion de PS en un 10% (excepto revivir)" },
     "CANDY_JAR": { name: "Candy Jar", description: "Aumenta en 1 el número de niveles añadidos por los carameloraros" },
@@ -216,7 +216,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "TOXIC_ORB": { name: "Toxiesfera", description: "Extraña esfera que envenena gravemente a quien la usa en combate" },
     "FLAME_ORB": { name: "Llamasfera", description: "Extraña esfera que causa quemaduras a quien la usa en combate" },
 
-    "BATON": { name: "Baton", description: "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas" },
+    "BATON": { name: "Relevo", description: "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas" },
 
     "SHINY_CHARM": { name: "Amuleto Iris", description: "Aumenta drásticamente la posibilidad de que un Pokémon salvaje sea Shiny" },
     "ABILITY_CHARM": { name: "Amuleto Habilidad", description: "Aumenta drásticamente la posibilidad de que un Pokémon salvaje tenga una habilidad oculta" },
@@ -229,15 +229,15 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "Poké Ball Dorada", description: "Agrega 1 opción de objeto extra al final de cada combate" },
 
-    "ENEMY_DAMAGE_BOOSTER": { name: "Damage Token", description: "Aumenta el daño en un 5%" },
-    "ENEMY_DAMAGE_REDUCTION": { name: "Protection Token", description: "Reduce el daño recibido en un 2,5%" },
-    "ENEMY_HEAL": { name: "Recovery Token", description: "Cura el 2% de los PS máximo en cada turno" },
-    "ENEMY_ATTACK_POISON_CHANCE": { name: "Poison Token" },
-    "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Paralyze Token" },
-    "ENEMY_ATTACK_BURN_CHANCE": { name: "Burn Token" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Agrega un 2.5% de probabilidad cada turno de curar un problema de estado" },
-    "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
-    "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión" },
+    "ENEMY_DAMAGE_BOOSTER": { name: "Ficha Daño", description: "Aumenta el daño en un 5%" },
+    "ENEMY_DAMAGE_REDUCTION": { name: "Ficha Protección", description: "Reduce el daño recibido en un 2,5%" },
+    "ENEMY_HEAL": { name: "Ficha Curación", description: "Cura el 2% de los PS máximo en cada turno" },
+    "ENEMY_ATTACK_POISON_CHANCE": { name: "Ficha Veneno" },
+    "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Ficha Parálisis" },
+    "ENEMY_ATTACK_BURN_CHANCE": { name: "Ficha Quemadura" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Ficha Cura Total", description: "Agrega un 2.5% de probabilidad cada turno de curar un problema de estado" },
+    "ENEMY_ENDURE_CHANCE": { name: "Ficha Aguante" },
+    "ENEMY_FUSED_CHANCE": { name: "Ficha Fusión", description: "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión" },
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",
