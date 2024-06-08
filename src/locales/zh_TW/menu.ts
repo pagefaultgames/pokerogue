@@ -45,6 +45,7 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "每週排名",
   "noRankings": "無排名",
   "loading": "加載中…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "在線玩家",
   "yes":"是",
   "no":"否",
