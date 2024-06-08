@@ -19,7 +19,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, g
 import { Type } from "../data/type";
 import { Button } from "../enums/buttons";
 import { GameModes } from "../game-mode";
-import { TitlePhase } from "../phases";
+import { SelectChallengePhase, TitlePhase } from "../phases";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
 import { Passive as PassiveAttr } from "#app/data/enums/passive";
 import { Tutorial, handleTutorial } from "../tutorial";
@@ -955,7 +955,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.blockInput = true;
         this.scene.clearPhaseQueue();
-        this.scene.pushPhase(new TitlePhase(this.scene));
+        if (this.scene.gameMode.isChallenge) {
+          this.scene.pushPhase(new SelectChallengePhase(this.scene));
+        } else {
+          this.scene.pushPhase(new TitlePhase(this.scene));
+        }
         this.scene.getCurrentPhase().end();
         success = true;
       }
