@@ -383,6 +383,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "I think it's me that's seasick..."
     },
   },
+  "camper": {
+    "encounter": {
+      1: "I saw your feet from the grass!",
+      2: "Huh? You want to talk to me?",
+      3: "I'm a cool guy. I've got a girlfriend!"
+    },
+    "victory": {
+      1: "I hid because the people on the bridge frightened me.",
+      2: "This stinks... I couldn't beat your challenge...",
+      3: "Aww, darn..."
+    },
+  },
+  "picknicker": {
+    "encounter": {
+      1: "I've been out at a Pokémon gym a few times. But I always lose.",
+      2: "Me? Well, okay. I'll play!",
+      3: "You look gentle, so I think I can beat you."
+    },
+    "victory": {
+      1: "Ohh! After all my training!",
+      2: "Things just didn't work...",
+      3: "No, wrong!"
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
