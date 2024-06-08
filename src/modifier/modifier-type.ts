@@ -25,6 +25,7 @@ import i18next from "#app/plugins/i18n";
 import { getModifierTierTextTint } from "#app/ui/text";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
 import * as Overrides from "../overrides";
+import { MoneyMultiplierModifier } from "./modifier";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -631,9 +632,13 @@ export class MoneyRewardModifierType extends ModifierType {
   }
 
   getDescription(scene: BattleScene): string {
+    const moneyAmount = new Utils.IntegerHolder(scene.getWaveMoneyAmount(this.moneyMultiplier));
+    scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    const formattedMoney = Utils.formatMoney(scene.moneyFormat, moneyAmount.value);
+
     return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
-      moneyAmount: scene.getWaveMoneyAmount(this.moneyMultiplier).toLocaleString("en-US"),
+      moneyAmount: formattedMoney,
     });
   }
 }

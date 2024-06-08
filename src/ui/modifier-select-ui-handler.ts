@@ -9,6 +9,7 @@ import { handleTutorial, Tutorial } from "../tutorial";
 import {Button} from "../enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
+import * as Utils from "./../utils";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -398,7 +399,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   updateRerollCostText(): void {
     const canReroll = this.scene.money >= this.rerollCost;
 
-    this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString("en-US")}`);
+    const formattedMoney = Utils.formatMoney(this.scene.moneyFormat, this.rerollCost);
+
+    this.rerollCostText.setText(`₽${formattedMoney}`);
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -656,7 +659,9 @@ class ModifierOption extends Phaser.GameObjects.Container {
     const scene = this.scene as BattleScene;
     const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString("en-US")}`);
+    const formattedMoney = Utils.formatMoney(scene.moneyFormat, this.modifierTypeOption.cost);
+
+    this.itemCostText.setText(`₽${formattedMoney}`);
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }

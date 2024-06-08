@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import { MoneyFormat } from "./enums/money-format";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -237,7 +238,7 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
 // Abbreviations from 10^0 to 10^33
 const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
 
-export function formatFancyLargeNumber(number: number, rounded: number = 2): string {
+export function formatFancyLargeNumber(number: number, rounded: number = 3): string {
   let exponent: number;
 
   if (number < 1000) {
@@ -251,7 +252,14 @@ export function formatFancyLargeNumber(number: number, rounded: number = 2): str
     number /= Math.pow(1000, exponent);
   }
 
-  return `${(exponent === 0) ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+  return `${(exponent === 0) || number % 1 === 0 ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+}
+
+export function formatMoney(format: MoneyFormat, amount: number) {
+  if (format === MoneyFormat.ABBREVIATED) {
+    return formatFancyLargeNumber(amount);
+  }
+  return amount.toLocaleString();
 }
 
 export function formatStat(stat: integer, forHp: boolean = false): string {
