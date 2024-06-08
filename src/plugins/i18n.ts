@@ -222,6 +222,7 @@ declare module "i18next" {
       berry: BerryTranslationEntries;
       achv: AchievementTranslationEntries;
       gameStatsUiHandler: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
       pokemonInfoContainer: SimpleTranslationEntries;
@@ -233,6 +234,7 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
     };
   }
 }
