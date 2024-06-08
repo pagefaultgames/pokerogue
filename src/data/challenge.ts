@@ -271,7 +271,8 @@ export class SingleGenerationChallenge extends Challenge {
     case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
       const isValidStarter = args[1] as Utils.BooleanHolder;
-      if (species.generation !== this.value) {
+      const starterGeneration = species.speciesId === Species.VICTINI ? 5 : species.generation;
+      if (starterGeneration !== this.value) {
         isValidStarter.value = false;
         return true;
       }
@@ -279,7 +280,9 @@ export class SingleGenerationChallenge extends Challenge {
     case ChallengeType.POKEMON_IN_BATTLE:
       const pokemon = args[0] as Pokemon;
       const isValidPokemon = args[1] as Utils.BooleanHolder;
-      if (pokemon.isPlayer() && ((pokemon.species.formIndex === 0 ? pokemon.species : getPokemonSpecies(pokemon.species.speciesId)).generation !== this.value || (pokemon.isFusion() && (pokemon.fusionSpecies.formIndex === 0 ? pokemon.fusionSpecies : getPokemonSpecies(pokemon.fusionSpecies.speciesId)).generation !== this.value))) {
+      const baseGeneration = pokemon.species.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.species.speciesId).generation;
+      const fusionGeneration = pokemon.isFusion() ? pokemon.fusionSpecies.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.fusionSpecies.speciesId).generation : 0;
+      if (pokemon.isPlayer() && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))) {
         isValidPokemon.value = false;
         return true;
       }
