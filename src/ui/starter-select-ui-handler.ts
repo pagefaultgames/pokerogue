@@ -32,7 +32,7 @@ import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import MoveInfoOverlay from "./move-info-overlay";
-import { getEggtierForSpecies } from "#app/data/egg.js";
+import { getEggTierForSpecies } from "#app/data/egg.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -1722,8 +1722,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
         if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
+        } else {
+          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species.getRootSpeciesId()));
         }
-        this.pokemonHatchedIcon.setFrame(getEggtierForSpecies(species.speciesId));
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
