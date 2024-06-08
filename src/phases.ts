@@ -19,7 +19,27 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import {
+  FusePokemonModifierType,
+  ModifierPoolType,
+  ModifierType,
+  ModifierTypeFunc,
+  ModifierTypeOption,
+  PokemonModifierType,
+  PokemonMoveModifierType,
+  PokemonPpRestoreModifierType,
+  PokemonPpUpModifierType,
+  RememberMoveModifierType,
+  TmModifierType,
+  getDailyRunStarterModifiers,
+  getEnemyBuffModifierForWave,
+  getModifierType,
+  getPlayerModifierTypeOptions,
+  getPlayerShopModifierTypeOptionsForWave,
+  modifierTypes,
+  regenerateModifierPoolThresholds,
+  CustomModifierSettings
+} from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
@@ -5012,12 +5032,14 @@ export class AttemptRunPhase extends PokemonPhase {
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
   private modifierTiers: ModifierTier[];
+  private customModifierSettings: CustomModifierSettings;
 
-  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[]) {
+  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings) {
     super(scene);
 
     this.rerollCount = rerollCount;
     this.modifierTiers = modifierTiers;
+    this.customModifierSettings = customModifierSettings;
   }
 
   start() {
@@ -5036,21 +5058,25 @@ export class SelectModifierPhase extends BattlePhase {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
 
-    let isMysteryEncounterFirstShop = false;
-    if (this.scene?.currentBattle?.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      // If encounter has custom rewards, ignore standard item counts
-      if (this.modifierTiers?.length > 0) {
-        modifierCount = new Utils.IntegerHolder(this.modifierTiers.length);
+    // If custom modifiers are specified, overrides default items
+    if (!!this.customModifierSettings) {
+      const newCount = (this.customModifierSettings.guaranteedModifierTiers?.length || 0) + (this.customModifierSettings.guaranteedModifiers?.length || 0);
+      if (this.customModifierSettings.fillRemaining) {
+        const originalCount = modifierCount.value;
+        modifierCount = new Utils.IntegerHolder(originalCount > newCount ? originalCount : newCount);
+      } else {
+        modifierCount = new Utils.IntegerHolder(newCount);
       }
 
-      // If mystery encounter with custom shop and first time shop is being rolled, lock the reward tiers for first shop roll
-      isMysteryEncounterFirstShop = this.scene?.currentBattle?.mysteryEncounter?.lockEncounterRewardTiers && this.modifierTiers?.length > 0;
-      if (isMysteryEncounterFirstShop) {
-        this.scene.currentBattle.mysteryEncounter.lockEncounterRewardTiers = false;
-      }
+      // Custom modifier tiers require "locking" shop tiers
+      // const isMysteryEncounterFirstShop = this.scene?.currentBattle?.mysteryEncounter?.lockEncounterRewardTiers;
+      // if (this.customModifierSettings.guaranteedModifierTiers?.length > 0 || isMysteryEncounterFirstShop) {
+      //   customModifierTiers = true;
+      //   this.scene.currentBattle.mysteryEncounter.lockEncounterRewardTiers = false;
+      // }
     }
 
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, isMysteryEncounterFirstShop);
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
 
     const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
       if (rowCursor < 0 || cursor < 0) {
@@ -5220,8 +5246,8 @@ export class SelectModifierPhase extends BattlePhase {
     return ModifierPoolType.PLAYER;
   }
 
-  getModifierTypeOptions(modifierCount: integer, lockTiers: boolean = false): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), (this.scene.lockModifierTiers || lockTiers) ? this.modifierTiers : undefined);
+  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {

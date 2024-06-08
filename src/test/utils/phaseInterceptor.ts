@@ -10,6 +10,12 @@ import {
   TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, VictoryPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
+import {
+  MysteryEncounterBattlePhase,
+  MysteryEncounterOptionSelectedPhase,
+  MysteryEncounterPhase,
+  PostMysteryEncounterPhase
+} from "#app/phases/mystery-encounter-phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -56,6 +62,10 @@ export default class PhaseInterceptor {
     [MoveEndPhase, this.startPhase],
     [StatChangePhase, this.startPhase],
     [ShinySparklePhase, this.startPhase],
+    [MysteryEncounterPhase, this.startPhase],
+    [MysteryEncounterOptionSelectedPhase, this.startPhase],
+    [MysteryEncounterBattlePhase, this.startPhase],
+    [PostMysteryEncounterPhase, this.startPhase]
   ];
 
   /**
@@ -68,7 +78,7 @@ export default class PhaseInterceptor {
     this.onHold = [];
     this.prompts = [];
     this.initPhases();
-    this.startPromptHander();
+    this.startPromptHandler();
   }
 
   /**
@@ -231,7 +241,7 @@ export default class PhaseInterceptor {
   /**
    * Method to start the prompt handler.
    */
-  startPromptHander() {
+  startPromptHandler() {
     this.promptInterval = setInterval(() => {
       if (this.prompts.length) {
         const actionForNextPrompt = this.prompts[0];

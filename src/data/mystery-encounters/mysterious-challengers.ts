@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
 import { ModifierTier } from "../../modifier/modifier-tier";
-import { modifierTypes } from "../../modifier/modifier-type";
+import {modifierTypes} from "../../modifier/modifier-type";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards } from "../../utils/mystery-encounter-utils";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import { TrainerType } from "../enums/trainer-type";
@@ -36,7 +36,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
         trainerType: TrainerType.SCHOOL_KID
       };
 
-      setEncounterRewards(scene, false, null, false, [modifierTypes.MEMORY_MUSHROOM]);
+      setEncounterRewards(scene, { guaranteedModifiers: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.MEMORY_MUSHROOM, modifierTypes.MEMORY_MUSHROOM, modifierTypes.MEMORY_MUSHROOM, modifierTypes.MEMORY_MUSHROOM], fillRemaining: true });
 
       return initBattleWithEnemyConfig(scene, config);
     })
@@ -49,7 +49,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
         trainerType: TrainerType.SCIENTIST
       };
 
-      setEncounterRewards(scene, true, [ModifierTier.ULTRA], true);
+      setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA], fillRemaining: true });
 
       return initBattleWithEnemyConfig(scene, config);
     })
@@ -62,7 +62,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
         trainerType: TrainerType.ACE_TRAINER
       };
 
-      setEncounterRewards(scene, true, [ModifierTier.ROGUE], true);
+      setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE], fillRemaining: true });
 
       return initBattleWithEnemyConfig(scene, config);
     })

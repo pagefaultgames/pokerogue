@@ -35,8 +35,11 @@ import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {allSpecies} from "#app/data/pokemon-species";
 import {PlayerGender} from "#app/data/enums/player-gender";
+import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
+import {Button} from "#app/enums/buttons";
+import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 
-describe("Test Battle Phase", () => {
+describe("Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -52,22 +55,88 @@ describe("Test Battle Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(64);
   });
 
-  it("test phase interceptor with remove", async() => {
-    await game.phaseInterceptor.run(LoginPhase);
+  it("spawns a mystery encounter", async() => {
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    await game.runToSummon([
+      Species.CHARIZARD,
+      Species.VOLCARONA
+    ]);
+    expect(game.scene.getCurrentPhase().constructor.name).toBe(EncounterPhase.name);
+    // game.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
+    //   // game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    //   const handler = game.scene.ui.getHandler() as MessageUiHandler;
+    //   // handler.processInput(Button.RIGHT);
+    //   // handler.processInput(Button.RIGHT);
+    //   // handler.processInput(Button.RIGHT);
+    //   // handler.processInput(Button.RIGHT);
+    //   // handler.processInput(Button.DOWN);
+    //   handler.processInput(Button.ACTION);
+    //
+    // });
+    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
+      // game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+      const handler = game.scene.ui.getHandler() as BattleMessageUiHandler;
+      handler.processInput(Button.ACTION);
+    }, () => game.isCurrentPhase(MysteryEncounterPhase));
+    await game.phaseInterceptor.runFrom(EncounterPhase).to(MysteryEncounterPhase);
 
-    await game.phaseInterceptor.run(LoginPhase, () => {
-      return game.phaseInterceptor.log.includes("LoginPhase");
-    });
-
-    game.scene.gameData.gender = PlayerGender.MALE;
-    await game.phaseInterceptor.remove(SelectGenderPhase, () => game.isCurrentPhase(TitlePhase));
-
-    await game.phaseInterceptor.run(TitlePhase);
-    await waitUntil(() => game.scene.ui?.getMode() === Mode.TITLE);
-
-    expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
+    expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+    // await game.phaseInterceptor.runFrom(PostSummonPhase).to(ToggleDoublePositionPhase);
+    // await game.phaseInterceptor.run(SummonPhase, () => game.isCurrentPhase(CheckSwitchPhase) || game.isCurrentPhase(PostSummonPhase));
+    // game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+    //   game.setMode(Mode.MESSAGE);
+    //   game.endPhase();
+    // }, () => game.isCurrentPhase(PostSummonPhase));
+    // game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+    //   game.setMode(Mode.MESSAGE);
+    //   game.endPhase();
+    // }, () => game.isCurrentPhase(PostSummonPhase));
+    // await game.phaseInterceptor.run(CheckSwitchPhase, () => game.isCurrentPhase(PostSummonPhase));
+    // await game.phaseInterceptor.run(CheckSwitchPhase, () => game.isCurrentPhase(PostSummonPhase));
+    // await game.phaseInterceptor.runFrom(PostSummonPhase).to(CommandPhase);
+    // await waitUntil(() => game.scene.ui?.getMode() === Mode.COMMAND);
+    // console.log("==================[New Turn]==================");
+    // expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+    // expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    // return resolve();
+    // game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+    //   game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    // });
+    // game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+    //   const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
+    //   (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    // });
+    // await game.phaseInterceptor.run(EnemyCommandPhase);
+    // await game.phaseInterceptor.run(TurnStartPhase);
+    //
+    // await game.phaseInterceptor.run(MovePhase);
+    // await game.phaseInterceptor.run(MessagePhase);
+    // await game.phaseInterceptor.run(MoveEffectPhase);
+    // await game.phaseInterceptor.run(DamagePhase);
+    // await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(MoveEndPhase));
+    // await game.phaseInterceptor.run(MoveEndPhase);
+    //
+    // await game.phaseInterceptor.run(MovePhase);
+    // await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(MoveEffectPhase));
+    // await game.phaseInterceptor.run(MoveEffectPhase);
+    // game.scene.moveAnimations = null; // Mandatory to avoid the crash
+    // await game.phaseInterceptor.run(StatChangePhase, () => game.isCurrentPhase(MessagePhase) || game.isCurrentPhase(MoveEndPhase) || game.isCurrentPhase(DamagePhase));
+    // await game.phaseInterceptor.run(DamagePhase, () => game.isCurrentPhase(MessagePhase) || game.isCurrentPhase(MoveEndPhase));
+    // await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(MoveEndPhase));
+    // await game.phaseInterceptor.run(MoveEndPhase);
+    //
+    // await game.phaseInterceptor.run(BerryPhase);
+    // await game.phaseInterceptor.run(MessagePhase, () => game.isCurrentPhase(TurnEndPhase));
+    // await game.phaseInterceptor.run(TurnEndPhase);
+    //
+    // await game.phaseInterceptor.run(TurnInitPhase);
+    // await game.phaseInterceptor.run(CommandPhase);
+    // await waitUntil(() => game.scene.ui?.getMode() === Mode.COMMAND);
+    // expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+    // expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
   }, 100000);
 
   it("test phase interceptor with prompt", async() => {

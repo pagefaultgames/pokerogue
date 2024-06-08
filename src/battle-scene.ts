@@ -1019,7 +1019,7 @@ export default class BattleScene extends SceneBase {
         const roll = Utils.randSeedInt(64);
         const successRate = Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? 25 : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE;
 
-        if (roll <= successRate) {
+        if (roll < successRate) {
           // Successful roll, this is a mystery encounter
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
         }

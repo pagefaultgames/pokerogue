@@ -10,6 +10,12 @@ import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
 import {initAchievements} from "#app/system/achv.js";
 import { initMysteryEncounters } from "../data/mystery-encounters/mystery-encounters";
+import { beforeEach, vi} from "vitest";
+import * as overrides from "#app/overrides";
+
+beforeEach( () => {
+  vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(0);
+});
 
 initAchievements();
 initStatsKeys();

@@ -10,9 +10,13 @@ import { StatusEffect } from "../data/status-effect";
 import { TrainerSlot, trainerConfigs } from "../data/trainer-config";
 import { FieldPosition, PlayerPokemon } from "../field/pokemon";
 import Trainer, { TrainerVariant } from "../field/trainer";
-import { ExtraModifierModifier, PokemonExpBoosterModifier } from "../modifier/modifier";
-import { ModifierTier } from "../modifier/modifier-tier";
-import { ModifierPoolType, ModifierTypeFunc, regenerateModifierPoolThresholds } from "../modifier/modifier-type";
+import { PokemonExpBoosterModifier } from "../modifier/modifier";
+import {
+  CustomModifierSettings,
+  ModifierPoolType,
+  ModifierTypeFunc,
+  regenerateModifierPoolThresholds
+} from "../modifier/modifier-type";
 import { BattleEndPhase, EggLapsePhase, ModifierRewardPhase, SelectModifierPhase, TrainerVictoryPhase } from "../phases";
 import { MysteryEncounterBattlePhase, PostMysteryEncounterPhase } from "../phases/mystery-encounter-phase";
 import * as Utils from "../utils";
@@ -386,40 +390,38 @@ export function initBattleFromEncounter(scene: BattleScene) {
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
  * @param scene - Battle Scene
- * @param showShop - if true, adds a shop phase
- * @param shopRewardTierOverrides - if set, will replace the auto-generated reward tiers with custom tiers. These tiers can still be upgraded by player luck
- * @param fillShopRemaining - if shopRewardTierOverrides is set with fewer items than what a shop would provide and this is true, will fill any remaining missing tiers with randomly generated ones.
+ * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
  * @param nonShopRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
  */
-export function setEncounterRewards(scene: BattleScene, showShop?: boolean, shopRewardTierOverrides?: ModifierTier[], fillShopRemaining?: boolean, nonShopRewards?: ModifierTypeFunc[]) {
+export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopRewards?: ModifierTypeFunc[]) {
   const rewardsFunction = (scene: BattleScene) => {
-    if (showShop) {
+    if (customShopRewards) {
       // Gets number of items for shop
-      const modifierCount = new Utils.IntegerHolder(3);
-      scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
-      const numItems = modifierCount.value;
+      // const modifierCount = new Utils.IntegerHolder(3);
+      // scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
+      // const numItems = modifierCount.value;
 
-      let rewards: ModifierTier[] = [];
-      if (shopRewardTierOverrides) {
-        rewards = shopRewardTierOverrides;
+      // let rewards: ModifierTier[] = [];
+      // if (shopRewardTierOverrides) {
+      //   rewards = shopRewardTierOverrides;
+      //
+      //   if (fillShopRemaining && rewards.length < numItems) {
+      //     const len = rewards.length;
+      //     for (let i = len - 1; i < numItems - len; i++) {
+      //       const tierValue = Utils.randSeedInt(1024);
+      //       const initialFillTier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
+      //       rewards.push(initialFillTier);
+      //     }
+      //   }
+      // } else {
+      //   for (let i = 0; i < numItems; i++) {
+      //     const tierValue = Utils.randSeedInt(1024);
+      //     const initialFillTier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
+      //     rewards.push(initialFillTier);
+      //   }
+      // }
 
-        if (fillShopRemaining && rewards.length < numItems) {
-          const len = rewards.length;
-          for (let i = len - 1; i < numItems - len; i++) {
-            const tierValue = Utils.randSeedInt(1024);
-            const initialFillTier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
-            rewards.push(initialFillTier);
-          }
-        }
-      } else {
-        for (let i = 0; i < numItems; i++) {
-          const tierValue = Utils.randSeedInt(1024);
-          const initialFillTier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
-          rewards.push(initialFillTier);
-        }
-      }
-
-      scene.unshiftPhase(new SelectModifierPhase(scene, 0, rewards));
+      scene.unshiftPhase(new SelectModifierPhase(scene, 0, null, customShopRewards));
     }
 
     if (nonShopRewards?.length > 0) {
