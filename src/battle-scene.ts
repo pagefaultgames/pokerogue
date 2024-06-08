@@ -155,6 +155,13 @@ export default class BattleScene extends SceneBase {
    */
   public battleStyle: integer = 0;
 
+  /**
+  * Defines whether or not to show type effectiveness hints
+  * - true: No hints
+  * - false: Show hints for moves
+   */
+  public typeHints: boolean = false;
+
   public disableMenu: boolean = false;
 
   public gameData: GameData;
