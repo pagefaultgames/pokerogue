@@ -1278,13 +1278,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           };
           if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
-            options.push({
-              label: i18next.t("starterSelectUiHandler:useCandies"),
-              handler: () => {
-                ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
-                return true;
-              }
-            });
+            const passiveAvailable = !(passiveAttr & PassiveAttr.UNLOCKED);
+            const reductionCostAvailable = starterData.valueReduction < 2;
+            if (passiveAvailable || reductionCostAvailable) {
+              options.push({
+                label: i18next.t("starterSelectUiHandler:useCandies"),
+                handler: () => {
+                  ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
+                  return true;
+                }
+              });
+            }
           }
           options.push({
             label: i18next.t("menu:cancel"),
