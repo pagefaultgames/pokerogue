@@ -24,7 +24,7 @@ import {Species} from "#app/data/enums/species";
 
 export enum TrainerVariant {
     DEFAULT,
-    FEMALE,
+    ALTERNATE,
     DOUBLE
 }
 
@@ -45,7 +45,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       this.config.partyTemplates.length - 1);
     if (trainerNamePools.hasOwnProperty(trainerType)) {
       const namePool = trainerNamePools[trainerType];
-      this.name = name || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
+      this.name = name || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.ALTERNATE ? 1 : 0] : namePool);
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
           if (partnerName) {
@@ -60,7 +60,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     switch (this.variant) {
-    case TrainerVariant.FEMALE:
+    case TrainerVariant.ALTERNATE:
       if (!this.config.hasGenders) {
         variant = TrainerVariant.DEFAULT;
       }
@@ -74,8 +74,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     console.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
 
-    const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale,this.isDouble()));
+    const getSprite = (hasShadow?: boolean, forceAlt?: boolean) => {
+      const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.ALTERNATE || forceAlt,this.isDouble()));
       ret.setOrigin(0.5, 1);
       ret.setPipeline(this.scene.spritePipeline, {tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow});
       return ret;
@@ -105,8 +105,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
   }
 
-  getKey(forceFemale?: boolean): string {
-    return this.config.getSpriteKey(this.variant === TrainerVariant.FEMALE || forceFemale,this.isDouble());
+  getKey(forceAlt?: boolean): string {
+    return this.config.getSpriteKey(this.variant === TrainerVariant.ALTERNATE || forceAlt,this.isDouble());
   }
 
   /**
@@ -171,19 +171,19 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getEncounterBgm(): string {
-    return !this.variant ? this.config.encounterBgm : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterBgm : this.config.femaleEncounterBgm) || this.config.encounterBgm;
+    return !this.variant ? this.config.encounterBgm : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterBgm : this.config.altEncounterBgm) || this.config.encounterBgm;
   }
 
   getEncounterMessages(): string[] {
-    return !this.variant ? this.config.encounterMessages : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterMessages : this.config.femaleEncounterMessages) || this.config.encounterMessages;
+    return !this.variant ? this.config.encounterMessages : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterMessages : this.config.altEncounterMessages) || this.config.encounterMessages;
   }
 
   getVictoryMessages(): string[] {
-    return !this.variant ? this.config.victoryMessages : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleVictoryMessages : this.config.femaleVictoryMessages) || this.config.victoryMessages;
+    return !this.variant ? this.config.victoryMessages : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleVictoryMessages : this.config.altVictoryMessages) || this.config.victoryMessages;
   }
 
   getDefeatMessages(): string[] {
-    return !this.variant ? this.config.defeatMessages : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleDefeatMessages : this.config.femaleDefeatMessages) || this.config.defeatMessages;
+    return !this.variant ? this.config.defeatMessages : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleDefeatMessages : this.config.altDefeatMessages) || this.config.defeatMessages;
   }
 
   getPartyTemplate(): TrainerPartyTemplate {

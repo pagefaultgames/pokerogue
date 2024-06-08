@@ -4019,7 +4019,7 @@ export class GameOverPhase extends BattlePhase {
             if (!this.scene.ui.shouldSkipDialogue(message)) {
               this.scene.ui.fadeIn(500).then(() => {
                 this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
-                  this.scene.ui.showDialogue(message, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
+                  this.scene.ui.showDialogue(message, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameAlt, null, () => {
                     this.scene.ui.fadeOut(500).then(() => {
                       this.scene.charSprite.hide().then(() => {
                         const endCardPhase = new EndCardPhase(this.scene);
@@ -4770,6 +4770,12 @@ export class AttemptCapturePhase extends PokemonPhase {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
               this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
+                const newPokemon = this.scene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
+                this.scene.ui.setModeWithoutClear(Mode.SUMMARY, newPokemon).then(() => {
+                  this.scene.ui.revertMode();
+                  this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
+                });
+              }, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
@@ -5253,7 +5259,7 @@ export class TrainerMessageTestPhase extends BattlePhase {
         continue;
       }
       const config = trainerConfigs[type];
-      [ config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages ]
+      [ config.encounterMessages, config.altEncounterMessages, config.victoryMessages, config.altVictoryMessages, config.defeatMessages, config.altDefeatMessages ]
         .map(messages => {
           if (messages?.length) {
             testMessages.push(...messages);
