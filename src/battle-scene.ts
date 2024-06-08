@@ -1010,7 +1010,8 @@ export default class BattleScene extends SceneBase {
     if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
       newDouble = true;
     }
-    if (Overrides.SINGLE_BATTLE_OVERRIDE) {
+    /* Override battles into single only if not fighting with trainers */
+    if (newBattleType !== BattleType.TRAINER && Overrides.SINGLE_BATTLE_OVERRIDE) {
       newDouble = false;
     }
 

@@ -46,7 +46,6 @@ export const menu: SimpleTranslationEntries = {
   "noRankings": "랭킹 정보 없음",
   "loading": "로딩 중…",
   "playersOnline": "플레이어 온라인",
-  "empty":"빈 슬롯",
   "yes":"예",
   "no":"아니오",
   "disclaimer": "면책 조항",
