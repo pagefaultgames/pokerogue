@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, MoveImmunityAbAttr, applyPreDefendAbAttrs} from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, MoveImmunityAbAttr, applyPreDefendAbAttrs } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
@@ -4356,7 +4356,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  if (switchOutTarget instanceof PlayerPokemon) {
 	  	if (switchOutTarget.hp) {
 	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
-          this.partyChoice ? (switchOutTarget as PlayerPokemon).switchOut(true).then(() => resolve(true)) : (switchOutTarget as PlayerPokemon).forceSwitchOut(true).then(() => resolve(true));
+          this.partyChoice ? (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true)) : (switchOutTarget as PlayerPokemon).forceSwitchOut(true).then(() => resolve(true));
 	  	} else {
           resolve(false);
         }
@@ -4410,12 +4410,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return blockedByAbility.value ? getPokemonMessage(target, " can't be switched out!") : null;
   }
 
+
   getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      if (!this.user && (move.category === MoveCategory.STATUS || move.category === MoveCategory.PHYSICAL) && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.hasAbilityWithAttr(MoveImmunityAbAttr) || target.isMax()) || target.getTag(BattlerTagType.INGRAIN)) {
+      // If any of these are true, the switchOut will fail
+      if (!this.user && (move.category === MoveCategory.STATUS || move.category === MoveCategory.PHYSICAL) && ((target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.hasAbilityWithAttr(MoveImmunityAbAttr) || target.getTag(BattlerTagType.INGRAIN)) || target.isMax())) {
         return false;
       }
 
