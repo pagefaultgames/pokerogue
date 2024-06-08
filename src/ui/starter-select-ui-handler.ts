@@ -2124,12 +2124,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
       this.starterIcons[s].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
       this.starterIcons[s].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+      if (s >= index) {
+        this.starterCursorObjs[s].setPosition(this.starterCursorObjs[s + 1].x, this.starterCursorObjs[s + 1].y);
+        this.starterCursorObjs[s].setVisible(true);
+      }
       //const cursorObj = this.starterCursorObjs[s];
       //cursorObj.setVisible(true);
       //cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
       //this.starterCursorObjs[s].setVisible(false);
     }
-    //this.starterCursorObjs[this.starterCursors.length].setVisible(false);
+    this.starterCursorObjs[this.starterCursors.length].setVisible(false);
     this.starterIcons[this.starterCursors.length].setTexture("pokemon_icons_0");
     this.starterIcons[this.starterCursors.length].setFrame("unknown");
 
