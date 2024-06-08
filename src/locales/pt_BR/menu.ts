@@ -46,7 +46,6 @@ export const menu: SimpleTranslationEntries = {
   "noRankings": "Sem Classificação",
   "loading": "Carregando…",
   "playersOnline": "Jogadores Ativos",
-  "empty": "Vazio",
   "yes": "Sim",
   "no": "Não",
   "disclaimer": "AVISO",
