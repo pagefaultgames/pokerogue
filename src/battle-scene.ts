@@ -155,6 +155,13 @@ export default class BattleScene extends SceneBase {
    */
   public battleStyle: integer = 0;
 
+  /**
+  * Defines whether or not to show type effectiveness hints
+  * - true: No hints
+  * - false: Show hints for moves
+   */
+  public typeHints: boolean = false;
+
   public disableMenu: boolean = false;
 
   public gameData: GameData;
@@ -1010,7 +1017,8 @@ export default class BattleScene extends SceneBase {
     if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
       newDouble = true;
     }
-    if (Overrides.SINGLE_BATTLE_OVERRIDE) {
+    /* Override battles into single only if not fighting with trainers */
+    if (newBattleType !== BattleType.TRAINER && Overrides.SINGLE_BATTLE_OVERRIDE) {
       newDouble = false;
     }
 
