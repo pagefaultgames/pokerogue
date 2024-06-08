@@ -373,14 +373,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "sailor": {
     "encounter": {
-      1: "Matey, you're walking the plank if you lose!",
-      2: "Come on then! My sailor's pride is at stake!",
-      3: "Ahoy there! Are you seasick?"
+      1: "Mano, você vai andar na prancha se perder!",
+      2: "Vem com tudo! Sou um marinheiro com orgulho!",
+      3: "Ahoy marujo! Tá enjoado, é?!"
     },
     "victory": {
-      1: "Argh! Beaten by a kid!",
-      2: "Your spirit sank me!",
-      3: "I think it's me that's seasick..."
+      1: "Argh! Perdi pra uma criança!",
+      2: "Sua vontade de ganhar me afogou!",
+      3: "Estou achando que quem tá enjoado sou eu..."
     },
   },
   "brock": {
@@ -765,14 +765,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "shauntal": {
     "encounter": {
-      1: "Com licença. Você é um desafiante, certo?\nSou a usuária de Pokémon do tipo Fantasma da Elite Four, Shauntal, e serei sua oponente.",
+      1: "Com licença. Você é um desafiante, certo?\nSou a usuária de Pokémon do tipo Fantasma da Elite dos Quatro, Shauntal, e serei sua oponente.",
       2: "Adoro escrever sobre Treinadores que vêm aqui e os Pokémon que treinam.\nPosso usar você e seus Pokémon como tema?",
       3: "Cada pessoa que trabalha com Pokémon tem uma história para contar.\nQue história está prestes a ser contada?"
     },
     "victory": {
       1: "Uau. Estou sem palavras!",
       2: "D-desculpe! Primeiro, preciso me desculpar com meus Pokémon...\n\nLamento muito que você tenha tido uma experiência ruim por minha causa!",
-      3: "Mesmo com isso, ainda sou uma das Elite Four!"
+      3: "Mesmo com isso, ainda sou uma da Elite dos Quatro!"
     },
     "defeat": {
       1: "Eheh.",
@@ -921,13 +921,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lacey": {
     "encounter": {
-      1: "Vou enfrentar você com meu time usual como membro da Elite Four."
+      1: "Vou enfrentar você com meu time usual como membro da Elite dos Quatro."
     },
     "victory": {
       1: "Foi uma excelente batalha. Estou ansiosa para o próximo desafio."
     },
     "defeat": {
-      1: "Fufufu... Nada mal.\nDesafiantes que derrotam a Elite Four são dignos de notar."
+      1: "Fufufu... Nada mal.\nDesafiantes que derrotam a Elite dos Quatro são dignos de notar."
     }
   },
   "drayton": {
@@ -1007,7 +1007,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Batalhar é um assunto profundo e complexo..."
     },
     "defeat": {
-      1: "Vencer um membro da Elite Four não é fácil."
+      1: "Vencer um membro da Elite dos Quatro não é fácil."
     }
   },
   "cress": {
@@ -1392,7 +1392,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "larry_elite": {
     "encounter": {
       1: `Olá… Sou eu, Larry.
-                $Eu também sou membro da Elite Four, sim… Infelizmente para mim.`,
+                $Eu também sou membro da Elite dos Quatro, sim… Infelizmente para mim.`,
     },
     "victory": {
       1: "Bem, isso tirou o vento debaixo das nossas asas…"
@@ -1476,7 +1476,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Então, aqui está você… Por que não vemos para quem os ventos favorecem hoje, você… ou eu?"
     },
     "victory": {
-      1: "É frustrante para mim como membro da Elite Four, mas parece que sua força é real."
+      1: "É frustrante para mim como membro da Elite dos Quatro, mas parece que sua força é real."
     },
     "defeat": {
       1: "Essa foi uma jogada de mestre!"

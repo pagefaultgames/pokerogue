@@ -99,6 +99,7 @@ export default class Move implements Localizable {
   public id: Moves;
   public name: string;
   public type: Type;
+  public defaultType: Type;
   public category: MoveCategory;
   public moveTarget: MoveTarget;
   public power: integer;
@@ -118,6 +119,7 @@ export default class Move implements Localizable {
 
     this.nameAppend = "";
     this.type = type;
+    this.defaultType = type;
     this.category = category;
     this.moveTarget = defaultMoveTarget;
     this.power = power;
@@ -1629,7 +1631,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
       }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0))
         && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
-        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, new PokemonMove(move.id), null,this.effect);
+        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null,this.effect);
         return true;
       }
     }
@@ -2195,7 +2197,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
           (args[0] as Utils.BooleanHolder).value = true;
           user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace("{TARGET}", target.name)}`));
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, target.getBattlerIndex());
+          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, false, target.getBattlerIndex());
 
           resolve(true);
         });
@@ -3323,23 +3325,22 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GENESECT)) {
       const form = user.species.speciesId === Species.GENESECT ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Shock Drive
-        type.value = Type.ELECTRIC;
+        move.type = Type.ELECTRIC;
         break;
       case 2: // Burn Drive
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 3: // Chill Drive
-        type.value = Type.ICE;
+        move.type = Type.ICE;
         break;
       case 4: // Douse Drive
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       default:
-        type.value = Type.NORMAL;
+        move.type = Type.NORMAL;
         break;
       }
       return true;
@@ -3353,14 +3354,13 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)) {
       const form = user.species.speciesId === Species.MORPEKO ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Hangry Mode
-        type.value = Type.DARK;
+        move.type = Type.DARK;
         break;
       default: // Full Belly Mode
-        type.value = Type.ELECTRIC;
+        move.type = Type.ELECTRIC;
         break;
       }
       return true;
@@ -3374,17 +3374,16 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.PALDEA_TAUROS)) {
       const form = user.species.speciesId === Species.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Blaze breed
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 2: // Aqua breed
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       default:
-        type.value = Type.FIGHTING;
+        move.type = Type.FIGHTING;
         break;
       }
       return true;
@@ -3398,32 +3397,31 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.OGERPON)) {
       const form = user.species.speciesId === Species.OGERPON ? user.formIndex : user.fusionSpecies.formIndex;
-      const type = (args[0] as Utils.IntegerHolder);
 
       switch (form) {
       case 1: // Wellspring Mask
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       case 2: // Hearthflame Mask
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 3: // Cornerstone Mask
-        type.value = Type.ROCK;
+        move.type = Type.ROCK;
         break;
       case 4: // Teal Mask Tera
-        type.value = Type.GRASS;
+        move.type = Type.GRASS;
         break;
       case 5: // Wellspring Mask Tera
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       case 6: // Hearthflame Mask Tera
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case 7: // Cornerstone Mask Tera
-        type.value = Type.ROCK;
+        move.type = Type.ROCK;
         break;
       default:
-        type.value = Type.GRASS;
+        move.type = Type.GRASS;
         break;
       }
       return true;
@@ -3436,23 +3434,21 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
-      const type = (args[0] as Utils.IntegerHolder);
-
       switch (user.scene.arena.weather?.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
-        type.value = Type.FIRE;
+        move.type = Type.FIRE;
         break;
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
-        type.value = Type.WATER;
+        move.type = Type.WATER;
         break;
       case WeatherType.SANDSTORM:
-        type.value = Type.ROCK;
+        move.type = Type.ROCK;
         break;
       case WeatherType.HAIL:
       case WeatherType.SNOW:
-        type.value = Type.ICE;
+        move.type = Type.ICE;
         break;
       default:
         return false;
@@ -3484,20 +3480,18 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
     }
 
     const currentTerrain = user.scene.arena.getTerrainType();
-    const type = (args[0] as Utils.IntegerHolder);
-
     switch (currentTerrain) {
     case TerrainType.MISTY:
-      type.value = Type.FAIRY;
+      move.type = Type.FAIRY;
       break;
     case TerrainType.ELECTRIC:
-      type.value = Type.ELECTRIC;
+      move.type = Type.ELECTRIC;
       break;
     case TerrainType.GRASSY:
-      type.value = Type.GRASS;
+      move.type = Type.GRASS;
       break;
     case TerrainType.PSYCHIC:
-      type.value = Type.PSYCHIC;
+      move.type = Type.PSYCHIC;
       break;
     default:
       return false;
@@ -3508,8 +3502,6 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
 
 export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const type = (args[0] as Utils.IntegerHolder);
-
     const iv_val = Math.floor(((user.ivs[Stat.HP] & 1)
       +(user.ivs[Stat.ATK] & 1) * 2
       +(user.ivs[Stat.DEF] & 1) * 4
@@ -3517,7 +3509,7 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
       +(user.ivs[Stat.SPATK] & 1) * 16
       +(user.ivs[Stat.SPDEF] & 1) * 32) * 15/63);
 
-    type.value = [
+    move.type = [
       Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
       Type.ROCK, Type.BUG, Type.GHOST, Type.STEEL,
       Type.FIRE, Type.WATER, Type.GRASS, Type.ELECTRIC,
@@ -3529,16 +3521,14 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
 
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const type = (args[0] as Utils.IntegerHolder);
-
     const userTypes = user.getTypes(true);
 
     if (userTypes.includes(Type.STELLAR)) { // will not change to stellar type
       const nonTeraTypes = user.getTypes();
-      type.value = nonTeraTypes[0];
+      move.type = nonTeraTypes[0];
       return true;
     } else if (userTypes.length > 0) {
-      type.value = userTypes[0];
+      move.type = userTypes[0];
       return true;
     } else {
       return false;
@@ -4224,6 +4214,48 @@ export class RemoveScreensAttr extends MoveEffectAttr {
 
   }
 }
+
+/*Swaps arena effects between the player and enemy side
+  * @extends MoveEffectAttr
+  * @see {@linkcode apply}
+*/
+export class SwapArenaTagsAttr extends MoveEffectAttr {
+  public SwapTags: ArenaTagType[];
+
+
+  constructor(SwapTags: ArenaTagType[]) {
+    super(true, MoveEffectTrigger.POST_APPLY);
+    this.SwapTags = SwapTags;
+  }
+
+  apply(user:Pokemon, target:Pokemon, move:Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const tagPlayerTemp = user.scene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
+    const tagEnemyTemp = user.scene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
+
+
+    if (tagPlayerTemp) {
+      for (const swapTagsType of tagPlayerTemp) {
+        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.ENEMY, true);
+      }
+    }
+    if (tagEnemyTemp) {
+      for (const swapTagsType of tagEnemyTemp) {
+        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId, ArenaTagSide.PLAYER, true);
+      }
+    }
+
+
+    user.scene.queueMessage( `${user.name} swapped the battle effects affecting each side of the field!`);
+    return true;
+  }
+}
+
 /**
  * Attribute used for Revival Blessing.
  * @extends MoveEffectAttr
@@ -4303,7 +4335,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   	// Check if the move category is not STATUS or if the switch out condition is not met
       if (!this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
-        applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
+        applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, move, null);
         return resolve(false);
       }
 
@@ -5913,6 +5945,7 @@ export function initMoves() {
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)
       .condition(userSleptOrComatoseCondition)
+      .target(MoveTarget.ALL_ENEMIES)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(PartyStatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
@@ -5972,7 +6005,7 @@ export function initMoves() {
       ], true)
       .attr(RemoveArenaTrapAttr),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
-      .attr(StatChangeAttr, BattleStat.EVA, -1)
+      .attr(StatChangeAttr, BattleStat.EVA, -2)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.IRON_TAIL, Type.STEEL, MoveCategory.PHYSICAL, 100, 75, 15, 30, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
@@ -7460,9 +7493,7 @@ export function initMoves() {
       .attr(FirstAttackDoublePowerAttr)
       .bitingMove(),
     new StatusMove(Moves.COURT_CHANGE, Type.NORMAL, 100, 10, -1, 0, 8)
-      .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
-    /* Unused */
+      .attr(SwapArenaTagsAttr, [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.MIST, ArenaTagType.REFLECT, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TAILWIND, ArenaTagType.TOXIC_SPIKES]),
     new AttackMove(Moves.MAX_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented()
