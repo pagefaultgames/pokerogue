@@ -40,6 +40,7 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Classement de la Semaine",
   "noRankings": "Pas de Classement",
   "loading": "Chargement…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Joueurs Connectés",
   "yes":"Oui",
   "no":"Non",

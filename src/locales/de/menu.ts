@@ -45,6 +45,7 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Wöchentliche Rangliste",
   "noRankings": "Keine Rangliste",
   "loading": "Lade…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Spieler Online",
   "yes":"Ja",
   "no":"Nein",

@@ -436,7 +436,7 @@ export class LoadingScene extends SceneBase {
     });
 
     this.load.on("fileprogress", file => {
-      assetText.setText(`Loading asset: ${file.key}`);
+      assetText.setText(i18next.t("menu:loadingAsset", { assetName: file.key }));
     });
 
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
