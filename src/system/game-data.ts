@@ -501,7 +501,10 @@ export class GameData {
 
         const starterDataKey = `starterData_${loggedInUser.username}`;
         if (localStorage.hasOwnProperty(starterDataKey)) {
-          this.localOnlyStarterData = JSON.parse(decrypt(localStorage.getItem(starterDataKey), bypassLogin));
+          this.localOnlyStarterData = JSON.parse(
+            decrypt(localStorage.getItem(starterDataKey), bypassLogin),
+            (k, v) => k === "dexAttrCursor" ? BigInt(v) : v
+          );
         }
 
         resolve(true);
@@ -1583,6 +1586,7 @@ export class GameData {
     ret |= this.getFormAttr(this.getFormIndex(attr));
 
     const localOnlyStarterData = this.localOnlyStarterData[species.speciesId];
+    console.log(localOnlyStarterData);
     return localOnlyStarterData?.dexAttrCursor ?? ret;
   }
 
@@ -1601,7 +1605,7 @@ export class GameData {
   }
 
   getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): integer {
-    const lastAbilityIndex = this.scene.gameData.localOnlyStarterData[species.speciesId]?.abilityIndex;
+    const lastAbilityIndex = this.localOnlyStarterData[species.speciesId]?.abilityIndex;
     if (lastAbilityIndex !== undefined) {
       return lastAbilityIndex;
     }
@@ -1611,7 +1615,7 @@ export class GameData {
   }
 
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
-    const lastNature = this.scene.gameData.localOnlyStarterData[species.speciesId]?.nature;
+    const lastNature = this.localOnlyStarterData[species.speciesId]?.nature;
     if (lastNature !== undefined) {
       return lastNature;
     }
