@@ -1313,6 +1313,15 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon
     if (!partyMember.isAllowedInBattle()) {
       console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
+
+      // First check if they're somehow still in play, if so remove them.
+      if (partyMember.isOnField()) {
+        partyMember.hideInfo();
+        partyMember.setVisible(false);
+        this.scene.field.remove(partyMember);
+        this.scene.triggerPokemonFormChange(partyMember, SpeciesFormChangeActiveTrigger, true);
+      }
+
       const party = this.getParty();
 
       // Find the first non-fainted Pokemon index above the current one
@@ -1752,6 +1761,34 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
 
+    this.scene.getPlayerField().forEach(p => {
+      // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
+      if (p.isOnField() && !p.isAllowedInBattle()) {
+        this.scene.queueMessage(i18next.t("challenges:illegalEvolution", {"pokemon": p.name}), null, true);
+
+        const allowedPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+
+        if (!allowedPokemon.length) {
+          // If there are no longer any legal pokemon in the party, game over.
+          this.scene.clearPhaseQueue();
+          this.scene.unshiftPhase(new GameOverPhase(this.scene));
+        } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
+          // If there is at least one pokemon in the back that is legal to switch in, force a switch.
+          p.switchOut(false, true);
+        } else {
+          // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
+          // This should only happen in double battles.
+          p.hideInfo();
+          p.setVisible(false);
+          this.scene.field.remove(p);
+          this.scene.triggerPokemonFormChange(p, SpeciesFormChangeActiveTrigger, true);
+        }
+        if (allowedPokemon.length === 1 && this.scene.currentBattle.double) {
+          this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
+        }
+      }
+    });
+
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
@@ -1786,9 +1823,15 @@ export class CommandPhase extends FieldPhase {
     super.start();
 
     if (this.fieldIndex) {
-      const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
-      if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN) {
-        this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand.command, skip: true };
+      // If we somehow are attempting to check the right pokemon but there's only one pokemon out
+      // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
+      if (this.scene.getPlayerField().filter(p => p.isActive()).length === 1) {
+        this.fieldIndex = FieldPosition.CENTER;
+      } else {
+        const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
+        if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN) {
+          this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand.command, skip: true };
+        }
       }
     }
 

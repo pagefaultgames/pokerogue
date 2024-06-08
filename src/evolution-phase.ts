@@ -5,7 +5,7 @@ import { SpeciesFormEvolution } from "./data/pokemon-evolutions";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
-import { GameOverPhase, LearnMovePhase, ToggleDoublePositionPhase } from "./phases";
+import { LearnMovePhase } from "./phases";
 import { cos, sin } from "./field/anims";
 import { PlayerPokemon } from "./field/pokemon";
 import { getTypeRgb } from "./data/type";
@@ -189,7 +189,7 @@ export class EvolutionPhase extends Phase {
 
                           SoundFade.fadeOut(this.scene, evolutionBgm, 100);
 
-                          this.scene.unshiftPhase(new EndEvolutionPhase(this.scene, this.pokemon));
+                          this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
                           this.scene.ui.showText(i18next.t("menu:stoppedEvolving", { pokemonName: preName }), null, () => {
                             this.scene.ui.showText(i18next.t("menu:pauseEvolutionsQuestion", { pokemonName: preName }), null, () => {
@@ -223,7 +223,7 @@ export class EvolutionPhase extends Phase {
                             for (const lm of levelMoves) {
                               this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));
                             }
-                            this.scene.unshiftPhase(new EndEvolutionPhase(this.scene, this.pokemon));
+                            this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
                             this.scene.playSound("shine");
                             this.doSpray();
@@ -531,35 +531,13 @@ export class EvolutionPhase extends Phase {
 }
 
 export class EndEvolutionPhase extends Phase {
-  protected pokemon: PlayerPokemon;
 
-  constructor(scene: BattleScene, pokemon: PlayerPokemon) {
+  constructor(scene: BattleScene) {
     super(scene);
-
-    this.pokemon = pokemon;
   }
 
   start() {
     super.start();
-
-    // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
-    if (this.pokemon.isPlayer() && this.pokemon.isOnField() && !this.pokemon.isAllowedInBattle()) {
-      this.scene.queueMessage(i18next.t("challenges:illegalEvolution", {"pokemon": this.pokemon.name}), null, true);
-
-      const allowedPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
-
-      if (!allowedPokemon.length) {
-        // If there are no longer any legal pokemon in the party, game over.
-        this.scene.clearPhaseQueue();
-        this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
-        // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-        this.pokemon.switchOut(false, true);
-      }
-      if (allowedPokemon.length === 1 && this.scene.currentBattle.double) {
-        this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-      }
-    }
 
     this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => this.end());
   }
