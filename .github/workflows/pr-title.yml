@@ -4,7 +4,7 @@ on:
     types: [opened, edited, synchronize, reopened]
 
 jobs:
-  lint:
+  lint-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master

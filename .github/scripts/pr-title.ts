@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-const PREFIXES = ["ability", "balance", "bug", "docs", "feature", "item", "localize", "move", "other"] as const;
+const PREFIXES = ["ability", "balance", "bug", "docs", "feature", "item", "locale", "move", "other"] as const;
 
 const LOCALES = ["es", "fr", "de", "it", "zh_CN", "zh_TW", "pt_BR", "ko"];
 
@@ -29,17 +29,16 @@ async function run() {
     });
 
     const title = pullRequest.title;
-    // const title = "poop(asd): asdasdasd";
     core.info(`Pull Request title: "${title}"`);
 
 
 
     const info = `
-Terminology: feat(ui): Add new feature
-             ^    ^    ^
-             |    |    |__ Subject
-             |    |_______ Scope
-             |____________ Prefix
+Terminology:  fix(ui): Fix female trainer names
+              ^   ^    ^
+              |   |    |__ Subject
+              |   |_______ Scope
+              |___________ Prefix
 `;
 
     core.info(info.trim());
@@ -47,7 +46,7 @@ Terminology: feat(ui): Add new feature
     // Check if title pass regex
     const regex = RegExp(/^[a-zA-Z]+(\([a-zA-Z]+\))?: .+/);
     if (!regex.test(title)) {
-      core.setFailed(`Pull Request title "${title}" failed to match - 'Prefix(Scrope): Subject'`);
+      core.setFailed(`Pull Request title "${title}" failed to match - 'Prefix(Scope): Subject'`);
       return;
     }
 
@@ -59,7 +58,7 @@ Terminology: feat(ui): Add new feature
     }
 
     // Check if title has an allowed scope
-    if (title.startsWith("localize")) {
+    if (title.startsWith("locale")) {
       core.info(`Allowed locale scopes: ${LOCALES}`);
       const scope = regex.exec(title);
       if (!scope || !LOCALES.includes(scope[1])) {
