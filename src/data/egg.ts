@@ -111,3 +111,15 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 
   return ret;
 }
+
+export function getEggtierForSpecies(species :Species): EggTier {
+  const speciesBaseValue = speciesStarters[species];
+  if (speciesBaseValue <= 3) {
+    return EggTier.COMMON;
+  } else if (speciesBaseValue <= 5) {
+    return EggTier.GREAT;
+  } else if (speciesBaseValue <= 7) {
+    return EggTier.ULTRA;
+  }
+  return EggTier.MASTER;
+}

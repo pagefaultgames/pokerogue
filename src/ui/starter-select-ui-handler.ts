@@ -32,6 +32,7 @@ import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import MoveInfoOverlay from "./move-info-overlay";
+import { getEggtierForSpecies } from "#app/data/egg.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -186,6 +187,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonCandyCountText: Phaser.GameObjects.Text;
   private pokemonCaughtHatchedContainer: Phaser.GameObjects.Container;
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
+  private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private genOptionsText: Phaser.GameObjects.Text;
   private instructionsText: Phaser.GameObjects.Text;
@@ -577,10 +579,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCaughtCountText.setOrigin(0, 0);
     this.pokemonCaughtHatchedContainer.add(this.pokemonCaughtCountText);
 
-    const pokemonHatchedIcon = this.scene.add.sprite(1, 14, "items", "mystery_egg");
-    pokemonHatchedIcon.setOrigin(0, 0);
-    pokemonHatchedIcon.setScale(0.75);
-    this.pokemonCaughtHatchedContainer.add(pokemonHatchedIcon);
+    this.pokemonHatchedIcon = this.scene.add.sprite(1, 14, "egg_icons");
+    this.pokemonHatchedIcon.setOrigin(0.15, 0.2);
+    this.pokemonHatchedIcon.setScale(0.8);
+    this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedIcon);
 
     this.pokemonHatchedCountText = addTextObject(this.scene, 24, 19, "0", TextStyle.SUMMARY_ALT);
     this.pokemonHatchedCountText.setOrigin(0, 0);
@@ -1718,6 +1720,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonPassiveLabelText.setVisible(true);
         this.pokemonNatureLabelText.setVisible(true);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
+        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+          this.pokemonHatchedIcon.setFrame("manaphy");
+        }
+        this.pokemonHatchedIcon.setFrame(getEggtierForSpecies(species.speciesId));
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
