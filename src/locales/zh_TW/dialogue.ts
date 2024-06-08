@@ -1144,6 +1144,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `真開心啊，能將你徹底粉碎！`,
     }
   },
+  "hala": {
+    "encounter": {
+      1: "老哈拉讓你放開嗓子！"
+    },
+    "victory": {
+      1: "我能感受到你在旅途中所獲得的力量。"
+    },
+    "defeat": {
+      1: "啊哈哈。多麼有趣的戰鬥。"
+    }
+  },
   "molayne": {
     "encounter": {
       1: `我將隊長的位置讓給了我的表弟馬瑪內,\n但我對自己的能力很有信心。 $我的力量就像超新星一樣！`,
