@@ -3808,6 +3808,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.FORECAST, 3)
       .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FORECAST),
     new Ability(Abilities.STICKY_HOLD, 3)
