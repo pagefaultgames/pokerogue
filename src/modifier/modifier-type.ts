@@ -1715,6 +1715,13 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
         options.push(getModifierTypeOptionWithLuckUpgrades(options, retryCount, party, tier));
       });
     }
+
+    // Fill remaining
+    if (options.length < count && customModifierSettings.fillRemaining) {
+      while (options.length < count) {
+        options.push(getModifierTypeOptionWithLuckUpgrades(options, retryCount, party, undefined));
+      }
+    }
   }
 
   // OVERRIDE IF NECESSARY
