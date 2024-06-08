@@ -4416,7 +4416,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      // If any of these are true, the switchOut will fail
       if (!this.user && (move.category === MoveCategory.STATUS || move.category === MoveCategory.PHYSICAL) && ((target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.hasAbilityWithAttr(MoveImmunityAbAttr) || target.getTag(BattlerTagType.INGRAIN)) || target.isMax())) {
         return false;
       }
