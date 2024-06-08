@@ -224,7 +224,7 @@ export default class FightUiHandler extends UiHandler {
       if (moveIndex < moveset.length) {
         const pokemonMove = moveset[moveIndex];
         moveText.setText(pokemonMove.getName());
-        moveText.setColor(this.getMoveColor(pokemon, pokemonMove));
+        moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
       }
 
       this.movesContainer.add(moveText);
@@ -234,15 +234,16 @@ export default class FightUiHandler extends UiHandler {
   /**
    * Returns a specific move's color based on its type effectiveness against opponents
    * If there are multiple opponents, the highest effectiveness' color is returned
+   * @returns A color or undefined if the default color should be used
    */
-  private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string {
+  private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
     if (!this.scene.typeHints) {
-      return "white";
+      return undefined;
     }
 
     const opponents = pokemon.getOpponents();
     if (opponents.length <= 0) {
-      return "white";
+      return undefined;
     }
 
     const moveColors = opponents.map((opponent) => {
@@ -251,7 +252,7 @@ export default class FightUiHandler extends UiHandler {
       return getTypeDamageMultiplierColor(effectiveness, "offense");
     });
 
-    return moveColors[0] ?? "white";
+    return moveColors[0];
   }
 
   clear() {

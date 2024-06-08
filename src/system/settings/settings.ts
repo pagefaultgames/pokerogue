@@ -47,7 +47,6 @@ export const SettingKeys = {
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
-  Type_Hints: "TYPE_HINTS",
   Language: "LANGUAGE",
   UI_Theme: "UI_THEME",
   Window_Type: "WINDOW_TYPE",
@@ -65,6 +64,7 @@ export const SettingKeys = {
   Sprite_Set: "SPRITE_SET",
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
+  Type_Hints: "TYPE_HINTS",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
   SE_Volume: "SE_VOLUME",
@@ -142,13 +142,6 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Vibration,
     label: "Vibration",
     options: AUTO_DISABLED,
-    default: 0,
-    type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Type_Hints,
-    label: "Type hints",
-    options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
   },
@@ -273,6 +266,13 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Player_Gender,
     label: "Player Gender",
     options: ["Boy", "Girl"],
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Type_Hints,
+    label: "Type hints",
+    options: OFF_ON,
     default: 0,
     type: SettingType.DISPLAY
   },
