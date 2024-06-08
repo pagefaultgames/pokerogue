@@ -27,7 +27,7 @@ export const challenges: SimpleTranslationEntries = {
   "singleGeneration.desc.9": "Vous ne pouvez choisir que des Pokémon de 9e génération.",
   "singleType.name": "Mono-type",
   "singleType.value.0": "Désactivé",
-  "singleType.desc.0": "Vous ne pouvez choisir que des Pokémon du type sélectionnée.",
+  "singleType.desc.0": "Vous ne pouvez choisir que des Pokémon du type sélectionné.",
   "singleType.value.1": "Normal",
   "singleType.desc.1": "Vous ne pouvez choisir que des Pokémon de type Normal.",
   "singleType.value.2": "Combat",
