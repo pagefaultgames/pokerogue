@@ -19,7 +19,7 @@ import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { Button } from "../enums/buttons";
-import { GameModes, gameModes } from "../game-mode";
+import { GameModes } from "../game-mode";
 import { SelectChallengePhase, TitlePhase } from "../phases";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
 import { Passive as PassiveAttr } from "#app/data/enums/passive";
