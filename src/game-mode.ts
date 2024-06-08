@@ -285,15 +285,15 @@ export class GameMode implements GameModeConfig {
   static getModeName(modeId: GameModes): string {
     switch (modeId) {
     case GameModes.CLASSIC:
-      return i18next.t("gameMode:classic");
+      return "Classic";
     case GameModes.ENDLESS:
-      return i18next.t("gameMode:endless");
+      return "Endless";
     case GameModes.SPLICED_ENDLESS:
-      return i18next.t("gameMode:endlessSpliced");
+      return "Endless (Spliced)";
     case GameModes.DAILY:
-      return i18next.t("gameMode:dailyRun");
+      return "Daily Run";
     case GameModes.CHALLENGE:
-      return i18next.t("gameMode:challenge");
+      return "Challenge";
     }
   }
 }
