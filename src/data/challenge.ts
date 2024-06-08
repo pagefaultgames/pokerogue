@@ -8,6 +8,8 @@ import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import { TrainerType } from "./enums/trainer-type";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
+import { Species } from "./enums/species";
+import { Type } from "./type";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -328,10 +330,24 @@ export class SingleGenerationChallenge extends Challenge {
   }
 }
 
+interface monotypeOverride {
+  /** The species to override */
+  species: Species;
+  /** The type to count as */
+  type: Type;
+  /** If part of a fusion, should we check the fused species instead of the base species? */
+  fusion: boolean;
+}
+
 /**
  * Implements a mono type challenge.
  */
 export class SingleTypeChallenge extends Challenge {
+  private static TYPE_OVERRIDES: monotypeOverride[] = [
+    {species: Species.MELOETTA, type: Type.PSYCHIC, fusion: true},
+    {species: Species.CASTFORM, type: Type.NORMAL, fusion: false},
+  ];
+
   constructor() {
     super(Challenges.SINGLE_TYPE, 18);
     this.addChallengeType(ChallengeType.STARTER_CHOICE);
@@ -355,7 +371,8 @@ export class SingleTypeChallenge extends Challenge {
     case ChallengeType.POKEMON_IN_BATTLE:
       const pokemon = args[0] as Pokemon;
       const isValidPokemon = args[1] as Utils.BooleanHolder;
-      if (pokemon.isPlayer() && !pokemon.isOfType(this.value - 1, false, false, true)) {
+      if (pokemon.isPlayer() && !pokemon.isOfType(this.value - 1, false, false, true)
+        && !SingleTypeChallenge.TYPE_OVERRIDES.some(o => o.type === (this.value - 1) && (pokemon.isFusion() && o.fusion ? pokemon.fusionSpecies : pokemon.species).speciesId === o.species)) {
         isValidPokemon.value = false;
         return true;
       }
