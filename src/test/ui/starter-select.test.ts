@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import {Species} from "#app/data/enums/species";
 import {
+  EncounterPhase,
   SelectStarterPhase,
   TitlePhase,
 } from "#app/phases";
@@ -15,6 +16,8 @@ import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 import {OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
 import {Gender} from "#app/data/gender";
 import {allSpecies} from "#app/data/pokemon-species";
+import {Nature} from "#app/data/nature";
+import {Abilities} from "#app/data/enums/abilities";
 
 
 describe("UI - Starter select", () => {
@@ -86,6 +89,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
+    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
     expect(game.scene.getParty()[0].shiny).toBe(true);
@@ -93,66 +97,67 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].gender).toBe(Gender.MALE);
   }, 20000);
 
-  // it("Bulbasaur - shiny - variant 2 female hardy overgrow", async() => {
-  //   await game.importData("src/test/utils/saves/everything.prsv");
-  //   const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
-  //     const species = game.scene.gameData.dexData[key];
-  //     return species.caughtAttr !== 0n;
-  //   }).length;
-  //   expect(caughtCount).toBe(Object.keys(allSpecies).length);
-  //   await game.runToTitle();
-  //   game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-  //     const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
-  //     currentPhase.gameMode = GameModes.CLASSIC;
-  //     currentPhase.end();
-  //   });
-  //   game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
-  //     const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
-  //     handler.processInput(Button.RIGHT);
-  //     handler.processInput(Button.CYCLE_GENDER);
-  //     handler.processInput(Button.ACTION);
-  //     game.phaseInterceptor.unlock();
-  //   });
-  //   await game.phaseInterceptor.run(SelectStarterPhase)
-  //   let options: OptionSelectItem[];
-  //   let optionSelectUiHandler: OptionSelectUiHandler;
-  //   await new Promise<void>((resolve) => {
-  //     game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
-  //       optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-  //       options = optionSelectUiHandler.getOptionsWithScroll();
-  //       resolve();
-  //     });
-  //   });
-  //   expect(options.some(option => option.label === "Add to Party")).toBe(true);
-  //   expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-  //   expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-  //   expect(options.some(option => option.label === "Use Candies")).toBe(true);
-  //   expect(options.some(option => option.label === "Cancel")).toBe(true);
-  //   optionSelectUiHandler.processInput(Button.ACTION);
-  //
-  //   await new Promise<void>((resolve) => {
-  //     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
-  //       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
-  //       handler.processInput(Button.SUBMIT);
-  //     });
-  //     game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
-  //       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
-  //       handler.processInput(Button.ACTION);
-  //     });
-  //     game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
-  //       const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
-  //       saveSlotSelectUiHandler.processInput(Button.ACTION);
-  //       resolve();
-  //     });
-  //   });
-  //
-  //   expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-  //   expect(game.scene.getParty()[0].shiny).toBe(true);
-  //   expect(game.scene.getParty()[0].variant).toBe(2);
-  //   expect(game.scene.getParty()[0].nature).toBe(Nature.HARDY);
-  //   expect(game.scene.getParty()[0].getAbility().id).toBe(Abilities.OVERGROW);
-  // }, 200000);
-  //
+  it("Bulbasaur - shiny - variant 2 female hardy overgrow", async() => {
+    await game.importData("src/test/utils/saves/everything.prsv");
+    const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
+      const species = game.scene.gameData.dexData[key];
+      return species.caughtAttr !== 0n;
+    }).length;
+    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    await game.runToTitle();
+    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase.end();
+    });
+    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
+      handler.processInput(Button.RIGHT);
+      handler.processInput(Button.CYCLE_GENDER);
+      handler.processInput(Button.ACTION);
+      game.phaseInterceptor.unlock();
+    });
+    await game.phaseInterceptor.run(SelectStarterPhase);
+    let options: OptionSelectItem[];
+    let optionSelectUiHandler: OptionSelectUiHandler;
+    await new Promise<void>((resolve) => {
+      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+        optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
+        options = optionSelectUiHandler.getOptionsWithScroll();
+        resolve();
+      });
+    });
+    expect(options.some(option => option.label === "Add to Party")).toBe(true);
+    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
+    expect(options.some(option => option.label === "Use Candies")).toBe(true);
+    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    optionSelectUiHandler.processInput(Button.ACTION);
+
+    await new Promise<void>((resolve) => {
+      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+        const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
+        handler.processInput(Button.SUBMIT);
+      });
+      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+        const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
+        handler.processInput(Button.ACTION);
+      });
+      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+        const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
+        saveSlotSelectUiHandler.processInput(Button.ACTION);
+        resolve();
+      });
+    });
+    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+
+    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getParty()[0].shiny).toBe(true);
+    expect(game.scene.getParty()[0].variant).toBe(2);
+    expect(game.scene.getParty()[0].nature).toBe(Nature.HARDY);
+    expect(game.scene.getParty()[0].getAbility().id).toBe(Abilities.OVERGROW);
+  }, 20000);
+
   // it("Bulbasaur - shiny - variant 2 female lonely cholorophyl", async() => {
   //   await game.importData("src/test/utils/saves/everything.prsv");
   //   await game.runToTitle();

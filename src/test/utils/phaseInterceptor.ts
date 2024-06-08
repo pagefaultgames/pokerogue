@@ -175,6 +175,25 @@ export default class PhaseInterceptor {
     });
   }
 
+  whenAboutToRun(phaseTarget, skipFn?): Promise<void> {
+    const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
+    this.scene.moveAnimations = null; // Mandatory to avoid crash
+    return new Promise(async (resolve, reject) => {
+      ErrorInterceptor.getInstance().add(this);
+      const interval = setInterval(async () => {
+        const currentPhase = this.onHold.shift();
+        if (currentPhase) {
+          if (currentPhase.name !== targetName) {
+            this.onHold.unshift(currentPhase);
+          } else {
+            clearInterval(interval);
+            resolve();
+          }
+        }
+      });
+    });
+  }
+
   /**
    * Method to initialize phases and their corresponding methods.
    */
@@ -182,7 +201,7 @@ export default class PhaseInterceptor {
     this.originalSetMode = UI.prototype.setMode;
     this.originalSuperEnd = Phase.prototype.end;
     UI.prototype.setMode = (mode, ...args) => this.setMode.call(this, mode, ...args);
-    Phase.prototype.end = () => this.superEndPhase.call(this, Phase);
+    Phase.prototype.end = () => this.superEndPhase.call(this);
     for (const [phase, methodStart] of this.PHASES) {
       const originalStart = phase.prototype.start;
       this.phases[phase.name] = {
