@@ -2372,7 +2372,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Tate: Are you suprised?
+      1: `Tate: Are you surprised?
                   $Liza: We are two gym leaders at once!
                   $Tate: We are twins!
                   $Liza: We dont need to talk to understand each other!
@@ -2386,7 +2386,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Liza: Hihihi... Are you suprised?
+      1: `Liza: Hihihi... Are you surprised?
                   $Tate: Yes, we are really two gym leaders at once!
                   $Liza: This is my twin brother Tate!
                   $Tate: And this is my twin sister Liza!
