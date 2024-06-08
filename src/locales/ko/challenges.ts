@@ -43,7 +43,7 @@ export const challenges: SimpleTranslationEntries = {
   "singleType.value.7": "벌레",
   "singleType.desc.7": "벌레 타입의 포켓몬만 사용할 수 있습니다.",
   "singleType.value.8": "고스트",
-  "singleType.desc.8": "고스트 타입의 포켓몬만 사용할 수 있습니다G.",
+  "singleType.desc.8": "고스트 타입의 포켓몬만 사용할 수 있습니다.",
   "singleType.value.9": "강철",
   "singleType.desc.9": "강철 타입의 포켓몬만 사용할 수 있습니다.",
   "singleType.value.10": "불꽃",
