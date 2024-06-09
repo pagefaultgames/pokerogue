@@ -48,7 +48,7 @@ export interface InterfaceConfig {
     custom?: MappingLayout;
 }
 
-const repeatInputDelayMillis = 500;
+let repeatInputDelayMillis = 250;
 
 // Phaser.Input.Gamepad.GamepadPlugin#refreshPads
 declare module "phaser" {
@@ -547,6 +547,19 @@ export class InputsController {
   repeatInputDurationJustPassed(button: Button): boolean {
     if (!this.isButtonLocked(button)) {
       return false;
+    }
+    if (typeof this.scene.repeatInputDelay !== "undefined") {
+      switch (this.scene.inputDelay) {
+      case 0:
+        repeatInputDelayMillis = 125;
+        break;
+      case 1:
+        repeatInputDelayMillis = 250;
+        break;
+      case 2:
+        repeatInputDelayMillis = 500;
+        break;
+      }
     }
     const duration = Date.now() - this.interactions[button].pressTime;
     if (duration >= repeatInputDelayMillis) {

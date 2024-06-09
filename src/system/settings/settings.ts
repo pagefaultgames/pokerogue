@@ -47,6 +47,7 @@ export const SettingKeys = {
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
+  Repeat_Input_Delay: "REPEAT INPUT DELAY",
   Language: "LANGUAGE",
   UI_Theme: "UI_THEME",
   Window_Type: "WINDOW_TYPE",
@@ -143,6 +144,13 @@ export const Setting: Array<Setting> = [
     label: "Vibration",
     options: AUTO_DISABLED,
     default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Repeat_Input_Delay,
+    label: "Repeat Input Delay",
+    options: ["Short","Normal","Long"],
+    default: 1,
     type: SettingType.GENERAL
   },
   {
@@ -457,6 +465,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Type_Hints:
     scene.typeHints = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Repeat_Input_Delay:
+    scene.repeatInputDelay = value;
     break;
   case SettingKeys.Language:
     if (value) {
