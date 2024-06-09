@@ -101,12 +101,14 @@ export default class TouchControl {
       this.events.emit("input_down", {
         controller_type: "keyboard",
         button: button,
+        isTouch: true
       });
       break;
     case "keyup":
       this.events.emit("input_up", {
         controller_type: "keyboard",
         button: button,
+        isTouch: true
       });
       break;
     }
