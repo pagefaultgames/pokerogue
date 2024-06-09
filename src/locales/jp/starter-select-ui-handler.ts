@@ -35,9 +35,9 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleGender": ": 性別変更",
   "cycleAbility": ": 特性変更",
   "cycleNature": ": 性格変更",
-  "cycleVariant": ": バリアント変更",
-  "enablePassive": "Passive有効",
-  "disablePassive": "Passive無効",
+  "cycleVariant": ": 色変更",
+  "enablePassive": "パッシブ ゆうこう",
+  "disablePassive": "パッシブ むこう",
   "locked": "Locked",
   "disabled": "Disabled",
   "uncaught": "Uncaught"
