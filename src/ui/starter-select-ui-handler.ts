@@ -197,6 +197,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   private genMode: boolean;
   private statsMode: boolean;
+  private starterIconsCursorXOffset: number = -2;
+  private starterIconsCursorYOffset: number = 1;
+  private starterIconsCursorIndex: number;
   private dexAttrCursor: bigint = 0n;
   private abilityCursor: integer = -1;
   private natureCursor: integer = -1;
@@ -233,6 +236,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterIcons: Phaser.GameObjects.Sprite[];
   private genCursorObj: Phaser.GameObjects.Image;
   private genCursorHighlightObj: Phaser.GameObjects.Image;
+  private starterIconsCursorObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
   private starterValueLabels: Phaser.GameObjects.Text[];
@@ -402,6 +406,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.genCursorObj.setVisible(false);
     this.genCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.genCursorObj);
+
+    this.starterIconsCursorObj = this.scene.add.image(this.genCursorObj.x, 64, "select_gen_cursor_highlight");
+    this.starterIconsCursorObj.setVisible(false);
+    this.starterIconsCursorObj.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.starterIconsCursorObj);
 
     this.valueLimitLabel = addTextObject(this.scene, 124, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
     this.valueLimitLabel.setOrigin(0.5, 0);
@@ -972,7 +981,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.UP:
         this.startCursorObj.setVisible(false);
-        this.setGenMode(true);
+        if (this.starterCursors.length > 0) {
+          this.starterIconsCursorIndex = this.starterCursors.length - 1;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          this.setGenMode(true);
+        }
         success = true;
         break;
       case Button.LEFT:
@@ -983,6 +997,46 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.RIGHT:
         this.startCursorObj.setVisible(false);
+        this.setGenMode(false);
+        success = true;
+        break;
+      }
+    } else if (this.starterIconsCursorObj.visible) {
+      switch (button) {
+      case Button.ACTION:
+        if (this.tryStart(true)) {
+          success = true;
+        } else {
+          error = true;
+        }
+        break;
+      case Button.DOWN:
+        if (this.starterIconsCursorIndex <= this.starterCursors.length - 2) {
+          this.starterIconsCursorIndex++;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          this.starterIconsCursorObj.setVisible(false);
+          this.startCursorObj.setVisible(true);
+        }
+        this.setGenMode(false);
+        break;
+      case Button.UP:
+        if (this.starterIconsCursorIndex === 0) {
+          this.starterIconsCursorObj.setVisible(false);
+          this.setGenMode(true);
+        } else {
+          this.starterIconsCursorIndex--;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        }
+        break;
+      case Button.LEFT:
+        this.starterIconsCursorObj.setVisible(false);
+        this.setGenMode(false);
+        this.setCursor(this.cursor + 8);
+        success = true;
+        break;
+      case Button.RIGHT:
+        this.starterIconsCursorObj.setVisible(false);
         this.setGenMode(false);
         success = true;
         break;
@@ -998,7 +1052,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (this.genCursor < 2) {
           success = this.setCursor(this.genCursor + 1);
         } else {
-          this.startCursorObj.setVisible(true);
+          if (this.starterCursors.length === 0) {
+            this.startCursorObj.setVisible(true);
+          } else {
+            this.starterIconsCursorIndex = 0;
+            this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+          }
           this.setGenMode(true);
           success = true;
         }
@@ -1429,7 +1488,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           break;
         case Button.LEFT:
-          if (this.cursor % 9) {
+          if (this.cursor % 9 !== 0) {
             success = this.setCursor(this.cursor - 1);
           } else {
             if (row >= Math.min(5, rows - 1)) {
@@ -1656,8 +1715,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   setGenMode(genMode: boolean): boolean {
-    this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);
-    this.cursorObj.setVisible(!genMode && !this.startCursorObj.visible);
+    this.genCursorObj.setVisible(genMode && !(this.startCursorObj.visible || this.starterIconsCursorObj.visible));
+    this.cursorObj.setVisible(!genMode && !(this.startCursorObj.visible || this.starterIconsCursorObj.visible));
 
     if (genMode !== this.genMode) {
       this.genMode = genMode;
@@ -1671,6 +1730,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     return false;
+  }
+
+  moveStarterIconsCursor(index: number): void {
+    this.starterIconsCursorObj.x = this.starterIcons[index].x + this.starterIconsCursorXOffset;
+    this.starterIconsCursorObj.y = this.starterIcons[index].y + this.starterIconsCursorYOffset;
+    this.starterIconsCursorObj.setVisible(true);
+    this.setSpecies(this.genSpecies[this.starterGens[index]][this.starterCursors[index]]);
   }
 
   setSpecies(species: PokemonSpecies) {
@@ -2126,6 +2192,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterCursorObjs[this.starterCursors.length].setVisible(false);
     this.starterIcons[this.starterCursors.length].setTexture("pokemon_icons_0");
     this.starterIcons[this.starterCursors.length].setFrame("unknown");
+
+    if (this.starterIconsCursorObj.visible) {
+      if (this.starterIconsCursorIndex === this.starterCursors.length) {
+        if (this.starterCursors.length > 0) {
+          this.starterIconsCursorIndex--;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          this.starterIconsCursorObj.setVisible(false);
+          this.setGenMode(true);
+        }
+      }
+    }
+
     this.tryUpdateValue();
   }
 
