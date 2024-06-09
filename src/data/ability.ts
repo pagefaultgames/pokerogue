@@ -1770,6 +1770,28 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
 }
 
 /**
+ * Ability attribute for all PostSummon abilities that affect the weather
+ * Used in cloud nine and air lock
+ */
+export class PostSummonTriggerWeatherFormChangesForAllAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super();
+  }
+
+  /**
+   * Tries to make all Pokemon trigger a form change based on weather when summoned
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param args n/a
+   * @returns true
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]) {
+    pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    return true;
+  }
+}
+
+/**
  * Ability attribute that allows for triggering a form change based on the weather on summon
  * Used for Forecast and Flower Gift
  */
@@ -3666,7 +3688,8 @@ export function initAbilities() {
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
-      .attr(SuppressWeatherEffectAbAttr, true),
+      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr),
     new Ability(Abilities.COMPOUND_EYES, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
@@ -3860,7 +3883,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared.")
+      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), BattleStatMultiplierAbAttr, BattleStat.EVA, 2)
       .ignorable(),
