@@ -857,7 +857,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         altText = !pokemon.getSpeciesForm().getLevelMoves().find(plm => plm[1] === move);
       } else {
         if (option === PartyOption.ALL) {
-          optionName = i18next.t("partyUiHandler:all");
+          optionName = i18next.t("partyUiHandler:ALL");
         } else {
           const itemModifier = itemModifiers[option];
           optionName = itemModifier.type.name;
