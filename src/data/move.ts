@@ -4416,7 +4416,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       const party = player ? user.scene.getParty() : user.scene.getEnemyParty();
-      return (!player && !user.scene.currentBattle.battleType) || party.filter(p => !p.isFainted() && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > user.scene.currentBattle.getBattlerCount();
+      return (!player && !user.scene.currentBattle.battleType) || party.filter(p => p.isAllowedInBattle() && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > user.scene.currentBattle.getBattlerCount();
     };
   }
 
@@ -6005,7 +6005,7 @@ export function initMoves() {
       ], true)
       .attr(RemoveArenaTrapAttr),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
-      .attr(StatChangeAttr, BattleStat.EVA, -1)
+      .attr(StatChangeAttr, BattleStat.EVA, -2)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.IRON_TAIL, Type.STEEL, MoveCategory.PHYSICAL, 100, 75, 15, 30, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
