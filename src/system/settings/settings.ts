@@ -64,6 +64,7 @@ export const SettingKeys = {
   Sprite_Set: "SPRITE_SET",
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
+  Type_Hints: "TYPE_HINTS",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
   SE_Volume: "SE_VOLUME",
@@ -269,6 +270,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Type_Hints,
+    label: "Type hints",
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Master_Volume,
     label: "Master Volume",
     options: VOLUME_OPTIONS,
@@ -446,6 +454,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Vibration:
     scene.enableVibration = Setting[index].options[value] !== "Disabled" && hasTouchscreen();
+    break;
+  case SettingKeys.Type_Hints:
+    scene.typeHints = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Language:
     if (value) {
