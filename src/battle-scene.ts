@@ -68,6 +68,12 @@ export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
+const OPP_IVS_OVERRIDE_VALIDATED : integer[] = (
+  Array.isArray(Overrides.OPP_IVS_OVERRIDE) ?
+    Overrides.OPP_IVS_OVERRIDE :
+    new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
+).map(iv => isNaN(iv) || iv === null || iv > 31 ? -1 : iv);
+
 export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
@@ -765,6 +771,13 @@ export default class BattleScene extends SceneBase {
     if (postProcess) {
       postProcess(pokemon);
     }
+
+    for (let i = 0; i < pokemon.ivs.length; i++) {
+      if (OPP_IVS_OVERRIDE_VALIDATED[i] > -1) {
+        pokemon.ivs[i] = OPP_IVS_OVERRIDE_VALIDATED[i];
+      }
+    }
+
     pokemon.init();
     return pokemon;
   }

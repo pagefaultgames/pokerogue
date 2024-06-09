@@ -63,8 +63,12 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   }
 
   updateIvs(ivs: integer[], originalIvs?: integer[]): void {
+    this.updateValues(ivs, 31, ivs.reduce((res, iv) => res && iv === 31, true) ? window.perfectIVsChartColor ?? 0xFFBE00 : 0x98d8a0, originalIvs);
+  }
+
+  updateValues(ivs: integer[], scale : integer, color : integer, originalIvs?: integer[]): void {
     if (ivs) {
-      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
+      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / scale) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
       this.statsIvsCache = ivChartData.slice(0);
 
@@ -87,6 +91,15 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         t.setText(`[shadow]${label}[/shadow]`);
       });
 
+      const oldColor = this.ivChart.fillColor;
+      let interpolateColor = null;
+      if (oldColor !== color) {
+        interpolateColor = [
+          Phaser.Display.Color.IntegerToColor(oldColor),
+          Phaser.Display.Color.IntegerToColor(color)
+        ];
+      }
+
       this.scene.tweens.addCounter({
         from: 0,
         to: 1,
@@ -95,6 +108,13 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         onUpdate: (tween: Phaser.Tweens.Tween) => {
           const progress = tween.getValue();
           const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));
+          if (interpolateColor) {
+            this.ivChart.setFillStyle(
+              Phaser.Display.Color.ValueToColor(
+                Phaser.Display.Color.Interpolate.ColorWithColor(interpolateColor[0], interpolateColor[1], 1, progress)
+              ).color,
+              0.75);
+          }
           this.ivChart.setTo(interpolatedData);
         }
       });
