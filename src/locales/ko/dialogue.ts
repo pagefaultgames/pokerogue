@@ -223,7 +223,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "살아있는 산같은… 큰 체격을 부모님이 물려주셨죠…",
     },
     "victory": {
-      1: "적어도 BMI에 대하서는 질 수 없습니다!",
+      1: "적어도 BMI에 대해서는 질 수 없습니다!",
       2: "부족해… 절대로 충분하지 않아. 저의 콜레스테롤이 부족합니다…"
     },
   },
