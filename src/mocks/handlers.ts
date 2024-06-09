@@ -1,6 +1,6 @@
 import { randInt } from "#app/utils.js";
 import { http, HttpResponse } from "msw";
-// import saveData from "./assets/save-data.json";
+import systemClientSession from "./data/system-client-session.json";
 
 export const handlers = [
   http.post("https://api.pokerogue.net/account/login", async () => {
@@ -14,7 +14,7 @@ export const handlers = [
     });
   }),
   http.get("https://api.pokerogue.net/savedata/system", async () => {
-    return HttpResponse.json({});
+    return HttpResponse.json(systemClientSession);
   }),
   http.get("https://api.pokerogue.net/savedata/session", async () => {
     return HttpResponse.text();
