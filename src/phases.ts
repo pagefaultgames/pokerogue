@@ -1336,7 +1336,11 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       const legalIndex = party.findIndex((p, i) => i > this.partyMemberIndex && p.isAllowedInBattle());
       if (legalIndex === -1) {
         console.error("Party Details:\n", party);
-        throw new Error("All available Pokemon were fainted or illegal!");
+        console.error("All available Pokemon were fainted or illegal!");
+        this.scene.clearPhaseQueue();
+        this.scene.unshiftPhase(new GameOverPhase(this.scene));
+        this.end();
+        return;
       }
 
       // Swaps the fainted Pokemon and the first non-fainted legal Pokemon in the party
@@ -4291,12 +4295,12 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible
-    if (this.isModal && !this.scene.getParty().filter(p => !p.isAllowedInBattle() && !p.isActive(true)).length) {
+    if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => !p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 

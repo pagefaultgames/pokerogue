@@ -155,6 +155,13 @@ export default class BattleScene extends SceneBase {
    */
   public battleStyle: integer = 0;
 
+  /**
+  * Defines whether or not to show type effectiveness hints
+  * - true: No hints
+  * - false: Show hints for moves
+   */
+  public typeHints: boolean = false;
+
   public disableMenu: boolean = false;
 
   public gameData: GameData;
@@ -227,6 +234,7 @@ export default class BattleScene extends SceneBase {
   public rngSeedOverride: string = "";
   public rngOffset: integer = 0;
 
+  public inputMethod: string;
   private infoToggles: InfoToggle[] = [];
 
   /**
@@ -1010,7 +1018,8 @@ export default class BattleScene extends SceneBase {
     if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
       newDouble = true;
     }
-    if (Overrides.SINGLE_BATTLE_OVERRIDE) {
+    /* Override battles into single only if not fighting with trainers */
+    if (newBattleType !== BattleType.TRAINER && Overrides.SINGLE_BATTLE_OVERRIDE) {
       newDouble = false;
     }
 
@@ -1671,34 +1680,64 @@ export default class BattleScene extends SceneBase {
 
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
-    case "battle_kanto_champion":
+    case "battle_kanto_champion": //B2W2 Kanto Champion Battle
       return 13.950;
-    case "battle_johto_champion":
+    case "battle_johto_champion": //B2W2 Johto Champion Battle
       return 23.498;
-    case "battle_hoenn_champion":
+    case "battle_hoenn_champion": //B2W2 Hoenn Champion Battle
       return 11.328;
-    case "battle_sinnoh_champion":
+    case "battle_sinnoh_champion": //B2W2 Sinnoh Champion Battle
       return 12.235;
-    case "battle_champion_alder":
+    case "battle_champion_alder": //BW Unova Champion Battle
       return 27.653;
-    case "battle_champion_iris":
+    case "battle_champion_iris": //B2W2 Unova Champion Battle
       return 10.145;
-    case "battle_elite":
+    case "battle_kalos_champion": //XY Kalos Champion Battle
+      return 10.380;
+    case "battle_alola_champion": //USUM Alola Champion Battle
+      return 13.025;
+    case "battle_galar_champion": //SWSH Galar Champion Battle
+      return 61.635;
+    case "battle_champion_geeta": //SV Champion Geeta Battle
+      return 37.447;
+    case "battle_champion_nemona": //SV Champion Nemona Battle
+      return 14.914;
+    case "battle_champion_kieran": //SV Champion Kieran Battle
+      return 7.206;
+    case "battle_hoenn_elite": //ORAS Elite Four Battle
+      return 11.350;
+    case "battle_unova_elite": //BW Elite Four Battle
       return 17.730;
-    case "battle_final_encounter":
+    case "battle_kalos_elite": //XY Elite Four Battle
+      return 12.340;
+    case "battle_alola_elite": //SM Elite Four Battle
+      return 19.212;
+    case "battle_galar_elite": //SWSH League Tournament Battle
+      return 164.069;
+    case "battle_paldea_elite": //SV Elite Four Battle
+      return 12.770;
+    case "battle_bb_elite": //SV BB League Elite Four Battle
+      return 19.434;
+    case "battle_final_encounter": //PMD RTDX Rayquaza's Domain
       return 19.159;
-    case "battle_final":
+    case "battle_final": //BW Ghetsis Battle
       return 16.453;
-    case "battle_kanto_gym":
+    case "battle_kanto_gym": //B2W2 Kanto Gym Battle
       return 13.857;
-    case "battle_johto_gym":
+    case "battle_johto_gym": //B2W2 Johto Gym Battle
       return 12.911;
-    case "battle_hoenn_gym":
+    case "battle_hoenn_gym": //B2W2 Hoenn Gym Battle
       return 12.379;
-    case "battle_sinnoh_gym":
+    case "battle_sinnoh_gym": //B2W2 Sinnoh Gym Battle
       return 13.122;
-    case "battle_unova_gym":
+    case "battle_unova_gym": //BW Unova Gym Battle
       return 19.145;
+    case "battle_kalos_gym": //XY Kalos Gym Battle
+      return 44.810;
+    case "battle_galar_gym": //SWSH Galar Gym Battle
+      return 171.262;
+    case "battle_paldea_gym": //SV Paldea Gym Battle
+      return 127.489;
     case "battle_legendary_kanto": //XY Kanto Legendary Battle
       return 32.966;
     case "battle_legendary_raikou": //HGSS Raikou Battle
@@ -1767,19 +1806,19 @@ export default class BattleScene extends SceneBase {
       return 24.377;
     case "battle_legendary_pecharunt": //SV Pecharunt Battle
       return 6.508;
-    case "battle_rival":
+    case "battle_rival": //BW Rival Battle
       return 13.689;
-    case "battle_rival_2":
+    case "battle_rival_2": //BW N Battle
       return 17.714;
-    case "battle_rival_3":
+    case "battle_rival_3": //BW Final N Battle
       return 17.586;
-    case "battle_trainer":
+    case "battle_trainer": //BW Trainer Battle
       return 13.686;
-    case "battle_wild":
+    case "battle_wild": //BW Wild Battle
       return 12.703;
-    case "battle_wild_strong":
+    case "battle_wild_strong": //BW Strong Wild Battle
       return 13.940;
-    case "end_summit":
+    case "end_summit": //PMD RTDX Sky Tower Summit
       return 30.025;
     }
 

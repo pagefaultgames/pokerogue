@@ -7,9 +7,11 @@ export default class MockText {
   private scene;
   private textureManager;
   public list = [];
+  public style;
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
     this.textureManager = textureManager;
+    this.style = {};
     // Phaser.GameObjects.TextStyle.prototype.setStyle = () => null;
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
