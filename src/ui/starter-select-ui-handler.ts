@@ -1723,7 +1723,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
-          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species.getRootSpeciesId()));
+          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
         }
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
         this.pokemonCaughtHatchedContainer.setVisible(true);
