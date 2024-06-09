@@ -205,6 +205,7 @@ declare module "i18next" {
       biome: SimpleTranslationEntries;
       challenges: SimpleTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
+      PGMachv: AchievementTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
       PGMmiscDialogue: SimpleTranslationEntries;
@@ -213,6 +214,7 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFachv: AchievementTranslationEntries;
       egg: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
       gameMode: SimpleTranslationEntries;
@@ -255,3 +257,4 @@ export function getIsInitialized(): boolean {
 }
 
 let isInitialized = false;
+
