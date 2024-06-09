@@ -1155,6 +1155,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `啊哈哈。多么有趣的战斗。`,
     },
   },
+    "rika": {
+    "encounter": {
+      1: `我要对你手下留情，但……骗你的啦！$好好动脑！`,
+    },
+    "victory": {
+      1: `不错，小子。`,
+    },
+    "defeat": {
+      1: `啊哈哈哈哈！你真的很特别，小子！`,
+    },
+  },
   "molayne": {
     "encounter": {
       1: `我将队长的位置让给了我的表弟马玛内,\n但我对自己的能力很有信心。 $我的力量就像超新星一样！`,
