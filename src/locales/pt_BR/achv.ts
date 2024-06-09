@@ -1,6 +1,7 @@
 import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
-export const achv: AchievementTranslationEntries = {
+// Achievement translations for the when the player character is male
+export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
     name: "Conquistas",
   },
@@ -170,6 +171,7 @@ export const achv: AchievementTranslationEntries = {
   },
 
   "MONO_GEN_ONE": {
+
     name: "O Início de Tudo",
     description: "Complete o desafio da geração um.",
   },
@@ -264,3 +266,6 @@ export const achv: AchievementTranslationEntries = {
     name: "Clube das Winx",
   },
 } as const;
+
+// Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
+export const PGFachv: AchievementTranslationEntries = PGMachv;
