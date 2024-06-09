@@ -179,10 +179,18 @@ export default class FightUiHandler extends UiHandler {
       const pp = maxPP - pokemonMove.ppUsed;
 
       this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
-      this.ppText.setColor(pp === 0
-        ? "red" : pp / maxPP <= 0.25
-          ? "orange" : pp / maxPP <= 0.5
-            ? "yellow" : "white");
+      const ppPercentLeft = pp / maxPP;
+      let ppColor = "white";
+      if (ppPercentLeft <= 0.5) {
+        ppColor = "yellow";
+      }
+      if (ppPercentLeft <= 0.25) {
+        ppColor = "orange";
+      }
+      if (pp === 0) {
+        ppColor = "red";
+      }
+      this.ppText.setColor(ppColor);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
 
