@@ -61,6 +61,12 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
     this.eggCountWindow.setSize(this.WINDOW_DEFAULT_WIDTH, this.WINDOW_HEIGHT);
   }
 
+  /**
+   * Handles window size, the egg count to show, and whether it should be displayed.
+   *
+   * @param event {@linkcode Event} being sent
+   * @returns void
+   */
   private onEggCountChanged(event: Event): void {
     const eggCountChangedEvent = event as EggCountChangedEvent;
     if (!eggCountChangedEvent) {
