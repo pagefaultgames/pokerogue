@@ -44,16 +44,14 @@ interface LanguageSetting {
 interface AutoTextInterface {
   originalFontSize: number,
   limits: TextLimits,
-  scale: number,
   x: number,
   displayWidth: number
   style: Phaser.Types.GameObjects.Text.TextStyle,
-  originalY: number,
+  padding: any
+  blockAutoSize: boolean,
+  text: string
 
-  setFontSize: (fontSize: number) => this,
-  setText: (text: string | string[]) => this,
-  setScale: (x?: number, y?: number) => this,
-  setY: (y: number) => this,
+  setFontSize: (fontSize: number) => this
 }
 interface TextLimits {
   left?: number,
@@ -74,6 +72,7 @@ export class AutoBBCodeText extends BBCodeText implements AutoTextInterface {
   originalFontSize: number;
   limits: TextLimits;
   originalY: number;
+  blockAutoSize: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, content: string, style: BBCodeText.TextStyle, limits?: TextLimits) {
     super(scene, x, y, content, style);
@@ -81,26 +80,26 @@ export class AutoBBCodeText extends BBCodeText implements AutoTextInterface {
     autoSizeText(this);
   }
 
-  setText(text: string | string[]): this {
-    super.setText(text);
-    autoSizeText(this);
+  updateText(runWrap?: boolean): this {
+    super.updateText(runWrap);
+    if (!this.blockAutoSize) {
+      autoSizeText(this);
+    }
     return this;
   }
 
-  // setVisible(value: boolean): this {
-  //   super.setVisible(value);
-  //   if (value) {
-  //     autoSizeText(this);
-  //     this.update();
-  //   }
-  //   return this;
-  // }
+  setVisible(value: boolean): this {
+    super.setVisible(value);
+    autoSizeText(this);
+    return this;
+  }
 }
 
 export class AutoText extends Phaser.GameObjects.Text implements AutoTextInterface {
   originalFontSize: number;
   limits: TextLimits;
   originalY: number;
+  blockAutoSize: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, content: string, style: Phaser.Types.GameObjects.Text.TextStyle, limits?: TextLimits) {
     super(scene, x, y, content, style);
@@ -108,44 +107,47 @@ export class AutoText extends Phaser.GameObjects.Text implements AutoTextInterfa
     autoSizeText(this);
   }
 
-  setText(text: string | string[]): this {
-    super.setText(text);
-    autoSizeText(this);
+  updateText(): this {
+    super.updateText();
+    if (!this.blockAutoSize) {
+      autoSizeText(this);
+    }
     return this;
   }
 
-  // setVisible(value: boolean): this {
-  //   super.setVisible(value);
-  //   if (value) {
-  //     autoSizeText(this);
-  //   }
-  //   return this;
-  // }
-
-  setScale(x?: number, y?: number): this {
-    super.setScale(x, y);
+  setVisible(value: boolean): this {
+    super.setVisible(value);
     autoSizeText(this);
     return this;
   }
 }
 
 function autoSizeText<T extends AutoTextInterface>(obj: T): void {
+  if (!obj.text || !obj.limits) {
+    return;
+  }
+  obj.blockAutoSize = true;
   if (!obj.originalFontSize) {
     obj.originalFontSize = parseInt(obj.style.fontSize as any);
   }
-
-  obj.setFontSize(obj.originalFontSize);
-  const minFontSize = 10;
-  let fontSize = parseInt(obj.originalFontSize as any);
-  while (((obj.limits?.right && (obj.x + obj.displayWidth) > obj.limits.right) ||
-          (obj.limits?.left && obj.x < obj.limits.left) ||
-          (obj.limits?.width > 0 && obj.displayWidth > obj.limits.width)
-  ) && fontSize > minFontSize) {
-    console.log(fontSize);
-    fontSize -= 1;
-    obj.setFontSize(fontSize);
+  // const minFontSize = 40;
+  const fontSize = parseInt(obj.originalFontSize as any);
+  let f = 1;
+  if (obj.limits?.right) {
+    const maxWidth = obj.limits.right - obj.x;
+    f = obj.displayWidth / maxWidth;
+  } else if (obj.limits?.width) {
+    f = obj.displayWidth / obj.limits.width;
   }
-  (obj as any).padding.top = (obj.originalFontSize - fontSize) / 2;
+  if (f > 1) {
+    const newFontSize = Math.floor(fontSize / f);
+    obj.padding.top = (fontSize - newFontSize) / 2;
+    obj.setFontSize(newFontSize);
+  } else if (parseInt(obj.style.fontSize as any) !== obj.originalFontSize) {
+    obj.padding.top = 0;
+    obj.setFontSize(obj.originalFontSize);
+  }
+  obj.blockAutoSize = false;
 }
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle, limits?: TextLimits): Phaser.GameObjects.Text {
@@ -157,6 +159,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(5);
+
   }
 
   return ret;
