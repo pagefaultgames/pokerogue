@@ -39,6 +39,8 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
+import { battleStat } from "./battle-stat";
 
 export const ptBrConfig = {
   ability: ability,
@@ -82,4 +84,6 @@ export const ptBrConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  partyUiHandler: partyUiHandler,
+  battleStat: battleStat
 };
