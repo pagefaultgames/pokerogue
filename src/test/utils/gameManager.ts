@@ -5,7 +5,6 @@ import {
   CommandPhase,
   EncounterPhase,
   LoginPhase,
-  PostSummonPhase,
   SelectGenderPhase,
   SelectStarterPhase,
   TitlePhase,
@@ -147,7 +146,7 @@ export default class GameManager {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
       }, () => this.isCurrentPhase(CommandPhase));
-      await this.phaseInterceptor.runFrom(PostSummonPhase).to(CommandPhase).catch((e) => reject(e));
+      await this.phaseInterceptor.to(CommandPhase).catch((e) => reject(e));
       console.log("==================[New Turn]==================");
       return resolve();
     });
