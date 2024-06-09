@@ -3,6 +3,7 @@ import BattleScene from "../battle-scene";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import i18next from "../plugins/i18n";
 import * as Utils from "../utils";
+import { Challenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge.js";
 
 export enum AchvTier {
   COMMON,
@@ -38,6 +39,10 @@ export class Achv {
   getName(): string {
     // Localization key is used to get the name of the achievement
     return i18next.t(`achv:${this.localizationKey}.name`);
+  }
+
+  getDescription(): string {
+    return this.description;
   }
 
   getIconImage(): string {
@@ -119,6 +124,12 @@ export class LevelAchv extends Achv {
 export class ModifierAchv extends Achv {
   constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, modifierFunc: (modifier: Modifier) => boolean) {
     super(localizationKey, name, description, iconImage, score, (_scene: BattleScene, args: any[]) => modifierFunc((args[0] as Modifier)));
+  }
+}
+
+export class ChallengeAchv extends Achv {
+  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, challengeFunc: (challenge: Challenge) => boolean) {
+    super(localizationKey, name, description, iconImage, score, (_scene: BattleScene, args: any[]) => challengeFunc((args[0] as Challenge)));
   }
 }
 
@@ -210,6 +221,43 @@ export function getAchievementDescription(localizationKey: string): string {
     return i18next.t("achv:PERFECT_IVS.description");
   case "CLASSIC_VICTORY":
     return i18next.t("achv:CLASSIC_VICTORY.description");
+  case "MONO_GEN_ONE":
+    return i18next.t("achv:MONO_GEN_ONE.description");
+  case "MONO_GEN_TWO":
+    return i18next.t("achv:MONO_GEN_TWO.description");
+  case "MONO_GEN_THREE":
+    return i18next.t("achv:MONO_GEN_THREE.description");
+  case "MONO_GEN_FOUR":
+    return i18next.t("achv:MONO_GEN_FOUR.description");
+  case "MONO_GEN_FIVE":
+    return i18next.t("achv:MONO_GEN_FIVE.description");
+  case "MONO_GEN_SIX":
+    return i18next.t("achv:MONO_GEN_SIX.description");
+  case "MONO_GEN_SEVEN":
+    return i18next.t("achv:MONO_GEN_SEVEN.description");
+  case "MONO_GEN_EIGHT":
+    return i18next.t("achv:MONO_GEN_EIGHT.description");
+  case "MONO_GEN_NINE":
+    return i18next.t("achv:MONO_GEN_NINE.description");
+  case "MONO_NORMAL":
+  case "MONO_FIGHTING":
+  case "MONO_FLYING":
+  case "MONO_POISON":
+  case "MONO_GROUND":
+  case "MONO_ROCK":
+  case "MONO_BUG":
+  case "MONO_GHOST":
+  case "MONO_STEEL":
+  case "MONO_FIRE":
+  case "MONO_WATER":
+  case "MONO_GRASS":
+  case "MONO_ELECTRIC":
+  case "MONO_PSYCHIC":
+  case "MONO_ICE":
+  case "MONO_DRAGON":
+  case "MONO_DARK":
+  case "MONO_FAIRY":
+    return i18next.t("achv:MonoType.description", {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
   default:
     return "";
   }
@@ -257,16 +305,41 @@ export const achvs = {
   HIDDEN_ABILITY: new Achv("HIDDEN_ABILITY","",  "HIDDEN_ABILITY.description", "ability_charm", 75),
   PERFECT_IVS: new Achv("PERFECT_IVS","",  "PERFECT_IVS.description", "blunder_policy", 100),
   CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY","",  "CLASSIC_VICTORY.description", "relic_crown", 150),
+  MONO_GEN_ONE_VICTORY: new ChallengeAchv("MONO_GEN_ONE","",  "MONO_GEN_ONE.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 1),
+  MONO_GEN_TWO_VICTORY: new ChallengeAchv("MONO_GEN_TWO","",  "MONO_GEN_TWO.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 2),
+  MONO_GEN_THREE_VICTORY: new ChallengeAchv("MONO_GEN_THREE","",  "MONO_GEN_THREE.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 3),
+  MONO_GEN_FOUR_VICTORY: new ChallengeAchv("MONO_GEN_FOUR","",  "MONO_GEN_FOUR.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 4),
+  MONO_GEN_FIVE_VICTORY: new ChallengeAchv("MONO_GEN_FIVE","",  "MONO_GEN_FIVE.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 5),
+  MONO_GEN_SIX_VICTORY: new ChallengeAchv("MONO_GEN_SIX","",  "MONO_GEN_SIX.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 6),
+  MONO_GEN_SEVEN_VICTORY: new ChallengeAchv("MONO_GEN_SEVEN","",  "MONO_GEN_SEVEN.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 7),
+  MONO_GEN_EIGHT_VICTORY: new ChallengeAchv("MONO_GEN_EIGHT","",  "MONO_GEN_EIGHT.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 8),
+  MONO_GEN_NINE_VICTORY: new ChallengeAchv("MONO_GEN_NINE","",  "MONO_GEN_NINE.description", "mystic_ticket", 100, c => c instanceof SingleGenerationChallenge && c.value === 9),
+  MONO_NORMAL: new ChallengeAchv("MONO_NORMAL","", "MONO_NORMAL.description", "silk_scarf", 100, c => c instanceof SingleTypeChallenge && c.value === 1),
+  MONO_FIGHTING: new ChallengeAchv("MONO_FIGHTING","", "MONO_FIGHTING.description", "black_belt", 100, c => c instanceof SingleTypeChallenge && c.value === 2),
+  MONO_FLYING: new ChallengeAchv("MONO_FLYING","", "MONO_FLYING.description", "sharp_beak", 100, c => c instanceof SingleTypeChallenge && c.value === 3),
+  MONO_POISON: new ChallengeAchv("MONO_POISON","", "MONO_POISON.description", "poison_barb", 100, c => c instanceof SingleTypeChallenge && c.value === 4),
+  MONO_GROUND: new ChallengeAchv("MONO_GROUND","", "MONO_GROUND.description", "soft_sand", 100, c => c instanceof SingleTypeChallenge && c.value === 5),
+  MONO_ROCK: new ChallengeAchv("MONO_ROCK","", "MONO_ROCK.description", "hard_stone", 100, c => c instanceof SingleTypeChallenge && c.value === 6),
+  MONO_BUG: new ChallengeAchv("MONO_BUG","", "MONO_BUG.description", "silver_powder", 100, c => c instanceof SingleTypeChallenge && c.value === 7),
+  MONO_GHOST: new ChallengeAchv("MONO_GHOST","", "MONO_GHOST.description", "spell_tag", 100, c => c instanceof SingleTypeChallenge && c.value === 8),
+  MONO_STEEL: new ChallengeAchv("MONO_STEEL","", "MONO_STEEL.description", "metal_coat", 100, c => c instanceof SingleTypeChallenge && c.value === 9),
+  MONO_FIRE: new ChallengeAchv("MONO_FIRE","", "MONO_FIRE.description", "charcoal", 100, c => c instanceof SingleTypeChallenge && c.value === 10),
+  MONO_WATER: new ChallengeAchv("MONO_WATER","", "MONO_WATER.description", "mystic_water", 100, c => c instanceof SingleTypeChallenge && c.value === 11),
+  MONO_GRASS: new ChallengeAchv("MONO_GRASS","", "MONO_GRASS.description", "miracle_seed", 100, c => c instanceof SingleTypeChallenge && c.value === 12),
+  MONO_ELECTRIC: new ChallengeAchv("MONO_ELECTRIC","", "MONO_ELECTRIC.description", "magnet", 100, c => c instanceof SingleTypeChallenge && c.value === 13),
+  MONO_PSYCHIC: new ChallengeAchv("MONO_PSYCHIC","", "MONO_PSYCHIC.description", "twisted_spoon", 100, c => c instanceof SingleTypeChallenge && c.value === 14),
+  MONO_ICE: new ChallengeAchv("MONO_ICE","", "MONO_ICE.description", "never_melt_ice", 100, c => c instanceof SingleTypeChallenge && c.value === 15),
+  MONO_DRAGON: new ChallengeAchv("MONO_DRAGON","", "MONO_DRAGON.description", "dragon_fang", 100, c => c instanceof SingleTypeChallenge && c.value === 16),
+  MONO_DARK: new ChallengeAchv("MONO_DARK","", "MONO_DARK.description", "black_glasses", 100, c => c instanceof SingleTypeChallenge && c.value === 17),
+  MONO_FAIRY: new ChallengeAchv("MONO_FAIRY","", "MONO_FAIRY.description", "fairy_feather", 100, c => c instanceof SingleTypeChallenge && c.value === 18),
 };
 
-{
-  (function() {
-    const achvKeys = Object.keys(achvs);
-    achvKeys.forEach((a: string, i: integer) => {
-      achvs[a].id = a;
-      if (achvs[a].hasParent) {
-        achvs[a].parentId = achvKeys[i - 1];
-      }
-    });
-  })();
+export function initAchievements() {
+  const achvKeys = Object.keys(achvs);
+  achvKeys.forEach((a: string, i: integer) => {
+    achvs[a].id = a;
+    if (achvs[a].hasParent) {
+      achvs[a].parentId = achvKeys[i - 1];
+    }
+  });
 }
