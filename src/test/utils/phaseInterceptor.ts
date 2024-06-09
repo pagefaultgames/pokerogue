@@ -6,10 +6,12 @@ import {
   LoginPhase, MessagePhase, MoveEffectPhase, MoveEndPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
   PostSummonPhase,
   SelectGenderPhase, SelectModifierPhase,
-  SelectStarterPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
-  TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, VictoryPhase
+  SelectStarterPhase, SelectTargetPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
+  TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, UnavailablePhase, VictoryPhase
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
+import UI, {Mode} from "#app/ui/ui";
+import {Phase} from "#app/phase";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 
 export default class PhaseInterceptor {
   public scene;
@@ -21,6 +23,9 @@ export default class PhaseInterceptor {
   private intervalRun;
   private prompts;
   private phaseFrom;
+  private inProgress;
+  private originalSetMode;
+  private originalSuperEnd;
 
   /**
    * List of phases with their corresponding start methods.
@@ -56,6 +61,12 @@ export default class PhaseInterceptor {
     [MoveEndPhase, this.startPhase],
     [StatChangePhase, this.startPhase],
     [ShinySparklePhase, this.startPhase],
+    [SelectTargetPhase, this.startPhase],
+    [UnavailablePhase, this.startPhase],
+  ];
+
+  private endBySetMode = [
+    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase
   ];
 
   /**
@@ -69,6 +80,15 @@ export default class PhaseInterceptor {
     this.prompts = [];
     this.initPhases();
     this.startPromptHander();
+  }
+
+  rejectAll(error) {
+    if (this.inProgress) {
+      clearInterval(this.promptInterval);
+      clearInterval(this.interval);
+      clearInterval(this.intervalRun);
+      this.inProgress.onError(error);
+    }
   }
 
   /**
@@ -86,19 +106,30 @@ export default class PhaseInterceptor {
    * @param phaseTo - The phase to transition to.
    * @returns A promise that resolves when the transition is complete.
    */
-  async to(phaseTo): Promise<void> {
-    return new Promise(async (resolve) => {
-      await this.run(this.phaseFrom);
+  async to(phaseTo, runTarget: boolean = true): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      ErrorInterceptor.getInstance().add(this);
+      await this.run(this.phaseFrom).catch((e) => reject(e));
       this.phaseFrom = null;
       const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
-      this.intervalRun = setInterval(async () => {
+      this.intervalRun = setInterval(async() => {
         const currentPhase = this.onHold?.length && this.onHold[0];
-        if (currentPhase && currentPhase.name !== targetName) {
-          await this.run(currentPhase.name);
-        } else if (currentPhase.name === targetName) {
-          await this.run(currentPhase.name);
+        if (currentPhase && currentPhase.name === targetName) {
           clearInterval(this.intervalRun);
+          if (!runTarget) {
+            return resolve();
+          }
+          await this.run(currentPhase).catch((e) => {
+            clearInterval(this.intervalRun);
+            return reject(e);
+          });
           return resolve();
+        }
+        if (currentPhase && currentPhase.name !== targetName) {
+          await this.run(currentPhase).catch((e) => {
+            clearInterval(this.intervalRun);
+            return reject(e);
+          });
         }
       });
     });
@@ -111,92 +142,53 @@ export default class PhaseInterceptor {
    * @returns A promise that resolves when the phase is run.
    */
   run(phaseTarget, skipFn?): Promise<void> {
-    this.scene.moveAnimations = null; // Mandatory to avoid crash
-    return new Promise(async (resolve) => {
-      this.waitUntil(phaseTarget, skipFn).then(() => {
-        const currentPhase = this.onHold.shift();
-        currentPhase.call();
-        resolve();
-      }).catch(() => {
-        resolve();
-      });
-    });
-  }
-
-  /**
-   * Method to ensure a phase is run, to throw error on test if not.
-   * @param phaseTarget - The phase to run.
-   * @returns A promise that resolves when the phase is run.
-   */
-  mustRun(phaseTarget): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve, reject) => {
+      ErrorInterceptor.getInstance().add(this);
       const interval = setInterval(async () => {
-        const currentPhase = this.onHold?.length && this.onHold[0];
-        if (currentPhase && currentPhase.name !== targetName) {
-          reject(currentPhase);
-        } else if (currentPhase && currentPhase.name === targetName) {
+        const currentPhase = this.onHold.shift();
+        if (currentPhase) {
+          if (currentPhase.name !== targetName) {
+            clearInterval(interval);
+            const skip = skipFn && skipFn(currentPhase.name);
+            if (skip) {
+              this.onHold.unshift(currentPhase);
+              ErrorInterceptor.getInstance().remove(this);
+              return resolve();
+            }
+            clearInterval(interval);
+            return reject(`Wrong phase: this is ${currentPhase.name} and not ${targetName}`);
+          }
           clearInterval(interval);
-          await this.run(phaseTarget);
-          resolve();
+          this.inProgress = {
+            name: currentPhase.name,
+            callback: () => {
+              ErrorInterceptor.getInstance().remove(this);
+              resolve();
+            },
+            onError: (error) => reject(error),
+          };
+          currentPhase.call();
         }
       });
     });
   }
 
-  /**
-   * Method to execute actions when about to run a phase. Does not run the phase, stop right before.
-   * @param phaseTarget - The phase to run.
-   * @param skipFn - Optional skip function.
-   * @returns A promise that resolves when the phase is about to run.
-   */
   whenAboutToRun(phaseTarget, skipFn?): Promise<void> {
-    return new Promise(async (resolve) => {
-      this.waitUntil(phaseTarget, skipFn).then(() => {
-        resolve();
-      }).catch(() => {
-        resolve();
-      });
-    });
-  }
-
-  /**
-   * Method to remove a phase from the list.
-   * @param phaseTarget - The phase to remove.
-   * @param skipFn - Optional skip function.
-   * @returns A promise that resolves when the phase is removed.
-   */
-  remove(phaseTarget, skipFn?): Promise<void> {
-    return new Promise(async (resolve) => {
-      this.waitUntil(phaseTarget, skipFn).then(() => {
-        this.onHold.shift();
-        this.scene.getCurrentPhase().end();
-        resolve();
-      }).catch(() => {
-        resolve();
-      });
-    });
-  }
-
-  /**
-   * Method to wait until a specific phase is reached.
-   * @param phaseTarget - The phase to wait for.
-   * @param skipFn - Optional skip function.
-   * @returns A promise that resolves when the phase is reached.
-   */
-  waitUntil(phaseTarget, skipFn?): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return new Promise((resolve, reject) => {
-      this.interval = setInterval(() => {
-        const currentPhase = this.onHold?.length && this.onHold[0] && this.onHold[0].name;
-        // if the currentPhase here is not filled, it means it's a phase we haven't added to the list
-        if (currentPhase === targetName) {
-          clearInterval(this.interval);
-          return resolve();
-        } else if (skipFn && skipFn()) {
-          clearInterval(this.interval);
-          return reject("Skipped phase");
+    this.scene.moveAnimations = null; // Mandatory to avoid crash
+    return new Promise(async (resolve, reject) => {
+      ErrorInterceptor.getInstance().add(this);
+      const interval = setInterval(async () => {
+        const currentPhase = this.onHold.shift();
+        if (currentPhase) {
+          if (currentPhase.name !== targetName) {
+            this.onHold.unshift(currentPhase);
+          } else {
+            clearInterval(interval);
+            resolve();
+          }
         }
       });
     });
@@ -206,10 +198,17 @@ export default class PhaseInterceptor {
    * Method to initialize phases and their corresponding methods.
    */
   initPhases() {
-    for (const [phase, method] of this.PHASES) {
+    this.originalSetMode = UI.prototype.setMode;
+    this.originalSuperEnd = Phase.prototype.end;
+    UI.prototype.setMode = (mode, ...args) => this.setMode.call(this, mode, ...args);
+    Phase.prototype.end = () => this.superEndPhase.call(this);
+    for (const [phase, methodStart] of this.PHASES) {
       const originalStart = phase.prototype.start;
-      this.phases[phase.name] = originalStart;
-      phase.prototype.start = () => method.call(this, phase);
+      this.phases[phase.name] = {
+        start: originalStart,
+        endBySetMode: this.endBySetMode.some((elm) => elm.name === phase.name),
+      };
+      phase.prototype.start = () => methodStart.call(this, phase);
     }
   }
 
@@ -223,9 +222,42 @@ export default class PhaseInterceptor {
     this.onHold.push({
       name: phase.name,
       call: () => {
-        this.phases[phase.name].apply(instance);
+        this.phases[phase.name].start.apply(instance);
       }
     });
+  }
+
+  unlock() {
+    this.inProgress?.callback();
+    this.inProgress = undefined;
+  }
+
+  /**
+   * Method to end a phase and log it.
+   * @param phase - The phase to start.
+   */
+  superEndPhase() {
+    const instance = this.scene.getCurrentPhase();
+    console.log(`%c INTERCEPTED Super End Phase ${instance.constructor.name}`, "color:red;");
+    this.originalSuperEnd.apply(instance);
+    this.inProgress?.callback();
+    this.inProgress = undefined;
+  }
+
+  /**
+   * m2m to set mode.
+   * @param phase - The phase to start.
+   */
+  setMode(mode: Mode, ...args: any[]): Promise<void> {
+    const currentPhase = this.scene.getCurrentPhase();
+    const instance = this.scene.ui;
+    console.log("setMode", mode, args);
+    const ret = this.originalSetMode.apply(instance, [mode, ...args]);
+    if (this.phases[currentPhase.constructor.name].endBySetMode) {
+      this.inProgress?.callback();
+      this.inProgress = undefined;
+    }
+    return ret;
   }
 
   /**
@@ -271,9 +303,12 @@ export default class PhaseInterceptor {
    */
   restoreOg() {
     for (const [phase] of this.PHASES) {
-      phase.prototype.start = this.phases[phase.name];
+      phase.prototype.start = this.phases[phase.name].start;
     }
+    UI.prototype.setMode = this.originalSetMode;
+    Phase.prototype.end = this.originalSuperEnd;
     clearInterval(this.promptInterval);
     clearInterval(this.interval);
+    clearInterval(this.intervalRun);
   }
 }
