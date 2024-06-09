@@ -1493,6 +1493,10 @@ export class SwitchSummonPhase extends SummonPhase {
     this.batonPass = batonPass;
   }
 
+  start(): void {
+    super.start();
+  }
+
   preSummon(): void {
     if (!this.player) {
       if (this.slotIndex === -1) {

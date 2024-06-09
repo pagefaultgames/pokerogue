@@ -131,6 +131,13 @@ export default class GameWrapper {
       key: "",
     };
 
+    this.scene.cameras = {
+      main: {
+        setPostPipeline: () => null,
+        removePostPipeline: () => null,
+      },
+    }
+
     this.scene.tweens = {
       add: (data) => {
         if (data.onComplete) {

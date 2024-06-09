@@ -1,17 +1,43 @@
 import {
   BattleEndPhase,
   BerryPhase,
-  CheckSwitchPhase, CommandPhase, DamagePhase, EggLapsePhase,
-  EncounterPhase, EnemyCommandPhase, FaintPhase,
-  LoginPhase, MessagePhase, MoveEffectPhase, MoveEndPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
+  CheckSwitchPhase,
+  CommandPhase,
+  DamagePhase,
+  EggLapsePhase,
+  EncounterPhase,
+  EnemyCommandPhase,
+  FaintPhase,
+  LoginPhase,
+  MessagePhase,
+  MoveEffectPhase,
+  MoveEndPhase,
+  MovePhase,
+  NewBattlePhase,
+  NextEncounterPhase,
   PostSummonPhase,
-  SelectGenderPhase, SelectModifierPhase,
-  SelectStarterPhase, SelectTargetPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
-  TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, UnavailablePhase, VictoryPhase
+  SelectGenderPhase,
+  SelectModifierPhase,
+  SelectStarterPhase,
+  SelectTargetPhase,
+  ShinySparklePhase,
+  ShowAbilityPhase,
+  StatChangePhase,
+  SummonPhase,
+  SwitchPhase,
+  SwitchSummonPhase,
+  TitlePhase,
+  ToggleDoublePositionPhase,
+  TurnEndPhase,
+  TurnInitPhase,
+  TurnStartPhase,
+  UnavailablePhase,
+  VictoryPhase
 } from "#app/phases";
 import UI, {Mode} from "#app/ui/ui";
 import {Phase} from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import {QuietFormChangePhase} from "#app/form-change-phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -63,6 +89,9 @@ export default class PhaseInterceptor {
     [ShinySparklePhase, this.startPhase],
     [SelectTargetPhase, this.startPhase],
     [UnavailablePhase, this.startPhase],
+    [QuietFormChangePhase, this.startPhase],
+    [SwitchPhase, this.startPhase],
+    [SwitchSummonPhase, this.startPhase],
   ];
 
   private endBySetMode = [
@@ -109,8 +138,10 @@ export default class PhaseInterceptor {
   async to(phaseTo, runTarget: boolean = true): Promise<void> {
     return new Promise(async (resolve, reject) => {
       ErrorInterceptor.getInstance().add(this);
-      await this.run(this.phaseFrom).catch((e) => reject(e));
-      this.phaseFrom = null;
+      if (this.phaseFrom) {
+        await this.run(this.phaseFrom).catch((e) => reject(e));
+        this.phaseFrom = null;
+      }
       const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
       this.intervalRun = setInterval(async() => {
         const currentPhase = this.onHold?.length && this.onHold[0];
@@ -238,7 +269,6 @@ export default class PhaseInterceptor {
    */
   superEndPhase() {
     const instance = this.scene.getCurrentPhase();
-    console.log(`%c INTERCEPTED Super End Phase ${instance.constructor.name}`, "color:red;");
     this.originalSuperEnd.apply(instance);
     this.inProgress?.callback();
     this.inProgress = undefined;
@@ -253,6 +283,9 @@ export default class PhaseInterceptor {
     const instance = this.scene.ui;
     console.log("setMode", mode, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
+    if (!this.phases[currentPhase.constructor.name]) {
+      throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptior PHASES list`);
+    }
     if (this.phases[currentPhase.constructor.name].endBySetMode) {
       this.inProgress?.callback();
       this.inProgress = undefined;
