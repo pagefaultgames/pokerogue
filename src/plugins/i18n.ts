@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
 import { deConfig } from "#app/locales/de/config.js";
 import { enConfig } from "#app/locales/en/config.js";
@@ -148,7 +149,7 @@ export function initI18n(): void {
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.use(LanguageDetector).init({
+  i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init({
     lng: lang,
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
@@ -173,19 +174,20 @@ export function initI18n(): void {
       de: {
         ...deConfig
       },
-      pt_BR: {
+      "pt-BR": {
         ...ptBrConfig
       },
-      zh_CN: {
+      "zh-CN": {
         ...zhCnConfig
       },
-      zh_TW: {
+      "zh-TW": {
         ...zhTwConfig
       },
       ko: {
         ...koConfig
       },
     },
+    postProcess: ["korean-postposition"],
   });
 }
 
@@ -194,36 +196,16 @@ declare module "i18next" {
   interface CustomTypeOptions {
     defaultNS: "menu"; // Even if we don't use it, i18next requires a valid default namespace
     resources: {
-      menu: SimpleTranslationEntries;
-      menuUiHandler: SimpleTranslationEntries;
-      move: MoveTranslationEntries;
-      battle: SimpleTranslationEntries;
-      abilityTriggers: SimpleTranslationEntries;
       ability: AbilityTranslationEntries;
-      pokeball: SimpleTranslationEntries;
-      pokemon: SimpleTranslationEntries;
-      pokemonInfo: PokemonInfoTranslationEntries;
-      commandUiHandler: SimpleTranslationEntries;
-      fightUiHandler: SimpleTranslationEntries;
-      partyUiHandler: SimpleTranslationEntries;
-      titles: SimpleTranslationEntries;
-      trainerClasses: SimpleTranslationEntries;
-      trainerNames: SimpleTranslationEntries;
-      tutorial: SimpleTranslationEntries;
-      starterSelectUiHandler: SimpleTranslationEntries;
-      splashMessages: SimpleTranslationEntries;
-      nature: SimpleTranslationEntries;
-      growth: SimpleTranslationEntries;
-      egg: SimpleTranslationEntries;
-      weather: SimpleTranslationEntries;
-      modifierType: ModifierTypeTranslationEntries;
+      abilityTriggers: SimpleTranslationEntries;
+      achv: AchievementTranslationEntries;
+      battle: SimpleTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-      achv: AchievementTranslationEntries;
-      gameStatsUiHandler: SimpleTranslationEntries;
-      voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
-      pokemonInfoContainer: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
+      commandUiHandler: SimpleTranslationEntries;
+      PGMachv: AchievementTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
       PGMmiscDialogue: SimpleTranslationEntries;
@@ -232,6 +214,31 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFachv: AchievementTranslationEntries;
+      egg: SimpleTranslationEntries;
+      fightUiHandler: SimpleTranslationEntries;
+      gameMode: SimpleTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      growth: SimpleTranslationEntries;
+      menu: SimpleTranslationEntries;
+      menuUiHandler: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
+      move: MoveTranslationEntries;
+      nature: SimpleTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
+      pokeball: SimpleTranslationEntries;
+      pokemon: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      saveSlotSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
+      starterSelectUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
+      tutorial: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
     };
   }
 }
@@ -243,3 +250,4 @@ export function getIsInitialized(): boolean {
 }
 
 let isInitialized = false;
+

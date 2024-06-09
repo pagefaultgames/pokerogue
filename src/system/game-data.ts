@@ -9,11 +9,11 @@ import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
-import { GameModes, gameModes } from "../game-mode";
+import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
-import { Setting, setSetting, settingDefaults } from "./settings";
+import { SettingKeys, resetSettings, setSetting } from "./settings/settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
@@ -30,30 +30,17 @@ import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
-import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings-gamepad";
-import {setSettingKeyboard, SettingKeyboard, settingKeyboardDefaults} from "#app/system/settings-keyboard";
+import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
+import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
+import { Device } from "#app/enums/devices.js";
+import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect.js";
+import { PlayerGender } from "#app/data/enums/player-gender";
+import { GameDataType } from "#app/data/enums/game-data-type";
+import ChallengeData from "./challenge-data";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
-
-export enum GameDataType {
-  SYSTEM,
-  SESSION,
-  SETTINGS,
-  TUTORIALS,
-  SEEN_DIALOGUES
-}
-
-export enum PlayerGender {
-  UNSET,
-  MALE,
-  FEMALE
-}
-
-export enum Passive {
-  UNLOCKED = 1,
-  ENABLED = 2
-}
 
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
@@ -74,13 +61,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   }
 }
 
-function encrypt(data: string, bypassLogin: boolean): string {
+export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => btoa(data)
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
-function decrypt(data: string, bypassLogin: boolean): string {
+export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => atob(data)
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
@@ -121,6 +108,7 @@ export interface SessionSaveData {
   trainer: TrainerData;
   gameVersion: string;
   timestamp: integer;
+  challenges: ChallengeData[];
 }
 
 interface Unlocks {
@@ -402,7 +390,7 @@ export class GameData {
 
         this.gender = systemData.gender;
 
-        this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+        this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
         const initStarterData = !systemData.starterData;
 
@@ -507,7 +495,7 @@ export class GameData {
     });
   }
 
-  private parseSystemData(dataStr: string): SystemSaveData {
+  parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
@@ -526,7 +514,7 @@ export class GameData {
     }) as SystemSaveData;
   }
 
-  private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+  convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
     if (!shorten) {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
@@ -568,19 +556,21 @@ export class GameData {
     }
   }
 
-  public saveSetting(setting: Setting, valueIndex: integer): boolean {
+  /**
+   * Saves a setting to localStorage
+   * @param setting string ideally of SettingKeys
+   * @param valueIndex index of the setting's option
+   * @returns true
+   */
+  public saveSetting(setting: string, valueIndex: integer): boolean {
     let settings: object = {};
     if (localStorage.hasOwnProperty("settings")) {
       settings = JSON.parse(localStorage.getItem("settings"));
     }
 
-    setSetting(this.scene, setting as Setting, valueIndex);
+    setSetting(this.scene, setting, valueIndex);
 
-    Object.keys(settingDefaults).forEach(s => {
-      if (s === setting) {
-        settings[s] = valueIndex;
-      }
-    });
+    settings[setting] = valueIndex;
 
     localStorage.setItem("settings", JSON.stringify(settings));
 
@@ -653,61 +643,36 @@ export class GameData {
    * to update the specified setting with the new value. Finally, it saves the updated settings back
    * to localStorage and returns `true` to indicate success.
    */
-  public saveGamepadSetting(setting: SettingGamepad, valueIndex: integer): boolean {
-    let settingsGamepad: object = {};  // Initialize an empty object to hold the gamepad settings
+  public saveControlSetting(device: Device, localStoragePropertyName: string, setting: SettingGamepad|SettingKeyboard, settingDefaults, valueIndex: integer): boolean {
+    let settingsControls: object = {};  // Initialize an empty object to hold the gamepad settings
 
-    if (localStorage.hasOwnProperty("settingsGamepad")) {  // Check if 'settingsGamepad' exists in localStorage
-      settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad"));  // Parse the existing 'settingsGamepad' from localStorage
+    if (localStorage.hasOwnProperty(localStoragePropertyName)) {  // Check if 'settingsControls' exists in localStorage
+      settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName));  // Parse the existing 'settingsControls' from localStorage
     }
 
-    setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
+    if (device === Device.GAMEPAD) {
+      setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
+    } else if (device === Device.KEYBOARD) {
+      setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
+    }
 
-    Object.keys(settingGamepadDefaults).forEach(s => {  // Iterate over the default gamepad settings
+    Object.keys(settingDefaults).forEach(s => {  // Iterate over the default gamepad settings
       if (s === setting) {// If the current setting matches, update its value
-        settingsGamepad[s] = valueIndex;
+        settingsControls[s] = valueIndex;
       }
     });
 
-    localStorage.setItem("settingsGamepad", JSON.stringify(settingsGamepad));  // Save the updated gamepad settings back to localStorage
+    localStorage.setItem(localStoragePropertyName, JSON.stringify(settingsControls));  // Save the updated gamepad settings back to localStorage
 
     return true;  // Return true to indicate the operation was successful
   }
 
   /**
-   * Saves a keyboard setting to localStorage.
-   *
-   * @param setting - The keyboard setting to save.
-   * @param valueIndex - The index of the value to set for the keyboard setting.
-   * @returns `true` if the setting is successfully saved.
-   *
-   * @remarks
-   * This method initializes an empty object for keyboard settings if none exist in localStorage.
-   * It then updates the setting in the current scene and iterates over the default keyboard settings
-   * to update the specified setting with the new value. Finally, it saves the updated settings back
-   * to localStorage and returns `true` to indicate success.
+   * Loads Settings from local storage if available
+   * @returns true if succesful, false if not
    */
-  public saveKeyboardSetting(setting: SettingKeyboard, valueIndex: integer): boolean {
-    let settingsKeyboard: object = {};  // Initialize an empty object to hold the keyboard settings
-
-    if (localStorage.hasOwnProperty("settingsKeyboard")) {  // Check if 'settingsKeyboard' exists in localStorage
-      settingsKeyboard = JSON.parse(localStorage.getItem("settingsKeyboard"));  // Parse the existing 'settingsKeyboard' from localStorage
-    }
-
-    setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
-
-    Object.keys(settingKeyboardDefaults).forEach(s => {  // Iterate over the default keyboard settings
-      if (s === setting) {// If the current setting matches, update its value
-        settingsKeyboard[s] = valueIndex;
-      }
-    });
-
-    localStorage.setItem("settingsKeyboard", JSON.stringify(settingsKeyboard));  // Save the updated keyboard settings back to localStorage
-
-    return true;  // Return true to indicate the operation was successful
-  }
-
   private loadSettings(): boolean {
-    Object.values(Setting).map(setting => setting as Setting).forEach(setting => setSetting(this.scene, setting, settingDefaults[setting]));
+    resetSettings(this.scene);
 
     if (!localStorage.hasOwnProperty("settings")) {
       return false;
@@ -716,7 +681,7 @@ export class GameData {
     const settings = JSON.parse(localStorage.getItem("settings"));
 
     for (const setting of Object.keys(settings)) {
-      setSetting(this.scene, setting as Setting, settings[setting]);
+      setSetting(this.scene, setting, settings[setting]);
     }
   }
 
@@ -817,7 +782,8 @@ export class GameData {
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
     } as SessionSaveData;
   }
 
@@ -866,7 +832,10 @@ export class GameData {
         const initSessionFromData = async sessionData => {
           console.debug(sessionData);
 
-          scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
+          scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
+          if (sessionData.challenges) {
+            scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+          }
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
@@ -1100,6 +1069,9 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
+          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+            continue;
+          }
           ret.push(new PersistentModifierData(md, player));
         }
         return ret;
@@ -1107,6 +1079,17 @@ export class GameData {
 
       if (k === "arena") {
         return new ArenaData(v);
+      }
+
+      if (k === "challenges") {
+        const ret: ChallengeData[] = [];
+        if (v === null) {
+          v = [];
+        }
+        for (const c of v) {
+          ret.push(new ChallengeData(c));
+        }
+        return ret;
       }
 
       return v;
