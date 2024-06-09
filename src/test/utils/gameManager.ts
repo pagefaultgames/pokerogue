@@ -22,8 +22,8 @@ import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import {ExpNotification} from "#app/enums/exp-notification";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import Pokemon, {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
-import {StatusEffect} from "#app/data/status-effect";
+import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
+import {MockClock} from "#app/test/utils/mocks/mockClock";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -216,28 +216,12 @@ export default class GameManager {
   }
 
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
-    const originalFaintCry = pokemon.faintCry;
-    Pokemon.prototype.faintCry = () => {
-      if (pokemon instanceof PlayerPokemon) {
-        pokemon.addFriendship(-10);
-      }
-      pokemon.setVisible(false);
-      pokemon.y -= 150;
-      pokemon.trySetStatus(StatusEffect.FAINT);
-      if (pokemon.isPlayer()) {
-        this.scene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
-      } else {
-        this.scene.addFaintedEnemyScore(pokemon as EnemyPokemon);
-        this.scene.currentBattle.addPostBattleLoot(pokemon as EnemyPokemon);
-      }
-      this.scene.field.remove(pokemon);
-      this.endPhase();
-    };
+    (this.scene.time as MockClock).overrideDelay = 0.01;
     return new Promise<void>(async(resolve) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase);
-      Pokemon.prototype.faintCry = originalFaintCry;
+      (this.scene.time as MockClock).overrideDelay = undefined;
       resolve();
     });
   }

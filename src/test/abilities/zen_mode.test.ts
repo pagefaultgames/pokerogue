@@ -8,13 +8,12 @@ import {
   CommandPhase,
   DamagePhase,
   EnemyCommandPhase,
-  FaintPhase,
   MessagePhase,
   PostSummonPhase,
   SwitchPhase,
   SwitchSummonPhase,
   TurnEndPhase, TurnInitPhase,
-  TurnStartPhase, VictoryPhase,
+  TurnStartPhase,
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {Stat} from "#app/data/pokemon-stat";
@@ -124,9 +123,7 @@ describe("Abilities - Zen mode", () => {
     await game.phaseInterceptor.runFrom(DamagePhase).to(QuietFormChangePhase);
     expect(game.scene.getParty()[0].hp).not.toBe(100);
     expect(game.scene.getParty()[0].formIndex).not.toBe(0);
-    game.scene.getParty()[0].hp = 0;
-    game.scene.pushPhase(new FaintPhase(game.scene, game.scene.getParty()[0].getBattlerIndex(), true));
-    await game.phaseInterceptor.to(FaintPhase);
+    await game.killPokemon(game.scene.getParty()[0]);
     expect(game.scene.getParty()[0].isFainted()).toBe(true);
     await game.phaseInterceptor.run(MessagePhase);
     await game.phaseInterceptor.run(EnemyCommandPhase);
@@ -140,7 +137,6 @@ describe("Abilities - Zen mode", () => {
     });
     await game.phaseInterceptor.run(SwitchPhase);
     await game.phaseInterceptor.to(PostSummonPhase);
-    await game.phaseInterceptor.to(VictoryPhase);
     expect(game.scene.getParty()[1].formIndex).toBe(1);
   }, 20000);
 });

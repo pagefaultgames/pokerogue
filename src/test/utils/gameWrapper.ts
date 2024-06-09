@@ -120,7 +120,7 @@ export default class GameWrapper {
       pause: () => null,
       setRate: () => null,
       add: () => this.scene.sound,
-      get: () => this.scene.sound,
+      get: () => ({...this.scene.sound, totalDuration: 0}),
       getAllPlaying: () => [],
       manager: {
         game: this.game,
