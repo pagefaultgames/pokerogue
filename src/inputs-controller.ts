@@ -523,8 +523,8 @@ export class InputsController {
      * Deactivates all currently pressed keys.
      */
   deactivatePressedKey(): void {
-    for (const interval of this.inputInterval) {
-      clearInterval(interval);
+    for (const key of Object.keys(this.inputInterval)) {
+      clearInterval(this.inputInterval[key]);
     }
     this.buttonLock = [];
   }

@@ -152,8 +152,11 @@ export default class TouchControl {
      * Deactivates all currently pressed keys.
      */
   deactivatePressedKey(): void {
-    for (const interval of this.inputInterval) {
-      clearInterval(interval);
+    for (const key of Object.keys(this.inputInterval)) {
+      clearInterval(this.inputInterval[key]);
+    }
+    for (const button of document.querySelectorAll("[data-key]")) {
+      button.classList.remove("active");
     }
     this.buttonLock = [];
   }
