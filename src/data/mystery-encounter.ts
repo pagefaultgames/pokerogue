@@ -5,6 +5,7 @@ import MysteryEncounterDialogue, { allMysteryEncounterDialogue } from "./mystery
 import MysteryEncounterOption from "./mystery-encounter-option";
 import { EncounterRequirement } from "./mystery-encounter-requirements";
 import * as Utils from "../utils";
+import {EnemyPartyConfig} from "#app/utils/mystery-encounter-utils";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -35,6 +36,7 @@ export default interface MysteryEncounter {
   encounterTier?: MysteryEncounterTier;
   requirements?: EncounterRequirement[];
   doEncounterRewards?: (scene: BattleScene) => boolean;
+  onInit?: (scene: BattleScene) => boolean;
 
 
   /**
@@ -47,11 +49,22 @@ export default interface MysteryEncounter {
   dialogue?: MysteryEncounterDialogue;
 
   /**
+   * Data used for setting up/initializing enemy party in battles
+   * Can store multiple configs so that one can be chosen based on option selected
+   */
+  enemyPartyConfigs?: EnemyPartyConfig[];
+
+  /**
    * Object instance containing sprite data for an encounter when it is being spawned
    * Otherwise, will be undefined
    * You probably shouldn't do anything with this unless you have a very specific need
    */
   introVisuals?: MysteryEncounterIntroVisuals;
+
+  /**
+   * Generic property to set any custom data required for the encounter
+   */
+  misc?: any;
 
 
   /**
@@ -106,6 +119,7 @@ export default class MysteryEncounter implements MysteryEncounter {
     this.lockEncounterRewardTiers = true;
     this.dialogueTokens = this.dialogueTokens ? this.dialogueTokens : [];
     this.requirements = this.requirements ? this.requirements : [];
+    this.enemyPartyConfigs = this.enemyPartyConfigs ? this.enemyPartyConfigs : [];
   }
 
   /**
@@ -137,6 +151,8 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
   requirements?: EncounterRequirement[] = [];
   dialogueTokens?: [RegExp, string][];
   doEncounterRewards?: (scene: BattleScene) => boolean;
+  onInit?: (scene: BattleScene) => boolean;
+  enemyPartyConfigs?: EnemyPartyConfig[] = [];
 
   /**
    * REQUIRED
@@ -223,6 +239,27 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    */
   withRewards(doEncounterRewards: (scene: BattleScene) => boolean): this & Required<Pick<MysteryEncounter, "doEncounterRewards">> {
     return Object.assign(this, { doEncounterRewards: doEncounterRewards });
+  }
+
+  /**
+   * Can be used to perform init logic before intro visuals are shown and before the MysteryEncounterPhase begins
+   * Useful for performing things like procedural generation of intro sprites, etc.
+   *
+   * @param onInit - synchronous callback function to perform as soon as the encounter is selected for the next phase
+   * @returns
+   */
+  withOnInit(onInit: (scene: BattleScene) => boolean): this & Required<Pick<MysteryEncounter, "onInit">> {
+    return Object.assign(this, { onInit: onInit });
+  }
+
+  /**
+   * Defines any enemies to use for a battle from the mystery encounter
+   * @param enemyPartyConfig
+   * @returns
+   */
+  withEnemyPartyConfig(enemyPartyConfig: EnemyPartyConfig): this & Required<Pick<MysteryEncounter, "enemyPartyConfigs">> {
+    this.enemyPartyConfigs.push(enemyPartyConfig);
+    return Object.assign(this, { enemyPartyConfigs: this.enemyPartyConfigs });
   }
 
   /**

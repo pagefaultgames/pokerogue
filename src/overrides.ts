@@ -94,7 +94,7 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
 // 1 to 64 (out of 64), set to null to ignore
 export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 100;
 // Can use MysteryEncounterType, set to null to ignore (e.g. MysteryEncounterType.DARK_DEAL)
-export const MYSTERY_ENCOUNTER_OVERRIDE: number = MysteryEncounterType.MYSTERIOUS_CHALLENGERS;
+export const MYSTERY_ENCOUNTER_OVERRIDE: number = MysteryEncounterType.FIGHT_OR_FLIGHT;
 
 /**
  * MODIFIER / ITEM OVERRIDES

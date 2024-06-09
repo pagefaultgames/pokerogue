@@ -183,6 +183,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       trainer.alpha = 0;
       trainer.x += 16;
       trainer.y -= 16;
+      trainer.setVisible(true);
       scene.tweens.add({
         targets: scene.currentBattle.trainer,
         x: "-=16",

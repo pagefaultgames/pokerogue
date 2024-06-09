@@ -6,6 +6,7 @@ export class MysteryEncounterSpriteConfig {
   fileRoot: string; // "trainer" for trainer sprites, "pokemon" for pokemon, etc. Refer to /public/images directory for the folder name
   hasShadow?: boolean = false; // Spawns shadow underneath sprite
   repeat?: boolean = false; // Cycles animation
+  useSilhouette?: boolean = false;
 }
 
 /**
@@ -102,6 +103,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
     this.getSprites().map((sprite, i) => sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0));
     this.getTintSprites().map((tintSprite, i) => tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0));
+
+    if (this.spriteConfigs.some(config => config.useSilhouette)) {
+      this.tint(0, 1);
+    }
   }
 
   /**

@@ -1019,8 +1019,8 @@ export default class BattleScene extends SceneBase {
         this.field.add(newTrainer);
       }
 
-      // Mystery Encounters
-      // The only time they can occur is in place of a standard wild battle
+      // Check for mystery encounter
+      // Can only occur in place of a standard wild battle
       // They will also never be found after floor 180 of classic mode, and cannot be in the first 2 battles
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && (newWaveIndex > 180 || newWaveIndex < 3))) {
         // Roll for mystery encounter instead of wild battle (25% chance)
@@ -1076,12 +1076,19 @@ export default class BattleScene extends SceneBase {
 
       // Load or generate a mystery encounter
       const newEncounter = this.getMysteryEncounter(mysteryEncounter);
+      this.currentBattle.mysteryEncounter = newEncounter;
+
+      // If Encounter has an onInit() function, call it
+      // Usually used for calculating rand data before initializing anything visual
+      if (newEncounter.onInit) {
+        newEncounter.onInit(this);
+      }
 
       // Add intro visuals for mystery encounter
       newEncounter.initIntroVisuals(this);
       this.field.add(newEncounter.introVisuals);
 
-      this.currentBattle.mysteryEncounter = newEncounter;
+      // this.currentBattle.mysteryEncounter = newEncounter;
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));

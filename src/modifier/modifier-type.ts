@@ -1681,11 +1681,6 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
 
   if (!customModifierSettings) {
     new Array(count).fill(0).map((_, i) => {
-      // let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers?.length > i ? modifierTiers[i] : undefined);
-      // let r = 0;
-      // while (options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) {
-      //   candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
-      // }
       options.push(getModifierTypeOptionWithLuckUpgrades(options, retryCount, party, modifierTiers?.length > i ? modifierTiers[i] : undefined));
     });
   } else {

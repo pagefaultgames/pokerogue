@@ -28,18 +28,13 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_challengers_description": "If you defeat a challenger, you might impress them enough to receive a boon. But some look tough, are you up to the challenge?",
   "mysterious_challengers_query": "Who will you battle?",
   "mysterious_challengers_option_1_label": "A weak, clever foe",
-  "mysterious_challengers_option_1_tooltip": "(+) Easy Battle\n(+) Poor Rewards",
+  "mysterious_challengers_option_1_tooltip": "(+) Standard Battle\n(+) Standard Rewards",
   "mysterious_challengers_option_2_label": "A strong foe",
-  "mysterious_challengers_option_2_tooltip": "(+) Medium Battle\n(+) Normal Rewards",
+  "mysterious_challengers_option_2_tooltip": "(+) Hard Battle\n(+) Good Rewards",
   "mysterious_challengers_option_3_label": "The mightiest foe",
-  "mysterious_challengers_option_3_tooltip": "(+) Hard Battle\n(+) Great Rewards",
-  "mysterious_challengers_option_4_label": "Leave",
-  "mysterious_challengers_option_4_tooltip": "(-) No Rewards",
+  "mysterious_challengers_option_3_tooltip": "(+) Brutal Battle\n(+) Great Rewards",
   "mysterious_challengers_option_selected_message": "The trainer steps forward...",
-  "mysterious_challengers_option_4_selected_message": "You hurry along your way, with a slight feeling of regret.",
   "mysterious_challengers_outro_win": "The mysterious challengers were defeated!",
-  "mysterious_challengers_speaker": "Jimmy",
-
 
   // Mysterious Encounters -- Epic Tier
   // Gholdengo Gang

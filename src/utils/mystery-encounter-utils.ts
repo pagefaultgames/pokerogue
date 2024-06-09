@@ -7,7 +7,7 @@ import { TrainerType } from "../data/enums/trainer-type";
 import { MysteryEncounterVariant } from "../data/mystery-encounter";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
 import { StatusEffect } from "../data/status-effect";
-import { TrainerSlot, trainerConfigs } from "../data/trainer-config";
+import {TrainerSlot, trainerConfigs, TrainerConfig} from "../data/trainer-config";
 import { FieldPosition, PlayerPokemon } from "../field/pokemon";
 import Trainer, { TrainerVariant } from "../field/trainer";
 import { PokemonExpBoosterModifier } from "../modifier/modifier";
@@ -204,6 +204,7 @@ export class EnemyPartyConfig {
   levelMultiplier?: number = 1;
   doubleBattle?: boolean = false;
   trainerType?: TrainerType;
+  trainerConfig?: TrainerConfig;
   pokemonSpecies?: PokemonSpecies[];
   pokemonBosses?: PokemonSpecies[];
 }
@@ -213,9 +214,7 @@ export class EnemyPartyConfig {
  * This will override and replace any standard encounter generation logic
  * Useful for tailoring specific battles to mystery encounters
  * @param scene - Battle Scene
- * @param doubleBattle - is double battle?
- * @param levelMultiplier - multiplier to adjust enemy levels up and down for harder or easier battles
- * @param trainerType - optional, if set will generate a team based on passed trainer type and configure a trainer battle instead of wild
+ * @param partyConfig - Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
  */
 export function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
   const loaded = false;
@@ -228,15 +227,20 @@ export function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: Enemy
 
   // Trainer
   const trainerType = partyConfig?.trainerType;
-  if (trainerType) {
+  const trainerConfig = partyConfig?.trainerConfig;
+  if (trainerType || partyConfig?.trainerConfig) {
     scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.TRAINER_BATTLE;
     if (scene.currentBattle.trainer) {
       scene.currentBattle.trainer.setVisible(false);
       scene.currentBattle.trainer.destroy();
     }
-    const doubleTrainer = trainerConfigs[trainerType].doubleOnly || (trainerConfigs[trainerType].hasDouble && partyConfig?.doubleBattle);
-    const newTrainer = new Trainer(scene, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+
+    const trainerConfig = partyConfig?.trainerConfig ? partyConfig?.trainerConfig : trainerConfigs[trainerType];
+
+    const doubleTrainer = trainerConfig.doubleOnly || (trainerConfig.hasDouble && partyConfig?.doubleBattle);
+    const newTrainer = new Trainer(scene, trainerConfig.trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT, null, null, null, trainerConfig);
     newTrainer.x += 300;
+    newTrainer.setVisible(false);
     scene.field.add(newTrainer);
     scene.currentBattle.trainer = newTrainer;
     loadEnemyAssets.push(newTrainer.loadAssets());
@@ -258,7 +262,7 @@ export function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: Enemy
     let enemySpecies;
     let isBoss = false;
     if (!loaded) {
-      if (trainerType) {
+      if (trainerType || trainerConfig) {
         battle.enemyParty[e] = battle.trainer.genPartyMember(e);
       } else {
         // Normal pokemon loaded first, Bosses second
@@ -396,39 +400,19 @@ export function initBattleFromEncounter(scene: BattleScene) {
 export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopRewards?: ModifierTypeFunc[]) {
   const rewardsFunction = (scene: BattleScene) => {
     if (customShopRewards) {
-      // Gets number of items for shop
-      // const modifierCount = new Utils.IntegerHolder(3);
-      // scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
-      // const numItems = modifierCount.value;
-
-      // let rewards: ModifierTier[] = [];
-      // if (shopRewardTierOverrides) {
-      //   rewards = shopRewardTierOverrides;
-      //
-      //   if (fillShopRemaining && rewards.length < numItems) {
-      //     const len = rewards.length;
-      //     for (let i = len - 1; i < numItems - len; i++) {
-      //       const tierValue = Utils.randSeedInt(1024);
-      //       const initialFillTier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
-      //       rewards.push(initialFillTier);
-      //     }
-      //   }
-      // } else {
-      //   for (let i = 0; i < numItems; i++) {
-      //     const tierValue = Utils.randSeedInt(1024);
-      //     const initialFillTier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
-      //     rewards.push(initialFillTier);
-      //   }
-      // }
-
       scene.unshiftPhase(new SelectModifierPhase(scene, 0, null, customShopRewards));
+    } else {
+      scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
     }
 
     if (nonShopRewards?.length > 0) {
       nonShopRewards.forEach((reward) => {
         scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
       });
-
+    } else {
+      while (!Utils.isNullOrUndefined(scene.findPhase(p => p instanceof ModifierRewardPhase))) {
+        scene.tryRemovePhase(p => p instanceof ModifierRewardPhase);
+      }
     }
 
     return true;
