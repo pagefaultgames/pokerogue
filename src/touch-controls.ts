@@ -147,6 +147,16 @@ export default class TouchControl {
       }
     });
   }
+
+  /**
+     * Deactivates all currently pressed keys.
+     */
+  deactivatePressedKey(): void {
+    for (const interval of this.inputInterval) {
+      clearInterval(interval);
+    }
+    this.buttonLock = [];
+  }
 }
 
 /**

@@ -104,6 +104,7 @@ export class InputsController {
 
   public lastSource: string = "keyboard";
   private inputInterval: NodeJS.Timeout[] = new Array();
+  private touchControls: TouchControl;
 
   /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
@@ -180,7 +181,7 @@ export class InputsController {
       this.scene.input.keyboard.on("keydown", this.keyboardKeyDown, this);
       this.scene.input.keyboard.on("keyup", this.keyboardKeyUp, this);
     }
-    new TouchControl(this.scene);
+    this.touchControls = new TouchControl(this.scene);
   }
 
   /**
@@ -191,6 +192,7 @@ export class InputsController {
      */
   loseFocus(): void {
     this.deactivatePressedKey();
+    this.touchControls.deactivatePressedKey();
   }
 
   /**
