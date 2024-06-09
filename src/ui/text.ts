@@ -13,6 +13,7 @@ export enum TextStyle {
   BATTLE_INFO,
   PARTY,
   PARTY_RED,
+  PARTY_ORANGE,
   SUMMARY,
   SUMMARY_ALT,
   SUMMARY_RED,
@@ -66,6 +67,8 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 
 export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
   const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+
+  obj.setStyle(styleOptions);
   obj.setScale(0.1666666667);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
@@ -166,6 +169,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     break;
   case TextStyle.PARTY:
   case TextStyle.PARTY_RED:
+  case TextStyle.PARTY_ORANGE:
     styleOptions.fontSize = languageSettings[lang]?.partyFontSize || "66px";
     styleOptions.fontFamily = "pkmnems";
     break;
@@ -220,6 +224,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#f8f8f8" : "#707070";
   case TextStyle.PARTY_RED:
     return !shadow ? "#f89890" : "#984038";
+  case TextStyle.PARTY_ORANGE:
+    return !shadow ? "#efb45c" : "#e74b29";
   case TextStyle.SUMMARY:
     return !shadow ? "#ffffff" : "#636363";
   case TextStyle.SUMMARY_ALT:

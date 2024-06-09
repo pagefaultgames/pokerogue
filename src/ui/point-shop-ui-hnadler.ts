@@ -1,11 +1,13 @@
+import * as Utils from "../utils";
 import { Button } from "../enums/buttons";
 import BattleScene from "../battle-scene";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { TextStyle, addTextObject } from "./text";
-import { PointShopModifierCategories, PointShopModifierTypes } from "#app/modifier/point-shop-modifier.js";
+import { TextStyle, addTextObject, setTextStyle } from "./text";
+import { AbstractMultiPointShopModifierType, PointShopModifierCategories, PointShopModifierType, PointShopModifierTypes } from "#app/modifier/point-shop-modifier.js";
 import { achvs } from "#app/system/achv.js";
+import i18next from "i18next";
 
 type PointShopUiCallback = () => void;
 
@@ -27,6 +29,12 @@ const MaxIcons = {
 };
 
 export default class PointShopUiHandler extends MessageUiHandler {
+  private get currentSelection() {
+    return PointShopModifierTypes[this.currentCategory][this.cursor];
+  }
+  private get currentEnabledIcon() {
+    return this.itemEnableIcon[this.currentCategory][this.cursor];
+  }
 
   private parentContainer: Phaser.GameObjects.Container;
 
@@ -46,6 +54,8 @@ export default class PointShopUiHandler extends MessageUiHandler {
   private itemHeaderIconLeft: Phaser.GameObjects.Sprite;
   private itemHeaderIconRight: Phaser.GameObjects.Sprite;
 
+  private readonly itemHeaderText: Phaser.GameObjects.Text[] = new Array(Object.keys(PointShopModifierCategories).length / 2);
+
   private itemFooterLeftText: Phaser.GameObjects.Text;
   private itemFooterRightText: Phaser.GameObjects.Text;
 
@@ -53,11 +63,14 @@ export default class PointShopUiHandler extends MessageUiHandler {
   private itemListWindow: Phaser.GameObjects.NineSlice;
 
   private itemListContainer: Phaser.GameObjects.Container;
-  private itemIcons: Phaser.GameObjects.Image[][] = new Array(Object.values(PointShopModifierCategories).length / 2).fill(new Array());
-  private itemCostText: Phaser.GameObjects.Text[][] = new Array(Object.values(PointShopModifierCategories).length / 2).fill(new Array());
+  private readonly itemIcons: Phaser.GameObjects.Image[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
+  private readonly itemEnableIcon: Phaser.GameObjects.Image[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
+  private readonly itemCostText: Phaser.GameObjects.Text[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
 
   private itemCursor: Phaser.GameObjects.Image;
   private startCursor: Phaser.GameObjects.NineSlice;
+
+  private messageWindow: Phaser.GameObjects.NineSlice;
 
   private selectionContainer: Phaser.GameObjects.Container;
 
@@ -81,6 +94,15 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
   constructor(scene: BattleScene) {
     super(scene, Mode.POINT_SHOP);
+
+    const categoryLeftEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+    const categoryRightEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+
+    //const categoryLeftEvent = scene.input.gamepad.gamepads[0].on(Phaser.Input.Gamepad.Events.BUTTON_DOWN);
+    //const categoryRightEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+
+    categoryLeftEvent.on("down", this.onCategoryLeft, this);
+    categoryRightEvent.on("down", this.onCategoryRight, this);
   }
 
   private getCanvasWidth(): number {
@@ -193,21 +215,53 @@ export default class PointShopUiHandler extends MessageUiHandler {
     this.itemWindowContainer.add(this.itemListContainer);
 
     PointShopModifierTypes.forEach((category, i) => {
+      const isCurrentCategory = this.currentCategory === i;
+
+      let x = this.itemHeaderIconLeft.x + this.itemHeaderIconLeft.displayWidth + 4;
+      if (i > 0) {
+        x = this.itemHeaderText[i - 1].x + this.itemHeaderText[i - 1].displayWidth + 8;
+      }
+
+      this.itemHeaderText[i] =
+        addTextObject(this.scene, x, this.itemHeaderIconLeft.y, Utils.toReadableString(Object.values(PointShopModifierCategories)[i].toString()), isCurrentCategory ? TextStyle.PARTY_ORANGE : TextStyle.PARTY)
+          .setOrigin(0, 0.5);
+
+      this.itemHeaderContainer.add(this.itemHeaderText[i]);
+
       category.forEach((modifierType, j) => {
         const position = this.getIconPositionFromIndex(j);
+        const cost = !(modifierType instanceof AbstractMultiPointShopModifierType)
+          ? modifierType.cost.toString()
+          : modifierType.cost + "+" ;
 
         const newIcon = this.scene.add
           .image(position.x, position.y, "items", modifierType.iconImage)
           .setOrigin(0, 0)
-          .setScale(0.5);
-        const newText = addTextObject(this.scene, position.x, position.y, modifierType.cost.toString(), TextStyle.PARTY);
+          .setScale(0.5)
+          .setVisible(isCurrentCategory);
+        const newEnabledIcon = this.scene.add
+          .image(position.x - 1 + 9, position.y - 1 + 9, "select_cursor_highlight")
+          .setOrigin()
+          .setScale(0.75)
+          .setVisible(isCurrentCategory && modifierType.active);
+        const newText =
+          addTextObject(this.scene, position.x, position.y, cost, TextStyle.PARTY)
+            .setVisible(isCurrentCategory);
         newText.setScale(newText.scaleX / 2, newText.scaleY / 2);
-        this.itemListContainer.add([newIcon, newText]);
 
         this.itemIcons[i].push(newIcon);
+        this.itemEnableIcon[i].push(newEnabledIcon);
         this.itemCostText[i].push(newText);
+
+        this.itemListContainer.add([newIcon, newEnabledIcon]);
       });
     });
+
+    this.itemCursor = this.scene.add.image(0, 0, "select_cursor")
+      .setOrigin(0, 0);
+    this.itemListContainer.add(this.itemCursor);
+
+    this.itemListContainer.add(this.itemCostText.flat());
 
     /* for (let y = 0; y < MaxIcons.column; y++) {
       for (let x = 0; x < MaxIcons.row; x++) {
@@ -221,9 +275,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
       }
     } */
 
-    this.itemCursor = this.scene.add.image(0, 0, "select_cursor")
-      .setOrigin(0, 0);
-    this.itemListContainer.add(this.itemCursor);
+
 
     // Item List Footer Windows
     this.itemFooterLeftWindow =
@@ -248,6 +300,17 @@ export default class PointShopUiHandler extends MessageUiHandler {
       .setOrigin()
       .setVisible(false);
     this.itemContainer.add([this.itemFooterLeftText, this.itemFooterRightText, this.startCursor]);
+
+    // Footer Message Window
+    this.messageWindow =
+      addWindow(this.scene, 0, 0, this.getRatioWidth(2/3), this.getRatioHeight(1/9))
+        .setOrigin(0, 1)
+        .setVisible(false);
+    this.itemContainer.add(this.messageWindow);
+
+    this.message = addTextObject(this.scene, WindowMargin.left, -this.messageWindow.displayHeight / 2 - 1, "", TextStyle.PARTY, { maxLines: 1 })
+      .setOrigin(0, 0.5);
+    this.itemContainer.add(this.message);
 
     // Selection Container
     this.selectionContainer = this.scene.add
@@ -290,6 +353,10 @@ export default class PointShopUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
+    if (!args.length || !(args[0] instanceof Function)) {
+      return false;
+    }
+
     super.show(args);
 
     const unlockedKeys = Object.keys(this.scene.gameData.achvUnlocks);
@@ -310,7 +377,11 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     this.parentContainer.setVisible(true);
 
-    return false;
+    return true;
+  }
+
+  getEnabledModifiers(): PointShopModifierType[] {
+    return PointShopModifierTypes.flat().filter(modifier => modifier.active); // What about multi tho
   }
 
   setCursor(cursor: integer): boolean {
@@ -319,7 +390,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
       return changed;
     }
 
-    if (this.cursor >= PointShopModifierTypes[this.currentCategory].length) {
+    if (!this.currentSelection) {
       this.itemCursor.setVisible(false);
       this.startCursor.setVisible(true);
 
@@ -333,41 +404,159 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     this.itemCursor.setX(cursorPosition.x - 1).setY(cursorPosition.y - 1);
 
-    const currentSelection = PointShopModifierTypes[this.currentCategory][this.cursor];
-    this.selectionCostText.setText(currentSelection.cost.toString());
-    this.selectionIcon.setFrame(currentSelection.iconImage);
-    this.selectionHeaderText.setText(currentSelection.name);
-    this.selectionDescriptionText.setText(currentSelection.getDescription(this.scene));
+    this.selectionCostText.setText(this.currentSelection.cost.toString());
+    this.selectionIcon.setFrame(this.currentSelection.iconImage);
+    this.selectionHeaderText.setText(this.currentSelection.name);
+    this.selectionDescriptionText.setText(this.currentSelection.description || this.currentSelection.getDescription(this.scene));
+
+    return changed;
+  }
+  setCategory(category: PointShopModifierCategories): boolean {
+    const changed = this.currentCategory !== category;
+    if (!changed) {
+      return changed;
+    }
+
+    this.currentCategory = category;
+
+    PointShopModifierTypes.forEach((category, i) => {
+      const isCurrentCategory = this.currentCategory === i;
+
+      this.itemIcons[i].forEach(icon => icon.setVisible(isCurrentCategory));
+      this.itemCostText[i].forEach(text => text.setVisible(isCurrentCategory));
+      this.itemEnableIcon[i].forEach((icon, j) => {
+        const currentSelection = PointShopModifierTypes[i][j];
+        if (!(currentSelection instanceof AbstractMultiPointShopModifierType)) {
+          icon.setVisible(isCurrentCategory && currentSelection.active);
+        } else {
+          icon.setVisible(isCurrentCategory && currentSelection.modifierOptions.some(option => option.active));
+        }
+      });
+
+      setTextStyle(this.itemHeaderText[i], this.scene, isCurrentCategory ? TextStyle.PARTY_ORANGE : TextStyle.PARTY);
+    });
+
+    this.cursor = -1;
+    this.setCursor(0);
 
     return changed;
   }
 
-  processInput(button: Button): boolean {
-    //const ui = this.getUi();
+  onCategoryLeft() {
+    this.setCategory(Math.max(this.currentCategory - 1, 0));
+  }
+  onCategoryRight() {
+    this.setCategory(Math.min(this.currentCategory + 1, PointShopModifierTypes.length - 1));
+  }
 
+  updateOptions(index: number) {
+    let messageString: string;
+    if (!(this.currentSelection instanceof AbstractMultiPointShopModifierType)) {
+      messageString = "Current Status: " + (this.currentSelection.active ? "Enabled" : "Disabled");
+    } else {
+      const currentMultiSelection = this.currentSelection as AbstractMultiPointShopModifierType;
+      if (currentMultiSelection.multiSelect) {
+        messageString = "Current Status: " + (currentMultiSelection.modifierOptions[index].active ? "Enabled" : "Disabled");
+      } else {
+        const enabledOption = currentMultiSelection.modifierOptions.find(option => option.active);
+        messageString = "Current Status: " + (enabledOption ? enabledOption.name : "Disabled");
+      }
+    }
+
+    this.message.setText(messageString);
+  }
+  handleToggle(index: number) {
+    if (!(this.currentSelection instanceof AbstractMultiPointShopModifierType)) {
+      this.currentSelection.active = !this.currentSelection.active;
+      this.currentEnabledIcon.setVisible(this.currentSelection.active);
+    } else {
+      this.currentSelection.modifierOptions[index].active = !this.currentSelection.modifierOptions[index].active;
+
+      if (!this.currentSelection.multiSelect) {
+        this.currentSelection.modifierOptions.forEach((option, i) => {
+          if (i !== index) {
+            option.active = false;
+          }
+        });
+      }
+
+      this.currentEnabledIcon.setVisible(this.currentSelection.modifierOptions.some(option => option.active));
+    }
+    this.updateOptions(index);
+  }
+  handleSelection() {
+    const ui = this.getUi();
+
+    let optionStrings: string[];
+    if (!(this.currentSelection instanceof AbstractMultiPointShopModifierType)) {
+      optionStrings = ["Toggle " + this.currentSelection.name];
+    } else {
+      const currentMultiSelection = this.currentSelection as AbstractMultiPointShopModifierType;
+      optionStrings = currentMultiSelection.modifierOptions.map(option => option.name);
+    }
+
+    ui.showText("Current Status: ", undefined, () => {
+      this.updateOptions(0);
+      ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+        options: optionStrings.map((optionString, i) => {
+          // make an option for each available starter move
+          const option = {
+            label: optionString,
+            handler: () => {
+              this.handleToggle(i);
+            },
+            onHover: () => {
+              this.updateOptions(i);
+            },
+          };
+          return option;
+        }).concat({
+          label: i18next.t("menu:cancel"),
+          handler: () => {
+            ui.setMode(Mode.POINT_SHOP);
+            this.clearText();
+            return true;
+          },
+          onHover: () => {
+            this.message.setText("Return to the Item List");
+          },
+        }),
+        supportHover: true,
+        maxOptions: 8,
+        yOffset: 29,
+        xOffset: -1,
+      });
+    });
+  }
+
+  processInput(button: Button): boolean {
     let success = false;
     const error = false;
 
-    if (button === Button.ACTION) {
-      this.callbackFunction();
-    } else {
-      switch (button) {
-      case Button.UP:
-        this.setCursor(Math.max(this.cursor - MaxIcons.row, 0));
-        break;
-      case Button.DOWN:
-        this.setCursor(Math.min(this.cursor + MaxIcons.row, PointShopModifierTypes[this.currentCategory].length));
-        break;
-      case Button.LEFT:
-        this.setCursor(Math.max(this.cursor - 1, 0));
-        break;
-      case Button.RIGHT:
-        this.setCursor(Math.min(this.cursor + 1, PointShopModifierTypes[this.currentCategory].length));
-        break;
+    switch (button) {
+    case Button.SUBMIT:
+      this.setCursor(PointShopModifierTypes[this.currentCategory].length);
+    case Button.ACTION:
+      if (!this.currentSelection) {
+        this.callbackFunction();
+      } else {
+        this.handleSelection();
       }
-
-      success = true;
+      break;
+    case Button.UP:
+      this.setCursor(Math.max(this.cursor - MaxIcons.row, 0));
+      break;
+    case Button.DOWN:
+      this.setCursor(Math.min(this.cursor + MaxIcons.row, PointShopModifierTypes[this.currentCategory].length));
+      break;
+    case Button.LEFT:
+      this.setCursor(Math.max(this.cursor - 1, 0));
+      break;
+    case Button.RIGHT:
+      this.setCursor(Math.min(this.cursor + 1, PointShopModifierTypes[this.currentCategory].length));
     }
+
+    success = true;
 
     return success || error;
   }
@@ -375,5 +564,16 @@ export default class PointShopUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.parentContainer.setVisible(false);
+  }
+
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+
+    this.messageWindow.setVisible(!!text?.length);
+  }
+
+  clearText() {
+    this.messageWindow.setVisible(false);
+    super.clearText();
   }
 }
