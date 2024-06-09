@@ -181,6 +181,7 @@ export class TitlePhase extends Phase {
 
   showOptions(): void {
     const options: OptionSelectItem[] = [];
+    const devMode = import.meta.env.VITE_DEV_MODE === "1";
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
         label: i18next.t("menu:continue"),
@@ -191,8 +192,15 @@ export class TitlePhase extends Phase {
       });
     }
     options.push({
-      label: i18next.t("menu:newGame"),
+      label: i18next.t("menu:newGame") + (devMode ? " (Dev)" : ""),
       handler: () => {
+        if (devMode) {
+          this.gameMode = GameModes.CLASSIC;
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.clearText();
+          this.toDev();
+          return true;
+        }
         const setModeAndEnd = (gameMode: GameModes) => {
           this.gameMode = gameMode;
           this.scene.ui.setMode(Mode.MESSAGE);
@@ -370,6 +378,30 @@ export class TitlePhase extends Phase {
       } else {
         generateDaily(btoa(new Date().toISOString().substring(0, 10)));
       }
+    });
+  }
+
+  toDev(): void {
+    this.scene.ui.clearText();
+    this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
+    this.scene.newArena(Overrides.STARTING_BIOME_OVERRIDE);
+    const species = Overrides.STARTER_SPECIES_OVERRIDE ? Overrides.STARTER_SPECIES_OVERRIDE:1;
+    const pokemonSpecies = getPokemonSpecies(species as Species);
+    const level = this.scene.gameMode.getStartingLevel();
+    const form = Overrides.STARTER_FORM_OVERRIDE;
+    const gender = Overrides.GENDER_OVERRIDE;
+    const party = this.scene.getParty();
+    const loadPokemonAssets: Promise<void>[] = [];
+    const pokemon = this.scene.addPlayerPokemon(pokemonSpecies, level, undefined, form, gender, undefined, undefined, undefined, undefined);
+    pokemon.setVisible(false);
+    party.push(pokemon);
+    loadPokemonAssets.push(pokemon.loadAssets());
+    Promise.all(loadPokemonAssets).then(() => {
+      this.scene.newBattle();
+      this.scene.arena.init();
+      this.scene.sessionPlayTime = 0;
+      this.scene.lastSavePlayTime = 0;
+      super.end();
     });
   }
 
