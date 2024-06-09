@@ -1,6 +1,5 @@
 import BattleScene from "../battle-scene";
 import { PlayerPokemon } from "../field/pokemon";
-import { GameModes, gameModes } from "../game-mode";
 import { Starter } from "../ui/starter-select-ui-handler";
 import * as Utils from "../utils";
 import { Species } from "./enums/species";
@@ -14,14 +13,14 @@ export interface DailyRunConfig {
 
 export function fetchDailyRunSeed(): Promise<string> {
   return new Promise<string>((resolve, reject) => {
-    Utils.apiFetch('daily/seed').then(response => {
+    Utils.apiFetch("daily/seed").then(response => {
       if (!response.ok) {
         resolve(null);
         return;
       }
       return response.text();
     }).then(seed => resolve(seed))
-    .catch(err => reject(err));
+      .catch(err => reject(err));
   });
 }
 
@@ -29,7 +28,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
   const starters: Starter[] = [];
 
   scene.executeWithSeedOffset(() => {
-    const startingLevel = gameModes[GameModes.DAILY].getStartingLevel();
+    const startingLevel = scene.gameMode.getStartingLevel();
 
     if (/\d{18}$/.test(seed)) {
       for (let s = 0; s < 3; s++) {
@@ -54,7 +53,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
       starters.push(getDailyRunStarter(scene, starterSpecies, startingLevel));
     }
   }, 0, seed);
-  
+
   return starters;
 }
 

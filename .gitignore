@@ -14,8 +14,6 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
@@ -23,9 +21,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Docummentation
-docs/*
 
 public/images/trainer/convert/*
 public/images/battle_anims/input/*.png
@@ -39,3 +34,7 @@ src/data/battle-anim-data.ts
 src/overrides.ts
 
 coverage
+
+# Local Documentation
+/typedoc
+

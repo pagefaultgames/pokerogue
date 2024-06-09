@@ -16,6 +16,7 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   private targets: BattlerIndex[];
   private targetFlashTween: Phaser.Tweens.Tween;
+  private targetBattleInfoMoveTween: Phaser.Tweens.Tween;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.TARGET_SELECT);
@@ -26,8 +27,9 @@ export default class TargetSelectUiHandler extends UiHandler {
   setup(): void { }
 
   show(args: any[]): boolean {
-    if (args.length < 3)
+    if (args.length < 3) {
       return false;
+    }
 
     super.show(args);
 
@@ -37,8 +39,9 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     this.targets = getMoveTargets(this.scene.getPlayerField()[this.fieldIndex], this.move).targets;
 
-    if (!this.targets.length)
+    if (!this.targets.length) {
       return false;
+    }
 
     this.setCursor(this.targets.indexOf(this.cursor) > -1 ? this.cursor : this.targets[0]);
 
@@ -55,27 +58,32 @@ export default class TargetSelectUiHandler extends UiHandler {
       success = true;
     } else {
       switch (button) {
-        case Button.UP:
-          if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1)
-            success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
-          break;
-        case Button.DOWN:
-          if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1)
-            success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
-          break;
-        case Button.LEFT:
-          if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1)
-            success = this.setCursor(this.cursor - 1);
-          break;
-        case Button.RIGHT:
-          if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1)
-            success = this.setCursor(this.cursor + 1);
-          break;
+      case Button.UP:
+        if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1) {
+          success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
+        }
+        break;
+      case Button.DOWN:
+        if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1) {
+          success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
+        }
+        break;
+      case Button.LEFT:
+        if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1) {
+          success = this.setCursor(this.cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1) {
+          success = this.setCursor(this.cursor + 1);
+        }
+        break;
       }
     }
 
-    if (success)
+    if (success) {
       ui.playSelect();
+    }
 
     return success;
   }
@@ -88,8 +96,9 @@ export default class TargetSelectUiHandler extends UiHandler {
     if (this.targetFlashTween) {
       this.targetFlashTween.stop();
       const lastTarget = this.scene.getField()[lastCursor];
-      if (lastTarget)
+      if (lastTarget) {
         lastTarget.setAlpha(1);
+      }
     }
 
     const target = this.scene.getField()[cursor];
@@ -99,12 +108,32 @@ export default class TargetSelectUiHandler extends UiHandler {
       alpha: 0,
       loop: -1,
       duration: Utils.fixedInt(250),
-      ease: 'Sine.easeIn',
+      ease: "Sine.easeIn",
       yoyo: true,
       onUpdate: t => {
-        if (target)
+        if (target) {
           target.setAlpha(t.getValue());
+        }
       }
+    });
+
+    if (this.targetBattleInfoMoveTween) {
+      this.targetBattleInfoMoveTween.stop();
+      const lastTarget = this.scene.getField()[lastCursor];
+      if (lastTarget) {
+        lastTarget.getBattleInfo().resetY();
+      }
+    }
+
+    const targetBattleInfo = target.getBattleInfo();
+
+    this.targetBattleInfoMoveTween = this.scene.tweens.add({
+      targets: [ targetBattleInfo ],
+      y: { start: targetBattleInfo.getBaseY(), to: targetBattleInfo.getBaseY() + 1 },
+      loop: -1,
+      duration: Utils.fixedInt(250),
+      ease: "Linear",
+      yoyo: true
     });
 
     return ret;
@@ -116,8 +145,18 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       this.targetFlashTween = null;
     }
-    if (target)
+    if (target) {
       target.setAlpha(1);
+    }
+
+    const targetBattleInfo = target.getBattleInfo();
+    if (this.targetBattleInfoMoveTween) {
+      this.targetBattleInfoMoveTween.stop();
+      this.targetBattleInfoMoveTween = null;
+    }
+    if (targetBattleInfo) {
+      targetBattleInfo.resetY();
+    }
   }
 
   clear() {

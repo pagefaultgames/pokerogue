@@ -1,7 +1,7 @@
 
 export enum TrainerType {
   UNKNOWN,
-  
+
   ACE_TRAINER,
   ARTIST,
   BACKERS,
@@ -16,6 +16,7 @@ export enum TrainerType {
   DANCER,
   DEPOT_AGENT,
   DOCTOR,
+  FIREBREATHER,
   FISHERMAN,
   GUITARIST,
   HARLEQUIN,
@@ -39,6 +40,7 @@ export enum TrainerType {
   RICH,
   RICH_KID,
   ROUGHNECK,
+  SAILOR,
   SCIENTIST,
   SMASHER,
   SNOW_WORKER,
@@ -153,6 +155,11 @@ export enum TrainerType {
   OLIVIA,
   ACEROLA,
   KAHILI,
+  MARNIE_ELITE,
+  NESSA_ELITE,
+  BEA_ELITE,
+  ALLISTER_ELITE,
+  RAIHAN_ELITE,
   RIKA,
   POPPY,
   LARRY_ELITE,
@@ -171,10 +178,10 @@ export enum TrainerType {
   IRIS,
   DIANTHA,
   HAU,
+  LEON,
   GEETA,
   NEMONA,
   KIERAN,
-  LEON, // He's problematic right now because he has no corresponding Elite Four
   RIVAL = 375,
   RIVAL_2,
   RIVAL_3,
