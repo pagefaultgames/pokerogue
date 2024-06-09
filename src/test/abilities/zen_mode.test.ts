@@ -14,7 +14,7 @@ import {
   SwitchPhase,
   SwitchSummonPhase,
   TurnEndPhase, TurnInitPhase,
-  TurnStartPhase,
+  TurnStartPhase, VictoryPhase,
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {Stat} from "#app/data/pokemon-stat";
@@ -51,7 +51,7 @@ describe("Abilities - Zen mode", () => {
   });
 
   it("ZEN MODE - not enough damage to change form", async() => {
-    const moveToUse = Moves.AERIAL_ACE;
+    const moveToUse = Moves.SPLASH;
     await game.startBattle([
       Species.DARMANITAN,
     ]);
@@ -77,7 +77,7 @@ describe("Abilities - Zen mode", () => {
   }, 20000);
 
   it("ZEN MODE - enough damage to change form", async() => {
-    const moveToUse = Moves.AERIAL_ACE;
+    const moveToUse = Moves.SPLASH;
     await game.startBattle([
       Species.DARMANITAN,
     ]);
@@ -100,7 +100,7 @@ describe("Abilities - Zen mode", () => {
   }, 20000);
 
   it("ZEN MODE - kill pokemon while on zen mode", async() => {
-    const moveToUse = Moves.AERIAL_ACE;
+    const moveToUse = Moves.SPLASH;
     await game.startBattle([
       Species.DARMANITAN,
       Species.CHARIZARD,
@@ -140,7 +140,7 @@ describe("Abilities - Zen mode", () => {
     });
     await game.phaseInterceptor.run(SwitchPhase);
     await game.phaseInterceptor.to(PostSummonPhase);
-    await game.phaseInterceptor.to(TurnEndPhase, false);
+    await game.phaseInterceptor.to(VictoryPhase);
     expect(game.scene.getParty()[1].formIndex).toBe(1);
   }, 20000);
 });

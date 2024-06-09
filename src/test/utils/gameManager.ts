@@ -3,7 +3,7 @@ import {Mode} from "#app/ui/ui";
 import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
 import {
   CommandPhase,
-  EncounterPhase,
+  EncounterPhase, FaintPhase,
   LoginPhase,
   SelectGenderPhase,
   SelectStarterPhase,
@@ -22,6 +22,8 @@ import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import {ExpNotification} from "#app/enums/exp-notification";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import Pokemon, {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
+import {StatusEffect} from "#app/data/status-effect";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -211,5 +213,32 @@ export default class GameManager {
       await this.scene.gameData.initSystem(dataStr);
     }
     return updateUserInfo();
+  }
+
+  async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
+    const originalFaintCry = pokemon.faintCry;
+    Pokemon.prototype.faintCry = () => {
+      if (pokemon instanceof PlayerPokemon) {
+        pokemon.addFriendship(-10);
+      }
+      pokemon.setVisible(false);
+      pokemon.y -= 150;
+      pokemon.trySetStatus(StatusEffect.FAINT);
+      if (pokemon.isPlayer()) {
+        this.scene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
+      } else {
+        this.scene.addFaintedEnemyScore(pokemon as EnemyPokemon);
+        this.scene.currentBattle.addPostBattleLoot(pokemon as EnemyPokemon);
+      }
+      this.scene.field.remove(pokemon);
+      this.endPhase();
+    };
+    return new Promise<void>(async(resolve) => {
+      pokemon.hp = 0;
+      this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
+      await this.phaseInterceptor.to(FaintPhase);
+      Pokemon.prototype.faintCry = originalFaintCry;
+      resolve();
+    });
   }
 }
