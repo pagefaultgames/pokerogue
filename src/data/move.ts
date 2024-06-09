@@ -4416,15 +4416,20 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      if (
-        !this.user &&
-        (move.category === MoveCategory.STATUS ||
-          move.category === MoveCategory.PHYSICAL) &&
-        (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) ||
-          target.hasAbilityWithAttr(MoveImmunityAbAttr) ||
-          target.getTag(BattlerTagType.INGRAIN) ||
-          target.isMax())
-      ) {
+      const moveCategory =
+        move.category === MoveCategory.STATUS ||
+        move.category === MoveCategory.PHYSICAL
+          ? true
+          : false;
+
+      const moveAttribute =
+        target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) ||
+        target.hasAbilityWithAttr(MoveImmunityAbAttr) ||
+        target.getTag(BattlerTagType.INGRAIN)
+          ? true
+          : false;
+
+      if (!this.user && ((moveCategory && moveAttribute) || target.isMax())) {
         return false;
       }
 
