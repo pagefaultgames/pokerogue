@@ -378,6 +378,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Das war mal wieder ein Schuss in den Ofen!"
     },
   },
+  "firebreather": {
+    "encounter": {
+      1: "Meine Flammen werden dich verschlingen!",
+      2: "Meine Seele hat Feuer gefangen. Ich werde dir zeigen, wie heiß sie brennt!",
+      3: "Komm näher und sieh dir meine Flammen an!"
+    },
+    "victory": {
+      1: "Verbrannt bis zur Asche...",
+      2: "Yow! Das ist heiß!",
+      3: "Auuu! Ich habe mir die Nasenspitze verbrannt!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "Matrose, du gehst über Bord, wenn du verlierst!",
+      2: "Komm schon! Mein Stolz als Seemann steht auf dem Spiel!",
+      3: "Ahoj! Bist du seekrank?"
+    },
+    "victory": {
+      1: "Argh! Von einem Kind besiegt!",
+      2: "Dein Geist hat mich versenkt!",
+      3: "Ich glaube, ich bin der der seekrank ist..."
+    },
+  },
   "magma_grunt": {
     "encounter": {
       1: "Keiner, der sich Team Magma in den Weg stellt, bekommt Gnade, nicht einmal Kinder!"
