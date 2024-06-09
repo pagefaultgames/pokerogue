@@ -14,6 +14,7 @@ import EvolutionSceneHandler from "./evolution-scene-handler";
 import TargetSelectUiHandler from "./target-select-ui-handler";
 import SettingsUiHandler from "./settings/settings-ui-handler";
 import SettingsGamepadUiHandler from "./settings/settings-gamepad-ui-handler";
+import GameChallengesUiHandler from "./challenges-select-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import AchvBar from "./achv-bar";
 import MenuUiHandler from "./menu-ui-handler";
@@ -82,6 +83,7 @@ export enum Mode {
   SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED,
+  CHALLENGE_SELECT,
   MYSTERY_ENCOUNTER
 }
 
@@ -93,7 +95,8 @@ const transitionModes = [
   Mode.EVOLUTION_SCENE,
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
-  Mode.EGG_GACHA
+  Mode.EGG_GACHA,
+  Mode.CHALLENGE_SELECT
 ];
 
 const noTransitionModes = [
@@ -176,6 +179,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
+      new GameChallengesUiHandler(scene),
       new MysteryEncounterUiHandler(scene),
     ];
   }

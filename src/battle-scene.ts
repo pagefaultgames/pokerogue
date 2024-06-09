@@ -20,8 +20,8 @@ import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesF
 import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
-import Battle, { BattleType, FixedBattleConfig, fixedBattles } from "./battle";
-import { GameMode, GameModes, gameModes } from "./game-mode";
+import Battle, { BattleType, FixedBattleConfig } from "./battle";
+import { GameMode, GameModes, getGameMode } from "./game-mode";
 import FieldSpritePipeline from "./pipelines/field-sprite";
 import SpritePipeline from "./pipelines/sprite";
 import PartyExpBar from "./ui/party-exp-bar";
@@ -129,6 +129,7 @@ export default class BattleScene extends SceneBase {
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
+  public musicPreference: integer = 0;
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
   public skipSeenDialogues: boolean = false;
@@ -156,6 +157,13 @@ export default class BattleScene extends SceneBase {
    * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
    */
   public battleStyle: integer = 0;
+
+  /**
+  * Defines whether or not to show type effectiveness hints
+  * - true: No hints
+  * - false: Show hints for moves
+   */
+  public typeHints: boolean = false;
 
   public disableMenu: boolean = false;
 
@@ -871,7 +879,7 @@ export default class BattleScene extends SceneBase {
       this.gameData = new GameData(this);
     }
 
-    this.gameMode = gameModes[GameModes.CLASSIC];
+    this.gameMode = getGameMode(GameModes.CLASSIC);
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
@@ -979,8 +987,8 @@ export default class BattleScene extends SceneBase {
 
     const playerField = this.getPlayerField();
 
-    if (this.gameMode.hasFixedBattles && fixedBattles.hasOwnProperty(newWaveIndex) && trainerData === undefined) {
-      battleConfig = fixedBattles[newWaveIndex];
+    if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
+      battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
       newDouble = battleConfig.double;
       newBattleType = battleConfig.battleType;
       this.executeWithSeedOffset(() => newTrainer = battleConfig.getTrainer(this), (battleConfig.seedOffsetWaveIndex || newWaveIndex) << 8);
@@ -1042,7 +1050,8 @@ export default class BattleScene extends SceneBase {
     if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
       newDouble = true;
     }
-    if (Overrides.SINGLE_BATTLE_OVERRIDE) {
+    /* Override battles into single only if not fighting with trainers */
+    if (newBattleType !== BattleType.TRAINER && Overrides.SINGLE_BATTLE_OVERRIDE) {
       newDouble = false;
     }
 
@@ -1435,8 +1444,7 @@ export default class BattleScene extends SceneBase {
     if (this.money === undefined) {
       return;
     }
-    const formattedMoney =
-            this.moneyFormat === MoneyFormat.ABBREVIATED ? Utils.formatFancyLargeNumber(this.money, 3) : this.money.toLocaleString();
+    const formattedMoney = Utils.formatMoney(this.moneyFormat, this.money);
     this.moneyText.setText(`₽${formattedMoney}`);
     this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
@@ -1753,14 +1761,74 @@ export default class BattleScene extends SceneBase {
       return 13.122;
     case "battle_unova_gym":
       return 19.145;
-    case "battle_legendary_regis": //B2W2 Legendary Titan Battle
+    case "battle_legendary_kanto": //XY Kanto Legendary Battle
+      return 32.966;
+    case "battle_legendary_raikou": //HGSS Raikou Battle
+      return 12.632;
+    case "battle_legendary_entei": //HGSS Entei Battle
+      return 2.905;
+    case "battle_legendary_suicune": //HGSS Suicune Battle
+      return 12.636;
+    case "battle_legendary_lugia": //HGSS Lugia Battle
+      return 19.770;
+    case "battle_legendary_ho_oh": //HGSS Ho-oh Battle
+      return 17.668;
+    case "battle_legendary_regis_g5": //B2W2 Legendary Titan Battle
       return 49.500;
+    case "battle_legendary_regis_g6": //ORAS Legendary Titan Battle
+      return 21.130;
+    case "battle_legendary_gro_kyo": //ORAS Groudon & Kyogre Battle
+      return 10.547;
+    case "battle_legendary_rayquaza": //ORAS Rayquaza Battle
+      return 10.495;
+    case "battle_legendary_deoxys": //ORAS Deoxys Battle
+      return 13.333;
+    case "battle_legendary_lake_trio": //ORAS Lake Guardians Battle
+      return 16.887;
+    case "battle_legendary_sinnoh": //ORAS Sinnoh Legendary Battle
+      return 22.770;
+    case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
+      return 16.009;
+    case "battle_legendary_giratina": //ORAS Giratina Battle
+      return 10.451;
+    case "battle_legendary_arceus": //HGSS Arceus Battle
+      return 9.595;
     case "battle_legendary_unova": //BW Unova Legendary Battle
       return 13.855;
     case "battle_legendary_kyurem": //BW Kyurem Battle
       return 18.314;
     case "battle_legendary_res_zek": //BW Reshiram & Zekrom Battle
       return 18.329;
+    case "battle_legendary_xern_yvel": //XY Xerneas & Yveltal Battle
+      return 26.468;
+    case "battle_legendary_tapu": //SM Tapu Battle
+      return 0.000;
+    case "battle_legendary_sol_lun": //SM Solgaleo & Lunala Battle
+      return 6.525;
+    case "battle_legendary_ub": //SM Ultra Beast Battle
+      return 9.818;
+    case "battle_legendary_dusk_dawn": //USUM Dusk Mane & Dawn Wings Necrozma Battle
+      return 5.211;
+    case "battle_legendary_ultra_nec": //USUM Ultra Necrozma Battle
+      return 10.344;
+    case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
+      return 11.424;
+    case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
+      return 12.503;
+    case "battle_legendary_calyrex": //SWSH Calyrex Battle
+      return 50.641;
+    case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
+      return 0.175;
+    case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
+      return 6.333;
+    case "battle_legendary_loyal_three": //SV Loyal Three Battle
+      return 6.500;
+    case "battle_legendary_ogerpon": //SV Ogerpon Battle
+      return 14.335;
+    case "battle_legendary_terapagos": //SV Terapagos Battle
+      return 24.377;
+    case "battle_legendary_pecharunt": //SV Pecharunt Battle
+      return 6.508;
     case "battle_rival":
       return 13.689;
     case "battle_rival_2":
