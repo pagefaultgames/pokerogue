@@ -211,6 +211,10 @@ export class Egg {
   ////
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
+    if (this._species === Species.PHIONE || this._species === Species.MANAPHY) {
+      return 50;
+    }
+
     switch (eggTier ?? this._tier) {
     case EggTier.COMMON:
       return 10;
