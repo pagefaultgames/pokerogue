@@ -12,16 +12,38 @@ import { PlayerPokemon } from "#app/field/pokemon";
 
 export const EGG_SEED = 1073741824;
 
+/** Egg options to override egg properties */
 export interface IEggOptions {
+  /** Id. Used to check if egg type will be manaphy (id % 255 === 0) */
   id?: number;
+  /** Timestamp when this egg got created */
   timestamp?: number;
+  /** Defines if the egg got pulled from a gacha or not. If true, egg pity and pull statistics will be applyed.
+   * Egg will be automaticly added to the game data.
+   * NEEDS scene eggOption to work.
+   */
   pulled?: boolean;
+  /** Defines the gacha machine type where this egg was pulled from.
+   * Used for shiny and species calculations.
+   */
   gachaType?: GachaType;
+  /** Needs to be defined if eggOption pulled is defined or if no species or isShiny is degined since this will be needed to generate them. */
   scene?: BattleScene;
+  /** Sets the tier of the egg. Only species of this tier can be hatched from this egg.
+   * Tier will be overriden if species eggOption is set.
+   */
   tier?: EggTier;
+  /** Sets how many waves it will take till this egg hatches. */
   hatchWaves?: number;
+  /** Sets the exact species that will hatch from this egg.
+   * Needs scene eggOption if not provided.
+   */
   species?: Species;
+  /** Defines if the hatched pokemon will be a shiny.
+   * Needs scene eggOption if not provided.
+   */
   isShiny?: boolean;
+  /** Defines the variant of the pokemon that will hatch from this egg. If no variantTier is given the normal variant rates will apply. */
   variantTier?: VariantTier;
 }
 
