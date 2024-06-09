@@ -166,6 +166,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return this.config.doubleOnly || this.variant === TrainerVariant.DOUBLE;
   }
 
+  getMixedBattleBgm(): string {
+    return this.config.mixedBattleBgm;
+  }
+
   getBattleBgm(): string {
     return this.config.battleBgm;
   }
@@ -422,7 +426,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const party = this.scene.getEnemyParty();
     const nonFaintedPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => !p.isFainted()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
     const partyMemberScores = nonFaintedPartyMembers.map(p => {
-      const playerField = this.scene.getPlayerField();
+      const playerField = this.scene.getPlayerField().filter(p => p.isActive(true));
       let score = 0;
       for (const playerPokemon of playerField) {
         score += p.getMatchupScore(playerPokemon);
