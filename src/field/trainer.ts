@@ -166,6 +166,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return this.config.doubleOnly || this.variant === TrainerVariant.DOUBLE;
   }
 
+  getMixedBattleBgm(): string {
+    return this.config.mixedBattleBgm;
+  }
+
   getBattleBgm(): string {
     return this.config.battleBgm;
   }

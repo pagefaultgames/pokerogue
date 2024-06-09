@@ -86,7 +86,6 @@ export default class GameWrapper {
       frames: {},
     });
     Pokemon.prototype.enableMask = () => null;
-    localStorage.clear();
   }
 
   setScene(scene: BattleScene) {
