@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import * as Utils from "./utils";
 import {deepCopy} from "./utils";
-import {initTouchControls} from "./touch-controls";
 import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
@@ -21,6 +20,7 @@ import {
 import BattleScene from "./battle-scene";
 import {SettingGamepad} from "#app/system/settings/settings-gamepad.js";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import TouchControl from "#app/touch-controls";
 
 export interface DeviceMapping {
     [key: string]: number;
@@ -180,7 +180,7 @@ export class InputsController {
       this.scene.input.keyboard.on("keydown", this.keyboardKeyDown, this);
       this.scene.input.keyboard.on("keyup", this.keyboardKeyUp, this);
     }
-    initTouchControls(this.events);
+    new TouchControl(this.scene);
   }
 
   /**
