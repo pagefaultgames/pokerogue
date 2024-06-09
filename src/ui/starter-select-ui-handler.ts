@@ -951,7 +951,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.toggleStatsMode(false);
         success = true;
       } else if (this.starterCursors.length) {
-        this.popStarter();
+        this.popStarter(this.starterCursors.length - 1);
         success = true;
         this.updateInstructions();
       } else {
@@ -1076,7 +1076,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             options = [{
               label: i18next.t("starterSelectUiHandler:removeFromParty"),
               handler: () => {
-                this.popStarter2(removeIndex);
+                this.popStarter(removeIndex);
                 ui.setMode(Mode.STARTER_SELECT);
                 return true;
               }
@@ -2105,19 +2105,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  popStarter2(index: number): void {
+  popStarter(index: number): void {
     this.starterGens.splice(index, 1);
     this.starterCursors.splice(index, 1);
     this.starterAttr.splice(index, 1);
     this.starterAbilityIndexes.splice(index, 1);
     this.starterNatures.splice(index, 1);
     this.starterMovesets.splice(index, 1);
-    //this.starterCursorObjs[index].setVisible(false);
-
-    //const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-    //const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-    //this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
-    //this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
 
     for (let s = 0; s < this.starterCursors.length; s++) {
       const species = this.genSpecies[this.starterGens[s]][this.starterCursors[s]];
@@ -2126,32 +2120,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterIcons[s].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
       if (s >= index) {
         this.starterCursorObjs[s].setPosition(this.starterCursorObjs[s + 1].x, this.starterCursorObjs[s + 1].y);
-        this.starterCursorObjs[s].setVisible(true);
+        this.starterCursorObjs[s].setVisible(this.starterCursorObjs[s + 1].visible);
       }
-      //const cursorObj = this.starterCursorObjs[s];
-      //cursorObj.setVisible(true);
-      //cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-      //this.starterCursorObjs[s].setVisible(false);
     }
-    this.starterCursorObjs[this.starterCursors.length].setVisible(false);
-    this.starterIcons[this.starterCursors.length].setTexture("pokemon_icons_0");
-    this.starterIcons[this.starterCursors.length].setFrame("unknown");
-
-    //  this.starterIcons.splice(index, 1);
-
-    //this.starterCursorObjs[this.starterCursors.length].setVisible(false);
-    //this.starterIcons[this.starterCursors.length].setTexture("pokemon_icons_0");
-    //this.starterIcons[this.starterCursors.length].setFrame("unknown");
-    this.tryUpdateValue();
-  }
-
-  popStarter(): void {
-    this.starterGens.pop();
-    this.starterCursors.pop();
-    this.starterAttr.pop();
-    this.starterAbilityIndexes.pop();
-    this.starterNatures.pop();
-    this.starterMovesets.pop();
     this.starterCursorObjs[this.starterCursors.length].setVisible(false);
     this.starterIcons[this.starterCursors.length].setTexture("pokemon_icons_0");
     this.starterIcons[this.starterCursors.length].setFrame("unknown");
@@ -2251,7 +2222,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const cancel = () => {
       ui.setMode(Mode.STARTER_SELECT);
       if (!manualTrigger) {
-        this.popStarter();
+        this.popStarter(this.starterGens.length - 1);
       }
       this.clearText();
     };
@@ -2323,7 +2294,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = false;
 
     while (this.starterCursors.length) {
-      this.popStarter();
+      this.popStarter(this.starterCursors.length - 1);
     }
 
     if (this.statsMode) {
