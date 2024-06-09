@@ -5,13 +5,14 @@ import {
   EncounterPhase, EnemyCommandPhase, FaintPhase,
   LoginPhase, MessagePhase, MoveEffectPhase, MoveEndPhase, MovePhase, NewBattlePhase, NextEncounterPhase,
   PostSummonPhase,
-  SelectGenderPhase, SelectModifierPhase,
+  SelectGenderPhase,
   SelectStarterPhase, SelectTargetPhase, ShinySparklePhase, ShowAbilityPhase, StatChangePhase, SummonPhase,
   TitlePhase, ToggleDoublePositionPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase, UnavailablePhase, VictoryPhase
 } from "#app/phases";
 import UI, {Mode} from "#app/ui/ui";
 import {Phase} from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 export default class PhaseInterceptor {
   public scene;

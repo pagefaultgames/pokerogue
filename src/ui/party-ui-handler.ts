@@ -1,4 +1,4 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
+import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
@@ -20,6 +20,7 @@ import {Button} from "../enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 const defaultMessage = "Choose a Pokémon.";
 
