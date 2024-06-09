@@ -1403,11 +1403,6 @@ export class CursedTag extends BattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsCursedOnAdd", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
-    }));
     this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
   }
 
