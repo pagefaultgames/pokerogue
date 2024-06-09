@@ -64,6 +64,7 @@ export const SettingKeys = {
   Sprite_Set: "SPRITE_SET",
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
+  Rival_Gender: "RIVAL_GENDER",
   Type_Hints: "TYPE_HINTS",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
@@ -270,6 +271,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Rival_Gender,
+    label: "Rival Gender",
+    options: ["Boy", "Girl"],
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Type_Hints,
     label: "Type hints",
     options: OFF_ON,
@@ -441,6 +449,14 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       const female = Setting[index].options[value] === "Girl";
       scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
       scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
+    } else {
+      return false;
+    }
+    break;
+  case SettingKeys.Rival_Gender:
+    if (scene.gameData) {
+      const female = Setting[index].options[value] === "Girl";
+      scene.gameData.rivalGender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
     } else {
       return false;
     }

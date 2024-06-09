@@ -223,6 +223,7 @@ export class GameData {
   public secretId: integer;
 
   public gender: PlayerGender;
+  public rivalGender: PlayerGender;
 
   public dexData: DexData;
   private defaultDexData: DexData;
