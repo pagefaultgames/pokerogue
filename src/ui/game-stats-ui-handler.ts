@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -88,7 +89,7 @@ const displayStats: DisplayStats = {
   },
   highestMoney: {
     label_key: "highestMoney",
-    sourceFunc: gameData => Utils.formatFancyLargeNumber(gameData.gameStats.highestMoney, 3),
+    sourceFunc: gameData => Utils.formatFancyLargeNumber(gameData.gameStats.highestMoney),
   },
   highestDamage: {
     label_key: "highestDamage",
