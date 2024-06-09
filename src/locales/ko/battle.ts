@@ -58,5 +58,15 @@ export const battle: SimpleTranslationEntries = {
   "ivScannerUseQuestion": "{{pokemonName}}에게 개체값탐지기를 사용하시겠습니까?",
   "wildPokemonWithAffix": "야생 {{pokemonName}}",
   "foePokemonWithAffix": "상대 {{pokemonName}}",
-  "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!"
+  "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!",
+  "drainMessage": "{{pokemonName}} had its\nenergy drained!",
+  "regainHealth": "{{pokemonName}} regained\nhealth!",
+  "statIsRose": "상승했다",
+  "statIsSharplyRose": "약간 상승했다",
+  "statIsRoseDrastically": "대폭 상승했다",
+  "statIsWontGoAnyHigher": "더 이상 상승할 수 없다",
+  "statIsFell": "떨어졌다",
+  "statIsHarshlyFell": "약간 떨어졌다",
+  "statIsSeverelyFell": "대폭 떨어졌다",
+  "statIsWontGoAnyLower": "더 이상 떨어질 수 없다",
 } as const;

@@ -1,15 +1,25 @@
 import {beforeAll, describe, expect, it} from "vitest";
 import { getBattleStatName, getBattleStatLevelChangeDescription } from "#app/data/battle-stat.js";
 import { BattleStat } from "#app/data/battle-stat.js";
-import { battleStat as enBattleStat } from "#app/locales/en/battle-stat.js";
-import { battleStat as deBattleStat } from "#app/locales/de/battle-stat.js";
-import { battleStat as esBattleStat } from "#app/locales/es/battle-stat.js";
-import { battleStat as frBattleStat } from "#app/locales/fr/battle-stat.js";
-import { battleStat as itBattleStat } from "#app/locales/it/battle-stat.js";
-import { battleStat as koBattleStat } from "#app/locales/ko/battle-stat.js";
-import { battleStat as ptBrBattleStat } from "#app/locales/pt_BR/battle-stat.js";
-import { battleStat as zhCnBattleStat } from "#app/locales/zh_CN/battle-stat.js";
-import { battleStat as zhTwBattleStat } from "#app/locales/zh_TW/battle-stat.js";
+import { pokemonInfo as enPokemonInfo } from "#app/locales/en/pokemon-info.js";
+import { battle as enBattleStat } from "#app/locales/en/battle.js";
+import { pokemonInfo as dePokemonInfo } from "#app/locales/de/pokemon-info.js";
+import { battle as deBattleStat } from "#app/locales/de/battle.js";
+import { pokemonInfo as esPokemonInfo } from "#app/locales/es/pokemon-info.js";
+import { battle as esBattleStat } from "#app/locales/es/battle.js";
+import { pokemonInfo as frPokemonInfo } from "#app/locales/fr/pokemon-info.js";
+import { battle as frBattleStat } from "#app/locales/fr/battle.js";
+import { pokemonInfo as itPokemonInfo } from "#app/locales/it/pokemon-info.js";
+import { battle as itBattleStat } from "#app/locales/it/battle.js";
+import { pokemonInfo as koPokemonInfo } from "#app/locales/ko/pokemon-info.js";
+import { battle as koBattleStat } from "#app/locales/ko/battle.js";
+import { pokemonInfo as ptBrPokemonInfo } from "#app/locales/pt_BR/pokemon-info.js";
+import { battle as ptBrBattleStat } from "#app/locales/pt_BR/battle.js";
+import { pokemonInfo as zhCnPokemonInfo } from "#app/locales/zh_CN/pokemon-info.js";
+import { battle as zhCnBattleStat } from "#app/locales/zh_CN/battle.js";
+import { pokemonInfo as zhTwPokemonInfo } from "#app/locales/zh_TW/pokemon-info.js";
+import { battle as zhTwBattleStat } from "#app/locales/zh_TW/battle.js";
+
 import i18next, {initI18n} from "#app/plugins/i18n";
 
 interface BattleStatTestUnit {
@@ -66,34 +76,34 @@ describe("Test for BattleStat Localization", () => {
 
     initI18n();
 
-    battleStatUnits.push({ stat: BattleStat.ATK, key: "attack" });
-    battleStatUnits.push({ stat: BattleStat.DEF, key: "defense" });
-    battleStatUnits.push({ stat: BattleStat.SPATK, key: "specialAttack" });
-    battleStatUnits.push({ stat: BattleStat.SPDEF, key: "specialDefense" });
-    battleStatUnits.push({ stat: BattleStat.SPD, key: "speed" });
-    battleStatUnits.push({ stat: BattleStat.ACC, key: "accuracy" });
-    battleStatUnits.push({ stat: BattleStat.EVA, key: "evasiveness" });
+    battleStatUnits.push({ stat: BattleStat.ATK, key: "Stat.ATK" });
+    battleStatUnits.push({ stat: BattleStat.DEF, key: "Stat.DEF" });
+    battleStatUnits.push({ stat: BattleStat.SPATK, key: "Stat.SPATK" });
+    battleStatUnits.push({ stat: BattleStat.SPDEF, key: "Stat.SPDEF" });
+    battleStatUnits.push({ stat: BattleStat.SPD, key: "Stat.SPD" });
+    battleStatUnits.push({ stat: BattleStat.ACC, key: "Stat.ACC" });
+    battleStatUnits.push({ stat: BattleStat.EVA, key: "Stat.EVA" });
 
-    battleStatLevelUnits.push({ levels: 1, up: true, key: "rose" });
-    battleStatLevelUnits.push({ levels: 2, up: true, key: "sharplyRose" });
-    battleStatLevelUnits.push({ levels: 3, up: true, key: "roseDrastically" });
-    battleStatLevelUnits.push({ levels: 4, up: true, key: "roseDrastically" });
-    battleStatLevelUnits.push({ levels: 5, up: true, key: "roseDrastically" });
-    battleStatLevelUnits.push({ levels: 6, up: true, key: "roseDrastically" });
-    battleStatLevelUnits.push({ levels: 7, up: true, key: "anyHigher" });
-    battleStatLevelUnits.push({ levels: 1, up: false, key: "fell" });
-    battleStatLevelUnits.push({ levels: 2, up: false, key: "harshlyFell" });
-    battleStatLevelUnits.push({ levels: 3, up: false, key: "severelyFell" });
-    battleStatLevelUnits.push({ levels: 4, up: false, key: "severelyFell" });
-    battleStatLevelUnits.push({ levels: 5, up: false, key: "severelyFell" });
-    battleStatLevelUnits.push({ levels: 6, up: false, key: "severelyFell" });
-    battleStatLevelUnits.push({ levels: 7, up: false, key: "anyLower" });
+    battleStatLevelUnits.push({ levels: 1, up: true, key: "statIsRose" });
+    battleStatLevelUnits.push({ levels: 2, up: true, key: "statIsSharplyRose" });
+    battleStatLevelUnits.push({ levels: 3, up: true, key: "statIsRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 4, up: true, key: "statIsRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 5, up: true, key: "statIsRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 6, up: true, key: "statIsRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 7, up: true, key: "statIsWontGoAnyHigher" });
+    battleStatLevelUnits.push({ levels: 1, up: false, key: "statIsFell" });
+    battleStatLevelUnits.push({ levels: 2, up: false, key: "statIsHarshlyFell" });
+    battleStatLevelUnits.push({ levels: 3, up: false, key: "statIsSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 4, up: false, key: "statIsSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 5, up: false, key: "statIsSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 6, up: false, key: "statIsSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 7, up: false, key: "statIsWontGoAnyLower" });
   });
 
   it("Test getBattleStatName() in English", async () => {
     i18next.changeLanguage("en");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, enBattleStat[unit.key]);
+      testBattleStatName(unit.stat, enPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -107,7 +117,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in Español", async () => {
     i18next.changeLanguage("es");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, esBattleStat[unit.key]);
+      testBattleStatName(unit.stat, esPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -121,7 +131,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in Italiano", async () => {
     i18next.changeLanguage("it");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, itBattleStat[unit.key]);
+      testBattleStatName(unit.stat, itPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -135,7 +145,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in Français", async () => {
     i18next.changeLanguage("fr");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, frBattleStat[unit.key]);
+      testBattleStatName(unit.stat, frPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -149,7 +159,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in Deutsch", async () => {
     i18next.changeLanguage("de");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, deBattleStat[unit.key]);
+      testBattleStatName(unit.stat, dePokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -163,7 +173,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in Português (BR)", async () => {
     i18next.changeLanguage("pt-BR");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, ptBrBattleStat[unit.key]);
+      testBattleStatName(unit.stat, ptBrPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -177,7 +187,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in 简体中文", async () => {
     i18next.changeLanguage("zh-CN");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, zhCnBattleStat[unit.key]);
+      testBattleStatName(unit.stat, zhCnPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -191,7 +201,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in 繁體中文", async () => {
     i18next.changeLanguage("zh-TW");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, zhTwBattleStat[unit.key]);
+      testBattleStatName(unit.stat, zhTwPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
@@ -205,7 +215,7 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatName() in 한국어", async () => {
     await i18next.changeLanguage("ko");
     battleStatUnits.forEach(unit => {
-      testBattleStatName(unit.stat, koBattleStat[unit.key]);
+      testBattleStatName(unit.stat, koPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 

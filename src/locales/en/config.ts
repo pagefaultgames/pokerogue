@@ -39,7 +39,6 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
-import { battleStat } from "./battle-stat";
 
 export const enConfig = {
   ability: ability,
@@ -82,6 +81,5 @@ export const enConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler,
-  battleStat: battleStat
+  partyUiHandler: partyUiHandler
 };
