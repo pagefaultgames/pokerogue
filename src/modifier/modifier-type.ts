@@ -1678,7 +1678,6 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
 export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
-
   if (!customModifierSettings) {
     new Array(count).fill(0).map((_, i) => {
       options.push(getModifierTypeOptionWithLuckUpgrades(options, retryCount, party, modifierTiers?.length > i ? modifierTiers[i] : undefined));
@@ -1717,8 +1716,8 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
       });
     }
 
-    // Fill remaining with random tiers
-    if (customModifierSettings.fillRemaining && count > options.length) {
+    // Fill remaining
+    if (options.length < count && customModifierSettings.fillRemaining) {
       while (options.length < count) {
         options.push(getModifierTypeOptionWithLuckUpgrades(options, retryCount, party, undefined));
       }

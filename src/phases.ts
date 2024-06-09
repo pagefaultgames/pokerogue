@@ -6,39 +6,28 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
 import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
-import { EvolutionPhase } from "./evolution-phase";
+import { EvolutionPhase } from "./phases/evolution-phase";
 import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import {
-  FusePokemonModifierType,
   ModifierPoolType,
   ModifierType,
   ModifierTypeFunc,
-  ModifierTypeOption,
-  PokemonModifierType,
-  PokemonMoveModifierType,
-  PokemonPpRestoreModifierType,
-  PokemonPpUpModifierType,
-  RememberMoveModifierType,
-  TmModifierType,
   getDailyRunStarterModifiers,
   getEnemyBuffModifierForWave,
   getModifierType,
-  getPlayerModifierTypeOptions,
-  getPlayerShopModifierTypeOptionsForWave,
   modifierTypes,
-  regenerateModifierPoolThresholds,
-  CustomModifierSettings
+  regenerateModifierPoolThresholds
 } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
@@ -59,7 +48,7 @@ import { Species } from "./data/enums/species";
 import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
-import { EggHatchPhase } from "./egg-hatch-phase";
+import { EggHatchPhase } from "./phases/egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
@@ -68,7 +57,6 @@ import { PlayerGender } from "./data/enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
-import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 import { SettingKeys } from "./system/settings/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
 import { TerrainType } from "./data/terrain";
@@ -84,6 +72,8 @@ import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 import { ExpNotification } from "./enums/exp-notification";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
+import {BattlePhase} from "#app/phases/battle-phase";
 import { MysteryEncounterPhase } from "./phases/mystery-encounter-phase";
 import { MysteryEncounterVariant } from "./data/mystery-encounter";
 import { handleMysteryEncounterVictory } from "./utils/mystery-encounter-utils";
@@ -628,50 +618,6 @@ export class SelectStarterPhase extends Phase {
       this.scene.sessionPlayTime = 0;
       this.scene.lastSavePlayTime = 0;
       this.end();
-    });
-  }
-}
-
-export class BattlePhase extends Phase {
-  constructor(scene: BattleScene) {
-    super(scene);
-  }
-
-  showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
-    const sprites = this.scene.currentBattle.trainer.getSprites();
-    const tintSprites = this.scene.currentBattle.trainer.getTintSprites();
-    for (let i = 0; i < sprites.length; i++) {
-      const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
-      [ sprites[i], tintSprites[i] ].map(sprite => {
-        if (visible) {
-          sprite.x = trainerSlot || sprites.length < 2 ? 0 : i ? 16 : -16;
-        }
-        sprite.setVisible(visible);
-        sprite.clearTint();
-      });
-      sprites[i].setVisible(visible);
-      tintSprites[i].setVisible(visible);
-      sprites[i].clearTint();
-      tintSprites[i].clearTint();
-    }
-    this.scene.tweens.add({
-      targets: this.scene.currentBattle.trainer,
-      x: "-=16",
-      y: "+=16",
-      alpha: 1,
-      ease: "Sine.easeInOut",
-      duration: 750
-    });
-  }
-
-  hideEnemyTrainer(): void {
-    this.scene.tweens.add({
-      targets: this.scene.currentBattle.trainer,
-      x: "+=16",
-      y: "-=16",
-      alpha: 0,
-      ease: "Sine.easeInOut",
-      duration: 750
     });
   }
 }
@@ -5096,240 +5042,6 @@ export class AttemptRunPhase extends PokemonPhase {
     }
 
     this.end();
-  }
-}
-
-export class SelectModifierPhase extends BattlePhase {
-  private rerollCount: integer;
-  private modifierTiers: ModifierTier[];
-  private customModifierSettings: CustomModifierSettings;
-
-  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings) {
-    super(scene);
-
-    this.rerollCount = rerollCount;
-    this.modifierTiers = modifierTiers;
-    this.customModifierSettings = customModifierSettings;
-  }
-
-  start() {
-    super.start();
-
-    if (!this.rerollCount) {
-      this.updateSeed();
-    } else {
-      this.scene.reroll = false;
-    }
-
-    const party = this.scene.getParty();
-    regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
-    let modifierCount = new Utils.IntegerHolder(3);
-    if (this.isPlayer()) {
-      this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
-    }
-
-    // If custom modifiers are specified, overrides default items
-    if (!!this.customModifierSettings) {
-      const newCount = (this.customModifierSettings.guaranteedModifierTiers?.length || 0) + (this.customModifierSettings.guaranteedModifiers?.length || 0);
-      if (this.customModifierSettings.fillRemaining) {
-        const originalCount = modifierCount.value;
-        modifierCount = new Utils.IntegerHolder(originalCount > newCount ? originalCount : newCount);
-      } else {
-        modifierCount = new Utils.IntegerHolder(newCount);
-      }
-
-      // Custom modifier tiers require "locking" shop tiers
-      // const isMysteryEncounterFirstShop = this.scene?.currentBattle?.mysteryEncounter?.lockEncounterRewardTiers;
-      // if (this.customModifierSettings.guaranteedModifierTiers?.length > 0 || isMysteryEncounterFirstShop) {
-      //   customModifierTiers = true;
-      //   this.scene.currentBattle.mysteryEncounter.lockEncounterRewardTiers = false;
-      // }
-    }
-
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
-
-    const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
-      if (rowCursor < 0 || cursor < 0) {
-        this.scene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
-          this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-            this.scene.ui.revertMode();
-            this.scene.ui.setMode(Mode.MESSAGE);
-            super.end();
-          }, () => this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers)));
-        });
-        return false;
-      }
-      let modifierType: ModifierType;
-      let cost: integer;
-      switch (rowCursor) {
-      case 0:
-        switch (cursor) {
-        case 0:
-          const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
-          if (this.scene.money < rerollCost) {
-            this.scene.ui.playError();
-            return false;
-          } else {
-            this.scene.reroll = true;
-            this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier)));
-            this.scene.ui.clearText();
-            this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-            this.scene.money -= rerollCost;
-            this.scene.updateMoneyText();
-            this.scene.animateMoneyChanged(false);
-            this.scene.playSound("buy");
-          }
-          break;
-        case 1:
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
-            if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
-              const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                      && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
-              const itemModifier = itemModifiers[itemIndex];
-              this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
-            } else {
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-            }
-          }, PartyUiHandler.FilterItemMaxStacks);
-          break;
-        case 2:
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-          });
-          break;
-        case 3:
-          this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
-          const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
-          uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-          uiHandler.updateLockRaritiesText();
-          uiHandler.updateRerollCostText();
-          return false;
-        }
-        return true;
-      case 1:
-        modifierType = typeOptions[cursor].type;
-        break;
-      default:
-        const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
-        const shopOption = shopOptions[rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT];
-        modifierType = shopOption.type;
-        cost = shopOption.cost;
-        break;
-      }
-
-      if (cost && this.scene.money < cost) {
-        this.scene.ui.playError();
-        return false;
-      }
-
-      const applyModifier = (modifier: Modifier, playSound: boolean = false) => {
-        const result = this.scene.addModifier(modifier, false, playSound);
-        if (cost) {
-          result.then(success => {
-            if (success) {
-              this.scene.money -= cost;
-              this.scene.updateMoneyText();
-              this.scene.animateMoneyChanged(false);
-              this.scene.playSound("buy");
-              (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
-            } else {
-              this.scene.ui.playError();
-            }
-          });
-        } else {
-          const doEnd = () => {
-            this.scene.ui.clearText();
-            this.scene.ui.setMode(Mode.MESSAGE);
-            super.end();
-          };
-          if (result instanceof Promise) {
-            result.then(() => doEnd());
-          } else {
-            doEnd();
-          }
-        }
-      };
-
-      if (modifierType instanceof PokemonModifierType) {
-        if (modifierType instanceof FusePokemonModifierType) {
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.SPLICE, -1, (fromSlotIndex: integer, spliceSlotIndex: integer) => {
-            if (spliceSlotIndex !== undefined && fromSlotIndex < 6 && spliceSlotIndex < 6 && fromSlotIndex !== spliceSlotIndex) {
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-                const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex]);
-                applyModifier(modifier, true);
-              });
-            } else {
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-            }
-          }, modifierType.selectFilter);
-        } else {
-          const pokemonModifierType = modifierType as PokemonModifierType;
-          const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
-          const isTmModifier = modifierType instanceof TmModifierType;
-          const isRememberMoveModifier = modifierType instanceof RememberMoveModifierType;
-          const isPpRestoreModifier = (modifierType instanceof PokemonPpRestoreModifierType || modifierType instanceof PokemonPpUpModifierType);
-          const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
-            : isTmModifier ? PartyUiMode.TM_MODIFIER
-              : isRememberMoveModifier ? PartyUiMode.REMEMBER_MOVE_MODIFIER
-                : PartyUiMode.MODIFIER;
-          const tmMoveId = isTmModifier
-            ? (modifierType as TmModifierType).moveId
-            : undefined;
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
-            if (slotIndex < 6) {
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-                const modifier = !isMoveModifier
-                  ? !isRememberMoveModifier
-                    ? modifierType.newModifier(party[slotIndex])
-                    : modifierType.newModifier(party[slotIndex], option as integer)
-                  : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
-                applyModifier(modifier, true);
-              });
-            } else {
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-            }
-          }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId, isPpRestoreModifier);
-        }
-      } else {
-        applyModifier(modifierType.newModifier());
-      }
-
-      return !cost;
-    };
-    this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-  }
-
-  updateSeed(): void {
-    this.scene.resetSeed();
-  }
-
-  isPlayer(): boolean {
-    return true;
-  }
-
-  getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
-    let baseValue = 0;
-    if (lockRarities) {
-      const tierValues = [ 50, 125, 300, 750, 2000 ];
-      for (const opt of typeOptions) {
-        baseValue += tierValues[opt.type.tier];
-      }
-    } else {
-      baseValue = 250;
-    }
-    return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount), Number.MAX_SAFE_INTEGER);
-  }
-
-  getPoolType(): ModifierPoolType {
-    return ModifierPoolType.PLAYER;
-  }
-
-  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
-  }
-
-  addModifier(modifier: Modifier): Promise<boolean> {
-    return this.scene.addModifier(modifier, false, true);
   }
 }
 

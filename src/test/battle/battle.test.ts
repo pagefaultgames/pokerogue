@@ -11,7 +11,6 @@ import {
   EnemyCommandPhase,
   LoginPhase,
   SelectGenderPhase,
-  SelectModifierPhase,
   SelectStarterPhase,
   SummonPhase,
   TitlePhase,
@@ -24,6 +23,7 @@ import {allSpecies} from "#app/data/pokemon-species";
 import {PlayerGender} from "#app/data/enums/player-gender";
 import { getGameMode } from "#app/game-mode.js";
 import {Abilities} from "#app/data/enums/abilities";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
