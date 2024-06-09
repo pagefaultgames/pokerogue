@@ -240,9 +240,13 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
         const formName = pokemon.species.forms?.[pokemon.formIndex]?.formName;
         this.pokemonFormText.setText(formName.length > this.numCharsBeforeCutoff ? formName.substring(0, this.numCharsBeforeCutoff - 3) + "..." : formName);
-        this.pokemonFormText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormText.width, this.pokemonFormText.height), Phaser.Geom.Rectangle.Contains);
-        this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
-        this.pokemonFormText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+        if (formName.length > this.numCharsBeforeCutoff) {
+          this.pokemonFormText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormText.width, this.pokemonFormText.height), Phaser.Geom.Rectangle.Contains);
+          this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
+          this.pokemonFormText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+        } else {
+          this.pokemonFormText.disableInteractive();
+        }
       }
 
       const abilityTextStyle = pokemon.abilityIndex === (pokemon.species.ability2 ? 2 : 1) ? TextStyle.MONEY : TextStyle.WINDOW;
