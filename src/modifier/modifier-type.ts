@@ -1345,7 +1345,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.LIGHT_BALL, (party: Pokemon[]) => {
       // If a party member is a Pikachu (or is fused with one) or knows Fling and does not have a Light Ball already, it can appear
-      return party.some(p => ((p.getSpeciesForm(true).speciesId === Species.PIKACHU || p.getFusionSpeciesForm(true).speciesId === Species.PIKACHU) || p.getMoveset(true).some(m => m.moveId === Moves.FLING))
+      return party.some(p => ((p.getSpeciesForm(true).speciesId === Species.PIKACHU || (p.isFusion() ? p.getFusionSpeciesForm(true).speciesId === Species.PIKACHU : false)) || p.getMoveset(true).some(m => m.moveId === Moves.FLING))
       && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
           return (i as Modifiers.SpeciesStatBoosterModifier).getSpecies().includes(Species.PIKACHU);
@@ -1356,7 +1356,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.THICK_CLUB, (party: Pokemon[]) => {
       const checkedSpecies = [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK ];
       // If a party member is one of the checked species (or is fused with one) and does not have a Thick Club already, it can appear
-      return party.some(p => (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || p.isFusion() ? checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId) : false)
+      return party.some(p => (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || (p.isFusion() ? checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId) : false))
       && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
           return (i as Modifiers.SpeciesStatBoosterModifier).getSpecies().includes(Species.CUBONE);
@@ -1366,7 +1366,7 @@ const modifierPool: ModifierPool = {
     }, 10),
     new WeightedModifierType(modifierTypes.QUICK_POWDER, (party: Pokemon[]) => {
       // If a party member is Ditto (or is fused with one) and does not have a Quick Powder already, it can appear
-      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || p.getFusionSpeciesForm(true).speciesId === Species.DITTO)
+      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || (p.isFusion() ? p.getFusionSpeciesForm(true).speciesId === Species.DITTO : false))
       && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
           const modifierInstance = i as Modifiers.SpeciesStatBoosterModifier;
@@ -1377,7 +1377,7 @@ const modifierPool: ModifierPool = {
     }, 10),
     new WeightedModifierType(modifierTypes.METAL_POWDER, (party: Pokemon[]) => {
       // If a party member is Ditto (or is fused with one) and does not have a Metal Powder already, it can appear
-      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || p.getFusionSpeciesForm(true).speciesId === Species.DITTO)
+      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || (p.isFusion() ? p.getFusionSpeciesForm(true).speciesId === Species.DITTO : false))
       && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
           const modifierInstance = i as Modifiers.SpeciesStatBoosterModifier;
