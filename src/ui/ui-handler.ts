@@ -3,12 +3,19 @@ import { TextStyle, getTextColor } from "./text";
 import { Mode } from "./ui";
 import {Button} from "../enums/buttons";
 
+/**
+ * A basic abstract class to act as a holder and processor for UI elements.
+ */
 export default abstract class UiHandler {
   protected scene: BattleScene;
   protected mode: integer;
   protected cursor: integer = 0;
   public active: boolean = false;
 
+  /**
+   * @param {BattleScene} scene The same scene as everything else.
+   * @param {Mode} mode The mode of the UI element. These should be unique.
+   */
   constructor(scene: BattleScene, mode: Mode) {
     this.scene = scene;
     this.mode = mode;

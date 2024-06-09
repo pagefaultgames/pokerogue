@@ -5,6 +5,7 @@ import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { biome } from "./biome";
+import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
 import {
   PGFbattleSpecDialogue,
@@ -18,6 +19,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
@@ -29,6 +31,7 @@ import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
@@ -45,6 +48,7 @@ export const zhTwConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   biome: biome,
+  challenges: challenges,
   commandUiHandler: commandUiHandler,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
@@ -56,6 +60,7 @@ export const zhTwConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
   menu: menu,
@@ -67,6 +72,7 @@ export const zhTwConfig = {
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
