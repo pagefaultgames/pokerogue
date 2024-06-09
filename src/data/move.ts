@@ -1251,11 +1251,18 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     this.abilityCondition = abilityCondition;
   }
 
+  //The same as MoveEffectAttr.canApply, except it doesn't check for the target's HP.
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    const isTargetValid =
+      (this.selfTarget && user.hp && !user.getTag(BattlerTagType.FRENZY)) ||
+      (!this.selfTarget && (!target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT)));
+    return !!isTargetValid;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
+    if (!this.canApply(user, target, move, args)) {
       return false;
     }
-
     this.addPartyCurePhase(user);
   }
 
@@ -1467,7 +1474,7 @@ export class HitHealAttr extends MoveEffectAttr {
       message = i18next.t("battle:drainMessage", {pokemonName: target.name});
     } else {
       // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
-      healAmount = Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1);
+      healAmount = Math.max(Math.floor(user.turnData.currDamageDealt * this.healRatio), 1);
       message = i18next.t("battle:regainHealth", {pokemonName: user.name});
     }
     if (reverseDrain) {
