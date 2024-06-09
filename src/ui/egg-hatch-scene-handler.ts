@@ -7,6 +7,8 @@ import {Button} from "../enums/buttons";
 export default class EggHatchSceneHandler extends UiHandler {
   public eggHatchContainer: Phaser.GameObjects.Container;
 
+  public readonly eventTarget: EventTarget = new EventTarget();
+
   constructor(scene: BattleScene) {
     super(scene, Mode.EGG_HATCH_SCENE);
   }
