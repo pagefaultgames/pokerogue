@@ -48,6 +48,7 @@ import { BerryType } from "../data/enums/berry-type";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import { DamagePhase } from "#app/phases/DamagePhase";
 
 export enum FieldPosition {
@@ -267,11 +268,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.hp && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
   }
 
+  /**
+   * Check if this pokemon is both not fainted and allowed to be in battle.
+   * This is frequently a better alternative to {@link isFainted}
+   * @returns {boolean} True if pokemon is allowed in battle
+   */
+  isAllowedInBattle(): boolean {
+    const challengeAllowed = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
+    return !this.isFainted() && challengeAllowed.value;
+  }
+
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
       return false;
     }
-    return !this.isFainted() && !!this.scene && (!onField || this.isOnField());
+    return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
   }
 
   getDexAttr(): bigint {
@@ -886,8 +898,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return types;
   }
 
-  isOfType(type: Type, forDefend: boolean = false): boolean {
-    return !!this.getTypes(true, forDefend).find(t => t === type);
+  isOfType(type: Type, includeTeraType: boolean = true, forDefend: boolean = false, ignoreOverride?: boolean): boolean {
+    return !!this.getTypes(includeTeraType, forDefend, ignoreOverride).some(t => t === type);
   }
 
   /**
@@ -1055,7 +1067,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !this.isOfType(Type.FLYING, true) && !this.hasAbility(Abilities.LEVITATE);
+    return !this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE);
+  }
+
+  /**
+   * @returns The type damage multiplier or undefined if it's a status move
+   */
+  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
+    if (move.getMove().category === MoveCategory.STATUS) {
+      return undefined;
+    }
+
+    return this.getAttackMoveEffectiveness(source, move);
   }
 
   getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove): TypeDamageMultiplier {
@@ -1577,11 +1600,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    this.battleInfo.updateEffectiveness(effectiveness);
+  }
+
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
   }
+
   toggleFlyout(visible: boolean): void {
-    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
+    this.battleInfo.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {
@@ -1728,6 +1760,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
           const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
           isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.randBattleSeedInt(critChance));
+          if (Overrides.NEVER_CRIT_OVERRIDE) {
+            isCritical = false;
+          }
         }
         if (isCritical) {
           const blockCrit = new Utils.BooleanHolder(false);
