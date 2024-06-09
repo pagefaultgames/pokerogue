@@ -3323,7 +3323,7 @@ export class VariableMoveTypeAttr extends MoveAttr {
 
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS && Species.SILVALLY)) {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS) || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.SILVALLY)) {
       const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies.formIndex;
 
       switch (form) {
