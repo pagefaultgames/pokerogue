@@ -549,7 +549,7 @@ export class InputsController {
       return false;
     }
     if (typeof this.scene.repeatInputDelay !== "undefined") {
-      switch (this.scene.inputDelay) {
+      switch (this.scene.repeatInputDelay) {
       case 0:
         repeatInputDelayMillis = 125;
         break;
