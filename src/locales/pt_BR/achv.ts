@@ -171,98 +171,99 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MONO_GEN_ONE": {
-    name: "The Original Rival",
-    description: "Complete the generation one only challenge.",
+
+    name: "O Início de Tudo",
+    description: "Complete o desafio da geração um.",
   },
   "MONO_GEN_TWO": {
-    name: "Generation 1.5",
-    description: "Complete the generation two only challenge.",
+    name: "Geração 1.5",
+    description: "Complete o desafio da geração dois.",
   },
   "MONO_GEN_THREE": {
-    name: "Too much water?",
-    description: "Complete the generation three only challenge.",
+    name: "Será que tem muita água?",
+    description: "Complete o desafio da geração três.",
   },
   "MONO_GEN_FOUR": {
-    name: "Is she really the hardest?",
-    description: "Complete the generation four only challenge.",
+    name: "Essa foi a mais difícil?",
+    description: "Complete o desafio da geração quatro.",
   },
   "MONO_GEN_FIVE": {
-    name: "All Original",
-    description: "Complete the generation five only challenge.",
+    name: "Nada original",
+    description: "Complete o desafio da geração cinco.",
   },
   "MONO_GEN_SIX": {
-    name: "Almost Royalty",
-    description: "Complete the generation six only challenge.",
+    name: "Esse croissant tem recheio?",
+    description: "Complete o desafio da geração seis.",
   },
   "MONO_GEN_SEVEN": {
-    name: "Only Technically",
-    description: "Complete the generation seven only challenge.",
+    name: "Z-Move ou Se vira nos 30?",
+    description: "Complete o desafio da geração sete.",
   },
   "MONO_GEN_EIGHT": {
-    name: "A Champion Time!",
-    description: "Complete the generation eight only challenge.",
+    name: "Finalmente ele ganhou!",
+    description: "Complete o desafio da geração oito.",
   },
   "MONO_GEN_NINE": {
-    name: "She was going easy on you",
-    description: "Complete the generation nine only challenge.",
+    name: "Isso aqui tá muito fácil!",
+    description: "Complete o desafio da geração nove.",
   },
 
   "MonoType": {
-    description: "Complete the {{type}} monotype challenge.",
+    description: "Complete o desafio de monotipo {{type}}.",
   },
   "MONO_NORMAL": {
-    name: "Mono NORMAL",
+    name: "Tenho medo de fantasma",
   },
   "MONO_FIGHTING": {
-    name: "I Know Kung Fu",
+    name: "Briga de Rua",
   },
   "MONO_FLYING": {
-    name: "Mono FLYING",
+    name: "Rinha de Pidgeys",
   },
   "MONO_POISON": {
-    name: "Kanto's Favourite",
+    name: "Menina Veneno",
   },
   "MONO_GROUND": {
-    name: "Mono GROUND",
+    name: "Deixou eles comendo poeira!",
   },
   "MONO_ROCK": {
-    name: "Brock Hard",
+    name: "Duro como Pedra",
   },
   "MONO_BUG": {
-    name: "Sting Like A Beedrill",
+    name: "Vida de Inseto",
   },
   "MONO_GHOST": {
-    name: "Who you gonna call?",
+    name: "Posso dormir com você hoje, mamãe?",
   },
   "MONO_STEEL": {
-    name: "Mono STEEL",
+    name: "Levantando Ferro",
   },
   "MONO_FIRE": {
-    name: "Mono FIRE",
+    name: "Tá Pegando Fogo, Bicho!",
   },
   "MONO_WATER": {
-    name: "When It Rains, It Pours",
+    name: "Água mole em pedra dura...",
   },
   "MONO_GRASS": {
-    name: "Mono GRASS",
+    name: "Jardim Botânico",
   },
   "MONO_ELECTRIC": {
-    name: "Mono ELECTRIC",
+    name: "Choque de Realidade",
   },
   "MONO_PSYCHIC": {
-    name: "Mono PSYCHIC",
+    name: "Preciso de Terapia",
   },
   "MONO_ICE": {
-    name: "Mono ICE",
+    name: "Era do Gelo",
   },
   "MONO_DRAGON": {
-    name: "Mono DRAGON",
+    name: "Caverna do Dragão",
   },
   "MONO_DARK": {
-    name: "It's just a phase",
+    name: "É só uma fase",
   },
   "MONO_FAIRY": {
-    name: "Mono FAIRY",
+    name: "Clube das Winx",
   },
 } as const;
 
