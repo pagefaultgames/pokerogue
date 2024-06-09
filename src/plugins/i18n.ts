@@ -174,13 +174,13 @@ export function initI18n(): void {
       de: {
         ...deConfig
       },
-      pt_BR: {
+      "pt-BR": {
         ...ptBrConfig
       },
-      zh_CN: {
+      "zh-CN": {
         ...zhCnConfig
       },
-      zh_TW: {
+      "zh-TW": {
         ...zhTwConfig
       },
       ko: {
@@ -196,35 +196,15 @@ declare module "i18next" {
   interface CustomTypeOptions {
     defaultNS: "menu"; // Even if we don't use it, i18next requires a valid default namespace
     resources: {
-      menu: SimpleTranslationEntries;
-      menuUiHandler: SimpleTranslationEntries;
-      move: MoveTranslationEntries;
-      battle: SimpleTranslationEntries;
-      abilityTriggers: SimpleTranslationEntries;
       ability: AbilityTranslationEntries;
-      pokeball: SimpleTranslationEntries;
-      pokemon: SimpleTranslationEntries;
-      pokemonInfo: PokemonInfoTranslationEntries;
-      commandUiHandler: SimpleTranslationEntries;
-      fightUiHandler: SimpleTranslationEntries;
-      titles: SimpleTranslationEntries;
-      trainerClasses: SimpleTranslationEntries;
-      trainerNames: SimpleTranslationEntries;
-      tutorial: SimpleTranslationEntries;
-      starterSelectUiHandler: SimpleTranslationEntries;
-      splashMessages: SimpleTranslationEntries;
-      nature: SimpleTranslationEntries;
-      growth: SimpleTranslationEntries;
-      egg: SimpleTranslationEntries;
-      weather: SimpleTranslationEntries;
-      modifierType: ModifierTypeTranslationEntries;
+      abilityTriggers: SimpleTranslationEntries;
+      achv: AchievementTranslationEntries;
+      battle: SimpleTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-      achv: AchievementTranslationEntries;
-      gameStatsUiHandler: SimpleTranslationEntries;
-      voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
-      pokemonInfoContainer: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
+      commandUiHandler: SimpleTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
       PGMmiscDialogue: SimpleTranslationEntries;
@@ -233,6 +213,30 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      egg: SimpleTranslationEntries;
+      fightUiHandler: SimpleTranslationEntries;
+      gameMode: SimpleTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      growth: SimpleTranslationEntries;
+      menu: SimpleTranslationEntries;
+      menuUiHandler: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
+      move: MoveTranslationEntries;
+      nature: SimpleTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
+      pokeball: SimpleTranslationEntries;
+      pokemon: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      saveSlotSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
+      starterSelectUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
+      tutorial: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
     };
   }
 }

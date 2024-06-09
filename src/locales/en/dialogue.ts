@@ -371,6 +371,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Ow! I scorched the tip of my nose!"
     },
   },
+  "sailor": {
+    "encounter": {
+      1: "Matey, you're walking the plank if you lose!",
+      2: "Come on then! My sailor's pride is at stake!",
+      3: "Ahoy there! Are you seasick?"
+    },
+    "victory": {
+      1: "Argh! Beaten by a kid!",
+      2: "Your spirit sank me!",
+      3: "I think it's me that's seasick..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
@@ -2360,7 +2372,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Tate: Are you suprised?
+      1: `Tate: Are you surprised?
                   $Liza: We are two gym leaders at once!
                   $Tate: We are twins!
                   $Liza: We dont need to talk to understand each other!
@@ -2374,7 +2386,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Liza: Hihihi... Are you suprised?
+      1: `Liza: Hihihi... Are you surprised?
                   $Tate: Yes, we are really two gym leaders at once!
                   $Liza: This is my twin brother Tate!
                   $Tate: And this is my twin sister Liza!
