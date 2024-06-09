@@ -388,7 +388,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.RELEASE) {
           this.clearOptions();
           ui.playSelect();
-          if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
+          if (this.cursor >= this.scene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
             this.showText(`Do you really want to release ${pokemon.name}?`, null, () => {
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);

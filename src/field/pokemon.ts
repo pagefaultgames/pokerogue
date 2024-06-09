@@ -857,11 +857,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (!ignoreOverride && this.summonData?.types) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
-        const speciesForm = this.getSpeciesForm();
+        const speciesForm = this.getSpeciesForm(ignoreOverride);
 
         types.push(speciesForm.type1);
 
-        const fusionSpeciesForm = this.getFusionSpeciesForm();
+        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
         if (fusionSpeciesForm) {
           if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
             types.push(fusionSpeciesForm.type2);
@@ -1069,11 +1069,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
+  /**
+   * @returns The type damage multiplier or undefined if it's a status move
+   */
+  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
+    if (move.getMove().category === MoveCategory.STATUS) {
+      return undefined;
+    }
+
+    return this.getAttackMoveEffectiveness(source, move);
+  }
+
   getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove): TypeDamageMultiplier {
     const move = pokemonMove.getMove();
     const typeless = move.hasAttr(TypelessAttr);
     const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.type, source));
     const cancelled = new Utils.BooleanHolder(false);
+    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (!typeless) {
       applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
     }
@@ -1588,11 +1600,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    this.battleInfo.updateEffectiveness(effectiveness);
+  }
+
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
   }
+
   toggleFlyout(visible: boolean): void {
-    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
+    this.battleInfo.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {
