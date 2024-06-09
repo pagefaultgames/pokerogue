@@ -154,6 +154,13 @@ export default class BattleScene extends SceneBase {
    * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
    */
   public battleStyle: integer = 0;
+  /**
+   * Determines the repeat input delay.
+   * - 0 = 'Short' or 125ms delay
+   * - 1 = 'Normal' or 250ms delay being the default
+   * - 2 = 'Long' or 500ms delay
+   */
+  public repeatInputDelay: integer = 1;
 
   /**
   * Defines whether or not to show type effectiveness hints
