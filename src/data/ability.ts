@@ -1936,6 +1936,23 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
   }
 }
 
+/**
+ * Used for weather suppressing abilities to trigger weather based form changes upon being switched out
+ */
+export class PreSwitchOutWeatherNoLongerSuppressedAbAttr extends PreSwitchOutAbAttr {
+  /**
+   * Tries to trigger weather based form changes upon pre switch out
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param args n/a
+   * @returns n/a
+   */
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    return true;
+  }
+}
+
 export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     if (pokemon.getHpRatio() < 1 ) {
@@ -3120,6 +3137,26 @@ export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
   }
 }
 
+/**
+ * Used for weather suppressing abilities to trigger weather based form changes upon being fainted
+ */
+export class PostFaintWeatherNoLongerSuppressedAbAttr extends PostFaintAbAttr {
+  /**
+   * Tries to trigger weather based form changes upon fainting
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param attacker n/a
+   * @param move n/a
+   * @param hitResult n/a
+   * @param args n/a
+   * @returns true
+   */
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    return true;
+  }
+}
+
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private damageRatio: integer;
 
@@ -3771,7 +3808,9 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr),
+      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr)
+      .attr(PreSwitchOutWeatherNoLongerSuppressedAbAttr)
+      .attr(PostFaintWeatherNoLongerSuppressedAbAttr),
     new Ability(Abilities.COMPOUND_EYES, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
@@ -3966,7 +4005,9 @@ export function initAbilities() {
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
       .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared.")
-      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr),
+      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr)
+      .attr(PreSwitchOutWeatherNoLongerSuppressedAbAttr)
+      .attr(PostFaintWeatherNoLongerSuppressedAbAttr),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), BattleStatMultiplierAbAttr, BattleStat.EVA, 2)
       .ignorable(),
